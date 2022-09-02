@@ -1,0 +1,83 @@
+name: Tagged releases
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release-github:
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Decode Keystore
+        env:
+          ENCODED_KEYSTORE: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+        run: |
+          TMP_KEYSTORE_FILE_PATH="${RUNNER_TEMP}"/keystore
+          mkdir -p "${TMP_KEYSTORE_FILE_PATH}"
+          KEYSTORE_PATH="${TMP_KEYSTORE_FILE_PATH}"/keystore.jks
+          echo $ENCODED_KEYSTORE | base64 -di > "${KEYSTORE_PATH}"
+          echo "STORE_PATH=$(echo $KEYSTORE_PATH)" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get the version
+        id: tagger
+        uses: jimschubert/query-tag-action@v2
+        with:
+          skip-unshallow: 'true'
+          abbrev: false
+          commit-ish: HEAD
+
+      - name: Install JDK ${{ matrix.java_version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: 11
+
+      - name: Assemble beta APK
+        if: contains(steps.tagger.outputs.tag, '-beta')
+        run: ./gradlew assembleBeta
+        env:
+          VERSION: ${{ github.ref }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Assemble release APK
+        if: "!contains(steps.tagger.outputs.tag, '-beta')"
+        run: ./gradlew assembleRelease
+        env:
+          VERSION: ${{ github.ref }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Create pre-release
+        if: contains(steps.tagger.outputs.tag, '-beta')
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
+          tag_name: ${{ steps.tagger.outputs.tag }}
+          name: ${{ steps.tagger.outputs.tag }}
+          generate_release_notes: true
+          files: app/build/outputs/apk/beta/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release
+        if: "!contains(steps.tagger.outputs.tag, '-beta')"
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: false
+          tag_name: ${{ steps.tagger.outputs.tag }}
+          name: ${{ steps.tagger.outputs.tag }}
+          generate_release_notes: true
+          files: app/build/outputs/apk/release/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

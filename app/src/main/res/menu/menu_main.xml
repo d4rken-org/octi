@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="eu.darken.octi.main.ui.MainActivity">
+
+    <item
+        android:id="@+id/action_sync_services"
+        android:orderInCategory="100"
+        android:title="@string/sync_services_label"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/label_settings"
+        app:showAsAction="never" />
+</menu>

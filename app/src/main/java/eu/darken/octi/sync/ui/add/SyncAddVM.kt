@@ -1,0 +1,44 @@
+package eu.darken.octi.sync.ui.add
+
+import androidx.activity.result.ActivityResult
+import androidx.lifecycle.SavedStateHandle
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import dagger.hilt.android.lifecycle.HiltViewModel
+import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.livedata.SingleLiveEvent
+import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.sync.core.provider.gdrive.GDriveAccRepo
+import eu.darken.octi.sync.core.provider.gdrive.GoogleAccount
+import javax.inject.Inject
+
+@HiltViewModel
+class SyncAddVM @Inject constructor(
+    handle: SavedStateHandle,
+    dispatcherProvider: DispatcherProvider,
+    private val accRepo: GDriveAccRepo,
+) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+    val events = SingleLiveEvent<SyncAddEvents>()
+
+    fun startSignIn() {
+        log(TAG) { "startSignIn()" }
+        events.postValue(SyncAddEvents.SignInStart(accRepo.startNewAuth()))
+    }
+
+    fun onGoogleSignIn(result: ActivityResult) = launch {
+        log(TAG) { "onGoogleSignIn(result=$result)" }
+
+        val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
+        accRepo.add(GoogleAccount(account))
+        navEvents.postValue(null)
+    }
+
+    companion object {
+        private val TAG = logTag("Sync", "Add", "Fragment", "VM")
+    }
+}

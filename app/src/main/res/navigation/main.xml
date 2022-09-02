@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    app:startDestination="@id/dashFragment">
+
+    <fragment
+        android:id="@+id/dashFragment"
+        android:name="eu.darken.octi.main.ui.dashboard.DashboardFragment"
+        tools:layout="@layout/dashboard_fragment">
+
+        <action
+            android:id="@+id/action_dashFragment_to_settingsContainerFragment"
+            app:destination="@id/settingsContainerFragment" />
+        <action
+            android:id="@+id/action_dashFragment_to_syncAddFragment"
+            app:destination="@id/syncAddFragment" />
+        <action
+            android:id="@+id/action_dashFragment_to_syncListFragment"
+            app:destination="@id/syncListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsContainerFragment"
+        android:name="eu.darken.octi.main.ui.settings.SettingsFragment"
+        android:label="SettingsContainerFragment" />
+
+    <fragment
+        android:id="@+id/syncAddFragment"
+        android:name="eu.darken.octi.sync.ui.add.SyncAddFragment"
+        tools:layout="@layout/sync_add_fragment" />
+    <fragment
+        android:id="@+id/syncListFragment"
+        android:name="eu.darken.octi.sync.ui.list.SyncListFragment"
+        tools:layout="@layout/sync_list_fragment">
+        <action
+            android:id="@+id/action_syncListFragment_to_syncAddFragment"
+            app:destination="@id/syncAddFragment" />
+    </fragment>
+
+
+</navigation>
