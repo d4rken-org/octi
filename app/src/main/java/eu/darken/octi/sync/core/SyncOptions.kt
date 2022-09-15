@@ -15,11 +15,11 @@ class SyncOptions @Inject constructor(
 ) {
     private val userIdFile = File(context.filesDir, "identifier_user")
     val syncUserId by lazy {
-        SyncUserId(userIdFile.getOrCreateUUID().toString())
+        UserId(userIdFile.getOrCreateUUID().toString())
     }
     private val deviceIdFile = File(context.filesDir, "identifier_device")
-    val syncDeviceId by lazy {
-        SyncDeviceId(deviceIdFile.getOrCreateUUID().toString())
+    val deviceId by lazy {
+        DeviceId(deviceIdFile.getOrCreateUUID().toString())
     }
 
     private fun File.getOrCreateUUID(): UUID {

@@ -12,15 +12,15 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.sync.core.provider.gdrive.GDriveAccRepo
 import eu.darken.octi.sync.core.provider.gdrive.GoogleAccount
+import eu.darken.octi.sync.core.provider.gdrive.GoogleAccountRepo
 import javax.inject.Inject
 
 @HiltViewModel
 class SyncAddVM @Inject constructor(
     handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
-    private val accRepo: GDriveAccRepo,
+    private val accRepo: GoogleAccountRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
     val events = SingleLiveEvent<SyncAddEvents>()
 

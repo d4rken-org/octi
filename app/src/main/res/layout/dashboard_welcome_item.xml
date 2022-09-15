@@ -11,15 +11,37 @@
         android:layout_margin="16dp">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/shareduserid_label"
-            style="@style/TextAppearance.Material3.LabelSmall"
+            android:id="@+id/welcome_title"
+            style="@style/TextAppearance.Material3.TitleMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Welcome!"
+            android:text="Welcome to Octi"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/welcome_body"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Octi helps you monitor multiple Android devices."
+            app:layout_constraintBottom_toTopOf="@id/dismiss_action"
+            app:layout_constraintEnd_toEndOf="@id/welcome_title"
+            app:layout_constraintStart_toStartOf="@id/welcome_title"
+            app:layout_constraintTop_toBottomOf="@id/welcome_title" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dismiss_action"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/generic_dismiss_action"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/welcome_body" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

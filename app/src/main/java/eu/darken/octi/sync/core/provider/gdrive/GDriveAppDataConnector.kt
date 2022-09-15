@@ -1,37 +1,27 @@
 package eu.darken.octi.sync.core.provider.gdrive
 
 import android.content.Context
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
-import com.google.api.client.http.ByteArrayContent
-import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.gson.GsonFactory
-import com.google.api.client.util.DateTime
-import com.google.api.services.drive.Drive
-import com.google.api.services.drive.DriveScopes
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.octi.R
-import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
-import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
-import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
+import eu.darken.octi.common.debug.logging.Logging.Priority.*
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
+import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.ModuleId
 import eu.darken.octi.sync.core.Sync
-import eu.darken.octi.sync.core.SyncDeviceId
-import eu.darken.octi.sync.core.SyncModuleId
 import eu.darken.octi.sync.core.SyncOptions
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
-import okio.ByteString
-import okio.ByteString.Companion.toByteString
-import java.io.ByteArrayOutputStream
 import java.time.Instant
 import com.google.api.services.drive.model.File as GDriveFile
 
@@ -43,21 +33,15 @@ class GDriveAppDataConnector @AssistedInject constructor(
     @ApplicationContext private val context: Context,
     @Assisted private val client: GoogleClient,
     private val syncOptions: SyncOptions,
-) : Sync.Connector {
-
-    private val gdrive by lazy {
-        val credential = GoogleAccountCredential.usingOAuth2(context, listOf(DriveScopes.DRIVE_APPDATA)).apply {
-            selectedAccount = client.account.signInAccount.account
-        }
-        Drive.Builder(NetHttpTransport(), GsonFactory(), credential).apply {
-            applicationName = context.getString(R.string.app_name)
-        }.build()
-    }
+) : GDriveBaseConnector(context, client), Sync.Connector {
 
     data class State(
-        override val isSyncing: Boolean = false,
-        override val syncedAt: Instant? = null,
-        override val data: GDriveData? = null,
+        override val isReading: Boolean = false,
+        override val isWriting: Boolean = false,
+        override val lastReadAt: Instant? = null,
+        override val lastWriteAt: Instant? = null,
+        override val lastError: Exception? = null,
+        override val quota: Sync.Connector.State.Quota? = null,
     ) : Sync.Connector.State
 
     private val _state = DynamicStateFlow(
@@ -68,97 +52,128 @@ class GDriveAppDataConnector @AssistedInject constructor(
     }
 
     override val state: Flow<State> = _state.flow
+    private val _data = MutableStateFlow<Sync.Read?>(null)
+    override val data: Flow<Sync.Read?> = _data
 
-    val account: GoogleAccount
-        get() = client.account
+    private val writeQueue = MutableSharedFlow<Sync.Write>()
 
-    override suspend fun sync() {
-        log(TAG) { "sync()" }
-        var wasAlreadySyncing = false
+    init {
+        writeQueue
+            .onEach { toWrite ->
+                var alreadyWriting = false
+                _state.updateBlocking {
+                    alreadyWriting = isReading
+                    copy(isWriting = true)
+                }
+                if (alreadyWriting) throw IllegalStateException("Concurrent write attempt!")
+
+                var writeError: Exception? = null
+                try {
+                    writeDrive(toWrite)
+                } catch (e: Exception) {
+                    writeError = e
+                    log(TAG, ERROR) { "writeDrive() failed: ${e.asLog()}" }
+                }
+
+                _state.updateBlocking {
+                    log(TAG) { "writeDrive() finished" }
+                    copy(
+                        isWriting = false,
+                        lastWriteAt = Instant.now(),
+                        lastError = writeError,
+                    )
+                }
+                if (writeError != null) throw writeError
+            }
+            .retry {
+                delay(5000)
+                true
+            }
+            .setupCommonEventHandlers(TAG) { "writeQueue" }
+            .launchIn(scope + dispatcherProvider.IO)
+    }
+
+    override suspend fun read() {
+        log(TAG) { "read()" }
+        var alreadyReading = false
         _state.updateBlocking {
-            wasAlreadySyncing = isSyncing
-            State(isSyncing = true)
+            alreadyReading = isReading
+            copy(isReading = true)
         }
-        if (wasAlreadySyncing) {
-            log(TAG, WARN) { "Sync already in progress, skipping." }
+        if (alreadyReading) {
+            log(TAG, WARN) { "Read already in progress, skipping." }
             return
         }
 
-        writeDrive(object : Sync.Write {
-            override val deviceId: SyncDeviceId
-                get() = SyncDeviceId("syncdeviceid1")
-            override val modules: Collection<Sync.Write.Module> = listOf(
-                object : Sync.Write.Module {
-                    override val moduleId: SyncModuleId
-                        get() = SyncModuleId("${BuildConfigWrap.APPLICATION_ID}.module.test")
-                    override val payload: ByteString
-                        get() = "Test123ABC".toByteArray().toByteString()
-                }
+        var readError: Exception? = null
+        try {
+            _data.value = GDriveData(
+                devices = readDrive()
             )
-
-
-        })
-        val devices = readDrive()
+        } catch (e: Exception) {
+            readError = e
+            log(TAG, ERROR) { "readDrive() failed: ${e.asLog()}" }
+        }
 
         _state.updateBlocking {
             log(TAG) { "sync() finished" }
-            State(
-                isSyncing = false,
-                syncedAt = Instant.now(),
-                data = GDriveData(
-                    devices = devices
-                ),
+            copy(
+                isReading = false,
+                lastReadAt = Instant.now(),
+                lastError = readError,
             )
         }
-    }
-
-    private suspend fun readDrive(): Collection<GDriveDeviceData> = withContext(dispatcherProvider.IO) {
-        val userDir = getOrCreateUserDir()
-
-        val deviceFiles = userDir.listFiles()
-        log(TAG) { "read(): GDrive files are:\n${deviceFiles.joinToString("\n")}" }
-
-        deviceFiles
-            .filter { !it.isDirectory }
-            .mapNotNull { deviceFile ->
-                if (deviceFile.isDirectory) return@mapNotNull null
-                val payload = gdrive.files().get(deviceFile.id)?.let { get ->
-                    ByteArrayOutputStream()
-                        .apply { use { get.executeMediaAndDownloadTo(it) } }
-                        .let { it.toByteArray() }
-                }
-                if (payload == null) {
-                    log(TAG, WARN) { "read(): Device file is empty: ${deviceFile.name}" }
-                    return@mapNotNull null
-                } else {
-                    log(TAG) { "read(): ${deviceFile.name} has ${payload.size} bytes" }
-                }
-
-                GDriveDeviceData(
-                    deviceId = SyncDeviceId(deviceFile.name),
-                    modules = listOf(
-                        object : Sync.Read.Module {
-                            override val moduleId: SyncModuleId = SyncModuleId("TODO module ID")
-                            override val createdAt: Instant = Instant.ofEpochMilli(deviceFile.createdTime.value)
-                            override val modifiedAt: Instant = Instant.ofEpochMilli(deviceFile.modifiedTime.value)
-                            override val payload: ByteArray = payload
-                        }
-                    )
-                )
-            }
-            .also {
-                log(TAG) { "read(): Device data is:\n${it.joinToString("\n")}" }
-            }
     }
 
     override suspend fun write(toWrite: Sync.Write) {
         log(TAG) { "write(toWrite=$toWrite)" }
-        // TODO make async and trigger on sync
-        writeDrive(toWrite)
+        writeQueue.emit(toWrite)
     }
 
-    private suspend fun writeDrive(data: Sync.Write) {
-        log(TAG) { "writeDrive(): $data)" }
+    private suspend fun readDrive(): Collection<GDriveDeviceData> = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "readDrive(): Starting..." }
+
+        val userDir = getOrCreateUserDir()
+        log(TAG, VERBOSE) { "readDrive(): userDir=$userDir" }
+
+        val deviceDirs = userDir.listFiles()
+
+        val modulesPerDevice = deviceDirs
+            .filter {
+                val isDir = it.isDirectory
+                if (!isDir) log(TAG, WARN) { "Unexpected file in userDir: $it" }
+                isDir
+            }
+            .map { deviceDir -> deviceDir to deviceDir.listFiles() }
+
+        modulesPerDevice.mapNotNull { (deviceDir, moduleFiles) ->
+            log(TAG, VERBOSE) { "readDrive(): Reading module data for device: $deviceDir" }
+            val moduleData = moduleFiles.map { moduleFile ->
+                val payload = moduleFile.readData()
+                if (payload == null) {
+                    log(TAG, WARN) { "readDrive(): Device file is empty: ${moduleFile.name}" }
+                    return@mapNotNull null
+                }
+
+                GDriveModuleData(
+                    moduleId = ModuleId(moduleFile.name),
+                    createdAt = Instant.ofEpochMilli(moduleFile.createdTime.value),
+                    modifiedAt = Instant.ofEpochMilli(moduleFile.modifiedTime.value),
+                    payload = payload,
+                ).also {
+                    log(TAG, VERBOSE) { "readDrive(): Module data: $it" }
+                }
+            }
+
+            GDriveDeviceData(
+                deviceId = DeviceId(deviceDir.name),
+                modules = moduleData
+            )
+        }
+    }
+
+    private suspend fun writeDrive(data: Sync.Write) = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "writeDrive(): $data)" }
 
         val userDir = getOrCreateUserDir()
 
@@ -167,86 +182,23 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
 
         data.modules.forEach { module ->
-            log(TAG) { "writeDrive(): Writing module $module" }
+            log(TAG, VERBOSE) { "writeDrive(): Writing module $module" }
             val moduleFile = deviceDir.child(module.moduleId.id) ?: deviceDir.createFile(module.moduleId.id).also {
-                log(TAG) { "writeDrive(): Created module file $it" }
+                log(TAG, VERBOSE) { "writeDrive(): Created module file $it" }
             }
             moduleFile.writeData(module.payload)
         }
 
-        log(TAG) { "writeDrive(): Done" }
+        log(TAG, VERBOSE) { "writeDrive(): Done" }
     }
 
     private fun getOrCreateUserDir(): GDriveFile {
-        val userDir = gdrive.appDataRoot().child(syncOptions.syncUserId.id)
+        val userDir = appDataRoot().child(syncOptions.syncUserId.id)
+        if (userDir?.isDirectory == false) throw IllegalStateException("userDir is not a directory: $userDir")
         if (userDir != null) return userDir
-        return gdrive.appDataRoot().createDir(folderName = syncOptions.syncUserId.id).also {
+        return appDataRoot().createDir(folderName = syncOptions.syncUserId.id).also {
             log(TAG) { "write(): Created user dir $it" }
         }
-    }
-
-    private fun Drive.appDataRoot() = files()
-        .get(APPDATAFOLDER).execute()
-
-    private val GDriveFile.isDirectory: Boolean
-        get() = mimeType == MIME_FOLDER
-
-    private fun GDriveFile.listFiles(): Collection<GDriveFile> = gdrive.files()
-        .list().apply {
-            spaces = APPDATAFOLDER
-            q = "'${id}' in parents"
-            fields = "files(id,name,createdTime,modifiedTime,size)"
-        }
-        .execute().files
-
-    private fun GDriveFile.child(name: String): GDriveFile? = gdrive.files()
-        .list().apply {
-            spaces = APPDATAFOLDER
-            q = "'${id}' in parents and name = '$name'"
-            fields = "files(id,name,createdTime,modifiedTime,size)"
-        }
-        .execute().files
-        .singleOrNull()
-
-    private fun GDriveFile.createDir(folderName: String): GDriveFile {
-        val metaData = GDriveFile().apply {
-            name = folderName
-            mimeType = MIME_FOLDER
-            parents = listOf(this@createDir.id)
-        }
-        return gdrive.files().create(metaData).execute()
-    }
-
-    private fun GDriveFile.createFile(fileName: String): GDriveFile {
-        val metaData = GDriveFile().apply {
-            name = fileName
-            parents = listOf(this@createFile.id)
-            modifiedTime = DateTime(System.currentTimeMillis())
-        }
-        return gdrive.files().create(metaData).execute()
-    }
-
-    private fun GDriveFile.writeData(toWrite: ByteString) {
-        log(TAG, VERBOSE) { "writeData($name): $toWrite" }
-        // TODO skip base64
-        val base64 = toWrite.base64()
-        val payload = ByteArrayContent.fromString("text/plain", base64)
-        val writeMetaData = GDriveFile().apply {
-            mimeType = "text/plain"
-            modifiedTime = DateTime(System.currentTimeMillis())
-        }
-        gdrive.files().update(id, writeMetaData, payload).execute().also {
-            log(TAG, VERBOSE) { "writeData($name): done: $it" }
-        }
-    }
-
-    private fun GDriveFile.readData(): String {
-        log(TAG) { "readData($name)" }
-        val readData = ByteArrayOutputStream()
-            .apply { use { gdrive.files().get(id).executeMediaAndDownloadTo(it) } }
-            .let { String(it.toByteArray()) }
-        log(TAG) { "readData($name) done: $readData" }
-        return readData
     }
 
     @AssistedFactory
@@ -255,8 +207,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
     }
 
     companion object {
-        private const val APPDATAFOLDER = "appDataFolder"
-        private const val MIME_FOLDER = "application/vnd.google-apps.folder"
         private val TAG = logTag("Sync", "GDrive", "Connector")
     }
 }

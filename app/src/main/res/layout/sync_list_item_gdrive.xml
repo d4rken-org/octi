@@ -60,7 +60,21 @@
         style="@style/TextAppearance.Material3.BodyMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toStartOf="@id/sync_progress_indicator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/last_sync_label"
         tools:text="5 minute ago" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/sync_progress_indicator"
+        style="@style/Widget.Material3.CircularProgressIndicator.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/last_sync_label_text"
+        android:indeterminate="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@id/last_sync_label_text"
+        app:layout_constraintTop_toTopOf="@id/last_sync_label" />
 </androidx.constraintlayout.widget.ConstraintLayout>

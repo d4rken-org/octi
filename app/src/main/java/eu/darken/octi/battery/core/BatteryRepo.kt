@@ -95,7 +95,7 @@ class BatteryRepo @Inject constructor(
             )
         }
         .setupCommonEventHandlers(TAG) { "powerStatus" }
-        .shareLatest(TAG, appScope, SharingStarted.Lazily)
+        .shareLatest(appScope, SharingStarted.Lazily, TAG)
 
 
     @SuppressLint("WakelockTimeout")

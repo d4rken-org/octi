@@ -3,6 +3,7 @@ package eu.darken.octi.sync.core
 import kotlinx.coroutines.flow.Flow
 import okio.ByteString
 import java.time.Instant
+import java.util.*
 
 interface Sync {
     interface Hub {
@@ -12,11 +13,12 @@ interface Sync {
     interface Connector {
 
         val state: Flow<State>
+        val data: Flow<Read?>
 
         /**
-         * Attempt to read and write data
+         * Sync all modules
          */
-        suspend fun sync()
+        suspend fun read()
 
         /**
          * Data that is written on the next **sync**
@@ -24,29 +26,46 @@ interface Sync {
         suspend fun write(toWrite: Write)
 
         interface State {
-            val isSyncing: Boolean
-            val syncedAt: Instant?
-            val data: Read?
-        }
+            val isReading: Boolean
+            val lastReadAt: Instant?
 
+            val isWriting: Boolean
+            val lastWriteAt: Instant?
+
+            val lastError: Exception?
+
+            val quota: Quota?
+
+            val isBusy: Boolean
+                get() = isReading || isWriting
+
+            val lastSyncAt: Instant?
+                get() = setOf(lastReadAt, lastWriteAt).filterNotNull().maxByOrNull { it }
+
+            data class Quota(
+                val storageUsed: Long,
+                val storageAvailable: Long,
+            )
+        }
     }
 
     /**
      * Data read from a connector
      */
     interface Read {
+        val readId: UUID
         val devices: Collection<Device>
 
         interface Device {
-            val deviceId: SyncDeviceId
+            val deviceId: DeviceId
             val modules: Collection<Module>
         }
 
         interface Module {
-            val moduleId: SyncModuleId
+            val moduleId: ModuleId
             val createdAt: Instant
             val modifiedAt: Instant
-            val payload: ByteArray
+            val payload: ByteString
         }
     }
 
@@ -54,13 +73,16 @@ interface Sync {
      * Data written to a connector
      */
     interface Write {
-        val deviceId: SyncDeviceId
+        val writeId: UUID
+        val userId: UserId
+        val deviceId: DeviceId
         val modules: Collection<Module>
 
-        interface Module {
-            val moduleId: SyncModuleId
-            val payload: ByteString
-        }
+    }
+
+    interface Module {
+        val moduleId: ModuleId
+        val payload: ByteString
     }
 
 }

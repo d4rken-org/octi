@@ -3,6 +3,7 @@ package eu.darken.octi.sync.core.provider.gdrive
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.sync.core.Sync
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +17,7 @@ import javax.inject.Singleton
 class GDriveHub @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
-    private val accRepo: GDriveAccRepo,
+    private val accRepo: GoogleAccountRepo,
     private val connectorFactory: GDriveAppDataConnector.Factory,
 ) : Sync.Hub {
 
@@ -24,7 +25,8 @@ class GDriveHub @Inject constructor(
         .mapLatest { acc ->
             acc.map { connectorFactory.create(it) }
         }
-        .shareLatest(TAG, scope + dispatcherProvider.IO)
+        .setupCommonEventHandlers(TAG) { "connectors" }
+        .shareLatest(scope + dispatcherProvider.IO)
 
     override val connectors: Flow<Collection<Sync.Connector>> = _connectors
 

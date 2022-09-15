@@ -22,8 +22,7 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
     override val vm: DashboardVM by viewModels()
     override val ui: DashboardFragmentBinding by viewBinding()
 
-    @Inject
-    lateinit var dashboardAdapter: DashboardAdapter
+    @Inject lateinit var dashboardAdapter: DashboardAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ui.toolbar.apply {
@@ -40,12 +39,12 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                     else -> super.onOptionsItemSelected(it)
                 }
             }
-            subtitle = "Buildtype: ${BuildConfigWrap.BUILD_TYPE}"
+            subtitle = BuildConfigWrap.VERSION_DESCRIPTION
         }
 
         ui.refreshAction.setOnClickListener { vm.refresh() }
 
-        ui.list.setupDefaults(dashboardAdapter)
+        ui.list.setupDefaults(dashboardAdapter, dividers = false)
 
         vm.listItems.observe2(this@DashboardFragment, ui) {
             dashboardAdapter.update(it.items)

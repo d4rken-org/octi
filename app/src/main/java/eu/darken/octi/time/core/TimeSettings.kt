@@ -1,4 +1,4 @@
-package eu.darken.octi.main.core
+package eu.darken.octi.time.core
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,21 +12,20 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GeneralSettings @Inject constructor(
+class TimeSettings @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Settings() {
 
-    override val preferences: SharedPreferences = context.getSharedPreferences("settings_core", Context.MODE_PRIVATE)
+    override val preferences: SharedPreferences =
+        context.getSharedPreferences("settings_module_time", Context.MODE_PRIVATE)
 
-    val isBugTrackingEnabled = preferences.createFlowPreference("core.bugtracking.enabled", true)
-
-    val isWelcomeDismissed = preferences.createFlowPreference("onboarding.welcome.dismissed", false)
+    val isSyncEnabled = preferences.createFlowPreference("module.time.sync.enabled", true)
 
     override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
-        isBugTrackingEnabled
+        isSyncEnabled
     )
 
     companion object {
-        internal val TAG = logTag("Core", "Settings")
+        internal val TAG = logTag("Module", "Time", "Settings")
     }
 }

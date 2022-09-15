@@ -1,19 +1,15 @@
 package eu.darken.octi.main.ui.dashboard
 
-import androidx.activity.result.ActivityResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
-import eu.darken.octi.sync.core.SyncRepo
+import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -22,7 +18,8 @@ import javax.inject.Inject
 class DashboardVM @Inject constructor(
     handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
-    private val syncRepo: SyncRepo
+    private val generalSettings: GeneralSettings,
+    private val syncManager: SyncManager
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
@@ -30,37 +27,25 @@ class DashboardVM @Inject constructor(
     )
 
     val listItems: LiveData<State> = combine(
-        syncRepo.syncData,
-        syncRepo.syncData
-    ) { syncData, _ ->
+        syncManager.data,
+        generalSettings.isWelcomeDismissed.flow,
+    ) { syncData, isWelcomeDismissed ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
-        WelcomeVH.Item(
-            onDismiss = {
-                log(TAG) { "WelcomeVH: onDismiss()" }
-            }
-        ).run { items.add(this) }
+        if (!isWelcomeDismissed) {
+            WelcomeVH.Item(
+                onDismiss = { generalSettings.isWelcomeDismissed.value = true }
+            ).run { items.add(this) }
+        }
 
         State(
             items = items
         )
     }.asLiveData2()
 
-    fun onGoogleSignIn(result: ActivityResult) {
-        val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        val account: GoogleSignInAccount? = try {
-            task.getResult(ApiException::class.java)
-        } catch (e: ApiException) {
-            e.statusCode
-            null
-        }
-
-        account!!
-    }
-
     fun goToSyncServices() = launch {
         log(TAG) { "goToSyncServices()" }
-        if (syncRepo.connectors.first().isEmpty()) {
+        if (syncManager.connectors.first().isEmpty()) {
             log(TAG) { "Connectors are empty, going to add screen directly." }
             DashboardFragmentDirections.actionDashFragmentToSyncAddFragment().navigate()
         } else {
@@ -70,7 +55,7 @@ class DashboardVM @Inject constructor(
 
     fun refresh() = launch {
         log(TAG) { "refresh()" }
-        syncRepo.syncAll()
+        syncManager.sync()
     }
 
     companion object {

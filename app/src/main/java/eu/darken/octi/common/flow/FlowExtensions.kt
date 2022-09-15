@@ -16,9 +16,9 @@ import kotlin.time.Duration
  * The flow collector will just wait for the first value
  */
 fun <T : Any> Flow<T>.shareLatest(
-    tag: String? = null,
     scope: CoroutineScope,
-    started: SharingStarted = SharingStarted.WhileSubscribed(replayExpirationMillis = 0)
+    started: SharingStarted = SharingStarted.WhileSubscribed(replayExpirationMillis = 0),
+    tag: String? = null,
 ) = this
     .onStart { if (tag != null) log(tag) { "shareLatest(...) start" } }
     .onEach { if (tag != null) log(tag) { "shareLatest(...) emission: $it" } }

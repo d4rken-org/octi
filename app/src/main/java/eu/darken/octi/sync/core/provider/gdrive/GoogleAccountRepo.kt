@@ -23,7 +23,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GDriveAccRepo @Inject constructor(
+class GoogleAccountRepo @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,

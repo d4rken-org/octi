@@ -54,8 +54,9 @@
     <string name="sync_type_jserver_appdata_description">An open-source server hosted by me, written by a friend, with end-to-end encryption. It\'s encrypted, free and anonymous, but I make no promises about reliability &amp; uptime.</string>
 
     <string name="sync_last_update_label">Last update</string>
-    <string name="sync_last_sync_label">Last synchronization</string>
+    <string name="sync_last_sync_label">Last sync</string>
     <string name="sync_last_never_label">Never</string>
 
     <string name="battery_status_card_label">Battery status</string>
+    <string name="generic_dismiss_action">Dismiss</string>
 </resources>

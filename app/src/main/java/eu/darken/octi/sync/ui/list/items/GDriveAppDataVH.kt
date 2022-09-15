@@ -1,6 +1,7 @@
 package eu.darken.octi.sync.ui.list.items
 
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import eu.darken.octi.R
 import eu.darken.octi.databinding.SyncListItemGdriveBinding
 import eu.darken.octi.sync.core.Sync
@@ -18,7 +19,8 @@ class GDriveAppDataVH(parent: ViewGroup) :
         payloads: List<Any>
     ) -> Unit = { item, _ ->
         accountLabelText.text = item.account.email
-        lastSyncLabelText.text = item.state.syncedAt?.toString() ?: getString(R.string.sync_last_never_label)
+        lastSyncLabelText.text = item.state.lastSyncAt?.toString() ?: getString(R.string.sync_last_never_label)
+        syncProgressIndicator.isGone = !item.state.isBusy
     }
 
     data class Item(
