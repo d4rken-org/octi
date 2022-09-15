@@ -1,4 +1,4 @@
-package eu.darken.octi.time.core
+package eu.darken.octi.metainfo.core
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,7 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TimeSettings @Inject constructor(
+class MetaSettings @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Settings() {
 

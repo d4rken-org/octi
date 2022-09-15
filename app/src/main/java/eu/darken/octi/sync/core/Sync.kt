@@ -34,7 +34,7 @@ interface Sync {
 
             val lastError: Exception?
 
-            val quota: Quota?
+            val stats: Stats?
 
             val isBusy: Boolean
                 get() = isReading || isWriting
@@ -42,10 +42,14 @@ interface Sync {
             val lastSyncAt: Instant?
                 get() = setOf(lastReadAt, lastWriteAt).filterNotNull().maxByOrNull { it }
 
-            data class Quota(
+            data class Stats(
+                val timestamp: Instant,
                 val storageUsed: Long,
-                val storageAvailable: Long,
-            )
+                val storageTotal: Long,
+            ) {
+                val storageFree: Long
+                    get() = storageTotal - storageUsed
+            }
         }
     }
 
@@ -74,15 +78,12 @@ interface Sync {
      */
     interface Write {
         val writeId: UUID
-        val userId: UserId
         val deviceId: DeviceId
         val modules: Collection<Module>
 
+        interface Module {
+            val moduleId: ModuleId
+            val payload: ByteString
+        }
     }
-
-    interface Module {
-        val moduleId: ModuleId
-        val payload: ByteString
-    }
-
 }

@@ -1,8 +1,10 @@
 package eu.darken.octi.sync.ui.list.items
 
+import android.text.format.Formatter
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import eu.darken.octi.R
+import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.databinding.SyncListItemGdriveBinding
 import eu.darken.octi.sync.core.Sync
 import eu.darken.octi.sync.core.provider.gdrive.GoogleAccount
@@ -19,8 +21,24 @@ class GDriveAppDataVH(parent: ViewGroup) :
         payloads: List<Any>
     ) -> Unit = { item, _ ->
         accountLabelText.text = item.account.email
-        lastSyncLabelText.text = item.state.lastSyncAt?.toString() ?: getString(R.string.sync_last_never_label)
+        lastSyncLabelText.apply {
+            text = item.state.lastSyncAt?.toString() ?: getString(R.string.sync_last_never_label)
+            if (item.state.lastError != null) {
+                setTextColor(context.getColorForAttr(R.attr.colorError))
+            } else {
+                setTextColor(context.getColorForAttr(android.R.attr.textColorPrimary))
+            }
+        }
         syncProgressIndicator.isGone = !item.state.isBusy
+
+        quotaText.text = item.state.stats
+            ?.let { stats ->
+                val total = Formatter.formatShortFileSize(context, stats.storageTotal)
+                val used = Formatter.formatShortFileSize(context, stats.storageUsed)
+                val free = Formatter.formatShortFileSize(context, stats.storageFree)
+                getString(R.string.sync_quota_storage_msg, free, used, total)
+            }
+            ?: getString(R.string.general_na_label)
     }
 
     data class Item(

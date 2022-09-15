@@ -16,12 +16,12 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.ModuleId
 import eu.darken.octi.sync.core.Sync
-import eu.darken.octi.sync.core.SyncOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
+import java.time.Duration
 import java.time.Instant
 import com.google.api.services.drive.model.File as GDriveFile
 
@@ -32,7 +32,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
     @Assisted private val client: GoogleClient,
-    private val syncOptions: SyncOptions,
 ) : GDriveBaseConnector(context, client), Sync.Connector {
 
     data class State(
@@ -41,7 +40,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         override val lastReadAt: Instant? = null,
         override val lastWriteAt: Instant? = null,
         override val lastError: Exception? = null,
-        override val quota: Sync.Connector.State.Quota? = null,
+        override val stats: Sync.Connector.State.Stats? = null,
     ) : Sync.Connector.State
 
     private val _state = DynamicStateFlow(
@@ -106,10 +105,17 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
 
         var readError: Exception? = null
+
+        var newStorageStats: Sync.Connector.State.Stats? = null
+
         try {
-            _data.value = GDriveData(
-                devices = readDrive()
-            )
+            _data.value = readDrive()
+
+            val lastStats = _state.value().stats?.timestamp
+            if (lastStats == null || Duration.between(lastStats, Instant.now()) > Duration.ofSeconds(60)) {
+                log(TAG) { "read(): Updating storage stats" }
+                newStorageStats = getStorageStats()
+            }
         } catch (e: Exception) {
             readError = e
             log(TAG, ERROR) { "readDrive() failed: ${e.asLog()}" }
@@ -119,6 +125,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             log(TAG) { "sync() finished" }
             copy(
                 isReading = false,
+                stats = newStorageStats ?: stats,
                 lastReadAt = Instant.now(),
                 lastError = readError,
             )
@@ -130,10 +137,10 @@ class GDriveAppDataConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    private suspend fun readDrive(): Collection<GDriveDeviceData> = withContext(dispatcherProvider.IO) {
+    private suspend fun readDrive(): GDriveData = withContext(dispatcherProvider.IO) {
         log(TAG, VERBOSE) { "readDrive(): Starting..." }
 
-        val userDir = getOrCreateUserDir()
+        val userDir = getOrCreateDeviceDir()
         log(TAG, VERBOSE) { "readDrive(): userDir=$userDir" }
 
         val deviceDirs = userDir.listFiles()
@@ -146,7 +153,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
             .map { deviceDir -> deviceDir to deviceDir.listFiles() }
 
-        modulesPerDevice.mapNotNull { (deviceDir, moduleFiles) ->
+        val devices = modulesPerDevice.mapNotNull { (deviceDir, moduleFiles) ->
             log(TAG, VERBOSE) { "readDrive(): Reading module data for device: $deviceDir" }
             val moduleData = moduleFiles.map { moduleFile ->
                 val payload = moduleFile.readData()
@@ -170,14 +177,17 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 modules = moduleData
             )
         }
+        GDriveData(
+            devices = devices
+        )
     }
 
     private suspend fun writeDrive(data: Sync.Write) = withContext(dispatcherProvider.IO) {
         log(TAG, VERBOSE) { "writeDrive(): $data)" }
 
-        val userDir = getOrCreateUserDir()
-
-        val deviceDir = userDir.child(data.deviceId.id) ?: userDir.createDir(data.deviceId.id).also {
+        val userDir = getOrCreateDeviceDir()
+        val deviceIdRaw = data.deviceId.id.toString()
+        val deviceDir = userDir.child(deviceIdRaw) ?: userDir.createDir(deviceIdRaw).also {
             log(TAG) { "writeDrive(): Created device dir $it" }
         }
 
@@ -192,12 +202,34 @@ class GDriveAppDataConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeDrive(): Done" }
     }
 
-    private fun getOrCreateUserDir(): GDriveFile {
-        val userDir = appDataRoot().child(syncOptions.syncUserId.id)
-        if (userDir?.isDirectory == false) throw IllegalStateException("userDir is not a directory: $userDir")
+    private fun getStorageStats(): Sync.Connector.State.Stats {
+        log(TAG, VERBOSE) { "getStorageStats()" }
+        val allItems = gdrive.files()
+            .list().apply {
+                spaces = APPDATAFOLDER
+                fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
+            }
+            .execute().files
+
+
+        val storageTotal = gdrive.about()
+            .get().setFields("storageQuota")
+            .execute().storageQuota
+            .limit
+
+        return Sync.Connector.State.Stats(
+            timestamp = Instant.now(),
+            storageUsed = allItems.sumOf { it.quotaBytesUsed ?: 0 },
+            storageTotal = storageTotal
+        )
+    }
+
+    private fun getOrCreateDeviceDir(): GDriveFile {
+        val userDir = appDataRoot().child(DEVICE_DATA_DIR_NAME)
+        if (userDir?.isDirectory == false) throw IllegalStateException("devices is not a directory: $userDir")
         if (userDir != null) return userDir
-        return appDataRoot().createDir(folderName = syncOptions.syncUserId.id).also {
-            log(TAG) { "write(): Created user dir $it" }
+        return appDataRoot().createDir(folderName = DEVICE_DATA_DIR_NAME).also {
+            log(TAG) { "write(): Created devices dir $it" }
         }
     }
 
@@ -207,6 +239,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     }
 
     companion object {
+        private const val DEVICE_DATA_DIR_NAME = "devices"
         private val TAG = logTag("Sync", "GDrive", "Connector")
     }
 }

@@ -13,7 +13,7 @@ import eu.darken.octi.common.lists.modular.ModularAdapter
 import eu.darken.octi.common.lists.modular.mods.DataBinderMod
 import eu.darken.octi.common.lists.modular.mods.TypedVHCreatorMod
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
-import eu.darken.octi.time.ui.dashboard.TimeDashVH
+import eu.darken.octi.metainfo.ui.dashboard.MetaInfoVH
 import javax.inject.Inject
 
 
@@ -28,7 +28,7 @@ class DashboardAdapter @Inject constructor() :
     init {
         modules.add(DataBinderMod(data))
         modules.add(TypedVHCreatorMod({ data[it] is WelcomeVH.Item }) { WelcomeVH(it) })
-        modules.add(TypedVHCreatorMod({ data[it] is TimeDashVH.Item }) { TimeDashVH(it) })
+        modules.add(TypedVHCreatorMod({ data[it] is MetaInfoVH.Item }) { MetaInfoVH(it) })
         modules.add(TypedVHCreatorMod({ data[it] is BatteryDashVH.Item }) { BatteryDashVH(it) })
     }
 

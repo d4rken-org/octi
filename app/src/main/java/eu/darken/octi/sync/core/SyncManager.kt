@@ -62,13 +62,12 @@ class SyncManager @Inject constructor(
         }
     }
 
-    suspend fun write(toWrite: Sync.Module) {
+    suspend fun write(toWrite: Sync.Write.Module) {
         val start = System.currentTimeMillis()
         log(TAG) { "write(data=$toWrite)..." }
         connectors.first().forEach {
             it.write(
                 SyncWriteContainer(
-                    userId = syncOptions.syncUserId,
                     deviceId = syncOptions.deviceId,
                     modules = listOf(
                         toWrite

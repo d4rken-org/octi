@@ -112,7 +112,7 @@ abstract class GDriveBaseConnector constructor(
     }
 
     companion object {
-        private const val APPDATAFOLDER = "appDataFolder"
+        internal const val APPDATAFOLDER = "appDataFolder"
         private const val MIME_FOLDER = "application/vnd.google-apps.folder"
         private val TAG = logTag("Sync", "GDrive", "Connector", "Browser")
     }

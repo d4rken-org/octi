@@ -9,6 +9,8 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
+import eu.darken.octi.metainfo.core.MetaRepo
+import eu.darken.octi.metainfo.ui.dashboard.MetaInfoVH
 import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -19,7 +21,8 @@ class DashboardVM @Inject constructor(
     handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     private val generalSettings: GeneralSettings,
-    private val syncManager: SyncManager
+    private val syncManager: SyncManager,
+    private val metaRepo: MetaRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
@@ -27,9 +30,9 @@ class DashboardVM @Inject constructor(
     )
 
     val listItems: LiveData<State> = combine(
-        syncManager.data,
         generalSettings.isWelcomeDismissed.flow,
-    ) { syncData, isWelcomeDismissed ->
+        metaRepo.state,
+    ) { isWelcomeDismissed, metaState ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
         if (!isWelcomeDismissed) {
@@ -38,10 +41,18 @@ class DashboardVM @Inject constructor(
             ).run { items.add(this) }
         }
 
+        MetaInfoVH.Item(
+            state = metaState
+        ).run { items.add(this) }
+
         State(
             items = items
         )
     }.asLiveData2()
+
+    init {
+        refresh()
+    }
 
     fun goToSyncServices() = launch {
         log(TAG) { "goToSyncServices()" }

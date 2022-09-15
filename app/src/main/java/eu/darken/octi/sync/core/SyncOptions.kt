@@ -13,10 +13,7 @@ import javax.inject.Singleton
 class SyncOptions @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
-    private val userIdFile = File(context.filesDir, "identifier_user")
-    val syncUserId by lazy {
-        UserId(userIdFile.getOrCreateUUID().toString())
-    }
+
     private val deviceIdFile = File(context.filesDir, "identifier_device")
     val deviceId by lazy {
         DeviceId(deviceIdFile.getOrCreateUUID().toString())
