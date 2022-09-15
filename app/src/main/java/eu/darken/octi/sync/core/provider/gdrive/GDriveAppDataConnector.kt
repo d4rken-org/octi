@@ -13,6 +13,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.R
+import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
@@ -22,16 +23,21 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.sync.core.Sync
 import eu.darken.octi.sync.core.SyncDeviceId
+import eu.darken.octi.sync.core.SyncModuleId
 import eu.darken.octi.sync.core.SyncOptions
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
+import okio.ByteString
+import okio.ByteString.Companion.toByteString
 import java.io.ByteArrayOutputStream
 import java.time.Instant
 import com.google.api.services.drive.model.File as GDriveFile
 
 
-@Suppress("BlockingMethodInNonBlockingContext") class GDriveAppDataConnector @AssistedInject constructor(
+@Suppress("BlockingMethodInNonBlockingContext")
+class GDriveAppDataConnector @AssistedInject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
@@ -50,18 +56,18 @@ import com.google.api.services.drive.model.File as GDriveFile
 
     data class State(
         override val isSyncing: Boolean = false,
-        override val lastSyncAt: Instant? = null,
-        override val devices: Collection<Sync.Data.Device> = emptyList(),
-    ) : Sync.Data, Sync.Connector.State
+        override val syncedAt: Instant? = null,
+        override val data: GDriveData? = null,
+    ) : Sync.Connector.State
 
-    private val _state = DynamicStateFlow<State>(
+    private val _state = DynamicStateFlow(
         parentScope = scope + dispatcherProvider.IO,
         loggingTag = TAG,
     ) {
         State()
     }
 
-    override val state = _state.flow
+    override val state: Flow<State> = _state.flow
 
     val account: GoogleAccount
         get() = client.account
@@ -78,28 +84,35 @@ import com.google.api.services.drive.model.File as GDriveFile
             return
         }
 
-        write(object : Sync.Data.Device {
+        writeDrive(object : Sync.Write {
             override val deviceId: SyncDeviceId
-                get() = syncOptions.syncDeviceId
-            override val lastUpdatedAt: Instant
-                get() = Instant.now()
-            override val payload: String
-                get() = "Test123ABC"
+                get() = SyncDeviceId("syncdeviceid1")
+            override val modules: Collection<Sync.Write.Module> = listOf(
+                object : Sync.Write.Module {
+                    override val moduleId: SyncModuleId
+                        get() = SyncModuleId("${BuildConfigWrap.APPLICATION_ID}.module.test")
+                    override val payload: ByteString
+                        get() = "Test123ABC".toByteArray().toByteString()
+                }
+            )
+
 
         })
-        val devices = read()
+        val devices = readDrive()
 
         _state.updateBlocking {
             log(TAG) { "sync() finished" }
             State(
                 isSyncing = false,
-                lastSyncAt = Instant.now(),
-                devices = devices,
+                syncedAt = Instant.now(),
+                data = GDriveData(
+                    devices = devices
+                ),
             )
         }
     }
 
-    private suspend fun read(): Collection<GDriveDeviceData> = withContext(dispatcherProvider.IO) {
+    private suspend fun readDrive(): Collection<GDriveDeviceData> = withContext(dispatcherProvider.IO) {
         val userDir = getOrCreateUserDir()
 
         val deviceFiles = userDir.listFiles()
@@ -112,19 +125,25 @@ import com.google.api.services.drive.model.File as GDriveFile
                 val payload = gdrive.files().get(deviceFile.id)?.let { get ->
                     ByteArrayOutputStream()
                         .apply { use { get.executeMediaAndDownloadTo(it) } }
-                        .let { String(it.toByteArray()) }
+                        .let { it.toByteArray() }
                 }
                 if (payload == null) {
                     log(TAG, WARN) { "read(): Device file is empty: ${deviceFile.name}" }
                     return@mapNotNull null
                 } else {
-                    log(TAG) { "read(): ${deviceFile.name} has ${payload.length} bytes" }
+                    log(TAG) { "read(): ${deviceFile.name} has ${payload.size} bytes" }
                 }
 
                 GDriveDeviceData(
                     deviceId = SyncDeviceId(deviceFile.name),
-                    lastUpdatedAt = Instant.ofEpochMilli(deviceFile.modifiedTime.value),
-                    payload = payload,
+                    modules = listOf(
+                        object : Sync.Read.Module {
+                            override val moduleId: SyncModuleId = SyncModuleId("TODO module ID")
+                            override val createdAt: Instant = Instant.ofEpochMilli(deviceFile.createdTime.value)
+                            override val modifiedAt: Instant = Instant.ofEpochMilli(deviceFile.modifiedTime.value)
+                            override val payload: ByteArray = payload
+                        }
+                    )
                 )
             }
             .also {
@@ -132,17 +151,30 @@ import com.google.api.services.drive.model.File as GDriveFile
             }
     }
 
-    private suspend fun write(data: Sync.Data.Device) {
-        log(TAG) { "write(): $data)" }
+    override suspend fun write(toWrite: Sync.Write) {
+        log(TAG) { "write(toWrite=$toWrite)" }
+        // TODO make async and trigger on sync
+        writeDrive(toWrite)
+    }
+
+    private suspend fun writeDrive(data: Sync.Write) {
+        log(TAG) { "writeDrive(): $data)" }
 
         val userDir = getOrCreateUserDir()
 
-        val deviceFile = userDir.child(data.deviceId.id) ?: userDir.createFile(data.deviceId.id).also {
-            log(TAG) { "write(): Created device file $it" }
+        val deviceDir = userDir.child(data.deviceId.id) ?: userDir.createDir(data.deviceId.id).also {
+            log(TAG) { "writeDrive(): Created device dir $it" }
         }
 
-        deviceFile.writeData(data.payload)
-        log(TAG) { "write(): Done" }
+        data.modules.forEach { module ->
+            log(TAG) { "writeDrive(): Writing module $module" }
+            val moduleFile = deviceDir.child(module.moduleId.id) ?: deviceDir.createFile(module.moduleId.id).also {
+                log(TAG) { "writeDrive(): Created module file $it" }
+            }
+            moduleFile.writeData(module.payload)
+        }
+
+        log(TAG) { "writeDrive(): Done" }
     }
 
     private fun getOrCreateUserDir(): GDriveFile {
@@ -194,9 +226,11 @@ import com.google.api.services.drive.model.File as GDriveFile
         return gdrive.files().create(metaData).execute()
     }
 
-    private fun GDriveFile.writeData(toWrite: String) {
+    private fun GDriveFile.writeData(toWrite: ByteString) {
         log(TAG, VERBOSE) { "writeData($name): $toWrite" }
-        val payload = ByteArrayContent.fromString("text/plain", toWrite)
+        // TODO skip base64
+        val base64 = toWrite.base64()
+        val payload = ByteArrayContent.fromString("text/plain", base64)
         val writeMetaData = GDriveFile().apply {
             mimeType = "text/plain"
             modifiedTime = DateTime(System.currentTimeMillis())

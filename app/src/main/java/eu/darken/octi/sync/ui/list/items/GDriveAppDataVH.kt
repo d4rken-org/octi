@@ -18,7 +18,7 @@ class GDriveAppDataVH(parent: ViewGroup) :
         payloads: List<Any>
     ) -> Unit = { item, _ ->
         accountLabelText.text = item.account.email
-        lastSyncLabelText.text = item.state.lastSyncAt?.toString() ?: getString(R.string.sync_last_never_label)
+        lastSyncLabelText.text = item.state.syncedAt?.toString() ?: getString(R.string.sync_last_never_label)
     }
 
     data class Item(

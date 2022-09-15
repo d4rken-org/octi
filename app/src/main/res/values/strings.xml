@@ -42,12 +42,17 @@
     <string name="settings_support_label">Support</string>
 
     <string name="sync_add_label">Add new sync service</string>
-    <string name="sync_services_label">Synchronization services</string>
+    <string name="sync_services_label">Sync services</string>
     <string name="sync_gdrive_label">Google Drive</string>
     <string name="sync_gdrive_add_label">Add new Google Drive</string>
     <string name="sync_account_label">Account</string>
+
     <string name="sync_type_gdrive_appdata_label">Google Drive - App Data Scope</string>
-    <string name="sync_type_gdrive_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Files don\'t clutter your folder list and access is only granted to a folder specific to this app. This is similar to how Whats App backups work.</string>
+    <string name="sync_type_gdrive_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. This is similar to how Whats App backups work.</string>
+
+    <string name="sync_type_jserver_appdata_label">J-Server (Beta)</string>
+    <string name="sync_type_jserver_appdata_description">An open-source server hosted by me, written by a friend, with end-to-end encryption. It\'s encrypted, free and anonymous, but I make no promises about reliability &amp; uptime.</string>
+
     <string name="sync_last_update_label">Last update</string>
     <string name="sync_last_sync_label">Last synchronization</string>
     <string name="sync_last_never_label">Never</string>

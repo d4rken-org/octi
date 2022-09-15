@@ -180,12 +180,11 @@ dependencies {
 
     implementation("io.coil-kt:coil:2.0.0-rc02")
 
-//    implementation("com.google.api-client:google-api-client:+")
-    implementation("com.google.android.gms:play-services-auth:+")
+    implementation("com.google.android.gms:play-services-auth:20.3.0")
     implementation("com.google.api-client:google-api-client-android:+") {
         exclude("org.apache.httpcomponents")
     }
-//    implementation("com.google.oauth-client:google-oauth-client-jetty:+")
+
     implementation("com.google.apis:google-api-services-drive:+") {
         exclude("org.apache.httpcomponents")
     }

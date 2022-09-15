@@ -1,4 +1,4 @@
-package eu.darken.octi.common
+package eu.darken.octi.common.collections
 
 import java.nio.ByteBuffer
 import java.util.*

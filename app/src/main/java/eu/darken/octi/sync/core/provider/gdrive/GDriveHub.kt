@@ -7,8 +7,6 @@ import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.sync.core.Sync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.plus
 import javax.inject.Inject
@@ -28,13 +26,7 @@ class GDriveHub @Inject constructor(
         }
         .shareLatest(TAG, scope + dispatcherProvider.IO)
 
-    val connectors: Flow<Collection<Sync.Connector>> = _connectors
-
-    val data: Flow<Collection<Sync.Data>> = _connectors
-        .flatMapLatest { connectors ->
-            combine(connectors.map { it.state }) { it.toList() }
-        }
-        .shareLatest(TAG, scope + dispatcherProvider.IO)
+    override val connectors: Flow<Collection<Sync.Connector>> = _connectors
 
     companion object {
         private val TAG = logTag("Sync", "GDrive", "Hub")
