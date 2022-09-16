@@ -1,4 +1,4 @@
-package eu.darken.octi.metainfo.core
+package eu.darken.octi.sync.core
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,20 +12,19 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MetaSettings @Inject constructor(
+class SyncSettings @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Settings() {
 
-    override val preferences: SharedPreferences =
-        context.getSharedPreferences("settings_module_time", Context.MODE_PRIVATE)
+    override val preferences: SharedPreferences = context.getSharedPreferences("settings_sync", Context.MODE_PRIVATE)
 
-    val isEnabled = preferences.createFlowPreference("module.time.enabled", true)
+    val syncOnMobile = preferences.createFlowPreference("sync.connection.mobile.enabled", true)
 
     override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
-        isEnabled
+        syncOnMobile
     )
 
     companion object {
-        internal val TAG = logTag("Module", "Time", "Settings")
+        internal val TAG = logTag("Core", "Settings")
     }
 }

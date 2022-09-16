@@ -5,7 +5,10 @@ import com.squareup.moshi.adapter
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.Bugs
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
@@ -38,7 +41,7 @@ class MetaSync @Inject constructor(
         log(TAG) { "start()" }
 
         // Read
-        metaSettings.isSyncEnabled.flow
+        metaSettings.isEnabled.flow
             .flatMapLatest { isEnabled ->
                 log(TAG) { "SyncRead: isEnabled=$isEnabled" }
                 if (!isEnabled) return@flatMapLatest emptyFlow()
@@ -48,28 +51,30 @@ class MetaSync @Inject constructor(
                 reads
                     .map { it.devices }.flatten()
                     .filter { it.deviceId != syncOptions.deviceId }
-                    .map { device ->
-                        device.modules
-                            .filter { it.moduleId == MODULE_ID }
-                            .map { device to it.toMetaInfo() }
+                    .mapNotNull { device ->
+                        val rawModule = device.modules.single { it.moduleId == MODULE_ID }
+                        try {
+                            SyncDataContainer(
+                                deviceId = device.deviceId,
+                                modifiedAt = rawModule.modifiedAt,
+                                data = rawModule.toMetaInfo(),
+                            )
+                        } catch (e: Exception) {
+                            log(TAG, ERROR) { "Failed to decode $rawModule:\n${e.asLog()}" }
+                            Bugs.report(PayloadDecodingException(rawModule))
+                            null
+                        }
                     }
-                    .flatten()
             }
             .onEach { infos ->
                 log(TAG, VERBOSE) { "SyncRead: Processing new data: $infos" }
-                val others = infos.map { (device, info) ->
-                    SyncDataContainer(
-                        deviceId = device.deviceId,
-                        data = info,
-                    )
-                }
-                metaRepo.updateOthers(others)
+                metaRepo.updateOthers(infos)
             }
             .setupCommonEventHandlers(TAG) { "syncRead" }
             .launchIn(scope + dispatcherProvider.IO)
 
         // Write
-        metaSettings.isSyncEnabled.flow
+        metaSettings.isEnabled.flow
             .flatMapLatest { isEnabled ->
                 log(TAG) { "SyncWrite: isEnabled=$isEnabled" }
                 if (!isEnabled) return@flatMapLatest emptyFlow()

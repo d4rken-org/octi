@@ -10,6 +10,7 @@ import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.sync.core.SyncOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,10 +33,14 @@ class MetaRepo @Inject constructor(
         val info = MetaInfo(
             versionName = BuildConfigWrap.VERSION_NAME,
             deviceName = Build.MODEL,
+            deviceType = MetaInfo.DeviceType.PHONE,
+            androidVersionName = Build.VERSION.RELEASE_OR_CODENAME,
+            androidApiLevel = Build.VERSION.SDK_INT,
         )
         State(
             self = SyncDataContainer(
                 deviceId = syncOptions.deviceId,
+                modifiedAt = Instant.now(),
                 data = info,
             )
         )

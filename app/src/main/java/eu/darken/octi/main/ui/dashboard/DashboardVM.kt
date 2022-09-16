@@ -9,11 +9,15 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
+import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import eu.darken.octi.metainfo.core.MetaRepo
-import eu.darken.octi.metainfo.ui.dashboard.MetaInfoVH
 import eu.darken.octi.sync.core.SyncManager
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,10 +33,18 @@ class DashboardVM @Inject constructor(
         val items: List<DashboardAdapter.Item>,
     )
 
+    private val refreshTicker = flow {
+        while (currentCoroutineContext().isActive) {
+            emit(Unit)
+            delay(5000)
+        }
+    }
+
     val listItems: LiveData<State> = combine(
+        refreshTicker,
         generalSettings.isWelcomeDismissed.flow,
         metaRepo.state,
-    ) { isWelcomeDismissed, metaState ->
+    ) { _, isWelcomeDismissed, metaState ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
         if (!isWelcomeDismissed) {
@@ -41,13 +53,13 @@ class DashboardVM @Inject constructor(
             ).run { items.add(this) }
         }
 
-        MetaInfoVH.Item(
-            state = metaState
-        ).run { items.add(this) }
+        metaState.all.forEach { metaContainer ->
+            DeviceVH.Item(
+                meta = metaContainer,
+            ).run { items.add(this) }
+        }
 
-        State(
-            items = items
-        )
+        State(items = items)
     }.asLiveData2()
 
     init {

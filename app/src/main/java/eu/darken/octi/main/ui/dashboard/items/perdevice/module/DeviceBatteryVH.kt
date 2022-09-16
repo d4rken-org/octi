@@ -1,20 +1,23 @@
-package eu.darken.octi.main.ui.dashboard.items.perdevice
+package eu.darken.octi.main.ui.dashboard.items.perdevice.module
 
 import android.text.format.DateUtils
 import android.view.ViewGroup
 import eu.darken.octi.R
-import eu.darken.octi.databinding.DashboardDeviceItemBinding
+import eu.darken.octi.databinding.DashboardDeviceBatteryItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
 import eu.darken.octi.metainfo.core.MetaInfo
 import eu.darken.octi.metainfo.core.SyncDataContainer
 
 
-class DeviceVH(parent: ViewGroup) :
-    DashboardAdapter.BaseVH<DeviceVH.Item, DashboardDeviceItemBinding>(R.layout.dashboard_device_item, parent) {
+class DeviceBatteryVH(parent: ViewGroup) :
+    DashboardAdapter.BaseVH<DeviceBatteryVH.Item, DashboardDeviceBatteryItemBinding>(
+        R.layout.dashboard_device_battery_item,
+        parent
+    ) {
 
-    override val viewBinding = lazy { DashboardDeviceItemBinding.bind(itemView) }
+    override val viewBinding = lazy { DashboardDeviceBatteryItemBinding.bind(itemView) }
 
-    override val onBindData: DashboardDeviceItemBinding.(
+    override val onBindData: DashboardDeviceBatteryItemBinding.(
         item: Item,
         payloads: List<Any>
     ) -> Unit = { item, _ ->

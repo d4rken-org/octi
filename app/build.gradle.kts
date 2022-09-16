@@ -180,6 +180,11 @@ dependencies {
 
     implementation("io.coil-kt:coil:2.0.0-rc02")
 
+    implementation("androidx.work:work-runtime:${Versions.AndroidX.WorkManager.core}")
+    testImplementation("androidx.work:work-testing:${Versions.AndroidX.WorkManager.core}")
+    implementation("androidx.work:work-runtime-ktx:${Versions.AndroidX.WorkManager.core}")
+    implementation("androidx.hilt:hilt-work:1.0.0")
+
     implementation("com.google.android.gms:play-services-auth:20.3.0")
     implementation("com.google.api-client:google-api-client-android:+") {
         exclude("org.apache.httpcomponents")

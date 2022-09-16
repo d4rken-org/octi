@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
 import android.os.PowerManager
+import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,4 +28,8 @@ class AndroidModule {
     @Singleton
     fun powerManager(context: Context): PowerManager =
         context.getSystemService(Context.POWER_SERVICE) as PowerManager
+
+    @Provides
+    @Singleton
+    fun workManager(context: Context): WorkManager = WorkManager.getInstance(context)
 }
