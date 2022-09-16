@@ -6,7 +6,7 @@ import androidx.core.view.isGone
 import eu.darken.octi.R
 import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.databinding.SyncListItemGdriveBinding
-import eu.darken.octi.sync.core.Sync
+import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.provider.gdrive.GoogleAccount
 import eu.darken.octi.sync.ui.list.SyncListAdapter
 
@@ -43,7 +43,7 @@ class GDriveAppDataVH(parent: ViewGroup) :
 
     data class Item(
         val account: GoogleAccount,
-        val state: Sync.Connector.State,
+        val state: SyncConnector.State,
     ) : SyncListAdapter.Item {
         override val stableId: Long
             get() {

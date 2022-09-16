@@ -7,7 +7,7 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.sync.core.Sync
+import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.provider.gdrive.GDriveAppDataConnector
 import eu.darken.octi.sync.ui.list.items.GDriveAppDataVH
@@ -30,7 +30,7 @@ class SyncListVM @Inject constructor(
             if (connectors.isEmpty()) return@flatMapLatest flowOf(emptyList())
 
             val withStates = connectors.map { connector ->
-                connector.state.mapNotNull<Sync.Connector.State, SyncListAdapter.Item> { state ->
+                connector.state.mapNotNull<SyncConnector.State, SyncListAdapter.Item> { state ->
                     when (connector) {
                         is GDriveAppDataConnector -> GDriveAppDataVH.Item(
                             account = connector.account,

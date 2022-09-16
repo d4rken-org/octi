@@ -22,21 +22,21 @@ class SyncManager @Inject constructor(
     private val gDriveHub: GDriveHub,
 ) {
 
-    val hubs: Flow<List<Sync.Hub>> = flow {
+    val hubs: Flow<List<SyncHub>> = flow {
         emit(listOf(gDriveHub))
         awaitCancellation()
     }
         .setupCommonEventHandlers(TAG) { "hubs" }
         .shareLatest(scope + dispatcherProvider.IO)
 
-    val connectors: Flow<List<Sync.Connector>> = hubs
+    val connectors: Flow<List<SyncConnector>> = hubs
         .flatMapLatest { hs ->
             combine(hs.map { it.connectors }) { it.toList().flatten() }
         }
         .setupCommonEventHandlers(TAG) { "connectors" }
         .shareLatest(scope + dispatcherProvider.IO)
 
-    val states: Flow<Collection<Sync.Connector.State>> = connectors
+    val states: Flow<Collection<SyncConnector.State>> = connectors
         .flatMapLatest { hs ->
             if (hs.isEmpty()) flowOf(emptyList())
             else combine(hs.map { it.state }) { it.toList() }
@@ -44,7 +44,7 @@ class SyncManager @Inject constructor(
         .setupCommonEventHandlers(TAG) { "syncStates" }
         .shareLatest(scope + dispatcherProvider.IO)
 
-    val data: Flow<Collection<Sync.Read>> = connectors
+    val data: Flow<Collection<SyncRead>> = connectors
         .flatMapLatest { hs ->
             if (hs.isEmpty()) flowOf(emptyList())
             else combine(hs.map { it.data }) { it.toList() }
@@ -62,7 +62,7 @@ class SyncManager @Inject constructor(
         }
     }
 
-    suspend fun write(toWrite: Sync.Write.Module) {
+    suspend fun write(toWrite: SyncWrite.Module) {
         val start = System.currentTimeMillis()
         log(TAG) { "write(data=$toWrite)..." }
         connectors.first().forEach {

@@ -11,10 +11,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.serialization.fromJson
 import eu.darken.octi.common.serialization.toByteString
-import eu.darken.octi.sync.core.ModuleId
-import eu.darken.octi.sync.core.Sync
-import eu.darken.octi.sync.core.SyncManager
-import eu.darken.octi.sync.core.SyncOptions
+import eu.darken.octi.sync.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.plus
@@ -86,20 +83,20 @@ class MetaSync @Inject constructor(
             .launchIn(scope + dispatcherProvider.IO)
     }
 
-    private fun MetaInfo.toWriteModule(): Sync.Write.Module {
+    private fun MetaInfo.toWriteModule(): SyncWrite.Module {
         val serialized = try {
             adapter.toByteString(this)
         } catch (e: Exception) {
             throw IOException("Failed to serialize $this", e)
         }
-        return object : Sync.Write.Module {
+        return object : SyncWrite.Module {
             override val moduleId: ModuleId = MODULE_ID
             override val payload: ByteString = serialized.toByteArray().toByteString()
             override fun toString(): String = this@toWriteModule.toString()
         }
     }
 
-    private fun Sync.Read.Module.toMetaInfo(): MetaInfo {
+    private fun SyncRead.Device.Module.toMetaInfo(): MetaInfo {
         if (moduleId != MODULE_ID) {
             throw IllegalArgumentException("Wrong moduleId: ${moduleId}\n$this")
         }

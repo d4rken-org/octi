@@ -13,9 +13,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
-import eu.darken.octi.sync.core.DeviceId
-import eu.darken.octi.sync.core.ModuleId
-import eu.darken.octi.sync.core.Sync
+import eu.darken.octi.sync.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -32,7 +30,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
     @Assisted private val client: GoogleClient,
-) : GDriveBaseConnector(context, client), Sync.Connector {
+) : GDriveBaseConnector(context, client), SyncConnector {
 
     data class State(
         override val isReading: Boolean = false,
@@ -40,8 +38,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
         override val lastReadAt: Instant? = null,
         override val lastWriteAt: Instant? = null,
         override val lastError: Exception? = null,
-        override val stats: Sync.Connector.State.Stats? = null,
-    ) : Sync.Connector.State
+        override val stats: SyncConnector.State.Stats? = null,
+    ) : SyncConnector.State
 
     private val _state = DynamicStateFlow(
         parentScope = scope + dispatcherProvider.IO,
@@ -51,10 +49,10 @@ class GDriveAppDataConnector @AssistedInject constructor(
     }
 
     override val state: Flow<State> = _state.flow
-    private val _data = MutableStateFlow<Sync.Read?>(null)
-    override val data: Flow<Sync.Read?> = _data
+    private val _data = MutableStateFlow<SyncRead?>(null)
+    override val data: Flow<SyncRead?> = _data
 
-    private val writeQueue = MutableSharedFlow<Sync.Write>()
+    private val writeQueue = MutableSharedFlow<SyncWrite>()
 
     init {
         writeQueue
@@ -106,7 +104,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         var readError: Exception? = null
 
-        var newStorageStats: Sync.Connector.State.Stats? = null
+        var newStorageStats: SyncConnector.State.Stats? = null
 
         try {
             _data.value = readDrive()
@@ -132,7 +130,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
-    override suspend fun write(toWrite: Sync.Write) {
+    override suspend fun write(toWrite: SyncWrite) {
         log(TAG) { "write(toWrite=$toWrite)" }
         writeQueue.emit(toWrite)
     }
@@ -182,7 +180,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         )
     }
 
-    private suspend fun writeDrive(data: Sync.Write) = withContext(dispatcherProvider.IO) {
+    private suspend fun writeDrive(data: SyncWrite) = withContext(dispatcherProvider.IO) {
         log(TAG, VERBOSE) { "writeDrive(): $data)" }
 
         val userDir = getOrCreateDeviceDir()
@@ -202,7 +200,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeDrive(): Done" }
     }
 
-    private fun getStorageStats(): Sync.Connector.State.Stats {
+    private fun getStorageStats(): SyncConnector.State.Stats {
         log(TAG, VERBOSE) { "getStorageStats()" }
         val allItems = gdrive.files()
             .list().apply {
@@ -217,7 +215,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             .execute().storageQuota
             .limit
 
-        return Sync.Connector.State.Stats(
+        return SyncConnector.State.Stats(
             timestamp = Instant.now(),
             storageUsed = allItems.sumOf { it.quotaBytesUsed ?: 0 },
             storageTotal = storageTotal
