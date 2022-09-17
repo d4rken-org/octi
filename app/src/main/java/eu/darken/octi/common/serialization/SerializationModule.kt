@@ -14,6 +14,6 @@ class SerializationModule {
     @Provides
     @Singleton
     fun moshi(): Moshi = Moshi.Builder().apply {
-
+        add(InstantAdapter())
     }.build()
 }

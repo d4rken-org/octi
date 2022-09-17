@@ -11,6 +11,7 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,7 +30,7 @@ class MetaSource @Inject constructor(
                 deviceType = MetaInfo.DeviceType.PHONE,
                 androidVersionName = Build.VERSION.CODENAME,
                 androidApiLevel = Build.VERSION.SDK_INT,
-                deviceUptime = SystemClock.elapsedRealtime(),
+                deviceBootedAt = Instant.now().minusMillis(SystemClock.elapsedRealtime()),
             )
             emit(info)
             delay(10 * 1000)

@@ -3,6 +3,7 @@ package eu.darken.octi.main.ui.dashboard
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
+import java.time.Instant
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,8 +37,12 @@ class DashboardVM @Inject constructor(
 
     private val refreshTicker = flow {
         while (currentCoroutineContext().isActive) {
-            emit(Unit)
-            delay(5000)
+            emit(Instant.now())
+            if (BuildConfigWrap.DEBUG) {
+                delay(1000)
+            } else {
+                delay(60 * 1000)
+            }
         }
     }
 
@@ -44,7 +50,7 @@ class DashboardVM @Inject constructor(
         refreshTicker,
         generalSettings.isWelcomeDismissed.flow,
         metaRepo.state,
-    ) { _, isWelcomeDismissed, metaState ->
+    ) { now, isWelcomeDismissed, metaState ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
         if (!isWelcomeDismissed) {
@@ -55,6 +61,7 @@ class DashboardVM @Inject constructor(
 
         metaState.all.forEach { metaContainer ->
             DeviceVH.Item(
+                now = now,
                 meta = metaContainer,
             ).run { items.add(this) }
         }

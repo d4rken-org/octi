@@ -37,7 +37,9 @@ class DashboardAdapter @Inject constructor() :
 
     interface Item : DifferItem {
         override val payloadProvider: ((DifferItem, DifferItem) -> DifferItem?)
-            get() = { old, new -> if (new::class.isInstance(old)) new else null }
+            get() = { old, new ->
+                if (new::class.isInstance(old)) new else null
+            }
     }
 
 }

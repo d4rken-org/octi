@@ -2,6 +2,7 @@ package eu.darken.octi.main.ui.dashboard.items
 
 import android.view.ViewGroup
 import eu.darken.octi.R
+import eu.darken.octi.common.lists.binding
 import eu.darken.octi.databinding.DashboardWelcomeItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
 
@@ -14,7 +15,7 @@ class WelcomeVH(parent: ViewGroup) :
     override val onBindData: DashboardWelcomeItemBinding.(
         item: Item,
         payloads: List<Any>
-    ) -> Unit = { item, _ ->
+    ) -> Unit = binding { item ->
         itemView.setOnClickListener { item.onDismiss() }
     }
 

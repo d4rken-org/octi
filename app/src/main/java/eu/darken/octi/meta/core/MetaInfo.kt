@@ -2,6 +2,7 @@ package eu.darken.octi.meta.core
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.time.Instant
 
 @JsonClass(generateAdapter = true)
 data class MetaInfo(
@@ -10,7 +11,7 @@ data class MetaInfo(
 
     @Json(name = "deviceName") val deviceName: String,
     @Json(name = "deviceType") val deviceType: DeviceType,
-    @Json(name = "deviceUptime") val deviceUptime: Long,
+    @Json(name = "deviceBootedAt") val deviceBootedAt: Instant,
 
     @Json(name = "androidVersionName") val androidVersionName: String,
     @Json(name = "androidApiLevel") val androidApiLevel: Int,

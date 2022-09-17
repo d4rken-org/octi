@@ -4,10 +4,13 @@ import android.text.format.DateUtils
 import android.view.ViewGroup
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.lists.binding
 import eu.darken.octi.databinding.DashboardDeviceItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
 import eu.darken.octi.meta.core.MetaInfo
 import eu.darken.octi.sync.core.SyncDataContainer
+import java.time.Duration
+import java.time.Instant
 
 
 class DeviceVH(parent: ViewGroup) :
@@ -18,7 +21,7 @@ class DeviceVH(parent: ViewGroup) :
     override val onBindData: DashboardDeviceItemBinding.(
         item: Item,
         payloads: List<Any>
-    ) -> Unit = { item, _ ->
+    ) -> Unit = binding { item ->
         val meta = item.meta.data
 
         deviceIcon.setImageResource(
@@ -27,10 +30,9 @@ class DeviceVH(parent: ViewGroup) :
             }
         )
         deviceLabel.text = "${meta.deviceName}"
-        deviceUptime.text = if (BuildConfigWrap.DEBUG) {
-            "${meta.deviceUptime / 1000L}s"
-        } else {
-            getString(R.string.device_uptime_x, DateUtils.formatElapsedTime(meta.deviceUptime / 1000L))
+        deviceUptime.apply {
+            val uptimeExtraPolated = Duration.between(meta.deviceBootedAt, item.now)
+            text = getString(R.string.device_uptime_x, DateUtils.formatElapsedTime(uptimeExtraPolated.seconds))
         }
 
         octiVersion.text = if (BuildConfigWrap.DEBUG) {
@@ -38,10 +40,12 @@ class DeviceVH(parent: ViewGroup) :
         } else {
             "Octi v${meta.octiVersionName}"
         }
+
         lastSeen.text = DateUtils.getRelativeTimeSpanString(item.meta.modifiedAt.toEpochMilli())
     }
 
     data class Item(
+        val now: Instant,
         val meta: SyncDataContainer<MetaInfo>,
     ) : DashboardAdapter.Item {
         override val stableId: Long = meta.deviceId.hashCode().toLong()
