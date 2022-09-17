@@ -5,6 +5,6 @@ import com.squareup.moshi.JsonClass
 import java.util.*
 
 @JsonClass(generateAdapter = true)
-data class DeviceId(@Json(name = "id") val id: UUID) {
+data class SyncDeviceId(@Json(name = "id") val id: UUID) {
     constructor(id: String) : this(UUID.fromString(id))
 }

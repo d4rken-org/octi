@@ -10,7 +10,7 @@ import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
-import eu.darken.octi.metainfo.core.MetaRepo
+import eu.darken.octi.meta.core.MetaRepo
 import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay

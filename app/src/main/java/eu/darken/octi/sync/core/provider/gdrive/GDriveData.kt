@@ -5,5 +5,5 @@ import java.util.*
 
 data class GDriveData(
     override val readId: UUID = UUID.randomUUID(),
-    override val devices: Collection<SyncRead.Device>,
+    override val devices: Collection<SyncRead.Device> = emptySet(),
 ) : SyncRead

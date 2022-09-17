@@ -67,6 +67,7 @@ abstract class GDriveBaseConnector constructor(
         }
 
     fun GDriveFile.createDir(folderName: String): GDriveFile {
+        log(TAG, VERBOSE) { "createDir(): $name/$folderName" }
         val metaData = GDriveFile().apply {
             name = folderName
             mimeType = MIME_FOLDER
@@ -76,6 +77,7 @@ abstract class GDriveBaseConnector constructor(
     }
 
     fun GDriveFile.createFile(fileName: String): GDriveFile {
+        log(TAG, VERBOSE) { "createFile(): $name/$fileName" }
         val metaData = GDriveFile().apply {
             name = fileName
             parents = listOf(this@createFile.id)
@@ -109,6 +111,14 @@ abstract class GDriveBaseConnector constructor(
 
         log(TAG, VERBOSE) { "readData($name) done: $readData" }
         return readData
+    }
+
+    fun GDriveFile.deleteAll() {
+        log(TAG, VERBOSE) { "deleteAll(): $name ($id)" }
+
+        gdrive.files().delete(id).execute().also {
+            log(TAG, VERBOSE) { "deleteAll(): $name ($id) done!" }
+        }
     }
 
     companion object {

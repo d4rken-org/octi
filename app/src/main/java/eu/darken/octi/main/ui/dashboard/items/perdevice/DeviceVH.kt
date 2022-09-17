@@ -3,10 +3,11 @@ package eu.darken.octi.main.ui.dashboard.items.perdevice
 import android.text.format.DateUtils
 import android.view.ViewGroup
 import eu.darken.octi.R
+import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.databinding.DashboardDeviceItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
-import eu.darken.octi.metainfo.core.MetaInfo
-import eu.darken.octi.metainfo.core.SyncDataContainer
+import eu.darken.octi.meta.core.MetaInfo
+import eu.darken.octi.sync.core.SyncDataContainer
 
 
 class DeviceVH(parent: ViewGroup) :
@@ -26,8 +27,17 @@ class DeviceVH(parent: ViewGroup) :
             }
         )
         deviceLabel.text = "${meta.deviceName}"
-        octiVersion.text = "Octi v${meta.versionName}"
+        deviceUptime.text = if (BuildConfigWrap.DEBUG) {
+            "${meta.deviceUptime / 1000L}s"
+        } else {
+            getString(R.string.device_uptime_x, DateUtils.formatElapsedTime(meta.deviceUptime / 1000L))
+        }
 
+        octiVersion.text = if (BuildConfigWrap.DEBUG) {
+            meta.octiGitSha
+        } else {
+            "Octi v${meta.octiVersionName}"
+        }
         lastSeen.text = DateUtils.getRelativeTimeSpanString(item.meta.modifiedAt.toEpochMilli())
     }
 

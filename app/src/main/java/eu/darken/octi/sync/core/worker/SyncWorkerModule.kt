@@ -6,7 +6,7 @@ import dagger.hilt.InstallIn
 import kotlinx.coroutines.CoroutineScope
 
 @InstallIn(SyncWorkerComponent::class)
-@Module()
+@Module
 abstract class SyncWorkerModule {
 
     @Binds

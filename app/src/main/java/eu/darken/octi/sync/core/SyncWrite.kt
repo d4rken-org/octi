@@ -8,11 +8,11 @@ import java.util.*
  */
 interface SyncWrite {
     val writeId: UUID
-    val deviceId: DeviceId
+    val deviceId: SyncDeviceId
     val modules: Collection<Module>
 
     interface Module {
-        val moduleId: ModuleId
+        val moduleId: SyncModuleId
         val payload: ByteString
     }
 }

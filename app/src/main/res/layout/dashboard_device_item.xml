@@ -33,6 +33,17 @@
             tools:text="Pixel 5 (Android 13)" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/device_uptime"
+            style="@style/TextAppearance.Material3.LabelSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="@id/device_label"
+            app:layout_constraintStart_toStartOf="@id/device_label"
+            app:layout_constraintTop_toBottomOf="@id/device_label"
+            tools:text="123 days" />
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/octi_version"
             style="@style/TextAppearance.Material3.LabelSmall"
             android:layout_width="0dp"

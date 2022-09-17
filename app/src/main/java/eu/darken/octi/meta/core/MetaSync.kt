@@ -1,4 +1,4 @@
-package eu.darken.octi.metainfo.core
+package eu.darken.octi.meta.core
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
@@ -6,8 +6,7 @@ import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.Bugs
-import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
-import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.Logging.Priority.*
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -15,12 +14,16 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.serialization.fromJson
 import eu.darken.octi.common.serialization.toByteString
 import eu.darken.octi.sync.core.*
+import eu.darken.octi.sync.core.errors.PayloadDecodingException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.plus
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import java.io.IOException
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,11 +31,12 @@ import javax.inject.Singleton
 class MetaSync @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
+    private val moshi: Moshi,
     private val syncOptions: SyncOptions,
     private val syncManager: SyncManager,
     private val metaRepo: MetaRepo,
+    private val metaSource: MetaSource,
     private val metaSettings: MetaSettings,
-    private val moshi: Moshi,
 ) {
 
     private val adapter by lazy { moshi.adapter<MetaInfo>() }
@@ -41,18 +45,20 @@ class MetaSync @Inject constructor(
         log(TAG) { "start()" }
 
         // Read
-        metaSettings.isEnabled.flow
-            .flatMapLatest { isEnabled ->
-                log(TAG) { "SyncRead: isEnabled=$isEnabled" }
-                if (!isEnabled) return@flatMapLatest emptyFlow()
-                else syncManager.data
-            }
+        syncManager.data
             .map { reads ->
                 reads
                     .map { it.devices }.flatten()
                     .filter { it.deviceId != syncOptions.deviceId }
                     .mapNotNull { device ->
-                        val rawModule = device.modules.single { it.moduleId == MODULE_ID }
+                        val rawModule = device.modules.singleOrNull {
+                            it.moduleId == MODULE_ID
+                        }
+                        if (rawModule == null) {
+                            log(TAG, WARN) { "Missing meta module on $device" }
+                            return@mapNotNull null
+                        }
+
                         try {
                             SyncDataContainer(
                                 deviceId = device.deviceId,
@@ -74,15 +80,17 @@ class MetaSync @Inject constructor(
             .launchIn(scope + dispatcherProvider.IO)
 
         // Write
-        metaSettings.isEnabled.flow
-            .flatMapLatest { isEnabled ->
-                log(TAG) { "SyncWrite: isEnabled=$isEnabled" }
-                if (!isEnabled) return@flatMapLatest emptyFlow()
-                else metaRepo.state.map { it.self }
-            }
+        metaSource.self
             .onEach {
                 log(TAG, VERBOSE) { "SyncWrite: Processing new data: $it" }
-                syncManager.write(it.data.toWriteModule())
+                val container = SyncDataContainer(
+                    deviceId = syncOptions.deviceId,
+                    modifiedAt = Instant.now(),
+                    data = it
+                )
+                metaRepo.updateSelf(container)
+                syncManager.write(it.toWriteModule())
+                syncManager.sync()
             }
             .setupCommonEventHandlers(TAG) { "syncWrite" }
             .launchIn(scope + dispatcherProvider.IO)
@@ -95,7 +103,7 @@ class MetaSync @Inject constructor(
             throw IOException("Failed to serialize $this", e)
         }
         return object : SyncWrite.Module {
-            override val moduleId: ModuleId = MODULE_ID
+            override val moduleId: SyncModuleId = MODULE_ID
             override val payload: ByteString = serialized.toByteArray().toByteString()
             override fun toString(): String = this@toWriteModule.toString()
         }
@@ -113,7 +121,7 @@ class MetaSync @Inject constructor(
     }
 
     companion object {
-        val MODULE_ID = ModuleId("${BuildConfigWrap.APPLICATION_ID}.module.core.time")
-        val TAG = logTag("Module", "Time", "Sync")
+        val MODULE_ID = SyncModuleId("${BuildConfigWrap.APPLICATION_ID}.module.core.meta")
+        val TAG = logTag("Module", "Meta", "Sync")
     }
 }

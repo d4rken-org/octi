@@ -71,8 +71,8 @@
         style="@style/Widget.Material3.CircularProgressIndicator.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/last_sync_label_text"
         android:indeterminate="true"
+        app:layout_constraintBottom_toBottomOf="@id/last_sync_label_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@id/last_sync_label_text"
@@ -98,5 +98,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/quota_label"
         tools:text="25 MB used / 30 MB available" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/wipe_action"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/general_wipe_action"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quota_text" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/remove_action"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/general_remove_action"
+        app:backgroundTint="@color/error"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quota_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,11 +12,11 @@ interface SyncRead {
     val devices: Collection<Device>
 
     interface Device {
-        val deviceId: DeviceId
+        val deviceId: SyncDeviceId
         val modules: Collection<Module>
 
         interface Module {
-            val moduleId: ModuleId
+            val moduleId: SyncModuleId
             val createdAt: Instant
             val modifiedAt: Instant
             val payload: ByteString

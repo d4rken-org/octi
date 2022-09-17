@@ -1,10 +1,10 @@
-package eu.darken.octi.metainfo.ui.dashboard
+package eu.darken.octi.meta.ui.dashboard
 
 import android.view.ViewGroup
 import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardMetaItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
-import eu.darken.octi.metainfo.core.MetaRepo
+import eu.darken.octi.meta.core.MetaRepo
 
 
 class MetaInfoVH(parent: ViewGroup) :
@@ -16,7 +16,7 @@ class MetaInfoVH(parent: ViewGroup) :
         item: Item,
         payloads: List<Any>
     ) -> Unit = { item, _ ->
-        metaTitle.text = item.state.all.joinToString("\n") { "${it.data.deviceName} (${it.data.versionName})" }
+//        metaTitle.text = item.state.all.joinToString("\n") { "${it.data.deviceName} (${it.data.versionName})" }
     }
 
     data class Item(

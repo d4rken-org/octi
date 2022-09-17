@@ -14,14 +14,12 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.sync.core.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.plus
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.time.Duration
 import java.time.Instant
-import com.google.api.services.drive.model.File as GDriveFile
 
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -33,8 +31,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
 ) : GDriveBaseConnector(context, client), SyncConnector {
 
     data class State(
-        override val isReading: Boolean = false,
-        override val isWriting: Boolean = false,
+        override val readActions: Int = 0,
+        override val writeActions: Int = 0,
         override val lastReadAt: Instant? = null,
         override val lastWriteAt: Instant? = null,
         override val lastError: Exception? = null,
@@ -53,80 +51,32 @@ class GDriveAppDataConnector @AssistedInject constructor(
     override val data: Flow<SyncRead?> = _data
 
     private val writeQueue = MutableSharedFlow<SyncWrite>()
+    private val writeLock = Mutex()
+    private val readLock = Mutex()
 
     init {
         writeQueue
             .onEach { toWrite ->
-                var alreadyWriting = false
-                _state.updateBlocking {
-                    alreadyWriting = isReading
-                    copy(isWriting = true)
-                }
-                if (alreadyWriting) throw IllegalStateException("Concurrent write attempt!")
-
-                var writeError: Exception? = null
-                try {
+                writeAction {
                     writeDrive(toWrite)
-                } catch (e: Exception) {
-                    writeError = e
-                    log(TAG, ERROR) { "writeDrive() failed: ${e.asLog()}" }
                 }
-
-                _state.updateBlocking {
-                    log(TAG) { "writeDrive() finished" }
-                    copy(
-                        isWriting = false,
-                        lastWriteAt = Instant.now(),
-                        lastError = writeError,
-                    )
-                }
-                if (writeError != null) throw writeError
             }
             .retry {
                 delay(5000)
                 true
             }
             .setupCommonEventHandlers(TAG) { "writeQueue" }
-            .launchIn(scope + dispatcherProvider.IO)
+            .launchIn(scope)
     }
 
     override suspend fun read() {
         log(TAG) { "read()" }
-        var alreadyReading = false
-        _state.updateBlocking {
-            alreadyReading = isReading
-            copy(isReading = true)
-        }
-        if (alreadyReading) {
-            log(TAG, WARN) { "Read already in progress, skipping." }
-            return
-        }
-
-        var readError: Exception? = null
-
-        var newStorageStats: SyncConnector.State.Stats? = null
-
         try {
-            _data.value = readDrive()
-
-            val lastStats = _state.value().stats?.timestamp
-            if (lastStats == null || Duration.between(lastStats, Instant.now()) > Duration.ofSeconds(60)) {
-                log(TAG) { "read(): Updating storage stats" }
-                newStorageStats = getStorageStats()
+            readAction {
+                _data.value = readDrive()
             }
         } catch (e: Exception) {
-            readError = e
-            log(TAG, ERROR) { "readDrive() failed: ${e.asLog()}" }
-        }
-
-        _state.updateBlocking {
-            log(TAG) { "sync() finished" }
-            copy(
-                isReading = false,
-                stats = newStorageStats ?: stats,
-                lastReadAt = Instant.now(),
-                lastError = readError,
-            )
+            _state.updateBlocking { copy(lastError = e) }
         }
     }
 
@@ -135,13 +85,27 @@ class GDriveAppDataConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    private suspend fun readDrive(): GDriveData = withContext(dispatcherProvider.IO) {
-        log(TAG, VERBOSE) { "readDrive(): Starting..." }
+    override suspend fun wipe() {
+        log(TAG, INFO) { "wipe()" }
+        writeAction {
+            appDataRoot().listFiles().forEach {
+                it.deleteAll()
+            }
+        }
+    }
 
-        val userDir = getOrCreateDeviceDir()
-        log(TAG, VERBOSE) { "readDrive(): userDir=$userDir" }
+    private suspend fun readDrive(): GDriveData {
+        log(TAG, DEBUG) { "readDrive(): Starting..." }
 
-        val deviceDirs = userDir.listFiles()
+        val deviceDataDir = appDataRoot().child(DEVICE_DATA_DIR_NAME)
+        log(TAG, VERBOSE) { "readDrive(): userDir=$deviceDataDir" }
+
+        if (deviceDataDir?.isDirectory != true) {
+            log(TAG, WARN) { "No device data dir found ($deviceDataDir)" }
+            return GDriveData()
+        }
+
+        val deviceDirs = deviceDataDir.listFiles()
 
         val modulesPerDevice = deviceDirs
             .filter {
@@ -161,7 +125,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 }
 
                 GDriveModuleData(
-                    moduleId = ModuleId(moduleFile.name),
+                    moduleId = SyncModuleId(moduleFile.name),
                     createdAt = Instant.ofEpochMilli(moduleFile.createdTime.value),
                     modifiedAt = Instant.ofEpochMilli(moduleFile.modifiedTime.value),
                     payload = payload,
@@ -171,19 +135,23 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
 
             GDriveDeviceData(
-                deviceId = DeviceId(deviceDir.name),
+                deviceId = SyncDeviceId(deviceDir.name),
                 modules = moduleData
             )
         }
-        GDriveData(
-            devices = devices
-        )
+        return GDriveData(devices = devices)
     }
 
-    private suspend fun writeDrive(data: SyncWrite) = withContext(dispatcherProvider.IO) {
-        log(TAG, VERBOSE) { "writeDrive(): $data)" }
+    private suspend fun writeDrive(data: SyncWrite) {
+        log(TAG, DEBUG) { "writeDrive(): $data)" }
 
-        val userDir = getOrCreateDeviceDir()
+        val userDir = appDataRoot().child(DEVICE_DATA_DIR_NAME)
+            ?.also { if (!it.isDirectory) throw IllegalStateException("devices is not a directory: $it") }
+            ?: run {
+                appDataRoot().createDir(folderName = DEVICE_DATA_DIR_NAME)
+                    .also { log(TAG, INFO) { "write(): Created devices dir $it" } }
+            }
+
         val deviceIdRaw = data.deviceId.id.toString()
         val deviceDir = userDir.child(deviceIdRaw) ?: userDir.createDir(deviceIdRaw).also {
             log(TAG) { "writeDrive(): Created device dir $it" }
@@ -209,7 +177,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
             .execute().files
 
-
         val storageTotal = gdrive.about()
             .get().setFields("storageQuota")
             .execute().storageQuota
@@ -222,12 +189,62 @@ class GDriveAppDataConnector @AssistedInject constructor(
         )
     }
 
-    private fun getOrCreateDeviceDir(): GDriveFile {
-        val userDir = appDataRoot().child(DEVICE_DATA_DIR_NAME)
-        if (userDir?.isDirectory == false) throw IllegalStateException("devices is not a directory: $userDir")
-        if (userDir != null) return userDir
-        return appDataRoot().createDir(folderName = DEVICE_DATA_DIR_NAME).also {
-            log(TAG) { "write(): Created devices dir $it" }
+    private suspend fun readAction(block: suspend () -> Unit) = withContext(dispatcherProvider.IO) {
+        val start = System.currentTimeMillis()
+        log(TAG, VERBOSE) { "readAction(block=$block)" }
+
+        _state.updateBlocking { copy(readActions = readActions + 1) }
+
+        var newStorageStats: SyncConnector.State.Stats? = null
+
+        try {
+            block()
+
+            val lastStats = _state.value().stats?.timestamp
+            if (lastStats == null || Duration.between(lastStats, Instant.now()) > Duration.ofSeconds(60)) {
+                log(TAG) { "readAction(block=$block): Updating storage stats" }
+                newStorageStats = getStorageStats()
+            }
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "readAction(block=$block) failed: ${e.asLog()}" }
+            throw e
+        } finally {
+            _state.updateBlocking {
+                copy(
+                    readActions = readActions - 1,
+                    stats = newStorageStats ?: stats,
+                    lastReadAt = Instant.now(),
+                )
+            }
+        }
+
+        log(TAG, VERBOSE) { "readAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
+    }
+
+    private suspend fun writeAction(block: suspend () -> Unit) = withContext(dispatcherProvider.IO + NonCancellable) {
+        val start = System.currentTimeMillis()
+        log(TAG, VERBOSE) { "writeAction(block=$block)" }
+
+        _state.updateBlocking { copy(writeActions = writeActions + 1) }
+
+        try {
+            writeLock.withLock {
+                try {
+                    block()
+                } catch (e: Exception) {
+                    log(TAG, ERROR) { "writeAction(block=$block) failed: ${e.asLog()}" }
+                    throw e
+                }
+            }
+        } finally {
+            _state.updateBlocking {
+                log(TAG, VERBOSE) { "writeAction(block=$block) finished" }
+                copy(
+                    writeActions = writeActions - 1,
+                    lastWriteAt = Instant.now(),
+                )
+            }
+            log(TAG, VERBOSE) { "writeAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
         }
     }
 

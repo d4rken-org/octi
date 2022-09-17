@@ -16,7 +16,7 @@ class SyncOptions @Inject constructor(
 
     private val deviceIdFile = File(context.filesDir, "identifier_device")
     val deviceId by lazy {
-        DeviceId(deviceIdFile.getOrCreateUUID().toString())
+        SyncDeviceId(deviceIdFile.getOrCreateUUID().toString())
     }
 
     private fun File.getOrCreateUUID(): UUID {

@@ -60,4 +60,9 @@
     <string name="sync_quota_storage_msg">%s free (%s / %s)</string>
 
     <string name="battery_status_card_label">Battery status</string>
+
+    <string name="device_uptime_x">Uptime: %s</string>
+    <string name="general_remove_action">Remove</string>
+    <string name="general_wipe_action">Wipe</string>
+    <string name="general_cancel_action">Cancel</string>
 </resources>

@@ -1,4 +1,6 @@
-package eu.darken.octi.sync.core
+package eu.darken.octi.sync.core.errors
+
+import eu.darken.octi.sync.core.SyncRead
 
 class PayloadDecodingException(
     syncRead: SyncRead.Device.Module

@@ -18,11 +18,16 @@ interface SyncConnector {
      */
     suspend fun write(toWrite: SyncWrite)
 
+    /**
+     * Wipe all Octi data stored via this connector
+     */
+    suspend fun wipe()
+
     interface State {
-        val isReading: Boolean
+        val readActions: Int
         val lastReadAt: Instant?
 
-        val isWriting: Boolean
+        val writeActions: Int
         val lastWriteAt: Instant?
 
         val lastError: Exception?
@@ -30,7 +35,7 @@ interface SyncConnector {
         val stats: Stats?
 
         val isBusy: Boolean
-            get() = isReading || isWriting
+            get() = readActions > 0 || writeActions > 0
 
         val lastSyncAt: Instant?
             get() = setOf(lastReadAt, lastWriteAt).filterNotNull().maxByOrNull { it }

@@ -3,6 +3,7 @@ package eu.darken.octi.sync.ui.list.items
 import android.text.format.Formatter
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import eu.darken.octi.R
 import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.databinding.SyncListItemGdriveBinding
@@ -39,11 +40,35 @@ class GDriveAppDataVH(parent: ViewGroup) :
                 getString(R.string.sync_quota_storage_msg, free, used, total)
             }
             ?: getString(R.string.general_na_label)
+
+        wipeAction.setOnClickListener {
+            MaterialAlertDialogBuilder(context).apply {
+                setPositiveButton(R.string.general_wipe_action) { _, _ ->
+                    item.onWipe(item.state)
+                }
+                setNegativeButton(R.string.general_cancel_action) { _, _ ->
+
+                }
+            }.show()
+        }
+
+        removeAction.setOnClickListener {
+            MaterialAlertDialogBuilder(context).apply {
+                setPositiveButton(R.string.general_remove_action) { _, _ ->
+                    item.onRemove(item.account)
+                }
+                setNegativeButton(R.string.general_cancel_action) { _, _ ->
+
+                }
+            }.show()
+        }
     }
 
     data class Item(
         val account: GoogleAccount,
         val state: SyncConnector.State,
+        val onWipe: (SyncConnector.State) -> Unit,
+        val onRemove: (GoogleAccount) -> Unit,
     ) : SyncListAdapter.Item {
         override val stableId: Long
             get() {

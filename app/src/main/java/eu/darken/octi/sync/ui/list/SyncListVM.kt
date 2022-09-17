@@ -10,6 +10,7 @@ import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.provider.gdrive.GDriveAppDataConnector
+import eu.darken.octi.sync.core.provider.gdrive.GoogleAccountRepo
 import eu.darken.octi.sync.ui.list.items.GDriveAppDataVH
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -19,6 +20,7 @@ class SyncListVM @Inject constructor(
     handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     private val syncManager: SyncManager,
+    private val googleAccountRepo: GoogleAccountRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
@@ -34,7 +36,11 @@ class SyncListVM @Inject constructor(
                     when (connector) {
                         is GDriveAppDataConnector -> GDriveAppDataVH.Item(
                             account = connector.account,
-                            state = state
+                            state = state,
+                            onWipe = {
+                                launch { connector.wipe() }
+                            },
+                            onRemove = { launch { googleAccountRepo.remove(it.id) } }
                         )
                         else -> {
                             log(TAG, WARN) { "Unknown connector type: $connector" }
