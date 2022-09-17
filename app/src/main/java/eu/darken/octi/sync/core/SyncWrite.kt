@@ -9,10 +9,12 @@ import java.util.*
 interface SyncWrite {
     val writeId: UUID
     val deviceId: SyncDeviceId
-    val modules: Collection<Module>
+    val modules: Collection<Device.Module>
 
-    interface Module {
-        val moduleId: SyncModuleId
-        val payload: ByteString
+    interface Device {
+        interface Module {
+            val moduleId: SyncModuleId
+            val payload: ByteString
+        }
     }
 }

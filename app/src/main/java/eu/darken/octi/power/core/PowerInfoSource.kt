@@ -1,6 +1,5 @@
-package eu.darken.octi.battery.core
+package eu.darken.octi.power.core
 
-import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,6 +12,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.sync.core.ModuleInfoSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -21,14 +21,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class BatteryInfoSource @Inject constructor(
+class PowerInfoSource @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
     @ApplicationContext private val context: Context,
     private val powerManager: PowerManager,
-) {
-
-    private val powerEventsInternal = MutableSharedFlow<PowerEvent>()
-    val powerEvents: Flow<PowerEvent> = powerEventsInternal
+) : ModuleInfoSource<PowerInfo> {
 
     private val isPowerConnected: Flow<Boolean> = callbackFlow {
         fun updateState(isConnected: Boolean) {
@@ -61,8 +58,8 @@ class BatteryInfoSource @Inject constructor(
         .setupCommonEventHandlers(TAG) { "isPowerConnected" }
         .shareIn(appScope, started = SharingStarted.WhileSubscribed(), replay = 0)
 
-    private val batteryInfo: Flow<BatteryInfo> = callbackFlow {
-        fun update(info: BatteryInfo) {
+    private val battery: Flow<PowerInfo.Battery> = callbackFlow {
+        fun update(info: PowerInfo.Battery) {
             appScope.launch { send(info) }
         }
 
@@ -70,7 +67,7 @@ class BatteryInfoSource @Inject constructor(
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 log(TAG, VERBOSE) { "batteryState new intent: $intent" }
-                update(BatteryInfo.fromIntent(intent))
+                update(PowerInfo.Battery.fromIntent(intent))
             }
         }
         log(TAG) { "batteryState receiver: $receiver" }
@@ -88,30 +85,16 @@ class BatteryInfoSource @Inject constructor(
         .setupCommonEventHandlers(TAG) { "batteryState" }
         .shareIn(appScope, started = SharingStarted.WhileSubscribed(), replay = 0)
 
-    val powerStatus: Flow<PowerStatus> = batteryInfo
+    override val info: Flow<PowerInfo> = battery
         .map { batteryInfo ->
-            PowerStatus(
+            PowerInfo(
                 battery = batteryInfo
             )
         }
         .setupCommonEventHandlers(TAG) { "powerStatus" }
         .shareLatest(appScope, SharingStarted.Lazily, TAG)
 
-
-    @SuppressLint("WakelockTimeout")
-    fun start() {
-        log(TAG) { "start()" }
-
-        isPowerConnected
-            .map {
-                val event = if (it) PowerEvent.PowerConnected else PowerEvent.PowerDisconnected
-                log(TAG) { "Forwarding $event" }
-                powerEventsInternal.emit(event)
-            }
-            .launchIn(appScope)
-    }
-
     companion object {
-        private val TAG = logTag("Battery", "Repo")
+        private val TAG = logTag("Module", "Power", "Source")
     }
 }

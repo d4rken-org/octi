@@ -1,25 +1,24 @@
-package eu.darken.octi.meta.core
+package eu.darken.octi.power.core
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.power.core.PowerRepo
 import eu.darken.octi.sync.core.BaseModuleRepo
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MetaRepo @Inject constructor(
+class PowerRepo @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
-) : BaseModuleRepo<MetaInfo>(
-    tag = PowerRepo.TAG,
+) : BaseModuleRepo<PowerInfo>(
+    tag = TAG,
     scope = scope,
     dispatcherProvider = dispatcherProvider
 ) {
 
     companion object {
-        val TAG = logTag("Module", "Meta", "Repo")
+        val TAG = logTag("Module", "Power", "Repo")
     }
 }

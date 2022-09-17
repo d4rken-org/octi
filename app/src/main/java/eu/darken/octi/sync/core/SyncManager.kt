@@ -62,7 +62,7 @@ class SyncManager @Inject constructor(
         }
     }
 
-    suspend fun write(toWrite: SyncWrite.Module) {
+    suspend fun write(toWrite: SyncWrite.Device.Module) {
         val start = System.currentTimeMillis()
         log(TAG) { "write(data=$toWrite)..." }
         connectors.first().forEach {

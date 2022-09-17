@@ -1,4 +1,4 @@
-package eu.darken.octi.meta.core
+package eu.darken.octi.power.core
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
@@ -14,43 +14,42 @@ import eu.darken.octi.sync.core.SyncModuleId
 import eu.darken.octi.sync.core.SyncOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import okio.ByteString
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MetaSync @Inject constructor(
+class PowerSync @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
-    private val moshi: Moshi,
     syncOptions: SyncOptions,
     syncManager: SyncManager,
-    metaRepo: MetaRepo,
-    metaInfoSource: MetaInfoSource,
-    private val metaSettings: MetaSettings,
-) : BaseSyncHelper<MetaInfo>(
+    private val moshi: Moshi,
+    powerSettings: PowerSettings,
+    powerInfoSource: PowerInfoSource,
+    powerRepo: PowerRepo,
+) : BaseSyncHelper<PowerInfo>(
     tag = TAG,
     scope = scope,
     dispatcherProvider = dispatcherProvider,
     syncOptions = syncOptions,
     syncManager = syncManager,
-    moduleRepo = metaRepo,
-    infoSource = metaInfoSource,
+    moduleRepo = powerRepo,
+    infoSource = powerInfoSource
 ) {
 
-    private val adapter by lazy { moshi.adapter<MetaInfo>() }
+    private val adapter by lazy { moshi.adapter<PowerInfo>() }
+
+    override val isEnabled: Flow<Boolean> = powerSettings.isEnabled.flow
 
     override val moduleId: SyncModuleId = MODULE_ID
 
-    override val isEnabled: Flow<Boolean> = flowOf(true)
+    override fun onSerialize(item: PowerInfo): ByteString = adapter.toByteString(item)
 
-    override fun onSerialize(item: MetaInfo): ByteString = adapter.toByteString(item)
-
-    override fun onDeserialize(raw: ByteString): MetaInfo = adapter.fromJson(raw)!!
+    override fun onDeserialize(raw: ByteString): PowerInfo = adapter.fromJson(raw)!!
 
     companion object {
-        val MODULE_ID = SyncModuleId("${BuildConfigWrap.APPLICATION_ID}.module.core.meta")
-        val TAG = logTag("Module", "Meta", "Sync")
+        val MODULE_ID = SyncModuleId("${BuildConfigWrap.APPLICATION_ID}.module.core.power")
+        val TAG = logTag("Module", "Power", "Sync")
     }
 }

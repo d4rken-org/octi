@@ -5,5 +5,5 @@ import java.util.*
 data class SyncWriteContainer(
     override val writeId: UUID = UUID.randomUUID(),
     override val deviceId: SyncDeviceId,
-    override val modules: Collection<SyncWrite.Module>
+    override val modules: Collection<SyncWrite.Device.Module>
 ) : SyncWrite

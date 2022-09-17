@@ -8,6 +8,7 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.sync.core.ModuleInfoSource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -16,12 +17,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MetaSource @Inject constructor(
+class MetaInfoSource @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
-) {
+) : ModuleInfoSource<MetaInfo> {
 
-    val self: Flow<MetaInfo> = flow {
+    override val info: Flow<MetaInfo> = flow {
         while (currentCoroutineContext().isActive) {
             val info = MetaInfo(
                 octiVersionName = BuildConfigWrap.VERSION_NAME,

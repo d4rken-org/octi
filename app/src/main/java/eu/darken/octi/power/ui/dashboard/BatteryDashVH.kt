@@ -1,4 +1,4 @@
-package eu.darken.octi.battery.ui.dashboard
+package eu.darken.octi.power.ui.dashboard
 
 import android.view.ViewGroup
 import eu.darken.octi.R

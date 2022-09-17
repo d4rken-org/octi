@@ -1,4 +1,4 @@
-package eu.darken.octi.meta.core
+package eu.darken.octi.power.core
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -7,24 +7,25 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.preferences.PreferenceStoreMapper
 import eu.darken.octi.common.preferences.Settings
+import eu.darken.octi.common.preferences.createFlowPreference
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MetaSettings @Inject constructor(
+class PowerSettings @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Settings() {
 
     override val preferences: SharedPreferences =
-        context.getSharedPreferences("settings_module_meta", Context.MODE_PRIVATE)
+        context.getSharedPreferences("settings_module_power", Context.MODE_PRIVATE)
 
-//    val isEnabled = preferences.createFlowPreference("module.meta.enabled", true)
+    val isEnabled = preferences.createFlowPreference("module.power.enabled", true)
 
     override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
-//        isEnabled
+        isEnabled
     )
 
     companion object {
-        internal val TAG = logTag("Module", "Meta", "Settings")
+        internal val TAG = logTag("Module", "Power", "Settings")
     }
 }
