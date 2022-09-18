@@ -8,8 +8,8 @@ import dagger.hilt.android.HiltAndroidApp
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.debug.autoreport.AutoReporting
 import eu.darken.octi.common.debug.logging.*
-import eu.darken.octi.meta.core.MetaSync
-import eu.darken.octi.power.core.PowerSync
+import eu.darken.octi.modules.meta.core.MetaSync
+import eu.darken.octi.modules.power.core.PowerSync
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import javax.inject.Inject
 

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardDeviceBatteryItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
-import eu.darken.octi.meta.core.MetaInfo
+import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.SyncDataContainer
 
 
@@ -28,7 +28,7 @@ class DeviceBatteryVH(parent: ViewGroup) :
                 MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
             }
         )
-        deviceLabel.text = "${meta.deviceName}"
+        deviceLabel.text = meta.deviceName
 //        octiVersion.text = "Octi v${meta.versionName}"
 
         lastSeen.text = DateUtils.getRelativeTimeSpanString(item.meta.modifiedAt.toEpochMilli())

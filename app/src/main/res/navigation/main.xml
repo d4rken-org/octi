@@ -47,11 +47,11 @@
     </fragment>
     <fragment
         android:id="@+id/addGDriveFragment"
-        android:name="eu.darken.octi.sync.ui.add.gdrive.AddGDriveFragment"
+        android:name="eu.darken.octi.servers.gdrive.ui.add.AddGDriveFragment"
         tools:layout="@layout/sync_add_new_gdrive_appdata_fragment" />
     <fragment
         android:id="@+id/addJServerFragment"
-        android:name="eu.darken.octi.sync.ui.add.jserver.AddJServerFragment"
+        android:name="eu.darken.octi.servers.jserver.ui.add.AddJServerFragment"
         tools:layout="@layout/sync_add_new_jserver_fragment" />
 
 

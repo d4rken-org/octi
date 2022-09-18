@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardMetaItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
-import eu.darken.octi.meta.core.MetaInfo
+import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.SyncDeviceId
 
 

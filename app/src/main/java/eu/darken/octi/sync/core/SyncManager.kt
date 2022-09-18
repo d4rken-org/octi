@@ -6,8 +6,8 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
-import eu.darken.octi.sync.core.provider.gdrive.GDriveHub
-import eu.darken.octi.sync.core.provider.jserver.JServerHub
+import eu.darken.octi.servers.gdrive.core.GDriveHub
+import eu.darken.octi.servers.jserver.core.JServerHub
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.*
@@ -18,7 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class SyncManager @Inject constructor(
     @AppScope private val scope: CoroutineScope,
-    private val dispatcherProvider: DispatcherProvider,
+    dispatcherProvider: DispatcherProvider,
     private val syncSettings: SyncSettings,
     private val gDriveHub: GDriveHub,
     private val jServerHub: JServerHub,

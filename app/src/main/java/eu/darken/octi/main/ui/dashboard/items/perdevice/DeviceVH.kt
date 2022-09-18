@@ -7,7 +7,7 @@ import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.lists.binding
 import eu.darken.octi.databinding.DashboardDeviceItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
-import eu.darken.octi.meta.core.MetaInfo
+import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.SyncDataContainer
 import java.time.Duration
 import java.time.Instant
@@ -29,7 +29,7 @@ class DeviceVH(parent: ViewGroup) :
                 MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
             }
         )
-        deviceLabel.text = "${meta.deviceName}"
+        deviceLabel.text = meta.deviceName
         deviceUptime.apply {
             val uptimeExtraPolated = Duration.between(meta.deviceBootedAt, item.now)
             text = getString(R.string.device_uptime_x, DateUtils.formatElapsedTime(uptimeExtraPolated.seconds))

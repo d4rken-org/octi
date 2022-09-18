@@ -11,7 +11,7 @@ import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
-import eu.darken.octi.meta.core.MetaRepo
+import eu.darken.octi.modules.meta.core.MetaRepo
 import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -24,11 +24,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardVM @Inject constructor(
-    handle: SavedStateHandle,
+    @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     private val generalSettings: GeneralSettings,
     private val syncManager: SyncManager,
-    private val metaRepo: MetaRepo,
+    metaRepo: MetaRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(

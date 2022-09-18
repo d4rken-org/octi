@@ -5,14 +5,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.sync.ui.add.gdrive.AddGDriveAppDataVH
-import eu.darken.octi.sync.ui.add.jserver.AddJServerDataVH
+import eu.darken.octi.servers.gdrive.ui.add.AddGDriveAppDataVH
+import eu.darken.octi.servers.jserver.ui.add.AddJServerDataVH
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @HiltViewModel
 class SyncAddVM @Inject constructor(
-    handle: SavedStateHandle,
+    @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
