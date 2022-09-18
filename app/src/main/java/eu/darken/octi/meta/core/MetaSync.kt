@@ -11,7 +11,7 @@ import eu.darken.octi.common.serialization.toByteString
 import eu.darken.octi.sync.core.BaseSyncHelper
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncModuleId
-import eu.darken.octi.sync.core.SyncOptions
+import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -24,7 +24,7 @@ class MetaSync @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     private val moshi: Moshi,
-    syncOptions: SyncOptions,
+    syncSettings: SyncSettings,
     syncManager: SyncManager,
     metaRepo: MetaRepo,
     metaInfoSource: MetaInfoSource,
@@ -33,7 +33,7 @@ class MetaSync @Inject constructor(
     tag = TAG,
     scope = scope,
     dispatcherProvider = dispatcherProvider,
-    syncOptions = syncOptions,
+    syncSettings = syncSettings,
     syncManager = syncManager,
     moduleRepo = metaRepo,
     infoSource = metaInfoSource,

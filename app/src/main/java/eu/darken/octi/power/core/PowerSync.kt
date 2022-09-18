@@ -11,7 +11,7 @@ import eu.darken.octi.common.serialization.toByteString
 import eu.darken.octi.sync.core.BaseSyncHelper
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncModuleId
-import eu.darken.octi.sync.core.SyncOptions
+import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import okio.ByteString
@@ -22,7 +22,7 @@ import javax.inject.Singleton
 class PowerSync @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
-    syncOptions: SyncOptions,
+    syncSettings: SyncSettings,
     syncManager: SyncManager,
     private val moshi: Moshi,
     powerSettings: PowerSettings,
@@ -32,7 +32,7 @@ class PowerSync @Inject constructor(
     tag = TAG,
     scope = scope,
     dispatcherProvider = dispatcherProvider,
-    syncOptions = syncOptions,
+    syncSettings = syncSettings,
     syncManager = syncManager,
     moduleRepo = powerRepo,
     infoSource = powerInfoSource

@@ -69,10 +69,6 @@ class DashboardVM @Inject constructor(
         State(items = items)
     }.asLiveData2()
 
-    init {
-        refresh()
-    }
-
     fun goToSyncServices() = launch {
         log(TAG) { "goToSyncServices()" }
         if (syncManager.connectors.first().isEmpty()) {

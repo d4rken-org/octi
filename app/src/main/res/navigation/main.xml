@@ -29,7 +29,14 @@
     <fragment
         android:id="@+id/syncAddFragment"
         android:name="eu.darken.octi.sync.ui.add.SyncAddFragment"
-        tools:layout="@layout/sync_add_fragment" />
+        tools:layout="@layout/sync_add_new_fragment">
+        <action
+            android:id="@+id/action_syncAddFragment_to_GDriveAddFragment"
+            app:destination="@id/addGDriveFragment" />
+        <action
+            android:id="@+id/action_syncAddFragment_to_addJServerFragment"
+            app:destination="@id/addJServerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/syncListFragment"
         android:name="eu.darken.octi.sync.ui.list.SyncListFragment"
@@ -38,6 +45,14 @@
             android:id="@+id/action_syncListFragment_to_syncAddFragment"
             app:destination="@id/syncAddFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/addGDriveFragment"
+        android:name="eu.darken.octi.sync.ui.add.gdrive.AddGDriveFragment"
+        tools:layout="@layout/sync_add_new_gdrive_appdata_fragment" />
+    <fragment
+        android:id="@+id/addJServerFragment"
+        android:name="eu.darken.octi.sync.ui.add.jserver.AddJServerFragment"
+        tools:layout="@layout/sync_add_new_jserver_fragment" />
 
 
 </navigation>

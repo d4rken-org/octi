@@ -25,7 +25,7 @@ import javax.inject.Singleton
 @Singleton
 class GoogleAccountRepo @Inject constructor(
     @AppScope private val scope: CoroutineScope,
-    private val dispatcherProvider: DispatcherProvider,
+    dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
 ) {
 
@@ -106,6 +106,6 @@ class GoogleAccountRepo @Inject constructor(
     }
 
     companion object {
-        private val TAG = logTag("Sync", "GDrive", "AccRepo")
+        private val TAG = logTag("Sync", "GDrive", "AccountRepo")
     }
 }

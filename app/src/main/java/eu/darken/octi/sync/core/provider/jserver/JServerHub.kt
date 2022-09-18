@@ -1,4 +1,4 @@
-package eu.darken.octi.sync.core.provider.gdrive
+package eu.darken.octi.sync.core.provider.jserver
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
@@ -15,11 +15,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GDriveHub @Inject constructor(
+class JServerHub @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
-    accRepo: GoogleAccountRepo,
-    private val connectorFactory: GDriveAppDataConnector.Factory,
+    accRepo: JServerAccountRepo,
+    private val connectorFactory: JServerConnector.Factory,
 ) : SyncHub {
 
     private val _connectors = accRepo.accounts
@@ -32,6 +32,6 @@ class GDriveHub @Inject constructor(
     override val connectors: Flow<Collection<SyncConnector>> = _connectors
 
     companion object {
-        private val TAG = logTag("Sync", "GDrive", "Hub")
+        private val TAG = logTag("Sync", "JServer", "Hub")
     }
 }

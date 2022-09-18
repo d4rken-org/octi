@@ -20,7 +20,7 @@ abstract class BaseSyncHelper<T : Any> constructor(
     private val tag: String,
     private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
-    private val syncOptions: SyncOptions,
+    private val syncSettings: SyncSettings,
     private val syncManager: SyncManager,
     private val moduleRepo: ModuleRepo<T>,
     private val infoSource: ModuleInfoSource<T>,
@@ -44,7 +44,7 @@ abstract class BaseSyncHelper<T : Any> constructor(
             .map { reads ->
                 reads
                     .map { it.devices }.flatten()
-                    .filter { it.deviceId != syncOptions.deviceId }
+                    .filter { it.deviceId != syncSettings.deviceId }
                     .mapNotNull { device ->
                         val rawModule = device.modules.singleOrNull {
                             it.moduleId == moduleId
@@ -84,7 +84,7 @@ abstract class BaseSyncHelper<T : Any> constructor(
             .onEach {
                 log(tag, VERBOSE) { "syncWrite(): Processing updating self: $it" }
                 val container = SyncDataContainer(
-                    deviceId = syncOptions.deviceId,
+                    deviceId = syncSettings.deviceId,
                     modifiedAt = Instant.now(),
                     data = it
                 )

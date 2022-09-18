@@ -199,6 +199,11 @@ dependencies {
     implementation("com.bugsnag:bugsnag-android:5.9.2")
     implementation("com.getkeepsafe.relinker:relinker:1.4.3")
 
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
     // Support libs
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.4.2")

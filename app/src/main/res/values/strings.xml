@@ -3,16 +3,22 @@
     <string name="label_settings">Settings</string>
     <string name="label_help">Help</string>
 
-
-    <string name="general_error_label">Error</string>
     <string name="general_share_action">Share</string>
     <string name="general_done_action">Done</string>
     <string name="general_copy_action">Copy</string>
-
+    <string name="general_remove_action">Remove</string>
+    <string name="general_wipe_action">Wipe</string>
+    <string name="general_cancel_action">Cancel</string>
+    <string name="general_thanks_action">Thanks</string>
+    <string name="general_gotit_action">Got it</string>
+    <string name="general_create_account_action">Create account</string>
+    <string name="general_link_existing_action">Link to existing account</string>
     <string name="general_na_label">N/A</string>
+    <string name="general_dismiss_action">Dismiss</string>
 
-    <string name="generic_dismiss_action">Dismiss</string>
-    <string name="generic_quota_label">Quota</string>
+    <string name="general_error_label">Error</string>
+    <string name="general_select_server_label">Select server</string>
+    <string name="general_quota_label">Quota</string>
 
     <string name="debug_debuglog_size_label">Size</string>
     <string name="debug_debuglog_size_compressed_label">Compressed size</string>
@@ -42,17 +48,21 @@
     <string name="support_debuglog_desc">Record everything the app is doing into a text file that you can share.</string>
     <string name="settings_support_label">Support</string>
 
-    <string name="sync_add_label">Add new sync service</string>
-    <string name="sync_services_label">Sync services</string>
-    <string name="sync_gdrive_label">Google Drive</string>
-    <string name="sync_gdrive_add_label">Add new Google Drive</string>
     <string name="sync_account_label">Account</string>
+    <string name="sync_services_label">Sync services</string>
+    <string name="sync_add_label">Add new sync service</string>
+    <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
 
-    <string name="sync_type_gdrive_appdata_label">Google Drive - App Data Scope</string>
-    <string name="sync_type_gdrive_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. This is similar to how Whats App backups work.</string>
+    <string name="sync_gdrive_label">Google Drive</string>
+    <string name="sync_gdrive_type_label">Google Drive - App Data Scope</string>
+    <string name="sync_gdrive_type_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. This is similar to how Whats App backups work.</string>
+    <string name="sync_gdrive_add_label">Add new Google Drive</string>
+    <string name="sync_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
 
-    <string name="sync_type_jserver_appdata_label">J-Server (Beta)</string>
-    <string name="sync_type_jserver_appdata_description">An open-source server hosted by me, written by a friend, with end-to-end encryption. It\'s encrypted, free and anonymous, but I make no promises about reliability &amp; uptime.</string>
+    <string name="sync_jserver_type_label">J-Server (Beta)</string>
+    <string name="sync_jserver_type_description">A self-made open-source sync server for Octi. Data is encrypted client-side, only your devices can decrypt it.</string>
+    <string name="sync_jserver_add_create_action_hint">Inactive accounts are deleted after a few weeks.</string>
+    <string name="sync_jserver_add_link_action_hint">You will need access to another device that is already linked.</string>
 
     <string name="sync_last_update_label">Last update</string>
     <string name="sync_last_sync_label">Last sync</string>
@@ -62,7 +72,4 @@
     <string name="battery_status_card_label">Battery status</string>
 
     <string name="device_uptime_x">Uptime: %s</string>
-    <string name="general_remove_action">Remove</string>
-    <string name="general_wipe_action">Wipe</string>
-    <string name="general_cancel_action">Cancel</string>
 </resources>

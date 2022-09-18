@@ -41,9 +41,9 @@ interface SyncConnector {
             get() = setOf(lastReadAt, lastWriteAt).filterNotNull().maxByOrNull { it }
 
         data class Stats(
-            val timestamp: Instant,
-            val storageUsed: Long,
-            val storageTotal: Long,
+            val timestamp: Instant = Instant.now(),
+            val storageUsed: Long = -1,
+            val storageTotal: Long = -1,
         ) {
             val storageFree: Long
                 get() = storageTotal - storageUsed

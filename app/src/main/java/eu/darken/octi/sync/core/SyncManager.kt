@@ -7,6 +7,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.sync.core.provider.gdrive.GDriveHub
+import eu.darken.octi.sync.core.provider.jserver.JServerHub
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.*
@@ -18,12 +19,13 @@ import javax.inject.Singleton
 class SyncManager @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
-    private val syncOptions: SyncOptions,
+    private val syncSettings: SyncSettings,
     private val gDriveHub: GDriveHub,
+    private val jServerHub: JServerHub,
 ) {
 
     val hubs: Flow<List<SyncHub>> = flow {
-        emit(listOf(gDriveHub))
+        emit(listOf(gDriveHub, jServerHub))
         awaitCancellation()
     }
         .setupCommonEventHandlers(TAG) { "hubs" }
@@ -68,7 +70,7 @@ class SyncManager @Inject constructor(
         connectors.first().forEach {
             it.write(
                 SyncWriteContainer(
-                    deviceId = syncOptions.deviceId,
+                    deviceId = syncSettings.deviceId,
                     modules = listOf(
                         toWrite
                     )

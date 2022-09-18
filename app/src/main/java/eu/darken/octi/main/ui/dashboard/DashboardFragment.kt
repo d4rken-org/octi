@@ -52,4 +52,9 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
 
         super.onViewCreated(view, savedInstanceState)
     }
+
+    override fun onResume() {
+        vm.refresh()
+        super.onResume()
+    }
 }

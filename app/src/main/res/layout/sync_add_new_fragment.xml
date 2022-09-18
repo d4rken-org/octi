@@ -11,14 +11,14 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/menu_sync_add"
         app:layout_constraintTop_toTopOf="parent"
-        app:subtitle="@string/sync_gdrive_add_label"
-        app:title="@string/sync_gdrive_label" />
+        app:title="@string/sync_add_label" />
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_action"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -8,6 +8,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.preferences.PreferenceStoreMapper
 import eu.darken.octi.common.preferences.Settings
 import eu.darken.octi.common.preferences.createFlowPreference
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,6 +24,16 @@ class SyncSettings @Inject constructor(
     override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
         syncOnMobile
     )
+
+    val deviceId by lazy {
+        val key = "sync.identifier.device"
+        val rawId = preferences.getString(key, null) ?: kotlin.run {
+            UUID.randomUUID().toString().also {
+                preferences.edit().putString(key, it).commit()
+            }
+        }
+        SyncDeviceId(rawId)
+    }
 
     companion object {
         internal val TAG = logTag("Core", "Settings")
