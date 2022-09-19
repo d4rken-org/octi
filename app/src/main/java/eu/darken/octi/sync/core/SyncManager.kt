@@ -85,20 +85,18 @@ class SyncManager @Inject constructor(
         log(TAG) { "write(data=$toWrite) done (${System.currentTimeMillis() - start}ms)" }
     }
 
-    private suspend fun getConnectorById(identifier: SyncConnector.Identifier): SyncConnector {
-        return connectors.map { connecs -> connecs.single { it.identifier == identifier } }.first()
-    }
+
 
     suspend fun wipe(identifier: SyncConnector.Identifier) = withContext(NonCancellable) {
         log(TAG) { "wipe(identifier=$identifier)" }
-        getConnectorById(identifier).deleteAll()
+        getConnectorById<SyncConnector>(identifier).first().deleteAll()
         log(TAG) { "wipe(identifier=$identifier) done" }
     }
 
     suspend fun disconnect(identifier: SyncConnector.Identifier, wipe: Boolean = false) = withContext(NonCancellable) {
         log(TAG) { "disconnect(identifier=$identifier, wipe=$wipe)" }
 
-        val connector = getConnectorById(identifier)
+        val connector = getConnectorById<SyncConnector>(identifier).first()
 
         disabledConnectors.value = disabledConnectors.value + connector
         try {

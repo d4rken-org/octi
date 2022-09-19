@@ -8,6 +8,10 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.sync.core.getConnectorById
+import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
+import eu.darken.octi.syncs.gdrive.core.GoogleAccount
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,9 +23,15 @@ class GDriveActionsVM @Inject constructor(
 
     private val navArgs: GDriveActionsFragmentArgs by handle.navArgs()
 
-    fun linkNewDevice() {
-        log(TAG) { "linkNewDevice()" }
-    }
+    data class State(
+        val account: GoogleAccount
+    )
+
+    val state = syncManager.getConnectorById<GDriveAppDataConnector>(navArgs.identifier)
+        .map {
+            State(it.account)
+        }
+        .asLiveData2()
 
     fun disconnct() = launch {
         log(TAG) { "disconnct()" }

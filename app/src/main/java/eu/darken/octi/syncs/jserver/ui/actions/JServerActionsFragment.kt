@@ -46,6 +46,11 @@ class JServerActionsFragment : BottomSheetDialogFragment2() {
                 }
             }.show()
         }
+
+        vm.state.observe2(ui) {
+            title.text = "${getString(R.string.sync_jserver_type_label)} (${it.credentials.serverAdress.domain})"
+            subtitle.text = it.credentials.accountId.id
+        }
         super.onViewCreated(view, savedInstanceState)
     }
 }

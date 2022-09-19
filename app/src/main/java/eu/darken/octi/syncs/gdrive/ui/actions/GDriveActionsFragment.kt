@@ -42,6 +42,14 @@ class GDriveActionsFragment : BottomSheetDialogFragment2() {
                 setNegativeButton(R.string.general_cancel_action) { _, _ -> }
             }.show()
         }
+        vm.state.observe2(ui) {
+            title.apply {
+                text = getString(R.string.sync_gdrive_type_label)
+                if (it.account.isAppDataScope) append(" (${getString(R.string.sync_gdrive_appdata_label)})")
+            }
+
+            subtitle.text = it.account.email
+        }
         super.onViewCreated(view, savedInstanceState)
     }
 }
