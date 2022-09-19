@@ -12,6 +12,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.sync.core.SyncConnector
+import eu.darken.octi.sync.core.SyncDeviceId
 import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncWrite
 import kotlinx.coroutines.*
@@ -87,8 +88,15 @@ class JServerConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    override suspend fun wipe() {
+    override suspend fun deleteAll() {
         log(TAG, INFO) { "wipe()" }
+        writeAction {
+            // TODO
+        }
+    }
+
+    override suspend fun deleteDevice(deviceId: SyncDeviceId) {
+        log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
         writeAction {
             // TODO
         }
@@ -111,7 +119,7 @@ class JServerConnector @AssistedInject constructor(
         return SyncConnector.State.Stats()
     }
 
-    private suspend fun readAction(block: suspend () -> Unit) = withContext(dispatcherProvider.IO) {
+    private suspend fun readAction(block: suspend () -> Unit) {
         val start = System.currentTimeMillis()
         log(TAG, VERBOSE) { "readAction(block=$block)" }
 
@@ -143,7 +151,7 @@ class JServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "readAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
     }
 
-    private suspend fun writeAction(block: suspend () -> Unit) = withContext(dispatcherProvider.IO + NonCancellable) {
+    private suspend fun writeAction(block: suspend () -> Unit) = withContext(NonCancellable) {
         val start = System.currentTimeMillis()
         log(TAG, VERBOSE) { "writeAction(block=$block)" }
 

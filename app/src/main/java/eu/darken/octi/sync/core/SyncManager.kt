@@ -6,12 +6,12 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.syrvs.gdrive.core.GDriveAppDataConnector
 import eu.darken.octi.syrvs.gdrive.core.GDriveHub
+import eu.darken.octi.syrvs.jserver.core.JServerConnector
 import eu.darken.octi.syrvs.jserver.core.JServerHub
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.plus
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,19 +24,23 @@ class SyncManager @Inject constructor(
     private val jServerHub: JServerHub,
 ) {
 
+    private val disabledConnectors = MutableStateFlow(emptySet<SyncConnector>())
+
     val hubs: Flow<List<SyncHub>> = flow {
         emit(listOf(gDriveHub, jServerHub))
         awaitCancellation()
     }
         .setupCommonEventHandlers(TAG) { "hubs" }
-        .shareLatest(scope + dispatcherProvider.IO)
+        .shareLatest(scope + dispatcherProvider.Default)
 
-    val connectors: Flow<List<SyncConnector>> = hubs
-        .flatMapLatest { hs ->
-            combine(hs.map { it.connectors }) { it.toList().flatten() }
-        }
+    val connectors: Flow<List<SyncConnector>> = combine(
+        hubs.flatMapLatest { hs -> combine(hs.map { it.connectors }) { it.toList().flatten() } },
+        disabledConnectors
+    ) { connectors, disabledConnectors ->
+        connectors.filter { !disabledConnectors.contains(it) }
+    }
         .setupCommonEventHandlers(TAG) { "connectors" }
-        .shareLatest(scope + dispatcherProvider.IO)
+        .shareLatest(scope + dispatcherProvider.Default)
 
     val states: Flow<Collection<SyncConnector.State>> = connectors
         .flatMapLatest { hs ->
@@ -44,7 +48,7 @@ class SyncManager @Inject constructor(
             else combine(hs.map { it.state }) { it.toList() }
         }
         .setupCommonEventHandlers(TAG) { "syncStates" }
-        .shareLatest(scope + dispatcherProvider.IO)
+        .shareLatest(scope + dispatcherProvider.Default)
 
     val data: Flow<Collection<SyncRead>> = connectors
         .flatMapLatest { hs ->
@@ -55,7 +59,7 @@ class SyncManager @Inject constructor(
             reads.filterNotNull()
         }
         .setupCommonEventHandlers(TAG) { "syncStates" }
-        .shareLatest(scope + dispatcherProvider.IO)
+        .shareLatest(scope + dispatcherProvider.Default)
 
     suspend fun sync() {
         log(TAG) { "syncAll()" }
@@ -79,6 +83,34 @@ class SyncManager @Inject constructor(
         }
 
         log(TAG) { "write(data=$toWrite) done (${System.currentTimeMillis() - start}ms)" }
+    }
+
+    suspend fun wipe(connector: SyncConnector) = withContext(NonCancellable) {
+        log(TAG) { "wipe(connector=$connector)" }
+        connector.deleteAll()
+        log(TAG) { "wipe(connector=$connector) done" }
+    }
+
+    suspend fun disconnect(connector: SyncConnector, wipe: Boolean = false) = withContext(NonCancellable) {
+        log(TAG) { "disconnect(connector=$connector, wipe=$wipe)" }
+        disabledConnectors.value = disabledConnectors.value + connector
+        try {
+            if (wipe) wipe(connector)
+            else connector.deleteDevice(syncSettings.deviceId)
+
+            when (connector) {
+                is GDriveAppDataConnector -> {
+                    gDriveHub.accountRepo.remove(connector.account.id)
+                }
+                is JServerConnector -> {
+                    jServerHub.accountRepo.remove(connector.credentials.accountId)
+                }
+            }
+        } finally {
+            disabledConnectors.value = disabledConnectors.value - connector
+        }
+
+        log(TAG) { "disconnect(connector=$connector, wipe=$wipe) done" }
     }
 
     companion object {

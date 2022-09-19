@@ -85,12 +85,22 @@ class GDriveAppDataConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    override suspend fun wipe() {
+    override suspend fun deleteAll() {
         log(TAG, INFO) { "wipe()" }
         writeAction {
-            appDataRoot().listFiles().forEach {
-                it.deleteAll()
-            }
+            appDataRoot()
+                .listFiles()
+                .forEach { it.deleteAll() }
+        }
+    }
+
+    override suspend fun deleteDevice(deviceId: SyncDeviceId) {
+        log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
+        writeAction {
+            appDataRoot()
+                .listFiles()
+                .singleOrNull { it.name == deviceId.id.toString() }
+                ?.deleteAll()
         }
     }
 

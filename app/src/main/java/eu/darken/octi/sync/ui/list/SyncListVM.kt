@@ -10,9 +10,7 @@ import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.syrvs.gdrive.core.GDriveAppDataConnector
-import eu.darken.octi.syrvs.gdrive.core.GoogleAccountRepo
 import eu.darken.octi.syrvs.gdrive.ui.GDriveStateVH
-import eu.darken.octi.syrvs.jserver.core.JServerAccountRepo
 import eu.darken.octi.syrvs.jserver.core.JServerConnector
 import eu.darken.octi.syrvs.jserver.ui.JServerStateVH
 import kotlinx.coroutines.flow.*
@@ -23,8 +21,6 @@ class SyncListVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     syncManager: SyncManager,
-    private val googleAccountRepo: GoogleAccountRepo,
-    private val jServerAccountRepo: JServerAccountRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
@@ -48,14 +44,14 @@ class SyncListVM @Inject constructor(
                         is GDriveAppDataConnector -> GDriveStateVH.Item(
                             account = connector.account,
                             state = state,
-                            onDisconnect = { launch { googleAccountRepo.remove(it.id) } },
-                            onWipe = { launch { connector.wipe() } }
+                            onDisconnect = { launch { syncManager.disconnect(connector) } },
+                            onWipe = { launch { syncManager.wipe(connector) } }
                         )
                         is JServerConnector -> JServerStateVH.Item(
                             credentials = connector.credentials,
                             state = state,
-                            onDisconnect = { launch { jServerAccountRepo.remove(it.accountId) } },
-                            onWipe = { launch { connector.wipe() } }
+                            onDisconnect = { launch { syncManager.disconnect(connector) } },
+                            onWipe = { launch { syncManager.wipe(connector) } }
                         )
                         else -> {
                             log(TAG, WARN) { "Unknown connector type: $connector" }

@@ -38,7 +38,7 @@ class MetaInfoSource @Inject constructor(
         }
     }
         .setupCommonEventHandlers(TAG) { "self" }
-        .replayingShare(scope + dispatcherProvider.IO)
+        .replayingShare(scope + dispatcherProvider.Default)
 
     companion object {
         val TAG = logTag("Module", "Meta", "Source")

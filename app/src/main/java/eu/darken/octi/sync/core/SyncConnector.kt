@@ -21,7 +21,9 @@ interface SyncConnector {
     /**
      * Wipe all Octi data stored via this connector
      */
-    suspend fun wipe()
+    suspend fun deleteAll()
+
+    suspend fun deleteDevice(deviceId: SyncDeviceId)
 
     interface State {
         val readActions: Int

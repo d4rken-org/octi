@@ -43,7 +43,7 @@ class GoogleAccountRepo @Inject constructor(
     }
 
     private val _accounts = DynamicStateFlow<Map<GoogleAccount.Id, GoogleClient>>(
-        parentScope = scope + dispatcherProvider.IO, loggingTag = TAG
+        parentScope = scope + dispatcherProvider.Default, loggingTag = TAG
     ) {
         val cached = mutableMapOf<GoogleAccount.Id, GoogleClient>()
         GoogleSignIn.getLastSignedInAccount(context)

@@ -49,7 +49,7 @@ class JServerStateVH(parent: ViewGroup) :
         disconnectAction.setOnClickListener {
             MaterialAlertDialogBuilder(context).apply {
                 setMessage(R.string.syrv_jserver_disconnect_confirmation_desc)
-                setPositiveButton(R.string.general_remove_action) { _, _ ->
+                setPositiveButton(R.string.general_disconnect_action) { _, _ ->
                     item.onDisconnect(item.credentials)
                 }
                 setNegativeButton(R.string.general_cancel_action) { _, _ ->

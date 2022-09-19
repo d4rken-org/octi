@@ -49,6 +49,7 @@ class GDriveStateVH(parent: ViewGroup) :
 
         wipeAction.setOnClickListener {
             MaterialAlertDialogBuilder(context).apply {
+                setMessage(R.string.syrv_gdrive_wipe_confirmation_desc)
                 setPositiveButton(R.string.general_wipe_action) { _, _ ->
                     item.onWipe(item.state)
                 }
@@ -60,7 +61,8 @@ class GDriveStateVH(parent: ViewGroup) :
 
         disconnectAction.setOnClickListener {
             MaterialAlertDialogBuilder(context).apply {
-                setPositiveButton(R.string.general_remove_action) { _, _ ->
+                setMessage(R.string.syrv_gdrive_disconnect_confirmation_desc)
+                setPositiveButton(R.string.general_disconnect_action) { _, _ ->
                     item.onDisconnect(item.account)
                 }
                 setNegativeButton(R.string.general_cancel_action) { _, _ ->

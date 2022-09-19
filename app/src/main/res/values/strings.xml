@@ -70,13 +70,14 @@
     <string name="syrv_gdrive_type_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. This is similar to how Whats App backups work.</string>
     <string name="syrv_gdrive_add_label">Add new Google Drive</string>
     <string name="syrv_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
+    <string name="syrv_gdrive_wipe_confirmation_desc">Reset all Octi data stored on Google Drive. Your device stays logged into Google Drive.</string>
+    <string name="syrv_gdrive_disconnect_confirmation_desc">Log out from Google Drive and delete data from this device.</string>
 
     <string name="syrv_jserver_type_label">J-Server</string>
     <string name="syrv_jserver_type_description">A open-source sync server for Octi made by a friend. Data is encrypted client-side, only your devices can decrypt it.</string>
     <string name="syrv_jserver_add_create_action_hint">Inactive accounts are deleted after a few weeks.</string>
     <string name="syrv_jserver_add_subtitle">Add new Google Drive</string>
     <string name="syrv_jserver_add_link_action_hint">You will need access to another device that is already linked.</string>
-
     <string name="syrv_jserver_about_title">About JServer</string>
     <string name="syrv_jserver_about_desc">JServer is an open-source sync server for Octi by Jakob Möller.</string>
     <string name="syrv_jserver_about_author_action">Author</string>

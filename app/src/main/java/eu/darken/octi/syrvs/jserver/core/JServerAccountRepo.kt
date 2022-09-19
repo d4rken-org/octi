@@ -28,7 +28,7 @@ class JServerAccountRepo @Inject constructor(
     private val adapterCredentials by lazy { moshi.adapter<JServer.Credentials>() }
     private val prefs = context.getSharedPreferences("syrv_jserver_credentials", Context.MODE_PRIVATE)
 
-    private val _accounts = DynamicStateFlow(parentScope = scope + dispatcherProvider.IO) {
+    private val _accounts = DynamicStateFlow(parentScope = scope + dispatcherProvider.Default) {
         prefs.all
             .filter {
                 if (!it.key.startsWith(KEY_PREFIX)) {

@@ -18,16 +18,16 @@ import javax.inject.Singleton
 class GDriveHub @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
-    accRepo: GoogleAccountRepo,
+    val accountRepo: GoogleAccountRepo,
     private val connectorFactory: GDriveAppDataConnector.Factory,
 ) : SyncHub {
 
-    private val _connectors = accRepo.accounts
+    private val _connectors = accountRepo.accounts
         .mapLatest { acc ->
             acc.map { connectorFactory.create(it) }
         }
         .setupCommonEventHandlers(TAG) { "connectors" }
-        .shareLatest(scope + dispatcherProvider.IO)
+        .shareLatest(scope + dispatcherProvider.Default)
 
     override val connectors: Flow<Collection<SyncConnector>> = _connectors
 
