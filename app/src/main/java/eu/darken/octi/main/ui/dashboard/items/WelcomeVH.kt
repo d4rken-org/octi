@@ -16,11 +16,13 @@ class WelcomeVH(parent: ViewGroup) :
         item: Item,
         payloads: List<Any>
     ) -> Unit = binding { item ->
-        itemView.setOnClickListener { item.onDismiss() }
+        dismissAction.setOnClickListener { item.onDismiss() }
+        setupAction.setOnClickListener { item.onSetup() }
     }
 
     data class Item(
-        val onDismiss: () -> Unit
+        val onDismiss: () -> Unit,
+        val onSetup: () -> Unit,
     ) : DashboardAdapter.Item {
         override val stableId: Long = this.javaClass.hashCode().toLong()
     }

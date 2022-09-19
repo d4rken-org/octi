@@ -26,6 +26,9 @@
     <string name="debug_debuglog_file_label">Recorded log file</string>
     <string name="debug_debuglog_record_action">Record debug log</string>
 
+    <string name="onboarding_card_title">Welcome to Octi</string>
+    <string name="onboarding_card_message">Octi helps you monitor multiple Android devices.\nCurrently you are only seeing this device. To connect your Octi installations, setup a common synchronization service.</string>
+
     <string name="settings_privacy_policy_label">Privacy policy</string>
     <string name="settings_privacy_policy_desc">Handling data responsibly.</string>
     <string name="settings_licenses_label">Licenses</string>
@@ -62,7 +65,7 @@
     <string name="sync_server_label">Server</string>
     <string name="sync_account_label">Account</string>
     <string name="sync_services_label">Sync services</string>
-    <string name="sync_add_label">Add new sync service</string>
+    <string name="sync_add_label">Add sync service</string>
     <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
 
     <string name="syrv_gdrive_type_label">Google Drive</string>
@@ -84,4 +87,5 @@
     <string name="syrv_jserver_about_source_action">Source code</string>
     <string name="syrv_jserver_wipe_confirmation_desc">Reset this account and delete all stored data. Your device stays linked to the account.</string>
     <string name="syrv_jserver_disconnect_confirmation_desc">Remove this device from your account. If this is the last linked device, then your account will be deleted.</string>
+
 </resources>

@@ -54,7 +54,8 @@ class DashboardVM @Inject constructor(
 
         if (!isWelcomeDismissed) {
             WelcomeVH.Item(
-                onDismiss = { generalSettings.isWelcomeDismissed.value = true }
+                onDismiss = { generalSettings.isWelcomeDismissed.value = true },
+                onSetup = { DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate() }
             ).run { items.add(this) }
         }
 

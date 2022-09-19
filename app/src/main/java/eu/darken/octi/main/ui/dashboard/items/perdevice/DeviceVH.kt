@@ -36,7 +36,7 @@ class DeviceVH(parent: ViewGroup) :
         }
 
         octiVersion.text = if (BuildConfigWrap.DEBUG) {
-            "Octi v${meta.octiGitSha}"
+            "Octi #${meta.octiGitSha}"
         } else {
             "Octi v${meta.octiVersionName}"
         }
