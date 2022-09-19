@@ -12,8 +12,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:subtitle="@string/syrv_gdrive_add_label"
-        app:title="@string/syrv_gdrive_type_label" />
+        app:subtitle="@string/sync_gdrive_add_label"
+        app:title="@string/sync_gdrive_type_label" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
                 android:gravity="center"
-                android:text="@string/syrv_gdrive_add_description" />
+                android:text="@string/sync_gdrive_add_description" />
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_action"

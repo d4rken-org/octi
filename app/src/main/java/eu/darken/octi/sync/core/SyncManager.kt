@@ -6,10 +6,10 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
-import eu.darken.octi.syrvs.gdrive.core.GDriveAppDataConnector
-import eu.darken.octi.syrvs.gdrive.core.GDriveHub
-import eu.darken.octi.syrvs.jserver.core.JServerConnector
-import eu.darken.octi.syrvs.jserver.core.JServerHub
+import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
+import eu.darken.octi.syncs.gdrive.core.GDriveHub
+import eu.darken.octi.syncs.jserver.core.JServerConnector
+import eu.darken.octi.syncs.jserver.core.JServerHub
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -85,17 +85,24 @@ class SyncManager @Inject constructor(
         log(TAG) { "write(data=$toWrite) done (${System.currentTimeMillis() - start}ms)" }
     }
 
-    suspend fun wipe(connector: SyncConnector) = withContext(NonCancellable) {
-        log(TAG) { "wipe(connector=$connector)" }
-        connector.deleteAll()
-        log(TAG) { "wipe(connector=$connector) done" }
+    private suspend fun getConnectorById(identifier: SyncConnector.Identifier): SyncConnector {
+        return connectors.map { connecs -> connecs.single { it.identifier == identifier } }.first()
     }
 
-    suspend fun disconnect(connector: SyncConnector, wipe: Boolean = false) = withContext(NonCancellable) {
-        log(TAG) { "disconnect(connector=$connector, wipe=$wipe)" }
+    suspend fun wipe(identifier: SyncConnector.Identifier) = withContext(NonCancellable) {
+        log(TAG) { "wipe(identifier=$identifier)" }
+        getConnectorById(identifier).deleteAll()
+        log(TAG) { "wipe(identifier=$identifier) done" }
+    }
+
+    suspend fun disconnect(identifier: SyncConnector.Identifier, wipe: Boolean = false) = withContext(NonCancellable) {
+        log(TAG) { "disconnect(identifier=$identifier, wipe=$wipe)" }
+
+        val connector = getConnectorById(identifier)
+
         disabledConnectors.value = disabledConnectors.value + connector
         try {
-            if (wipe) wipe(connector)
+            if (wipe) connector.deleteAll()
             else connector.deleteDevice(syncSettings.deviceId)
 
             when (connector) {

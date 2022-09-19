@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/menu_jserver_add"
-        app:title="@string/syrv_jserver_type_label" />
+        app:title="@string/sync_jserver_type_label" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/server_group_label"
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:gravity="center"
-        android:text="@string/syrv_jserver_add_create_action_hint"
+        android:text="@string/sync_jserver_add_create_action_hint"
         app:layout_constraintEnd_toEndOf="@id/create_new_account"
         app:layout_constraintStart_toStartOf="@id/create_new_account"
         app:layout_constraintTop_toBottomOf="@id/create_new_account" />
@@ -99,7 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:gravity="center"
-        android:text="@string/syrv_jserver_add_link_action_hint"
+        android:text="@string/sync_jserver_add_link_action_hint"
         app:layout_constraintEnd_toEndOf="@id/link_existing_account"
         app:layout_constraintStart_toStartOf="@id/link_existing_account"
         app:layout_constraintTop_toBottomOf="@id/link_existing_account" />

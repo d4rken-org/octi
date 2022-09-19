@@ -15,6 +15,7 @@
     <string name="general_link_existing_action">Link to existing account</string>
     <string name="general_na_label">N/A</string>
     <string name="general_dismiss_action">Dismiss</string>
+    <string name="general_manage_action">Manage</string>
 
     <string name="general_error_label">Error</string>
     <string name="general_select_server_label">Select server</string>
@@ -68,24 +69,25 @@
     <string name="sync_add_label">Add sync service</string>
     <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
 
-    <string name="syrv_gdrive_type_label">Google Drive</string>
-    <string name="syrv_gdrive_appdata_label">App-data scope</string>
-    <string name="syrv_gdrive_type_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. This is similar to how Whats App backups work.</string>
-    <string name="syrv_gdrive_add_label">Add new Google Drive</string>
-    <string name="syrv_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
-    <string name="syrv_gdrive_wipe_confirmation_desc">Reset all Octi data stored on Google Drive. Your device stays logged into Google Drive.</string>
-    <string name="syrv_gdrive_disconnect_confirmation_desc">Log out from Google Drive and delete data from this device.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">App-data scope</string>
+    <string name="sync_gdrive_type_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. This is similar to how Whats App backups work.</string>
+    <string name="sync_gdrive_add_label">Add new Google Drive</string>
+    <string name="sync_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
+    <string name="sync_gdrive_wipe_confirmation_desc">Reset all Octi data stored on Google Drive. Your device stays logged into Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Log out from Google Drive and delete data from this device.</string>
 
-    <string name="syrv_jserver_type_label">J-Server</string>
-    <string name="syrv_jserver_type_description">A open-source sync server for Octi made by a friend. Data is encrypted client-side, only your devices can decrypt it.</string>
-    <string name="syrv_jserver_add_create_action_hint">Inactive accounts are deleted after a few weeks.</string>
-    <string name="syrv_jserver_add_subtitle">Add new Google Drive</string>
-    <string name="syrv_jserver_add_link_action_hint">You will need access to another device that is already linked.</string>
-    <string name="syrv_jserver_about_title">About JServer</string>
-    <string name="syrv_jserver_about_desc">JServer is an open-source sync server for Octi by Jakob Möller.</string>
-    <string name="syrv_jserver_about_author_action">Author</string>
-    <string name="syrv_jserver_about_source_action">Source code</string>
-    <string name="syrv_jserver_wipe_confirmation_desc">Reset this account and delete all stored data. Your device stays linked to the account.</string>
-    <string name="syrv_jserver_disconnect_confirmation_desc">Remove this device from your account. If this is the last linked device, then your account will be deleted.</string>
+    <string name="sync_jserver_type_label">J-Server</string>
+    <string name="sync_jserver_type_description">A open-source sync server for Octi made by a friend. Data is encrypted client-side, only your devices can decrypt it.</string>
+    <string name="sync_jserver_add_create_action_hint">Inactive accounts are deleted after a few weeks.</string>
+    <string name="sync_jserver_add_subtitle">Add new Google Drive</string>
+    <string name="sync_jserver_add_link_action_hint">You will need access to another device that is already linked.</string>
+    <string name="sync_jserver_about_title">About JServer</string>
+    <string name="sync_jserver_about_desc">JServer is an open-source sync server for Octi by Jakob Möller.</string>
+    <string name="sync_jserver_about_author_action">Author</string>
+    <string name="sync_jserver_about_source_action">Source code</string>
+    <string name="sync_jserver_wipe_confirmation_desc">Reset this account and delete all stored data. Your device stays linked to the account.</string>
+    <string name="sync_jserver_disconnect_confirmation_desc">Remove this device from your account. If this is the last linked device, then your account will be deleted.</string>
+    <string name="sync_jserver_link_device_action">Link new device</string>
 
 </resources>

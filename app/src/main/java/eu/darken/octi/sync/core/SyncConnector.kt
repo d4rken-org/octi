@@ -1,9 +1,14 @@
 package eu.darken.octi.sync.core
 
+import android.os.Parcelable
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
 
 interface SyncConnector {
+
+    interface Identifier : Parcelable
+
+    val identifier: Identifier
 
     val state: Flow<State>
     val data: Flow<SyncRead?>

@@ -29,12 +29,12 @@
         tools:layout="@layout/sync_add_new_fragment">
         <action
             android:id="@+id/action_syncAddFragment_to_GDriveAddFragment"
-            app:popUpTo="@id/syncListFragment"
-            app:destination="@id/addGDriveFragment" />
+            app:destination="@id/addGDriveFragment"
+            app:popUpTo="@id/syncListFragment" />
         <action
             android:id="@+id/action_syncAddFragment_to_addJServerFragment"
-            app:popUpTo="@id/syncListFragment"
-            app:destination="@id/addJServerFragment" />
+            app:destination="@id/addJServerFragment"
+            app:popUpTo="@id/syncListFragment" />
     </fragment>
     <fragment
         android:id="@+id/syncListFragment"
@@ -43,15 +43,37 @@
         <action
             android:id="@+id/action_syncListFragment_to_syncAddFragment"
             app:destination="@id/syncAddFragment" />
+        <action
+            android:id="@+id/action_syncListFragment_to_syrvJServerActionsFragment"
+            app:destination="@id/syrvJServerActionsFragment" />
+        <action
+            android:id="@+id/action_syncListFragment_to_GDriveActionsFragment"
+            app:destination="@id/GDriveActionsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addGDriveFragment"
-        android:name="eu.darken.octi.syrvs.gdrive.ui.add.AddGDriveFragment"
+        android:name="eu.darken.octi.syncs.gdrive.ui.add.AddGDriveFragment"
         tools:layout="@layout/sync_add_new_gdrive_fragment" />
     <fragment
         android:id="@+id/addJServerFragment"
-        android:name="eu.darken.octi.syrvs.jserver.ui.add.AddJServerFragment"
+        android:name="eu.darken.octi.syncs.jserver.ui.add.AddJServerFragment"
         tools:layout="@layout/sync_add_new_jserver_fragment" />
+    <dialog
+        android:id="@+id/syrvJServerActionsFragment"
+        android:name="eu.darken.octi.syncs.jserver.ui.actions.JServerActionsFragment"
+        tools:layout="@layout/sync_actions_jserver_fragment">
+        <argument
+            android:name="identifier"
+            app:argType="eu.darken.octi.sync.core.SyncConnector$Identifier" />
+    </dialog>
+    <dialog
+        android:id="@+id/GDriveActionsFragment"
+        android:name="eu.darken.octi.syncs.gdrive.ui.actions.GDriveActionsFragment"
+        tools:layout="@layout/sync_actions_gdrive_fragment">
+        <argument
+            android:name="identifier"
+            app:argType="eu.darken.octi.sync.core.SyncConnector$Identifier" />
+    </dialog>
 
 
 </navigation>

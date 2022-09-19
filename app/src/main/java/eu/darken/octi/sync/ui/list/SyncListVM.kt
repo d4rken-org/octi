@@ -9,10 +9,10 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncManager
-import eu.darken.octi.syrvs.gdrive.core.GDriveAppDataConnector
-import eu.darken.octi.syrvs.gdrive.ui.GDriveStateVH
-import eu.darken.octi.syrvs.jserver.core.JServerConnector
-import eu.darken.octi.syrvs.jserver.ui.JServerStateVH
+import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
+import eu.darken.octi.syncs.gdrive.ui.GDriveStateVH
+import eu.darken.octi.syncs.jserver.core.JServerConnector
+import eu.darken.octi.syncs.jserver.ui.JServerStateVH
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -44,14 +44,20 @@ class SyncListVM @Inject constructor(
                         is GDriveAppDataConnector -> GDriveStateVH.Item(
                             account = connector.account,
                             state = state,
-                            onDisconnect = { launch { syncManager.disconnect(connector) } },
-                            onWipe = { launch { syncManager.wipe(connector) } }
+                            onManage = {
+                                SyncListFragmentDirections.actionSyncListFragmentToGDriveActionsFragment(
+                                    connector.identifier
+                                ).navigate()
+                            }
                         )
                         is JServerConnector -> JServerStateVH.Item(
                             credentials = connector.credentials,
                             state = state,
-                            onDisconnect = { launch { syncManager.disconnect(connector) } },
-                            onWipe = { launch { syncManager.wipe(connector) } }
+                            onManage = {
+                                SyncListFragmentDirections.actionSyncListFragmentToSyrvJServerActionsFragment(
+                                    connector.identifier
+                                ).navigate()
+                            }
                         )
                         else -> {
                             log(TAG, WARN) { "Unknown connector type: $connector" }

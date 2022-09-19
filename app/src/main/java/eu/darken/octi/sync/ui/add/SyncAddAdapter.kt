@@ -11,8 +11,8 @@ import eu.darken.octi.common.lists.differ.setupDiffer
 import eu.darken.octi.common.lists.modular.ModularAdapter
 import eu.darken.octi.common.lists.modular.mods.DataBinderMod
 import eu.darken.octi.common.lists.modular.mods.TypedVHCreatorMod
-import eu.darken.octi.syrvs.gdrive.ui.add.AddGDriveVH
-import eu.darken.octi.syrvs.jserver.ui.add.AddJServerDataVH
+import eu.darken.octi.syncs.gdrive.ui.add.AddGDriveVH
+import eu.darken.octi.syncs.jserver.ui.add.AddJServerDataVH
 import javax.inject.Inject
 
 
