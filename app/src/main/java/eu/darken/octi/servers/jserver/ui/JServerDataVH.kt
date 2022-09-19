@@ -1,27 +1,26 @@
 package eu.darken.octi.servers.jserver.ui
 
-import android.text.format.Formatter
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import eu.darken.octi.R
 import eu.darken.octi.common.getColorForAttr
-import eu.darken.octi.databinding.SyncListItemGdriveBinding
-import eu.darken.octi.servers.gdrive.core.GoogleAccount
+import eu.darken.octi.databinding.SyncListItemJserverBinding
+import eu.darken.octi.servers.jserver.core.JServer
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.ui.list.SyncListAdapter
 
 
 class JServerDataVH(parent: ViewGroup) :
-    SyncListAdapter.BaseVH<JServerDataVH.Item, SyncListItemGdriveBinding>(R.layout.sync_list_item_gdrive, parent) {
+    SyncListAdapter.BaseVH<JServerDataVH.Item, SyncListItemJserverBinding>(R.layout.sync_list_item_jserver, parent) {
 
-    override val viewBinding = lazy { SyncListItemGdriveBinding.bind(itemView) }
+    override val viewBinding = lazy { SyncListItemJserverBinding.bind(itemView) }
 
-    override val onBindData: SyncListItemGdriveBinding.(
+    override val onBindData: SyncListItemJserverBinding.(
         item: Item,
         payloads: List<Any>
     ) -> Unit = { item, _ ->
-        accountLabelText.text = item.account.email
+        accountLabelText.text = "${item.credentials.server.baseUrl} (${item.credentials.accountId})"
         lastSyncLabelText.apply {
             text = item.state.lastSyncAt?.toString() ?: getString(R.string.sync_last_never_label)
             if (item.state.lastError != null) {
@@ -31,15 +30,6 @@ class JServerDataVH(parent: ViewGroup) :
             }
         }
         syncProgressIndicator.isGone = !item.state.isBusy
-
-        quotaText.text = item.state.stats
-            ?.let { stats ->
-                val total = Formatter.formatShortFileSize(context, stats.storageTotal)
-                val used = Formatter.formatShortFileSize(context, stats.storageUsed)
-                val free = Formatter.formatShortFileSize(context, stats.storageFree)
-                getString(R.string.sync_quota_storage_msg, free, used, total)
-            }
-            ?: getString(R.string.general_na_label)
 
         wipeAction.setOnClickListener {
             MaterialAlertDialogBuilder(context).apply {
@@ -52,10 +42,10 @@ class JServerDataVH(parent: ViewGroup) :
             }.show()
         }
 
-        removeAction.setOnClickListener {
+        disconnectAction.setOnClickListener {
             MaterialAlertDialogBuilder(context).apply {
                 setPositiveButton(R.string.general_remove_action) { _, _ ->
-                    item.onRemove(item.account)
+                    item.onDisconnect(item.credentials)
                 }
                 setNegativeButton(R.string.general_cancel_action) { _, _ ->
 
@@ -65,15 +55,15 @@ class JServerDataVH(parent: ViewGroup) :
     }
 
     data class Item(
-        val account: GoogleAccount,
+        val credentials: JServer.Credentials,
         val state: SyncConnector.State,
         val onWipe: (SyncConnector.State) -> Unit,
-        val onRemove: (GoogleAccount) -> Unit,
+        val onDisconnect: (JServer.Credentials) -> Unit,
     ) : SyncListAdapter.Item {
         override val stableId: Long
             get() {
                 var result = this.javaClass.hashCode().toLong()
-                result = 31 * result + account.hashCode()
+                result = 31 * result + credentials.hashCode()
                 return result
             }
     }

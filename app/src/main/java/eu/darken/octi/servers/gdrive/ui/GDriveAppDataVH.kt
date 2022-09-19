@@ -52,10 +52,10 @@ class GDriveAppDataVH(parent: ViewGroup) :
             }.show()
         }
 
-        removeAction.setOnClickListener {
+        disconnectAction.setOnClickListener {
             MaterialAlertDialogBuilder(context).apply {
                 setPositiveButton(R.string.general_remove_action) { _, _ ->
-                    item.onRemove(item.account)
+                    item.onDisconnect(item.account)
                 }
                 setNegativeButton(R.string.general_cancel_action) { _, _ ->
 
@@ -68,7 +68,7 @@ class GDriveAppDataVH(parent: ViewGroup) :
         val account: GoogleAccount,
         val state: SyncConnector.State,
         val onWipe: (SyncConnector.State) -> Unit,
-        val onRemove: (GoogleAccount) -> Unit,
+        val onDisconnect: (GoogleAccount) -> Unit,
     ) : SyncListAdapter.Item {
         override val stableId: Long
             get() {

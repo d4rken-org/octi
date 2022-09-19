@@ -40,7 +40,7 @@ class SyncListVM @Inject constructor(
                             onWipe = {
                                 launch { connector.wipe() }
                             },
-                            onRemove = { launch { googleAccountRepo.remove(it.id) } }
+                            onDisconnect = { launch { googleAccountRepo.remove(it.id) } }
                         )
                         else -> {
                             log(TAG, WARN) { "Unknown connector type: $connector" }

@@ -11,7 +11,7 @@
         style="@style/TextAppearance.Material3.TitleMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/sync_gdrive_type_label"
+        android:text="@string/sync_jserver_type_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
@@ -68,38 +68,17 @@
         app:layout_constraintStart_toEndOf="@id/last_sync_label_text"
         app:layout_constraintTop_toTopOf="@id/last_sync_label" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/quota_label"
-        style="@style/TextAppearance.Material3.LabelMedium"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/general_quota_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/last_sync_label_text" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/quota_text"
-        style="@style/TextAppearance.Material3.BodyMedium"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/quota_label"
-        tools:text="25 MB used / 30 MB available" />
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/wipe_action"
         style="@style/Widget.Material3.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:backgroundTint="@color/error"
         android:layout_marginTop="16dp"
         android:text="@string/general_wipe_action"
+        app:backgroundTint="@color/error"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/quota_text" />
+        app:layout_constraintTop_toBottomOf="@id/sync_progress_indicator" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/disconnect_action"
@@ -110,6 +89,6 @@
         android:text="@string/general_disconnect_action"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/quota_text" />
+        app:layout_constraintTop_toBottomOf="@id/sync_progress_indicator" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
