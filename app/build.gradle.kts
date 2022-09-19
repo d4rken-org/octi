@@ -225,7 +225,7 @@ dependencies {
 
     implementation("androidx.preference:preference-ktx:1.2.0")
 
-    implementation("androidx.core:core-splashscreen:1.0.0-alpha02")
+    implementation("androidx.core:core-splashscreen:1.0.0")
 
     implementation("androidx.work:work-runtime:${Versions.AndroidX.WorkManager.core}")
     testImplementation("androidx.work:work-testing:${Versions.AndroidX.WorkManager.core}")
