@@ -16,7 +16,7 @@ class GeneralSettings @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Settings() {
 
-    override val preferences: SharedPreferences = context.getSharedPreferences("settings_core", Context.MODE_PRIVATE)
+    override val preferences: SharedPreferences = context.getSharedPreferences("core_settings", Context.MODE_PRIVATE)
 
     val isBugTrackingEnabled = preferences.createFlowPreference("core.bugtracking.enabled", true)
 

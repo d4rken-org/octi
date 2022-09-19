@@ -14,9 +14,6 @@
             android:id="@+id/action_dashFragment_to_settingsContainerFragment"
             app:destination="@id/settingsContainerFragment" />
         <action
-            android:id="@+id/action_dashFragment_to_syncAddFragment"
-            app:destination="@id/syncAddFragment" />
-        <action
             android:id="@+id/action_dashFragment_to_syncListFragment"
             app:destination="@id/syncListFragment" />
     </fragment>
@@ -32,9 +29,11 @@
         tools:layout="@layout/sync_add_new_fragment">
         <action
             android:id="@+id/action_syncAddFragment_to_GDriveAddFragment"
+            app:popUpTo="@id/syncListFragment"
             app:destination="@id/addGDriveFragment" />
         <action
             android:id="@+id/action_syncAddFragment_to_addJServerFragment"
+            app:popUpTo="@id/syncListFragment"
             app:destination="@id/addJServerFragment" />
     </fragment>
     <fragment
@@ -47,11 +46,11 @@
     </fragment>
     <fragment
         android:id="@+id/addGDriveFragment"
-        android:name="eu.darken.octi.servers.gdrive.ui.add.AddGDriveFragment"
-        tools:layout="@layout/sync_add_new_gdrive_appdata_fragment" />
+        android:name="eu.darken.octi.syrvs.gdrive.ui.add.AddGDriveFragment"
+        tools:layout="@layout/sync_add_new_gdrive_fragment" />
     <fragment
         android:id="@+id/addJServerFragment"
-        android:name="eu.darken.octi.servers.jserver.ui.add.AddJServerFragment"
+        android:name="eu.darken.octi.syrvs.jserver.ui.add.AddJServerFragment"
         tools:layout="@layout/sync_add_new_jserver_fragment" />
 
 

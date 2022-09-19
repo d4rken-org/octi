@@ -5,8 +5,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.servers.gdrive.ui.add.AddGDriveAppDataVH
-import eu.darken.octi.servers.jserver.ui.add.AddJServerDataVH
+import eu.darken.octi.syrvs.gdrive.ui.add.AddGDriveVH
+import eu.darken.octi.syrvs.jserver.ui.add.AddJServerDataVH
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class SyncAddVM @Inject constructor(
     val addItems = flow {
         val items = mutableListOf<SyncAddAdapter.Item>()
 
-        AddGDriveAppDataVH.Item {
+        AddGDriveVH.Item {
             SyncAddFragmentDirections.actionSyncAddFragmentToGDriveAddFragment().navigate()
         }.run { items.add(this) }
         AddJServerDataVH.Item {

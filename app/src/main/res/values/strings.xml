@@ -48,22 +48,6 @@
     <string name="support_debuglog_desc">Record everything the app is doing into a text file that you can share.</string>
     <string name="settings_support_label">Support</string>
 
-    <string name="sync_account_label">Account</string>
-    <string name="sync_services_label">Sync services</string>
-    <string name="sync_add_label">Add new sync service</string>
-    <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
-
-    <string name="sync_gdrive_label">Google Drive</string>
-    <string name="sync_gdrive_type_label">Google Drive - App Data Scope</string>
-    <string name="sync_gdrive_type_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. This is similar to how Whats App backups work.</string>
-    <string name="sync_gdrive_add_label">Add new Google Drive</string>
-    <string name="sync_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
-
-    <string name="sync_jserver_type_label">J-Server (Beta)</string>
-    <string name="sync_jserver_type_description">A self-made open-source sync server for Octi. Data is encrypted client-side, only your devices can decrypt it.</string>
-    <string name="sync_jserver_add_create_action_hint">Inactive accounts are deleted after a few weeks.</string>
-    <string name="sync_jserver_add_link_action_hint">You will need access to another device that is already linked.</string>
-
     <string name="sync_last_update_label">Last update</string>
     <string name="sync_last_sync_label">Last sync</string>
     <string name="sync_last_never_label">Never</string>
@@ -73,4 +57,30 @@
 
     <string name="device_uptime_x">Uptime: %s</string>
     <string name="general_disconnect_action">Disconnect</string>
+    <string name="generic_info_action">Info</string>
+
+    <string name="sync_server_label">Server</string>
+    <string name="sync_account_label">Account</string>
+    <string name="sync_services_label">Sync services</string>
+    <string name="sync_add_label">Add new sync service</string>
+    <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
+
+    <string name="syrv_gdrive_type_label">Google Drive</string>
+    <string name="syrv_gdrive_appdata_label">App-data scope</string>
+    <string name="syrv_gdrive_type_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. This is similar to how Whats App backups work.</string>
+    <string name="syrv_gdrive_add_label">Add new Google Drive</string>
+    <string name="syrv_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
+
+    <string name="syrv_jserver_type_label">J-Server</string>
+    <string name="syrv_jserver_type_description">A open-source sync server for Octi made by a friend. Data is encrypted client-side, only your devices can decrypt it.</string>
+    <string name="syrv_jserver_add_create_action_hint">Inactive accounts are deleted after a few weeks.</string>
+    <string name="syrv_jserver_add_subtitle">Add new Google Drive</string>
+    <string name="syrv_jserver_add_link_action_hint">You will need access to another device that is already linked.</string>
+
+    <string name="syrv_jserver_about_title">About JServer</string>
+    <string name="syrv_jserver_about_desc">JServer is an open-source sync server for Octi by Jakob Möller.</string>
+    <string name="syrv_jserver_about_author_action">Author</string>
+    <string name="syrv_jserver_about_source_action">Source code</string>
+    <string name="syrv_jserver_wipe_confirmation_desc">Reset this account and delete all stored data. Your device stays linked to the account.</string>
+    <string name="syrv_jserver_disconnect_confirmation_desc">Remove this device from your account. If this is the last linked device, then your account will be deleted.</string>
 </resources>

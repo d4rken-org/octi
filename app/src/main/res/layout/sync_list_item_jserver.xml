@@ -11,14 +11,14 @@
         style="@style/TextAppearance.Material3.TitleMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/sync_jserver_type_label"
+        android:text="@string/syrv_jserver_type_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/account_label"
-        style="@style/TextAppearance.Material3.LabelMedium"
+        style="@style/TextAppearance.Material3.LabelSmall"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -27,7 +27,7 @@
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/account_label_text"
+        android:id="@+id/account_text"
         style="@style/TextAppearance.Material3.BodyMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -43,15 +43,14 @@
         android:layout_marginTop="8dp"
         android:text="@string/sync_last_sync_label"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/account_label_text" />
+        app:layout_constraintTop_toBottomOf="@id/account_text" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/last_sync_label_text"
+        android:id="@+id/last_sync_text"
         style="@style/TextAppearance.Material3.BodyMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toStartOf="@id/sync_progress_indicator"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/last_sync_label"
         tools:text="5 minute ago" />
@@ -62,23 +61,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        app:layout_constraintBottom_toBottomOf="@id/last_sync_label_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@id/last_sync_label_text"
-        app:layout_constraintTop_toTopOf="@id/last_sync_label" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/wipe_action"
         style="@style/Widget.Material3.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/general_wipe_action"
         app:backgroundTint="@color/error"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/disconnect_action"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sync_progress_indicator" />
+        app:layout_constraintTop_toTopOf="@id/disconnect_action" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/disconnect_action"
@@ -89,6 +84,6 @@
         android:text="@string/general_disconnect_action"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sync_progress_indicator" />
+        app:layout_constraintTop_toBottomOf="@id/last_sync_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

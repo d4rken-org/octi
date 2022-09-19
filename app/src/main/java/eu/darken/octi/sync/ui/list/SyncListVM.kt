@@ -7,11 +7,14 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.servers.gdrive.core.GDriveAppDataConnector
-import eu.darken.octi.servers.gdrive.core.GoogleAccountRepo
-import eu.darken.octi.servers.gdrive.ui.GDriveAppDataVH
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.syrvs.gdrive.core.GDriveAppDataConnector
+import eu.darken.octi.syrvs.gdrive.core.GoogleAccountRepo
+import eu.darken.octi.syrvs.gdrive.ui.GDriveStateVH
+import eu.darken.octi.syrvs.jserver.core.JServerAccountRepo
+import eu.darken.octi.syrvs.jserver.core.JServerConnector
+import eu.darken.octi.syrvs.jserver.ui.JServerStateVH
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -21,11 +24,19 @@ class SyncListVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     syncManager: SyncManager,
     private val googleAccountRepo: GoogleAccountRepo,
+    private val jServerAccountRepo: JServerAccountRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
         val connectors: List<SyncListAdapter.Item> = emptyList()
     )
+
+    init {
+        launch {
+            val isEmpty = syncManager.connectors.first().isEmpty()
+            if (isEmpty) addConnector()
+        }
+    }
 
     val state = syncManager.connectors
         .flatMapLatest { connectors ->
@@ -34,13 +45,17 @@ class SyncListVM @Inject constructor(
             val withStates = connectors.map { connector ->
                 connector.state.mapNotNull<SyncConnector.State, SyncListAdapter.Item> { state ->
                     when (connector) {
-                        is GDriveAppDataConnector -> GDriveAppDataVH.Item(
+                        is GDriveAppDataConnector -> GDriveStateVH.Item(
                             account = connector.account,
                             state = state,
-                            onWipe = {
-                                launch { connector.wipe() }
-                            },
-                            onDisconnect = { launch { googleAccountRepo.remove(it.id) } }
+                            onDisconnect = { launch { googleAccountRepo.remove(it.id) } },
+                            onWipe = { launch { connector.wipe() } }
+                        )
+                        is JServerConnector -> JServerStateVH.Item(
+                            credentials = connector.credentials,
+                            state = state,
+                            onDisconnect = { launch { jServerAccountRepo.remove(it.accountId) } },
+                            onWipe = { launch { connector.wipe() } }
                         )
                         else -> {
                             log(TAG, WARN) { "Unknown connector type: $connector" }

@@ -17,7 +17,7 @@ class PowerSettings @Inject constructor(
 ) : Settings() {
 
     override val preferences: SharedPreferences =
-        context.getSharedPreferences("settings_module_power", Context.MODE_PRIVATE)
+        context.getSharedPreferences("module_power_settings", Context.MODE_PRIVATE)
 
     val isEnabled = preferences.createFlowPreference("module.power.enabled", true)
 

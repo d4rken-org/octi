@@ -17,7 +17,7 @@ class SyncSettings @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Settings() {
 
-    override val preferences: SharedPreferences = context.getSharedPreferences("settings_sync", Context.MODE_PRIVATE)
+    override val preferences: SharedPreferences = context.getSharedPreferences("sync_settings", Context.MODE_PRIVATE)
 
     val syncOnMobile = preferences.createFlowPreference("sync.connection.mobile.enabled", true)
 

@@ -11,7 +11,7 @@
         style="@style/TextAppearance.Material3.TitleSmall"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/sync_jserver_type_label"
+        android:text="@string/syrv_jserver_type_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
@@ -21,7 +21,7 @@
         style="@style/TextAppearance.Material3.BodyMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/sync_jserver_type_description"
+        android:text="@string/syrv_jserver_type_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
         app:layout_constraintVertical_chainStyle="packed" />

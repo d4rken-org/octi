@@ -16,7 +16,7 @@ class MetaSettings @Inject constructor(
 ) : Settings() {
 
     override val preferences: SharedPreferences =
-        context.getSharedPreferences("settings_module_meta", Context.MODE_PRIVATE)
+        context.getSharedPreferences("module_meta_settings", Context.MODE_PRIVATE)
 
 //    val isEnabled = preferences.createFlowPreference("module.meta.enabled", true)
 

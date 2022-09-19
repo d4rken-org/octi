@@ -16,7 +16,6 @@ import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 import java.time.Instant
@@ -71,12 +70,7 @@ class DashboardVM @Inject constructor(
 
     fun goToSyncServices() = launch {
         log(TAG) { "goToSyncServices()" }
-        if (syncManager.connectors.first().isEmpty()) {
-            log(TAG) { "Connectors are empty, going to add screen directly." }
-            DashboardFragmentDirections.actionDashFragmentToSyncAddFragment().navigate()
-        } else {
-            DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate()
-        }
+        DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate()
     }
 
     fun refresh() = launch {
