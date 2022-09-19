@@ -1,6 +1,7 @@
 <resources>
     <color name="seed">#53d1a2</color>
     <color name="error">#B3261E</color>
+    <color name="splash_color">#25314D</color>
     <color name="md_theme_light_primary">#006C4E</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
     <color name="md_theme_light_primaryContainer">#7DF9C7</color>

@@ -7,7 +7,7 @@ import java.time.Instant
 import java.util.*
 
 object ProjectConfig {
-    const val minSdk = 26
+    const val minSdk = 23
     const val compileSdk = 31
     const val targetSdk = 31
 

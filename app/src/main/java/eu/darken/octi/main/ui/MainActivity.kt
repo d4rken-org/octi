@@ -23,9 +23,9 @@ class MainActivity : Activity2() {
     @Inject lateinit var recorderModule: RecorderModule
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
-
         super.onCreate(savedInstanceState)
+
+        val splashScreen = installSplashScreen()
 
         splashScreen.setKeepOnScreenCondition { showSplashScreen && savedInstanceState == null }
 
