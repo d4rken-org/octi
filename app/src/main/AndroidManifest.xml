@@ -14,8 +14,8 @@
         <activity
             android:name="eu.darken.octi.main.ui.MainActivity"
             android:exported="true"
-            android:theme="@style/AppThemeSplash"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/AppThemeSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,6 +54,11 @@
         <meta-data
             android:name="com.bugsnag.android.API_KEY"
             android:value="${bugsnagApiKey}" />
+
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="sensor"
+            tools:replace="screenOrientation" />
 
         <!-- Debug stuff-->
         <activity

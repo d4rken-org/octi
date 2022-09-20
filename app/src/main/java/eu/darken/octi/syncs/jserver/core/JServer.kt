@@ -46,7 +46,9 @@ interface JServer {
             override fun toString(): String = "DevicePassword(code=${password.take(4)}...)"
         }
 
-        data class ShareCode(val code: String) {
+        @JsonClass(generateAdapter = true)
+        @Parcelize
+        data class LinkCode(@Json(name = "code") val code: String) : Parcelable {
             override fun toString(): String = "ShareCode(code=${code.take(4)}...)"
         }
     }

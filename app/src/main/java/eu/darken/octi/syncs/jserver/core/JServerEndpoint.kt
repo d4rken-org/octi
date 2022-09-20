@@ -54,17 +54,20 @@ class JServerEndpoint @AssistedInject constructor(
 
     suspend fun linkToAccount(
         accountId: JServer.Credentials.AccountId,
-        shareCode: JServer.Credentials.ShareCode,
+        linkCode: JServer.Credentials.LinkCode,
     ): JServer.Credentials = withContext(dispatcherProvider.IO) {
-        log(TAG) { "linkToAccount(accountId=$accountId, shareCode=$shareCode)" }
+        log(TAG) { "linkToAccount(accountId=$accountId, shareCode=$linkCode)" }
         TODO()
     }
 
-    suspend fun createShareCode(credentials: JServer.Credentials): JServer.Credentials.ShareCode =
-        withContext(dispatcherProvider.IO) {
-            log(TAG) { "createShareCode(account=$credentials)" }
-            TODO()
-        }
+    suspend fun createLinkCode(
+        credentials: JServer.Credentials
+    ): JServer.Credentials.LinkCode = withContext(dispatcherProvider.IO) {
+        log(TAG) { "createLinkCode(account=$credentials)" }
+        JServer.Credentials.LinkCode(code = "testcode")
+//        api.shareAccount(credentials.accountId.id)
+//        TODO()
+    }
 
     suspend fun unregisterDevice(credentials: JServer.Credentials, toRemove: JServer.Credentials.DeviceId) {
         log(TAG) { "unregisterDevice(account=$credentials, toRemove=$toRemove)" }

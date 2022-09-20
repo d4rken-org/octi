@@ -37,6 +37,7 @@ class AddJServerVM @Inject constructor(
     }
 
     fun createAccount() = launch {
+        log(TAG) { "createAccount()" }
         _state.value = _state.value.copy(isBusy = true)
         try {
             val type = _state.value.serverType.address
@@ -56,22 +57,11 @@ class AddJServerVM @Inject constructor(
         }
     }
 
-    fun linkAccount(
-        accountId: JServer.Credentials.AccountId,
-        shareCode: JServer.Credentials.ShareCode
-    ) = launch {
+    fun linkAccount() = launch {
+        log(TAG) { "linkAccount()" }
         _state.value = _state.value.copy(isBusy = true)
         try {
-            val type = _state.value.serverType.address
-            log(TAG) { "linkAccount(): $type" }
-            val endpoint = jServerEndpointFactory.create(type)
-
-            withContext(NonCancellable) {
-                log(TAG) { "Linking account..." }
-                val newCredentials = endpoint.linkToAccount(accountId, shareCode)
-                log(TAG, INFO) { "Linked account created: $newCredentials" }
-                jServerAccountRepo.add(newCredentials)
-            }
+            AddJServerFragmentDirections.actionAddJServerFragmentToJServerLinkClientFragment().navigate()
         } finally {
             _state.value = _state.value.copy(isBusy = false)
         }

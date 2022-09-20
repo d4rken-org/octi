@@ -26,7 +26,7 @@ interface JServerApi {
 
 
     @POST("auth/share")
-    suspend fun shareAccount(
+    suspend fun linkAccount(
         @Header("X-Account-ID") accountId: String,
     ): String
 

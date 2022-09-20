@@ -114,6 +114,16 @@ class JServerConnector @AssistedInject constructor(
         }
     }
 
+    suspend fun createLinkCode(): LinkCodeContainer {
+        log(TAG) { "createLinkCode()" }
+        val linkCode = endpoint.createLinkCode(credentials)
+
+        return LinkCodeContainer(
+            accountId = credentials.accountId,
+            linkCode = linkCode
+        )
+    }
+
     private suspend fun readServer(): JServerData {
         log(TAG, DEBUG) { "readServer(): Starting..." }
         throw Exception("TODO")

@@ -61,9 +61,7 @@ class AddJServerFragment : Fragment3(R.layout.sync_add_new_jserver_fragment) {
         }
 
         ui.createNewAccount.setOnClickListener { vm.createAccount() }
-        ui.linkExistingAccount.setOnClickListener {
-            // TODO
-        }
+        ui.linkExistingAccount.setOnClickListener { vm.linkAccount() }
 
         super.onViewCreated(view, savedInstanceState)
     }

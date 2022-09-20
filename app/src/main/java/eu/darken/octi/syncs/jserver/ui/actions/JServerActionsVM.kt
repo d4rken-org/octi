@@ -44,6 +44,9 @@ class JServerActionsVM @Inject constructor(
 
     fun linkNewDevice() {
         log(TAG) { "linkNewDevice()" }
+        JServerActionsFragmentDirections.actionJServerActionsFragmentToJServerLinkFragment(
+            navArgs.identifier
+        ).navigate()
     }
 
     fun disconnct() = launch {
