@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.lifecycle.SavedStateHandle
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
@@ -14,7 +13,6 @@ import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.jserver.core.JServerConnector
-import eu.darken.octi.syncs.jserver.core.LinkCodeContainer
 import eu.darken.octi.syncs.jserver.ui.link.LinkOption
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -31,7 +29,6 @@ class JServerLinkHostVM @Inject constructor(
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     private val navArgs: JServerLinkHostFragmentArgs by handle.navArgs()
-    private val adapterContainer = moshi.adapter<LinkCodeContainer>()
     private val stateLock = Mutex()
 
     data class State(

@@ -7,6 +7,7 @@ import dagger.assisted.AssistedInject
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.sync.core.SyncDeviceId
 import eu.darken.octi.sync.core.SyncModuleId
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -36,18 +37,19 @@ class JServerEndpoint @AssistedInject constructor(
         }.build().create(JServerApi::class.java)
     }
 
-    suspend fun createNewAccount(): JServer.Credentials = withContext(dispatcherProvider.IO) {
+    suspend fun createNewAccount(ourDeviceId: SyncDeviceId): JServer.Credentials = withContext(dispatcherProvider.IO) {
         log(TAG) { "createNewAccount()" }
         val response = api.register(
             accountIDHeader = null,
-            deviceIDHeader = null,
+            deviceIDHeader = ourDeviceId.id.toString(),
             shareCode = null,
         )
+        require(ourDeviceId.id.toString() == response.deviceID)
         JServer.Credentials(
             createdAt = Instant.now(),
             serverAdress = serverAdress,
             accountId = JServer.Credentials.AccountId(response.accountID),
-            deviceId = JServer.Credentials.DeviceId(response.deviceID),
+            deviceId = ourDeviceId,
             devicePassword = JServer.Credentials.DevicePassword(response.password)
         )
     }
@@ -69,7 +71,7 @@ class JServerEndpoint @AssistedInject constructor(
 //        TODO()
     }
 
-    suspend fun unregisterDevice(credentials: JServer.Credentials, toRemove: JServer.Credentials.DeviceId) {
+    suspend fun unregisterDevice(credentials: JServer.Credentials, toRemove: SyncDeviceId) {
         log(TAG) { "unregisterDevice(account=$credentials, toRemove=$toRemove)" }
         TODO()
     }

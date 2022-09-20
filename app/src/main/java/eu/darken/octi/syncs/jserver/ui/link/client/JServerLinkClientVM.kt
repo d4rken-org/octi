@@ -2,7 +2,6 @@ package eu.darken.octi.syncs.jserver.ui.link.client
 
 import androidx.lifecycle.SavedStateHandle
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
@@ -23,8 +22,6 @@ class JServerLinkClientVM @Inject constructor(
     private val syncManager: SyncManager,
     private val moshi: Moshi
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
-
-    private val adapterContainer = moshi.adapter<LinkCodeContainer>()
 
     private val stateLock = Mutex()
 

@@ -11,10 +11,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
-import eu.darken.octi.sync.core.SyncConnector
-import eu.darken.octi.sync.core.SyncDeviceId
-import eu.darken.octi.sync.core.SyncRead
-import eu.darken.octi.sync.core.SyncWrite
+import eu.darken.octi.sync.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
@@ -30,6 +27,7 @@ class JServerConnector @AssistedInject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val endpointFactory: JServerEndpoint.Factory,
+    private val syncSettings: SyncSettings,
 ) : SyncConnector {
 
     private val endpoint by lazy { endpointFactory.create(credentials.serverAdress) }
@@ -120,6 +118,7 @@ class JServerConnector @AssistedInject constructor(
 
         return LinkCodeContainer(
             accountId = credentials.accountId,
+            deviceId = syncSettings.deviceId,
             linkCode = linkCode
         )
     }

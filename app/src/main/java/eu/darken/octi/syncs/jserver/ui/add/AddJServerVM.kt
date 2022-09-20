@@ -7,6 +7,7 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.syncs.jserver.core.JServer
 import eu.darken.octi.syncs.jserver.core.JServerAccountRepo
 import eu.darken.octi.syncs.jserver.core.JServerEndpoint
@@ -21,6 +22,7 @@ class AddJServerVM @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val jServerAccountRepo: JServerAccountRepo,
     private val jServerEndpointFactory: JServerEndpoint.Factory,
+    private val syncSettings: SyncSettings,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
@@ -46,7 +48,7 @@ class AddJServerVM @Inject constructor(
 
             withContext(NonCancellable) {
                 log(TAG) { "Creating account..." }
-                val newCredentials = endpoint.createNewAccount()
+                val newCredentials = endpoint.createNewAccount(syncSettings.deviceId)
                 log(TAG, INFO) { "New account created: $newCredentials" }
                 jServerAccountRepo.add(newCredentials)
             }

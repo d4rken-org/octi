@@ -3,6 +3,7 @@ package eu.darken.octi.syncs.jserver.core
 import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import eu.darken.octi.sync.core.SyncDeviceId
 import kotlinx.parcelize.Parcelize
 import java.time.Instant
 
@@ -26,7 +27,7 @@ interface JServer {
     data class Credentials(
         @Json(name = "serverAdress") val serverAdress: Address,
         @Json(name = "accountId") val accountId: AccountId,
-        @Json(name = "deviceId") val deviceId: DeviceId,
+        @Json(name = "deviceId") val deviceId: SyncDeviceId,
         @Json(name = "devicePassword") val devicePassword: DevicePassword,
         @Json(name = "createdAt") val createdAt: Instant,
     ) {
@@ -37,9 +38,6 @@ interface JServer {
         @JsonClass(generateAdapter = true)
         @Parcelize
         data class AccountId(@Json(name = "id") val id: String) : Parcelable
-
-        @JsonClass(generateAdapter = true)
-        data class DeviceId(@Json(name = "id") val id: String)
 
         @JsonClass(generateAdapter = true)
         data class DevicePassword(@Json(name = "password") val password: String) {
