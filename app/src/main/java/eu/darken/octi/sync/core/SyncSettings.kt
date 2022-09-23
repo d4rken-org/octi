@@ -32,7 +32,7 @@ class SyncSettings @Inject constructor(
                 preferences.edit().putString(key, it).commit()
             }
         }
-        SyncDeviceId(rawId)
+        DeviceId(rawId)
     }
 
     companion object {

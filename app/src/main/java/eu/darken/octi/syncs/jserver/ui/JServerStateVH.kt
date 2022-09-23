@@ -5,7 +5,7 @@ import androidx.core.view.isGone
 import eu.darken.octi.R
 import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.databinding.SyncListItemJserverBinding
-import eu.darken.octi.sync.core.SyncConnector
+import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.ui.list.SyncListAdapter
 import eu.darken.octi.syncs.jserver.core.JServer
 
@@ -38,7 +38,7 @@ class JServerStateVH(parent: ViewGroup) :
 
     data class Item(
         val credentials: JServer.Credentials,
-        val state: SyncConnector.State,
+        val state: SyncConnectorState,
         val onManage: () -> Unit,
     ) : SyncListAdapter.Item {
         override val stableId: Long

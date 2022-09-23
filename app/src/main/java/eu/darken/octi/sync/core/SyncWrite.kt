@@ -1,5 +1,6 @@
 package eu.darken.octi.sync.core
 
+import eu.darken.octi.modules.ModuleId
 import okio.ByteString
 import java.util.*
 
@@ -8,12 +9,12 @@ import java.util.*
  */
 interface SyncWrite {
     val writeId: UUID
-    val deviceId: SyncDeviceId
+    val deviceId: DeviceId
     val modules: Collection<Device.Module>
 
     interface Device {
         interface Module {
-            val moduleId: SyncModuleId
+            val moduleId: ModuleId
             val payload: ByteString
         }
     }

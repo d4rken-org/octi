@@ -1,4 +1,4 @@
-package eu.darken.octi.sync.core
+package eu.darken.octi.modules
 
 import kotlinx.coroutines.flow.Flow
 

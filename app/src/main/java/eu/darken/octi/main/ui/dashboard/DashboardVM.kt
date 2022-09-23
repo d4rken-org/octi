@@ -5,13 +5,16 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
-import eu.darken.octi.modules.meta.core.MetaRepo
+import eu.darken.octi.modules.ModuleData
+import eu.darken.octi.modules.ModuleManager
+import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -27,7 +30,7 @@ class DashboardVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val generalSettings: GeneralSettings,
     private val syncManager: SyncManager,
-    metaRepo: MetaRepo,
+    private val moduleManager: ModuleManager,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
@@ -48,8 +51,8 @@ class DashboardVM @Inject constructor(
     val listItems: LiveData<State> = combine(
         refreshTicker,
         generalSettings.isWelcomeDismissed.flow,
-        metaRepo.state,
-    ) { now, isWelcomeDismissed, metaState ->
+        moduleManager.byDevice,
+    ) { now, isWelcomeDismissed, byDevice ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
         if (!isWelcomeDismissed) {
@@ -59,12 +62,18 @@ class DashboardVM @Inject constructor(
             ).run { items.add(this) }
         }
 
-        metaState.all.forEach { metaContainer ->
+        byDevice.devices.mapNotNull { (deviceId, data) ->
+            val metaModule = data.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
+            if (metaModule == null) {
+                log(TAG, WARN) { "Missing meta module for $deviceId" }
+                return@mapNotNull null
+            }
+
             DeviceVH.Item(
                 now = now,
-                meta = metaContainer,
-            ).run { items.add(this) }
-        }
+                meta = metaModule,
+            )
+        }.toList().let { items.addAll(it) }
 
         State(items = items)
     }.asLiveData2()

@@ -13,12 +13,12 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.modules.ModuleId
 import eu.darken.octi.sync.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.parcelize.Parcelize
 import java.time.Duration
 import java.time.Instant
 
@@ -37,8 +37,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
         override val lastReadAt: Instant? = null,
         override val lastWriteAt: Instant? = null,
         override val lastError: Exception? = null,
-        override val stats: SyncConnector.State.Stats? = null,
-    ) : SyncConnector.State
+        override val stats: SyncConnectorState.Stats? = null,
+    ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
         parentScope = scope + dispatcherProvider.IO,
@@ -55,13 +55,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val writeLock = Mutex()
     private val readLock = Mutex()
 
-    @Parcelize
-    data class Identifier(
-        val account: GoogleAccount,
-    ) : SyncConnector.Identifier
-
-    override val identifier: SyncConnector.Identifier = Identifier(
-        account = client.account,
+    override val identifier: ConnectorId = ConnectorId(
+        if (client.account.isAppDataScope) "${account.id.id}-appdatascope" else account.id.id
     )
 
     init {
@@ -104,7 +99,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
-    override suspend fun deleteDevice(deviceId: SyncDeviceId) {
+    override suspend fun deleteDevice(deviceId: DeviceId) {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
         writeAction {
             appDataRoot()
@@ -122,7 +117,10 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         if (deviceDataDir?.isDirectory != true) {
             log(TAG, WARN) { "No device data dir found ($deviceDataDir)" }
-            return GDriveData()
+            return GDriveData(
+                connectorId = identifier,
+                devices = emptySet(),
+            )
         }
 
         val deviceDirs = deviceDataDir.listFiles()
@@ -145,7 +143,9 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 }
 
                 GDriveModuleData(
-                    moduleId = SyncModuleId(moduleFile.name),
+                    accountId = identifier,
+                    deviceId = DeviceId(deviceDir.name),
+                    moduleId = ModuleId(moduleFile.name),
                     createdAt = Instant.ofEpochMilli(moduleFile.createdTime.value),
                     modifiedAt = Instant.ofEpochMilli(moduleFile.modifiedTime.value),
                     payload = payload,
@@ -155,11 +155,14 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
 
             GDriveDeviceData(
-                deviceId = SyncDeviceId(deviceDir.name),
+                deviceId = DeviceId(deviceDir.name),
                 modules = moduleData
             )
         }
-        return GDriveData(devices = devices)
+        return GDriveData(
+            connectorId = identifier,
+            devices = devices,
+        )
     }
 
     private suspend fun writeDrive(data: SyncWrite) {
@@ -188,7 +191,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeDrive(): Done" }
     }
 
-    private fun getStorageStats(): SyncConnector.State.Stats {
+    private fun getStorageStats(): SyncConnectorState.Stats {
         log(TAG, VERBOSE) { "getStorageStats()" }
         val allItems = gdrive.files()
             .list().apply {
@@ -202,7 +205,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             .execute().storageQuota
             .limit
 
-        return SyncConnector.State.Stats(
+        return SyncConnectorState.Stats(
             timestamp = Instant.now(),
             storageUsed = allItems.sumOf { it.quotaBytesUsed ?: 0 },
             storageTotal = storageTotal
@@ -215,7 +218,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         _state.updateBlocking { copy(readActions = readActions + 1) }
 
-        var newStorageStats: SyncConnector.State.Stats? = null
+        var newStorageStats: SyncConnectorState.Stats? = null
 
         try {
             block()

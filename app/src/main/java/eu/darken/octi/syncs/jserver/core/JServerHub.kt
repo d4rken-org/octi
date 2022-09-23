@@ -5,8 +5,8 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.sync.core.ConnectorHub
 import eu.darken.octi.sync.core.SyncConnector
-import eu.darken.octi.sync.core.SyncHub
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapLatest
@@ -20,7 +20,7 @@ class JServerHub @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     val accountRepo: JServerAccountRepo,
     private val connectorFactory: JServerConnector.Factory,
-) : SyncHub {
+) : ConnectorHub {
 
     private val _connectors = accountRepo.accounts
         .mapLatest { acc ->

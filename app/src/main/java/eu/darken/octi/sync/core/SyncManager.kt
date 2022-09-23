@@ -6,6 +6,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.sync.core.cache.SyncCache
 import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
 import eu.darken.octi.syncs.gdrive.core.GDriveHub
 import eu.darken.octi.syncs.jserver.core.JServerConnector
@@ -20,14 +21,14 @@ class SyncManager @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     private val syncSettings: SyncSettings,
-    private val gDriveHub: GDriveHub,
-    private val jServerHub: JServerHub,
+    private val syncCache: SyncCache,
+    private val connectorHubs: Set<@JvmSuppressWildcards ConnectorHub>,
 ) {
 
     private val disabledConnectors = MutableStateFlow(emptySet<SyncConnector>())
 
-    val hubs: Flow<List<SyncHub>> = flow {
-        emit(listOf(gDriveHub, jServerHub))
+    private val hubs: Flow<Collection<ConnectorHub>> = flow {
+        emit(connectorHubs)
         awaitCancellation()
     }
         .setupCommonEventHandlers(TAG) { "hubs" }
@@ -42,7 +43,7 @@ class SyncManager @Inject constructor(
         .setupCommonEventHandlers(TAG) { "connectors" }
         .shareLatest(scope + dispatcherProvider.Default)
 
-    val states: Flow<Collection<SyncConnector.State>> = connectors
+    val states: Flow<Collection<SyncConnectorState>> = connectors
         .flatMapLatest { hs ->
             if (hs.isEmpty()) flowOf(emptyList())
             else combine(hs.map { it.state }) { it.toList() }
@@ -50,16 +51,25 @@ class SyncManager @Inject constructor(
         .setupCommonEventHandlers(TAG) { "syncStates" }
         .shareLatest(scope + dispatcherProvider.Default)
 
-    val data: Flow<Collection<SyncRead>> = connectors
+    val data: Flow<Collection<SyncRead.Device>> = connectors
         .flatMapLatest { hs ->
             if (hs.isEmpty()) flowOf(emptyList())
-            else combine(hs.map { it.data }) { it.toList() }
+            else combine(hs.map { it.data }) { it.toSet() }
         }
-        .map { reads ->
-            reads.filterNotNull()
+        .map { it.filterNotNull() }
+        .onEach { syncCache.save(it) }
+        .map { newReads ->
+            newReads + syncCache.load()
         }
+        .map { it.latestData() }
+//        .onStart { emit(emptyList()) }
         .setupCommonEventHandlers(TAG) { "syncStates" }
         .shareLatest(scope + dispatcherProvider.Default)
+
+    fun start() {
+        log(TAG) { "start()" }
+        // NOOP?
+    }
 
     suspend fun sync() {
         log(TAG) { "syncAll()" }
@@ -86,14 +96,13 @@ class SyncManager @Inject constructor(
     }
 
 
-
-    suspend fun wipe(identifier: SyncConnector.Identifier) = withContext(NonCancellable) {
+    suspend fun wipe(identifier: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "wipe(identifier=$identifier)" }
         getConnectorById<SyncConnector>(identifier).first().deleteAll()
         log(TAG) { "wipe(identifier=$identifier) done" }
     }
 
-    suspend fun disconnect(identifier: SyncConnector.Identifier, wipe: Boolean = false) = withContext(NonCancellable) {
+    suspend fun disconnect(identifier: ConnectorId, wipe: Boolean = false) = withContext(NonCancellable) {
         log(TAG) { "disconnect(identifier=$identifier, wipe=$wipe)" }
 
         val connector = getConnectorById<SyncConnector>(identifier).first()
@@ -105,10 +114,10 @@ class SyncManager @Inject constructor(
 
             when (connector) {
                 is GDriveAppDataConnector -> {
-                    gDriveHub.accountRepo.remove(connector.account.id)
+                    hubs.filterIsInstance<GDriveHub>().single().accountRepo.remove(connector.account.id)
                 }
                 is JServerConnector -> {
-                    jServerHub.accountRepo.remove(connector.credentials.accountId)
+                    hubs.filterIsInstance<JServerHub>().single().accountRepo.remove(connector.credentials.accountId)
                 }
             }
         } finally {

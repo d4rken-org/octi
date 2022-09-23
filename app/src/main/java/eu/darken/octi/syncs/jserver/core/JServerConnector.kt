@@ -16,7 +16,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.parcelize.Parcelize
 import java.time.Duration
 import java.time.Instant
 
@@ -38,8 +37,8 @@ class JServerConnector @AssistedInject constructor(
         override val lastReadAt: Instant? = null,
         override val lastWriteAt: Instant? = null,
         override val lastError: Exception? = null,
-        override val stats: SyncConnector.State.Stats? = null,
-    ) : SyncConnector.State
+        override val stats: SyncConnectorState.Stats? = null,
+    ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
         parentScope = scope + dispatcherProvider.IO,
@@ -56,15 +55,8 @@ class JServerConnector @AssistedInject constructor(
     private val writeLock = Mutex()
     private val readLock = Mutex()
 
-    @Parcelize
-    data class Identifier(
-        val server: JServer.Address,
-        val account: JServer.Credentials.AccountId,
-    ) : SyncConnector.Identifier
-
-    override val identifier: SyncConnector.Identifier = Identifier(
-        server = credentials.serverAdress,
-        account = credentials.accountId,
+    override val identifier: ConnectorId = ConnectorId(
+        "${credentials.serverAdress.domain}(${credentials.accountId.id})"
     )
 
     init {
@@ -105,7 +97,7 @@ class JServerConnector @AssistedInject constructor(
         }
     }
 
-    override suspend fun deleteDevice(deviceId: SyncDeviceId) {
+    override suspend fun deleteDevice(deviceId: DeviceId) {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
         writeAction {
             // TODO
@@ -134,10 +126,10 @@ class JServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeServer(): Done" }
     }
 
-    private fun getStorageStats(): SyncConnector.State.Stats {
+    private fun getStorageStats(): SyncConnectorState.Stats {
         log(TAG, VERBOSE) { "getStorageStats()" }
 
-        return SyncConnector.State.Stats()
+        return SyncConnectorState.Stats()
     }
 
     private suspend fun readAction(block: suspend () -> Unit) {
@@ -146,7 +138,7 @@ class JServerConnector @AssistedInject constructor(
 
         _state.updateBlocking { copy(readActions = readActions + 1) }
 
-        var newStorageStats: SyncConnector.State.Stats? = null
+        var newStorageStats: SyncConnectorState.Stats? = null
 
         try {
             block()

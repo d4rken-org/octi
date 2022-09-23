@@ -69,7 +69,7 @@
         tools:layout="@layout/sync_actions_jserver_fragment">
         <argument
             android:name="identifier"
-            app:argType="eu.darken.octi.sync.core.SyncConnector$Identifier" />
+            app:argType="eu.darken.octi.sync.core.ConnectorId" />
         <action
             android:id="@+id/action_JServerActionsFragment_to_JServerLinkFragment"
             app:destination="@id/JServerLinkFragment"
@@ -81,7 +81,7 @@
         tools:layout="@layout/sync_actions_gdrive_fragment">
         <argument
             android:name="identifier"
-            app:argType="eu.darken.octi.sync.core.SyncConnector$Identifier" />
+            app:argType="eu.darken.octi.sync.core.ConnectorId" />
     </dialog>
     <fragment
         android:id="@+id/JServerLinkFragment"
@@ -89,7 +89,7 @@
         tools:layout="@layout/sync_jserver_link_host_fragment">
         <argument
             android:name="identifier"
-            app:argType="eu.darken.octi.sync.core.SyncConnector$Identifier" />
+            app:argType="eu.darken.octi.sync.core.ConnectorId" />
     </fragment>
     <fragment
         android:id="@+id/JServerLinkClientFragment"

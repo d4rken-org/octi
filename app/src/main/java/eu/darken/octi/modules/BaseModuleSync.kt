@@ -1,4 +1,4 @@
-package eu.darken.octi.sync.core
+package eu.darken.octi.modules
 
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.Bugs
@@ -6,6 +6,10 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.*
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.sync.core.SyncRead
+import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.SyncWrite
 import eu.darken.octi.sync.core.errors.PayloadDecodingException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
@@ -16,7 +20,7 @@ import java.io.IOException
 import java.time.Instant
 
 
-abstract class BaseSyncHelper<T : Any> constructor(
+abstract class BaseModuleSync<T : Any> constructor(
     private val tag: String,
     private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
@@ -24,15 +28,15 @@ abstract class BaseSyncHelper<T : Any> constructor(
     private val syncManager: SyncManager,
     private val moduleRepo: ModuleRepo<T>,
     private val infoSource: ModuleInfoSource<T>,
-) {
+) : ModuleSync<T> {
 
-    abstract val moduleId: SyncModuleId
+    abstract override val moduleId: ModuleId
     abstract val isEnabled: Flow<Boolean>
 
     abstract fun onSerialize(item: T): ByteString
     abstract fun onDeserialize(raw: ByteString): T
 
-    fun start() {
+    override fun start() {
         log(tag) { "start()" }
 
         // Read
@@ -43,7 +47,6 @@ abstract class BaseSyncHelper<T : Any> constructor(
             }
             .map { reads ->
                 reads
-                    .map { it.devices }.flatten()
                     .filter { it.deviceId != syncSettings.deviceId }
                     .mapNotNull { device ->
                         val rawModule = device.modules.singleOrNull {
@@ -55,9 +58,10 @@ abstract class BaseSyncHelper<T : Any> constructor(
                         }
 
                         try {
-                            SyncDataContainer(
-                                deviceId = device.deviceId,
+                            ModuleData(
                                 modifiedAt = rawModule.modifiedAt,
+                                deviceId = device.deviceId,
+                                moduleId = moduleId,
                                 data = deserialize(rawModule),
                             )
                         } catch (e: Exception) {
@@ -83,9 +87,10 @@ abstract class BaseSyncHelper<T : Any> constructor(
             .distinctUntilChanged()
             .onEach {
                 log(tag, VERBOSE) { "syncWrite(): Processing updating self: $it" }
-                val container = SyncDataContainer(
-                    deviceId = syncSettings.deviceId,
+                val container = ModuleData(
                     modifiedAt = Instant.now(),
+                    deviceId = syncSettings.deviceId,
+                    moduleId = moduleId,
                     data = it
                 )
                 moduleRepo.updateSelf(container)
@@ -103,14 +108,14 @@ abstract class BaseSyncHelper<T : Any> constructor(
             throw IOException("Failed to serialize $this", e)
         }
         return object : SyncWrite.Device.Module {
-            override val moduleId: SyncModuleId = this@BaseSyncHelper.moduleId
+            override val moduleId: ModuleId = this@BaseModuleSync.moduleId
             override val payload: ByteString = serialized.toByteArray().toByteString()
             override fun toString(): String = item.toString()
         }
     }
 
     private fun deserialize(raw: SyncRead.Device.Module): T {
-        if (raw.moduleId != this@BaseSyncHelper.moduleId) {
+        if (raw.moduleId != this@BaseModuleSync.moduleId) {
             throw IllegalArgumentException("Wrong moduleId: ${moduleId}\n$this")
         }
         return try {

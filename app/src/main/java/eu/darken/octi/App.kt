@@ -8,8 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.debug.autoreport.AutoReporting
 import eu.darken.octi.common.debug.logging.*
-import eu.darken.octi.modules.meta.core.MetaSync
-import eu.darken.octi.modules.power.core.PowerSync
+import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import javax.inject.Inject
 
@@ -18,8 +17,7 @@ open class App : Application(), Configuration.Provider {
 
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var bugReporter: AutoReporting
-    @Inject lateinit var metaSync: MetaSync
-    @Inject lateinit var powerSync: PowerSync
+    @Inject lateinit var syncManager: SyncManager
     @Inject lateinit var syncWorkerControl: SyncWorkerControl
 
     override fun onCreate() {
@@ -48,8 +46,8 @@ open class App : Application(), Configuration.Provider {
             .loadLibrary(this, "bugsnag-plugin-android-anr")
 
         bugReporter.setup()
-        metaSync.start()
-        powerSync.start()
+
+        syncManager.start()
 
         syncWorkerControl.schedule()
 

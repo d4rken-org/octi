@@ -7,8 +7,8 @@ import dagger.assisted.AssistedInject
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.sync.core.SyncDeviceId
-import eu.darken.octi.sync.core.SyncModuleId
+import eu.darken.octi.modules.ModuleId
+import eu.darken.octi.sync.core.DeviceId
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okio.ByteString
@@ -37,7 +37,7 @@ class JServerEndpoint @AssistedInject constructor(
         }.build().create(JServerApi::class.java)
     }
 
-    suspend fun createNewAccount(ourDeviceId: SyncDeviceId): JServer.Credentials = withContext(dispatcherProvider.IO) {
+    suspend fun createNewAccount(ourDeviceId: DeviceId): JServer.Credentials = withContext(dispatcherProvider.IO) {
         log(TAG) { "createNewAccount()" }
         val response = api.register(
             accountIDHeader = null,
@@ -71,17 +71,17 @@ class JServerEndpoint @AssistedInject constructor(
 //        TODO()
     }
 
-    suspend fun unregisterDevice(credentials: JServer.Credentials, toRemove: SyncDeviceId) {
+    suspend fun unregisterDevice(credentials: JServer.Credentials, toRemove: DeviceId) {
         log(TAG) { "unregisterDevice(account=$credentials, toRemove=$toRemove)" }
         TODO()
     }
 
-    suspend fun readModule(credentials: JServer.Credentials, moduleId: SyncModuleId) {
+    suspend fun readModule(credentials: JServer.Credentials, moduleId: ModuleId) {
         log(TAG) { "readModule(account=$credentials, moduleId=$moduleId)" }
         TODO()
     }
 
-    suspend fun writeModule(credentials: JServer.Credentials, moduleId: SyncModuleId, payload: ByteString) {
+    suspend fun writeModule(credentials: JServer.Credentials, moduleId: ModuleId, payload: ByteString) {
         log(TAG) { "writeModule(account=$credentials, moduleId=$moduleId, payload=$payload)" }
         TODO()
     }

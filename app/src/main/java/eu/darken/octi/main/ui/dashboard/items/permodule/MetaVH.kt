@@ -5,7 +5,7 @@ import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardMetaItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
 import eu.darken.octi.modules.meta.core.MetaInfo
-import eu.darken.octi.sync.core.SyncDeviceId
+import eu.darken.octi.sync.core.DeviceId
 
 
 class MetaVH(parent: ViewGroup) :
@@ -21,7 +21,7 @@ class MetaVH(parent: ViewGroup) :
     }
 
     data class Item(
-        val deviceId: SyncDeviceId,
+        val deviceId: DeviceId,
         val metaInfo: MetaInfo,
     ) : DashboardAdapter.Item {
         override val stableId: Long = this.javaClass.hashCode().toLong()

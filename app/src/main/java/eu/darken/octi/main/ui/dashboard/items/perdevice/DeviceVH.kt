@@ -7,8 +7,8 @@ import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.lists.binding
 import eu.darken.octi.databinding.DashboardDeviceItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
+import eu.darken.octi.modules.ModuleData
 import eu.darken.octi.modules.meta.core.MetaInfo
-import eu.darken.octi.sync.core.SyncDataContainer
 import java.time.Duration
 import java.time.Instant
 
@@ -46,7 +46,7 @@ class DeviceVH(parent: ViewGroup) :
 
     data class Item(
         val now: Instant,
-        val meta: SyncDataContainer<MetaInfo>,
+        val meta: ModuleData<MetaInfo>,
     ) : DashboardAdapter.Item {
         override val stableId: Long = meta.deviceId.hashCode().toLong()
     }

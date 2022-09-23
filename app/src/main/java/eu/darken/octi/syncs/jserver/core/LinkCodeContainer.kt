@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import eu.darken.octi.common.serialization.fromJson
-import eu.darken.octi.sync.core.SyncDeviceId
+import eu.darken.octi.sync.core.DeviceId
 import kotlinx.parcelize.Parcelize
 import okio.ByteString.Companion.decodeBase64
 import okio.ByteString.Companion.toByteString
@@ -15,7 +15,7 @@ import okio.ByteString.Companion.toByteString
 @Parcelize
 data class LinkCodeContainer(
     @Json(name = "accountId") val accountId: JServer.Credentials.AccountId,
-    @Json(name = "deviceId") val deviceId: SyncDeviceId,
+    @Json(name = "deviceId") val deviceId: DeviceId,
     @Json(name = "shareCode") val linkCode: JServer.Credentials.LinkCode,
 ) : Parcelable {
 

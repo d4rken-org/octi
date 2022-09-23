@@ -1,22 +1,21 @@
 package eu.darken.octi.sync.core
 
+import eu.darken.octi.modules.ModuleId
 import okio.ByteString
 import java.time.Instant
-import java.util.*
 
-/**
- * Data read from a connector
- */
 interface SyncRead {
-    val readId: UUID
+    val connectorId: ConnectorId
     val devices: Collection<Device>
 
     interface Device {
-        val deviceId: SyncDeviceId
+        val deviceId: DeviceId
         val modules: Collection<Module>
 
         interface Module {
-            val moduleId: SyncModuleId
+            val accountId: ConnectorId
+            val deviceId: DeviceId
+            val moduleId: ModuleId
             val createdAt: Instant
             val modifiedAt: Instant
             val payload: ByteString

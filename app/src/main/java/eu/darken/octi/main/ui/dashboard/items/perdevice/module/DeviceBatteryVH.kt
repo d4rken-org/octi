@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardDeviceBatteryItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
+import eu.darken.octi.modules.ModuleData
 import eu.darken.octi.modules.meta.core.MetaInfo
-import eu.darken.octi.sync.core.SyncDataContainer
 
 
 class DeviceBatteryVH(parent: ViewGroup) :
@@ -35,7 +35,7 @@ class DeviceBatteryVH(parent: ViewGroup) :
     }
 
     data class Item(
-        val meta: SyncDataContainer<MetaInfo>,
+        val meta: ModuleData<MetaInfo>,
     ) : DashboardAdapter.Item {
         override val stableId: Long = meta.deviceId.hashCode().toLong()
     }
