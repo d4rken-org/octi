@@ -12,8 +12,8 @@ import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
 import eu.darken.octi.sync.core.errors.PayloadDecodingException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.plus
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import java.io.IOException
@@ -26,79 +26,54 @@ abstract class BaseModuleSync<T : Any> constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val syncSettings: SyncSettings,
     private val syncManager: SyncManager,
-    private val moduleRepo: ModuleRepo<T>,
-    private val infoSource: ModuleInfoSource<T>,
 ) : ModuleSync<T> {
 
     abstract override val moduleId: ModuleId
-    abstract val isEnabled: Flow<Boolean>
 
     abstract fun onSerialize(item: T): ByteString
     abstract fun onDeserialize(raw: ByteString): T
 
-    override fun start() {
-        log(tag) { "start()" }
-
-        // Read
-        isEnabled
-            .flatMapLatest { isEnabled ->
-                if (!isEnabled) emptyFlow()
-                else syncManager.data
-            }
-            .map { reads ->
-                reads
-                    .filter { it.deviceId != syncSettings.deviceId }
-                    .mapNotNull { device ->
-                        val rawModule = device.modules.singleOrNull {
-                            it.moduleId == moduleId
-                        }
-                        if (rawModule == null) {
-                            log(tag, WARN) { "syncRead(): Missing meta module on $device" }
-                            return@mapNotNull null
-                        }
-
-                        try {
-                            ModuleData(
-                                modifiedAt = rawModule.modifiedAt,
-                                deviceId = device.deviceId,
-                                moduleId = moduleId,
-                                data = deserialize(rawModule),
-                            )
-                        } catch (e: Exception) {
-                            log(tag, ERROR) { "syncRead(): Failed to decode $rawModule:\n${e.asLog()}" }
-                            Bugs.report(PayloadDecodingException(rawModule))
-                            null
-                        }
+    override val others: Flow<List<ModuleData<T>>> = syncManager.data
+        .map { reads ->
+            reads
+                .filter { it.deviceId != syncSettings.deviceId }
+                .mapNotNull { device ->
+                    val rawModule = device.modules.singleOrNull {
+                        it.moduleId == moduleId
                     }
-            }
-            .onEach { infos ->
-                log(tag, VERBOSE) { "syncRead(): Processing updating others: $infos" }
-                moduleRepo.updateOthers(infos)
-            }
-            .setupCommonEventHandlers(tag) { "syncRead" }
-            .launchIn(scope + dispatcherProvider.IO)
+                    if (rawModule == null) {
+                        log(tag, WARN) { "syncRead(): Missing meta module on $device" }
+                        return@mapNotNull null
+                    }
 
-        // Write
-        isEnabled
-            .flatMapLatest {
-                if (!it) emptyFlow()
-                else infoSource.info
-            }
-            .distinctUntilChanged()
-            .onEach {
-                log(tag, VERBOSE) { "syncWrite(): Processing updating self: $it" }
-                val container = ModuleData(
-                    modifiedAt = Instant.now(),
-                    deviceId = syncSettings.deviceId,
-                    moduleId = moduleId,
-                    data = it
-                )
-                moduleRepo.updateSelf(container)
-                syncManager.write(serialize(it))
-                syncManager.sync()
-            }
-            .setupCommonEventHandlers(tag) { "syncWrite" }
-            .launchIn(scope + dispatcherProvider.IO)
+                    try {
+                        ModuleData(
+                            modifiedAt = rawModule.modifiedAt,
+                            deviceId = device.deviceId,
+                            moduleId = moduleId,
+                            data = deserialize(rawModule),
+                        )
+                    } catch (e: Exception) {
+                        log(tag, ERROR) { "syncRead(): Failed to decode $rawModule:\n${e.asLog()}" }
+                        Bugs.report(PayloadDecodingException(rawModule))
+                        null
+                    }
+                }
+        }
+        .setupCommonEventHandlers(tag) { "others" }
+
+    override suspend fun sync(self: T): ModuleData<T> {
+        log(tag, VERBOSE) { "sync(self=$self)" }
+        val container = ModuleData(
+            modifiedAt = Instant.now(),
+            deviceId = syncSettings.deviceId,
+            moduleId = moduleId,
+            data = self
+        )
+
+        syncManager.write(serialize(self))
+
+        return container
     }
 
     private fun serialize(item: T): SyncWrite.Device.Module {

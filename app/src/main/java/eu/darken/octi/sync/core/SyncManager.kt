@@ -31,7 +31,7 @@ class SyncManager @Inject constructor(
         emit(connectorHubs)
         awaitCancellation()
     }
-        .setupCommonEventHandlers(TAG) { "hubs" }
+        .setupCommonEventHandlers(TAG) { "syncHubs" }
         .shareLatest(scope + dispatcherProvider.Default)
 
     val connectors: Flow<List<SyncConnector>> = combine(
@@ -40,7 +40,7 @@ class SyncManager @Inject constructor(
     ) { connectors, disabledConnectors ->
         connectors.filter { !disabledConnectors.contains(it) }
     }
-        .setupCommonEventHandlers(TAG) { "connectors" }
+        .setupCommonEventHandlers(TAG) { "syncConnectors" }
         .shareLatest(scope + dispatcherProvider.Default)
 
     val states: Flow<Collection<SyncConnectorState>> = connectors
@@ -53,17 +53,20 @@ class SyncManager @Inject constructor(
 
     val data: Flow<Collection<SyncRead.Device>> = connectors
         .flatMapLatest { hs ->
-            if (hs.isEmpty()) flowOf(emptyList())
-            else combine(hs.map { it.data }) { it.toSet() }
+            if (hs.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                combine(hs.map { it.data }) { it.toSet() }
+            }
         }
         .map { it.filterNotNull() }
         .onEach { syncCache.save(it) }
+        .onStart { emit(emptyList()) }
         .map { newReads ->
             newReads + syncCache.load()
         }
         .map { it.latestData() }
-//        .onStart { emit(emptyList()) }
-        .setupCommonEventHandlers(TAG) { "syncStates" }
+        .setupCommonEventHandlers(TAG) { "syncData" }
         .shareLatest(scope + dispatcherProvider.Default)
 
     fun start() {

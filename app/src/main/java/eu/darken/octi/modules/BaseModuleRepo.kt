@@ -2,17 +2,23 @@ package eu.darken.octi.modules
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.flow.DynamicStateFlow
+import eu.darken.octi.common.flow.replayingShare
+import eu.darken.octi.common.flow.setupCommonEventHandlers
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.plus
 
 
 abstract class BaseModuleRepo<T : Any> constructor(
     private val tag: String,
     @AppScope private val scope: CoroutineScope,
-    dispatcherProvider: DispatcherProvider,
+    private val dispatcherProvider: DispatcherProvider,
+    private val moduleSettings: ModuleSettings,
+    private val moduleSync: ModuleSync<T>,
+    private val infoSource: ModuleInfoSource<T>,
 ) : ModuleRepo<T> {
 
     abstract val moduleId: ModuleId
@@ -46,4 +52,35 @@ abstract class BaseModuleRepo<T : Any> constructor(
         }
     }
 
+    private val readFlow = moduleSettings.isEnabled.flow
+        .flatMapLatest { isEnabled ->
+            if (!isEnabled) {
+                log(tag, WARN) { "$moduleId is disabled" }
+                emptyFlow()
+            } else {
+                moduleSync.others
+            }
+        }
+        .onEach { updateOthers(it) }
+        .setupCommonEventHandlers(tag) { "others" }
+
+    private val writeFLow = moduleSettings.isEnabled.flow
+        .flatMapLatest { isEnabled ->
+            if (!isEnabled) {
+                log(tag, WARN) { "$moduleId is disabled" }
+                emptyFlow()
+            } else {
+                infoSource.info
+            }
+        }
+        .distinctUntilChanged()
+        .onEach { updateSelf(moduleSync.sync(it)) }
+        .setupCommonEventHandlers(tag) { "updateSelf" }
+
+    override val keepAlive: Flow<Unit> = combine(
+        readFlow,
+        writeFLow
+    ) { _, _ -> Unit }
+        .setupCommonEventHandlers(tag) { "keepAlive" }
+        .replayingShare(scope + dispatcherProvider.Default)
 }

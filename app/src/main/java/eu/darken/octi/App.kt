@@ -8,6 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.debug.autoreport.AutoReporting
 import eu.darken.octi.common.debug.logging.*
+import eu.darken.octi.modules.ModuleManager
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import javax.inject.Inject
@@ -18,6 +19,7 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var bugReporter: AutoReporting
     @Inject lateinit var syncManager: SyncManager
+    @Inject lateinit var moduleManager: ModuleManager
     @Inject lateinit var syncWorkerControl: SyncWorkerControl
 
     override fun onCreate() {
@@ -48,7 +50,7 @@ open class App : Application(), Configuration.Provider {
         bugReporter.setup()
 
         syncManager.start()
-
+        moduleManager.start()
         syncWorkerControl.schedule()
 
         log(TAG) { "onCreate() done! ${Exception().asLog()}" }

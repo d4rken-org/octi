@@ -9,10 +9,10 @@ import eu.darken.octi.common.serialization.fromJson
 import eu.darken.octi.common.serialization.toByteString
 import eu.darken.octi.modules.BaseModuleSync
 import eu.darken.octi.modules.ModuleId
+import eu.darken.octi.modules.power.PowerModule
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import okio.ByteString
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,22 +24,15 @@ class PowerSync @Inject constructor(
     syncSettings: SyncSettings,
     syncManager: SyncManager,
     private val moshi: Moshi,
-    powerSettings: PowerSettings,
-    powerInfoSource: PowerInfoSource,
-    powerRepo: PowerRepo,
 ) : BaseModuleSync<PowerInfo>(
     tag = TAG,
     scope = scope,
     dispatcherProvider = dispatcherProvider,
     syncSettings = syncSettings,
     syncManager = syncManager,
-    moduleRepo = powerRepo,
-    infoSource = powerInfoSource
 ) {
 
     private val adapter by lazy { moshi.adapter<PowerInfo>() }
-
-    override val isEnabled: Flow<Boolean> = powerSettings.isEnabled.flow
 
     override val moduleId: ModuleId = PowerModule.MODULE_ID
 

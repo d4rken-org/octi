@@ -1,4 +1,4 @@
-package eu.darken.octi.modules.meta.core
+package eu.darken.octi.modules.power
 
 import dagger.Binds
 import dagger.Module
@@ -9,20 +9,22 @@ import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.modules.ModuleId
 import eu.darken.octi.modules.ModuleRepo
 import eu.darken.octi.modules.ModuleSync
+import eu.darken.octi.modules.power.core.PowerRepo
+import eu.darken.octi.modules.power.core.PowerSync
 
 @InstallIn(SingletonComponent::class)
 @Module
-abstract class MetaModule {
+abstract class PowerModule {
 
     @Binds
     @IntoSet
-    abstract fun sync(sync: MetaSync): ModuleSync<out Any>
+    abstract fun sync(sync: PowerSync): ModuleSync<out Any>
 
     @Binds
     @IntoSet
-    abstract fun repo(repo: MetaRepo): ModuleRepo<out Any>
+    abstract fun repo(repo: PowerRepo): ModuleRepo<out Any>
 
     companion object {
-        val MODULE_ID = ModuleId("${BuildConfigWrap.APPLICATION_ID}.module.core.meta")
+        val MODULE_ID = ModuleId("${BuildConfigWrap.APPLICATION_ID}.module.core.power")
     }
 }

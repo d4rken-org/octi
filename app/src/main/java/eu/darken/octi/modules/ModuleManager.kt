@@ -5,12 +5,10 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
+import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.plus
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,9 +21,9 @@ class ModuleManager @Inject constructor(
 ) {
 
     private val data = combine(moduleRepos.map { it.state }) {
-        log(TAG) { "####### $it" }
         it.toList()
     }
+        .setupCommonEventHandlers(TAG) { "data" }
         .replayingShare(scope + dispatcherProvider.Default)
 
     data class ByModule(
@@ -53,6 +51,7 @@ class ModuleManager @Inject constructor(
 
     fun start() {
         log(TAG) { "start()" }
+        combine(moduleRepos.map { it.keepAlive }) { it }.launchIn(scope + dispatcherProvider.Default)
     }
 
     companion object {
