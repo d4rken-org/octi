@@ -7,10 +7,6 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.sync.core.cache.SyncCache
-import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
-import eu.darken.octi.syncs.gdrive.core.GDriveHub
-import eu.darken.octi.syncs.jserver.core.JServerConnector
-import eu.darken.octi.syncs.jserver.core.JServerHub
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -116,13 +112,8 @@ class SyncManager @Inject constructor(
             if (wipe) connector.deleteAll()
             else connector.deleteDevice(syncSettings.deviceId)
 
-            when (connector) {
-                is GDriveAppDataConnector -> {
-                    hubs.filterIsInstance<GDriveHub>().single().accountRepo.remove(connector.account.id)
-                }
-                is JServerConnector -> {
-                    hubs.filterIsInstance<JServerHub>().single().accountRepo.remove(connector.credentials.accountId)
-                }
+            hubs.first().filter { it.owns(identifier) }.forEach {
+                it.remove(identifier)
             }
         } finally {
             disabledConnectors.value = disabledConnectors.value - connector
@@ -132,6 +123,6 @@ class SyncManager @Inject constructor(
     }
 
     companion object {
-        private val TAG = logTag("Sync", "Repo")
+        private val TAG = logTag("Sync", "Manager")
     }
 }
