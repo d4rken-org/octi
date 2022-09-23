@@ -2,7 +2,7 @@ package eu.darken.octi.sync.core.cache
 
 import android.content.Context
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
+import com.squareup.moshi.adapter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.Bugs
@@ -11,6 +11,9 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.hashing.Hash
+import eu.darken.octi.common.hashing.toHash
+import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.SyncRead
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -26,11 +29,12 @@ class SyncCache @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
     private val adapter by lazy {
-        val list = Types.newParameterizedType(Collection::class.java, CachedSyncRead::class.java)
-        moshi.adapter<Collection<CachedSyncRead>>(list)
+        moshi.adapter<CachedSyncRead>()
     }
     private val cacheLock = Mutex()
-    private val cacheFile = File(context.cacheDir, "sync_cache")
+    private val cacheDir by lazy {
+        File(context.cacheDir, "sync_caches").also { it.mkdirs() }
+    }
 
     private suspend inline fun <reified T> guard(crossinline block: () -> T) = withContext(dispatcherProvider.IO) {
         cacheLock.withLock {
@@ -38,32 +42,38 @@ class SyncCache @Inject constructor(
         }
     }
 
-    suspend fun load(): Collection<SyncRead> = guard {
-        log(TAG, VERBOSE) { "load()" }
+    private fun ConnectorId.toCacheFile() = File(cacheDir, id.toHash(Hash.Algo.SHA256))
+
+    suspend fun load(id: ConnectorId): SyncRead? = guard {
+        log(TAG, VERBOSE) { "load(id=$id)" }
+        val cacheFile = id.toCacheFile()
         try {
-            if (!cacheFile.exists()) return@guard emptyList()
+            if (!cacheFile.exists()) return@guard null
+
             adapter.fromJson(cacheFile.readText())!!.also {
-                log(TAG, VERBOSE) { "loaded(): $it" }
+                log(TAG, VERBOSE) { "load(id=$id): $it" }
             }
         } catch (e: Exception) {
             log(TAG, ERROR) { "Failed to load cache sync data: ${e.asLog()}" }
             Bugs.report(e)
-            emptyList()
+            null
         }
     }
 
-    suspend fun save(reads: Collection<SyncRead>) = guard {
-        log(TAG, VERBOSE) { "save(reads=$reads)" }
+    suspend fun save(id: ConnectorId, read: SyncRead): Unit = guard {
+        log(TAG, VERBOSE) { "save(id=$id, read=$read)" }
         try {
-            val mapped = reads.map { read ->
-                val mappedDevices = read.devices.map { device ->
+            val cachedRead = read.devices
+                .map { device ->
                     val mappedModules = device.modules.map { it.toCached() }
                     device.toCached(mappedModules)
                 }
-                read.toCached(mappedDevices)
-            }
+                .let { read.toCached(it) }
+
+            val cacheFile = id.toCacheFile()
+
             if (!cacheFile.exists()) cacheFile.createNewFile()
-            cacheFile.writeText(adapter.toJson(mapped))
+            cacheFile.writeText(adapter.toJson(cachedRead))
         } catch (e: Exception) {
             log(TAG, ERROR) { "Failed to cache sync data: ${e.asLog()}" }
             Bugs.report(e)

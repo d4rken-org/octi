@@ -56,14 +56,15 @@ class SyncManager @Inject constructor(
             if (hs.isEmpty()) {
                 flowOf(emptyList())
             } else {
-                combine(hs.map { it.data }) { it.toSet() }
+                val cons = hs.map { con -> con.data.map { con.identifier to it } }
+                combine(cons) { it.toSet() }
             }
         }
-        .map { it.filterNotNull() }
-        .onEach { syncCache.save(it) }
-        .onStart { emit(emptyList()) }
-        .map { newReads ->
-            newReads + syncCache.load()
+        .map { pairs ->
+            pairs.mapNotNull { (id, read) ->
+                if (read != null) syncCache.save(id, read)
+                read ?: syncCache.load(id)
+            }
         }
         .map { it.latestData() }
         .setupCommonEventHandlers(TAG) { "syncData" }
