@@ -6,13 +6,23 @@
     android:layout_height="wrap_content"
     android:layout_margin="16dp">
 
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_baseline_gdrive_24"
+        app:layout_constraintBottom_toBottomOf="@id/title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/title" />
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title"
         style="@style/TextAppearance.Material3.TitleMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:text="@string/sync_gdrive_type_label"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -92,8 +102,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:icon="@drawable/ic_baseline_settings_24"
         android:text="@string/general_manage_action"
+        app:icon="@drawable/ic_baseline_settings_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/quota_text" />
