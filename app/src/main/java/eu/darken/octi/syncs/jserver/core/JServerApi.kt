@@ -19,32 +19,26 @@ interface JServerApi {
 
     @POST("auth/register")
     suspend fun register(
-        @Header("X-Account-ID") accountIDHeader: String?,
-        @Header("X-Device-ID") deviceIDHeader: String?,
-        @Header("X-Share-ID") shareCode: String?,
+        @Header("X-Device-ID") deviceID: String,
     ): RegisterResponse
 
-
     @POST("auth/share")
-    suspend fun linkAccount(
-        @Header("X-Account-ID") accountId: String,
+    suspend fun createLinkCode(
+        @Header("X-Device-ID") deviceID: String,
     ): String
 
-    @POST("auth/unregister")
-    suspend fun unregisterDevice(
-        @Header("X-Account-ID") accountIDHeader: String,
-        @Header("X-Device-ID") deviceIDHeader: String,
-    ): String
+    @GET("auth/devices")
+    suspend fun getDeviceList(): List<String>
 
     @GET("module/{moduleId}")
     suspend fun readModule(
-        @Header("X-Device-ID") deviceIDHeader: String,
         @Path("moduleId") moduleId: String,
+        @Header("X-Device-ID") deviceId: String,
     ): ResponseBody
 
     @POST("module/{moduleId}")
     suspend fun writeModule(
-        @Header("X-Device-ID") deviceIDHeader: String,
         @Path("moduleId") moduleId: String,
+        @Header("X-Device-ID") deviceId: String,
     )
 }

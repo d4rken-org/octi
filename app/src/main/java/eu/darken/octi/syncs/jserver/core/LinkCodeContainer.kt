@@ -14,26 +14,21 @@ import okio.ByteString.Companion.toByteString
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class LinkCodeContainer(
+    @Json(name = "serverAddress") val serverAdress: JServer.Address,
     @Json(name = "accountId") val accountId: JServer.Credentials.AccountId,
-    @Json(name = "deviceId") val deviceId: DeviceId,
+    @Json(name = "fromDeviceId") val fromDeviceId: DeviceId,
     @Json(name = "shareCode") val linkCode: JServer.Credentials.LinkCode,
 ) : Parcelable {
 
-    fun toEncodedString(moshi: Moshi): String {
-        val adapter = moshi.adapter<LinkCodeContainer>()
-        return adapter
-            .toJson(this)
-            .toByteArray()
-            .toByteString()
-            .base64()
-    }
+    fun toEncodedString(moshi: Moshi): String = moshi.adapter<LinkCodeContainer>()
+        .toJson(this)
+        .toByteArray()
+        .toByteString()
+        .base64()
 
     companion object {
-        fun fromEncodedString(moshi: Moshi, encoded: String): LinkCodeContainer {
-            val adapter = moshi.adapter<LinkCodeContainer>()
-            return encoded
-                .decodeBase64()!!
-                .let { adapter.fromJson(it)!! }
-        }
+        fun fromEncodedString(moshi: Moshi, encoded: String): LinkCodeContainer = encoded
+            .decodeBase64()!!
+            .let { moshi.adapter<LinkCodeContainer>().fromJson(it)!! }
     }
 }

@@ -48,7 +48,7 @@ class AddJServerVM @Inject constructor(
 
             withContext(NonCancellable) {
                 log(TAG) { "Creating account..." }
-                val newCredentials = endpoint.createNewAccount(syncSettings.deviceId)
+                val newCredentials = endpoint.createAccount(syncSettings.deviceId)
                 log(TAG, INFO) { "New account created: $newCredentials" }
                 jServerAccountRepo.add(newCredentials)
             }

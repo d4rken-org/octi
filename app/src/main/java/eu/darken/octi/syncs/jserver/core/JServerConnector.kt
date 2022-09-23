@@ -29,7 +29,11 @@ class JServerConnector @AssistedInject constructor(
     private val syncSettings: SyncSettings,
 ) : SyncConnector {
 
-    private val endpoint by lazy { endpointFactory.create(credentials.serverAdress) }
+    private val endpoint by lazy {
+        endpointFactory.create(credentials.serverAdress).also {
+            it.setCredentials(credentials)
+        }
+    }
 
     data class State(
         override val readActions: Int = 0,
@@ -106,11 +110,12 @@ class JServerConnector @AssistedInject constructor(
 
     suspend fun createLinkCode(): LinkCodeContainer {
         log(TAG) { "createLinkCode()" }
-        val linkCode = endpoint.createLinkCode(credentials)
+        val linkCode = endpoint.createLinkCode()
 
         return LinkCodeContainer(
+            serverAdress = credentials.serverAdress,
             accountId = credentials.accountId,
-            deviceId = syncSettings.deviceId,
+            fromDeviceId = syncSettings.deviceId,
             linkCode = linkCode
         )
     }

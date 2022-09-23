@@ -17,15 +17,16 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.time.Instant
 
 class JServerEndpoint @AssistedInject constructor(
+    @Assisted private val serverAdress: JServer.Address,
     private val dispatcherProvider: DispatcherProvider,
     private val baseHttpClient: OkHttpClient,
     private val baseMoshi: Moshi,
-    @Assisted private val serverAdress: JServer.Address,
+    private val basicAuthInterceptor: BasicAuthInterceptor,
 ) {
 
     private val httpClient by lazy {
         baseHttpClient.newBuilder().apply {
-
+            addInterceptor(basicAuthInterceptor)
         }.build()
     }
 
@@ -37,52 +38,54 @@ class JServerEndpoint @AssistedInject constructor(
         }.build().create(JServerApi::class.java)
     }
 
-    suspend fun createNewAccount(ourDeviceId: DeviceId): JServer.Credentials = withContext(dispatcherProvider.IO) {
-        log(TAG) { "createNewAccount()" }
-        val response = api.register(
-            accountIDHeader = null,
-            deviceIDHeader = ourDeviceId.id.toString(),
-            shareCode = null,
-        )
-        require(ourDeviceId.id.toString() == response.deviceID)
+    private var credentials: JServer.Credentials? = null
+    fun setCredentials(credentials: JServer.Credentials?) {
+        log(TAG) { "setCredentials(credentials=$credentials)" }
+        basicAuthInterceptor.setCredentials(credentials)
+        this.credentials = credentials
+    }
+
+    suspend fun createAccount(
+        deviceId: DeviceId,
+    ): JServer.Credentials = withContext(dispatcherProvider.IO) {
+        log(TAG) { "createAccount(deviceId=$deviceId)" }
+        val response = api.register(deviceID = deviceId.id)
+        require(deviceId.id == response.deviceID)
         JServer.Credentials(
             createdAt = Instant.now(),
             serverAdress = serverAdress,
             accountId = JServer.Credentials.AccountId(response.accountID),
-            deviceId = ourDeviceId,
+            deviceId = deviceId,
             devicePassword = JServer.Credentials.DevicePassword(response.password)
         )
     }
 
-    suspend fun linkToAccount(
-        accountId: JServer.Credentials.AccountId,
-        linkCode: JServer.Credentials.LinkCode,
-    ): JServer.Credentials = withContext(dispatcherProvider.IO) {
-        log(TAG) { "linkToAccount(accountId=$accountId, shareCode=$linkCode)" }
-        TODO()
-    }
-
-    suspend fun createLinkCode(
-        credentials: JServer.Credentials
-    ): JServer.Credentials.LinkCode = withContext(dispatcherProvider.IO) {
+    suspend fun createLinkCode(): JServer.Credentials.LinkCode = withContext(dispatcherProvider.IO) {
         log(TAG) { "createLinkCode(account=$credentials)" }
-        JServer.Credentials.LinkCode(code = "testcode")
-//        api.shareAccount(credentials.accountId.id)
-//        TODO()
+        val rawCode = api.createLinkCode(deviceID = credentials!!.deviceId.id)
+        return@withContext JServer.Credentials.LinkCode(code = rawCode)
     }
 
-    suspend fun unregisterDevice(credentials: JServer.Credentials, toRemove: DeviceId) {
-        log(TAG) { "unregisterDevice(account=$credentials, toRemove=$toRemove)" }
+    suspend fun listDevices(): Collection<DeviceId> {
+        log(TAG) { "listDevices()" }
         TODO()
     }
 
-    suspend fun readModule(credentials: JServer.Credentials, moduleId: ModuleId) {
+    suspend fun readModule(moduleId: ModuleId) {
         log(TAG) { "readModule(account=$credentials, moduleId=$moduleId)" }
+        api.readModule(
+            moduleId = moduleId.id,
+            deviceId = credentials!!.deviceId.id
+        )
         TODO()
     }
 
-    suspend fun writeModule(credentials: JServer.Credentials, moduleId: ModuleId, payload: ByteString) {
+    suspend fun writeModule(moduleId: ModuleId, payload: ByteString) {
         log(TAG) { "writeModule(account=$credentials, moduleId=$moduleId, payload=$payload)" }
+        api.writeModule(
+            moduleId = moduleId.id,
+            deviceId = credentials!!.deviceId.id
+        )
         TODO()
     }
 
