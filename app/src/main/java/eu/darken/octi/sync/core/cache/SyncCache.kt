@@ -92,7 +92,7 @@ class SyncCache @Inject constructor(
 
     private fun SyncRead.Device.Module.toCached() = CachedSyncRead.Device.Module(
         moduleId = moduleId,
-        accountId = accountId,
+        connectorId = connectorId,
         deviceId = deviceId,
         createdAt = createdAt,
         modifiedAt = modifiedAt,

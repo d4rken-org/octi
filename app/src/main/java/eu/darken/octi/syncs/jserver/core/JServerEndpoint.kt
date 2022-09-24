@@ -12,6 +12,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody.Companion.toRequestBody
 import okio.ByteString
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -77,22 +78,28 @@ class JServerEndpoint @AssistedInject constructor(
         return response.items.map { DeviceId(it.id) }
     }
 
-    suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId) {
+    data class ReadData(
+        val payload: ByteString
+    )
+
+    suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId): ReadData {
         log(TAG) { "readModule(deviceId=$deviceId, moduleId=$moduleId)" }
-        api.readModule(
+        val response = api.readModule(
             moduleId = moduleId.id,
             deviceId = deviceId.id
         )
-        TODO()
+        return ReadData(
+            payload = response.byteString()
+        )
     }
 
     suspend fun writeModule(moduleId: ModuleId, payload: ByteString) {
         log(TAG) { "writeModule(moduleId=$moduleId, payload=$payload)" }
         api.writeModule(
             deviceId = ourDeviceIdString,
-            moduleId = moduleId.id
+            moduleId = moduleId.id,
+            payload = payload.toRequestBody(),
         )
-        TODO()
     }
 
     @AssistedFactory

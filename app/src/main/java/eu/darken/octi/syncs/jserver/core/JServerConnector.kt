@@ -11,6 +11,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.modules.ModuleId
 import eu.darken.octi.sync.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -27,6 +28,7 @@ class JServerConnector @AssistedInject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val endpointFactory: JServerEndpoint.Factory,
     private val syncSettings: SyncSettings,
+    private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
 ) : SyncConnector {
 
     private val endpoint by lazy {
@@ -113,12 +115,49 @@ class JServerConnector @AssistedInject constructor(
 
     private suspend fun readServer(): JServerData {
         log(TAG, DEBUG) { "readServer(): Starting..." }
-        throw Exception("TODO")
+        val deviceIds = endpoint.listDevices()
+        log(TAG, VERBOSE) { "readServer(): Found devices: $deviceIds" }
+
+        val devices = deviceIds.map { deviceId ->
+            val modules = supportedModuleIds.mapNotNull { moduleId ->
+                val readData = endpoint.readModule(deviceId = deviceId, moduleId = moduleId)
+
+                if (readData.payload.size == 0) {
+                    log(TAG, WARN) { "readServer(): Module payload is empty: $moduleId" }
+                    return@mapNotNull null
+                }
+
+                JServerModuleData(
+                    connectorId = identifier,
+                    deviceId = deviceId,
+                    moduleId = moduleId,
+                    createdAt = Instant.now(),
+                    modifiedAt = Instant.now(),
+                    payload = readData.payload,
+                ).also {
+                    log(TAG, VERBOSE) { "readServer(): Module data: $it" }
+                }
+            }
+            JServerDeviceData(
+                deviceId = deviceId,
+                modules = modules,
+            )
+        }
+
+        return JServerData(
+            connectorId = identifier,
+            devices = devices
+        )
     }
 
     private suspend fun writeServer(data: SyncWrite) {
         log(TAG, DEBUG) { "writeServer(): $data)" }
-        throw Exception("TODO")
+        data.modules.forEach { module ->
+            endpoint.writeModule(
+                moduleId = module.moduleId,
+                payload = module.payload,
+            )
+        }
         log(TAG, VERBOSE) { "writeServer(): Done" }
     }
 

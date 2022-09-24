@@ -1,7 +1,7 @@
 package eu.darken.octi.modules.meta
 
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
@@ -14,15 +14,19 @@ import eu.darken.octi.modules.meta.core.MetaSync
 
 @InstallIn(SingletonComponent::class)
 @Module
-abstract class MetaModule {
+class MetaModule {
 
-    @Binds
+    @Provides
     @IntoSet
-    abstract fun sync(sync: MetaSync): ModuleSync<out Any>
+    fun sync(sync: MetaSync): ModuleSync<out Any> = sync
 
-    @Binds
+    @Provides
     @IntoSet
-    abstract fun repo(repo: MetaRepo): ModuleRepo<out Any>
+    fun repo(repo: MetaRepo): ModuleRepo<out Any> = repo
+
+    @Provides
+    @IntoSet
+    fun moduleId(): ModuleId = MODULE_ID
 
     companion object {
         val MODULE_ID = ModuleId("${BuildConfigWrap.APPLICATION_ID}.module.core.meta")

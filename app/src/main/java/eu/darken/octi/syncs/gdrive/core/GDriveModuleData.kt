@@ -8,7 +8,7 @@ import okio.ByteString
 import java.time.Instant
 
 data class GDriveModuleData(
-    override val accountId: ConnectorId,
+    override val connectorId: ConnectorId,
     override val deviceId: DeviceId,
     override val moduleId: ModuleId,
     override val createdAt: Instant,

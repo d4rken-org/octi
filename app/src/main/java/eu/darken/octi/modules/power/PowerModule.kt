@@ -1,7 +1,7 @@
 package eu.darken.octi.modules.power
 
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
@@ -14,15 +14,19 @@ import eu.darken.octi.modules.power.core.PowerSync
 
 @InstallIn(SingletonComponent::class)
 @Module
-abstract class PowerModule {
+class PowerModule {
 
-    @Binds
+    @Provides
     @IntoSet
-    abstract fun sync(sync: PowerSync): ModuleSync<out Any>
+    fun sync(sync: PowerSync): ModuleSync<out Any> = sync
 
-    @Binds
+    @Provides
     @IntoSet
-    abstract fun repo(repo: PowerRepo): ModuleRepo<out Any>
+    fun repo(repo: PowerRepo): ModuleRepo<out Any> = repo
+
+    @Provides
+    @IntoSet
+    fun moduleId(): ModuleId = MODULE_ID
 
     companion object {
         val MODULE_ID = ModuleId("${BuildConfigWrap.APPLICATION_ID}.module.core.power")

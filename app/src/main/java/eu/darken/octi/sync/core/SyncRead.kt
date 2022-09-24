@@ -13,7 +13,7 @@ interface SyncRead {
         val modules: Collection<Module>
 
         interface Module {
-            val accountId: ConnectorId
+            val connectorId: ConnectorId
             val deviceId: DeviceId
             val moduleId: ModuleId
             val createdAt: Instant

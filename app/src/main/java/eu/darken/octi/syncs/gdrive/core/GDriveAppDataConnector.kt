@@ -24,10 +24,11 @@ import java.time.Instant
 
 @Suppress("BlockingMethodInNonBlockingContext")
 class GDriveAppDataConnector @AssistedInject constructor(
+    @Assisted private val client: GoogleClient,
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
-    @Assisted private val client: GoogleClient,
+    private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
 ) : GDriveBaseConnector(context, client), SyncConnector {
 
     data class State(
@@ -120,19 +121,22 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 if (!isDir) log(TAG, WARN) { "Unexpected file in userDir: $it" }
                 isDir
             }
-            .map { deviceDir -> deviceDir to deviceDir.listFiles() }
+            .map { deviceDir ->
+                val moduleDirs = deviceDir.listFiles().filter { supportedModuleIds.contains(ModuleId(it.name)) }
+                deviceDir to moduleDirs
+            }
 
         val devices = modulesPerDevice.mapNotNull { (deviceDir, moduleFiles) ->
             log(TAG, VERBOSE) { "readDrive(): Reading module data for device: $deviceDir" }
             val moduleData = moduleFiles.map { moduleFile ->
                 val payload = moduleFile.readData()
                 if (payload == null) {
-                    log(TAG, WARN) { "readDrive(): Device file is empty: ${moduleFile.name}" }
+                    log(TAG, WARN) { "readDrive(): Module file is empty: ${moduleFile.name}" }
                     return@mapNotNull null
                 }
 
                 GDriveModuleData(
-                    accountId = identifier,
+                    connectorId = identifier,
                     deviceId = DeviceId(deviceDir.name),
                     moduleId = ModuleId(moduleFile.name),
                     createdAt = Instant.ofEpochMilli(moduleFile.createdTime.value),

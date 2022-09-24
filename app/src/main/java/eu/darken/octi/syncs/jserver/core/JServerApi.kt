@@ -2,6 +2,7 @@ package eu.darken.octi.syncs.jserver.core
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.http.*
 
@@ -56,5 +57,6 @@ interface JServerApi {
     suspend fun writeModule(
         @Path("moduleId") moduleId: String,
         @Header("X-Device-ID") deviceId: String,
+        @Body payload: RequestBody,
     )
 }

@@ -23,7 +23,7 @@ data class CachedSyncRead(
 
         @JsonClass(generateAdapter = true)
         data class Module(
-            @Json(name = "accountId") override val accountId: ConnectorId,
+            @Json(name = "accountId") override val connectorId: ConnectorId,
             @Json(name = "deviceId") override val deviceId: DeviceId,
             @Json(name = "moduleId") override val moduleId: ModuleId,
             @Json(name = "createdAt") override val createdAt: Instant,
