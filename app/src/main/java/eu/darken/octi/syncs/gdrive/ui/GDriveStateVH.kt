@@ -1,5 +1,6 @@
 package eu.darken.octi.syncs.gdrive.ui
 
+import android.text.format.DateUtils
 import android.text.format.Formatter
 import android.view.ViewGroup
 import androidx.core.view.isGone
@@ -28,16 +29,19 @@ class GDriveStateVH(parent: ViewGroup) :
         accountText.text = item.account.email
 
         lastSyncText.apply {
-            text = item.state.lastSyncAt?.toString() ?: getString(R.string.sync_last_never_label)
-            if (item.state.lastError != null) {
+            text = item.ourState.lastSyncAt
+                ?.let { DateUtils.getRelativeTimeSpanString(it.toEpochMilli()) }
+                ?: getString(R.string.sync_last_never_label)
+
+            if (item.ourState.lastError != null) {
                 setTextColor(context.getColorForAttr(R.attr.colorError))
             } else {
                 setTextColor(context.getColorForAttr(android.R.attr.textColorPrimary))
             }
         }
-        syncProgressIndicator.isGone = !item.state.isBusy
+        syncProgressIndicator.isGone = !item.ourState.isBusy
 
-        quotaText.text = item.state.quota
+        quotaText.text = item.ourState.quota
             ?.let { stats ->
                 val total = Formatter.formatShortFileSize(context, stats.storageTotal)
                 val used = Formatter.formatShortFileSize(context, stats.storageUsed)
@@ -46,12 +50,26 @@ class GDriveStateVH(parent: ViewGroup) :
             }
             ?: getString(R.string.general_na_label)
 
-        manageAction.setOnClickListener { item.onManage() }
+        devicesText.text = item.ourState.devices?.let { ourDevices ->
+            var deviceString = getQuantityString(R.plurals.general_devices_count_label, ourDevices.size)
+
+            val devicesFromConnectors = item.otherStates.mapNotNull { it.devices }.flatten().toSet()
+            val uniqueDevices = ourDevices - devicesFromConnectors
+            if (uniqueDevices.isNotEmpty()) {
+                val uniquesString = getQuantityString(R.plurals.general_unique_devices_count_label, uniqueDevices.size)
+                deviceString += " ($uniquesString)"
+            }
+
+            deviceString
+        } ?: getString(R.string.general_na_label)
+
+        itemView.setOnClickListener { item.onManage() }
     }
 
     data class Item(
         val account: GoogleAccount,
-        val state: SyncConnectorState,
+        val ourState: SyncConnectorState,
+        val otherStates: Collection<SyncConnectorState>,
         val onManage: () -> Unit,
     ) : SyncListAdapter.Item {
         override val stableId: Long
@@ -62,3 +80,4 @@ class GDriveStateVH(parent: ViewGroup) :
             }
     }
 }
+

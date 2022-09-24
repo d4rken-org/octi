@@ -100,7 +100,7 @@ class DashboardVM @Inject constructor(
 
     fun refresh() = launch {
         log(TAG) { "refresh()" }
-        syncManager.sync()
+        syncManager.triggerSync()
     }
 
     companion object {

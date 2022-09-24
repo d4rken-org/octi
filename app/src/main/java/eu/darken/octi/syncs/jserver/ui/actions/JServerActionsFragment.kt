@@ -23,6 +23,7 @@ class JServerActionsFragment : BottomSheetDialogFragment2() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ui.syncAction.setOnClickListener { vm.forceSync() }
         ui.linkAction.setOnClickListener { vm.linkNewDevice() }
         ui.disconnectAction.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext()).apply {

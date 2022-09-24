@@ -20,6 +20,7 @@
     <string name="general_error_label">Error</string>
     <string name="general_select_server_label">Select server</string>
     <string name="general_quota_label">Quota</string>
+    <string name="general_tap_hint_msg">Tap for more options</string>
 
     <string name="debug_debuglog_size_label">Size</string>
     <string name="debug_debuglog_size_compressed_label">Compressed size</string>
@@ -66,8 +67,20 @@
     <string name="sync_server_label">Server</string>
     <string name="sync_account_label">Account</string>
     <string name="sync_services_label">Sync services</string>
+
     <string name="sync_add_label">Add sync service</string>
     <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
+
+    <string name="sync_synced_devices_label">Synced devices</string>
+
+    <plurals name="general_devices_count_label">
+        <item quantity="one">%d device</item>
+        <item quantity="other">%d devices</item>
+    </plurals>
+    <plurals name="general_unique_devices_count_label">
+        <item quantity="one">%d unique device</item>
+        <item quantity="other">%d unique devices</item>
+    </plurals>
 
     <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">App-data scope</string>
@@ -99,5 +112,6 @@
     <string name="sync_jserver_link_client_option_nfc">Use two devices with NFC</string>
     <string name="sync_jserver_link_client_startcamera_action">Start camera</string>
     <string name="sync_jserver_link_client_link_action">Link device</string>
+    <string name="general_force_sync_action">Force synchronization</string>
 
 </resources>

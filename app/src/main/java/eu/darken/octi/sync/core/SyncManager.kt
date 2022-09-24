@@ -71,12 +71,20 @@ class SyncManager @Inject constructor(
         // NOOP?
     }
 
-    suspend fun sync() {
-        log(TAG) { "syncAll()" }
-        connectors.first().forEach {
-            it.read()
+    suspend fun triggerSync(stats: Boolean = true, readData: Boolean = true, writeData: Boolean = true) = scope.launch {
+        log(TAG) { "sync()" }
+        val syncJobs = connectors.first().map {
+            triggerSync(it.identifier, stats = stats, readData = readData, writeData = writeData)
         }
+        syncJobs.joinAll()
     }
+
+    suspend fun triggerSync(connectorId: ConnectorId, stats: Boolean, readData: Boolean, writeData: Boolean) =
+        scope.launch {
+            log(TAG) { "forceSync(id=$connectorId, stats=$stats, readData=$readData, writeData=$writeData)" }
+            val connector = connectors.first().single { it.identifier == connectorId }
+            connector.sync(stats, readData, writeData)
+        }
 
     suspend fun write(toWrite: SyncWrite.Device.Module) {
         val start = System.currentTimeMillis()
@@ -94,7 +102,6 @@ class SyncManager @Inject constructor(
 
         log(TAG) { "write(data=$toWrite) done (${System.currentTimeMillis() - start}ms)" }
     }
-
 
     suspend fun wipe(identifier: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "wipe(identifier=$identifier)" }

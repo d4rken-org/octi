@@ -70,7 +70,7 @@ class JServerLinkHostVM @Inject constructor(
         launch {
             val connector = syncManager.getConnectorById<JServerConnector>(navArgs.identifier).first()
             while (currentCoroutineContext().isActive) {
-                connector.forceSync(stats = true, readData = false, writeData = false)
+                connector.sync(stats = true, readData = false, writeData = false)
                 delay(3000)
             }
         }

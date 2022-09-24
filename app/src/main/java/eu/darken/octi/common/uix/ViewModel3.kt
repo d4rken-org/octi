@@ -30,7 +30,7 @@ abstract class ViewModel3(
         navVia(navEvents)
     }
 
-    fun navigateBack() {
+    fun popNavStack() {
         navEvents.postValue(null)
     }
 }

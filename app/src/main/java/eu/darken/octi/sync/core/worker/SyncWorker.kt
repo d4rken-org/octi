@@ -63,7 +63,7 @@ class SyncWorker @AssistedInject constructor(
     }
 
     private suspend fun doDoWork() {
-        syncManager.sync()
+        syncManager.triggerSync()
     }
 
     companion object {

@@ -43,7 +43,8 @@ class SyncListVM @Inject constructor(
                     when (connector) {
                         is GDriveAppDataConnector -> GDriveStateVH.Item(
                             account = connector.account,
-                            state = state,
+                            ourState = state,
+                            otherStates = (connectors - connector).map { it.state.first() },
                             onManage = {
                                 SyncListFragmentDirections.actionSyncListFragmentToGDriveActionsFragment(
                                     connector.identifier
@@ -52,7 +53,8 @@ class SyncListVM @Inject constructor(
                         )
                         is JServerConnector -> JServerStateVH.Item(
                             credentials = connector.credentials,
-                            state = state,
+                            ourState = state,
+                            otherStates = (connectors - connector).map { it.state.first() },
                             onManage = {
                                 SyncListFragmentDirections.actionSyncListFragmentToSyrvJServerActionsFragment(
                                     connector.identifier

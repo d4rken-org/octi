@@ -10,11 +10,6 @@ interface SyncConnector {
     val data: Flow<SyncRead?>
 
     /**
-     * Sync all modules
-     */
-    suspend fun read()
-
-    /**
      * Data that is written on the next **sync**
      */
     suspend fun write(toWrite: SyncWrite)
@@ -26,5 +21,5 @@ interface SyncConnector {
 
     suspend fun deleteDevice(deviceId: DeviceId)
 
-    suspend fun forceSync(stats: Boolean, readData: Boolean, writeData: Boolean)
+    suspend fun sync(stats: Boolean, readData: Boolean, writeData: Boolean)
 }

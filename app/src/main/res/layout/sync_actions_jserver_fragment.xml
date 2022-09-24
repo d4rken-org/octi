@@ -30,6 +30,16 @@
         tools:text="Account: 1234-55667" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/sync_action"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/general_force_sync_action"
+        app:icon="@drawable/ic_baseline_cloud_sync_24"
+        app:iconGravity="textStart" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/link_action"
         style="@style/Widget.Material3.Button"
         android:layout_width="match_parent"
@@ -41,10 +51,11 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/disconnect_action"
-        style="@style/Widget.Material3.Button.TextButton"
+        style="@style/Widget.Material3.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/general_disconnect_action"
+        app:backgroundTint="@color/error"
         app:icon="@drawable/ic_baseline_link_off_24"
         app:iconGravity="textStart" />
 

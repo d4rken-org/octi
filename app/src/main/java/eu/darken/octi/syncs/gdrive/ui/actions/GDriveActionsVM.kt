@@ -33,7 +33,7 @@ class GDriveActionsVM @Inject constructor(
             State(it.account)
         }
         .catch {
-            if (it is NoSuchElementException) navigateBack()
+            if (it is NoSuchElementException) popNavStack()
             else throw it
         }
         .asLiveData2()
@@ -41,13 +41,19 @@ class GDriveActionsVM @Inject constructor(
     fun disconnct() = launch {
         log(TAG) { "disconnct()" }
         syncManager.disconnect(navArgs.identifier)
-        navEvents.postValue(null)
+        popNavStack()
     }
 
     fun wipe() = launch {
         log(TAG) { "wipe()" }
         syncManager.wipe(navArgs.identifier)
-        navEvents.postValue(null)
+        popNavStack()
+    }
+
+    fun forceSync() = launch {
+        log(TAG) { "forceSync()" }
+        syncManager.triggerSync(navArgs.identifier, stats = true, readData = true, writeData = true)
+        popNavStack()
     }
 
     companion object {

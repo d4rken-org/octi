@@ -10,9 +10,7 @@ import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.jserver.core.JServer
-import eu.darken.octi.syncs.jserver.core.JServerAccountRepo
 import eu.darken.octi.syncs.jserver.core.JServerConnector
-import eu.darken.octi.syncs.jserver.core.JServerEndpoint
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -21,8 +19,6 @@ import javax.inject.Inject
 class JServerActionsVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     private val dispatcherProvider: DispatcherProvider,
-    private val jServerAccountRepo: JServerAccountRepo,
-    private val jServerEndpointFactory: JServerEndpoint.Factory,
     private val syncManager: SyncManager,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
@@ -59,6 +55,12 @@ class JServerActionsVM @Inject constructor(
         log(TAG) { "wipe()" }
         syncManager.wipe(navArgs.identifier)
         navEvents.postValue(null)
+    }
+
+    fun forceSync() = launch {
+        log(TAG) { "forceSync()" }
+        syncManager.triggerSync(navArgs.identifier, stats = true, readData = true, writeData = true)
+        popNavStack()
     }
 
     companion object {

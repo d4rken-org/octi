@@ -19,7 +19,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.time.Duration
 import java.time.Instant
 
 
@@ -75,17 +74,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
             .launchIn(scope)
     }
 
-    override suspend fun read() {
-        log(TAG) { "read()" }
-        try {
-            readAction {
-                _data.value = readDrive()
-            }
-        } catch (e: Exception) {
-            _state.updateBlocking { copy(lastError = e) }
-        }
-    }
-
     override suspend fun write(toWrite: SyncWrite) {
         log(TAG) { "write(toWrite=$toWrite)" }
         writeQueue.emit(toWrite)
@@ -105,7 +93,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         writeAction {
             appDataRoot()
                 .listFiles()
-                .singleOrNull { it.name == deviceId.id.toString() }
+                .singleOrNull { it.name == deviceId.id }
                 ?.deleteAll()
         }
     }
@@ -160,23 +148,48 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 modules = moduleData
             )
         }
+
         return GDriveData(
             connectorId = identifier,
             devices = devices,
         )
     }
 
-
-    override suspend fun forceSync(stats: Boolean, readData: Boolean, writeData: Boolean) {
+    override suspend fun sync(stats: Boolean, readData: Boolean, writeData: Boolean) {
         log(TAG) { "refresh(stats=$stats, readData=$readData, writeData=$writeData)" }
-        if (stats) {
-            // TODO
-        }
-        if (readData) {
-            // TODO
-        }
+
         if (writeData) {
             // TODO
+        }
+
+        if (readData) {
+            try {
+                readAction {
+                    _data.value = readDrive()
+                }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
+                _state.updateBlocking { copy(lastError = e) }
+            }
+        }
+
+        if (stats) {
+            try {
+                val deviceDirs = appDataRoot().child(DEVICE_DATA_DIR_NAME)
+                    ?.listFiles()
+                    ?.filter { it.isDirectory }
+                    ?.map { DeviceId(id = it.name) }
+
+                _state.updateBlocking { copy(devices = deviceDirs) }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to list of known devices: ${e.asLog()}" }
+            }
+            try {
+                val newQuota = getStorageQuota()
+                _state.updateBlocking { copy(quota = newQuota) }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to update storage quota: ${e.asLog()}" }
+            }
         }
     }
 
@@ -206,7 +219,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeDrive(): Done" }
     }
 
-    private fun getStorageStats(): SyncConnectorState.Quota {
+    private suspend fun getStorageQuota(): SyncConnectorState.Quota = withContext(dispatcherProvider.IO) {
         log(TAG, VERBOSE) { "getStorageStats()" }
         val allItems = gdrive.files()
             .list().apply {
@@ -220,7 +233,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             .execute().storageQuota
             .limit
 
-        return SyncConnectorState.Quota(
+        SyncConnectorState.Quota(
             updatedAt = Instant.now(),
             storageUsed = allItems.sumOf { it.quotaBytesUsed ?: 0 },
             storageTotal = storageTotal
@@ -233,16 +246,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         _state.updateBlocking { copy(readActions = readActions + 1) }
 
-        var newStorageQuota: SyncConnectorState.Quota? = null
-
         try {
             block()
-
-            val lastStats = _state.value().quota?.updatedAt
-            if (lastStats == null || Duration.between(lastStats, Instant.now()) > Duration.ofSeconds(60)) {
-                log(TAG) { "readAction(block=$block): Updating storage stats" }
-                newStorageQuota = getStorageStats()
-            }
         } catch (e: Exception) {
             log(TAG, ERROR) { "readAction(block=$block) failed: ${e.asLog()}" }
             throw e
@@ -250,7 +255,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
             _state.updateBlocking {
                 copy(
                     readActions = readActions - 1,
-                    quota = newStorageQuota ?: quota,
                     lastReadAt = Instant.now(),
                 )
             }

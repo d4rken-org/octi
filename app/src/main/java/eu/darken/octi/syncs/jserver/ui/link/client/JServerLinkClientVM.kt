@@ -50,7 +50,7 @@ class JServerLinkClientVM @Inject constructor(
 
             jServerHub.linkAcount(linkContainer)
 
-            navigateBack()
+            popNavStack()
         } finally {
             _state.value = _state.value.copy(isBusy = false)
         }

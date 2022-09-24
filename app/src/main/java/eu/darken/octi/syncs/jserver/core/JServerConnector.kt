@@ -79,17 +79,6 @@ class JServerConnector @AssistedInject constructor(
             .launchIn(scope)
     }
 
-    override suspend fun read() {
-        log(TAG) { "read()" }
-        try {
-            readAction {
-                _data.value = readServer()
-            }
-        } catch (e: Exception) {
-            _state.updateBlocking { copy(lastError = e) }
-        }
-    }
-
     override suspend fun write(toWrite: SyncWrite) {
         log(TAG) { "write(toWrite=$toWrite)" }
         writeQueue.emit(toWrite)
@@ -198,17 +187,32 @@ class JServerConnector @AssistedInject constructor(
         }
     }
 
-    override suspend fun forceSync(stats: Boolean, readData: Boolean, writeData: Boolean) {
+    override suspend fun sync(stats: Boolean, readData: Boolean, writeData: Boolean) {
         log(TAG) { "refresh(stats=$stats, readData=$readData, writeData=$writeData)" }
-        if (stats) {
-            val knownDeviceIds = endpoint.listDevices()
-            _state.updateBlocking { copy(devices = knownDeviceIds) }
-        }
-        if (readData) {
 
-        }
         if (writeData) {
+            // TODO
+        }
 
+        if (readData) {
+            log(TAG) { "read()" }
+            try {
+                readAction {
+                    _data.value = readServer()
+                }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
+                _state.updateBlocking { copy(lastError = e) }
+            }
+        }
+
+        if (stats) {
+            try {
+                val knownDeviceIds = endpoint.listDevices()
+                _state.updateBlocking { copy(devices = knownDeviceIds) }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to list of known devices: ${e.asLog()}" }
+            }
         }
     }
 

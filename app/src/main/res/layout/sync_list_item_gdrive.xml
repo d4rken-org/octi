@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="?selectableItemBackground"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp">
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/icon"
@@ -95,17 +96,50 @@
         app:layout_constraintTop_toBottomOf="@id/quota_label"
         tools:text="25 MB used / 30 MB available" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/devices_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/sync_synced_devices_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quota_text" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/manage_action"
-        style="@style/Widget.Material3.Button"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/devices_text"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices_label"
+        tools:text="4 devices (2 unique)" />
+
+    <ImageView
+        android:id="@+id/manage_hint_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="4dp"
+        android:alpha="0.6"
+        android:src="@drawable/ic_baseline_settings_24"
+        app:layout_constraintBottom_toBottomOf="@id/manage_hint"
+        app:layout_constraintEnd_toStartOf="@id/manage_hint"
+        app:layout_constraintTop_toTopOf="@id/manage_hint" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/manage_hint"
+        style="@style/TextAppearance.Material3.LabelSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/general_manage_action"
-        app:icon="@drawable/ic_baseline_settings_24"
+        android:alpha="0.6"
+        android:text="@string/general_tap_hint_msg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/quota_text" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices_text" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

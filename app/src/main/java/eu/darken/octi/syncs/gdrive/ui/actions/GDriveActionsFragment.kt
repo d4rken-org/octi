@@ -23,8 +23,8 @@ class GDriveActionsFragment : BottomSheetDialogFragment2() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ui.syncAction.setOnClickListener { vm.forceSync() }
         ui.disconnectAction.setOnClickListener {
-
             MaterialAlertDialogBuilder(requireContext()).apply {
                 setMessage(R.string.sync_gdrive_disconnect_confirmation_desc)
                 setPositiveButton(R.string.general_disconnect_action) { _, _ ->
