@@ -29,4 +29,8 @@ abstract class ViewModel3(
     fun NavDirections.navigate() {
         navVia(navEvents)
     }
+
+    fun navigateBack() {
+        navEvents.postValue(null)
+    }
 }

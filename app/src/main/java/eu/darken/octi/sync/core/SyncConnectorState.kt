@@ -11,7 +11,7 @@ interface SyncConnectorState {
 
     val lastError: Exception?
 
-    val stats: Stats?
+    val quota: Quota?
 
     val isBusy: Boolean
         get() = readActions > 0 || writeActions > 0
@@ -19,8 +19,10 @@ interface SyncConnectorState {
     val lastSyncAt: Instant?
         get() = setOf(lastReadAt, lastWriteAt).filterNotNull().maxByOrNull { it }
 
-    data class Stats(
-        val timestamp: Instant = Instant.now(),
+    val devices: Collection<DeviceId>?
+
+    data class Quota(
+        val updatedAt: Instant = Instant.now(),
         val storageUsed: Long = -1,
         val storageTotal: Long = -1,
     ) {

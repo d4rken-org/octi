@@ -3,10 +3,7 @@ package eu.darken.octi.syncs.jserver.core
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import okhttp3.ResponseBody
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface JServerApi {
 
@@ -22,13 +19,32 @@ interface JServerApi {
         @Header("X-Device-ID") deviceID: String,
     ): RegisterResponse
 
-    @POST("auth/share")
-    suspend fun createLinkCode(
-        @Header("X-Device-ID") deviceID: String,
-    ): String
+    @JsonClass(generateAdapter = true)
+    data class ShareCodeResponse(
+        @Json(name = "shareCode") val shareCode: String,
+    )
 
-    @GET("auth/devices")
-    suspend fun getDeviceList(): List<String>
+    @POST("auth/share")
+    suspend fun createShareCode(
+        @Header("X-Device-ID") deviceID: String,
+    ): ShareCodeResponse
+
+    @JsonClass(generateAdapter = true)
+    data class DevicesResponse(
+        @Json(name = "count") val count: Int,
+        @Json(name = "items") val items: List<Device>,
+    ) {
+        @JsonClass(generateAdapter = true)
+        data class Device(
+            @Json(name = "id") val id: String
+        )
+    }
+
+    @GET("devices")
+    suspend fun getDeviceList(
+        @Header("X-Device-ID") deviceID: String,
+        @Query("share") shareCode: String? = null,
+    ): DevicesResponse
 
     @GET("module/{moduleId}")
     suspend fun readModule(

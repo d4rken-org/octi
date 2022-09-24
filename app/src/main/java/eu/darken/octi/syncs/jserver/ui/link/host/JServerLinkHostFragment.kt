@@ -2,6 +2,7 @@ package eu.darken.octi.syncs.jserver.ui.link.host
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -11,6 +12,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.error.asErrorDialogBuilder
+import eu.darken.octi.common.navigation.popBackStack
 import eu.darken.octi.common.uix.Fragment3
 import eu.darken.octi.common.viewbinding.viewBinding
 import eu.darken.octi.databinding.SyncJserverLinkHostFragmentBinding
@@ -68,6 +70,15 @@ class JServerLinkHostFragment : Fragment3(R.layout.sync_jserver_link_host_fragme
                     // TODO NOOP?
                 }
             }
+        }
+
+        vm.autoNavOnNewDevice.observe2(ui) {
+            Toast.makeText(
+                requireActivity(),
+                R.string.sync_jserver_link_host_device_linked_message,
+                Toast.LENGTH_LONG
+            ).show()
+            popBackStack()
         }
 
         super.onViewCreated(view, savedInstanceState)

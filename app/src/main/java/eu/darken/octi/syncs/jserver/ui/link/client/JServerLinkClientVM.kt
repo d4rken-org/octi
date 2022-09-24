@@ -7,10 +7,7 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.sync.core.SyncSettings
-import eu.darken.octi.syncs.jserver.core.JServer
-import eu.darken.octi.syncs.jserver.core.JServerAccountRepo
-import eu.darken.octi.syncs.jserver.core.JServerEndpoint
+import eu.darken.octi.syncs.jserver.core.JServerHub
 import eu.darken.octi.syncs.jserver.core.LinkCodeContainer
 import eu.darken.octi.syncs.jserver.ui.link.LinkOption
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,9 +20,7 @@ class JServerLinkClientVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     private val dispatcherProvider: DispatcherProvider,
     private val moshi: Moshi,
-    private val syncSettings: SyncSettings,
-    private val jServerEndpointFactory: JServerEndpoint.Factory,
-    private val jServerAccountRepo: JServerAccountRepo,
+    private val jServerHub: JServerHub,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     private val stateLock = Mutex()
@@ -33,6 +28,7 @@ class JServerLinkClientVM @Inject constructor(
     data class State(
         val encodedLinkCode: String? = null,
         val linkOption: LinkOption = LinkOption.DIRECT,
+        val isBusy: Boolean = false,
     )
 
     private val _state = MutableStateFlow(State())
@@ -47,21 +43,17 @@ class JServerLinkClientVM @Inject constructor(
 
     fun onCodeEntered(rawCode: String) = launch {
         log(TAG) { "onCodeEntered(rawCode=$rawCode)" }
-        val linkContainer = LinkCodeContainer.fromEncodedString(moshi, rawCode)
-        log(TAG) { "Got container: $linkContainer" }
+        _state.value = _state.value.copy(isBusy = true)
+        try {
+            val linkContainer = LinkCodeContainer.fromEncodedString(moshi, rawCode)
+            log(TAG) { "Got container: $linkContainer" }
 
-        val endpoint = jServerEndpointFactory.create(linkContainer.serverAdress)
+            jServerHub.linkAcount(linkContainer)
 
-        val tempCredentials = JServer.Credentials(
-            serverAdress = linkContainer.serverAdress,
-            accountId = linkContainer.accountId,
-            deviceId = syncSettings.deviceId,
-            devicePassword = JServer.Credentials.DevicePassword(linkContainer.linkCode.code),
-        )
-        endpoint.setCredentials(tempCredentials)
-        val newAccount = endpoint.createAccount(syncSettings.deviceId)
-        log(TAG) { "Account successfully linked: $newAccount" }
-        jServerAccountRepo.add(newAccount)
+            navigateBack()
+        } finally {
+            _state.value = _state.value.copy(isBusy = false)
+        }
     }
 
     companion object {

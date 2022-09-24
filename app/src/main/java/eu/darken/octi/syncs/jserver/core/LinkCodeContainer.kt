@@ -16,6 +16,7 @@ import okio.ByteString.Companion.toByteString
 data class LinkCodeContainer(
     @Json(name = "serverAddress") val serverAdress: JServer.Address,
     @Json(name = "accountId") val accountId: JServer.Credentials.AccountId,
+    @Json(name = "devicePassword") val devicePassword: JServer.Credentials.DevicePassword,
     @Json(name = "fromDeviceId") val fromDeviceId: DeviceId,
     @Json(name = "shareCode") val linkCode: JServer.Credentials.LinkCode,
 ) : Parcelable {

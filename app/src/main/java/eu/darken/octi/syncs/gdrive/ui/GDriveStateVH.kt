@@ -37,7 +37,7 @@ class GDriveStateVH(parent: ViewGroup) :
         }
         syncProgressIndicator.isGone = !item.state.isBusy
 
-        quotaText.text = item.state.stats
+        quotaText.text = item.state.quota
             ?.let { stats ->
                 val total = Formatter.formatShortFileSize(context, stats.storageTotal)
                 val used = Formatter.formatShortFileSize(context, stats.storageUsed)

@@ -10,10 +10,12 @@ import eu.darken.octi.sync.core.ConnectorHub
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.SyncConnector
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,6 +25,7 @@ class JServerHub @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val accountRepo: JServerAccountRepo,
     private val connectorFactory: JServerConnector.Factory,
+    private val endpointFactory: JServerEndpoint.Factory,
 ) : ConnectorHub {
 
     private val _connectors = accountRepo.accounts
@@ -42,6 +45,24 @@ class JServerHub @Inject constructor(
         log(TAG) { "remove(id=$connectorId)" }
         val connector = _connectors.first().single { it.identifier == connectorId }
         accountRepo.remove(connector.credentials.accountId)
+    }
+
+    suspend fun linkAcount(linkContainer: LinkCodeContainer) = withContext(NonCancellable) {
+        log(TAG) { "linkAccount(link=$linkContainer)" }
+        val newCredentials = JServer.Credentials(
+            serverAdress = linkContainer.serverAdress,
+            accountId = linkContainer.accountId,
+            devicePassword = linkContainer.devicePassword
+        )
+
+        endpointFactory.create(linkContainer.serverAdress).apply {
+            setCredentials(newCredentials)
+            listDevices(linkContainer.linkCode) // Any call that supports share codes suffices to link our device ID
+        }
+
+        log(TAG) { "Account successfully linked: $newCredentials" }
+
+        accountRepo.add(newCredentials)
     }
 
     companion object {

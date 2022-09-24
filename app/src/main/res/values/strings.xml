@@ -93,6 +93,7 @@
     <string name="sync_jserver_link_host_option_direct">Create a text code that you can send through other apps</string>
     <string name="sync_jserver_link_host_option_qrcode">Show a QRCode</string>
     <string name="sync_jserver_link_host_option_nfc">Link device via NFC</string>
+    <string name="sync_jserver_link_host_device_linked_message">A new device was linked to your account.</string>
     <string name="sync_jserver_link_client_option_direct">Manually copy and paste a  link code</string>
     <string name="sync_jserver_link_client_option_qrcode">Scan a QR code from another device</string>
     <string name="sync_jserver_link_client_option_nfc">Use two devices with NFC</string>

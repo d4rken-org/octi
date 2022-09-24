@@ -41,7 +41,8 @@ class JServerConnector @AssistedInject constructor(
         override val lastReadAt: Instant? = null,
         override val lastWriteAt: Instant? = null,
         override val lastError: Exception? = null,
-        override val stats: SyncConnectorState.Stats? = null,
+        override val quota: SyncConnectorState.Quota? = null,
+        override val devices: Collection<DeviceId>? = null,
     ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
@@ -115,6 +116,7 @@ class JServerConnector @AssistedInject constructor(
         return LinkCodeContainer(
             serverAdress = credentials.serverAdress,
             accountId = credentials.accountId,
+            devicePassword = credentials.devicePassword,
             fromDeviceId = syncSettings.deviceId,
             linkCode = linkCode
         )
@@ -131,10 +133,10 @@ class JServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeServer(): Done" }
     }
 
-    private fun getStorageStats(): SyncConnectorState.Stats {
+    private fun getStorageStats(): SyncConnectorState.Quota {
         log(TAG, VERBOSE) { "getStorageStats()" }
 
-        return SyncConnectorState.Stats()
+        return SyncConnectorState.Quota()
     }
 
     private suspend fun readAction(block: suspend () -> Unit) {
@@ -143,15 +145,15 @@ class JServerConnector @AssistedInject constructor(
 
         _state.updateBlocking { copy(readActions = readActions + 1) }
 
-        var newStorageStats: SyncConnectorState.Stats? = null
+        var newStorageQuota: SyncConnectorState.Quota? = null
 
         try {
             block()
 
-            val lastStats = _state.value().stats?.timestamp
+            val lastStats = _state.value().quota?.updatedAt
             if (lastStats == null || Duration.between(lastStats, Instant.now()) > Duration.ofSeconds(60)) {
                 log(TAG) { "readAction(block=$block): Updating storage stats" }
-                newStorageStats = getStorageStats()
+                newStorageQuota = getStorageStats()
             }
         } catch (e: Exception) {
             log(TAG, ERROR) { "readAction(block=$block) failed: ${e.asLog()}" }
@@ -160,7 +162,7 @@ class JServerConnector @AssistedInject constructor(
             _state.updateBlocking {
                 copy(
                     readActions = readActions - 1,
-                    stats = newStorageStats ?: stats,
+                    quota = newStorageQuota ?: quota,
                     lastReadAt = Instant.now(),
                 )
             }
@@ -193,6 +195,20 @@ class JServerConnector @AssistedInject constructor(
                 )
             }
             log(TAG, VERBOSE) { "writeAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
+        }
+    }
+
+    override suspend fun forceSync(stats: Boolean, readData: Boolean, writeData: Boolean) {
+        log(TAG) { "refresh(stats=$stats, readData=$readData, writeData=$writeData)" }
+        if (stats) {
+            val knownDeviceIds = endpoint.listDevices()
+            _state.updateBlocking { copy(devices = knownDeviceIds) }
+        }
+        if (readData) {
+
+        }
+        if (writeData) {
+
         }
     }
 

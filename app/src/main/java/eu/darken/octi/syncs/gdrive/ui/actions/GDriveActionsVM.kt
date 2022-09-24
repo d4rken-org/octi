@@ -11,6 +11,7 @@ import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
 import eu.darken.octi.syncs.gdrive.core.GoogleAccount
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -30,6 +31,10 @@ class GDriveActionsVM @Inject constructor(
     val state = syncManager.getConnectorById<GDriveAppDataConnector>(navArgs.identifier)
         .map {
             State(it.account)
+        }
+        .catch {
+            if (it is NoSuchElementException) navigateBack()
+            else throw it
         }
         .asLiveData2()
 

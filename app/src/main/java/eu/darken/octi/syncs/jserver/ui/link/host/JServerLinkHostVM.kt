@@ -8,14 +8,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.flow.withPrevious
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.jserver.core.JServerConnector
 import eu.darken.octi.syncs.jserver.ui.link.LinkOption
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
@@ -39,6 +42,20 @@ class JServerLinkHostVM @Inject constructor(
     private val _state = MutableStateFlow(State())
     val state = _state.asLiveData2()
 
+    val autoNavOnNewDevice = syncManager
+        .getConnectorById<JServerConnector>(navArgs.identifier)
+        .flatMapLatest { it.state }
+        .map { it.devices }
+        .withPrevious()
+        .map { (old, new) ->
+            if (old == null) return@map null
+            if (new == null) return@map null
+            if (new.size <= old.size) return@map null
+            Unit
+        }
+        .filterNotNull()
+        .asLiveData2()
+
     init {
         launch {
             val connector = syncManager.getConnectorById<JServerConnector>(navArgs.identifier).first()
@@ -48,6 +65,13 @@ class JServerLinkHostVM @Inject constructor(
 
             stateLock.withLock {
                 _state.value = _state.value.copy(encodedLinkCode = container.toEncodedString(moshi))
+            }
+        }
+        launch {
+            val connector = syncManager.getConnectorById<JServerConnector>(navArgs.identifier).first()
+            while (currentCoroutineContext().isActive) {
+                connector.forceSync(stats = true, readData = false, writeData = false)
+                delay(3000)
             }
         }
     }

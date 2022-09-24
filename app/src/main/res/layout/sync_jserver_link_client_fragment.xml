@@ -138,4 +138,27 @@
             android:text="// TODO" />
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/busy_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0.8"
+        android:background="?attr/colorSurface"
+        android:clickable="true"
+        android:elevation="16dp"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            style="@style/Widget.Material3.CircularProgressIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

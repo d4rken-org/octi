@@ -3,6 +3,7 @@ package eu.darken.octi.syncs.jserver.ui.link.client
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -73,6 +74,7 @@ class JServerLinkClientFragment : Fragment3(R.layout.sync_jserver_link_client_fr
                     // TODO NOOP?
                 }
             }
+            busyContainer.isVisible = state.isBusy
         }
         super.onViewCreated(view, savedInstanceState)
     }

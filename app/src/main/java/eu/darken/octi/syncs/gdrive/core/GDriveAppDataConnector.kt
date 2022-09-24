@@ -37,7 +37,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
         override val lastReadAt: Instant? = null,
         override val lastWriteAt: Instant? = null,
         override val lastError: Exception? = null,
-        override val stats: SyncConnectorState.Stats? = null,
+        override val quota: SyncConnectorState.Quota? = null,
+        override val devices: Collection<DeviceId>? = null,
     ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
@@ -165,6 +166,20 @@ class GDriveAppDataConnector @AssistedInject constructor(
         )
     }
 
+
+    override suspend fun forceSync(stats: Boolean, readData: Boolean, writeData: Boolean) {
+        log(TAG) { "refresh(stats=$stats, readData=$readData, writeData=$writeData)" }
+        if (stats) {
+            // TODO
+        }
+        if (readData) {
+            // TODO
+        }
+        if (writeData) {
+            // TODO
+        }
+    }
+
     private suspend fun writeDrive(data: SyncWrite) {
         log(TAG, DEBUG) { "writeDrive(): $data)" }
 
@@ -191,7 +206,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeDrive(): Done" }
     }
 
-    private fun getStorageStats(): SyncConnectorState.Stats {
+    private fun getStorageStats(): SyncConnectorState.Quota {
         log(TAG, VERBOSE) { "getStorageStats()" }
         val allItems = gdrive.files()
             .list().apply {
@@ -205,8 +220,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
             .execute().storageQuota
             .limit
 
-        return SyncConnectorState.Stats(
-            timestamp = Instant.now(),
+        return SyncConnectorState.Quota(
+            updatedAt = Instant.now(),
             storageUsed = allItems.sumOf { it.quotaBytesUsed ?: 0 },
             storageTotal = storageTotal
         )
@@ -218,15 +233,15 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         _state.updateBlocking { copy(readActions = readActions + 1) }
 
-        var newStorageStats: SyncConnectorState.Stats? = null
+        var newStorageQuota: SyncConnectorState.Quota? = null
 
         try {
             block()
 
-            val lastStats = _state.value().stats?.timestamp
+            val lastStats = _state.value().quota?.updatedAt
             if (lastStats == null || Duration.between(lastStats, Instant.now()) > Duration.ofSeconds(60)) {
                 log(TAG) { "readAction(block=$block): Updating storage stats" }
-                newStorageStats = getStorageStats()
+                newStorageQuota = getStorageStats()
             }
         } catch (e: Exception) {
             log(TAG, ERROR) { "readAction(block=$block) failed: ${e.asLog()}" }
@@ -235,7 +250,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             _state.updateBlocking {
                 copy(
                     readActions = readActions - 1,
-                    stats = newStorageStats ?: stats,
+                    quota = newStorageQuota ?: quota,
                     lastReadAt = Instant.now(),
                 )
             }
