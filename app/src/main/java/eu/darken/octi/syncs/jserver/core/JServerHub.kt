@@ -57,7 +57,7 @@ class JServerHub @Inject constructor(
 
         endpointFactory.create(linkContainer.serverAdress).apply {
             setCredentials(newCredentials)
-            listDevices(linkContainer.linkCode) // Any call that supports share codes suffices to link our device ID
+            linkToExistingAccount(linkContainer.linkCode) // Any call that supports share codes suffices to link our device ID
         }
 
         log(TAG) { "Account successfully linked: $newCredentials" }

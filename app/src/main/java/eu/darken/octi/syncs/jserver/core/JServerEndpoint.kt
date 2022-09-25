@@ -51,9 +51,26 @@ class JServerEndpoint @AssistedInject constructor(
         this.credentials = credentials
     }
 
-    suspend fun createAccount(): JServer.Credentials = withContext(dispatcherProvider.IO) {
-        log(TAG) { "createAccount()" }
+    suspend fun createNewAccount(): JServer.Credentials = withContext(dispatcherProvider.IO) {
+        log(TAG) { "createNewAccount()" }
         val response = api.register(deviceID = ourDeviceIdString)
+        require(ourDeviceIdString == response.deviceID)
+        JServer.Credentials(
+            createdAt = Instant.now(),
+            serverAdress = serverAdress,
+            accountId = JServer.Credentials.AccountId(response.accountID),
+            devicePassword = JServer.Credentials.DevicePassword(response.password)
+        )
+    }
+
+    suspend fun linkToExistingAccount(
+        linkCode: JServer.Credentials.LinkCode
+    ): JServer.Credentials = withContext(dispatcherProvider.IO) {
+        log(TAG) { "createAccount()" }
+        val response = api.register(
+            deviceID = ourDeviceIdString,
+            shareCode = linkCode.code,
+        )
         require(ourDeviceIdString == response.deviceID)
         JServer.Credentials(
             createdAt = Instant.now(),
@@ -73,7 +90,6 @@ class JServerEndpoint @AssistedInject constructor(
         log(TAG) { "listDevices(linkCode=$linkCode)" }
         val response = api.getDeviceList(
             deviceID = ourDeviceIdString,
-            shareCode = linkCode?.code
         )
         return response.items.map { DeviceId(it.id) }
     }

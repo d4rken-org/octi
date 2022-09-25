@@ -18,6 +18,7 @@ interface JServerApi {
     @POST("auth/register")
     suspend fun register(
         @Header("X-Device-ID") deviceID: String,
+        @Query("share") shareCode: String? = null,
     ): RegisterResponse
 
     @JsonClass(generateAdapter = true)
@@ -44,7 +45,6 @@ interface JServerApi {
     @GET("devices")
     suspend fun getDeviceList(
         @Header("X-Device-ID") deviceID: String,
-        @Query("share") shareCode: String? = null,
     ): DevicesResponse
 
     @GET("module/{moduleId}")
