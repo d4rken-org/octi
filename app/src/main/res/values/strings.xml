@@ -82,6 +82,12 @@
         <item quantity="other">%d unique devices</item>
     </plurals>
 
+    <string name="sync_settings_label">Synchronization</string>
+    <string name="sync_settings_desc">Device name, timing and trigger conditions.</string>
+    <string name="sync_setting_devicelabel_label">Device label</string>
+    <string name="sync_setting_devicelabel_desc">A name for this device. Visible to other synced devices.</string>
+    <string name="sync_setting_devicelabel_hint">If the label is empty, the device model is used.</string>
+
     <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">App-data scope</string>
     <string name="sync_gdrive_type_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. This is similar to how Whats App backups work.</string>
@@ -125,10 +131,6 @@
     <string name="module_power_battery_full_since_x">Charging finished: %s</string>
     <string name="module_power_battery_full_in_x">Fully charged: %s</string>
     <string name="module_power_battery_empty_in_x">Out of juice: %s</string>
-    <string name="sync_settings_label">Synchronization</string>
-    <string name="sync_settings_desc">Device name, timing and trigger conditions.</string>
-    <string name="sync_setting_devicelabel_label">Device label</string>
-    <string name="sync_setting_devicelabel_desc">A name for this device. Visible to other synced devices.</string>
-    <string name="sync_setting_devicelabel_hint">If the label is empty, the device model is used.</string>
 
+    <string name="module_meta_android_name_x_label">Android %s</string>
 </resources>

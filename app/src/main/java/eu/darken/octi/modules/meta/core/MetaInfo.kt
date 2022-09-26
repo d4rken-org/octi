@@ -2,11 +2,14 @@ package eu.darken.octi.modules.meta.core
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import eu.darken.octi.sync.core.DeviceId
 import java.time.Instant
 
 @JsonClass(generateAdapter = true)
 data class MetaInfo(
     @Json(name = "deviceLabel") val deviceLabel: String?,
+
+    @Json(name = "deviceId") val deviceId: DeviceId,
 
     @Json(name = "octiVersionName") val octiVersionName: String,
     @Json(name = "octiGitSha") val octiGitSha: String,
@@ -17,6 +20,7 @@ data class MetaInfo(
 
     @Json(name = "androidVersionName") val androidVersionName: String,
     @Json(name = "androidApiLevel") val androidApiLevel: Int,
+    @Json(name = "androidSecurityPatch") val androidSecurityPatch: String?,
 ) {
 
     @JsonClass(generateAdapter = false)

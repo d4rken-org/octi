@@ -11,7 +11,6 @@ import eu.darken.octi.databinding.DashboardDeviceItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
 import eu.darken.octi.modules.ModuleData
 import eu.darken.octi.modules.meta.core.MetaInfo
-import java.time.Duration
 import java.time.Instant
 
 
@@ -39,9 +38,12 @@ class DeviceVH(parent: ViewGroup) :
         deviceLabel.text = meta.deviceLabel
             ?.let { "$it (${meta.deviceName})" }
             ?: meta.deviceName
+
         deviceSubtitle.apply {
-            val uptimeExtraPolated = Duration.between(meta.deviceBootedAt, item.now)
-            text = getString(R.string.device_uptime_x, DateUtils.formatElapsedTime(uptimeExtraPolated.seconds))
+            val osName = getString(R.string.module_meta_android_name_x_label, meta.androidVersionName)
+            text = meta.androidSecurityPatch
+                ?.let { "$osName (API ${meta.androidApiLevel}) [$it]" }
+                ?: "$osName (API ${meta.androidApiLevel})"
         }
 
         octiVersion.text = if (BuildConfigWrap.DEBUG) {

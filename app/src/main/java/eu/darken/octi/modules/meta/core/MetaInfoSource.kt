@@ -31,12 +31,14 @@ class MetaInfoSource @Inject constructor(
                 while (currentCoroutineContext().isActive) {
                     val info = MetaInfo(
                         deviceLabel = deviceLabel.takeIf { !it.isNullOrEmpty() },
+                        deviceId = syncSettings.deviceId,
                         octiVersionName = BuildConfigWrap.VERSION_NAME,
                         octiGitSha = BuildConfigWrap.GIT_SHA,
                         deviceName = Build.MODEL,
                         deviceType = MetaInfo.DeviceType.PHONE,
-                        androidVersionName = Build.VERSION.CODENAME,
+                        androidVersionName = Build.VERSION.CODENAME.let { if (it == "REL") Build.VERSION.RELEASE else it },
                         androidApiLevel = Build.VERSION.SDK_INT,
+                        androidSecurityPatch = Build.VERSION.SECURITY_PATCH,
                         deviceBootedAt = Instant.now().minusMillis(SystemClock.elapsedRealtime()),
                     )
                     emit(info)
