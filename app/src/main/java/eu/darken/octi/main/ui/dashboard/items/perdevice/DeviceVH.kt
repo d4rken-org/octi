@@ -33,6 +33,7 @@ class DeviceVH(parent: ViewGroup) :
         deviceIcon.setImageResource(
             when (meta.deviceType) {
                 MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
+                MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
             }
         )
         deviceLabel.text = meta.deviceLabel

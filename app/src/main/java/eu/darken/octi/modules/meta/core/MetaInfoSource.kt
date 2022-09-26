@@ -1,7 +1,10 @@
 package eu.darken.octi.modules.meta.core
 
+import android.content.Context
 import android.os.Build
 import android.os.SystemClock
+import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
@@ -22,6 +25,7 @@ import javax.inject.Singleton
 class MetaInfoSource @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
+    @ApplicationContext private val context: Context,
     private val syncSettings: SyncSettings,
 ) : ModuleInfoSource<MetaInfo> {
 
@@ -31,14 +35,24 @@ class MetaInfoSource @Inject constructor(
                 while (currentCoroutineContext().isActive) {
                     val info = MetaInfo(
                         deviceLabel = deviceLabel.takeIf { !it.isNullOrEmpty() },
+
                         deviceId = syncSettings.deviceId,
+
                         octiVersionName = BuildConfigWrap.VERSION_NAME,
                         octiGitSha = BuildConfigWrap.GIT_SHA,
+
+                        deviceManufacturer = Build.MANUFACTURER,
                         deviceName = Build.MODEL,
-                        deviceType = MetaInfo.DeviceType.PHONE,
+
+                        deviceType = when {
+                            context.resources.getBoolean(R.bool.isTablet) -> MetaInfo.DeviceType.TABLET
+                            else -> MetaInfo.DeviceType.PHONE
+                        },
+
                         androidVersionName = Build.VERSION.CODENAME.let { if (it == "REL") Build.VERSION.RELEASE else it },
                         androidApiLevel = Build.VERSION.SDK_INT,
                         androidSecurityPatch = Build.VERSION.SECURITY_PATCH,
+
                         deviceBootedAt = Instant.now().minusMillis(SystemClock.elapsedRealtime()),
                     )
                     emit(info)

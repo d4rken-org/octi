@@ -14,6 +14,7 @@ data class MetaInfo(
     @Json(name = "octiVersionName") val octiVersionName: String,
     @Json(name = "octiGitSha") val octiGitSha: String,
 
+    @Json(name = "deviceManufacturer") val deviceManufacturer: String,
     @Json(name = "deviceName") val deviceName: String,
     @Json(name = "deviceType") val deviceType: DeviceType,
     @Json(name = "deviceBootedAt") val deviceBootedAt: Instant,
@@ -25,6 +26,7 @@ data class MetaInfo(
 
     @JsonClass(generateAdapter = false)
     enum class DeviceType {
-        @Json(name = "phone") PHONE,
+        @Json(name = "PHONE") PHONE,
+        @Json(name = "TABLET") TABLET,
     }
 }
