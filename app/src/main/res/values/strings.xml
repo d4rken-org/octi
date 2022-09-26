@@ -15,6 +15,7 @@
     <string name="general_link_existing_action">Link to existing account</string>
     <string name="general_na_label">N/A</string>
     <string name="general_dismiss_action">Dismiss</string>
+    <string name="general_maybe_later_action">Maybe later</string>
     <string name="general_manage_action">Manage</string>
 
     <string name="general_error_label">Error</string>
@@ -140,4 +141,21 @@
     <string name="ui_theme_dark_label">Dark</string>
     <string name="ui_theme_light_label">Light</string>
     <string name="ui_theme_system_label">System</string>
+
+    <string name="permission_required_label">Permission required</string>
+    <string name="permission_grant_action">Grant permission</string>
+    <string name="permission_dismiss_hint">Visit the app\'s system settings to later allow dismissed permissions.</string>
+
+    <string name="permission_location_label">Location permission</string>
+    <string name="permission_location_desc">Location permission enable Octi to display your Wifi names, or show you the current position of your device.</string>
+    <string name="permission_battery_optimization_label">Battery optimizations</string>
+    <string name="permission_battery_optimization_desc">Disable battery optimizations to allow synchronisation without opening the app.</string>
+    <string name="permission_notifications_post_label">Post notifications</string>
+    <string name="permission_notifications_post_desc">The post notification permission allows Octi to notify you about events on other devices that you have configured.</string>
+
+    <string name="module_wifi_unknown_ssid_label">Unknown SSID</string>
+    <string name="module_wifi_unknown_ip_label">Unknown IP</string>
+    <string name="module_wifi_reception_good_label">Good signal</string>
+    <string name="module_wifi_reception_okay_label">OK signal</string>
+    <string name="module_wifi_reception_bad_label">Bad signal</string>
 </resources>

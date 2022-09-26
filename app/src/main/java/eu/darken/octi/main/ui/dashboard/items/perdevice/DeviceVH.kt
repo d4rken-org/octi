@@ -42,9 +42,7 @@ class DeviceVH(parent: ViewGroup) :
 
         deviceSubtitle.apply {
             val osName = getString(R.string.module_meta_android_name_x_label, meta.androidVersionName)
-            text = meta.androidSecurityPatch
-                ?.let { "$osName (API ${meta.androidApiLevel}) [$it]" }
-                ?: "$osName (API ${meta.androidApiLevel})"
+            text = "$osName (API ${meta.androidApiLevel})"
         }
 
         octiVersion.text = if (BuildConfigWrap.DEBUG) {

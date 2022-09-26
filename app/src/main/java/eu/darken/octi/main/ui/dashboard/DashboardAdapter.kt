@@ -11,6 +11,7 @@ import eu.darken.octi.common.lists.differ.setupDiffer
 import eu.darken.octi.common.lists.modular.ModularAdapter
 import eu.darken.octi.common.lists.modular.mods.DataBinderMod
 import eu.darken.octi.common.lists.modular.mods.TypedVHCreatorMod
+import eu.darken.octi.main.ui.dashboard.items.PermissionVH
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import javax.inject.Inject
@@ -27,6 +28,7 @@ class DashboardAdapter @Inject constructor() :
     init {
         modules.add(DataBinderMod(data))
         modules.add(TypedVHCreatorMod({ data[it] is WelcomeVH.Item }) { WelcomeVH(it) })
+        modules.add(TypedVHCreatorMod({ data[it] is PermissionVH.Item }) { PermissionVH(it) })
         modules.add(TypedVHCreatorMod({ data[it] is DeviceVH.Item }) { DeviceVH(it) })
     }
 

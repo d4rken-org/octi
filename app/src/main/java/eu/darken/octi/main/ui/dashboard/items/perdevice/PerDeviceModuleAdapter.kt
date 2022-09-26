@@ -12,6 +12,7 @@ import eu.darken.octi.common.lists.modular.ModularAdapter
 import eu.darken.octi.common.lists.modular.mods.DataBinderMod
 import eu.darken.octi.common.lists.modular.mods.TypedVHCreatorMod
 import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
+import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
 import javax.inject.Inject
 
 
@@ -26,6 +27,7 @@ class PerDeviceModuleAdapter @Inject constructor() :
     init {
         modules.add(DataBinderMod(data))
         modules.add(TypedVHCreatorMod({ data[it] is DevicePowerVH.Item }) { DevicePowerVH(it) })
+        modules.add(TypedVHCreatorMod({ data[it] is DeviceWifiVH.Item }) { DeviceWifiVH(it) })
     }
 
     abstract class BaseVH<D : Item, B : ViewBinding>(

@@ -1,52 +1,53 @@
 package eu.darken.octi.common.network
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.NetworkCapabilities.*
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.core.net.ConnectivityManagerCompat
+import android.net.wifi.WifiManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.octi.BuildConfig
 import eu.darken.octi.common.coroutine.AppScope
+import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
+import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.hasApiLevel
+import eu.darken.octi.common.permissions.Permission
+import eu.darken.octi.common.permissions.hasPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.net.Inet4Address
+import java.net.Inet6Address
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
-class NetworkStateProvider @Inject constructor(
+class WifiStateProvider @Inject constructor(
     @ApplicationContext private val context: Context,
     @AppScope private val appScope: CoroutineScope,
+    private val dispatcherProvider: DispatcherProvider,
     private val networkRequestBuilderProvider: NetworkRequestBuilderProvider,
-    private val manager: ConnectivityManager,
+    private val connectivityManager: ConnectivityManager,
+    private val wifiManager: WifiManager,
 ) {
 
-    val networkState: Flow<State> = callbackFlow {
-        send(currentState)
-
+    val wifiState: Flow<Wifi?> = callbackFlow<Network?> {
         var registeredCallback: ConnectivityManager.NetworkCallback? = null
 
-        fun callbackRefresh(delayValue: Long = 0) {
+        fun callbackRefresh(network: Network?) {
             appScope.launch {
-                delay(delayValue)
-                send(currentState)
+                send(network)
             }
         }
 
@@ -54,7 +55,7 @@ class NetworkStateProvider @Inject constructor(
             val callback = object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     log(TAG, VERBOSE) { "onAvailable(network=$network)" }
-                    callbackRefresh()
+                    callbackRefresh(network)
                 }
 
                 /**
@@ -63,7 +64,7 @@ class NetworkStateProvider @Inject constructor(
                  */
                 override fun onLost(network: Network) {
                     log(TAG, VERBOSE) { "onLost(network=$network)" }
-                    callbackRefresh(200)
+                    callbackRefresh(null)
                 }
 
                 /**
@@ -72,32 +73,32 @@ class NetworkStateProvider @Inject constructor(
                  */
                 override fun onUnavailable() {
                     log(TAG, VERBOSE) { "onUnavailable()" }
-                    callbackRefresh()
+                    callbackRefresh(null)
                 }
 
                 override fun onLosing(network: Network, maxMsToLive: Int) {
                     log(TAG, VERBOSE) { "onLosing(network=$network, maxMsToLive=$maxMsToLive)" }
-                    callbackRefresh()
+                    callbackRefresh(network)
                 }
 
                 override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                     log(TAG, VERBOSE) { "onCapabilitiesChanged(network=$network, capabilities=$networkCapabilities)" }
-                    callbackRefresh()
+                    callbackRefresh(network)
                 }
 
                 override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
                     log(TAG, VERBOSE) { "onLinkPropertiesChanged(network=$network, linkProperties=$linkProperties)" }
-                    callbackRefresh()
+                    callbackRefresh(network)
                 }
 
                 override fun onBlockedStatusChanged(network: Network, blocked: Boolean) {
                     log(TAG, VERBOSE) { "onBlockedStatusChanged(network=$network, blocked=$blocked)" }
-                    callbackRefresh()
+                    callbackRefresh(network)
                 }
             }
 
             val request = networkRequestBuilderProvider.get()
-                .addCapability(NET_CAPABILITY_INTERNET)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                 .build()
 
             /**
@@ -106,92 +107,57 @@ class NetworkStateProvider @Inject constructor(
              *  at android.os.Parcel.createExceptionOrNull (Parcel.java:2385)
              *  at android.net.ConnectivityManager.registerNetworkCallback (ConnectivityManager.java:4564)
              */
-            manager.registerNetworkCallback(request, callback)
+            connectivityManager.registerNetworkCallback(request, callback)
             registeredCallback = callback
         } catch (e: SecurityException) {
             log(TAG, ERROR) {
                 "registerNetworkCallback() threw an undocumented SecurityException, Just Samsung Things™️:${e.asLog()}"
             }
-            send(State.Fallback)
         }
 
         awaitClose {
             log(TAG, VERBOSE) { "unregisterNetworkCallback($registeredCallback)" }
-            registeredCallback?.let { manager.unregisterNetworkCallback(it) }
+            registeredCallback?.let { connectivityManager.unregisterNetworkCallback(it) }
         }
     }
+        .map { network ->
+            if (network == null) return@map null
+            val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return@map null
+            val linkProperties = connectivityManager.getLinkProperties(network) ?: return@map null
+
+            val ssid = if (hasApiLevel(29) && context.hasPermission(Permission.ACCESS_FINE_LOCATION)) {
+                wifiManager.connectionInfo.ssid
+            } else if (hasApiLevel(27) && context.hasPermission(Permission.ACCESS_COARSE_LOCATION)) {
+                wifiManager.connectionInfo.ssid
+            } else {
+                wifiManager.connectionInfo.ssid
+            }
+
+            Wifi(
+                signalStrength = if (hasApiLevel(30)) {
+                    wifiManager.calculateSignalLevel(capabilities.signalStrength) / wifiManager.maxSignalLevel.toFloat()
+                } else {
+                    WifiManager.calculateSignalLevel(capabilities.signalStrength, 6) / 6f
+                },
+                ssid = ssid,
+                addressIpv4 = linkProperties.linkAddresses.firstOrNull { it.address is Inet4Address }?.address as Inet4Address?,
+                addressIpv6 = linkProperties.linkAddresses.firstOrNull { it.address is Inet6Address }?.address as Inet6Address?,
+                frequency = wifiManager.connectionInfo?.frequency,
+            )
+        }
         .distinctUntilChanged()
+        .setupCommonEventHandlers(TAG) { "wifiState" }
         .replayingShare(scope = appScope)
 
-    private val currentState: State
-        @SuppressLint("NewApi")
-        get() = try {
-            when {
-                hasApiLevel(Build.VERSION_CODES.M) -> modernNetworkState()
-                else -> legacyNetworkState()
-            }
-        } catch (e: Exception) {
-            if (BuildConfig.DEBUG) throw e
-            // Don't crash on appScope in prod
-            log(TAG, ERROR) { "Failed to determine current network state, using fallback:${e.asLog()}" }
-            State.Fallback
-        }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun modernNetworkState(): State = manager.activeNetwork.let { network ->
-        State.Modern(
-            activeNetwork = network,
-            capabilities = network?.let {
-                try {
-                    manager.getNetworkCapabilities(it)
-                } catch (e: SecurityException) {
-                    log(TAG, ERROR) { "Failed to determine network capabilities:${e.asLog()}" }
-                    null
-                }
-            },
-        )
-    }
-
-    @Suppress("DEPRECATION")
-    private fun legacyNetworkState(): State = State.LegacyAPI21(
-        isInternetAvailable = manager.activeNetworkInfo?.isConnected ?: false,
-        isMeteredConnection = ConnectivityManagerCompat.isActiveNetworkMetered(manager)
+    data class Wifi(
+        val signalStrength: Float,
+        val ssid: String?,
+        val addressIpv4: Inet4Address?,
+        val addressIpv6: Inet6Address?,
+        val frequency: Int?,
     )
 
-    interface State {
-        val isMeteredConnection: Boolean
-        val isInternetAvailable: Boolean
-
-        data class LegacyAPI21(
-            override val isMeteredConnection: Boolean,
-            override val isInternetAvailable: Boolean
-        ) : State
-
-        data class Modern(
-            val activeNetwork: Network?,
-            val capabilities: NetworkCapabilities?,
-        ) : State {
-            override val isInternetAvailable: Boolean
-                get() = capabilities?.hasCapability(NET_CAPABILITY_VALIDATED) ?: false
-
-            override val isMeteredConnection: Boolean
-                get() {
-                    val unMetered = if (hasApiLevel(Build.VERSION_CODES.N)) {
-                        capabilities?.hasCapability(NET_CAPABILITY_NOT_METERED) ?: false
-                    } else {
-                        capabilities?.hasTransport(TRANSPORT_WIFI) ?: false
-                    }
-                    return !unMetered
-                }
-        }
-
-        object Fallback : State {
-            override val isMeteredConnection: Boolean = true
-            override val isInternetAvailable: Boolean = true
-        }
-    }
-
     companion object {
-        private val TAG = logTag("NetworkStateProvider")
+        private val TAG = logTag("WifiStateProvider")
     }
 }

@@ -3,6 +3,8 @@ package eu.darken.octi.common.dagger
 import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.wifi.WifiManager
 import android.os.BatteryManager
 import android.os.PowerManager
 import androidx.work.WorkManager
@@ -34,6 +36,16 @@ class AndroidModule {
     @Singleton
     fun batteryManager(context: Context): BatteryManager =
         context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+
+    @Provides
+    @Singleton
+    fun connectivityManager(context: Context): ConnectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    @Provides
+    @Singleton
+    fun wifiManager(context: Context): WifiManager =
+        context.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
     @Provides
     @Singleton
