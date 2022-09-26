@@ -8,6 +8,15 @@
         app:summary="Advanced settings summary"
         app:title="Advanced settings" />
 
+
+    <PreferenceCategory android:title="@string/settings_category_ui_label">
+
+        <ListPreference
+            android:icon="@drawable/ic_theme_onsurface"
+            android:key="core.ui.theme.type"
+            android:title="@string/ui_theme_setting_label" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/settings_category_other_label">
 
         <CheckBoxPreference
