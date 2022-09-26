@@ -12,7 +12,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/ic_baseline_network_wifi_error_24"
-        app:layout_constraintBottom_toBottomOf="@id/wifi_primary"
+        app:layout_constraintBottom_toBottomOf="@id/wifi_secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/wifi_primary" />
 
@@ -21,7 +21,7 @@
         style="@style/TextAppearance.Material3.BodyMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@id/wifi_secondary"
         app:layout_constraintEnd_toEndOf="parent"

@@ -90,36 +90,39 @@ class DashboardVM @Inject constructor(
             )
         }.run { items.addAll(this) }
 
-        byDevice.devices.mapNotNull { (deviceId, moduleDatas) ->
-            val metaModule = moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
-            if (metaModule == null) {
-                log(TAG, WARN) { "Missing meta module for $deviceId" }
-                return@mapNotNull null
-            }
+        byDevice.devices
+            .mapNotNull { (deviceId, moduleDatas) ->
+                val metaModule = moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
+                if (metaModule == null) {
+                    log(TAG, WARN) { "Missing meta module for $deviceId" }
+                    return@mapNotNull null
+                }
 
-            val moduleItems = (moduleDatas.toList() - metaModule)
-                .sortedBy { it.orderPrio }
-                .mapNotNull {
-                    when (it.data) {
-                        is PowerInfo -> DevicePowerVH.Item(
-                            data = it as ModuleData<PowerInfo>,
-                        )
-                        is WifiInfo -> DeviceWifiVH.Item(
-                            data = it as ModuleData<WifiInfo>,
-                        )
-                        else -> {
-                            log(TAG, WARN) { "Unsupported module data: ${it.data}" }
-                            null
+                val moduleItems = (moduleDatas.toList() - metaModule)
+                    .sortedBy { it.orderPrio }
+                    .mapNotNull {
+                        when (it.data) {
+                            is PowerInfo -> DevicePowerVH.Item(
+                                data = it as ModuleData<PowerInfo>,
+                            )
+                            is WifiInfo -> DeviceWifiVH.Item(
+                                data = it as ModuleData<WifiInfo>,
+                            )
+                            else -> {
+                                log(TAG, WARN) { "Unsupported module data: ${it.data}" }
+                                null
+                            }
                         }
                     }
-            }
 
-            DeviceVH.Item(
-                now = now,
-                meta = metaModule,
-                moduleItems = moduleItems,
-            )
-        }.toList().let { items.addAll(it) }
+                DeviceVH.Item(
+                    now = now,
+                    meta = metaModule,
+                    moduleItems = moduleItems,
+                )
+            }
+            .sortedBy { it.meta.data.deviceLabel ?: it.meta.data.deviceName }
+            .toList().let { items.addAll(it) }
 
         State(items = items)
     }.asLiveData2()
