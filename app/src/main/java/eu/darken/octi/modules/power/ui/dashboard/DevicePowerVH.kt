@@ -109,7 +109,7 @@ class DevicePowerVH(parent: ViewGroup) :
                         )
                     )
                 }
-                else -> ""
+                else -> getString(R.string.module_power_battery_estimation_na)
             }
 
             val temperatureText = powerInfo.battery.temp?.let { "$it C°" }

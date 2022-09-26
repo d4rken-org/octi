@@ -131,6 +131,7 @@
     <string name="module_power_battery_full_since_x">Charging finished: %s</string>
     <string name="module_power_battery_full_in_x">Fully charged: %s</string>
     <string name="module_power_battery_empty_in_x">Out of juice: %s</string>
+    <string name="module_power_battery_estimation_na">Estimation not available</string>
 
     <string name="module_meta_android_name_x_label">Android %s</string>
 </resources>
