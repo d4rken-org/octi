@@ -125,7 +125,7 @@ class DevicePowerVH(parent: ViewGroup) :
     data class Item(
         val data: ModuleData<PowerInfo>,
     ) : PerDeviceModuleAdapter.Item {
-        override val stableId: Long = data.deviceId.hashCode().toLong()
+        override val stableId: Long = data.moduleId.hashCode().toLong()
     }
 
 }
