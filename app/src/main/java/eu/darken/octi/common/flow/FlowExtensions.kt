@@ -20,11 +20,11 @@ fun <T : Any> Flow<T>.shareLatest(
     started: SharingStarted = SharingStarted.WhileSubscribed(replayExpirationMillis = 0),
     tag: String? = null,
 ) = this
-    .onStart { if (tag != null) log(tag) { "shareLatest(...) start" } }
-    .onEach { if (tag != null) log(tag) { "shareLatest(...) emission: $it" } }
-    .onCompletion { if (tag != null) log(tag) { "shareLatest(...) completed." } }
+    .onStart { if (tag != null) log(tag, VERBOSE) { "shareLatest(...) start" } }
+    .onEach { if (tag != null) log(tag, VERBOSE) { "shareLatest(...) emission: $it" } }
+    .onCompletion { if (tag != null) log(tag, VERBOSE) { "shareLatest(...) completed." } }
     .catch {
-        if (tag != null) log(tag) { "shareLatest(...) catch(): ${it.asLog()}" }
+        if (tag != null) log(tag, VERBOSE) { "shareLatest(...) catch(): ${it.asLog()}" }
         throw it
     }
     .stateIn(

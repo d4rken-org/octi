@@ -114,4 +114,16 @@
     <string name="sync_jserver_link_client_link_action">Link device</string>
     <string name="general_force_sync_action">Force synchronization</string>
 
+    <string name="module_power_battery_status_unknown">Unknown status</string>
+    <string name="module_power_battery_status_full">Full</string>
+    <string name="module_power_battery_status_charging">Charging</string>
+    <string name="module_power_battery_status_charging_slow">Charging slowly</string>
+    <string name="module_power_battery_status_charging_fast">Charging fast</string>
+    <string name="module_power_battery_status_discharging">Discharging</string>
+    <string name="module_power_battery_status_discharging_slow">Discharging slowly</string>
+    <string name="module_power_battery_status_discharging_fast">Discharging fast</string>
+    <string name="module_power_battery_full_since_x">Charging finished: %s</string>
+    <string name="module_power_battery_full_in_x">Fully charged: %s</string>
+    <string name="module_power_battery_empty_in_x">Out of juice: %s</string>
+
 </resources>

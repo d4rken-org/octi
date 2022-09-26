@@ -28,9 +28,11 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/device_subtitle"
             app:layout_constraintEnd_toStartOf="@id/last_seen"
             app:layout_constraintStart_toEndOf="@id/device_icon"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:text="Pixel 5 (Android 13)" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -39,9 +41,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@id/module_data_list"
             app:layout_constraintEnd_toEndOf="@id/device_label"
             app:layout_constraintStart_toStartOf="@id/device_label"
             app:layout_constraintTop_toBottomOf="@id/device_label"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:text="123 days" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -68,11 +73,15 @@
             android:id="@+id/module_data_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/device_subtitle" />
+            app:layout_constraintTop_toBottomOf="@id/device_subtitle"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

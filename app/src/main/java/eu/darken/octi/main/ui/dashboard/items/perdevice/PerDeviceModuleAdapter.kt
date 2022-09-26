@@ -11,7 +11,7 @@ import eu.darken.octi.common.lists.differ.setupDiffer
 import eu.darken.octi.common.lists.modular.ModularAdapter
 import eu.darken.octi.common.lists.modular.mods.DataBinderMod
 import eu.darken.octi.common.lists.modular.mods.TypedVHCreatorMod
-import eu.darken.octi.main.ui.dashboard.items.perdevice.module.DevicePowerVH
+import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
 import javax.inject.Inject
 
 

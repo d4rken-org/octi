@@ -3,6 +3,7 @@ package eu.darken.octi.common.dagger
 import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
+import android.os.BatteryManager
 import android.os.PowerManager
 import androidx.work.WorkManager
 import dagger.Module
@@ -28,6 +29,11 @@ class AndroidModule {
     @Singleton
     fun powerManager(context: Context): PowerManager =
         context.getSystemService(Context.POWER_SERVICE) as PowerManager
+
+    @Provides
+    @Singleton
+    fun batteryManager(context: Context): BatteryManager =
+        context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
 
     @Provides
     @Singleton

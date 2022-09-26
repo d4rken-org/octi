@@ -2,6 +2,7 @@ package eu.darken.octi.main.ui.dashboard.items.perdevice
 
 import android.text.format.DateUtils
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.lists.binding
@@ -49,6 +50,7 @@ class DeviceVH(parent: ViewGroup) :
 
         lastSeen.text = DateUtils.getRelativeTimeSpanString(item.meta.modifiedAt.toEpochMilli())
 
+        moduleDataList.isGone = item.moduleItems.isEmpty()
         moduleAdapter.update(item.moduleItems)
     }
 

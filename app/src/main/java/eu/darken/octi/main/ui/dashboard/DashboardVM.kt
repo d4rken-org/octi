@@ -12,11 +12,11 @@ import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
-import eu.darken.octi.main.ui.dashboard.items.perdevice.module.DevicePowerVH
 import eu.darken.octi.modules.ModuleData
 import eu.darken.octi.modules.ModuleManager
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
+import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
 import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
