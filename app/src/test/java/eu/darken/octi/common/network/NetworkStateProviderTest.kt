@@ -2,7 +2,6 @@
 
 package eu.darken.octi.common.network
 
-import android.content.Context
 import android.net.*
 import android.net.ConnectivityManager.*
 import eu.darken.octi.common.BuildWrap
@@ -23,7 +22,6 @@ import testhelper.flow.test
 
 class NetworkStateProviderTest : BaseTest() {
 
-    @MockK lateinit var context: Context
     @MockK lateinit var connectivityManager: ConnectivityManager
 
     @MockK lateinit var network: Network
@@ -43,8 +41,6 @@ class NetworkStateProviderTest : BaseTest() {
 
         mockkObject(BuildWrap.VersionWrap)
         every { BuildWrap.VersionWrap.SDK_INT } returns 24
-
-        every { context.getSystemService(Context.CONNECTIVITY_SERVICE) } returns connectivityManager
 
         every { networkRequestBuilderProvider.get() } returns networkRequestBuilder
         networkRequestBuilder.apply {
@@ -84,9 +80,9 @@ class NetworkStateProviderTest : BaseTest() {
     }
 
     private fun createInstance(scope: CoroutineScope) = NetworkStateProvider(
-        context = context,
         appScope = scope,
         networkRequestBuilderProvider = networkRequestBuilderProvider,
+        manager = connectivityManager,
     )
 
     @Test

@@ -1,7 +1,6 @@
 package eu.darken.octi.common.network
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.Network
@@ -10,7 +9,6 @@ import android.net.NetworkCapabilities.*
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.net.ConnectivityManagerCompat
-import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.BuildConfig
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
@@ -32,7 +30,6 @@ import javax.inject.Singleton
 
 @Singleton
 class NetworkStateProvider @Inject constructor(
-    @ApplicationContext private val context: Context,
     @AppScope private val appScope: CoroutineScope,
     private val networkRequestBuilderProvider: NetworkRequestBuilderProvider,
     private val manager: ConnectivityManager,
