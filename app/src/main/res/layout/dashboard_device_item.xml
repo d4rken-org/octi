@@ -22,7 +22,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/device_label"
-            style="@style/TextAppearance.Material3.TitleMedium"
+            style="@style/TextAppearance.Material3.TitleSmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
