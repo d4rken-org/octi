@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.BatteryManager.*
+import android.os.Build
 import android.os.PowerManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
@@ -14,6 +15,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.ifApiLevel
 import eu.darken.octi.modules.ModuleInfoSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -122,8 +124,8 @@ class PowerInfoSource @Inject constructor(
         batteryChangedRaw,
         powerStatus
     ) { _, newStatus ->
-        val chargedFullAt = batteryManager.computeChargeTimeRemaining()
-            .takeIf { it != -1L }
+        val chargedFullAt = ifApiLevel(Build.VERSION_CODES.P) { batteryManager.computeChargeTimeRemaining() }
+            ?.takeIf { it != -1L }
             ?.let { Instant.now().plusMillis(it) }
 
         if (newStatus == PowerInfo.Status.CHARGING) {

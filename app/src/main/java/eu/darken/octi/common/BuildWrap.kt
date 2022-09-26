@@ -14,3 +14,5 @@ object BuildWrap {
 }
 
 fun hasApiLevel(level: Int): Boolean = BuildWrap.VERSION.SDK_INT >= level
+
+inline fun <reified R> ifApiLevel(level: Int, block: () -> R): R? = if (hasApiLevel(level)) block() else null
