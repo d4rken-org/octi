@@ -1,8 +1,11 @@
 package eu.darken.octi.modules.power.ui.dashboard
 
+import android.content.res.ColorStateList
 import android.text.format.DateUtils
 import android.view.ViewGroup
+import androidx.core.widget.ImageViewCompat
 import eu.darken.octi.R
+import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.databinding.DashboardDevicePowerItemBinding
 import eu.darken.octi.main.ui.dashboard.items.perdevice.PerDeviceModuleAdapter
 import eu.darken.octi.modules.ModuleData
@@ -28,7 +31,20 @@ class DevicePowerVH(parent: ViewGroup) :
     ) -> Unit = { item, _ ->
         val powerInfo = item.data.data
 
-        powerIcon.setImageResource(powerInfo.batteryIconRes)
+        powerIcon.apply {
+            setImageResource(powerInfo.batteryIconRes)
+            if (powerInfo.battery.percent < 0.1f) {
+                ImageViewCompat.setImageTintList(
+                    this,
+                    ColorStateList.valueOf(context.getColor(R.color.error))
+                )
+            } else {
+                ImageViewCompat.setImageTintList(
+                    this,
+                    ColorStateList.valueOf(context.getColorForAttr(R.attr.colorControlNormal))
+                )
+            }
+        }
 
         powerPrimary.apply {
             val percentTxt = (powerInfo.battery.percent * 100).toInt()
@@ -49,6 +65,12 @@ class DevicePowerVH(parent: ViewGroup) :
                 else -> getString(R.string.module_power_battery_status_unknown)
             }
             text = "$percentTxt% • $stateTxt"
+
+            if (powerInfo.battery.percent < 0.1f) {
+                setTextColor(context.getColor(R.color.error))
+            } else {
+                setTextColor(context.getColorForAttr(R.attr.colorOnSurface))
+            }
         }
 
         powerSecondary.apply {
