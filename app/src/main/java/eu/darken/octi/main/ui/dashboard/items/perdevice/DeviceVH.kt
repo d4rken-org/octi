@@ -36,7 +36,9 @@ class DeviceVH(parent: ViewGroup) :
                 MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
             }
         )
-        deviceLabel.text = meta.deviceName
+        deviceLabel.text = meta.deviceLabel
+            ?.let { "$it (${meta.deviceName})" }
+            ?: meta.deviceName
         deviceSubtitle.apply {
             val uptimeExtraPolated = Duration.between(meta.deviceBootedAt, item.now)
             text = getString(R.string.device_uptime_x, DateUtils.formatElapsedTime(uptimeExtraPolated.seconds))

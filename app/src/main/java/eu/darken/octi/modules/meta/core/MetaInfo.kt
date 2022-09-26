@@ -6,6 +6,8 @@ import java.time.Instant
 
 @JsonClass(generateAdapter = true)
 data class MetaInfo(
+    @Json(name = "deviceLabel") val deviceLabel: String?,
+
     @Json(name = "octiVersionName") val octiVersionName: String,
     @Json(name = "octiGitSha") val octiGitSha: String,
 

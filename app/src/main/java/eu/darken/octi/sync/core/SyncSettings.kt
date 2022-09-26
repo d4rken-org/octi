@@ -21,8 +21,11 @@ class SyncSettings @Inject constructor(
 
     val syncOnMobile = preferences.createFlowPreference("sync.connection.mobile.enabled", true)
 
+    val deviceLabel = preferences.createFlowPreference<String?>("sync.device.self.label", null)
+
     override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
-        syncOnMobile
+        syncOnMobile,
+        deviceLabel
     )
 
     val deviceId by lazy {

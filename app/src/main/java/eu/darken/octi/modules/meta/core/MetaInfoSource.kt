@@ -9,8 +9,10 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.modules.ModuleInfoSource
+import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import java.time.Instant
 import javax.inject.Inject
@@ -20,23 +22,28 @@ import javax.inject.Singleton
 class MetaInfoSource @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
+    private val syncSettings: SyncSettings,
 ) : ModuleInfoSource<MetaInfo> {
 
-    override val info: Flow<MetaInfo> = flow {
-        while (currentCoroutineContext().isActive) {
-            val info = MetaInfo(
-                octiVersionName = BuildConfigWrap.VERSION_NAME,
-                octiGitSha = BuildConfigWrap.GIT_SHA,
-                deviceName = Build.MODEL,
-                deviceType = MetaInfo.DeviceType.PHONE,
-                androidVersionName = Build.VERSION.CODENAME,
-                androidApiLevel = Build.VERSION.SDK_INT,
-                deviceBootedAt = Instant.now().minusMillis(SystemClock.elapsedRealtime()),
-            )
-            emit(info)
-            delay(10 * 1000)
+    override val info: Flow<MetaInfo> = syncSettings.deviceLabel.flow
+        .flatMapLatest { deviceLabel ->
+            flow {
+                while (currentCoroutineContext().isActive) {
+                    val info = MetaInfo(
+                        deviceLabel = deviceLabel.takeIf { !it.isNullOrEmpty() },
+                        octiVersionName = BuildConfigWrap.VERSION_NAME,
+                        octiGitSha = BuildConfigWrap.GIT_SHA,
+                        deviceName = Build.MODEL,
+                        deviceType = MetaInfo.DeviceType.PHONE,
+                        androidVersionName = Build.VERSION.CODENAME,
+                        androidApiLevel = Build.VERSION.SDK_INT,
+                        deviceBootedAt = Instant.now().minusMillis(SystemClock.elapsedRealtime()),
+                    )
+                    emit(info)
+                    delay(10 * 1000)
+                }
+            }
         }
-    }
         .setupCommonEventHandlers(TAG) { "self" }
         .replayingShare(scope + dispatcherProvider.Default)
 

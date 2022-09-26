@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:icon="@drawable/ic_changelog_onsurface"
+        android:summary="@string/sync_setting_devicelabel_desc"
+        android:dialogMessage="@string/sync_setting_devicelabel_hint"
+        android:key="sync.device.self.label"
+        android:title="@string/sync_setting_devicelabel_label" />
+
+</PreferenceScreen>
