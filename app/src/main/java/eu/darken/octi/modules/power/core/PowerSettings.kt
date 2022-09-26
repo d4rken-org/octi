@@ -9,7 +9,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.preferences.PreferenceStoreMapper
 import eu.darken.octi.common.preferences.Settings
 import eu.darken.octi.common.preferences.createFlowPreference
-import eu.darken.octi.modules.ModuleSettings
+import eu.darken.octi.module.core.ModuleSettings
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton

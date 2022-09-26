@@ -1,6 +1,6 @@
 package eu.darken.octi.sync.core
 
-import eu.darken.octi.modules.ModuleId
+import eu.darken.octi.module.core.ModuleId
 import okio.ByteString
 import java.util.*
 

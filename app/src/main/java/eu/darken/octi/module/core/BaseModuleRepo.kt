@@ -1,4 +1,4 @@
-package eu.darken.octi.modules
+package eu.darken.octi.module.core
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
@@ -38,7 +38,7 @@ abstract class BaseModuleRepo<T : Any> constructor(
 
     override val state: Flow<State<T>> = _state.flow
 
-    override suspend fun updateSelf(self: ModuleData<T>) {
+    override suspend fun updateSelf(self: ModuleData<T>?) {
         log(tag) { "updateSelf(self=$self)" }
         _state.updateBlocking {
             copy(self = self)
@@ -56,25 +56,29 @@ abstract class BaseModuleRepo<T : Any> constructor(
         .flatMapLatest { isEnabled ->
             if (!isEnabled) {
                 log(tag, WARN) { "$moduleId is disabled" }
-                emptyFlow()
+                flowOf(emptyList())
             } else {
                 moduleSync.others
             }
         }
-        .onEach { updateOthers(it) }
+        .onEach { othersData ->
+            updateOthers(othersData)
+        }
         .setupCommonEventHandlers(tag) { "others" }
 
     private val writeFLow = moduleSettings.isEnabled.flow
         .flatMapLatest { isEnabled ->
             if (!isEnabled) {
                 log(tag, WARN) { "$moduleId is disabled" }
-                emptyFlow()
+                flowOf(null)
             } else {
                 infoSource.info
             }
         }
         .distinctUntilChanged()
-        .onEach { updateSelf(moduleSync.sync(it)) }
+        .onEach { selfData ->
+            updateSelf(selfData?.let { moduleSync.sync(it) })
+        }
         .setupCommonEventHandlers(tag) { "updateSelf" }
 
     override val keepAlive: Flow<Unit> = combine(

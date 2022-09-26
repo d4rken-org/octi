@@ -13,6 +13,12 @@
         app:summary="@string/sync_settings_desc"
         app:title="@string/sync_settings_label" />
 
+    <Preference
+        android:icon="@drawable/ic_baseline_module_24"
+        app:fragment="eu.darken.octi.module.ui.settings.ModuleSettingsFragment"
+        app:summary="@string/modules_settings_desc"
+        app:title="@string/modules_settings_label" />
+
     <PreferenceCategory android:title="@string/settings_category_other_label">
 
         <Preference

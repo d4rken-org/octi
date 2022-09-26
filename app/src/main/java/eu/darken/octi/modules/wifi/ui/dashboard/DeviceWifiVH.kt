@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardDeviceWifiItemBinding
 import eu.darken.octi.main.ui.dashboard.items.perdevice.PerDeviceModuleAdapter
-import eu.darken.octi.modules.ModuleData
+import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.receptIconRes
 

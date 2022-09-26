@@ -1,4 +1,4 @@
-package eu.darken.octi.modules
+package eu.darken.octi.module.core
 
 import android.os.Parcelable
 import com.squareup.moshi.Json

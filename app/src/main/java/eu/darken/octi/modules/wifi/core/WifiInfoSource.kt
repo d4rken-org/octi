@@ -5,7 +5,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.network.WifiStateProvider
-import eu.darken.octi.modules.ModuleInfoSource
+import eu.darken.octi.module.core.ModuleInfoSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

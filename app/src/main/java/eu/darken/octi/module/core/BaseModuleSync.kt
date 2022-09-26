@@ -1,4 +1,4 @@
-package eu.darken.octi.modules
+package eu.darken.octi.module.core
 
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.Bugs

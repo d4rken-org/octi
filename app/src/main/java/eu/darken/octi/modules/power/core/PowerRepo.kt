@@ -3,9 +3,8 @@ package eu.darken.octi.modules.power.core
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.modules.BaseModuleRepo
-import eu.darken.octi.modules.ModuleId
-import eu.darken.octi.modules.meta.core.MetaRepo
+import eu.darken.octi.module.core.BaseModuleRepo
+import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.modules.power.PowerModule
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
@@ -19,7 +18,7 @@ class PowerRepo @Inject constructor(
     powerInfoSource: PowerInfoSource,
     powerSync: PowerSync,
 ) : BaseModuleRepo<PowerInfo>(
-    tag = MetaRepo.TAG,
+    tag = TAG,
     scope = scope,
     dispatcherProvider = dispatcherProvider,
     moduleSettings = powerSettings,

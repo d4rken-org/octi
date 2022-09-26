@@ -14,7 +14,7 @@ import eu.darken.octi.common.debug.logging.*
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.ThemeType
-import eu.darken.octi.modules.ModuleManager
+import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import kotlinx.coroutines.CoroutineScope

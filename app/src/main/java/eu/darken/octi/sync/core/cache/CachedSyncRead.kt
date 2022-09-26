@@ -2,7 +2,7 @@ package eu.darken.octi.sync.core.cache
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import eu.darken.octi.modules.ModuleId
+import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncRead

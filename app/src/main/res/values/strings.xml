@@ -158,4 +158,10 @@
     <string name="module_wifi_reception_good_label">Good signal</string>
     <string name="module_wifi_reception_okay_label">OK signal</string>
     <string name="module_wifi_reception_bad_label">Bad signal</string>
+    <string name="modules_settings_label">Modules</string>
+    <string name="modules_settings_desc">Toggle different modules and tweak their settings.</string>
+    <string name="module_power_label">Power module</string>
+    <string name="module_power_desc">Battery, charging, estimates, temperature, etc.</string>
+    <string name="module_wifi_label">Wi-Fi module</string>
+    <string name="module_wifi_desc">Names, reception, IPs, etc.</string>
 </resources>

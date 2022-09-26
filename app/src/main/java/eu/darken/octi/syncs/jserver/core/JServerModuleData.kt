@@ -1,6 +1,6 @@
 package eu.darken.octi.syncs.jserver.core
 
-import eu.darken.octi.modules.ModuleId
+import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncRead

@@ -9,7 +9,7 @@ import eu.darken.octi.common.lists.binding
 import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.databinding.DashboardDeviceItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
-import eu.darken.octi.modules.ModuleData
+import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.meta.core.MetaInfo
 import java.time.Instant
 

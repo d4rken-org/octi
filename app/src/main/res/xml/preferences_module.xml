@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:icon="@drawable/ic_baseline_battery_full_24"
+        android:key="module.power.enabled"
+        android:summary="@string/module_power_desc"
+        android:title="@string/module_power_label" />
+
+    <CheckBoxPreference
+        android:icon="@drawable/ic_baseline_network_wifi_5_bar_24"
+        android:key="module.wifi.enabled"
+        android:summary="@string/module_wifi_desc"
+        android:title="@string/module_wifi_label" />
+
+</PreferenceScreen>
