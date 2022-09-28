@@ -48,6 +48,7 @@ class JServerConnector @AssistedInject constructor(
         override val lastError: Exception? = null,
         override val quota: SyncConnectorState.Quota? = null,
         override val devices: Collection<DeviceId>? = null,
+        override val isAvailable: Boolean = true,
     ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
@@ -257,6 +258,11 @@ class JServerConnector @AssistedInject constructor(
                 log(TAG, ERROR) { "Failed to list of known devices: ${e.asLog()}" }
             }
         }
+    }
+
+    suspend fun checkHealth(): JServerApi.Health {
+        log(TAG) { "checkHealth()" }
+        return endpoint.getHealth()
     }
 
     @AssistedFactory

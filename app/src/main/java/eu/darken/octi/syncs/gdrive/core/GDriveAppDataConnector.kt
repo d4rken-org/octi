@@ -39,6 +39,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         override val lastError: Exception? = null,
         override val quota: SyncConnectorState.Quota? = null,
         override val devices: Collection<DeviceId>? = null,
+        override val isAvailable: Boolean = true,
     ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(

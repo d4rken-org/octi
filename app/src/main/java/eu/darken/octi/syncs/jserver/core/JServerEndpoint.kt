@@ -91,36 +91,42 @@ class JServerEndpoint @AssistedInject constructor(
         return@withContext JServer.Credentials.LinkCode(code = response.shareCode)
     }
 
-    suspend fun listDevices(linkCode: JServer.Credentials.LinkCode? = null): Collection<DeviceId> {
-        log(TAG) { "listDevices(linkCode=$linkCode)" }
-        val response = api.getDeviceList(
-            deviceID = ourDeviceIdString,
-        )
-        return response.items.map { DeviceId(it.id) }
-    }
+    suspend fun listDevices(linkCode: JServer.Credentials.LinkCode? = null): Collection<DeviceId> =
+        withContext(dispatcherProvider.IO) {
+            log(TAG) { "listDevices(linkCode=$linkCode)" }
+            val response = api.getDeviceList(
+                deviceID = ourDeviceIdString,
+            )
+            response.items.map { DeviceId(it.id) }
+        }
 
     data class ReadData(
         val payload: ByteString
     )
 
-    suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId): ReadData {
+    suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId): ReadData = withContext(dispatcherProvider.IO) {
         log(TAG) { "readModule(deviceId=$deviceId, moduleId=$moduleId)" }
         val response = api.readModule(
             moduleId = moduleId.id,
             deviceId = deviceId.id
         )
-        return ReadData(
+        ReadData(
             payload = response.byteString()
         )
     }
 
-    suspend fun writeModule(moduleId: ModuleId, payload: ByteString) {
+    suspend fun writeModule(moduleId: ModuleId, payload: ByteString) = withContext(dispatcherProvider.IO) {
         log(TAG) { "writeModule(moduleId=$moduleId, payload=$payload)" }
         api.writeModule(
             deviceId = ourDeviceIdString,
             moduleId = moduleId.id,
             payload = payload.toRequestBody(),
         )
+    }
+
+    suspend fun getHealth(): JServerApi.Health = withContext(dispatcherProvider.IO) {
+        log(TAG) { "getHealth()" }
+        api.getHealth()
     }
 
     @AssistedFactory

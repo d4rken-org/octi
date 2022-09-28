@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncManager
@@ -12,6 +13,7 @@ import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.jserver.core.JServer
 import eu.darken.octi.syncs.jserver.core.JServerConnector
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -23,6 +25,8 @@ class JServerActionsVM @Inject constructor(
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     private val navArgs: JServerActionsFragmentArgs by handle.navArgs()
+
+    val actionEvents = SingleLiveEvent<ActionEvents>()
 
     data class State(
         val credentials: JServer.Credentials
@@ -60,6 +64,12 @@ class JServerActionsVM @Inject constructor(
     fun forceSync() = launch {
         log(TAG) { "forceSync()" }
         syncManager.sync(navArgs.identifier)
+        popNavStack()
+    }
+
+    fun checkHealth() = launch {
+        val health = syncManager.getConnectorById<JServerConnector>(navArgs.identifier).first().checkHealth()
+        actionEvents.postValue(ActionEvents.HealthCheck(health))
         popNavStack()
     }
 

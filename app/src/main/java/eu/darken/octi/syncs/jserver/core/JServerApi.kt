@@ -58,4 +58,19 @@ interface JServerApi {
         @Header("X-Device-ID") deviceId: String,
         @Body payload: RequestBody,
     )
+
+    @JsonClass(generateAdapter = true)
+    data class Health(
+        @Json(name = "health") val health: String,
+        @Json(name = "components") val components: List<Components>,
+    ) {
+        @JsonClass(generateAdapter = true)
+        data class Components(
+            @Json(name = "health") val health: String,
+            @Json(name = "name") val name: String,
+        )
+    }
+
+    @GET("ready")
+    suspend fun getHealth(): Health
 }

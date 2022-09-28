@@ -11,6 +11,15 @@ interface SyncConnectorState {
 
     val lastError: Exception?
 
+    data class Quota(
+        val updatedAt: Instant = Instant.now(),
+        val storageUsed: Long = -1,
+        val storageTotal: Long = -1,
+    ) {
+        val storageFree: Long
+            get() = storageTotal - storageUsed
+    }
+
     val quota: Quota?
 
     val isBusy: Boolean
@@ -21,12 +30,5 @@ interface SyncConnectorState {
 
     val devices: Collection<DeviceId>?
 
-    data class Quota(
-        val updatedAt: Instant = Instant.now(),
-        val storageUsed: Long = -1,
-        val storageTotal: Long = -1,
-    ) {
-        val storageFree: Long
-            get() = storageTotal - storageUsed
-    }
+    val isAvailable: Boolean
 }
