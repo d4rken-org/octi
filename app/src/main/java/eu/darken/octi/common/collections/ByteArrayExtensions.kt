@@ -1,5 +1,6 @@
 package eu.darken.octi.common.collections
 
+import okio.ByteString.Companion.toByteString
 import java.nio.ByteBuffer
 import java.util.*
 
@@ -37,3 +38,5 @@ infix fun UByte.shr(bitCount: Int): UByte = (this.toUInt() shr bitCount).toUByte
 
 fun UByte.toBigEndianUShort(): UShort = this.toUShort() shl 8
 fun UByte.toBigEndianUInt(): UInt = this.toUInt() shl 24
+
+fun String.toByteString() = toByteArray().toByteString()
