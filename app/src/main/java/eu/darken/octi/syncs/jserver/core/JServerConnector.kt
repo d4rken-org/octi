@@ -63,7 +63,9 @@ class JServerConnector @AssistedInject constructor(
     private val readLock = Mutex()
 
     override val identifier: ConnectorId = ConnectorId(
-        "${credentials.serverAdress.domain}(${credentials.accountId.id})"
+        type = "jserver",
+        subtype = credentials.serverAdress.domain,
+        account = credentials.accountId.id,
     )
 
     init {

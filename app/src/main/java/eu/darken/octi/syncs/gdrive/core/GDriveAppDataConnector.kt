@@ -57,7 +57,9 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val readLock = Mutex()
 
     override val identifier: ConnectorId = ConnectorId(
-        if (client.account.isAppDataScope) "${account.id.id}-appdatascope" else account.id.id
+        type = "gdrive",
+        subtype = if (client.account.isAppDataScope) "appdatascope" else "",
+        account = "account.id.id",
     )
 
     init {

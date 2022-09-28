@@ -42,7 +42,7 @@ class SyncCache @Inject constructor(
         }
     }
 
-    private fun ConnectorId.toCacheFile() = File(cacheDir, id.toHash(Hash.Algo.SHA256))
+    private fun ConnectorId.toCacheFile() = File(cacheDir, "$type-${idString.toHash(Hash.Algo.SHA256)}")
 
     suspend fun load(id: ConnectorId): SyncRead? = guard {
         log(TAG, VERBOSE) { "load(id=$id)" }
