@@ -54,7 +54,7 @@ class JServerEndpoint @AssistedInject constructor(
     suspend fun createNewAccount(): JServer.Credentials = withContext(dispatcherProvider.IO) {
         log(TAG) { "createNewAccount()" }
         val response = api.register(deviceID = ourDeviceIdString)
-        require(ourDeviceIdString == response.deviceID)
+
         JServer.Credentials(
             createdAt = Instant.now(),
             serverAdress = serverAdress,
@@ -66,12 +66,12 @@ class JServerEndpoint @AssistedInject constructor(
     suspend fun linkToExistingAccount(
         linkCode: JServer.Credentials.LinkCode
     ): JServer.Credentials = withContext(dispatcherProvider.IO) {
-        log(TAG) { "createAccount()" }
+        log(TAG) { "linkToExistingAccount(linkCode=$linkCode)" }
         val response = api.register(
             deviceID = ourDeviceIdString,
             shareCode = linkCode.code,
         )
-        require(ourDeviceIdString == response.deviceID)
+
         JServer.Credentials(
             createdAt = Instant.now(),
             serverAdress = serverAdress,

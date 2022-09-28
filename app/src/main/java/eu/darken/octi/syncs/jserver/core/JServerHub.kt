@@ -49,16 +49,16 @@ class JServerHub @Inject constructor(
 
     suspend fun linkAcount(linkContainer: LinkCodeContainer) = withContext(NonCancellable) {
         log(TAG) { "linkAccount(link=$linkContainer)" }
+
+        val endPoint = endpointFactory.create(linkContainer.serverAdress)
+
+        val loginData = endPoint.linkToExistingAccount(linkContainer.linkCode)
+
         val newCredentials = JServer.Credentials(
             serverAdress = linkContainer.serverAdress,
-            accountId = linkContainer.accountId,
-            devicePassword = linkContainer.devicePassword
+            accountId = loginData.accountId,
+            devicePassword = loginData.devicePassword
         )
-
-        endpointFactory.create(linkContainer.serverAdress).apply {
-            setCredentials(newCredentials)
-            linkToExistingAccount(linkContainer.linkCode) // Any call that supports share codes suffices to link our device ID
-        }
 
         log(TAG) { "Account successfully linked: $newCredentials" }
 

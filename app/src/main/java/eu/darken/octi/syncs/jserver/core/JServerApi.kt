@@ -11,7 +11,6 @@ interface JServerApi {
     @JsonClass(generateAdapter = true)
     data class RegisterResponse(
         @Json(name = "username") val accountID: String,
-        @Json(name = "deviceID") val deviceID: String,
         @Json(name = "password") val password: String
     )
 
