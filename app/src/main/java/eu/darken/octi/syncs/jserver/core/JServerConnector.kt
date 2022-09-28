@@ -13,6 +13,7 @@ import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.*
+import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
@@ -36,6 +37,8 @@ class JServerConnector @AssistedInject constructor(
             it.setCredentials(credentials)
         }
     }
+
+    private val crypti by lazy { PayloadEncryption(credentials.encryptionKeyset) }
 
     data class State(
         override val readActions: Int = 0,
@@ -134,7 +137,7 @@ class JServerConnector @AssistedInject constructor(
                     moduleId = moduleId,
                     createdAt = Instant.now(),
                     modifiedAt = Instant.now(),
-                    payload = readData.payload,
+                    payload = crypti.decrypt(readData.payload),
                 ).also {
                     log(TAG, VERBOSE) { "readServer(): Module data: $it" }
                 }
@@ -156,7 +159,7 @@ class JServerConnector @AssistedInject constructor(
         data.modules.forEach { module ->
             endpoint.writeModule(
                 moduleId = module.moduleId,
-                payload = module.payload,
+                payload = crypti.encrypt(module.payload),
             )
         }
         log(TAG, VERBOSE) { "writeServer(): Done" }
