@@ -13,7 +13,7 @@ object ProjectConfig {
 
     object Version {
         const val major = 0
-        const val minor = 2
+        const val minor = 3
         const val patch = 0
         const val build = 0
 
