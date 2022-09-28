@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
@@ -25,11 +26,9 @@ import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
 import eu.darken.octi.sync.core.SyncManager
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.isActive
 import java.time.Instant
 import javax.inject.Inject
 
@@ -39,6 +38,7 @@ class DashboardVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
+    @AppScope private val appScope: CoroutineScope,
     private val generalSettings: GeneralSettings,
     private val syncManager: SyncManager,
     private val moduleManager: ModuleManager,
@@ -132,9 +132,9 @@ class DashboardVM @Inject constructor(
         DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate()
     }
 
-    fun refresh() = launch {
+    fun refresh() = appScope.launch {
         log(TAG) { "refresh()" }
-        syncManager.triggerSync()
+        syncManager.sync()
     }
 
     fun onPermissionResult(granted: Boolean) {

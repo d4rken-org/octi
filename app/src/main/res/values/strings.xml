@@ -88,6 +88,9 @@
     <string name="sync_setting_devicelabel_label">Device label</string>
     <string name="sync_setting_devicelabel_desc">A name for this device. Visible to other synced devices.</string>
     <string name="sync_setting_devicelabel_hint">If the label is empty, the device model is used.</string>
+    <string name="sync_setting_interval_label">Sync interval</string>
+    <string name="sync_setting_interval_desc">Background synchronization interval (in minutes).</string>
+    <string name="sync_setting_category_background_label">Background synchronization</string>
 
     <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">App-data scope</string>
@@ -164,4 +167,8 @@
     <string name="module_power_desc">Battery, charging, estimates, temperature, etc.</string>
     <string name="module_wifi_label">Wi-Fi module</string>
     <string name="module_wifi_desc">Names, reception, IPs, etc.</string>
+    <string name="sync_setting_background_enable_title">Background syncronization</string>
+    <string name="sync_setting_background_enable_desc">Synchronize data when the app is not open.</string>
+    <string name="sync_setting_background_mobile_label">Mobile network</string>
+    <string name="sync_setting_background_mobile_desc">Allow background syncronization using your mobile network connection if Wi-Fi is unavailable.</string>
 </resources>

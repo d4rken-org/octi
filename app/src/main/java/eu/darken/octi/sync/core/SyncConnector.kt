@@ -21,5 +21,5 @@ interface SyncConnector {
 
     suspend fun deleteDevice(deviceId: DeviceId)
 
-    suspend fun sync(stats: Boolean, readData: Boolean, writeData: Boolean)
+    suspend fun sync(options: SyncOptions)
 }

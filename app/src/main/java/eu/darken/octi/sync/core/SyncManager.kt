@@ -71,20 +71,21 @@ class SyncManager @Inject constructor(
         // NOOP?
     }
 
-    suspend fun triggerSync(stats: Boolean = true, readData: Boolean = true, writeData: Boolean = true) = scope.launch {
-        log(TAG) { "sync()" }
+    suspend fun sync(options: SyncOptions = SyncOptions()) {
+        log(TAG) { "sync(options=$options)" }
         val syncJobs = connectors.first().map {
-            triggerSync(it.identifier, stats = stats, readData = readData, writeData = writeData)
+            scope.launch {
+                sync(it.identifier, options = options)
+            }
         }
         syncJobs.joinAll()
     }
 
-    suspend fun triggerSync(connectorId: ConnectorId, stats: Boolean, readData: Boolean, writeData: Boolean) =
-        scope.launch {
-            log(TAG) { "forceSync(id=$connectorId, stats=$stats, readData=$readData, writeData=$writeData)" }
-            val connector = connectors.first().single { it.identifier == connectorId }
-            connector.sync(stats, readData, writeData)
-        }
+    suspend fun sync(connectorId: ConnectorId, options: SyncOptions = SyncOptions()) {
+        log(TAG) { "sync(id=$connectorId,options=$options)" }
+        val connector = connectors.first().single { it.identifier == connectorId }
+        connector.sync(options)
+    }
 
     suspend fun write(toWrite: SyncWrite.Device.Module) {
         val start = System.currentTimeMillis()

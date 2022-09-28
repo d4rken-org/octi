@@ -1,11 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditTextPreference
-        android:icon="@drawable/ic_changelog_onsurface"
-        android:summary="@string/sync_setting_devicelabel_desc"
         android:dialogMessage="@string/sync_setting_devicelabel_hint"
+        android:icon="@drawable/ic_changelog_onsurface"
         android:key="sync.device.self.label"
+        android:summary="@string/sync_setting_devicelabel_desc"
         android:title="@string/sync_setting_devicelabel_label" />
+
+    <PreferenceCategory app:title="@string/sync_setting_category_background_label">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="sync.background.enabled"
+            android:summary="@string/sync_setting_background_enable_desc"
+            android:title="@string/sync_setting_background_enable_title" />
+
+        <SeekBarPreference
+            android:defaultValue="60"
+            android:icon="@drawable/ic_baseline_av_timer_24"
+            android:key="sync.background.interval.minutes"
+            android:max="1440"
+            android:summary="@string/sync_setting_interval_desc"
+            android:title="@string/sync_setting_interval_label"
+            app:min="15"
+            app:showSeekBarValue="true" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="sync.background.mobile.enabled"
+            android:summary="@string/sync_setting_background_mobile_desc"
+            android:title="@string/sync_setting_background_mobile_label" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

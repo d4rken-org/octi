@@ -19,13 +19,19 @@ class SyncSettings @Inject constructor(
 
     override val preferences: SharedPreferences = context.getSharedPreferences("sync_settings", Context.MODE_PRIVATE)
 
-    val syncOnMobile = preferences.createFlowPreference("sync.connection.mobile.enabled", true)
-
     val deviceLabel = preferences.createFlowPreference<String?>("sync.device.self.label", null)
 
+    val backgroundSyncEnabled = preferences.createFlowPreference("sync.background.enabled", true)
+
+    val backgroundSyncInterval = preferences.createFlowPreference("sync.background.interval.minutes", 60)
+
+    val backgroundSyncOnMobile = preferences.createFlowPreference("sync.background.mobile.enabled", true)
+
     override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
-        syncOnMobile,
-        deviceLabel
+        deviceLabel,
+        backgroundSyncEnabled,
+        backgroundSyncInterval,
+        backgroundSyncOnMobile,
     )
 
     val deviceId by lazy {
@@ -39,6 +45,6 @@ class SyncSettings @Inject constructor(
     }
 
     companion object {
-        internal val TAG = logTag("Core", "Settings")
+        internal val TAG = logTag("Sync", "Settings")
     }
 }

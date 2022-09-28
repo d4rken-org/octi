@@ -65,7 +65,8 @@ open class App : Application(), Configuration.Provider {
 
         syncManager.start()
         moduleManager.start()
-        syncWorkerControl.schedule()
+
+        syncWorkerControl.start()
 
         generalSettings.themeType.flow
             .map { ThemeType.valueOf(it) }

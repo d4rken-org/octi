@@ -6,7 +6,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dagger.hilt.EntryPoints
 import eu.darken.octi.common.debug.Bugs
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
@@ -20,18 +19,18 @@ import kotlinx.coroutines.cancel
 class SyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters,
-    syncWorkerComponentBuilder: SyncWorkerComponent.Builder,
+//    syncWorkerComponentBuilder: SyncWorkerComponent.Builder,
     private val syncManager: SyncManager,
 ) : CoroutineWorker(context, params) {
 
     private val workerScope = SyncWorkerCoroutineScope()
-    private val monitorComponent = syncWorkerComponentBuilder
-        .coroutineScope(workerScope)
-        .build()
-
-    private val entryPoint by lazy {
-        EntryPoints.get(monitorComponent, SyncWorkerEntryPoint::class.java)
-    }
+//    private val monitorComponent = syncWorkerComponentBuilder
+//        .coroutineScope(workerScope)
+//        .build()
+//
+//    private val entryPoint by lazy {
+//        EntryPoints.get(monitorComponent, SyncWorkerEntryPoint::class.java)
+//    }
 
     private var finishedWithError = false
 
@@ -63,7 +62,7 @@ class SyncWorker @AssistedInject constructor(
     }
 
     private suspend fun doDoWork() {
-        syncManager.triggerSync()
+        syncManager.sync()
     }
 
     companion object {

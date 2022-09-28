@@ -226,14 +226,14 @@ class JServerConnector @AssistedInject constructor(
         }
     }
 
-    override suspend fun sync(stats: Boolean, readData: Boolean, writeData: Boolean) {
-        log(TAG) { "refresh(stats=$stats, readData=$readData, writeData=$writeData)" }
+    override suspend fun sync(options: SyncOptions) {
+        log(TAG) { "sync(options=$options)" }
 
-        if (writeData) {
+        if (options.writeData) {
             // TODO
         }
 
-        if (readData) {
+        if (options.readData) {
             log(TAG) { "read()" }
             try {
                 readAction {
@@ -245,7 +245,7 @@ class JServerConnector @AssistedInject constructor(
             }
         }
 
-        if (stats) {
+        if (options.stats) {
             try {
                 val knownDeviceIds = endpoint.listDevices()
                 _state.updateBlocking { copy(devices = knownDeviceIds) }

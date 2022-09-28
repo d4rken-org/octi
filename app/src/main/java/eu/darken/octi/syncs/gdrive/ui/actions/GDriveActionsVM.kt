@@ -52,7 +52,7 @@ class GDriveActionsVM @Inject constructor(
 
     fun forceSync() = launch {
         log(TAG) { "forceSync()" }
-        syncManager.triggerSync(navArgs.identifier, stats = true, readData = true, writeData = true)
+        syncManager.sync(navArgs.identifier)
         popNavStack()
     }
 

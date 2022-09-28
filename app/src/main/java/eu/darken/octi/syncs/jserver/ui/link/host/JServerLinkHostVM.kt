@@ -12,6 +12,7 @@ import eu.darken.octi.common.flow.withPrevious
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.jserver.core.JServerConnector
 import eu.darken.octi.syncs.jserver.ui.link.LinkOption
@@ -70,7 +71,7 @@ class JServerLinkHostVM @Inject constructor(
         launch {
             val connector = syncManager.getConnectorById<JServerConnector>(navArgs.identifier).first()
             while (currentCoroutineContext().isActive) {
-                connector.sync(stats = true, readData = false, writeData = false)
+                connector.sync(SyncOptions())
                 delay(3000)
             }
         }

@@ -159,14 +159,14 @@ class GDriveAppDataConnector @AssistedInject constructor(
         )
     }
 
-    override suspend fun sync(stats: Boolean, readData: Boolean, writeData: Boolean) {
-        log(TAG) { "refresh(stats=$stats, readData=$readData, writeData=$writeData)" }
+    override suspend fun sync(options: SyncOptions) {
+        log(TAG) { "sync(options=$options)" }
 
-        if (writeData) {
+        if (options.writeData) {
             // TODO
         }
 
-        if (readData) {
+        if (options.readData) {
             try {
                 readAction {
                     _data.value = readDrive()
@@ -177,7 +177,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
         }
 
-        if (stats) {
+        if (options.stats) {
             try {
                 val deviceDirs = appDataRoot().child(DEVICE_DATA_DIR_NAME)
                     ?.listFiles()
