@@ -2,6 +2,8 @@ package eu.darken.octi.sync.core
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
@@ -117,8 +119,12 @@ class SyncManager @Inject constructor(
 
         disabledConnectors.value = disabledConnectors.value + connector
         try {
-            if (wipe) connector.deleteAll()
-            else connector.deleteDevice(syncSettings.deviceId)
+            try {
+                if (wipe) connector.deleteAll()
+                else connector.deleteDevice(syncSettings.deviceId)
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Wiping data pre deletion failed: ${e.asLog()}" }
+            }
 
             hubs.first().filter { it.owns(identifier) }.forEach {
                 it.remove(identifier)
