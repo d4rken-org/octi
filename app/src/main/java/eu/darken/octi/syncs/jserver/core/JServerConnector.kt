@@ -102,16 +102,15 @@ class JServerConnector @AssistedInject constructor(
         }
     }
 
-    suspend fun createLinkCode(): LinkCodeContainer {
+    suspend fun createLinkCode(): LinkingData {
         log(TAG) { "createLinkCode()" }
         val linkCode = endpoint.createLinkCode()
 
-        return LinkCodeContainer(
+        return LinkingData(
             serverAdress = credentials.serverAdress,
-            accountId = credentials.accountId,
-            devicePassword = credentials.devicePassword,
             fromDeviceId = syncSettings.deviceId,
-            linkCode = linkCode
+            linkCode = linkCode,
+            encryptionKeyset = credentials.encryptionKeyset,
         )
     }
 

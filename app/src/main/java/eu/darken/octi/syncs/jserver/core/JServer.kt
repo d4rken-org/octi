@@ -3,6 +3,7 @@ package eu.darken.octi.syncs.jserver.core
 import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.parcelize.Parcelize
 import java.time.Instant
 import java.util.*
@@ -28,6 +29,7 @@ interface JServer {
         @Json(name = "serverAdress") val serverAdress: Address,
         @Json(name = "accountId") val accountId: AccountId,
         @Json(name = "devicePassword") val devicePassword: DevicePassword,
+        @Json(name = "encryptionKeyset") val encryptionKeyset: PayloadEncryption.KeySet,
         @Json(name = "createdAt") val createdAt: Instant = Instant.now(),
     ) {
 

@@ -10,6 +10,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -59,24 +60,28 @@ class JServerEndpoint @AssistedInject constructor(
             createdAt = Instant.now(),
             serverAdress = serverAdress,
             accountId = JServer.Credentials.AccountId(response.accountID),
-            devicePassword = JServer.Credentials.DevicePassword(response.password)
+            devicePassword = JServer.Credentials.DevicePassword(response.password),
+            encryptionKeyset = PayloadEncryption().exportKeyset()
         )
     }
 
+    data class LinkedAccount(
+        val accountId: JServer.Credentials.AccountId,
+        val devicePassword: JServer.Credentials.DevicePassword,
+    )
+
     suspend fun linkToExistingAccount(
         linkCode: JServer.Credentials.LinkCode
-    ): JServer.Credentials = withContext(dispatcherProvider.IO) {
+    ): LinkedAccount = withContext(dispatcherProvider.IO) {
         log(TAG) { "linkToExistingAccount(linkCode=$linkCode)" }
         val response = api.register(
             deviceID = ourDeviceIdString,
             shareCode = linkCode.code,
         )
 
-        JServer.Credentials(
-            createdAt = Instant.now(),
-            serverAdress = serverAdress,
+        LinkedAccount(
             accountId = JServer.Credentials.AccountId(response.accountID),
-            devicePassword = JServer.Credentials.DevicePassword(response.password)
+            devicePassword = JServer.Credentials.DevicePassword(response.password),
         )
     }
 

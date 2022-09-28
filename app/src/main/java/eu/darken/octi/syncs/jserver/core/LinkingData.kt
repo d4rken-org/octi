@@ -7,29 +7,29 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import eu.darken.octi.common.serialization.fromJson
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.parcelize.Parcelize
 import okio.ByteString.Companion.decodeBase64
 import okio.ByteString.Companion.toByteString
 
 @JsonClass(generateAdapter = true)
 @Parcelize
-data class LinkCodeContainer(
+data class LinkingData(
     @Json(name = "serverAddress") val serverAdress: JServer.Address,
-    @Json(name = "accountId") val accountId: JServer.Credentials.AccountId,
-    @Json(name = "devicePassword") val devicePassword: JServer.Credentials.DevicePassword,
     @Json(name = "fromDeviceId") val fromDeviceId: DeviceId,
     @Json(name = "shareCode") val linkCode: JServer.Credentials.LinkCode,
+    @Json(name = "encryptionKeySet") val encryptionKeyset: PayloadEncryption.KeySet,
 ) : Parcelable {
 
-    fun toEncodedString(moshi: Moshi): String = moshi.adapter<LinkCodeContainer>()
+    fun toEncodedString(moshi: Moshi): String = moshi.adapter<LinkingData>()
         .toJson(this)
         .toByteArray()
         .toByteString()
         .base64()
 
     companion object {
-        fun fromEncodedString(moshi: Moshi, encoded: String): LinkCodeContainer = encoded
+        fun fromEncodedString(moshi: Moshi, encoded: String): LinkingData = encoded
             .decodeBase64()!!
-            .let { moshi.adapter<LinkCodeContainer>().fromJson(it)!! }
+            .let { moshi.adapter<LinkingData>().fromJson(it)!! }
     }
 }

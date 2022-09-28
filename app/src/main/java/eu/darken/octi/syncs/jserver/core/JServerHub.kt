@@ -47,17 +47,18 @@ class JServerHub @Inject constructor(
         accountRepo.remove(connector.credentials.accountId)
     }
 
-    suspend fun linkAcount(linkContainer: LinkCodeContainer) = withContext(NonCancellable) {
-        log(TAG) { "linkAccount(link=$linkContainer)" }
+    suspend fun linkAcount(linkingData: LinkingData) = withContext(NonCancellable) {
+        log(TAG) { "linkAccount(link=$linkingData)" }
 
-        val endPoint = endpointFactory.create(linkContainer.serverAdress)
+        val endPoint = endpointFactory.create(linkingData.serverAdress)
 
-        val loginData = endPoint.linkToExistingAccount(linkContainer.linkCode)
+        val linkedAccount = endPoint.linkToExistingAccount(linkingData.linkCode)
 
         val newCredentials = JServer.Credentials(
-            serverAdress = linkContainer.serverAdress,
-            accountId = loginData.accountId,
-            devicePassword = loginData.devicePassword
+            serverAdress = linkingData.serverAdress,
+            accountId = linkedAccount.accountId,
+            devicePassword = linkedAccount.devicePassword,
+            encryptionKeyset = linkingData.encryptionKeyset,
         )
 
         log(TAG) { "Account successfully linked: $newCredentials" }

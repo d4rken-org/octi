@@ -8,7 +8,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.syncs.jserver.core.JServerHub
-import eu.darken.octi.syncs.jserver.core.LinkCodeContainer
+import eu.darken.octi.syncs.jserver.core.LinkingData
 import eu.darken.octi.syncs.jserver.ui.link.LinkOption
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
@@ -45,8 +45,9 @@ class JServerLinkClientVM @Inject constructor(
         log(TAG) { "onCodeEntered(rawCode=$rawCode)" }
         _state.value = _state.value.copy(isBusy = true)
         try {
-            val linkContainer = LinkCodeContainer.fromEncodedString(moshi, rawCode)
-            log(TAG) { "Got container: $linkContainer" }
+            val linkContainer = LinkingData.fromEncodedString(moshi, rawCode).also {
+                log(TAG) { "Got container: $it" }
+            }
 
             jServerHub.linkAcount(linkContainer)
 
