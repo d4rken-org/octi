@@ -9,7 +9,6 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.combine
 import eu.darken.octi.common.flow.setupCommonEventHandlers
-import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import java.time.Duration
@@ -21,7 +20,7 @@ import javax.inject.Singleton
 class SyncWorkerControl @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     private val workerManager: WorkManager,
-    private val syncSettings: SyncSettings,
+    private val syncSettings: eu.darken.octi.sync.core.SyncSettings,
 ) {
 
     fun start() {

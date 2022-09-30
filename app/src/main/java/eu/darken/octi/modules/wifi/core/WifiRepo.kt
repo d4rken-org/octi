@@ -3,7 +3,6 @@ package eu.darken.octi.modules.wifi.core
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.modules.meta.core.MetaRepo
 import eu.darken.octi.modules.wifi.WifiModule
@@ -18,7 +17,7 @@ class WifiRepo @Inject constructor(
     wifiSettings: WifiSettings,
     wifiInfoSource: WifiInfoSource,
     wifiSync: WifiSync,
-) : BaseModuleRepo<WifiInfo>(
+) : eu.darken.octi.module.core.BaseModuleRepo<WifiInfo>(
     tag = MetaRepo.TAG,
     scope = scope,
     dispatcherProvider = dispatcherProvider,

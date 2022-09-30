@@ -5,7 +5,6 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
-import eu.darken.octi.sync.core.ConnectorHub
 import eu.darken.octi.syncs.gdrive.core.GDriveHub
 
 @InstallIn(SingletonComponent::class)
@@ -14,5 +13,5 @@ abstract class GDriveModule {
 
     @Binds
     @IntoSet
-    abstract fun hub(hub: GDriveHub): ConnectorHub
+    abstract fun hub(hub: GDriveHub): eu.darken.octi.sync.core.ConnectorHub
 }

@@ -16,7 +16,6 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.ifApiLevel
-import eu.darken.octi.module.core.ModuleInfoSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -38,7 +37,7 @@ class PowerInfoSource @Inject constructor(
     private val powerManager: PowerManager,
     private val batteryManager: BatteryManager,
     private val powerSettings: PowerSettings,
-) : ModuleInfoSource<PowerInfo> {
+) : eu.darken.octi.module.core.ModuleInfoSource<PowerInfo> {
 
     private val isPowerConnected: Flow<Boolean> = callbackFlow {
         fun updateState(isConnected: Boolean) {

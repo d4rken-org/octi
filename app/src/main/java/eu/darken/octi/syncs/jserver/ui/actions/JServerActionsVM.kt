@@ -43,26 +43,26 @@ class JServerActionsVM @Inject constructor(
         .asLiveData2()
 
     fun linkNewDevice() {
-        log(TAG) { "linkNewDevice()" }
+        log(Companion.TAG) { "linkNewDevice()" }
         JServerActionsFragmentDirections.actionJServerActionsFragmentToJServerLinkFragment(
             navArgs.identifier
         ).navigate()
     }
 
     fun disconnct() = launch {
-        log(TAG) { "disconnct()" }
+        log(Companion.TAG) { "disconnct()" }
         syncManager.disconnect(navArgs.identifier)
         navEvents.postValue(null)
     }
 
     fun wipe() = launch {
-        log(TAG) { "wipe()" }
+        log(Companion.TAG) { "wipe()" }
         syncManager.wipe(navArgs.identifier)
         navEvents.postValue(null)
     }
 
     fun forceSync() = launch {
-        log(TAG) { "forceSync()" }
+        log(Companion.TAG) { "forceSync()" }
         syncManager.sync(navArgs.identifier)
         popNavStack()
     }

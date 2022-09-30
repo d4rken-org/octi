@@ -5,7 +5,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.network.WifiStateProvider
-import eu.darken.octi.module.core.ModuleInfoSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -18,7 +17,7 @@ class WifiInfoSource @Inject constructor(
     @ApplicationContext private val context: Context,
     private val networkStateProvider: NetworkStateProvider,
     private val wifiStateProvider: WifiStateProvider,
-) : ModuleInfoSource<WifiInfo> {
+) : eu.darken.octi.module.core.ModuleInfoSource<WifiInfo> {
 
 
     override val info: Flow<WifiInfo> = combine(

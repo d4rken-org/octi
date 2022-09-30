@@ -10,7 +10,6 @@ import eu.darken.octi.common.debug.Bugs
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 
@@ -20,7 +19,7 @@ class SyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters,
 //    syncWorkerComponentBuilder: SyncWorkerComponent.Builder,
-    private val syncManager: SyncManager,
+    private val syncManager: eu.darken.octi.sync.core.SyncManager,
 ) : CoroutineWorker(context, params) {
 
     private val workerScope = SyncWorkerCoroutineScope()

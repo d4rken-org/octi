@@ -7,8 +7,6 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.module.core.ModuleId
-import eu.darken.octi.module.core.ModuleRepo
-import eu.darken.octi.module.core.ModuleSync
 import eu.darken.octi.modules.power.core.PowerRepo
 import eu.darken.octi.modules.power.core.PowerSync
 
@@ -18,11 +16,11 @@ class PowerModule {
 
     @Provides
     @IntoSet
-    fun sync(sync: PowerSync): ModuleSync<out Any> = sync
+    fun sync(sync: PowerSync): eu.darken.octi.module.core.ModuleSync<out Any> = sync
 
     @Provides
     @IntoSet
-    fun repo(repo: PowerRepo): ModuleRepo<out Any> = repo
+    fun repo(repo: PowerRepo): eu.darken.octi.module.core.ModuleRepo<out Any> = repo
 
     @Provides
     @IntoSet

@@ -8,7 +8,6 @@ import eu.darken.octi.R
 import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.databinding.DashboardDevicePowerItemBinding
 import eu.darken.octi.main.ui.dashboard.items.perdevice.PerDeviceModuleAdapter
-import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
@@ -123,7 +122,7 @@ class DevicePowerVH(parent: ViewGroup) :
     }
 
     data class Item(
-        val data: ModuleData<PowerInfo>,
+        val data: eu.darken.octi.module.core.ModuleData<PowerInfo>,
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
     }

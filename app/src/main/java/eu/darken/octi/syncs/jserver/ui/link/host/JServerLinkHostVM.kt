@@ -61,7 +61,7 @@ class JServerLinkHostVM @Inject constructor(
         launch {
             val connector = syncManager.getConnectorById<JServerConnector>(navArgs.identifier).first()
             val container = connector.createLinkCode()
-            log(TAG) { "New magic link code generated." }
+            log(Companion.TAG) { "New magic link code generated." }
             handle["code"] = container
 
             stateLock.withLock {
@@ -78,14 +78,14 @@ class JServerLinkHostVM @Inject constructor(
     }
 
     fun onLinkOptionSelected(option: LinkOption) = launch {
-        log(TAG) { "onLinkOptionSelected(option=$option)" }
+        log(Companion.TAG) { "onLinkOptionSelected(option=$option)" }
         stateLock.withLock {
             _state.value = _state.value.copy(linkOption = option)
         }
     }
 
     fun shareLinkCode(activity: Activity) = launch {
-        log(TAG) { "shareLinkCode()" }
+        log(Companion.TAG) { "shareLinkCode()" }
         val encodedCode = _state.value.encodedLinkCode!!
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND

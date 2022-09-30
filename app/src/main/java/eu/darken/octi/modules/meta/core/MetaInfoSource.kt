@@ -11,8 +11,6 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.setupCommonEventHandlers
-import eu.darken.octi.module.core.ModuleInfoSource
-import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -26,8 +24,8 @@ class MetaInfoSource @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
-    private val syncSettings: SyncSettings,
-) : ModuleInfoSource<MetaInfo> {
+    private val syncSettings: eu.darken.octi.sync.core.SyncSettings,
+) : eu.darken.octi.module.core.ModuleInfoSource<MetaInfo> {
 
     override val info: Flow<MetaInfo> = syncSettings.deviceLabel.flow
         .flatMapLatest { deviceLabel ->

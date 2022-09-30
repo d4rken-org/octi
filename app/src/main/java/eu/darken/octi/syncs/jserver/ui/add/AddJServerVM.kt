@@ -34,22 +34,22 @@ class AddJServerVM @Inject constructor(
     val state = _state.asLiveData2()
 
     fun selectType(type: JServer.Official) {
-        log(TAG) { "selectType(type=$type)" }
+        log(Companion.TAG) { "selectType(type=$type)" }
         _state.value = _state.value.copy(serverType = type)
     }
 
     fun createAccount() = launch {
-        log(TAG) { "createAccount()" }
+        log(Companion.TAG) { "createAccount()" }
         _state.value = _state.value.copy(isBusy = true)
         try {
             val type = _state.value.serverType.address
-            log(TAG) { "createAccount(): $type" }
+            log(Companion.TAG) { "createAccount(): $type" }
             val endpoint = jServerEndpointFactory.create(type)
 
             withContext(NonCancellable) {
-                log(TAG) { "Creating account..." }
+                log(Companion.TAG) { "Creating account..." }
                 val newCredentials = endpoint.createNewAccount()
-                log(TAG, INFO) { "New account created: $newCredentials" }
+                log(Companion.TAG, INFO) { "New account created: $newCredentials" }
                 jServerAccountRepo.add(newCredentials)
             }
             navEvents.postValue(null)
@@ -60,7 +60,7 @@ class AddJServerVM @Inject constructor(
     }
 
     fun linkAccount() = launch {
-        log(TAG) { "linkAccount()" }
+        log(Companion.TAG) { "linkAccount()" }
         _state.value = _state.value.copy(isBusy = true)
         try {
             AddJServerFragmentDirections.actionAddJServerFragmentToJServerLinkClientFragment().navigate()

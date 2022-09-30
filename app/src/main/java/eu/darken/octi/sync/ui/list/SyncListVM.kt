@@ -7,8 +7,6 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.sync.core.SyncConnectorState
-import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
 import eu.darken.octi.syncs.gdrive.ui.GDriveStateVH
 import eu.darken.octi.syncs.jserver.core.JServerConnector
@@ -20,7 +18,7 @@ import javax.inject.Inject
 class SyncListVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
-    syncManager: SyncManager,
+    syncManager: eu.darken.octi.sync.core.SyncManager,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
@@ -39,7 +37,7 @@ class SyncListVM @Inject constructor(
             if (connectors.isEmpty()) return@flatMapLatest flowOf(emptyList())
 
             val withStates = connectors.map { connector ->
-                connector.state.mapNotNull<SyncConnectorState, SyncListAdapter.Item> { state ->
+                connector.state.mapNotNull<eu.darken.octi.sync.core.SyncConnectorState, SyncListAdapter.Item> { state ->
                     when (connector) {
                         is GDriveAppDataConnector -> GDriveStateVH.Item(
                             account = connector.account,

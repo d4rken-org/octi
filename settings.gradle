@@ -1,2 +1,6 @@
 rootProject.name = "Octi"
 include ':app'
+include ':syncs-jserver'
+include ':app-common'
+include ':sync-core'
+include ':module-core'

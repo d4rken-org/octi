@@ -7,8 +7,6 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.module.core.ModuleId
-import eu.darken.octi.module.core.ModuleRepo
-import eu.darken.octi.module.core.ModuleSync
 import eu.darken.octi.modules.meta.core.MetaRepo
 import eu.darken.octi.modules.meta.core.MetaSync
 
@@ -18,11 +16,11 @@ class MetaModule {
 
     @Provides
     @IntoSet
-    fun sync(sync: MetaSync): ModuleSync<out Any> = sync
+    fun sync(sync: MetaSync): eu.darken.octi.module.core.ModuleSync<out Any> = sync
 
     @Provides
     @IntoSet
-    fun repo(repo: MetaRepo): ModuleRepo<out Any> = repo
+    fun repo(repo: MetaRepo): eu.darken.octi.module.core.ModuleRepo<out Any> = repo
 
     @Provides
     @IntoSet
