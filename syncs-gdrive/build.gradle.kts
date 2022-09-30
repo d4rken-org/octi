@@ -9,7 +9,7 @@ plugins {
 apply(plugin = "dagger.hilt.android.plugin")
 
 android {
-    namespace = "eu.darken.octi.syncs.jserver"
+    namespace = "eu.darken.octi.syncs.gdrive"
     compileSdk = ProjectConfig.compileSdk
 
     defaultConfig {
@@ -42,4 +42,13 @@ dependencies {
     addIO()
     addRetrofit()
     addTesting()
+
+    implementation("com.google.android.gms:play-services-auth:20.3.0")
+    implementation("com.google.api-client:google-api-client-android:+") {
+        exclude("org.apache.httpcomponents")
+    }
+
+    implementation("com.google.apis:google-api-services-drive:+") {
+        exclude("org.apache.httpcomponents")
+    }
 }

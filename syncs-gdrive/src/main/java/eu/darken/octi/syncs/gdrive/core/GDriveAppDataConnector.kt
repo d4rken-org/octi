@@ -14,6 +14,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.DeviceId
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
@@ -145,7 +146,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
                 GDriveModuleData(
                     connectorId = identifier,
-                    deviceId = eu.darken.octi.sync.core.DeviceId(deviceDir.name),
+                    deviceId = DeviceId(deviceDir.name),
                     moduleId = ModuleId(moduleFile.name),
                     createdAt = Instant.ofEpochMilli(moduleFile.createdTime.value),
                     modifiedAt = Instant.ofEpochMilli(moduleFile.modifiedTime.value),
@@ -156,7 +157,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
 
             GDriveDeviceData(
-                deviceId = eu.darken.octi.sync.core.DeviceId(deviceDir.name),
+                deviceId = DeviceId(deviceDir.name),
                 modules = moduleData
             )
         }

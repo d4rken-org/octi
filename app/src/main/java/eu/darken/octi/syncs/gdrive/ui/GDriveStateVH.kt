@@ -8,7 +8,6 @@ import eu.darken.octi.R
 import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.databinding.SyncListItemGdriveBinding
 import eu.darken.octi.sync.ui.list.SyncListAdapter
-import eu.darken.octi.syncs.gdrive.core.GoogleAccount
 
 
 class GDriveStateVH(parent: ViewGroup) :
@@ -66,7 +65,7 @@ class GDriveStateVH(parent: ViewGroup) :
     }
 
     data class Item(
-        val account: GoogleAccount,
+        val account: eu.darken.octi.syncs.gdrive.core.GoogleAccount,
         val ourState: eu.darken.octi.sync.core.SyncConnectorState,
         val otherStates: Collection<eu.darken.octi.sync.core.SyncConnectorState>,
         val onManage: () -> Unit,

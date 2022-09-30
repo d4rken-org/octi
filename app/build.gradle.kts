@@ -134,6 +134,7 @@ dependencies {
     implementation(project(":app-common"))
     implementation(project(":sync-core"))
     implementation(project(":syncs-jserver"))
+    implementation(project(":syncs-gdrive"))
     implementation(project(":module-core"))
 
     addDI()
@@ -153,10 +154,6 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-auth:20.3.0")
     implementation("com.google.api-client:google-api-client-android:+") {
-        exclude("org.apache.httpcomponents")
-    }
-
-    implementation("com.google.apis:google-api-services-drive:+") {
         exclude("org.apache.httpcomponents")
     }
 
