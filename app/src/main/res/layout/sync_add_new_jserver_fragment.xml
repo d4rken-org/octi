@@ -33,18 +33,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:checkedButton="@id/server_jserver_grylls_item"
+        android:checkedButton="@id/server_jserver_prod_item"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/server_group_label">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/server_jserver_prod_item"
+            style="@style/Widget.Material3.CompoundButton.RadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="prod.octi.darken.eu (Production)"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/server_jserver_grylls_item"
             style="@style/Widget.Material3.CompoundButton.RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="grylls.octi.darken.eu (prod)"
-            android:textStyle="bold"
+            android:text="grylls.octi.darken.eu (Beta)"
             tools:ignore="HardcodedText" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -52,7 +60,7 @@
             style="@style/Widget.Material3.CompoundButton.RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="dev.octi.darken.eu (dev)"
+            android:text="dev.octi.darken.eu (Testing)"
             tools:ignore="HardcodedText" />
     </RadioGroup>
 

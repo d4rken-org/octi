@@ -26,7 +26,7 @@ class AddJServerVM @Inject constructor(
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
-        val serverType: JServer.Official = JServer.Official.GRYLLS,
+        val serverType: JServer.Official = JServer.Official.PROD,
         val isBusy: Boolean = false
     )
 

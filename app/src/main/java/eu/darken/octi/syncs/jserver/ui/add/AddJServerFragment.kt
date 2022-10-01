@@ -40,18 +40,26 @@ class AddJServerFragment : Fragment3(R.layout.sync_add_new_jserver_fragment) {
 
         ui.serverGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
+                R.id.server_jserver_prod_item -> vm.selectType(JServer.Official.PROD)
                 R.id.server_jserver_grylls_item -> vm.selectType(JServer.Official.GRYLLS)
                 R.id.server_jserver_dev_item -> vm.selectType(JServer.Official.DEV)
             }
         }
-        ui.serverJserverGryllsItem.text = "${JServer.Official.GRYLLS.address.domain} (prod)"
+        ui.serverJserverProdItem.apply {
+            text = "${JServer.Official.GRYLLS.address.domain} (Production)"
+        }
+        ui.serverJserverGryllsItem.apply {
+            text = "${JServer.Official.GRYLLS.address.domain} (Beta)"
+            isGone = BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.RELEASE
+        }
         ui.serverJserverDevItem.apply {
             text = "${JServer.Official.DEV.address.domain} (dev)"
-            isGone = BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.RELEASE
+            isGone = !BuildConfigWrap.DEBUG
         }
 
         vm.state.observe2(ui) { state ->
             when (state.serverType) {
+                JServer.Official.PROD -> serverGroup.check(R.id.server_jserver_prod_item)
                 JServer.Official.GRYLLS -> serverGroup.check(R.id.server_jserver_grylls_item)
                 JServer.Official.DEV -> serverGroup.check(R.id.server_jserver_dev_item)
             }

@@ -14,6 +14,7 @@ interface JServer {
     @JsonClass(generateAdapter = false)
     enum class Official(val address: Address) {
         @Json(name = "GRYLLS") GRYLLS(Address("grylls.octi.darken.eu")),
+        @Json(name = "PROD") PROD(Address("prod.octi.darken.eu")),
         @Json(name = "DEV") DEV(Address("dev.octi.darken.eu")),
     }
 
