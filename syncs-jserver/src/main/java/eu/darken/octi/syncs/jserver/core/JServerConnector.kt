@@ -136,8 +136,7 @@ class JServerConnector @AssistedInject constructor(
                     deviceId = deviceId,
                     moduleId = moduleId,
                     modifiedAt = Instant.now(),
-//                    payload = crypti.decrypt(readData.payload),
-                    payload = readData.payload,
+                    payload = crypti.decrypt(readData.payload),
                 ).also {
                     log(TAG, VERBOSE) { "readServer(): Module data: $it" }
                 }
@@ -159,8 +158,7 @@ class JServerConnector @AssistedInject constructor(
         data.modules.forEach { module ->
             endpoint.writeModule(
                 moduleId = module.moduleId,
-//                payload = crypti.encrypt(module.payload),
-                payload = module.payload,
+                payload = crypti.encrypt(module.payload),
             )
         }
         log(TAG, VERBOSE) { "writeServer(): Done" }
