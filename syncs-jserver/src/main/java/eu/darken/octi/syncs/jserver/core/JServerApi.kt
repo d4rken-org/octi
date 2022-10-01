@@ -4,6 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.*
 
 interface JServerApi {
@@ -51,7 +52,7 @@ interface JServerApi {
         @Path("moduleId") moduleId: String,
         @Header("X-Device-ID") callerDeviceId: String,
         @Query("device-id") targetDeviceId: String?,
-    ): ResponseBody
+    ): Response<ResponseBody>
 
     @POST("module/{moduleId}")
     suspend fun writeModule(

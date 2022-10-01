@@ -101,7 +101,8 @@ class JServerEndpoint @AssistedInject constructor(
         }
 
     data class ReadData(
-        val payload: ByteString
+        val modifiedAt: Instant,
+        val payload: ByteString,
     )
 
     suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId): ReadData = withContext(dispatcherProvider.IO) {
@@ -112,7 +113,8 @@ class JServerEndpoint @AssistedInject constructor(
             targetDeviceId = deviceId.id.takeIf { it != ourDeviceIdString }
         )
         ReadData(
-            payload = response.byteString()
+            modifiedAt = response.headers().getInstant("modified-at") ?: Instant.now(),
+            payload = response.body()?.byteString() ?: ByteString.EMPTY,
         )
     }
 
