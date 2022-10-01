@@ -16,9 +16,9 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import testhelper.BaseTest
-import testhelper.coroutine.runTest2
-import testhelper.flow.test
+import testhelpers.BaseTest
+import testhelpers.coroutine.runTest2
+import testhelpers.flow.test
 
 class NetworkStateProviderTest : BaseTest() {
 

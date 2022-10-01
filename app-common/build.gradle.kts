@@ -43,6 +43,7 @@ android {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.Desugar.core}")
+    testImplementation(project(":app-common-test"))
     addAndroidCore()
     addAndroidUI()
     addDI()

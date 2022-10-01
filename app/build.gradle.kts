@@ -116,22 +116,13 @@ android {
             useJUnitPlatform()
         }
     }
-
-    sourceSets {
-        getByName("test") {
-            java.srcDir("$projectDir/src/testShared/java")
-        }
-        getByName("androidTest") {
-            java.srcDir("$projectDir/src/testShared/java")
-            assets.srcDirs(files("$projectDir/schemas"))
-        }
-    }
 }
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.Desugar.core}")
 
     implementation(project(":app-common"))
+    testImplementation(project(":app-common-test"))
     implementation(project(":sync-core"))
     implementation(project(":syncs-jserver"))
     implementation(project(":syncs-gdrive"))

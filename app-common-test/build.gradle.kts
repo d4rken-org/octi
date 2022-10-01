@@ -3,13 +3,10 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
     id("kotlin-kapt")
-    id("kotlin-parcelize")
 }
 
-apply(plugin = "dagger.hilt.android.plugin")
-
 android {
-    namespace = "eu.darken.octi.module"
+    namespace = "eu.darken.octi.common"
     compileSdk = ProjectConfig.compileSdk
 
     defaultConfig {
@@ -21,6 +18,10 @@ android {
         debug { }
         create("beta") { }
         release { }
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     setupCompileOptions()
@@ -39,15 +40,23 @@ android {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.Desugar.core}")
-
     implementation(project(":app-common"))
-    testImplementation(project(":app-common-test"))
-    implementation(project(":sync-core"))
-
     addAndroidCore()
-    addDI()
-    addCoroutines()
-    addSerialization()
     addIO()
-    addTesting()
+    addSerialization()
+
+    implementation("junit:junit:4.13.2")
+    implementation("org.junit.vintage:junit-vintage-engine:5.8.2")
+    implementation("androidx.test:core-ktx:1.4.0")
+
+    implementation("io.mockk:mockk:1.12.4")
+
+    runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    implementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    implementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
+
+
+    implementation("io.kotest:kotest-runner-junit5:5.3.0")
+    implementation("io.kotest:kotest-assertions-core-jvm:5.3.0")
+    implementation("io.kotest:kotest-property-jvm:5.3.0")
 }

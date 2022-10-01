@@ -6,8 +6,9 @@ import eu.darken.octi.common.collections.toGzip
 import io.kotest.matchers.shouldBe
 import okio.ByteString.Companion.decodeHex
 import org.junit.jupiter.api.Test
+import testhelpers.BaseTest
 
-class ByteStringExtensionsTest {
+class ByteStringExtensionsTest : BaseTest() {
 
     @Test
     fun `bytestring gzip`() {
