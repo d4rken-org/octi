@@ -78,8 +78,8 @@
         <item quantity="other">%d devices</item>
     </plurals>
     <plurals name="general_unique_devices_count_label">
-        <item quantity="one">%d unique device</item>
-        <item quantity="other">%d unique devices</item>
+        <item quantity="one">%d unique device, only available here</item>
+        <item quantity="other">%d unique devices, only available here</item>
     </plurals>
 
     <string name="sync_settings_label">Synchronization</string>
