@@ -49,7 +49,8 @@ interface JServerApi {
     @GET("module/{moduleId}")
     suspend fun readModule(
         @Path("moduleId") moduleId: String,
-        @Header("X-Device-ID") deviceId: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String?,
     ): ResponseBody
 
     @POST("module/{moduleId}")

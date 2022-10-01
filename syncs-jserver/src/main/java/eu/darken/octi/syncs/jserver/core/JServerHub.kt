@@ -52,7 +52,9 @@ class JServerHub @Inject constructor(
 
         val endPoint = endpointFactory.create(linkingData.serverAdress)
 
-        val linkedAccount = endPoint.linkToExistingAccount(linkingData.linkCode)
+        val linkedAccount = endPoint.linkToExistingAccount(
+            linkingData.linkCode,
+        )
 
         val newCredentials = JServer.Credentials(
             serverAdress = linkingData.serverAdress,

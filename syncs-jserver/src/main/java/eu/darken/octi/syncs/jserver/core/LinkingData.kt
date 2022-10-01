@@ -6,7 +6,6 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import eu.darken.octi.common.serialization.fromJson
-import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.parcelize.Parcelize
 import okio.ByteString.Companion.decodeBase64
@@ -16,7 +15,6 @@ import okio.ByteString.Companion.toByteString
 @Parcelize
 data class LinkingData(
     @Json(name = "serverAddress") val serverAdress: JServer.Address,
-    @Json(name = "fromDeviceId") val fromDeviceId: DeviceId,
     @Json(name = "shareCode") val linkCode: JServer.Credentials.LinkCode,
     @Json(name = "encryptionKeySet") val encryptionKeyset: PayloadEncryption.KeySet,
 ) : Parcelable {

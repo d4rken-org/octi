@@ -35,18 +35,18 @@ class JServerLinkClientVM @Inject constructor(
     val state = _state.asLiveData2()
 
     fun onLinkOptionSelected(option: LinkOption) = launch {
-        log(Companion.TAG) { "onLinkOptionSelected(option=$option)" }
+        log(TAG) { "onLinkOptionSelected(option=$option)" }
         stateLock.withLock {
             _state.value = _state.value.copy(linkOption = option)
         }
     }
 
     fun onCodeEntered(rawCode: String) = launch {
-        log(Companion.TAG) { "onCodeEntered(rawCode=$rawCode)" }
+        log(TAG) { "onCodeEntered(rawCode=$rawCode)" }
         _state.value = _state.value.copy(isBusy = true)
         try {
             val linkContainer = LinkingData.fromEncodedString(moshi, rawCode).also {
-                log(Companion.TAG) { "Got container: $it" }
+                log(TAG) { "Got container: $it" }
             }
 
             jServerHub.linkAcount(linkContainer)

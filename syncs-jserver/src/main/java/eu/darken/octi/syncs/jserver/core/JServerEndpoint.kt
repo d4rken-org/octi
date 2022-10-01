@@ -71,7 +71,7 @@ class JServerEndpoint @AssistedInject constructor(
     )
 
     suspend fun linkToExistingAccount(
-        linkCode: JServer.Credentials.LinkCode
+        linkCode: JServer.Credentials.LinkCode,
     ): LinkedAccount = withContext(dispatcherProvider.IO) {
         log(TAG) { "linkToExistingAccount(linkCode=$linkCode)" }
         val response = api.register(
@@ -107,8 +107,9 @@ class JServerEndpoint @AssistedInject constructor(
     suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId): ReadData = withContext(dispatcherProvider.IO) {
         log(TAG) { "readModule(deviceId=$deviceId, moduleId=$moduleId)" }
         val response = api.readModule(
+            callerDeviceId = ourDeviceIdString,
             moduleId = moduleId.id,
-            deviceId = deviceId.id
+            targetDeviceId = deviceId.id.takeIf { it != ourDeviceIdString }
         )
         ReadData(
             payload = response.byteString()

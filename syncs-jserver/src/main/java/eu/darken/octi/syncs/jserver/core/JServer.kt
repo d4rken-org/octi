@@ -34,7 +34,7 @@ interface JServer {
     ) {
 
         override fun toString(): String =
-            "JServerAccount(server=$serverAdress, account=$accountId, password=$devicePassword)"
+            "JServer.Credentials(server=$serverAdress, account=$accountId, password=$devicePassword)"
 
         @JsonClass(generateAdapter = true)
         @Parcelize

@@ -112,7 +112,6 @@ class JServerConnector @AssistedInject constructor(
 
         return LinkingData(
             serverAdress = credentials.serverAdress,
-            fromDeviceId = syncSettings.deviceId,
             linkCode = linkCode,
             encryptionKeyset = credentials.encryptionKeyset,
         )
@@ -138,7 +137,8 @@ class JServerConnector @AssistedInject constructor(
                     moduleId = moduleId,
                     createdAt = Instant.now(),
                     modifiedAt = Instant.now(),
-                    payload = crypti.decrypt(readData.payload),
+//                    payload = crypti.decrypt(readData.payload),
+                    payload = readData.payload,
                 ).also {
                     log(TAG, VERBOSE) { "readServer(): Module data: $it" }
                 }
@@ -160,7 +160,8 @@ class JServerConnector @AssistedInject constructor(
         data.modules.forEach { module ->
             endpoint.writeModule(
                 moduleId = module.moduleId,
-                payload = crypti.encrypt(module.payload),
+//                payload = crypti.encrypt(module.payload),
+                payload = module.payload,
             )
         }
         log(TAG, VERBOSE) { "writeServer(): Done" }
