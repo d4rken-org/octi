@@ -30,6 +30,15 @@ android {
     setupCompileOptions()
 
     setupKotlinOptions()
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+        tasks.withType<Test> {
+            useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {

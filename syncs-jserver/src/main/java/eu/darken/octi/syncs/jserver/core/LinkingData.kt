@@ -5,6 +5,8 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
+import eu.darken.octi.common.collections.fromGzip
+import eu.darken.octi.common.collections.toGzip
 import eu.darken.octi.common.serialization.fromJson
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.parcelize.Parcelize
@@ -23,11 +25,13 @@ data class LinkingData(
         .toJson(this)
         .toByteArray()
         .toByteString()
+        .toGzip()
         .base64()
 
     companion object {
         fun fromEncodedString(moshi: Moshi, encoded: String): LinkingData = encoded
             .decodeBase64()!!
+            .fromGzip()
             .let { moshi.adapter<LinkingData>().fromJson(it)!! }
     }
 }
