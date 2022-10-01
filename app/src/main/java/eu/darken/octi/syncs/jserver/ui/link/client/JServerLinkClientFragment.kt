@@ -2,6 +2,7 @@ package eu.darken.octi.syncs.jserver.ui.link.client
 
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -48,7 +49,19 @@ class JServerLinkClientFragment : Fragment3(R.layout.sync_jserver_link_client_fr
             }
         }
 
-        ui.linkCodeInputAction.setOnClickListener { vm.onCodeEntered(ui.linkCodeActual.text.toString()) }
+        ui.apply {
+            linkCodeInputAction.setOnClickListener { vm.onCodeEntered(ui.linkCodeActual.text.toString()) }
+            linkCodeActual.setOnEditorActionListener { _, actionId, _ ->
+                when (actionId) {
+                    EditorInfo.IME_ACTION_GO -> {
+                        vm.onCodeEntered(ui.linkCodeActual.text.toString())
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
+
         ui.linkQrcodeCameraAction.setOnClickListener {
             val options = ScanOptions().apply {
                 setOrientationLocked(false)

@@ -104,6 +104,8 @@
                 style="@style/Widget.Material3.TextInputEditText.FilledBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionGo"
+                android:inputType="text"
                 android:hint="@string/sync_jserver_link_code_label" />
 
         </com.google.android.material.textfield.TextInputLayout>

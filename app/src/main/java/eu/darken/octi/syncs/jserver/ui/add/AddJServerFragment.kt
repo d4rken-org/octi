@@ -46,7 +46,7 @@ class AddJServerFragment : Fragment3(R.layout.sync_add_new_jserver_fragment) {
             }
         }
         ui.serverJserverProdItem.apply {
-            text = "${JServer.Official.GRYLLS.address.domain} (Production)"
+            text = "${JServer.Official.PROD.address.domain} (Production)"
         }
         ui.serverJserverGryllsItem.apply {
             text = "${JServer.Official.GRYLLS.address.domain} (Beta)"
