@@ -16,7 +16,6 @@ interface SyncRead {
             val connectorId: ConnectorId
             val deviceId: DeviceId
             val moduleId: ModuleId
-            val createdAt: Instant
             val modifiedAt: Instant
             val payload: ByteString
         }

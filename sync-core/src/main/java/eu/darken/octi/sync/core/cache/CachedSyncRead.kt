@@ -26,7 +26,6 @@ data class CachedSyncRead(
             @Json(name = "accountId") override val connectorId: ConnectorId,
             @Json(name = "deviceId") override val deviceId: DeviceId,
             @Json(name = "moduleId") override val moduleId: ModuleId,
-            @Json(name = "createdAt") override val createdAt: Instant,
             @Json(name = "modifiedAt") override val modifiedAt: Instant,
             @Json(name = "payload") override val payload: ByteString
         ) : SyncRead.Device.Module

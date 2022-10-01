@@ -86,16 +86,15 @@ class SyncCache @Inject constructor(
     )
 
     private fun SyncRead.Device.toCached(mappedModules: List<CachedSyncRead.Device.Module>) =
-        eu.darken.octi.sync.core.cache.CachedSyncRead.Device(
+        CachedSyncRead.Device(
             deviceId = deviceId,
             modules = mappedModules,
         )
 
-    private fun SyncRead.Device.Module.toCached() = eu.darken.octi.sync.core.cache.CachedSyncRead.Device.Module(
+    private fun SyncRead.Device.Module.toCached() = CachedSyncRead.Device.Module(
         moduleId = moduleId,
         connectorId = connectorId,
         deviceId = deviceId,
-        createdAt = createdAt,
         modifiedAt = modifiedAt,
         payload = payload,
     )

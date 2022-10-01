@@ -135,7 +135,6 @@ class JServerConnector @AssistedInject constructor(
                     connectorId = identifier,
                     deviceId = deviceId,
                     moduleId = moduleId,
-                    createdAt = Instant.now(),
                     modifiedAt = Instant.now(),
 //                    payload = crypti.decrypt(readData.payload),
                     payload = readData.payload,

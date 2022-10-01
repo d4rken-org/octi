@@ -11,7 +11,6 @@ data class JServerModuleData(
     override val connectorId: ConnectorId,
     override val deviceId: DeviceId,
     override val moduleId: ModuleId,
-    override val createdAt: Instant,
     override val modifiedAt: Instant,
     override val payload: ByteString
 ) : SyncRead.Device.Module

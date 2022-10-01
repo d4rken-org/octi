@@ -148,7 +148,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     connectorId = identifier,
                     deviceId = DeviceId(deviceDir.name),
                     moduleId = ModuleId(moduleFile.name),
-                    createdAt = Instant.ofEpochMilli(moduleFile.createdTime.value),
                     modifiedAt = Instant.ofEpochMilli(moduleFile.modifiedTime.value),
                     payload = payload,
                 ).also {
