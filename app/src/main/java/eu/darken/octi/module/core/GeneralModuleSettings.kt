@@ -7,7 +7,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.preferences.PreferenceStoreMapper
 import eu.darken.octi.common.preferences.Settings
-import eu.darken.octi.modules.power.core.PowerSettings
 import eu.darken.octi.modules.wifi.core.WifiSettings
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +14,7 @@ import javax.inject.Singleton
 @Singleton
 class GeneralModuleSettings @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val powerSettings: PowerSettings,
+    private val powerSettings: eu.darken.octi.modules.power.core.PowerSettings,
     private val wifiSettings: WifiSettings,
 ) : Settings() {
 

@@ -7,8 +7,6 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.module.core.ModuleId
-import eu.darken.octi.modules.power.core.PowerRepo
-import eu.darken.octi.modules.power.core.PowerSync
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -16,11 +14,11 @@ class PowerModule {
 
     @Provides
     @IntoSet
-    fun sync(sync: PowerSync): eu.darken.octi.module.core.ModuleSync<out Any> = sync
+    fun sync(sync: eu.darken.octi.modules.power.core.PowerSync): eu.darken.octi.module.core.ModuleSync<out Any> = sync
 
     @Provides
     @IntoSet
-    fun repo(repo: PowerRepo): eu.darken.octi.module.core.ModuleRepo<out Any> = repo
+    fun repo(repo: eu.darken.octi.modules.power.core.PowerRepo): eu.darken.octi.module.core.ModuleRepo<out Any> = repo
 
     @Provides
     @IntoSet

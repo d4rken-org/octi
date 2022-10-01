@@ -8,6 +8,7 @@ import eu.darken.octi.R
 import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.databinding.DashboardDevicePowerItemBinding
 import eu.darken.octi.main.ui.dashboard.items.perdevice.PerDeviceModuleAdapter
+import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
@@ -77,7 +78,7 @@ class DevicePowerVH(parent: ViewGroup) :
                 powerInfo.status == Status.FULL && powerInfo.chargeIO.fullSince != null -> {
                     getString(
                         R.string.module_power_battery_full_since_x,
-                        DateUtils.getRelativeTimeSpanString(powerInfo.chargeIO.fullSince.toEpochMilli())
+                        DateUtils.getRelativeTimeSpanString(powerInfo.chargeIO.fullSince!!.toEpochMilli())
                     )
                 }
                 powerInfo.status == Status.CHARGING
@@ -85,14 +86,14 @@ class DevicePowerVH(parent: ViewGroup) :
                         && Duration.between(Instant.now(), powerInfo.chargeIO.fullAt).isNegative -> {
                     getString(
                         R.string.module_power_battery_full_since_x,
-                        DateUtils.getRelativeTimeSpanString(powerInfo.chargeIO.fullAt.toEpochMilli())
+                        DateUtils.getRelativeTimeSpanString(powerInfo.chargeIO.fullAt!!.toEpochMilli())
                     )
                 }
                 powerInfo.status == Status.CHARGING && powerInfo.chargeIO.fullAt != null -> {
                     getString(
                         R.string.module_power_battery_full_in_x,
                         DateUtils.getRelativeTimeSpanString(
-                            powerInfo.chargeIO.fullAt.toEpochMilli(),
+                            powerInfo.chargeIO.fullAt!!.toEpochMilli(),
                             Instant.now().toEpochMilli(),
                             DateUtils.MINUTE_IN_MILLIS,
                         )
@@ -102,7 +103,7 @@ class DevicePowerVH(parent: ViewGroup) :
                     getString(
                         R.string.module_power_battery_empty_in_x,
                         DateUtils.getRelativeTimeSpanString(
-                            powerInfo.chargeIO.emptyAt.toEpochMilli(),
+                            powerInfo.chargeIO.emptyAt!!.toEpochMilli(),
                             Instant.now().toEpochMilli(),
                             DateUtils.MINUTE_IN_MILLIS,
                         )
@@ -122,7 +123,7 @@ class DevicePowerVH(parent: ViewGroup) :
     }
 
     data class Item(
-        val data: eu.darken.octi.module.core.ModuleData<PowerInfo>,
+        val data: ModuleData<PowerInfo>,
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
     }

@@ -19,7 +19,6 @@ import eu.darken.octi.main.ui.dashboard.items.PermissionVH
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import eu.darken.octi.modules.meta.core.MetaInfo
-import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
@@ -100,8 +99,8 @@ class DashboardVM @Inject constructor(
                     .sortedBy { it.orderPrio }
                     .mapNotNull {
                         when (it.data) {
-                            is PowerInfo -> DevicePowerVH.Item(
-                                data = it as eu.darken.octi.module.core.ModuleData<PowerInfo>,
+                            is eu.darken.octi.modules.power.core.PowerInfo -> DevicePowerVH.Item(
+                                data = it as eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.power.core.PowerInfo>,
                             )
                             is WifiInfo -> DeviceWifiVH.Item(
                                 data = it as eu.darken.octi.module.core.ModuleData<WifiInfo>,
@@ -144,7 +143,7 @@ class DashboardVM @Inject constructor(
 
     companion object {
         private val INFO_ORDER = listOf(
-            PowerInfo::class,
+            eu.darken.octi.modules.power.core.PowerInfo::class,
             WifiInfo::class
         )
         private val TAG = logTag("Dashboard", "Fragment", "VM")

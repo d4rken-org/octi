@@ -24,6 +24,7 @@ android {
 
         testInstrumentationRunner = "eu.darken.octi.HiltTestRunner"
 
+        buildConfigField("String", "PACKAGENAME", "\"${ProjectConfig.packageName}\"")
         buildConfigField("String", "GITSHA", "\"${lastCommitHash()}\"")
         buildConfigField("String", "BUILDTIME", "\"${buildTime()}\"")
 
@@ -127,6 +128,7 @@ dependencies {
     implementation(project(":syncs-jserver"))
     implementation(project(":syncs-gdrive"))
     implementation(project(":module-core"))
+    implementation(project(":modules-power"))
 
     addDI()
     addCoroutines()
