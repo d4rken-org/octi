@@ -117,6 +117,9 @@ class SyncManager @Inject constructor(
         val connector = getConnectorById<SyncConnector>(identifier).first()
 
         disabledConnectors.value = disabledConnectors.value + connector
+
+        syncCache.remove(identifier)
+
         try {
             try {
                 if (wipe) connector.deleteAll()

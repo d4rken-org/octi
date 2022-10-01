@@ -6,8 +6,7 @@ import com.squareup.moshi.adapter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.Bugs
-import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
-import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.Logging.Priority.*
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -98,6 +97,13 @@ class SyncCache @Inject constructor(
         modifiedAt = modifiedAt,
         payload = payload,
     )
+
+    suspend fun remove(id: ConnectorId) = guard {
+        log(TAG) { "remove(id=$id)" }
+        val cacheFile = id.toCacheFile()
+        val success = cacheFile.delete()
+        if (!success) log(TAG, WARN) { "Failed to delete $cacheFile" }
+    }
 
 
     companion object {
