@@ -116,11 +116,13 @@
     <string name="sync_jserver_link_host_option_qrcode">Show a QRCode</string>
     <string name="sync_jserver_link_host_option_nfc">Link device via NFC</string>
     <string name="sync_jserver_link_host_device_linked_message">A new device was linked to your account.</string>
+    <string name="sync_jserver_link_host_nfc_action">Looking for NFC client. Hold this device close to the device you want link to your account.</string>
     <string name="sync_jserver_link_client_option_direct">Manually copy and paste a  link code</string>
     <string name="sync_jserver_link_client_option_qrcode">Scan a QR code from another device</string>
     <string name="sync_jserver_link_client_option_nfc">Use two devices with NFC</string>
     <string name="sync_jserver_link_client_startcamera_action">Start camera</string>
     <string name="sync_jserver_link_client_link_action">Link device</string>
+    <string name="sync_jserver_link_client_nfc_action">Looking for NFC host. Hold it close to the device offering to share account access.</string>
     <string name="general_force_sync_action">Force synchronization</string>
 
     <string name="module_power_battery_status_unknown">Unknown status</string>

@@ -17,6 +17,7 @@ import eu.darken.octi.databinding.SyncAddNewJserverFragmentBinding
 import eu.darken.octi.syncs.jserver.core.JServer
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class AddJServerFragment : Fragment3(R.layout.sync_add_new_jserver_fragment) {
 

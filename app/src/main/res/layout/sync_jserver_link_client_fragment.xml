@@ -50,6 +50,7 @@
                 android:id="@+id/link_option_nfc"
                 style="@style/Widget.Material3.CompoundButton.RadioButton"
                 android:layout_width="match_parent"
+                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:text="@string/sync_jserver_link_client_option_nfc" />
 
@@ -137,7 +138,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="// TODO" />
+            android:text="@string/sync_jserver_link_client_nfc_action" />
     </LinearLayout>
 
     <FrameLayout
