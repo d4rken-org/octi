@@ -61,6 +61,12 @@ interface JServerApi {
         @Body payload: RequestBody,
     )
 
+    @DELETE("module")
+    suspend fun deleteModules(
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String?,
+    )
+
     @JsonClass(generateAdapter = true)
     data class Health(
         @Json(name = "health") val health: String,

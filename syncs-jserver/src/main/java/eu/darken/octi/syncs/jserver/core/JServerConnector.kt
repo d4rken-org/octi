@@ -92,18 +92,26 @@ class JServerConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    override suspend fun deleteAll() {
-        log(TAG, INFO) { "wipe()" }
-        writeAction {
-            // TODO
+    override suspend fun deleteAll() = writeAction {
+        log(TAG, INFO) { "deleteAll()" }
+        val deviceIds = endpoint.listDevices()
+        log(TAG, VERBOSE) { "deleteAll(): Found devices: $deviceIds" }
+
+        deviceIds.forEach {
+            log(TAG, VERBOSE) { "deleteAll(): Deleting module data for $it" }
+            try {
+                endpoint.deleteModules(it)
+            } catch (e: Exception) {
+                log(TAG, WARN) { "Failed to delete $it" }
+            }
         }
     }
 
-    override suspend fun deleteDevice(deviceId: DeviceId) {
+    override suspend fun deleteDevice(deviceId: DeviceId) = writeAction {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
-        writeAction {
-            // TODO
-        }
+
+        endpoint.deleteModules(deviceId)
+
     }
 
     suspend fun createLinkCode(): LinkingData {

@@ -127,6 +127,13 @@ class JServerEndpoint @AssistedInject constructor(
         )
     }
 
+    suspend fun deleteModules(deviceId: DeviceId) = withContext(dispatcherProvider.IO) {
+        api.deleteModules(
+            callerDeviceId = ourDeviceIdString,
+            targetDeviceId = deviceId.id.takeIf { it != ourDeviceIdString }
+        )
+    }
+
     suspend fun getHealth(): JServerApi.Health = withContext(dispatcherProvider.IO) {
         log(TAG) { "getHealth()" }
         api.getHealth()
