@@ -7,6 +7,7 @@ import android.provider.Settings
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,12 +88,15 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
             }
         }
 
-        ui.refreshAction.setOnClickListener { vm.refresh() }
-
         ui.list.setupDefaults(dashboardAdapter, dividers = false)
+
+        ui.refreshAction.setOnClickListener { vm.refresh() }
+        ui.refreshSwipe.setOnRefreshListener { vm.refresh() }
 
         vm.listItems.observe2(this@DashboardFragment, ui) {
             dashboardAdapter.update(it.items)
+            refreshSwipe.isRefreshing = it.isRefreshing
+            refreshAction.isGone = it.isRefreshing
         }
 
         super.onViewCreated(view, savedInstanceState)

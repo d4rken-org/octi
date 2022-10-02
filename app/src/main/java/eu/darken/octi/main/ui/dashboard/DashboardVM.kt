@@ -29,6 +29,7 @@ import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
 import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
@@ -54,7 +55,10 @@ class DashboardVM @Inject constructor(
 
     data class State(
         val items: List<DashboardAdapter.Item>,
+        val isRefreshing: Boolean,
     )
+
+    private val isManuallyRefreshing = MutableStateFlow(false)
 
     private val tickerUiRefresh = flow {
         while (currentCoroutineContext().isActive) {
@@ -76,7 +80,8 @@ class DashboardVM @Inject constructor(
         moduleManager.byDevice,
         permissionTool.missingPermissions,
         syncManager.connectors,
-    ) { now, isWelcomeDismissed, isSyncSetupDismissed, byDevice, missingPermissions, connectors ->
+        isManuallyRefreshing,
+    ) { now, isWelcomeDismissed, isSyncSetupDismissed, byDevice, missingPermissions, connectors, isRefreshing ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
         if (!isWelcomeDismissed) {
@@ -140,7 +145,10 @@ class DashboardVM @Inject constructor(
             .sortedBy { it.meta.data.deviceLabel ?: it.meta.data.deviceName }
             .toList().let { items.addAll(it) }
 
-        State(items = items)
+        State(
+            items = items,
+            isRefreshing = isRefreshing,
+        )
     }.asLiveData2()
 
     fun goToSyncServices() = launch {
@@ -154,16 +162,15 @@ class DashboardVM @Inject constructor(
     }
 
     private val refreshLock = Mutex()
-    private var isSyncing = false
     private suspend fun doRefresh() {
-        if (isSyncing) return
+        if (isManuallyRefreshing.value) return
         refreshLock.withLock {
             try {
-                isSyncing = true
+                isManuallyRefreshing.value = true
                 moduleManager.refresh()
                 syncManager.sync()
             } finally {
-                isSyncing = false
+                isManuallyRefreshing.value = false
             }
         }
     }

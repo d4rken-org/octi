@@ -15,16 +15,23 @@
         app:menu="@menu/menu_main"
         app:title="@string/app_name" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+    <eu.darken.octi.common.views.ThemedSwipeRefreshLayout
+        android:id="@+id/refresh_swipe"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingVertical="4dp"
-        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingVertical="4dp" />
+
+    </eu.darken.octi.common.views.ThemedSwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/refresh_action"

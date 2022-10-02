@@ -145,6 +145,7 @@ dependencies {
 
     addTesting()
 
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("io.coil-kt:coil:2.0.0-rc02")
 
     implementation("com.google.android.gms:play-services-auth:20.3.0")
