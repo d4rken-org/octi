@@ -37,6 +37,11 @@ class SyncManager @Inject constructor(
     ) { connectors, disabledConnectors ->
         connectors.filter { !disabledConnectors.contains(it) }
     }
+        .onEach { scs ->
+            scs.forEach {
+                scope.launch { it.sync(SyncOptions()) }
+            }
+        }
         .setupCommonEventHandlers(TAG) { "syncConnectors" }
         .shareLatest(scope + dispatcherProvider.Default)
 
