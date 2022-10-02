@@ -27,6 +27,8 @@ class GeneralSettings @Inject constructor(
 
     val isWelcomeDismissed = preferences.createFlowPreference("onboarding.welcome.dismissed", false)
 
+    val isSyncSetupDismissed = preferences.createFlowPreference("onboarding.syncsetup.dismissed", false)
+
     val themeType = preferences.createFlowPreference("core.ui.theme.type", ThemeType.SYSTEM.identifier)
 
     val dismissedPermissions: FlowPreference<Set<Permission>> = preferences.createFlowPreference(

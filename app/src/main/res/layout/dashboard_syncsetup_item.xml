@@ -15,7 +15,7 @@
             style="@style/TextAppearance.Material3.TitleMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/onboarding_card_title"
+            android:text="@string/onboarding_setupsync_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/onboarding_card_message"
+            android:text="@string/onboarding_setupsync_message"
             app:layout_constraintBottom_toTopOf="@id/dismiss_action"
             app:layout_constraintEnd_toEndOf="@id/welcome_title"
             app:layout_constraintStart_toStartOf="@id/welcome_title"
@@ -40,10 +40,23 @@
             android:layout_marginTop="8dp"
             android:text="@string/general_dismiss_action"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/setup_action"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/welcome_body" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/setup_action"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/sync_add_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toEndOf="@id/dismiss_action"
+            app:layout_constraintTop_toBottomOf="@id/welcome_body" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
