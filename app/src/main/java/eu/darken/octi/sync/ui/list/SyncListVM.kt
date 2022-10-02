@@ -36,7 +36,7 @@ class SyncListVM @Inject constructor(
             if (connectors.isEmpty()) return@flatMapLatest flowOf(emptyList())
 
             val withStates = connectors.map { connector ->
-                connector.state.mapNotNull<eu.darken.octi.sync.core.SyncConnectorState, SyncListAdapter.Item> { state ->
+                connector.state.mapNotNull { state ->
                     when (connector) {
                         is eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector -> GDriveStateVH.Item(
                             account = connector.account,

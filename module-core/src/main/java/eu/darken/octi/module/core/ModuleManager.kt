@@ -48,6 +48,11 @@ class ModuleManager @Inject constructor(
             log(TAG) { "BYDEVICE: $it" }
         }
 
+    suspend fun refresh() {
+        log(TAG) { "refresh()" }
+        moduleRepos.forEach { it.refresh() }
+    }
+
     fun start() {
         log(TAG) { "start()" }
         combine(moduleRepos.map { it.keepAlive }) { it }.launchIn(scope + dispatcherProvider.Default)

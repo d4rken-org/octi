@@ -9,6 +9,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.preferences.PreferenceStoreMapper
 import eu.darken.octi.common.preferences.Settings
 import eu.darken.octi.common.preferences.createFlowPreference
+import eu.darken.octi.module.core.ModuleSettings
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +18,7 @@ import javax.inject.Singleton
 class PowerSettings @Inject constructor(
     @ApplicationContext private val context: Context,
     private val moshi: Moshi,
-) : Settings(), eu.darken.octi.module.core.ModuleSettings {
+) : Settings(), ModuleSettings {
 
     override val preferences: SharedPreferences =
         context.getSharedPreferences("module_power_settings", Context.MODE_PRIVATE)

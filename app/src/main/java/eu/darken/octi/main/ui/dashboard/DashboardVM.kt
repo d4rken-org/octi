@@ -30,6 +30,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.time.Instant
 import javax.inject.Inject
 
@@ -60,7 +62,7 @@ class DashboardVM @Inject constructor(
             val netstate = networkStateProvider.networkState.first()
             if (netstate.isInternetAvailable && !netstate.isMeteredConnection) {
                 log(TAG) { "Auto data refresh..." }
-                syncManager.sync()
+                doRefresh()
             }
             delay(60 * 1000)
         }
@@ -139,7 +141,22 @@ class DashboardVM @Inject constructor(
 
     fun refresh() = appScope.launch {
         log(TAG) { "refresh()" }
-        syncManager.sync()
+        doRefresh()
+    }
+
+    private val refreshLock = Mutex()
+    private var isSyncing = false
+    private suspend fun doRefresh() {
+        if (isSyncing) return
+        refreshLock.withLock {
+            try {
+                isSyncing = true
+                moduleManager.refresh()
+                syncManager.sync()
+            } finally {
+                isSyncing = false
+            }
+        }
     }
 
     fun onPermissionResult(granted: Boolean) {

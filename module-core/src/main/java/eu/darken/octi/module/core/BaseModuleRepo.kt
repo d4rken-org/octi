@@ -10,6 +10,7 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.plus
+import java.util.*
 
 
 abstract class BaseModuleRepo<T : Any> constructor(
@@ -38,6 +39,8 @@ abstract class BaseModuleRepo<T : Any> constructor(
 
     override val state: Flow<State<T>> = _state.flow
 
+    private val refreshTrigger = MutableStateFlow(UUID.randomUUID())
+
     override suspend fun updateSelf(self: ModuleData<T>?) {
         log(tag) { "updateSelf(self=$self)" }
         _state.updateBlocking {
@@ -50,6 +53,11 @@ abstract class BaseModuleRepo<T : Any> constructor(
         _state.updateBlocking {
             copy(others = newOthers)
         }
+    }
+
+    override suspend fun refresh() {
+        log(tag) { "refresh()" }
+        refreshTrigger.value = UUID.randomUUID()
     }
 
     private val readFlow = moduleSettings.isEnabled.flow
@@ -72,7 +80,7 @@ abstract class BaseModuleRepo<T : Any> constructor(
                 log(tag, WARN) { "$moduleId is disabled" }
                 flowOf(null)
             } else {
-                infoSource.info
+                refreshTrigger.flatMapLatest { infoSource.info }
             }
         }
         .distinctUntilChanged()

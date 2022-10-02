@@ -10,8 +10,11 @@ import eu.darken.octi.common.debug.Bugs
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.module.core.ModuleManager
+import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 
 
 @HiltWorker
@@ -19,7 +22,8 @@ class SyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters,
 //    syncWorkerComponentBuilder: SyncWorkerComponent.Builder,
-    private val syncManager: eu.darken.octi.sync.core.SyncManager,
+    private val syncManager: SyncManager,
+    private val moduleManager: ModuleManager,
 ) : CoroutineWorker(context, params) {
 
     private val workerScope = SyncWorkerCoroutineScope()
@@ -61,6 +65,8 @@ class SyncWorker @AssistedInject constructor(
     }
 
     private suspend fun doDoWork() {
+        moduleManager.refresh()
+        delay(3000)
         syncManager.sync()
     }
 

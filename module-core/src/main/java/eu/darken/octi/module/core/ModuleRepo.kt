@@ -12,6 +12,8 @@ interface ModuleRepo<T> {
 
     val keepAlive: Flow<Unit>
 
+    suspend fun refresh()
+
     suspend fun updateSelf(self: ModuleData<T>?)
 
     suspend fun updateOthers(newOthers: Collection<ModuleData<T>>)
