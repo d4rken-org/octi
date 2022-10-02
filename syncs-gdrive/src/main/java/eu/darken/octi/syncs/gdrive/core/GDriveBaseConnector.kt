@@ -8,17 +8,19 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.DateTime
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
+import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import kotlinx.coroutines.withContext
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import java.io.ByteArrayOutputStream
 import com.google.api.services.drive.model.File as GDriveFile
 
-
 @Suppress("BlockingMethodInNonBlockingContext")
 abstract class GDriveBaseConnector constructor(
+    private val dispatcherProvider: DispatcherProvider,
     private val context: Context,
     private val client: GoogleClient,
     private val scopes: List<String> = listOf(DriveScopes.DRIVE_APPDATA),
@@ -40,53 +42,57 @@ abstract class GDriveBaseConnector constructor(
         .get(APPDATAFOLDER).execute()
 
     val GDriveFile.isDirectory: Boolean
-        get() = mimeType == eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.MIME_FOLDER
+        get() = mimeType == MIME_FOLDER
 
-    fun GDriveFile.listFiles(): Collection<GDriveFile> = gdrive.files()
-        .list().apply {
-            spaces = eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.APPDATAFOLDER
-            q = " '${id}' in parents "
-            fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
-        }
-        .execute().files
-
-    fun GDriveFile.child(name: String): GDriveFile? = gdrive.files()
-        .list().apply {
-            spaces = eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.APPDATAFOLDER
-            q = " '${id}' in parents and name = '$name' "
-            fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
-        }
-        .execute().files
-        .let {
-            when {
-                it.size > 1 -> throw IllegalStateException("Multiple folders with the same name.")
-                it.isEmpty() -> null
-                else -> it.single()
+    suspend fun GDriveFile.listFiles(): Collection<GDriveFile> = withContext(dispatcherProvider.IO) {
+        gdrive.files()
+            .list().apply {
+                spaces = APPDATAFOLDER
+                q = " '${id}' in parents "
+                fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
             }
-        }
-
-    fun GDriveFile.createDir(folderName: String): GDriveFile {
-        log(eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.TAG, VERBOSE) { "createDir(): $name/$folderName" }
-        val metaData = GDriveFile().apply {
-            name = folderName
-            mimeType = eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.MIME_FOLDER
-            parents = listOf(this@createDir.id)
-        }
-        return gdrive.files().create(metaData).execute()
+            .execute().files
     }
 
-    fun GDriveFile.createFile(fileName: String): GDriveFile {
-        log(eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.TAG, VERBOSE) { "createFile(): $name/$fileName" }
+    suspend fun GDriveFile.child(name: String): GDriveFile? = withContext(dispatcherProvider.IO) {
+        gdrive.files()
+            .list().apply {
+                spaces = APPDATAFOLDER
+                q = " '${id}' in parents and name = '$name' "
+                fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
+            }
+            .execute().files
+            .let {
+                when {
+                    it.size > 1 -> throw IllegalStateException("Multiple folders with the same name.")
+                    it.isEmpty() -> null
+                    else -> it.single()
+                }
+            }
+    }
+
+    suspend fun GDriveFile.createDir(folderName: String): GDriveFile = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "createDir(): $name/$folderName" }
+        val metaData = GDriveFile().apply {
+            name = folderName
+            mimeType = MIME_FOLDER
+            parents = listOf(this@createDir.id)
+        }
+        gdrive.files().create(metaData).execute()
+    }
+
+    suspend fun GDriveFile.createFile(fileName: String): GDriveFile = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "createFile(): $name/$fileName" }
         val metaData = GDriveFile().apply {
             name = fileName
             parents = listOf(this@createFile.id)
             modifiedTime = DateTime(System.currentTimeMillis())
         }
-        return gdrive.files().create(metaData).execute()
+        gdrive.files().create(metaData).execute()
     }
 
-    fun GDriveFile.writeData(toWrite: ByteString) {
-        log(eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.TAG, VERBOSE) { "writeData($name): $toWrite" }
+    suspend fun GDriveFile.writeData(toWrite: ByteString): Unit = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "writeData($name): $toWrite" }
 
         val payload = ByteArrayContent("application/octet-stream", toWrite.toByteArray())
         val writeMetaData = GDriveFile().apply {
@@ -94,12 +100,12 @@ abstract class GDriveBaseConnector constructor(
             modifiedTime = DateTime(System.currentTimeMillis())
         }
         gdrive.files().update(id, writeMetaData, payload).execute().also {
-            log(eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.TAG, VERBOSE) { "writeData($name): done: $it" }
+            log(TAG, VERBOSE) { "writeData($name): done: $it" }
         }
     }
 
-    fun GDriveFile.readData(): ByteString? {
-        log(eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.TAG, VERBOSE) { "readData($name)" }
+    suspend fun GDriveFile.readData(): ByteString? = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "readData($name)" }
 
         val readData = gdrive.files().get(id)
             ?.let { get ->
@@ -108,15 +114,15 @@ abstract class GDriveBaseConnector constructor(
                 buffer.toByteArray().toByteString()
             }
 
-        log(eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.TAG, VERBOSE) { "readData($name) done: $readData" }
-        return readData
+        log(TAG, VERBOSE) { "readData($name) done: $readData" }
+        readData
     }
 
-    fun GDriveFile.deleteAll() {
-        log(eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.TAG, VERBOSE) { "deleteAll(): $name ($id)" }
+    suspend fun GDriveFile.deleteAll() = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "deleteAll(): $name ($id)" }
 
         gdrive.files().delete(id).execute().also {
-            log(eu.darken.octi.syncs.gdrive.core.GDriveBaseConnector.TAG, VERBOSE) { "deleteAll(): $name ($id) done!" }
+            log(TAG, VERBOSE) { "deleteAll(): $name ($id) done!" }
         }
     }
 
@@ -126,3 +132,4 @@ abstract class GDriveBaseConnector constructor(
         private val TAG = logTag("Sync", "GDrive", "Connector", "Browser")
     }
 }
+

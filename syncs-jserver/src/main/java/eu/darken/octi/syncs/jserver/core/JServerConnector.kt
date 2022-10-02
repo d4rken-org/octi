@@ -20,6 +20,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Duration
 import java.time.Instant
+import kotlin.math.max
 
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -75,7 +76,7 @@ class JServerConnector @AssistedInject constructor(
     init {
         writeQueue
             .onEach { toWrite ->
-                writeAction {
+                writeServerWrapper {
                     writeServer(toWrite)
                 }
             }
@@ -92,7 +93,7 @@ class JServerConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    override suspend fun deleteAll() = writeAction {
+    override suspend fun deleteAll() = writeServerWrapper {
         log(TAG, INFO) { "deleteAll()" }
         val deviceIds = endpoint.listDevices()
         log(TAG, VERBOSE) { "deleteAll(): Found devices: $deviceIds" }
@@ -107,7 +108,7 @@ class JServerConnector @AssistedInject constructor(
         }
     }
 
-    override suspend fun deleteDevice(deviceId: DeviceId) = writeAction {
+    override suspend fun deleteDevice(deviceId: DeviceId) = writeServerWrapper {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
 
         endpoint.deleteModules(deviceId)
@@ -131,24 +132,29 @@ class JServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "readServer(): Found devices: $deviceIds" }
 
         val devices = deviceIds.map { deviceId ->
-            val modules = supportedModuleIds.mapNotNull { moduleId ->
-                val readData = endpoint.readModule(deviceId = deviceId, moduleId = moduleId)
+            val moduleFetchJobs = supportedModuleIds.mapNotNull { moduleId ->
+                scope.async moduleFetch@{
 
-                if (readData.payload.size == 0) {
-                    log(TAG, WARN) { "readServer(): Module payload is empty: $moduleId" }
-                    return@mapNotNull null
-                }
+                    val readData = endpoint.readModule(deviceId = deviceId, moduleId = moduleId)
 
-                JServerModuleData(
-                    connectorId = identifier,
-                    deviceId = deviceId,
-                    moduleId = moduleId,
-                    modifiedAt = Instant.now(),
-                    payload = crypti.decrypt(readData.payload),
-                ).also {
-                    log(TAG, VERBOSE) { "readServer(): Module data: $it" }
+                    if (readData.payload.size == 0) {
+                        log(TAG, WARN) { "readServer(): Module payload is empty: $moduleId" }
+                        return@moduleFetch null
+                    }
+
+                    JServerModuleData(
+                        connectorId = identifier,
+                        deviceId = deviceId,
+                        moduleId = moduleId,
+                        modifiedAt = Instant.now(),
+                        payload = crypti.decrypt(readData.payload),
+                    ).also { log(TAG, VERBOSE) { "readServer(): Module data: $it" } }
+
                 }
             }
+
+            val modules = moduleFetchJobs.awaitAll().filterNotNull()
+
             JServerDeviceData(
                 deviceId = deviceId,
                 modules = modules,
@@ -178,15 +184,21 @@ class JServerConnector @AssistedInject constructor(
         return SyncConnectorState.Quota()
     }
 
-    private suspend fun readAction(block: suspend () -> Unit) {
+    private suspend fun readServerWrapper(block: suspend () -> Unit) {
         val start = System.currentTimeMillis()
         log(TAG, VERBOSE) { "readAction(block=$block)" }
 
-        _state.updateBlocking { copy(readActions = readActions + 1) }
-
         var newStorageQuota: SyncConnectorState.Quota? = null
 
+        if (_state.value().readActions > 0) {
+            log(TAG, WARN) { "Already executing read skipping." }
+            return
+        }
         try {
+            _state.updateBlocking {
+                copy(readActions = readActions + 1)
+            }
+
             block()
 
             val lastStats = _state.value().quota?.updatedAt
@@ -200,7 +212,7 @@ class JServerConnector @AssistedInject constructor(
         } finally {
             _state.updateBlocking {
                 copy(
-                    readActions = readActions - 1,
+                    readActions = max(readActions - 1, 0),
                     quota = newStorageQuota ?: quota,
                     lastReadAt = Instant.now(),
                 )
@@ -210,7 +222,7 @@ class JServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "readAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
     }
 
-    private suspend fun writeAction(block: suspend () -> Unit) = withContext(NonCancellable) {
+    private suspend fun writeServerWrapper(block: suspend () -> Unit) = withContext(NonCancellable) {
         val start = System.currentTimeMillis()
         log(TAG, VERBOSE) { "writeAction(block=$block)" }
 
@@ -247,7 +259,7 @@ class JServerConnector @AssistedInject constructor(
         if (options.readData) {
             log(TAG) { "read()" }
             try {
-                readAction {
+                readServerWrapper {
                     _data.value = readServer()
                 }
             } catch (e: Exception) {

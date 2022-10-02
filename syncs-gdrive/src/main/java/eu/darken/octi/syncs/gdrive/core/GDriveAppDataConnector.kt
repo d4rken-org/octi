@@ -14,12 +14,13 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.module.core.ModuleId
-import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
+import kotlin.math.max
 
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -29,7 +30,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
-) : GDriveBaseConnector(context, client), eu.darken.octi.sync.core.SyncConnector {
+) : GDriveBaseConnector(dispatcherProvider, context, client), SyncConnector {
 
     data class State(
         override val readActions: Int = 0,
@@ -37,10 +38,10 @@ class GDriveAppDataConnector @AssistedInject constructor(
         override val lastReadAt: Instant? = null,
         override val lastWriteAt: Instant? = null,
         override val lastError: Exception? = null,
-        override val quota: eu.darken.octi.sync.core.SyncConnectorState.Quota? = null,
-        override val devices: Collection<eu.darken.octi.sync.core.DeviceId>? = null,
+        override val quota: SyncConnectorState.Quota? = null,
+        override val devices: Collection<DeviceId>? = null,
         override val isAvailable: Boolean = true,
-    ) : eu.darken.octi.sync.core.SyncConnectorState
+    ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
         parentScope = scope + dispatcherProvider.IO,
@@ -50,14 +51,13 @@ class GDriveAppDataConnector @AssistedInject constructor(
     }
 
     override val state: Flow<State> = _state.flow
-    private val _data = MutableStateFlow<eu.darken.octi.sync.core.SyncRead?>(null)
-    override val data: Flow<eu.darken.octi.sync.core.SyncRead?> = _data
+    private val _data = MutableStateFlow<SyncRead?>(null)
+    override val data: Flow<SyncRead?> = _data
 
-    private val writeQueue = MutableSharedFlow<eu.darken.octi.sync.core.SyncWrite>()
+    private val writeQueue = MutableSharedFlow<SyncWrite>()
     private val writeLock = Mutex()
-    private val readLock = Mutex()
 
-    override val identifier: eu.darken.octi.sync.core.ConnectorId = eu.darken.octi.sync.core.ConnectorId(
+    override val identifier: ConnectorId = ConnectorId(
         type = "gdrive",
         subtype = if (client.account.isAppDataScope) "appdatascope" else "",
         account = "account.id.id",
@@ -78,7 +78,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             .launchIn(scope)
     }
 
-    override suspend fun write(toWrite: eu.darken.octi.sync.core.SyncWrite) {
+    override suspend fun write(toWrite: SyncWrite) {
         log(TAG) { "write(toWrite=$toWrite)" }
         writeQueue.emit(toWrite)
     }
@@ -92,7 +92,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
-    override suspend fun deleteDevice(deviceId: eu.darken.octi.sync.core.DeviceId) {
+    override suspend fun deleteDevice(deviceId: DeviceId) {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
         writeAction {
             appDataRoot()
@@ -104,6 +104,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     private suspend fun readDrive(): GDriveData {
         log(TAG, DEBUG) { "readDrive(): Starting..." }
+        val start = System.currentTimeMillis()
 
         val deviceDataDir = appDataRoot().child(DEVICE_DATA_DIR_NAME)
         log(TAG, VERBOSE) { "readDrive(): userDir=$deviceDataDir" }
@@ -116,58 +117,56 @@ class GDriveAppDataConnector @AssistedInject constructor(
             )
         }
 
-        val deviceDirs = deviceDataDir.listFiles()
-
-        val modulesPerDevice = deviceDirs
-            .filter {
-                val isDir = it.isDirectory
-                if (!isDir) log(TAG, WARN) { "Unexpected file in userDir: $it" }
-                isDir
-            }
-            .map { deviceDir ->
-                val moduleDirs = deviceDir.listFiles().filter {
-                    supportedModuleIds.contains(
-                        ModuleId(
-                            it.name
-                        )
-                    )
-                }
-                deviceDir to moduleDirs
-            }
-
-        val devices = modulesPerDevice.mapNotNull { (deviceDir, moduleFiles) ->
-            log(TAG, VERBOSE) { "readDrive(): Reading module data for device: $deviceDir" }
-            val moduleData = moduleFiles.map { moduleFile ->
-                val payload = moduleFile.readData()
-                if (payload == null) {
-                    log(TAG, WARN) { "readDrive(): Module file is empty: ${moduleFile.name}" }
-                    return@mapNotNull null
-                }
-
-                GDriveModuleData(
-                    connectorId = identifier,
-                    deviceId = DeviceId(deviceDir.name),
-                    moduleId = ModuleId(moduleFile.name),
-                    modifiedAt = Instant.ofEpochMilli(moduleFile.modifiedTime.value),
-                    payload = payload,
-                ).also {
-                    log(TAG, VERBOSE) { "readDrive(): Module data: $it" }
-                }
-            }
-
-            GDriveDeviceData(
-                deviceId = DeviceId(deviceDir.name),
-                modules = moduleData
-            )
+        val validDeviceDirs = deviceDataDir.listFiles().filter {
+            val isDir = it.isDirectory
+            if (!isDir) log(TAG, WARN) { "Unexpected file in userDir: $it" }
+            isDir
         }
 
+        val deviceFetchJobs = validDeviceDirs.map { deviceDir ->
+            scope.async deviceFetch@{
+                val moduleDirs = deviceDir.listFiles().filter { supportedModuleIds.contains(ModuleId(it.name)) }
+
+                log(TAG, VERBOSE) { "readDrive(): Reading module data for device: $deviceDir" }
+
+                val moduleFetchJobs = moduleDirs.map { moduleFile ->
+                    scope.async moduleFetch@{
+                        val payload = moduleFile.readData()
+
+                        if (payload == null) {
+                            log(TAG, WARN) { "readDrive(): Module file is empty: ${moduleFile.name}" }
+                            return@moduleFetch null
+                        }
+
+                        GDriveModuleData(
+                            connectorId = identifier,
+                            deviceId = DeviceId(deviceDir.name),
+                            moduleId = ModuleId(moduleFile.name),
+                            modifiedAt = Instant.ofEpochMilli(moduleFile.modifiedTime.value),
+                            payload = payload,
+                        ).also { log(TAG, VERBOSE) { "readDrive(): Module data: $it" } }
+                    }
+                }
+
+                val moduleData = moduleFetchJobs.awaitAll().filterNotNull()
+
+                GDriveDeviceData(
+                    deviceId = DeviceId(deviceDir.name),
+                    modules = moduleData,
+                )
+            }
+        }
+
+        val devices = deviceFetchJobs.awaitAll()
+
+        log(TAG) { "readDrive() took ${System.currentTimeMillis() - start}ms" }
         return GDriveData(
             connectorId = identifier,
             devices = devices,
         )
     }
 
-    override suspend fun sync(options: eu.darken.octi.sync.core.SyncOptions) {
+    override suspend fun sync(options: SyncOptions) {
         log(TAG) { "sync(options=$options)" }
 
         if (options.writeData) {
@@ -190,7 +189,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 val deviceDirs = appDataRoot().child(DEVICE_DATA_DIR_NAME)
                     ?.listFiles()
                     ?.filter { it.isDirectory }
-                    ?.map { eu.darken.octi.sync.core.DeviceId(id = it.name) }
+                    ?.map { DeviceId(id = it.name) }
 
                 _state.updateBlocking { copy(devices = deviceDirs) }
             } catch (e: Exception) {
@@ -205,7 +204,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
-    private suspend fun writeDrive(data: eu.darken.octi.sync.core.SyncWrite) {
+    private suspend fun writeDrive(data: SyncWrite) {
         log(TAG, DEBUG) { "writeDrive(): $data)" }
 
         val userDir = appDataRoot().child(DEVICE_DATA_DIR_NAME)
@@ -215,7 +214,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     .also { log(TAG, INFO) { "write(): Created devices dir $it" } }
             }
 
-        val deviceIdRaw = data.deviceId.id.toString()
+        val deviceIdRaw = data.deviceId.id
         val deviceDir = userDir.child(deviceIdRaw) ?: userDir.createDir(deviceIdRaw).also {
             log(TAG) { "writeDrive(): Created device dir $it" }
         }
@@ -231,35 +230,40 @@ class GDriveAppDataConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeDrive(): Done" }
     }
 
-    private suspend fun getStorageQuota(): eu.darken.octi.sync.core.SyncConnectorState.Quota =
-        withContext(dispatcherProvider.IO) {
-            log(TAG, VERBOSE) { "getStorageStats()" }
-            val allItems = gdrive.files()
-                .list().apply {
-                    spaces = APPDATAFOLDER
-                    fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
-                }
-                .execute().files
+    private suspend fun getStorageQuota(): SyncConnectorState.Quota = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "getStorageStats()" }
+        val allItems = gdrive.files()
+            .list().apply {
+                spaces = APPDATAFOLDER
+                fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
+            }
+            .execute().files
 
-            val storageTotal = gdrive.about()
-                .get().setFields("storageQuota")
+        val storageTotal = gdrive.about()
+            .get().setFields("storageQuota")
             .execute().storageQuota
             .limit
 
-            eu.darken.octi.sync.core.SyncConnectorState.Quota(
-                updatedAt = Instant.now(),
-                storageUsed = allItems.sumOf { it.quotaBytesUsed ?: 0 },
-                storageTotal = storageTotal
-            )
+        SyncConnectorState.Quota(
+            updatedAt = Instant.now(),
+            storageUsed = allItems.sumOf { it.quotaBytesUsed ?: 0 },
+            storageTotal = storageTotal
+        )
     }
 
     private suspend fun readAction(block: suspend () -> Unit) = withContext(dispatcherProvider.IO) {
         val start = System.currentTimeMillis()
         log(TAG, VERBOSE) { "readAction(block=$block)" }
 
-        _state.updateBlocking { copy(readActions = readActions + 1) }
-
+        if (_state.value().readActions > 0) {
+            log(TAG, WARN) { "Already executing read skipping." }
+            return@withContext
+        }
         try {
+            _state.updateBlocking {
+                copy(readActions = readActions + 1)
+            }
+
             block()
         } catch (e: Exception) {
             log(TAG, ERROR) { "readAction(block=$block) failed: ${e.asLog()}" }
@@ -267,7 +271,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         } finally {
             _state.updateBlocking {
                 copy(
-                    readActions = readActions - 1,
+                    readActions = max(readActions - 1, 0),
                     lastReadAt = Instant.now(),
                 )
             }
