@@ -6,7 +6,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 
 abstract class ViewModel1 : ViewModel() {
-   private val _tag: String = logTag("VM", javaClass.simpleName)
+   internal val _tag: String = logTag("VM", javaClass.simpleName)
 
     init {
         log(_tag) { "Initialized" }

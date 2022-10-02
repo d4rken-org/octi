@@ -23,7 +23,7 @@ abstract class ViewModel3(
     }
 
     override fun <T> Flow<T>.launchInViewModel() = this
-        .setupCommonEventHandlers(TAG) { "launchInViewModel()" }
+        .setupCommonEventHandlers(_tag) { "launchInViewModel()" }
         .launchIn(vmScope)
 
     fun NavDirections.navigate() {

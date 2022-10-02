@@ -128,7 +128,9 @@ dependencies {
     implementation(project(":syncs-jserver"))
     implementation(project(":syncs-gdrive"))
     implementation(project(":module-core"))
+    implementation(project(":modules-meta"))
     implementation(project(":modules-power"))
+    implementation(project(":modules-wifi"))
 
     addDI()
     addCoroutines()

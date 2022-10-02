@@ -9,7 +9,6 @@ import eu.darken.octi.common.lists.binding
 import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.databinding.DashboardDeviceItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
-import eu.darken.octi.modules.meta.core.MetaInfo
 import java.time.Instant
 
 
@@ -31,8 +30,8 @@ class DeviceVH(parent: ViewGroup) :
 
         deviceIcon.setImageResource(
             when (meta.deviceType) {
-                MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
-                MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
+                eu.darken.octi.modules.meta.core.MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
+                eu.darken.octi.modules.meta.core.MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
             }
         )
         deviceLabel.text = meta.deviceLabel
@@ -58,7 +57,7 @@ class DeviceVH(parent: ViewGroup) :
 
     data class Item(
         val now: Instant,
-        val meta: eu.darken.octi.module.core.ModuleData<MetaInfo>,
+        val meta: eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>,
         val moduleItems: List<PerDeviceModuleAdapter.Item>,
     ) : DashboardAdapter.Item {
         override val stableId: Long = meta.deviceId.hashCode().toLong()

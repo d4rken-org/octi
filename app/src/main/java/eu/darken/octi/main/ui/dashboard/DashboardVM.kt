@@ -20,7 +20,6 @@ import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
-import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
 import eu.darken.octi.modules.wifi.core.WifiInfo
@@ -99,7 +98,7 @@ class DashboardVM @Inject constructor(
         byDevice.devices
             .mapNotNull { (deviceId, moduleDatas) ->
                 val metaModule =
-                    moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
+                    moduleDatas.firstOrNull { it.data is eu.darken.octi.modules.meta.core.MetaInfo } as? ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>
                 if (metaModule == null) {
                     log(TAG, WARN) { "Missing meta module for $deviceId" }
                     return@mapNotNull null

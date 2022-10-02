@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardDeviceWifiItemBinding
 import eu.darken.octi.main.ui.dashboard.items.perdevice.PerDeviceModuleAdapter
+import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.receptIconRes
 
@@ -49,7 +50,7 @@ class DeviceWifiVH(parent: ViewGroup) :
     }
 
     data class Item(
-        val data: eu.darken.octi.module.core.ModuleData<WifiInfo>,
+        val data: ModuleData<WifiInfo>,
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
     }
