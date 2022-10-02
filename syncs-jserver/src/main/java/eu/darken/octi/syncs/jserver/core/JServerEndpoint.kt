@@ -113,7 +113,7 @@ class JServerEndpoint @AssistedInject constructor(
             targetDeviceId = deviceId.id.takeIf { it != ourDeviceIdString }
         )
         ReadData(
-            modifiedAt = response.headers().getInstant("modified-at") ?: Instant.now(),
+            modifiedAt = response.headers().getInstant("X-Modified-At") ?: Instant.now(),
             payload = response.body()?.byteString() ?: ByteString.EMPTY,
         )
     }
