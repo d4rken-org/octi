@@ -4,13 +4,14 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.getkeepsafe.relinker.ReLinker
 import dagger.hilt.android.HiltAndroidApp
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.AutomaticBugReporter
 import eu.darken.octi.common.debug.logging.*
+import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
+import eu.darken.octi.common.debug.recording.core.RecorderModule
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.ThemeType
@@ -35,19 +36,21 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var moduleManager: ModuleManager
     @Inject lateinit var syncWorkerControl: SyncWorkerControl
     @Inject lateinit var generalSettings: GeneralSettings
+    @Inject lateinit var recorderModule: RecorderModule
 
     override fun onCreate() {
         super.onCreate()
         if (BuildConfigWrap.DEBUG) {
             Logging.install(LogCatLogger())
             log(TAG) { "BuildConfigWrap.DEBUG=true" }
+            log(TAG) { OctiAscii.logo }
         }
 
-        log(TAG) { OctiAscii.logo }
+        recorderModule.state
+            .onEach { log(TAG) { "RecorderModule: $it" } }
+            .launchIn(appScope)
 
-        ReLinker
-            .log { message -> log(TAG) { "ReLinker: $message" } }
-            .loadLibrary(this, "bugsnag-plugin-android-anr")
+        log(TAG, INFO) { BuildConfigWrap.VERSION_DESCRIPTION }
 
         bugReporter.setup(this)
 

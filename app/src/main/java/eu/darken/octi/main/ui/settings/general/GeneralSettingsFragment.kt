@@ -4,8 +4,10 @@ import android.content.SharedPreferences
 import androidx.annotation.Keep
 import androidx.fragment.app.viewModels
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.uix.PreferenceFragment3
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.ThemeType
@@ -31,6 +33,8 @@ class GeneralSettingsFragment : PreferenceFragment3() {
             entryValues = ThemeType.values().map { it.name }.toTypedArray()
             setSummary(ThemeType.valueOf(settings.themeType.value).labelRes)
         }
+        findPreference<Preference>("debug.bugreport.automatic.enabled")?.isEnabled =
+            BuildConfigWrap.FLAVOR != BuildConfigWrap.Flavor.FOSS
         super.onPreferencesCreated()
     }
 

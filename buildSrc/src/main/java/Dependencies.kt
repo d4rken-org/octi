@@ -111,11 +111,6 @@ fun DependencyHandlerScope.addAndroidCore() {
     implementation("androidx.preference:preference-ktx:1.2.0")
 }
 
-fun DependencyHandlerScope.addBugsnag() {
-    implementation("com.bugsnag:bugsnag-android:5.9.2")
-    implementation("com.getkeepsafe.relinker:relinker:1.4.3")
-}
-
 fun DependencyHandlerScope.addWorkerManager() {
     implementation("androidx.work:work-runtime:${Versions.AndroidX.WorkManager.core}")
     testImplementation("androidx.work:work-testing:${Versions.AndroidX.WorkManager.core}")

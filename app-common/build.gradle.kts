@@ -50,6 +50,5 @@ dependencies {
     addCoroutines()
     addSerialization()
     addIO()
-    addBugsnag()
     addTesting()
 }

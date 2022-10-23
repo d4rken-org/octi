@@ -4,7 +4,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import eu.darken.octi.common.debug.autoreport.AutomaticBugReporter
 import eu.darken.octi.common.debug.autoreport.GooglePlayReporting
 import javax.inject.Singleton
 

@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceDataStore
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.common.debug.autoreport.DebugSettings
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.permissions.Permission
@@ -19,11 +20,10 @@ import javax.inject.Singleton
 class GeneralSettings @Inject constructor(
     @ApplicationContext private val context: Context,
     private val moshi: Moshi,
+    private val debugSettings: DebugSettings,
 ) : Settings() {
 
     override val preferences: SharedPreferences = context.getSharedPreferences("core_settings", Context.MODE_PRIVATE)
-
-    val isBugTrackingEnabled = preferences.createFlowPreference("core.bugtracking.enabled", true)
 
     val isWelcomeDismissed = preferences.createFlowPreference("onboarding.welcome.dismissed", false)
 
@@ -51,7 +51,7 @@ class GeneralSettings @Inject constructor(
     }
 
     override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
-        isBugTrackingEnabled,
+        debugSettings.isAutoReportingEnabled,
         themeType
     )
 

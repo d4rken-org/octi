@@ -1,7 +1,7 @@
 package eu.darken.octi.common.debug.autoreporting
 
 import android.app.Application
-import eu.darken.octi.common.debug.autoreport.AutomaticBugReporter
+import eu.darken.octi.common.debug.AutomaticBugReporter
 import javax.inject.Inject
 import javax.inject.Singleton
 

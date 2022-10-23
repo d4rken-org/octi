@@ -141,7 +141,9 @@ dependencies {
     addIO()
     addRetrofit()
 
-    addBugsnag()
+    "gplayImplementation"("com.bugsnag:bugsnag-android:5.9.2")
+    "gplayImplementation"("com.getkeepsafe.relinker:relinker:1.4.3")
+
     addAndroidCore()
     addAndroidUI()
     addWorkerManager()

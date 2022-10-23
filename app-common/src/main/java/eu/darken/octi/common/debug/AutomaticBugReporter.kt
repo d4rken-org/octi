@@ -1,4 +1,4 @@
-package eu.darken.octi.common.debug.autoreport
+package eu.darken.octi.common.debug
 
 import android.app.Application
 
