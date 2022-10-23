@@ -28,7 +28,7 @@ class DeviceAppsVH(parent: ViewGroup) :
 
         appsSecondary.apply {
             val last = apps.installedPackages.maxByOrNull { it.installedAt }
-            text = last?.label?.let { getString(R.string.module_apps_last_installed_x, it) }
+            text = last?.let { getString(R.string.module_apps_last_installed_x, "${it.label} (${it.versionName})") }
         }
 
         itemView.setOnClickListener { item.onAppsInfoClicked() }
