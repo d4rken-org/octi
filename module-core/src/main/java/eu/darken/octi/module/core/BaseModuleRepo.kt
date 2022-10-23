@@ -72,7 +72,7 @@ abstract class BaseModuleRepo<T : Any> constructor(
         .onEach { othersData ->
             updateOthers(othersData)
         }
-        .setupCommonEventHandlers(tag) { "others" }
+        .setupCommonEventHandlers(tag) { "readFlow" }
 
     private val writeFLow = moduleSettings.isEnabled.flow
         .flatMapLatest { isEnabled ->
@@ -87,7 +87,7 @@ abstract class BaseModuleRepo<T : Any> constructor(
         .onEach { selfData ->
             updateSelf(selfData?.let { moduleSync.sync(it) })
         }
-        .setupCommonEventHandlers(tag) { "updateSelf" }
+        .setupCommonEventHandlers(tag) { "writeFLow" }
 
     override val keepAlive: Flow<Unit> = combine(
         readFlow,

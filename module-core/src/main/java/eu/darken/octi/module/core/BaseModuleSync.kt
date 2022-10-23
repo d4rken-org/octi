@@ -42,7 +42,7 @@ abstract class BaseModuleSync<T : Any> constructor(
                         it.moduleId == moduleId
                     }
                     if (rawModule == null) {
-                        log(tag, WARN) { "syncRead(): Missing meta module on $device" }
+                        log(tag, WARN) { "syncRead(): Missing module $moduleId on ${device.deviceId}" }
                         return@mapNotNull null
                     }
 

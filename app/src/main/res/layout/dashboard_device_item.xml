@@ -50,6 +50,19 @@
             tools:text="123 days" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/click_hint"
+            style="@style/TextAppearance.Material3.LabelSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/dashboard_click_hint"
+            android:textSize="8sp"
+            app:layout_constraintTop_toBottomOf="@id/device_subtitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/octi_version"
             style="@style/TextAppearance.Material3.LabelSmall"
             android:layout_width="0dp"

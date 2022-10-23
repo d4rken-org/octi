@@ -25,6 +25,8 @@ import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
+import eu.darken.octi.modules.apps.core.AppsInfo
+import eu.darken.octi.modules.apps.ui.dashboard.DeviceAppsVH
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
@@ -135,6 +137,7 @@ class DashboardVM @Inject constructor(
                         when (moduleData.data) {
                             is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem()
                             is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
+                            is AppsInfo -> (moduleData as ModuleData<AppsInfo>).createVHItem()
                             else -> {
                                 log(TAG, WARN) { "Unsupported module data: ${moduleData.data}" }
                                 null
@@ -185,6 +188,14 @@ class DashboardVM @Inject constructor(
         if (granted) permissionTool.recheck()
     }
 
+    fun launchUpgradeFlow(activity: Activity) {
+        log(TAG) { "launchUpgradeFlow(activity=$activity)" }
+        upgradeRepo.launchBillingFlow(activity)
+    }
+
+    private val ModuleData<out Any>.orderPrio: Int
+        get() = INFO_ORDER.indexOfFirst { it.isInstance(this.data) }
+
     private fun ModuleData<PowerInfo>.createVHItem() = DevicePowerVH.Item(
         data = this,
     )
@@ -217,18 +228,18 @@ class DashboardVM @Inject constructor(
             }
     )
 
-    fun launchUpgradeFlow(activity: Activity) {
-        log(TAG) { "launchUpgradeFlow(activity=$activity)" }
-        upgradeRepo.launchBillingFlow(activity)
-    }
+    private fun ModuleData<AppsInfo>.createVHItem() = DeviceAppsVH.Item(
+        data = this,
+        onAppsInfoClicked = {
 
-    private val ModuleData<out Any>.orderPrio: Int
-        get() = INFO_ORDER.indexOfFirst { it.isInstance(this.data) }
+        }
+    )
 
     companion object {
         private val INFO_ORDER = listOf(
             PowerInfo::class,
-            WifiInfo::class
+            WifiInfo::class,
+            AppsInfo::class,
         )
 
         private val WIFI_PERMISSIONS = setOf(Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION)
