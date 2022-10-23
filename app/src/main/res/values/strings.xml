@@ -21,6 +21,9 @@
     <string name="general_select_server_label">Select server</string>
     <string name="general_quota_label">Quota</string>
     <string name="general_tap_hint_msg">Tap for more options</string>
+    <string name="general_upgrade_action">Upgrade</string>
+    <string name="general_donate_action">Donate</string>
+    <string name="general_check_action">Check</string>
 
     <string name="debug_debuglog_size_label">Size</string>
     <string name="debug_debuglog_size_compressed_label">Compressed size</string>

@@ -104,6 +104,7 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                     )
                     dialog.show()
                 }
+                is DashboardEvent.LaunchUpgradeFlow -> vm.launchUpgradeFlow(requireActivity())
             }
         }
 

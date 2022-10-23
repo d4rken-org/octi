@@ -1,6 +1,7 @@
 package eu.darken.octi.main.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
@@ -16,6 +17,7 @@ import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.PermissionVH
 import eu.darken.octi.main.ui.dashboard.items.SyncSetupVH
@@ -52,6 +54,7 @@ class DashboardVM @Inject constructor(
     private val networkStateProvider: NetworkStateProvider,
     private val permissionTool: PermissionTool,
     private val syncSettings: SyncSettings,
+    private val upgradeRepo: UpgradeRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     val dashboardEvents = SingleLiveEvent<DashboardEvent>()
@@ -84,12 +87,14 @@ class DashboardVM @Inject constructor(
         permissionTool.missingPermissions,
         syncManager.connectors,
         isManuallyRefreshing,
-    ) { now, isWelcomeDismissed, isSyncSetupDismissed, byDevice, missingPermissions, connectors, isRefreshing ->
+        upgradeRepo.upgradeInfo,
+    ) { now, isWelcomeDismissed, isSyncSetupDismissed, byDevice, missingPermissions, connectors, isRefreshing, upgradeInfo ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
-        if (!isWelcomeDismissed) {
+        if (!isWelcomeDismissed && !upgradeInfo.isPro) {
             WelcomeVH.Item(
                 onDismiss = { generalSettings.isWelcomeDismissed.value = true },
+                onUpgrade = { dashboardEvents.postValue(DashboardEvent.LaunchUpgradeFlow(UpgradeRepo.Type.GPLAY)) }
             ).run { items.add(this) }
         }
 
@@ -211,6 +216,11 @@ class DashboardVM @Inject constructor(
                 }
             }
     )
+
+    fun launchUpgradeFlow(activity: Activity) {
+        log(TAG) { "launchUpgradeFlow(activity=$activity)" }
+        upgradeRepo.launchBillingFlow(activity)
+    }
 
     private val ModuleData<out Any>.orderPrio: Int
         get() = INFO_ORDER.indexOfFirst { it.isInstance(this.data) }
