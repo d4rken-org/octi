@@ -14,6 +14,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.combine
 import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.network.NetworkStateProvider
+import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.PermissionVH
@@ -28,6 +29,7 @@ import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
 import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -49,6 +51,7 @@ class DashboardVM @Inject constructor(
     private val moduleManager: ModuleManager,
     private val networkStateProvider: NetworkStateProvider,
     private val permissionTool: PermissionTool,
+    private val syncSettings: SyncSettings,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     val dashboardEvents = SingleLiveEvent<DashboardEvent>()
@@ -97,18 +100,20 @@ class DashboardVM @Inject constructor(
             ).run { items.add(this) }
         }
 
-        missingPermissions.map { perm ->
-            PermissionVH.Item(
-                permission = perm,
-                onGrant = {
-                    dashboardEvents.postValue(DashboardEvent.RequestPermissionEvent(it))
-                },
-                onDismiss = {
-                    generalSettings.addDismissedPermission(it)
-                    dashboardEvents.postValue(DashboardEvent.ShowPermissionDismissHint(it))
-                }
-            )
-        }.run { items.addAll(this) }
+        missingPermissions
+            .filterNot { WIFI_PERMISSIONS.contains(it) } // Inline handling by wifi row
+            .map { perm ->
+                PermissionVH.Item(
+                    permission = perm,
+                    onGrant = {
+                        dashboardEvents.postValue(DashboardEvent.RequestPermissionEvent(it))
+                    },
+                    onDismiss = {
+                        generalSettings.addDismissedPermission(it)
+                        dashboardEvents.postValue(DashboardEvent.ShowPermissionDismissHint(it))
+                    }
+                )
+            }.run { items.addAll(this) }
 
         byDevice.devices
             .mapNotNull { (deviceId, moduleDatas) ->
@@ -121,16 +126,12 @@ class DashboardVM @Inject constructor(
 
                 val moduleItems = (moduleDatas.toList() - metaModule)
                     .sortedBy { it.orderPrio }
-                    .mapNotNull {
-                        when (it.data) {
-                            is PowerInfo -> DevicePowerVH.Item(
-                                data = it as ModuleData<PowerInfo>,
-                            )
-                            is WifiInfo -> DeviceWifiVH.Item(
-                                data = it as ModuleData<WifiInfo>,
-                            )
+                    .mapNotNull { moduleData ->
+                        when (moduleData.data) {
+                            is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem()
+                            is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
                             else -> {
-                                log(TAG, WARN) { "Unsupported module data: ${it.data}" }
+                                log(TAG, WARN) { "Unsupported module data: ${moduleData.data}" }
                                 null
                             }
                         }
@@ -179,6 +180,38 @@ class DashboardVM @Inject constructor(
         if (granted) permissionTool.recheck()
     }
 
+    private fun ModuleData<PowerInfo>.createVHItem() = DevicePowerVH.Item(
+        data = this,
+    )
+
+    private fun ModuleData<WifiInfo>.createVHItem(
+        missingPermissions: Collection<Permission>,
+    ) = DeviceWifiVH.Item(
+        data = this,
+        onGrantPermission = missingPermissions
+            .firstOrNull { WIFI_PERMISSIONS.contains(it) }
+            ?.takeIf { deviceId == syncSettings.deviceId }
+            ?.let {
+                // Click listener for row
+                {
+                    DashboardEvent.ShowPermissionPopup(
+                        permission = it,
+                        onGrant = {
+                            dashboardEvents.postValue(DashboardEvent.RequestPermissionEvent(it))
+                        },
+                        onDismiss = {
+                            generalSettings.addDismissedPermission(it)
+                            dashboardEvents.postValue(
+                                DashboardEvent.ShowPermissionDismissHint(
+                                    it
+                                )
+                            )
+                        }
+                    ).run { dashboardEvents.postValue(this) }
+                }
+            }
+    )
+
     private val ModuleData<out Any>.orderPrio: Int
         get() = INFO_ORDER.indexOfFirst { it.isInstance(this.data) }
 
@@ -187,6 +220,9 @@ class DashboardVM @Inject constructor(
             PowerInfo::class,
             WifiInfo::class
         )
+
+        private val WIFI_PERMISSIONS = setOf(Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION)
+
         private val TAG = logTag("Dashboard", "Fragment", "VM")
     }
 }

@@ -28,29 +28,11 @@ class PermissionVH(parent: ViewGroup) :
         item: Item,
         payloads: List<Any>
     ) -> Unit = binding { item ->
-        dismissAction.setOnClickListener { item.onDismiss(item.permission) }
-        grantAction.setOnClickListener { item.onGrant(item.permission) }
-
-        permissionTitle.text = getString(item.permission.labelRes)
-        permissionBody.text = getString(item.permission.descriptionRes)
-
-        privacyPolicyLink.apply {
-            movementMethod = LinkMovementMethod.getInstance()
-            val ppp = setOf(
-                Permission.ACCESS_COARSE_LOCATION,
-                Permission.ACCESS_FINE_LOCATION,
-            )
-
-            if (hasApiLevel(24)) {
-                val ppText = getString(R.string.settings_privacy_policy_label)
-                val ppLink = PrivacyPolicy.URL
-                text = Html.fromHtml("<html><a href=\"$ppLink\">$ppText</a></html>", 0)
-            } else {
-                setOnClickListener { WebpageTool(context).open(PrivacyPolicy.URL) }
-            }
-
-            isGone = !ppp.contains(item.permission)
-        }
+        bindItem(
+            item.permission,
+            item.onDismiss,
+            item.onGrant,
+        )
     }
 
     data class Item(
@@ -61,4 +43,34 @@ class PermissionVH(parent: ViewGroup) :
         override val stableId: Long = this.javaClass.hashCode().toLong()
     }
 
+}
+
+fun DashboardPermissionItemBinding.bindItem(
+    permission: Permission,
+    onDismiss: (Permission) -> Unit,
+    onGrant: (Permission) -> Unit,
+) {
+    dismissAction.setOnClickListener { onDismiss(permission) }
+    grantAction.setOnClickListener { onGrant(permission) }
+
+    permissionTitle.text = root.context.getString(permission.labelRes)
+    permissionBody.text = root.context.getString(permission.descriptionRes)
+
+    privacyPolicyLink.apply {
+        movementMethod = LinkMovementMethod.getInstance()
+        val ppp = setOf(
+            Permission.ACCESS_COARSE_LOCATION,
+            Permission.ACCESS_FINE_LOCATION,
+        )
+
+        if (hasApiLevel(24)) {
+            val ppText = root.context.getString(R.string.settings_privacy_policy_label)
+            val ppLink = PrivacyPolicy.URL
+            text = Html.fromHtml("<html><a href=\"$ppLink\">$ppText</a></html>", 0)
+        } else {
+            setOnClickListener { WebpageTool(context).open(PrivacyPolicy.URL) }
+        }
+
+        isGone = !ppp.contains(permission)
+    }
 }

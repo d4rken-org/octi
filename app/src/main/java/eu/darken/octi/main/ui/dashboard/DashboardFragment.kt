@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
@@ -22,6 +23,8 @@ import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.uix.Fragment3
 import eu.darken.octi.common.viewbinding.viewBinding
 import eu.darken.octi.databinding.DashboardFragmentBinding
+import eu.darken.octi.databinding.DashboardPermissionItemBinding
+import eu.darken.octi.main.ui.dashboard.items.bindItem
 import javax.inject.Inject
 
 
@@ -64,10 +67,10 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
             subtitle = BuildConfigWrap.VERSION_DESCRIPTION
         }
 
-        vm.dashboardEvents.observe2(ui) {
-            when (it) {
+        vm.dashboardEvents.observe2(ui) { event ->
+            when (event) {
                 is DashboardEvent.RequestPermissionEvent -> {
-                    when (it.permission) {
+                    when (event.permission) {
                         Permission.IGNORE_BATTERY_OPTIMIZATION -> {
                             awaitingPermission = true
                             startActivity(
@@ -77,13 +80,29 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                                 )
                             )
                         }
-                        else -> permissionLauncher.launch(it.permission.permissionId)
+                        else -> permissionLauncher.launch(event.permission.permissionId)
                     }
                 }
                 is DashboardEvent.ShowPermissionDismissHint -> {
                     Snackbar
                         .make(view, R.string.permission_dismiss_hint, Snackbar.LENGTH_SHORT)
                         .show()
+                }
+                is DashboardEvent.ShowPermissionPopup -> {
+                    val binding = DashboardPermissionItemBinding.inflate(layoutInflater)
+                    val dialog = MaterialAlertDialogBuilder(requireContext()).setView(binding.root).create()
+                    binding.bindItem(
+                        permission = event.permission,
+                        onDismiss = {
+                            event.onDismiss(it)
+                            dialog.dismiss()
+                        },
+                        onGrant = {
+                            event.onGrant(it)
+                            dialog.dismiss()
+                        }
+                    )
+                    dialog.show()
                 }
             }
         }

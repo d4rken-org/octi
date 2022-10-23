@@ -8,6 +8,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.sync.core.cache.SyncCache
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -18,7 +19,7 @@ class SyncManager @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     private val syncSettings: SyncSettings,
-    private val syncCache: eu.darken.octi.sync.core.cache.SyncCache,
+    private val syncCache: SyncCache,
     private val connectorHubs: Set<@JvmSuppressWildcards ConnectorHub>,
 ) {
 

@@ -24,7 +24,7 @@
         android:layout_marginStart="8dp"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@id/wifi_secondary"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/perm_action"
         app:layout_constraintStart_toEndOf="@id/wifi_icon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="5.0 Ghz Wifi connected * Good reception" />
@@ -40,5 +40,19 @@
         app:layout_constraintStart_toStartOf="@id/wifi_primary"
         app:layout_constraintTop_toBottomOf="@id/wifi_primary"
         tools:text="MyWifiSSID * 127.0.0.1" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/perm_action"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:icon="@drawable/ic_baseline_warning_24"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/wifi_primary"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package eu.darken.octi.modules.wifi.ui.dashboard
 
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardDeviceWifiItemBinding
 import eu.darken.octi.main.ui.dashboard.items.perdevice.PerDeviceModuleAdapter
@@ -47,10 +48,16 @@ class DeviceWifiVH(parent: ViewGroup) :
             val ssidText = wifi.currentWifi?.ssid ?: getString(R.string.module_wifi_unknown_ssid_label)
             text = "$ssidText - $ipText"
         }
+
+        permAction.apply {
+            isGone = item.onGrantPermission == null
+            setOnClickListener { item.onGrantPermission?.invoke() }
+        }
     }
 
     data class Item(
         val data: ModuleData<WifiInfo>,
+        val onGrantPermission: (() -> Unit)?,
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
     }
