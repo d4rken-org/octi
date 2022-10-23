@@ -1,6 +1,6 @@
 object Versions {
     object Gradle {
-        const val buildTools = "7.2.1"
+        const val buildTools = "7.3.0"
     }
 
     object Kotlin {

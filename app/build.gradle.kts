@@ -11,6 +11,8 @@ apply(plugin = "com.bugsnag.android.gradle")
 android {
     val packageName = ProjectConfig.packageName
 
+    namespace = ProjectConfig.packageName
+
     compileSdk = ProjectConfig.compileSdk
 
     defaultConfig {
