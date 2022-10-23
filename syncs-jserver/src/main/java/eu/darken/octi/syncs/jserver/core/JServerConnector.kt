@@ -132,7 +132,7 @@ class JServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "readServer(): Found devices: $deviceIds" }
 
         val devices = deviceIds.map { deviceId ->
-            val moduleFetchJobs = supportedModuleIds.mapNotNull { moduleId ->
+            val moduleFetchJobs = supportedModuleIds.map { moduleId ->
                 scope.async moduleFetch@{
 
                     val readData = endpoint.readModule(deviceId = deviceId, moduleId = moduleId)
@@ -146,7 +146,7 @@ class JServerConnector @AssistedInject constructor(
                         connectorId = identifier,
                         deviceId = deviceId,
                         moduleId = moduleId,
-                        modifiedAt = Instant.now(),
+                        modifiedAt = readData.modifiedAt,
                         payload = crypti.decrypt(readData.payload),
                     ).also { log(TAG, VERBOSE) { "readServer(): Module data: $it" } }
 
