@@ -7,6 +7,7 @@ import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.common.isSystemApp
 import eu.darken.octi.module.core.ModuleInfoSource
 import eu.darken.octi.modules.apps.core.PackageEventListener.Event.PackageInstalled
 import kotlinx.coroutines.CoroutineScope
@@ -34,15 +35,17 @@ class AppsInfoSource @Inject constructor(
         updateTrigger,
         packageEventListener.events.onStart { emit(PackageInstalled(BuildConfigWrap.APPLICATION_ID)) }
     ) { _, event ->
-        val installedApps = pm.getInstalledPackages(0).map { pkgInfo ->
-            AppsInfo.Pkg(
-                packageName = pkgInfo.packageName,
-                installedAt = Instant.ofEpochMilli(pkgInfo.firstInstallTime),
-                versionCode = pkgInfo.longVersionCode,
-                versionName = pkgInfo.versionName,
-                label = pkgInfo.applicationInfo?.loadLabel(pm)?.toString()
-            )
-        }
+        val installedApps = pm.getInstalledPackages(0)
+            .filter { !it.isSystemApp }
+            .map { pkgInfo ->
+                AppsInfo.Pkg(
+                    packageName = pkgInfo.packageName,
+                    installedAt = Instant.ofEpochMilli(pkgInfo.firstInstallTime),
+                    versionCode = pkgInfo.longVersionCode,
+                    versionName = pkgInfo.versionName,
+                    label = pkgInfo.applicationInfo?.loadLabel(pm)?.toString()
+                )
+            }
 
         AppsInfo(
             installedPackages = installedApps,

@@ -1,5 +1,6 @@
 package eu.darken.octi.common
 
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
@@ -27,3 +28,6 @@ fun PackageManager.getIcon2(
 ): Drawable? = getPackageInfo2(pkgId)
     ?.applicationInfo
     ?.let { if (it.icon != 0) it.loadIcon(this) else null }
+
+val PackageInfo.isSystemApp: Boolean
+    get() = applicationInfo?.run { flags and ApplicationInfo.FLAG_SYSTEM != 0 } ?: true
