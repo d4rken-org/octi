@@ -8,8 +8,8 @@ import java.util.*
 
 object ProjectConfig {
     const val minSdk = 23
-    const val compileSdk = 31
-    const val targetSdk = 31
+    const val compileSdk = 33
+    const val targetSdk = 33
     const val packageName = "eu.darken.octi"
 
     object Version {
