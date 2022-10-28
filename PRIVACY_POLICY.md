@@ -14,6 +14,25 @@ My underlying privacy principle is the [Golden Rule](https://en.wikipedia.org/wi
 
 "Octi" neither collects nor allows 3rd party services to collect any user data. Not even anonymously.
 
+## Permissions 
+
+Some of the more senstive permissions are further explained here.
+
+### Location permission
+
+One of Octi's features allows you to view information about your current WiFi network. This requires location perrmissions (`ACCESS_COARSE_LOCATION`/ `ACCESS_FINE_LOCATION`) on newer Android versions, because theoretically by knowing which WiFi networks are near you, one could determine your location (e.g. Google does this to improve location accuracy).
+Granting this permission is optional, but then you won't see things like WiFi names.
+
+### Camera permission
+
+You can use the camera (`CAMERA`) to scan QR-Codes within Octi. Some of the sync services use QR-Codes to link new devices. One device shows a QR-Code with account data, while the other device scans it to be linked to your account.
+Camera data is not stored and only used for processing the QR-Code.
+
+### Query installed apps
+
+Octi allows you to see which apps are installed on your other devices, to do this, the `QUERY_ALL_PACKAGES` is required.
+Only you have access to this data.
+
 ## Sync services
 
 Octi provides different mechanisms to syncronize data across different devices. The following explains the different
@@ -23,7 +42,7 @@ mechanisms and how your data is handled.
 
 J-Server is an end to end encrypted open-source sync server hosted by me.
 
-No synced data can be viewed by me. Data is encrypted client-side. The encryption key is only available on your device.
+Synced data can't be viewed by me. Data is encrypted client-side. The encryption key is only available on your devices and is unknown to the server.
 
 Some meta data like access times and IP addresses are temporarily stored to allow for anti-abuse mechanisms.
 
@@ -33,9 +52,11 @@ once within 30 days, your data is also deleted.
 ### Google Drive
 
 You can sync devices using your own Google account. If each devices is logged into the same Google account, then Octi
-can exchange information using Google drive.
+can exchange information using Google Drive.
 
 Octi can only access it's own files on Google Drive.
+
+If you sync data using Google Drive, only you and Google have access to it.
 
 Google Drive's privacy policy applies:
 https://support.google.com/drive/answer/10375054?hl=en
