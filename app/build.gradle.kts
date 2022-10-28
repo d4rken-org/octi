@@ -29,6 +29,8 @@ android {
         buildConfigField("String", "PACKAGENAME", "\"${ProjectConfig.packageName}\"")
         buildConfigField("String", "GITSHA", "\"${lastCommitHash()}\"")
         buildConfigField("String", "BUILDTIME", "\"${buildTime()}\"")
+        buildConfigField("String", "VERSION_CODE", "\"${ProjectConfig.Version.code}\"")
+        buildConfigField("String", "VERSION_NAME", "\"${ProjectConfig.Version.name}\"")
 
         manifestPlaceholders["bugsnagApiKey"] = getBugSnagApiKey(
             File(System.getProperty("user.home"), ".appconfig/${packageName}/bugsnag.properties")
@@ -58,7 +60,7 @@ android {
     }
 
     buildTypes {
-        val customProguardRules = fileTree(File("../proguard")) {
+        val customProguardRules = fileTree(File(projectDir, "proguard")) {
             include("*.pro")
         }
         debug {

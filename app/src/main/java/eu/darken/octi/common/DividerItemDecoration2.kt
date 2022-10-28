@@ -29,9 +29,9 @@ class DividerItemDecoration2 constructor(
     private val bounds: Rect = Rect()
 
     init {
-        context.obtainStyledAttributes(ATTRS).use {
-            divider = it.getDrawable(0)!!
-        }
+        val attr = context.obtainStyledAttributes(ATTRS)
+        divider = attr.getDrawable(0)!!
+        attr.recycle()
         setOrientation(orientation)
     }
 

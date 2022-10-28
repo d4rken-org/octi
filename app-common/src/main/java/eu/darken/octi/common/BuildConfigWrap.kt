@@ -1,5 +1,6 @@
 package eu.darken.octi.common
 
+import android.util.Log
 import androidx.annotation.Keep
 import java.lang.reflect.Field
 import java.time.Instant
@@ -10,7 +11,7 @@ import java.time.Instant
 @Keep
 object BuildConfigWrap {
     val APPLICATION_ID = getBuildConfigValue("PACKAGENAME") as String
-    val DEBUG: Boolean = BuildConfig.DEBUG
+    val DEBUG: Boolean = getBuildConfigValue("DEBUG") as Boolean
     val BUILD_TYPE: BuildType = when (val typ = getBuildConfigValue("BUILD_TYPE") as String) {
         "debug" -> BuildType.DEV
         "beta" -> BuildType.BETA
@@ -18,6 +19,7 @@ object BuildConfigWrap {
         else -> throw IllegalArgumentException("Unknown buildtype: $typ")
     }
 
+    @Keep
     enum class BuildType {
         DEV,
         BETA,
@@ -25,21 +27,23 @@ object BuildConfigWrap {
         ;
     }
 
-    val FLAVOR: Flavor = when (val flav = getBuildConfigValue(("FLAVOR"))) {
+    val FLAVOR: Flavor = when (val flav = getBuildConfigValue("FLAVOR") as String?) {
         "gplay" -> Flavor.GPLAY
         "foss" -> Flavor.FOSS
+        null -> Flavor.NONE
         else -> throw IllegalStateException("Unknown flavor: $flav")
     }
 
     enum class Flavor {
         GPLAY,
         FOSS,
+        NONE,
         ;
     }
 
     val BUILD_TIME: Instant = Instant.parse(getBuildConfigValue("BUILDTIME") as String)
 
-    val VERSION_CODE: Long = (getBuildConfigValue("VERSION_CODE") as Int).toLong()
+    val VERSION_CODE: Long = (getBuildConfigValue("VERSION_CODE") as String).toLong()
     val VERSION_NAME: String = getBuildConfigValue("VERSION_NAME") as String
     val GIT_SHA: String = getBuildConfigValue("GITSHA") as String
 
@@ -47,11 +51,12 @@ object BuildConfigWrap {
 
     private fun getBuildConfigValue(fieldName: String): Any? = try {
         val c = Class.forName("eu.darken.octi.BuildConfig")
-        val f: Field = c.getDeclaredField(fieldName).apply {
+        val f: Field = c.getField(fieldName).apply {
             isAccessible = true
         }
         f.get(null)
     } catch (e: Exception) {
+        Log.e("getBuildConfigValue", "fieldName: $fieldName")
         e.printStackTrace()
         null
     }

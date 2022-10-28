@@ -23,6 +23,7 @@ class WelcomeVH(parent: ViewGroup) :
             when (BuildConfigWrap.FLAVOR) {
                 BuildConfigWrap.Flavor.GPLAY -> setText(R.string.general_upgrade_action)
                 BuildConfigWrap.Flavor.FOSS -> setText(R.string.general_donate_action)
+                BuildConfigWrap.Flavor.NONE -> throw IllegalArgumentException()
             }
             setOnClickListener { item.onUpgrade() }
         }
