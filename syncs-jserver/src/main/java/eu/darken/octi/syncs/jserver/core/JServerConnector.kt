@@ -11,6 +11,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.*
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
@@ -29,6 +30,7 @@ class JServerConnector @AssistedInject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val endpointFactory: JServerEndpoint.Factory,
+    private val networkStateProvider: NetworkStateProvider,
     private val syncSettings: SyncSettings,
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
 ) : SyncConnector {
@@ -87,6 +89,8 @@ class JServerConnector @AssistedInject constructor(
             .setupCommonEventHandlers(TAG) { "writeQueue" }
             .launchIn(scope)
     }
+
+    private suspend fun isInternetAvailable() = networkStateProvider.networkState.first().isInternetAvailable
 
     override suspend fun write(toWrite: SyncWrite) {
         log(TAG) { "write(toWrite=$toWrite)" }
@@ -169,6 +173,13 @@ class JServerConnector @AssistedInject constructor(
 
     private suspend fun writeServer(data: SyncWrite) {
         log(TAG, DEBUG) { "writeServer(): $data)" }
+
+        // TODO cache write data for when we are online again?
+        if (!isInternetAvailable()) {
+            log(TAG, WARN) { "writeServer(): Skipping, we are offline." }
+            return
+        }
+
         data.modules.forEach { module ->
             endpoint.writeModule(
                 moduleId = module.moduleId,
@@ -251,6 +262,11 @@ class JServerConnector @AssistedInject constructor(
 
     override suspend fun sync(options: SyncOptions) {
         log(TAG) { "sync(options=$options)" }
+
+        if (!isInternetAvailable()) {
+            log(TAG, WARN) { "sync(): Skipping, we are offline." }
+            return
+        }
 
         if (options.writeData) {
             // TODO

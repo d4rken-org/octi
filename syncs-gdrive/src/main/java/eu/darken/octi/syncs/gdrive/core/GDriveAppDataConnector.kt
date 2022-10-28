@@ -13,6 +13,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.*
 import kotlinx.coroutines.*
@@ -29,6 +30,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
+    private val networkStateProvider: NetworkStateProvider,
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
 ) : GDriveBaseConnector(dispatcherProvider, context, client), SyncConnector {
 
@@ -77,6 +79,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
             .setupCommonEventHandlers(TAG) { "writeQueue" }
             .launchIn(scope)
     }
+
+    private suspend fun isInternetAvailable() = networkStateProvider.networkState.first().isInternetAvailable
 
     override suspend fun write(toWrite: SyncWrite) {
         log(TAG) { "write(toWrite=$toWrite)" }
@@ -169,8 +173,13 @@ class GDriveAppDataConnector @AssistedInject constructor(
     override suspend fun sync(options: SyncOptions) {
         log(TAG) { "sync(options=$options)" }
 
+        if (!isInternetAvailable()) {
+            log(TAG, WARN) { "sync(): Skipping, we are offline." }
+            return
+        }
+
         if (options.writeData) {
-            // TODO
+            // TODO Attempt to write data if we were offline and are now online?
         }
 
         if (options.readData) {
@@ -179,7 +188,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     _data.value = readDrive()
                 }
             } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
+                log(TAG, ERROR) { "sync(): Failed to read: ${e.asLog()}" }
                 _state.updateBlocking { copy(lastError = e) }
             }
         }
@@ -193,19 +202,25 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
                 _state.updateBlocking { copy(devices = deviceDirs) }
             } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to list of known devices: ${e.asLog()}" }
+                log(TAG, ERROR) { "sync(): Failed to list of known devices: ${e.asLog()}" }
             }
             try {
                 val newQuota = getStorageQuota()
                 _state.updateBlocking { copy(quota = newQuota) }
             } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to update storage quota: ${e.asLog()}" }
+                log(TAG, ERROR) { "sync(): Failed to update storage quota: ${e.asLog()}" }
             }
         }
     }
 
     private suspend fun writeDrive(data: SyncWrite) {
         log(TAG, DEBUG) { "writeDrive(): $data)" }
+
+        // TODO cache write data for when we are online again?
+        if (!isInternetAvailable()) {
+            log(TAG, WARN) { "writeDrive(): Skipping, we are offline." }
+            return
+        }
 
         val userDir = appDataRoot().child(DEVICE_DATA_DIR_NAME)
             ?.also { if (!it.isDirectory) throw IllegalStateException("devices is not a directory: $it") }

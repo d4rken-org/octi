@@ -35,9 +35,7 @@ import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
@@ -61,11 +59,6 @@ class DashboardVM @Inject constructor(
 
     val dashboardEvents = SingleLiveEvent<DashboardEvent>()
 
-    data class State(
-        val items: List<DashboardAdapter.Item>,
-        val isRefreshing: Boolean,
-    )
-
     private val isManuallyRefreshing = MutableStateFlow(false)
 
     private val tickerUiRefresh = flow {
@@ -81,16 +74,22 @@ class DashboardVM @Inject constructor(
         }
     }
 
-    val listItems: LiveData<State> = combine(
+    data class State(
+        val items: List<DashboardAdapter.Item>,
+        val isRefreshing: Boolean,
+        val isOffline: Boolean,
+    )
+
+    val state: LiveData<State> = combine(
         tickerUiRefresh,
+        networkStateProvider.networkState,
         generalSettings.isWelcomeDismissed.flow,
         generalSettings.isSyncSetupDismissed.flow,
-        moduleManager.byDevice,
+        deviceItems(),
         permissionTool.missingPermissions,
-        syncManager.connectors,
         isManuallyRefreshing,
         upgradeRepo.upgradeInfo,
-    ) { now, isWelcomeDismissed, isSyncSetupDismissed, byDevice, missingPermissions, connectors, isRefreshing, upgradeInfo ->
+    ) { now, networkState, isWelcomeDismissed, isSyncSetupDismissed, deviceItems, missingPermissions, isRefreshing, upgradeInfo ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
         if (!isWelcomeDismissed && !upgradeInfo.isPro) {
@@ -100,7 +99,7 @@ class DashboardVM @Inject constructor(
             ).run { items.add(this) }
         }
 
-        if (!isSyncSetupDismissed && byDevice.devices.size <= 1) {
+        if (!isSyncSetupDismissed && deviceItems.size <= 1) {
             SyncSetupVH.Item(
                 onDismiss = { generalSettings.isSyncSetupDismissed.value = true },
                 onSetup = { DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate() }
@@ -122,42 +121,12 @@ class DashboardVM @Inject constructor(
                 )
             }.run { items.addAll(this) }
 
-        byDevice.devices
-            .mapNotNull { (deviceId, moduleDatas) ->
-                val metaModule =
-                    moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
-                if (metaModule == null) {
-                    log(TAG, WARN) { "Missing meta module for $deviceId" }
-                    return@mapNotNull null
-                }
-
-                val moduleItems = (moduleDatas.toList() - metaModule)
-                    .sortedBy { it.orderPrio }
-                    .mapNotNull { moduleData ->
-                        when (moduleData.data) {
-                            is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem()
-                            is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
-                            is AppsInfo -> (moduleData as ModuleData<AppsInfo>).createVHItem()
-                            else -> {
-                                log(TAG, WARN) { "Unsupported module data: ${moduleData.data}" }
-                                null
-                            }
-                        }
-                    }
-
-                DeviceVH.Item(
-                    now = now,
-                    meta = metaModule,
-                    moduleItems = moduleItems,
-                )
-            }
-            .sortedBy { it.meta.data.deviceLabel ?: it.meta.data.deviceName }
-            .sortedByDescending { it.meta.deviceId == syncSettings.deviceId }
-            .toList().let { items.addAll(it) }
+        items.addAll(deviceItems)
 
         State(
             items = items,
             isRefreshing = isRefreshing,
+            isOffline = !networkState.isInternetAvailable,
         )
     }.asLiveData2()
 
@@ -192,6 +161,45 @@ class DashboardVM @Inject constructor(
     fun launchUpgradeFlow(activity: Activity) {
         log(TAG) { "launchUpgradeFlow(activity=$activity)" }
         upgradeRepo.launchBillingFlow(activity)
+    }
+
+    private fun deviceItems(): Flow<List<DeviceVH.Item>> = combine(
+        tickerUiRefresh,
+        moduleManager.byDevice,
+        permissionTool.missingPermissions,
+        syncManager.connectors,
+    ) { now, byDevice, missingPermissions, connectors ->
+        byDevice.devices
+            .mapNotNull { (deviceId, moduleDatas) ->
+                val metaModule =
+                    moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
+                if (metaModule == null) {
+                    log(TAG, WARN) { "Missing meta module for $deviceId" }
+                    return@mapNotNull null
+                }
+
+                val moduleItems = (moduleDatas.toList() - metaModule)
+                    .sortedBy { it.orderPrio }
+                    .mapNotNull { moduleData ->
+                        when (moduleData.data) {
+                            is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem()
+                            is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
+                            is AppsInfo -> (moduleData as ModuleData<AppsInfo>).createVHItem()
+                            else -> {
+                                log(TAG, WARN) { "Unsupported module data: ${moduleData.data}" }
+                                null
+                            }
+                        }
+                    }
+
+                DeviceVH.Item(
+                    now = now,
+                    meta = metaModule,
+                    moduleItems = moduleItems,
+                )
+            }
+            .sortedBy { it.meta.data.deviceLabel ?: it.meta.data.deviceName }
+            .sortedByDescending { it.meta.deviceId == syncSettings.deviceId }
     }
 
     private val ModuleData<out Any>.orderPrio: Int

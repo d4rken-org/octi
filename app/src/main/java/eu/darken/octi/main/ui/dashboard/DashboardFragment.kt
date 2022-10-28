@@ -49,6 +49,8 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
         }
     }
 
+    private var offlineSnackbar: Snackbar? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ui.toolbar.apply {
             setOnMenuItemClickListener {
@@ -113,10 +115,22 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
         ui.refreshAction.setOnClickListener { vm.refresh() }
         ui.refreshSwipe.setOnRefreshListener { vm.refresh() }
 
-        vm.listItems.observe2(this@DashboardFragment, ui) {
-            dashboardAdapter.update(it.items)
-            refreshSwipe.isRefreshing = it.isRefreshing
-            refreshAction.isGone = it.isRefreshing
+        vm.state.observe2(this@DashboardFragment, ui) { state ->
+            dashboardAdapter.update(state.items)
+            refreshSwipe.isRefreshing = state.isRefreshing
+            refreshAction.isGone = state.isRefreshing
+
+            if (offlineSnackbar != null && !state.isOffline) {
+                offlineSnackbar?.dismiss()
+                offlineSnackbar = null
+            } else if (offlineSnackbar == null && state.isOffline) {
+                offlineSnackbar = Snackbar.make(
+                    ui.coordinator,
+                    getString(R.string.general_internal_not_available_msg),
+                    Snackbar.LENGTH_INDEFINITE
+                )
+                offlineSnackbar?.show()
+            }
         }
 
         super.onViewCreated(view, savedInstanceState)
