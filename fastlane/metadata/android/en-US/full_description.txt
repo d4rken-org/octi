@@ -8,8 +8,6 @@ Available information modules:
 * Installed applications
 * and more... if you have a good idea, let me know!
 
-
-
 You can pick different ways to synchronize the information:
 
 * Your Google Drive
