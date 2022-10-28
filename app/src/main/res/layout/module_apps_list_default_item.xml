@@ -2,44 +2,45 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/DashboardDeviceInfoRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?selectableItemBackground">
+    android:layout_marginHorizontal="16dp"
+    android:background="?selectableItemBackground"
+    android:layout_marginVertical="8dp">
 
     <ImageView
-        android:id="@+id/wifi_icon"
+        android:id="@+id/icon"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/ic_baseline_apps_24"
-        app:layout_constraintBottom_toBottomOf="@id/apps_secondary"
+        app:layout_constraintBottom_toBottomOf="@id/secondary"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/apps_primary"
+        app:layout_constraintTop_toTopOf="@id/primary"
         tools:ignore="ContentDescription" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/apps_primary"
+        android:id="@+id/primary"
         style="@style/TextAppearance.Material3.BodyMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:singleLine="true"
-        app:layout_constraintBottom_toTopOf="@id/apps_secondary"
+        app:layout_constraintBottom_toTopOf="@id/secondary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/wifi_icon"
+        app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="128 apps" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/apps_secondary"
+        android:id="@+id/secondary"
         style="@style/TextAppearance.Material3.BodySmall"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/apps_primary"
-        app:layout_constraintStart_toStartOf="@id/apps_primary"
-        app:layout_constraintTop_toBottomOf="@id/apps_primary"
+        app:layout_constraintEnd_toEndOf="@id/primary"
+        app:layout_constraintStart_toStartOf="@id/primary"
+        app:layout_constraintTop_toBottomOf="@id/primary"
         tools:text="Last installed: SD Maid" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

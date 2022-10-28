@@ -11,6 +11,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
@@ -18,12 +19,17 @@ import eu.darken.octi.common.debug.logging.logTag
 import javax.inject.Provider
 import javax.inject.Singleton
 
+
 @InstallIn(SingletonComponent::class)
 @Module
 class CoilModule {
 
     @Provides
-    fun imageLoader(@ApplicationContext context: Context): ImageLoader = ImageLoader.Builder(context).apply {
+    fun imageLoader(
+        @ApplicationContext context: Context,
+        appIconFetcherFactory: AppIconFetcher.Factory,
+        dispatcherProvider: DispatcherProvider,
+    ): ImageLoader = ImageLoader.Builder(context).apply {
 
         if (BuildConfigWrap.DEBUG) {
             val logger = object : Logger {
@@ -34,7 +40,10 @@ class CoilModule {
             }
             logger(logger)
         }
-
+        components {
+            add(appIconFetcherFactory)
+        }
+        dispatcher(dispatcherProvider.Default)
     }.build()
 
     @Singleton

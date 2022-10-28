@@ -149,13 +149,14 @@
     <string name="permission_notifications_post_label">Post notifications</string>
     <string name="permission_notifications_post_desc">The post notification permission allows Octi to notify you about events on other devices that you have configured.</string>
 
-    <string name="sync_setting_background_enable_title">Background syncronization</string>
+    <string name="sync_setting_background_enable_title">Background synchronization</string>
     <string name="sync_setting_background_enable_desc">Synchronize data when the app is not open.</string>
     <string name="sync_setting_background_mobile_label">Mobile network</string>
-    <string name="sync_setting_background_mobile_desc">Allow background syncronization using your mobile network connection if Wi-Fi is unavailable.</string>
+    <string name="sync_setting_background_mobile_desc">Allow background synchronization using your mobile network connection if Wi-Fi is unavailable.</string>
 
     <string name="modules_settings_label">Modules</string>
     <string name="modules_settings_desc">Toggle different modules and tweak their settings.</string>
+    <string name="device_x_label">Device: %s</string>
 
     <string name="module_power_battery_status_unknown">Unknown status</string>
     <string name="module_power_battery_status_full">Full</string>
@@ -184,4 +185,5 @@
 
     <string name="module_apps_x_installed">%d apps installed</string>
     <string name="module_apps_last_installed_x">Last installed app: %s</string>
+    <string name="module_apps_list_title">Installed apps</string>
 </resources>

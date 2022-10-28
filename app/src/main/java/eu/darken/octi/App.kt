@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import coil.Coil
+import coil.ImageLoaderFactory
 import dagger.hilt.android.HiltAndroidApp
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
@@ -37,6 +39,7 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var syncWorkerControl: SyncWorkerControl
     @Inject lateinit var generalSettings: GeneralSettings
     @Inject lateinit var recorderModule: RecorderModule
+    @Inject lateinit var imageLoaderFactory: ImageLoaderFactory
 
     override fun onCreate() {
         super.onCreate()
@@ -72,6 +75,8 @@ open class App : Application(), Configuration.Provider {
             }
             .setupCommonEventHandlers(TAG) { "themeMode" }
             .launchIn(appScope)
+
+        Coil.setImageLoader(imageLoaderFactory)
 
         log(TAG) { "onCreate() done! ${Exception().asLog()}" }
     }

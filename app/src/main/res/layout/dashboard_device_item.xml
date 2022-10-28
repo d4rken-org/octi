@@ -18,7 +18,8 @@
             android:src="@drawable/ic_baseline_phone_android_24"
             app:layout_constraintBottom_toBottomOf="@id/device_subtitle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/device_label" />
+            app:layout_constraintTop_toTopOf="@id/device_label"
+            tools:ignore="ContentDescription" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/device_label"
@@ -50,19 +51,6 @@
             tools:text="123 days" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/click_hint"
-            style="@style/TextAppearance.Material3.LabelSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="@string/dashboard_click_hint"
-            android:textSize="8sp"
-            app:layout_constraintTop_toBottomOf="@id/device_subtitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/octi_version"
             style="@style/TextAppearance.Material3.LabelSmall"
             android:layout_width="0dp"
@@ -86,15 +74,31 @@
             android:id="@+id/module_data_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/click_hint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/device_subtitle"
             app:layout_constraintVertical_chainStyle="packed"
+            tools:itemCount="4"
+            tools:listitem="@layout/dashboard_device_power_item"
             tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/click_hint"
+            style="@style/TextAppearance.Material3.LabelSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/module_data_list"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:layout_marginTop="2dp"
+            android:text="@string/dashboard_click_hint"
+            android:textSize="8sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

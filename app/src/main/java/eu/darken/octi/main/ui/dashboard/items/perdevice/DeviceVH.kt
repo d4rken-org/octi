@@ -3,12 +3,15 @@ package eu.darken.octi.main.ui.dashboard.items.perdevice
 import android.text.format.DateUtils
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.recyclerview.widget.DividerItemDecoration
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.DividerItemDecoration2
 import eu.darken.octi.common.lists.binding
 import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.databinding.DashboardDeviceItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
+import eu.darken.octi.modules.meta.core.MetaInfo
 import java.time.Instant
 
 
@@ -16,9 +19,13 @@ class DeviceVH(parent: ViewGroup) :
     DashboardAdapter.BaseVH<DeviceVH.Item, DashboardDeviceItemBinding>(R.layout.dashboard_device_item, parent) {
 
     private val moduleAdapter = PerDeviceModuleAdapter()
+
     override val viewBinding = lazy {
         DashboardDeviceItemBinding.bind(itemView).also {
-            it.moduleDataList.adapter = moduleAdapter
+            it.moduleDataList.apply {
+                adapter = moduleAdapter
+                addItemDecoration(DividerItemDecoration2(context, DividerItemDecoration.VERTICAL))
+            }
         }
     }
 
@@ -30,8 +37,8 @@ class DeviceVH(parent: ViewGroup) :
 
         deviceIcon.setImageResource(
             when (meta.deviceType) {
-                eu.darken.octi.modules.meta.core.MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
-                eu.darken.octi.modules.meta.core.MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
+                MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
+                MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
             }
         )
         deviceLabel.text = meta.deviceLabel
@@ -57,7 +64,7 @@ class DeviceVH(parent: ViewGroup) :
 
     data class Item(
         val now: Instant,
-        val meta: eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>,
+        val meta: eu.darken.octi.module.core.ModuleData<MetaInfo>,
         val moduleItems: List<PerDeviceModuleAdapter.Item>,
     ) : DashboardAdapter.Item {
         override val stableId: Long = meta.deviceId.hashCode().toLong()

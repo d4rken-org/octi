@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_dashFragment_to_syncListFragment"
             app:destination="@id/syncListFragment" />
+        <action
+            android:id="@+id/action_dashFragment_to_appsListFragment"
+            app:destination="@id/appsListFragment" />
     </fragment>
 
     <fragment
@@ -95,6 +98,15 @@
         android:id="@+id/JServerLinkClientFragment"
         android:name="eu.darken.octi.syncs.jserver.ui.link.client.JServerLinkClientFragment"
         tools:layout="@layout/sync_jserver_link_client_fragment" />
+
+    <fragment
+        android:id="@+id/appsListFragment"
+        android:name="eu.darken.octi.modules.wifi.ui.appslist.AppsListFragment"
+        tools:layout="@layout/module_apps_list_fragment">
+        <argument
+            android:name="deviceId"
+            app:argType="eu.darken.octi.sync.core.DeviceId" />
+    </fragment>
 
 
 </navigation>

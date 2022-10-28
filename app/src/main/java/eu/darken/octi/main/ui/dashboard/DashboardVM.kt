@@ -152,6 +152,7 @@ class DashboardVM @Inject constructor(
                 )
             }
             .sortedBy { it.meta.data.deviceLabel ?: it.meta.data.deviceName }
+            .sortedByDescending { it.meta.deviceId == syncSettings.deviceId }
             .toList().let { items.addAll(it) }
 
         State(
@@ -217,11 +218,7 @@ class DashboardVM @Inject constructor(
                         },
                         onDismiss = {
                             generalSettings.addDismissedPermission(it)
-                            dashboardEvents.postValue(
-                                DashboardEvent.ShowPermissionDismissHint(
-                                    it
-                                )
-                            )
+                            dashboardEvents.postValue(DashboardEvent.ShowPermissionDismissHint(it))
                         }
                     ).run { dashboardEvents.postValue(this) }
                 }
@@ -231,7 +228,7 @@ class DashboardVM @Inject constructor(
     private fun ModuleData<AppsInfo>.createVHItem() = DeviceAppsVH.Item(
         data = this,
         onAppsInfoClicked = {
-
+            DashboardFragmentDirections.actionDashFragmentToAppsListFragment(deviceId).navigate()
         }
     )
 
