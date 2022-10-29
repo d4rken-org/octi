@@ -87,7 +87,7 @@ class GoogleAccountRepo @Inject constructor(
                 return@updateBlocking this
             }
 
-            toRemove.signOut()
+//            toRemove.signOut()
 
             mutate { remove(toRemove.id) }
         }
