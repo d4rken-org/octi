@@ -1,6 +1,7 @@
 package eu.darken.octi.modules.apps.core
 
 import android.content.Context
+import androidx.core.content.pm.PackageInfoCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
@@ -41,7 +42,7 @@ class AppsInfoSource @Inject constructor(
                 AppsInfo.Pkg(
                     packageName = pkgInfo.packageName,
                     installedAt = Instant.ofEpochMilli(pkgInfo.firstInstallTime),
-                    versionCode = pkgInfo.longVersionCode,
+                    versionCode = PackageInfoCompat.getLongVersionCode(pkgInfo),
                     versionName = pkgInfo.versionName,
                     label = pkgInfo.applicationInfo?.loadLabel(pm)?.toString()
                 )
