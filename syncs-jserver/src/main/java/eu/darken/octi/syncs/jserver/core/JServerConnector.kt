@@ -118,7 +118,6 @@ class JServerConnector @AssistedInject constructor(
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
 
         endpoint.deleteModules(deviceId)
-
     }
 
     suspend fun createLinkCode(): LinkingData {

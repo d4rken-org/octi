@@ -9,6 +9,7 @@ import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.sync.core.ConnectorHub
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.SyncConnector
+import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ class JServerHub @Inject constructor(
     private val accountRepo: JServerAccountRepo,
     private val connectorFactory: JServerConnector.Factory,
     private val endpointFactory: JServerEndpoint.Factory,
+    private val syncSettings: SyncSettings,
 ) : ConnectorHub {
 
     private val _connectors = accountRepo.accounts
@@ -41,9 +43,10 @@ class JServerHub @Inject constructor(
         return _connectors.first().any { it.identifier == connectorId }
     }
 
-    override suspend fun remove(connectorId: ConnectorId) {
+    override suspend fun remove(connectorId: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "remove(id=$connectorId)" }
         val connector = _connectors.first().single { it.identifier == connectorId }
+        connector.deleteDevice(syncSettings.deviceId)
         accountRepo.remove(connector.credentials.accountId)
     }
 
