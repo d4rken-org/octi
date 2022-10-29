@@ -36,6 +36,11 @@ If you like the app, consider:
 * Buying the upgrade on [Google Play](https://play.google.com/store/apps/details?id=eu.darken.octi)
 * [Sponsoring the project](https://github.com/sponsors/d4rken)
 
+## Thanks
+
+* Huge thanks to [@jakmoe](https://github.com/jakmoe) for writing Octi's open source sync
+  server [J-Server](https://github.com/jakob-moeller-cloud/octi-sync-server)
+
 ## Screenshots
 
 <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot1.png" width="100"> <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot2.png" width="100"> <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot3.png" width="100"> <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot4.png" width="100"> 
