@@ -47,6 +47,8 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
             log { "Request for $id was granted=$granted" }
             vm.onPermissionResult(granted)
         }
+
+        if (savedInstanceState == null) vm.refresh()
     }
 
     private var offlineSnackbar: Snackbar? = null
@@ -143,7 +145,6 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
 
     override fun onResume() {
         super.onResume()
-        vm.refresh()
         if (awaitingPermission) {
             awaitingPermission = false
             log { "awaitingPermission=true" }
