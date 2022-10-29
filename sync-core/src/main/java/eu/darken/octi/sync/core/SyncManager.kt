@@ -127,16 +127,12 @@ class SyncManager @Inject constructor(
         syncCache.remove(identifier)
 
         try {
-            try {
-                if (wipe) connector.deleteAll()
-                else connector.deleteDevice(syncSettings.deviceId)
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Wiping data pre deletion failed: ${e.asLog()}" }
-            }
-
             hubs.first().filter { it.owns(identifier) }.forEach {
                 it.remove(identifier)
             }
+            if (wipe) connector.deleteAll()
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "Wiping data pre deletion failed: ${e.asLog()}" }
         } finally {
             disabledConnectors.value = disabledConnectors.value - connector
         }

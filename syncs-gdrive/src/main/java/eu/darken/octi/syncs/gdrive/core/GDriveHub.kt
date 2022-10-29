@@ -10,10 +10,12 @@ import eu.darken.octi.sync.core.ConnectorHub
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -39,7 +41,7 @@ class GDriveHub @Inject constructor(
         return _connectors.first().any { it.identifier == connectorId }
     }
 
-    override suspend fun remove(connectorId: ConnectorId) {
+    override suspend fun remove(connectorId: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "remove(id=$connectorId)" }
         val connector = _connectors.first().single { it.identifier == connectorId }
         connector.deleteDevice(syncSettings.deviceId)

@@ -43,6 +43,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         override val quota: SyncConnectorState.Quota? = null,
         override val devices: Collection<DeviceId>? = null,
         override val isAvailable: Boolean = true,
+        val isDead: Boolean = false,
     ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
@@ -88,21 +89,25 @@ class GDriveAppDataConnector @AssistedInject constructor(
     }
 
     override suspend fun deleteAll() {
-        log(TAG, INFO) { "wipe()" }
+        log(TAG, INFO) { "deleteAll()" }
         writeAction {
             appDataRoot()
                 .listFiles()
                 .forEach { it.deleteAll() }
+            _state.updateBlocking { copy(isDead = true) }
         }
     }
 
     override suspend fun deleteDevice(deviceId: DeviceId) {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
         writeAction {
-            appDataRoot()
-                .listFiles()
-                .singleOrNull { it.name == deviceId.id }
+            appDataRoot().child(DEVICE_DATA_DIR_NAME)
+                ?.listFiles()
+                ?.onEach { log(TAG, DEBUG) { "deleteDevice(): Checking $it" } }
+                ?.singleOrNull { it.name == deviceId.id }
+                ?.onEach { log(TAG, WARN) { "deleteDevice(): Deleting $it" } }
                 ?.deleteAll()
+            _state.updateBlocking { copy(isDead = true) }
         }
     }
 
@@ -303,6 +308,10 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         try {
             writeLock.withLock {
+                if (_state.value().isDead) {
+                    log(TAG, WARN) { "Connector is DEAD" }
+                    return@withLock
+                }
                 try {
                     block()
                 } catch (e: Exception) {
