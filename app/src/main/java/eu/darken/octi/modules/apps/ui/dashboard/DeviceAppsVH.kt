@@ -32,11 +32,14 @@ class DeviceAppsVH(parent: ViewGroup) :
         }
 
         itemView.setOnClickListener { item.onAppsInfoClicked() }
+
+        installAction.setOnClickListener { item.onInstallClicked() }
     }
 
     data class Item(
         val data: ModuleData<AppsInfo>,
         val onAppsInfoClicked: (() -> Unit),
+        val onInstallClicked: (() -> Unit),
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
     }

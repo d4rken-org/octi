@@ -25,7 +25,7 @@
         android:layout_marginStart="8dp"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@id/apps_secondary"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/install_action"
         app:layout_constraintStart_toEndOf="@id/wifi_icon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="128 apps" />
@@ -37,9 +37,23 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/apps_primary"
+        app:layout_constraintEnd_toStartOf="@id/install_action"
         app:layout_constraintStart_toStartOf="@id/apps_primary"
         app:layout_constraintTop_toBottomOf="@id/apps_primary"
         tools:text="Last installed: SD Maid" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/install_action"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:icon="@drawable/ic_google_play_24"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/apps_secondary"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

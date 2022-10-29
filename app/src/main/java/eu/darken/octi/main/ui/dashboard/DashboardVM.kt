@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
@@ -56,6 +58,7 @@ class DashboardVM @Inject constructor(
     private val permissionTool: PermissionTool,
     private val syncSettings: SyncSettings,
     private val upgradeRepo: UpgradeRepo,
+    private val webpageTool: WebpageTool,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     val dashboardEvents = SingleLiveEvent<DashboardEvent>()
@@ -248,6 +251,11 @@ class DashboardVM @Inject constructor(
         data = this,
         onAppsInfoClicked = {
             DashboardFragmentDirections.actionDashFragmentToAppsListFragment(deviceId).navigate()
+        },
+        onInstallClicked = {
+            val pkg =
+                data.installedPackages.maxByOrNull { it.installedAt }?.packageName ?: BuildConfigWrap.APPLICATION_ID
+            webpageTool.open("https://play.google.com/store/apps/details?id=$pkg")
         }
     )
 

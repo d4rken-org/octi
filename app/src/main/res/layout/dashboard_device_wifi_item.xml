@@ -44,10 +44,11 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/perm_action"
         style="@style/Widget.Material3.Button"
-        android:layout_width="56dp"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         app:icon="@drawable/ic_baseline_warning_24"
+        app:backgroundTint="@color/error"
         app:iconGravity="textStart"
         app:iconPadding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
