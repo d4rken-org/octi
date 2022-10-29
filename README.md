@@ -13,16 +13,21 @@ Octi facilitates cross-device information exchange/monitoring/synchronization.
 
 Information modules:
 
-* Battery
-* Connectivity
-* Installed
+* Battery: Charge level, speed and estimates.
+* Connectivity: Wifi SSID, IP.
+* Installed apps: Last installed app, app list.
 * ...
 
 Synchronization options:
 
-* Google Drive
-* J-Server
+* Google Drive: Easy to use if all devices use the same account.
+* J-Server: End-To-End encrypted server if you don't want to use Google Drive.
 * ...
+
+Hungry for details? [Check the wiki](https://github.com/d4rken-org/octi/wiki). Still have
+questions? [Join us on discord](https://discord.gg/s7V4C6zuVy)!
+
+Got ideas for more? [Make a feature request :)](https://github.com/d4rken-org/octi/issues)
 
 ## Downloads
 
@@ -36,11 +41,6 @@ Synchronization options:
 ## Community
 
 Want to chat? Join our [discord server here](https://discord.gg/s7V4C6zuVy).
-
-## Help
-
-[Check the wiki](https://github.com/d4rken-org/octi/wiki), if you there are still open
-questions, [join us on discord](https://discord.gg/s7V4C6zuVy).
 
 ## Support the project
 
