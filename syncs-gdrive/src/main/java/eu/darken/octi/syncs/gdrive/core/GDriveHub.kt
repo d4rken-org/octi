@@ -6,6 +6,9 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.sync.core.ConnectorHub
+import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -20,7 +23,8 @@ class GDriveHub @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val accountRepo: GoogleAccountRepo,
     private val connectorFactory: GDriveAppDataConnector.Factory,
-) : eu.darken.octi.sync.core.ConnectorHub {
+    private val syncSettings: SyncSettings,
+) : ConnectorHub {
 
     private val _connectors: Flow<Collection<GDriveAppDataConnector>> = accountRepo.accounts
         .mapLatest { acc ->
@@ -31,13 +35,14 @@ class GDriveHub @Inject constructor(
 
     override val connectors: Flow<Collection<eu.darken.octi.sync.core.SyncConnector>> = _connectors
 
-    override suspend fun owns(connectorId: eu.darken.octi.sync.core.ConnectorId): Boolean {
+    override suspend fun owns(connectorId: ConnectorId): Boolean {
         return _connectors.first().any { it.identifier == connectorId }
     }
 
-    override suspend fun remove(connectorId: eu.darken.octi.sync.core.ConnectorId) {
+    override suspend fun remove(connectorId: ConnectorId) {
         log(TAG) { "remove(id=$connectorId)" }
         val connector = _connectors.first().single { it.identifier == connectorId }
+        connector.deleteDevice(syncSettings.deviceId)
         accountRepo.remove(connector.account.id)
     }
 
