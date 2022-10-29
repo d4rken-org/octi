@@ -3,6 +3,8 @@ package eu.darken.octi.syncs.jserver.core
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import eu.darken.octi.common.collections.fromGzip
+import eu.darken.octi.common.collections.toGzip
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.*
@@ -151,7 +153,7 @@ class JServerConnector @AssistedInject constructor(
                         deviceId = deviceId,
                         moduleId = moduleId,
                         modifiedAt = readData.modifiedAt,
-                        payload = crypti.decrypt(readData.payload),
+                        payload = crypti.decrypt(readData.payload).fromGzip(),
                     ).also { log(TAG, VERBOSE) { "readServer(): Module data: $it" } }
 
                 }
@@ -183,7 +185,7 @@ class JServerConnector @AssistedInject constructor(
         data.modules.forEach { module ->
             endpoint.writeModule(
                 moduleId = module.moduleId,
-                payload = crypti.encrypt(module.payload),
+                payload = crypti.encrypt(module.payload.toGzip()),
             )
         }
         log(TAG, VERBOSE) { "writeServer(): Done" }
