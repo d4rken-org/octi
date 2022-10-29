@@ -5,7 +5,7 @@
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/d4rken-org/octi?include_prereleases)](https://github.com/d4rken-org/octi/releases/latest)
 [![Github All Releases](https://img.shields.io/github/downloads/d4rken-org/octi/total.svg)]()
 [![Code tests & eval](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml/badge.svg)](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml)
-[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19)
+[![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
 
 All your Android devices, closer together than ever.
 
