@@ -1,5 +1,7 @@
 # Octi
 
+<img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/featureGraphic.jpg" width="400">
+
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/d4rken-org/octi?include_prereleases)](https://github.com/d4rken-org/octi/releases/latest)
 [![Github All Releases](https://img.shields.io/github/downloads/d4rken-org/octi/total.svg)]()
 [![Code tests & eval](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml/badge.svg)](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml)
@@ -7,7 +9,7 @@
 
 All your Android devices, closer together than ever.
 
-Octi allows cross-device information exchange.
+Octi facilitates cross-device information exchange.
 
 ## Downloads
 
