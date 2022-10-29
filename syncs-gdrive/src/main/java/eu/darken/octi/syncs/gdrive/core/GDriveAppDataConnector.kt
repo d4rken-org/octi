@@ -62,7 +62,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     override val identifier: ConnectorId = ConnectorId(
         type = "gdrive",
         subtype = if (client.account.isAppDataScope) "appdatascope" else "",
-        account = "account.id.id",
+        account = account.id.id,
     )
 
     init {
