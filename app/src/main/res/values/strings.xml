@@ -36,7 +36,7 @@
     <string name="debug_debuglog_record_action">Record debug log</string>
 
     <string name="onboarding_card_title">Welcome to Octi</string>
-    <string name="onboarding_card_message">Octi helps you monitor multiple Android devices.</string>
+    <string name="onboarding_card_message">Octi helps you monitor multiple Android devices.\n\nConsider upgrading to Octi Pro to support me developing it.</string>
     <string name="onboarding_setupsync_title">Setup synchronization</string>
     <string name="onboarding_setupsync_message">Currently you are only seeing this device. To connect your Octi installations, setup a common synchronization service.</string>
 
@@ -189,4 +189,7 @@
     <string name="module_apps_x_installed">%d apps installed</string>
     <string name="module_apps_last_installed_x">Last installed app: %s</string>
     <string name="module_apps_list_title">Installed apps</string>
+
+    <string name="pro_device_limit_reached_title">Device limit reached</string>
+    <string name="pro_device_limit_reached_description">You currently have %1$d  synced devices. To view more than %2$d devices, upgrade to Octi Pro or remove devices.</string>
 </resources>

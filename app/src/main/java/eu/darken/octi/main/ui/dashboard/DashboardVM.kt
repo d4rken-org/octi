@@ -19,6 +19,7 @@ import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.main.core.GeneralSettings
+import eu.darken.octi.main.ui.dashboard.items.DeviceLimitVH
 import eu.darken.octi.main.ui.dashboard.items.PermissionVH
 import eu.darken.octi.main.ui.dashboard.items.SyncSetupVH
 import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
@@ -121,7 +122,17 @@ class DashboardVM @Inject constructor(
                 )
             }.run { items.addAll(this) }
 
-        items.addAll(deviceItems)
+        if (deviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro) {
+            log(TAG, WARN) { "Exceeding device limit: $deviceItems" }
+            DeviceLimitVH.Item(
+                current = deviceItems.size,
+                maximum = DEVICE_LIMIT,
+                onUpgrade = { dashboardEvents.postValue(DashboardEvent.LaunchUpgradeFlow(UpgradeRepo.Type.GPLAY)) },
+            ).run { items.add(this) }
+            items.addAll(deviceItems.take(DEVICE_LIMIT))
+        } else {
+            items.addAll(deviceItems)
+        }
 
         State(
             items = items,
@@ -246,7 +257,7 @@ class DashboardVM @Inject constructor(
             WifiInfo::class,
             AppsInfo::class,
         )
-
+        private const val DEVICE_LIMIT = 3
         private val WIFI_PERMISSIONS = setOf(Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION)
 
         private val TAG = logTag("Dashboard", "Fragment", "VM")
