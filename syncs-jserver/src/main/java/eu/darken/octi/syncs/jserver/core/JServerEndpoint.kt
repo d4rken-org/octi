@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.ByteString
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.time.Instant
@@ -112,6 +113,9 @@ class JServerEndpoint @AssistedInject constructor(
             moduleId = moduleId.id,
             targetDeviceId = deviceId.id.takeIf { it != ourDeviceIdString }
         )
+
+        if (!response.isSuccessful) throw HttpException(response)
+
         ReadData(
             modifiedAt = response.headers().getInstant("X-Modified-At") ?: Instant.now(),
             payload = response.body()?.byteString() ?: ByteString.EMPTY,

@@ -193,19 +193,21 @@ class JServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "readServer(): Found devices: $deviceIds" }
 
         val devices = deviceIds.map { deviceId ->
-            val moduleFetchJobs = supportedModuleIds.map { moduleId ->
-                scope.async moduleFetch@{
-                    fetchModule(deviceId, moduleId)
+            scope.async moduleFetch@{
+                val moduleFetchJobs = supportedModuleIds.map { moduleId ->
+                    fetchModule(deviceId, moduleId).also {
+                        delay(1000)
+                    }
                 }
+
+                val modules = moduleFetchJobs.filterNotNull()
+
+                JServerDeviceData(
+                    deviceId = deviceId,
+                    modules = modules,
+                )
             }
-
-            val modules = moduleFetchJobs.awaitAll().filterNotNull()
-
-            JServerDeviceData(
-                deviceId = deviceId,
-                modules = modules,
-            )
-        }
+        }.awaitAll()
 
         return JServerData(
             connectorId = identifier,
