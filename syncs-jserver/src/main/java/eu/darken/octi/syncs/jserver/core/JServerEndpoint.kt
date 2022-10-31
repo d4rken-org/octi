@@ -4,6 +4,7 @@ import com.squareup.moshi.Moshi
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import eu.darken.octi.common.collections.toByteString
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -106,7 +107,7 @@ class JServerEndpoint @AssistedInject constructor(
         val payload: ByteString,
     )
 
-    suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId): ReadData = withContext(dispatcherProvider.IO) {
+    suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId): ReadData? = withContext(dispatcherProvider.IO) {
         log(TAG) { "readModule(deviceId=$deviceId, moduleId=$moduleId)" }
         val response = api.readModule(
             callerDeviceId = ourDeviceIdString,
@@ -116,9 +117,13 @@ class JServerEndpoint @AssistedInject constructor(
 
         if (!response.isSuccessful) throw HttpException(response)
 
+        val lastModifiedAt = response.headers()["X-Modified-At"]?.let { Instant.parse(it) } ?: return@withContext null
+
+        val body = response.body()?.byteString()?.takeIf { it != NULL_BODY } ?: ByteString.EMPTY
+
         ReadData(
-            modifiedAt = response.headers().getInstant("X-Modified-At") ?: Instant.now(),
-            payload = response.body()?.byteString() ?: ByteString.EMPTY,
+            modifiedAt = lastModifiedAt,
+            payload = body,
         )
     }
 
@@ -149,6 +154,7 @@ class JServerEndpoint @AssistedInject constructor(
     }
 
     companion object {
+        private val NULL_BODY = "null".toByteString()
         private val TAG = logTag("Sync", "JServer", "Connector", "Endpoint")
     }
 }

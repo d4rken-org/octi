@@ -58,7 +58,6 @@ class DeviceVH(parent: ViewGroup) :
         }
 
         lastSeen.text = DateUtils.getRelativeTimeSpanString(item.meta.modifiedAt.toEpochMilli())
-
         moduleDataList.isGone = item.moduleItems.isEmpty()
         moduleAdapter.update(item.moduleItems)
     }

@@ -21,6 +21,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import okio.ByteString
+import retrofit2.HttpException
 import java.time.Duration
 import java.time.Instant
 import kotlin.math.max
@@ -116,8 +118,16 @@ class JServerConnector @AssistedInject constructor(
 
     override suspend fun deleteDevice(deviceId: DeviceId) = writeServerWrapper {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
-
-        endpoint.deleteModules(deviceId)
+        try {
+            endpoint.deleteModules(deviceId)
+        } catch (e: HttpException) {
+            // TODO once we have device deletion as an API, remove this edge case catch
+            if (e.code() == 401) {
+                log(TAG, WARN) { "Can't delete device because we are not authorized" }
+            } else {
+                throw e
+            }
+        }
     }
 
     suspend fun createLinkCode(): LinkingData {
@@ -171,11 +181,12 @@ class JServerConnector @AssistedInject constructor(
     }
 
     private suspend fun fetchModule(deviceId: DeviceId, moduleId: ModuleId): JServerModuleData? {
-        val readData = endpoint.readModule(deviceId = deviceId, moduleId = moduleId)
+        val readData = endpoint.readModule(deviceId = deviceId, moduleId = moduleId) ?: return null
 
-        if (readData.payload.size == 0) {
-            log(TAG, WARN) { "readServer(): Module payload is empty: $moduleId" }
-            return null
+        val payload = if (readData.payload != ByteString.EMPTY) {
+            crypti.decrypt(readData.payload).fromGzip()
+        } else {
+            ByteString.EMPTY
         }
 
         return JServerModuleData(
@@ -183,7 +194,7 @@ class JServerConnector @AssistedInject constructor(
             deviceId = deviceId,
             moduleId = moduleId,
             modifiedAt = readData.modifiedAt,
-            payload = crypti.decrypt(readData.payload).fromGzip(),
+            payload = payload,
         ).also { log(TAG, VERBOSE) { "readServer(): Module data: $it" } }
     }
 
@@ -195,9 +206,15 @@ class JServerConnector @AssistedInject constructor(
         val devices = deviceIds.map { deviceId ->
             scope.async moduleFetch@{
                 val moduleFetchJobs = supportedModuleIds.map { moduleId ->
-                    fetchModule(deviceId, moduleId).also {
-                        delay(1000)
+                    val fetchResult = try {
+                        fetchModule(deviceId, moduleId)
+                    } catch (e: Exception) {
+                        log(TAG, ERROR) { "Failed to fetch: $deviceId:$moduleId:\n${e.asLog()}" }
+                        null
                     }
+                    log(TAG, INFO) { "Module fetched: $fetchResult" }
+                    delay(1000)
+                    fetchResult
                 }
 
                 val modules = moduleFetchJobs.filterNotNull()
