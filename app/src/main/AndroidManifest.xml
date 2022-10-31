@@ -62,6 +62,17 @@
             android:screenOrientation="sensor"
             tools:replace="screenOrientation" />
 
+        <receiver
+            android:name=".modules.power.ui.widget.BatteryWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/battery_widget_info" />
+        </receiver>
+
         <!-- Debug stuff-->
         <activity
             android:name="eu.darken.octi.common.debug.recording.ui.RecorderActivity"
