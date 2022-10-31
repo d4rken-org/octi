@@ -131,6 +131,62 @@ class JServerConnector @AssistedInject constructor(
         )
     }
 
+    override suspend fun sync(options: SyncOptions) {
+        log(TAG) { "sync(options=$options)" }
+
+        if (!isInternetAvailable()) {
+            log(TAG, WARN) { "sync(): Skipping, we are offline." }
+            return
+        }
+
+        if (options.writeData) {
+            // TODO
+        }
+
+        if (options.readData) {
+            log(TAG) { "read()" }
+            try {
+                readServerWrapper {
+                    _data.value = readServer()
+                }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
+                _state.updateBlocking { copy(lastError = e) }
+            }
+        }
+
+        if (options.stats) {
+            try {
+                val knownDeviceIds = endpoint.listDevices()
+                _state.updateBlocking { copy(devices = knownDeviceIds) }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to list of known devices: ${e.asLog()}" }
+            }
+        }
+    }
+
+    suspend fun checkHealth(): JServerApi.Health {
+        log(TAG) { "checkHealth()" }
+        return endpoint.getHealth()
+    }
+
+    private suspend fun fetchModule(deviceId: DeviceId, moduleId: ModuleId): JServerModuleData? {
+        val readData = endpoint.readModule(deviceId = deviceId, moduleId = moduleId)
+
+        if (readData.payload.size == 0) {
+            log(TAG, WARN) { "readServer(): Module payload is empty: $moduleId" }
+            return null
+        }
+
+        return JServerModuleData(
+            connectorId = identifier,
+            deviceId = deviceId,
+            moduleId = moduleId,
+            modifiedAt = readData.modifiedAt,
+            payload = crypti.decrypt(readData.payload).fromGzip(),
+        ).also { log(TAG, VERBOSE) { "readServer(): Module data: $it" } }
+    }
+
     private suspend fun readServer(): JServerData {
         log(TAG, DEBUG) { "readServer(): Starting..." }
         val deviceIds = endpoint.listDevices()
@@ -139,22 +195,7 @@ class JServerConnector @AssistedInject constructor(
         val devices = deviceIds.map { deviceId ->
             val moduleFetchJobs = supportedModuleIds.map { moduleId ->
                 scope.async moduleFetch@{
-
-                    val readData = endpoint.readModule(deviceId = deviceId, moduleId = moduleId)
-
-                    if (readData.payload.size == 0) {
-                        log(TAG, WARN) { "readServer(): Module payload is empty: $moduleId" }
-                        return@moduleFetch null
-                    }
-
-                    JServerModuleData(
-                        connectorId = identifier,
-                        deviceId = deviceId,
-                        moduleId = moduleId,
-                        modifiedAt = readData.modifiedAt,
-                        payload = crypti.decrypt(readData.payload).fromGzip(),
-                    ).also { log(TAG, VERBOSE) { "readServer(): Module data: $it" } }
-
+                    fetchModule(deviceId, moduleId)
                 }
             }
 
@@ -259,45 +300,6 @@ class JServerConnector @AssistedInject constructor(
             }
             log(TAG, VERBOSE) { "writeAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
         }
-    }
-
-    override suspend fun sync(options: SyncOptions) {
-        log(TAG) { "sync(options=$options)" }
-
-        if (!isInternetAvailable()) {
-            log(TAG, WARN) { "sync(): Skipping, we are offline." }
-            return
-        }
-
-        if (options.writeData) {
-            // TODO
-        }
-
-        if (options.readData) {
-            log(TAG) { "read()" }
-            try {
-                readServerWrapper {
-                    _data.value = readServer()
-                }
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
-                _state.updateBlocking { copy(lastError = e) }
-            }
-        }
-
-        if (options.stats) {
-            try {
-                val knownDeviceIds = endpoint.listDevices()
-                _state.updateBlocking { copy(devices = knownDeviceIds) }
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to list of known devices: ${e.asLog()}" }
-            }
-        }
-    }
-
-    suspend fun checkHealth(): JServerApi.Health {
-        log(TAG) { "checkHealth()" }
-        return endpoint.getHealth()
     }
 
     @AssistedFactory
