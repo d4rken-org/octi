@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
+import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.preferences.PreferenceStoreMapper
 import eu.darken.octi.common.preferences.Settings
@@ -41,7 +43,9 @@ class SyncSettings @Inject constructor(
                 preferences.edit().putString(key, it).commit()
             }
         }
-        DeviceId(rawId)
+        DeviceId(rawId).also {
+            log(TAG, INFO) { "Our DeviceId is $it" }
+        }
     }
 
     companion object {
