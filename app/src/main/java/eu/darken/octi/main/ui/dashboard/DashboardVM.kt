@@ -38,7 +38,10 @@ import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
@@ -68,12 +71,6 @@ class DashboardVM @Inject constructor(
     private val tickerUiRefresh = flow {
         while (currentCoroutineContext().isActive) {
             emit(Instant.now())
-            // "Last seen update"
-            val netstate = networkStateProvider.networkState.first()
-            if (netstate.isInternetAvailable && !netstate.isMeteredConnection) {
-                log(TAG) { "Auto data refresh..." }
-                doRefresh()
-            }
             delay(60 * 1000)
         }
     }
@@ -156,14 +153,10 @@ class DashboardVM @Inject constructor(
         dashboardEvents.postValue(DashboardEvent.LaunchUpgradeFlow(UpgradeRepo.Type.GPLAY))
     }
 
+    private val refreshLock = Mutex()
     fun refresh() = appScope.launch {
         log(TAG) { "refresh()" }
-        doRefresh()
-    }
-
-    private val refreshLock = Mutex()
-    private suspend fun doRefresh() {
-        if (isManuallyRefreshing.value) return
+        if (isManuallyRefreshing.value) return@launch
         refreshLock.withLock {
             try {
                 isManuallyRefreshing.value = true
@@ -174,6 +167,7 @@ class DashboardVM @Inject constructor(
             }
         }
     }
+
 
     fun onPermissionResult(granted: Boolean) {
         if (granted) permissionTool.recheck()
