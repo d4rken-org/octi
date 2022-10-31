@@ -2,6 +2,7 @@ package eu.darken.octi.module.core
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
@@ -45,7 +46,7 @@ class ModuleManager @Inject constructor(
         )
     }
         .onEach {
-            log(TAG) { "BYDEVICE: $it" }
+            log(TAG, VERBOSE) { "BYDEVICE: $it" }
         }
 
     suspend fun refresh() {

@@ -212,7 +212,7 @@ class JServerConnector @AssistedInject constructor(
                         log(TAG, ERROR) { "Failed to fetch: $deviceId:$moduleId:\n${e.asLog()}" }
                         null
                     }
-                    log(TAG, INFO) { "Module fetched: $fetchResult" }
+                    log(TAG, VERBOSE) { "Module fetched: $fetchResult" }
                     delay(1000)
                     fetchResult
                 }
