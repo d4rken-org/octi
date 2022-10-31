@@ -1,4 +1,4 @@
-package eu.darken.octi.modules.wifi.ui.appslist
+package eu.darken.octi.modules.apps.ui.appslist
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData

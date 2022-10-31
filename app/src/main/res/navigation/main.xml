@@ -101,7 +101,7 @@
 
     <fragment
         android:id="@+id/appsListFragment"
-        android:name="eu.darken.octi.modules.wifi.ui.appslist.AppsListFragment"
+        android:name="eu.darken.octi.modules.apps.ui.appslist.AppsListFragment"
         tools:layout="@layout/module_apps_list_fragment">
         <argument
             android:name="deviceId"
