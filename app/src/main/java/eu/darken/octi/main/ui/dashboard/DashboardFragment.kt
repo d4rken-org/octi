@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.text.SpannableStringBuilder
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.colorString
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.common.lists.setupDefaults
@@ -61,6 +63,10 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                         vm.goToSyncServices()
                         true
                     }
+                    R.id.action_upgrade -> {
+                        vm.upgradeToOctiPro()
+                        true
+                    }
                     R.id.action_settings -> {
                         doNavigate(DashboardFragmentDirections.actionDashFragmentToSettingsContainerFragment())
                         true
@@ -68,7 +74,29 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                     else -> super.onOptionsItemSelected(it)
                 }
             }
-            subtitle = BuildConfigWrap.VERSION_DESCRIPTION
+            subtitle = if (BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.RELEASE) {
+                "v${BuildConfigWrap.VERSION_NAME}"
+            } else {
+                BuildConfigWrap.VERSION_DESCRIPTION
+            }
+        }
+
+        vm.upgradeStatus.observe2(ui) { state ->
+            toolbar.menu.findItem(R.id.action_upgrade)?.isVisible = !state.isPro
+
+            val baseTitle = when {
+                state.isPro -> getString(R.string.app_name_upgraded)
+                else -> getString(R.string.app_name)
+            }.split(" ".toRegex())
+                .dropLastWhile { it.isEmpty() }
+                .toTypedArray()
+
+            toolbar.title = if (baseTitle.size == 2) {
+                val builder = SpannableStringBuilder(baseTitle[0] + " ")
+                builder.append(colorString(requireContext().getColor(R.color.colorUpgraded), baseTitle[1]))
+            } else {
+                getString(R.string.app_name)
+            }
         }
 
         vm.dashboardEvents.observe2(ui) { event ->

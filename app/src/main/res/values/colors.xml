@@ -61,4 +61,6 @@
     <color name="md_theme_dark_surfaceTintColor">#7CDA9C</color>
     <color name="CustomColor1">#3FC89C</color>
     <color name="CustomColor2">#009495</color>
+
+    <color name="colorUpgraded">#00b8d4</color>
 </resources>

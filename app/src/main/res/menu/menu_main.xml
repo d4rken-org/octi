@@ -4,13 +4,21 @@
     tools:context="eu.darken.octi.main.ui.MainActivity">
 
     <item
+        android:id="@+id/action_upgrade"
+        android:icon="@drawable/ic_heart"
+        android:orderInCategory="100"
+        android:title="@string/general_upgrade_action"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_sync_services"
+        android:icon="@drawable/ic_baseline_cloud_sync_24"
         android:orderInCategory="100"
         android:title="@string/sync_services_label"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
         android:orderInCategory="100"
         android:title="@string/label_settings"
         app:showAsAction="never" />

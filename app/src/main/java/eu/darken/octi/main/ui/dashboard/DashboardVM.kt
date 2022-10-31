@@ -78,6 +78,8 @@ class DashboardVM @Inject constructor(
         }
     }
 
+    val upgradeStatus = upgradeRepo.upgradeInfo.asLiveData2()
+
     data class State(
         val items: List<DashboardAdapter.Item>,
         val isRefreshing: Boolean,
@@ -99,7 +101,7 @@ class DashboardVM @Inject constructor(
         if (!isWelcomeDismissed && !upgradeInfo.isPro) {
             WelcomeVH.Item(
                 onDismiss = { generalSettings.isWelcomeDismissed.value = true },
-                onUpgrade = { dashboardEvents.postValue(DashboardEvent.LaunchUpgradeFlow(UpgradeRepo.Type.GPLAY)) }
+                onUpgrade = { upgradeToOctiPro() }
             ).run { items.add(this) }
         }
 
@@ -147,6 +149,11 @@ class DashboardVM @Inject constructor(
     fun goToSyncServices() = launch {
         log(TAG) { "goToSyncServices()" }
         DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate()
+    }
+
+    fun upgradeToOctiPro() = launch {
+        log(TAG) { "upgradeToOctiPro()" }
+        dashboardEvents.postValue(DashboardEvent.LaunchUpgradeFlow(UpgradeRepo.Type.GPLAY))
     }
 
     fun refresh() = appScope.launch {
