@@ -44,6 +44,7 @@ class DeviceVH(parent: ViewGroup) :
         deviceLabel.text = meta.deviceLabel
             ?.let { "$it (${meta.deviceName})" }
             ?: meta.deviceName
+        deviceLabel.append(" (#${adapterPosition + 1})")
 
         deviceSubtitle.apply {
             val osName = getString(R.string.module_meta_android_name_x_label, meta.androidVersionName)
