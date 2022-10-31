@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.text.SpannableStringBuilder
+import android.text.format.DateUtils
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -168,10 +169,14 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                     R.plurals.general_devices_count_label,
                     state.deviceCount
                 )
+
+                val lastSyncAt = state.lastSyncAt?.let { DateUtils.getRelativeTimeSpanString(it.toEpochMilli()) }
+                val deviceInfo = if (lastSyncAt != null) "$deviceQuantity ($lastSyncAt)" else deviceQuantity
+
                 toolbar.subtitle = if (BuildConfigWrap.DEBUG) {
-                    "$deviceQuantity ${BuildConfigWrap.GIT_SHA}"
+                    "$deviceInfo ${BuildConfigWrap.GIT_SHA}"
                 } else {
-                    deviceQuantity
+                    deviceInfo
                 }
             }
         }

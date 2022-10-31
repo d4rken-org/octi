@@ -38,10 +38,7 @@ import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
@@ -80,6 +77,7 @@ class DashboardVM @Inject constructor(
     data class State(
         val items: List<DashboardAdapter.Item>,
         val deviceCount: Int,
+        val lastSyncAt: Instant?,
         val isRefreshing: Boolean,
         val isOffline: Boolean,
     )
@@ -137,9 +135,12 @@ class DashboardVM @Inject constructor(
             items.addAll(deviceItems)
         }
 
+        val lastConnectorActivity = syncManager.states.first().mapNotNull { it.lastSyncAt }.maxByOrNull { it }
+
         State(
             items = items,
             deviceCount = deviceItems.size,
+            lastSyncAt = lastConnectorActivity,
             isRefreshing = isRefreshing,
             isOffline = !networkState.isInternetAvailable,
         )
