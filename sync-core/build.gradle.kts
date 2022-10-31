@@ -17,11 +17,8 @@ android {
         targetSdk = ProjectConfig.targetSdk
     }
 
-    buildTypes {
-        debug { }
-        create("beta") { }
-        release { }
-    }
+
+    setupModuleBuildTypes()
 
     setupCompileOptions()
 
