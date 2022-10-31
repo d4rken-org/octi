@@ -43,7 +43,7 @@ android {
             setupCredentials(File(basePath, "signing-foss.properties"))
         }
         create("releaseGplay") {
-            setupCredentials(File(basePath, "signing-gplay-upload.properties"))
+            setupCredentials(File(basePath, "signing-gplay.properties"))
         }
     }
 
