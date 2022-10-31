@@ -3,6 +3,7 @@ package eu.darken.octi.syncs.gdrive.ui.add
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
@@ -34,6 +35,13 @@ class AddGDriveFragment : Fragment3(R.layout.sync_add_new_gdrive_fragment) {
             when (it) {
                 is AddGDriveEvents.SignInStart -> {
                     googleSignInHandler.launch(it.intent)
+                }
+                is AddGDriveEvents.NoGoogleAccount -> {
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.sync_gdrive_error_no_account_on_device,
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }

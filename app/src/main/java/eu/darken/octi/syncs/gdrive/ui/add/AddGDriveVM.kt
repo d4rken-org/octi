@@ -12,6 +12,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.syncs.gdrive.core.GoogleAccount
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,9 +33,16 @@ class AddGDriveVM @Inject constructor(
 
         val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         log(TAG) { "SignIn: success=${task.isSuccessful}" }
-        val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
-        accRepo.add(eu.darken.octi.syncs.gdrive.core.GoogleAccount(account))
-        navEvents.postValue(null)
+        try {
+            val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
+            accRepo.add(GoogleAccount(account))
+            navEvents.postValue(null)
+        } catch (e: ApiException) {
+            when (e.statusCode) {
+                12500 -> events.postValue(AddGDriveEvents.NoGoogleAccount(e))
+                else -> throw e
+            }
+        }
     }
 
     companion object {
