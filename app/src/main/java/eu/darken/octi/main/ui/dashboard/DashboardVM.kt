@@ -79,6 +79,7 @@ class DashboardVM @Inject constructor(
 
     data class State(
         val items: List<DashboardAdapter.Item>,
+        val deviceCount: Int,
         val isRefreshing: Boolean,
         val isOffline: Boolean,
     )
@@ -138,6 +139,7 @@ class DashboardVM @Inject constructor(
 
         State(
             items = items,
+            deviceCount = deviceItems.size,
             isRefreshing = isRefreshing,
             isOffline = !networkState.isInternetAvailable,
         )

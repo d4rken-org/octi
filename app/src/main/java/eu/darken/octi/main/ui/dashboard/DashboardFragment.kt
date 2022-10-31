@@ -17,6 +17,7 @@ import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.colorString
 import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.getQuantityString2
 import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.common.lists.setupDefaults
 import eu.darken.octi.common.navigation.doNavigate
@@ -160,6 +161,18 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                     Snackbar.LENGTH_INDEFINITE
                 )
                 offlineSnackbar?.show()
+            }
+
+            if (state.deviceCount > 0) {
+                val deviceQuantity = requireContext().getQuantityString2(
+                    R.plurals.general_devices_count_label,
+                    state.deviceCount
+                )
+                toolbar.subtitle = if (BuildConfigWrap.DEBUG) {
+                    "$deviceQuantity ${BuildConfigWrap.GIT_SHA}"
+                } else {
+                    deviceQuantity
+                }
             }
         }
 
