@@ -31,6 +31,7 @@ class AddGDriveVM @Inject constructor(
         log(TAG) { "onGoogleSignIn(result=$result)" }
 
         val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        log(TAG) { "SignIn: success=${task.isSuccessful}" }
         val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
         accRepo.add(eu.darken.octi.syncs.gdrive.core.GoogleAccount(account))
         navEvents.postValue(null)

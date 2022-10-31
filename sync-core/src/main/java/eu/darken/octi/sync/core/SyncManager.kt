@@ -89,7 +89,7 @@ class SyncManager @Inject constructor(
     }
 
     suspend fun sync(connectorId: ConnectorId, options: SyncOptions = SyncOptions()) {
-        log(TAG) { "sync(id=$connectorId,options=$options)" }
+        log(TAG) { "sync(id=$connectorId, options=$options)" }
         val connector = connectors.first().single { it.identifier == connectorId }
         connector.sync(options)
     }

@@ -102,7 +102,9 @@ class GoogleAccountRepo @Inject constructor(
 //            }
 //        }
 //        account.value = null
-        return createClient(account = null).signInIntent
+        return createClient(account = null).signInIntent.also {
+            log(TAG) { "New signIn intent: $it" }
+        }
     }
 
     companion object {
