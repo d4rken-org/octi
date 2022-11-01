@@ -101,7 +101,8 @@ class DashboardVM @Inject constructor(
             ).run { items.add(this) }
         }
 
-        if (!isSyncSetupDismissed && deviceItems.size <= 1) {
+        val connectorCount = syncManager.connectors.first().size
+        if (!isSyncSetupDismissed && connectorCount == 0) {
             SyncSetupVH.Item(
                 onDismiss = { generalSettings.isSyncSetupDismissed.value = true },
                 onSetup = { DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate() }
