@@ -1,7 +1,11 @@
 package eu.darken.octi.syncs.jserver.core
 
 import android.content.Context
-import androidx.core.content.edit
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,6 +18,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.plus
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,12 +31,17 @@ class JServerAccountRepo @Inject constructor(
     moshi: Moshi,
 ) {
     private val adapterCredentials by lazy { moshi.adapter<JServer.Credentials>() }
-    private val prefs = context.getSharedPreferences("syrv_jserver_credentials", Context.MODE_PRIVATE)
+
+    private val Context.dataStore by preferencesDataStore(name = "syncs_jserver_credentials")
+
+    private val dataStore: DataStore<Preferences>
+        get() = context.dataStore
 
     private val _accounts = DynamicStateFlow(parentScope = scope + dispatcherProvider.Default) {
-        prefs.all
+        dataStore.data.first()
+            .asMap()
             .filter {
-                if (!it.key.startsWith(KEY_PREFIX)) {
+                if (!it.key.name.startsWith(KEY_PREFIX)) {
                     log(TAG, ERROR) { "Unknown entry: $it" }
                     return@filter false
                 }
@@ -61,11 +71,8 @@ class JServerAccountRepo @Inject constructor(
 
             added = true
 
-            prefs.edit(commit = true) {
-                putString(
-                    "$KEY_PREFIX.${acc.accountId.id}",
-                    adapterCredentials.toJson(acc)
-                )
+            dataStore.edit {
+                it[stringPreferencesKey("$KEY_PREFIX.${acc.accountId.id}")] = adapterCredentials.toJson(acc)
             }
 
             this + acc
@@ -83,8 +90,8 @@ class JServerAccountRepo @Inject constructor(
                 return@updateBlocking this
             }
 
-            prefs.edit(commit = true) {
-                remove("$KEY_PREFIX.${id.id}")
+            dataStore.edit {
+                it.remove(stringPreferencesKey("$KEY_PREFIX.${id.id}"))
             }
 
             this - toRemove
