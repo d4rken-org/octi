@@ -1,8 +1,8 @@
 package eu.darken.octi.module.core
 
-import eu.darken.octi.common.preferences.FlowPreference
+import eu.darken.octi.common.datastore.DataStoreValue
 
 interface ModuleSettings {
 
-    val isEnabled: FlowPreference<Boolean>
+    val isEnabled: DataStoreValue<Boolean>
 }

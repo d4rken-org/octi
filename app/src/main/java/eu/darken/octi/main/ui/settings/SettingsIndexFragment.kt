@@ -8,7 +8,6 @@ import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.PrivacyPolicy
 import eu.darken.octi.common.WebpageTool
-import eu.darken.octi.common.preferences.Settings
 import eu.darken.octi.common.uix.PreferenceFragment2
 import eu.darken.octi.main.core.GeneralSettings
 import javax.inject.Inject
@@ -17,7 +16,7 @@ import javax.inject.Inject
 class SettingsIndexFragment : PreferenceFragment2() {
 
     @Inject lateinit var generalSettings: GeneralSettings
-    override val settings: Settings
+    override val settings: GeneralSettings
         get() = generalSettings
     override val preferenceFile: Int = R.xml.preferences_index
 

@@ -11,6 +11,7 @@ import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -96,7 +97,7 @@ class DashboardVM @Inject constructor(
 
         if (!isWelcomeDismissed && !upgradeInfo.isPro) {
             WelcomeVH.Item(
-                onDismiss = { generalSettings.isWelcomeDismissed.value = true },
+                onDismiss = { launch { generalSettings.isWelcomeDismissed.value(true) } },
                 onUpgrade = { upgradeToOctiPro() }
             ).run { items.add(this) }
         }
@@ -104,7 +105,7 @@ class DashboardVM @Inject constructor(
         val connectorCount = syncManager.connectors.first().size
         if (!isSyncSetupDismissed && connectorCount == 0) {
             SyncSetupVH.Item(
-                onDismiss = { generalSettings.isSyncSetupDismissed.value = true },
+                onDismiss = { launch { generalSettings.isSyncSetupDismissed.value(true) } },
                 onSetup = { DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate() }
             ).run { items.add(this) }
         }
@@ -118,7 +119,7 @@ class DashboardVM @Inject constructor(
                         dashboardEvents.postValue(DashboardEvent.RequestPermissionEvent(it))
                     },
                     onDismiss = {
-                        generalSettings.addDismissedPermission(it)
+                        runBlocking { generalSettings.addDismissedPermission(it) }
                         dashboardEvents.postValue(DashboardEvent.ShowPermissionDismissHint(it))
                     }
                 )
@@ -244,7 +245,7 @@ class DashboardVM @Inject constructor(
                             dashboardEvents.postValue(DashboardEvent.RequestPermissionEvent(it))
                         },
                         onDismiss = {
-                            generalSettings.addDismissedPermission(it)
+                            runBlocking { generalSettings.addDismissedPermission(it) }
                             dashboardEvents.postValue(DashboardEvent.ShowPermissionDismissHint(it))
                         }
                     ).run { dashboardEvents.postValue(this) }

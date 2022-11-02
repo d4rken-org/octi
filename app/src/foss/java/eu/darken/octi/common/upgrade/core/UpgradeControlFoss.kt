@@ -5,6 +5,7 @@ import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import eu.darken.octi.R
 import eu.darken.octi.common.WebpageTool
+import eu.darken.octi.common.datastore.valueBlocking
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -36,7 +37,7 @@ class UpgradeControlFoss @Inject constructor(
             setTitle(R.string.upgrades_upgrade_octi_title)
             setMessage(R.string.upgrades_upgrade_octi_body)
             setPositiveButton(R.string.foss_upgrade_donate_label) { _, _ ->
-                fossCache.upgrade.value = FossUpgrade(
+                fossCache.upgrade.valueBlocking = FossUpgrade(
                     upgradedAt = Instant.now(),
                     reason = FossUpgrade.Reason.DONATED
                 )
@@ -44,14 +45,14 @@ class UpgradeControlFoss @Inject constructor(
                 Toast.makeText(activity, R.string.general_thank_you_label, Toast.LENGTH_SHORT).show()
             }
             setNegativeButton(R.string.foss_upgrade_alreadydonated_label) { _, _ ->
-                fossCache.upgrade.value = FossUpgrade(
+                fossCache.upgrade.valueBlocking = FossUpgrade(
                     upgradedAt = Instant.now(),
                     reason = FossUpgrade.Reason.ALREADY_DONATED
                 )
                 Toast.makeText(activity, R.string.general_thank_you_label, Toast.LENGTH_SHORT).show()
             }
             setNeutralButton(R.string.foss_upgrade_no_money_label) { _, _ ->
-                fossCache.upgrade.value = FossUpgrade(
+                fossCache.upgrade.valueBlocking = FossUpgrade(
                     upgradedAt = Instant.now(),
                     reason = FossUpgrade.Reason.NO_MONEY
                 )

@@ -109,6 +109,7 @@ fun DependencyHandlerScope.addAndroidCore() {
     implementation("androidx.annotation:annotation:1.4.0")
 
     implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }
 
 fun DependencyHandlerScope.addWorkerManager() {

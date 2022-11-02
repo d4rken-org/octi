@@ -1,19 +1,32 @@
-package eu.darken.octi.common.preferences
+package eu.darken.octi.common.datastore
 
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.json.toComparableJson
-import testhelpers.preferences.MockSharedPreferences
+import java.io.File
 
-class FlowPreferenceMoshiTest : BaseTest() {
+class DataStoreMoshiExtensionsTest : BaseTest() {
 
-    private val mockPreferences = MockSharedPreferences()
+    private val testFile = File(IO_TEST_BASEDIR, DataStoreExtensionsTest::class.java.simpleName + ".preferences_pb")
+    private fun createDataStore(scope: TestScope) = PreferenceDataStoreFactory.create(
+        scope = scope,
+        produceFile = { testFile },
+    )
+
+    @AfterEach
+    fun tearDown() {
+        testFile.delete()
+    }
 
     @JsonClass(generateAdapter = true)
     data class TestGson(
@@ -25,28 +38,29 @@ class FlowPreferenceMoshiTest : BaseTest() {
     )
 
     @Test
-    fun `reading and writing using manual reader and writer`() = runBlockingTest {
+    fun `reading and writing using manual reader and writer`() = runTest {
+        val testStore = createDataStore(this)
+
         val testData1 = TestGson(string = "teststring")
         val testData2 = TestGson(string = "update")
         val moshi = Moshi.Builder().build()
-        FlowPreference<TestGson?>(
-            preferences = mockPreferences,
-            key = "testKey",
-            rawReader = moshiReader(moshi, testData1),
-            rawWriter = moshiWriter(moshi)
+
+        testStore.createValue<TestGson?>(
+            key = stringPreferencesKey("testKey"),
+            reader = moshiReader(moshi, testData1),
+            writer = moshiWriter(moshi)
         ).apply {
-            value shouldBe testData1
+
             flow.first() shouldBe testData1
-            mockPreferences.dataMapPeek.values.isEmpty() shouldBe true
+            testStore.data.first()[stringPreferencesKey(keyName)] shouldBe null
 
             update {
                 it shouldBe testData1
                 it!!.copy(string = "update")
             }
 
-            value shouldBe testData2
             flow.first() shouldBe testData2
-            (mockPreferences.dataMapPeek.values.first() as String).toComparableJson() shouldBe """
+            testStore.data.first()[stringPreferencesKey(keyName)]!!.toComparableJson() shouldBe """
                 {
                     "string":"update",
                     "boolean":true,
@@ -60,35 +74,36 @@ class FlowPreferenceMoshiTest : BaseTest() {
                 it shouldBe testData2
                 null
             }
-            value shouldBe testData1
+
             flow.first() shouldBe testData1
-            mockPreferences.dataMapPeek.values.isEmpty() shouldBe true
+            testStore.data.first()[stringPreferencesKey(keyName)] shouldBe null
         }
     }
 
     @Test
-    fun `reading and writing using autocreated reader and writer`() = runBlockingTest {
+    fun `reading and writing using autocreated reader and writer`() = runTest {
+        val testStore = createDataStore(this)
+
         val testData1 = TestGson(string = "teststring")
         val testData2 = TestGson(string = "update")
         val moshi = Moshi.Builder().build()
 
-        mockPreferences.createFlowPreference<TestGson?>(
+        testStore.createValue<TestGson?>(
             key = "testKey",
             defaultValue = testData1,
             moshi = moshi
         ).apply {
-            value shouldBe testData1
+
             flow.first() shouldBe testData1
-            mockPreferences.dataMapPeek.values.isEmpty() shouldBe true
+            testStore.data.first()[stringPreferencesKey(keyName)] shouldBe null
 
             update {
                 it shouldBe testData1
                 it!!.copy(string = "update")
             }
 
-            value shouldBe testData2
             flow.first() shouldBe testData2
-            (mockPreferences.dataMapPeek.values.first() as String).toComparableJson() shouldBe """
+            testStore.data.first()[stringPreferencesKey(keyName)]!!.toComparableJson() shouldBe """
                 {
                     "string":"update",
                     "boolean":true,
@@ -102,9 +117,9 @@ class FlowPreferenceMoshiTest : BaseTest() {
                 it shouldBe testData2
                 null
             }
-            value shouldBe testData1
+
             flow.first() shouldBe testData1
-            mockPreferences.dataMapPeek.values.isEmpty() shouldBe true
+            testStore.data.first()[stringPreferencesKey(keyName)] shouldBe null
         }
     }
 
@@ -114,16 +129,18 @@ class FlowPreferenceMoshiTest : BaseTest() {
     }
 
     @Test
-    fun `enum serialization`() = runBlockingTest {
+    fun `enum serialization`() = runTest {
+        val testStore = createDataStore(this)
+
         val moshi = Moshi.Builder().build()
-        val monitorMode = mockPreferences.createFlowPreference(
+        val monitorMode = testStore.createValue(
             "test.enum",
             Anum.A,
             moshi
         )
 
-        monitorMode.value shouldBe Anum.A
+        monitorMode.flow.first() shouldBe Anum.A
         monitorMode.update { Anum.B }
-        monitorMode.value shouldBe Anum.B
+        monitorMode.flow.first() shouldBe Anum.B
     }
 }

@@ -1,6 +1,8 @@
-package eu.darken.octi.common.preferences
+package eu.darken.octi.common.datastore
 
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.squareup.moshi.Moshi
 
 inline fun <reified T> moshiReader(
@@ -23,13 +25,13 @@ inline fun <reified T> moshiWriter(
     }
 }
 
-inline fun <reified T : Any?> SharedPreferences.createFlowPreference(
+inline fun <reified T : Any?> DataStore<Preferences>.createValue(
     key: String,
     defaultValue: T = null as T,
     moshi: Moshi,
-) = FlowPreference(
-    preferences = this,
-    key = key,
-    rawReader = moshiReader(moshi, defaultValue),
-    rawWriter = moshiWriter(moshi)
+) = DataStoreValue(
+    dataStore = this,
+    key = stringPreferencesKey(key),
+    reader = moshiReader(moshi, defaultValue),
+    writer = moshiWriter(moshi),
 )

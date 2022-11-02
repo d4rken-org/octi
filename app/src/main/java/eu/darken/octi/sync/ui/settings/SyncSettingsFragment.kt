@@ -23,8 +23,8 @@ class SyncSettingsFragment : PreferenceFragment3() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         settings.backgroundSyncEnabled.flow.asLiveData().observe2 {
-            findPreference<Preference>(settings.backgroundSyncInterval.key)?.isEnabled = it
-            findPreference<Preference>(settings.backgroundSyncOnMobile.key)?.isEnabled = it
+            findPreference<Preference>(settings.backgroundSyncInterval.keyName)?.isEnabled = it
+            findPreference<Preference>(settings.backgroundSyncOnMobile.keyName)?.isEnabled = it
         }
         super.onViewCreated(view, savedInstanceState)
     }

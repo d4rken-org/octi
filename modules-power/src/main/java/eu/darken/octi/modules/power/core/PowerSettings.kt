@@ -1,14 +1,16 @@
 package eu.darken.octi.modules.power.core
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.preference.PreferenceDataStore
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.common.datastore.PreferenceScreenData
+import eu.darken.octi.common.datastore.PreferenceStoreMapper
+import eu.darken.octi.common.datastore.createValue
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.preferences.PreferenceStoreMapper
-import eu.darken.octi.common.preferences.Settings
-import eu.darken.octi.common.preferences.createFlowPreference
 import eu.darken.octi.module.core.ModuleSettings
 import java.time.Instant
 import javax.inject.Inject
@@ -18,18 +20,20 @@ import javax.inject.Singleton
 class PowerSettings @Inject constructor(
     @ApplicationContext private val context: Context,
     private val moshi: Moshi,
-) : Settings(), ModuleSettings {
+) : PreferenceScreenData, ModuleSettings {
 
-    override val preferences: SharedPreferences =
-        context.getSharedPreferences("module_power_settings", Context.MODE_PRIVATE)
+    private val Context.dataStore by preferencesDataStore(name = "module_power_settings")
 
-    override val isEnabled = preferences.createFlowPreference("module.power.enabled", true)
+    override val dataStore: DataStore<Preferences>
+        get() = context.dataStore
 
-    override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
+    override val isEnabled = dataStore.createValue("module.power.enabled", true)
+
+    override val mapper: PreferenceDataStore = PreferenceStoreMapper(
         isEnabled
     )
 
-    val chargedFullAt = preferences.createFlowPreference<Instant?>("module.power.status.full.at", null, moshi)
+    val chargedFullAt = dataStore.createValue<Instant?>("module.power.status.full.at", null, moshi)
 
     companion object {
         internal val TAG = logTag("Module", "Power", "Settings")

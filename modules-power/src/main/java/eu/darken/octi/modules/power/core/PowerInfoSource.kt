@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.PowerManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -129,12 +130,12 @@ class PowerInfoSource @Inject constructor(
             ?.let { Instant.now().plusMillis(it) }
 
         if (newStatus == PowerInfo.Status.CHARGING) {
-            powerSettings.chargedFullAt.value = chargedFullAt
+            powerSettings.chargedFullAt.value(chargedFullAt)
         } else if (newStatus == PowerInfo.Status.DISCHARGING) {
-            powerSettings.chargedFullAt.value = null
-        } else if (newStatus == PowerInfo.Status.FULL && powerSettings.chargedFullAt.value == null) {
+            powerSettings.chargedFullAt.value(null)
+        } else if (newStatus == PowerInfo.Status.FULL && powerSettings.chargedFullAt.value() == null) {
             log(TAG) { "We are fully charged but have no date, let's just take NOW." }
-            powerSettings.chargedFullAt.value = chargedFullAt
+            powerSettings.chargedFullAt.value(chargedFullAt)
         }
 
         PowerInfo.ChargeIO(
@@ -142,7 +143,7 @@ class PowerInfoSource @Inject constructor(
                 .getIntProperty(BATTERY_PROPERTY_CURRENT_NOW).takeIf { it != Int.MIN_VALUE },
             currenAvg = batteryManager
                 .getIntProperty(BATTERY_PROPERTY_CURRENT_AVERAGE).takeIf { it != Int.MIN_VALUE },
-            fullSince = powerSettings.chargedFullAt.value,
+            fullSince = powerSettings.chargedFullAt.value(),
             fullAt = chargedFullAt,
             emptyAt = null,
         )

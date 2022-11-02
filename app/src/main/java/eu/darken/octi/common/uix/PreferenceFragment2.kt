@@ -1,6 +1,5 @@
 package eu.darken.octi.common.uix
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -10,14 +9,18 @@ import androidx.annotation.MenuRes
 import androidx.annotation.XmlRes
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceFragmentCompat
-import eu.darken.octi.common.preferences.Settings
+import eu.darken.octi.common.datastore.PreferenceScreenData
+import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.main.ui.settings.SettingsFragment
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
-abstract class PreferenceFragment2
-    : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+abstract class PreferenceFragment2 : PreferenceFragmentCompat() {
 
-    abstract val settings: Settings
+    abstract val settings: PreferenceScreenData
 
     @get:XmlRes
     abstract val preferenceFile: Int
@@ -31,14 +34,20 @@ abstract class PreferenceFragment2
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        preferenceManager.preferenceDataStore = settings.preferenceDataStore
-        settings.preferences.registerOnSharedPreferenceChangeListener(this)
-        refreshPreferenceScreen()
+        preferenceManager.preferenceDataStore = settings.mapper
     }
 
-    override fun onDestroy() {
-        settings.preferences.unregisterOnSharedPreferenceChangeListener(this)
-        super.onDestroy()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        refreshPreferenceScreen()
+
+        settings.dataStore.data
+            .onEach {
+                log(VERBOSE) { "Preferences changed." }
+                onPreferencesChanged()
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun getCallbackFragment(): Fragment? = parentFragment
@@ -53,7 +62,7 @@ abstract class PreferenceFragment2
 
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    open fun onPreferencesChanged() {
 
     }
 
@@ -67,4 +76,5 @@ abstract class PreferenceFragment2
             }
         }
     }
+
 }

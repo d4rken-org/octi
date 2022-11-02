@@ -1,18 +1,20 @@
 package eu.darken.octi.main.core
 
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.preference.PreferenceDataStore
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.common.datastore.DataStoreValue
+import eu.darken.octi.common.datastore.PreferenceScreenData
+import eu.darken.octi.common.datastore.PreferenceStoreMapper
+import eu.darken.octi.common.datastore.createValue
 import eu.darken.octi.common.debug.autoreport.DebugSettings
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.permissions.Permission
-import eu.darken.octi.common.preferences.FlowPreference
-import eu.darken.octi.common.preferences.PreferenceStoreMapper
-import eu.darken.octi.common.preferences.Settings
-import eu.darken.octi.common.preferences.createFlowPreference
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,18 +23,21 @@ class GeneralSettings @Inject constructor(
     @ApplicationContext private val context: Context,
     private val moshi: Moshi,
     private val debugSettings: DebugSettings,
-) : Settings() {
+) : PreferenceScreenData {
 
-    override val preferences: SharedPreferences = context.getSharedPreferences("core_settings", Context.MODE_PRIVATE)
+    private val Context.dataStore by preferencesDataStore(name = "core_settings")
 
-    val isWelcomeDismissed = preferences.createFlowPreference("onboarding.welcome.dismissed", false)
+    override val dataStore: DataStore<Preferences>
+        get() = context.dataStore
 
-    val isSyncSetupDismissed = preferences.createFlowPreference("onboarding.syncsetup.dismissed", false)
+    val isWelcomeDismissed = dataStore.createValue("onboarding.welcome.dismissed", false)
 
-    val themeType = preferences.createFlowPreference("core.ui.theme.type", ThemeType.SYSTEM.identifier)
+    val isSyncSetupDismissed = dataStore.createValue("onboarding.syncsetup.dismissed", false)
 
-    val dismissedPermissions: FlowPreference<Set<Permission>> = preferences.createFlowPreference(
-        "core.permission.dismissed",
+    val themeType = dataStore.createValue("core.ui.theme.type", ThemeType.SYSTEM.identifier)
+
+    val dismissedPermissions: DataStoreValue<Set<Permission>> = dataStore.createValue(
+        stringPreferencesKey("core.permission.dismissed"),
         reader = { raw ->
             (raw as? String)
                 ?.split(",")
@@ -43,14 +48,12 @@ class GeneralSettings @Inject constructor(
         writer = { perms -> perms.joinToString(",") { it.permissionId } }
     )
 
-    fun addDismissedPermission(permission: Permission) {
+    suspend fun addDismissedPermission(permission: Permission) {
         log(TAG) { "addDismissedPermission(permission=$permission)" }
-        dismissedPermissions.update {
-            it + permission
-        }
+        dismissedPermissions.update { it + permission }
     }
 
-    override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
+    override val mapper = PreferenceStoreMapper(
         debugSettings.isAutoReportingEnabled,
         themeType
     )

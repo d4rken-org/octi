@@ -16,6 +16,7 @@ open class BaseTest {
 
     companion object {
         private var testClassName: String? = null
+        const val IO_TEST_BASEDIR = "build/tmp/unit_tests"
 
         @JvmStatic
         @AfterAll

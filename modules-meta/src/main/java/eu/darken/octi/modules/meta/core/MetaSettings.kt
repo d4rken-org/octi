@@ -1,13 +1,15 @@
 package eu.darken.octi.modules.meta.core
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.preference.PreferenceDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.common.datastore.PreferenceScreenData
+import eu.darken.octi.common.datastore.PreferenceStoreMapper
+import eu.darken.octi.common.datastore.createValue
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.preferences.PreferenceStoreMapper
-import eu.darken.octi.common.preferences.Settings
-import eu.darken.octi.common.preferences.createFlowPreference
 import eu.darken.octi.module.core.ModuleSettings
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,14 +17,16 @@ import javax.inject.Singleton
 @Singleton
 class MetaSettings @Inject constructor(
     @ApplicationContext private val context: Context
-) : Settings(), ModuleSettings {
+) : PreferenceScreenData, ModuleSettings {
 
-    override val preferences: SharedPreferences =
-        context.getSharedPreferences("module_meta_settings", Context.MODE_PRIVATE)
+    private val Context.dataStore by preferencesDataStore(name = "module_meta_settings")
 
-    override val isEnabled = preferences.createFlowPreference("module.meta.enabled", true)
+    override val dataStore: DataStore<Preferences>
+        get() = context.dataStore
 
-    override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
+    override val isEnabled = dataStore.createValue("module.meta.enabled", true)
+
+    override val mapper: PreferenceDataStore = PreferenceStoreMapper(
         isEnabled
     )
 
