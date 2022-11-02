@@ -52,14 +52,11 @@ class JServerLinkHostFragment : Fragment3(R.layout.sync_jserver_link_host_fragme
                 }
                 LinkOption.QRCODE -> {
                     linkOptions.check(R.id.link_option_qrcode)
-                    val size = ui.root.width
                     try {
-                        val qrcode = BarcodeEncoder().encodeBitmap(
-                            state.encodedLinkCode,
-                            BarcodeFormat.QR_CODE,
-                            size,
-                            size,
-                        )
+                        val size = ui.root.width
+                        val qrcode = state.encodedLinkCode?.let {
+                            BarcodeEncoder().encodeBitmap(it, BarcodeFormat.QR_CODE, size, size)
+                        }
                         qrcodeImage.setImageBitmap(qrcode)
                     } catch (e: Exception) {
                         e.asErrorDialogBuilder(requireContext()).show()
