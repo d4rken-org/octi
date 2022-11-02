@@ -22,6 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.time.Duration
+import java.time.Instant
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -71,7 +73,12 @@ class BatteryWidgetProvider : AppWidgetProvider() {
             log(TAG) { "Generating info row for ${metaInfo.data.labelOrFallback}" }
             RemoteViews(context.packageName, R.layout.module_power_widget_row).apply {
                 val lastSeen = DateUtils.getRelativeTimeSpanString(metaInfo.modifiedAt.toEpochMilli())
-                setTextViewText(R.id.device_label, "${metaInfo.data.labelOrFallback} ($lastSeen)")
+                val labelText = if (Duration.between(metaInfo.modifiedAt, Instant.now()).toHours() > 1) {
+                    "${metaInfo.data.labelOrFallback} ($lastSeen)"
+                } else {
+                    metaInfo.data.labelOrFallback
+                }
+                setTextViewText(R.id.device_label, labelText)
 
                 setImageViewResource(
                     R.id.battery_icon,

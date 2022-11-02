@@ -20,7 +20,7 @@
         android:layout_alignStart="@id/battery_progressbar"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:text="Pixel 6 (5 min ago)"
+        android:text="Pixel 6"
         android:textStyle="bold" />
 
     <ProgressBar
