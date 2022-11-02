@@ -58,7 +58,7 @@ If you like the app, consider:
 
 ## Screenshots
 
-<img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot1.png" width="100"> <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot2.png" width="100"> <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot3.png" width="100"> <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot4.png" width="100"> 
+<img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot1.png" width="200"><img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot2.png" width="100"><img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot3.png" width="100"><img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot4.png" width="100">
 
 ## License
 
