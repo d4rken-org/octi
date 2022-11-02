@@ -8,6 +8,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.common.lists.setupDefaults
 import eu.darken.octi.common.uix.Fragment3
@@ -21,6 +22,7 @@ class SyncAddFragment : Fragment3(R.layout.sync_add_new_fragment) {
     override val vm: SyncAddVM by viewModels()
     override val ui: SyncAddNewFragmentBinding by viewBinding()
     @Inject lateinit var syncAddAdapter: SyncAddAdapter
+    @Inject lateinit var webpageTool: WebpageTool
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ui.toolbar.apply {
@@ -48,6 +50,9 @@ class SyncAddFragment : Fragment3(R.layout.sync_add_new_fragment) {
         setMessage(R.string.sync_add_help_desc)
         setPositiveButton(R.string.general_gotit_action) { _, _ ->
 
+        }
+        setNeutralButton(R.string.documentation_label) { _, _ ->
+            webpageTool.open("https://github.com/d4rken-org/octi/wiki/Syncs")
         }
     }.show()
 }
