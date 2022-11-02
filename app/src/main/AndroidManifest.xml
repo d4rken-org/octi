@@ -16,6 +16,7 @@
         <activity
             android:name="eu.darken.octi.main.ui.MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:label="@string/app_name"
             android:theme="@style/AppThemeSplash">
             <intent-filter>
