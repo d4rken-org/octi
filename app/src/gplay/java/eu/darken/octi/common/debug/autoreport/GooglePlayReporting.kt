@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.App
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.InstallId
+import eu.darken.octi.common.datastore.valueBlocking
 import eu.darken.octi.common.debug.AutomaticBugReporter
 import eu.darken.octi.common.debug.Bugs
 import eu.darken.octi.common.debug.autoreport.bugsnag.BugsnagErrorHandler
@@ -32,7 +33,7 @@ class GooglePlayReporting @Inject constructor(
 ) : AutomaticBugReporter {
 
     override fun setup(application: Application) {
-        val isEnabled = debugSettings.isAutoReportingEnabled.value
+        val isEnabled = debugSettings.isAutoReportingEnabled.valueBlocking
         log(TAG) { "setup(): isEnabled=$isEnabled" }
 
         if (isEnabled) {
@@ -42,7 +43,7 @@ class GooglePlayReporting @Inject constructor(
         }
         try {
             val bugsnagConfig = Configuration.load(context).apply {
-                if (debugSettings.isAutoReportingEnabled.value) {
+                if (debugSettings.isAutoReportingEnabled.valueBlocking) {
                     Logging.install(bugsnagLogger.get())
                     setUser(installId.id, null, null)
                     autoTrackSessions = true

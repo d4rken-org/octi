@@ -6,6 +6,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import eu.darken.octi.R
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
@@ -34,19 +35,18 @@ class UpgradeRepoGplay @Inject constructor(
     private val billingCache: BillingCache,
 ) : UpgradeRepo {
 
-    private var lastProStateAt: Long
-        get() = billingCache.lastProStateAt.value
-        set(value) = billingCache.lastProStateAt.update { value }
+
 
     override val upgradeInfo: Flow<UpgradeRepo.Info> = billingDataRepo.billingData
         .map { data -> // Only relinquish pro state if we haven't had it for a while
             val now = System.currentTimeMillis()
             val proSku = data.getProSku()
+            val lastProStateAt = billingCache.lastProStateAt.value()
             log(TAG) { "now=$now, lastProStateAt=$lastProStateAt, data=${data}" }
             when {
                 proSku != null -> {
                     // If we are pro refresh timestamp
-                    lastProStateAt = now
+                    billingCache.lastProStateAt.value(now)
                     Info(billingData = data)
                 }
                 (now - lastProStateAt) < 7 * 24 * 60 * 1000L -> { // 7 days
@@ -61,6 +61,7 @@ class UpgradeRepoGplay @Inject constructor(
         .catch {
             // Ignore Google Play errors if the last pro state was recent
             val now = System.currentTimeMillis()
+            val lastProStateAt = billingCache.lastProStateAt.value()
             log(TAG) { "now=$now, lastProStateAt=$lastProStateAt, error=$it" }
             if ((now - lastProStateAt) < 7 * 24 * 60 * 1000L) { // 7 days
                 log(TAG, VERBOSE) { "We are not pro, but were recently, and just and an error, what is GPlay doing???" }
