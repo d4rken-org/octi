@@ -63,4 +63,9 @@
     <color name="CustomColor2">#009495</color>
 
     <color name="colorUpgraded">#00b8d4</color>
+
+    <color name="widgetBackground">@color/md_theme_light_background</color>
+    <color name="widgetOnBackground">@color/md_theme_light_onBackground</color>
+    <color name="widgetPrimary">@color/md_theme_light_primary</color>
+    <color name="widgetOnPrimary">@color/md_theme_light_onPrimary</color>
 </resources>

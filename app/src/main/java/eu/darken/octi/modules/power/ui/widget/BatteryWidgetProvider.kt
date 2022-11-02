@@ -1,37 +1,101 @@
 package eu.darken.octi.modules.power.ui.widget
 
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.Context
+import android.content.Intent
+import android.text.format.DateUtils
+import android.widget.RemoteViews
+import dagger.hilt.android.AndroidEntryPoint
+import eu.darken.octi.R
+import eu.darken.octi.common.coroutine.AppScope
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.main.ui.MainActivity
+import eu.darken.octi.module.core.BaseModuleRepo
+import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.modules.meta.core.MetaRepo
+import eu.darken.octi.modules.power.core.PowerInfo
+import eu.darken.octi.modules.power.core.PowerRepo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class BatteryWidgetProvider : AppWidgetProvider() {
 
-    override fun onUpdate(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
-    ) {
-        // Perform this loop procedure for each widget that belongs to this
-        // provider.
-        appWidgetIds.forEach { appWidgetId ->
-            // Create an Intent to launch ExampleActivity.
-            val pendingIntent: PendingIntent = PendingIntent.getActivity(
-                /* context = */ context,
-                /* requestCode = */  0,
-                /* intent = */ Intent(context, ExampleActivity::class.java),
-                /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+    @Inject lateinit var metaRepo: MetaRepo
+    @Inject lateinit var powerRepo: PowerRepo
+    @AppScope @Inject lateinit var appScope: CoroutineScope
 
-            // Get the layout for the widget and attach an on-click listener
-            // to the button.
-            val views: RemoteViews = RemoteViews(
-                context.packageName,
-                R.layout.appwidget_provider_layout
-            ).apply {
-                setOnClickPendingIntent(R.id.button, pendingIntent)
+    private var asyncBarrier: PendingResult? = null
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        log(TAG) { "onUpdate(context=$context, appWidgetManager=$appWidgetManager, appWidgetIds=$appWidgetIds)" }
+        asyncBarrier = goAsync()
+
+        appScope.launch {
+            try {
+                withTimeout(10 * 1000) {
+                    appWidgetIds.forEach { appWidgetId ->
+                        log(TAG) { "Updating Widget (#$appWidgetId)" }
+                        val metaState = metaRepo.state.first()
+                        val powerState = powerRepo.state.first()
+                        val layout = createLayout(context, metaState, powerState)
+                        appWidgetManager.updateAppWidget(appWidgetId, layout)
+                    }
+                }
+            } finally {
+                asyncBarrier?.finish()
             }
-
-            // Tell the AppWidgetManager to perform an update on the current
-            // widget.
-            appWidgetManager.updateAppWidget(appWidgetId, views)
         }
+    }
+
+    private fun createLayout(
+        context: Context,
+        metaStates: BaseModuleRepo.State<MetaInfo>,
+        powerStates: BaseModuleRepo.State<PowerInfo>
+    ): RemoteViews {
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            Intent(context, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val rows = powerStates.others.mapNotNull { powerInfo ->
+            val metaInfo = metaStates.all.firstOrNull { it.deviceId == powerInfo.deviceId } ?: return@mapNotNull null
+
+            log(TAG) { "Generating info row for ${metaInfo.data.labelOrFallback}" }
+            RemoteViews(context.packageName, R.layout.module_power_widget_row).apply {
+                val lastSeen = DateUtils.getRelativeTimeSpanString(metaInfo.modifiedAt.toEpochMilli())
+                setTextViewText(R.id.device_label, "${metaInfo.data.labelOrFallback} ($lastSeen)")
+
+                setImageViewResource(
+                    R.id.battery_icon,
+                    if (powerInfo.data.isCharging) R.drawable.widget_battery_charging_full_24
+                    else R.drawable.widget_battery_full_24
+                )
+
+                setProgressBar(
+                    R.id.battery_progressbar,
+                    100,
+                    (powerInfo.data.battery.percent * 100).toInt(),
+                    false,
+                )
+            }
+        }
+
+        return RemoteViews(context.packageName, R.layout.module_power_widget).apply {
+            setOnClickPendingIntent(R.id.widget_root, pendingIntent)
+            removeAllViews(R.id.widget_root)
+            rows.forEach { addView(R.id.widget_root, it) }
+        }
+    }
+
+    companion object {
+        val TAG = logTag("Module", "Power", "Battery", "Widget")
     }
 }

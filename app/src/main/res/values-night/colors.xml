@@ -1,3 +1,8 @@
 <resources>
     <color name="colorUpgraded">#2962ff</color>
+
+    <color name="widgetBackground">@color/md_theme_dark_background</color>
+    <color name="widgetOnBackground">@color/md_theme_dark_onBackground</color>
+    <color name="widgetPrimary">@color/md_theme_dark_primary</color>
+    <color name="widgetOnPrimary">@color/md_theme_dark_onPrimary</color>
 </resources>
