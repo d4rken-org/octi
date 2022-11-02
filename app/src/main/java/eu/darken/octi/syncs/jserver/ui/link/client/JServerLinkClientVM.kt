@@ -27,7 +27,7 @@ class JServerLinkClientVM @Inject constructor(
 
     data class State(
         val encodedLinkCode: String? = null,
-        val linkOption: LinkOption = LinkOption.DIRECT,
+        val linkOption: LinkOption = LinkOption.QRCODE,
         val isBusy: Boolean = false,
     )
 

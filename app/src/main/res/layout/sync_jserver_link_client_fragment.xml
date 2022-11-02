@@ -33,18 +33,18 @@
             android:layout_margin="16dp">
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/link_option_direct"
-                style="@style/Widget.Material3.CompoundButton.RadioButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sync_jserver_link_client_option_direct" />
-
-            <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/link_option_qrcode"
                 style="@style/Widget.Material3.CompoundButton.RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sync_jserver_link_client_option_qrcode" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/link_option_direct"
+                style="@style/Widget.Material3.CompoundButton.RadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sync_jserver_link_client_option_direct" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/link_option_nfc"

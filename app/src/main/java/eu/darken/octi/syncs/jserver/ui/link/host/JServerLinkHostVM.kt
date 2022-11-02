@@ -37,7 +37,7 @@ class JServerLinkHostVM @Inject constructor(
 
     data class State(
         val encodedLinkCode: String? = null,
-        val linkOption: LinkOption = LinkOption.DIRECT,
+        val linkOption: LinkOption = LinkOption.QRCODE,
     )
 
     private val _state = MutableStateFlow(State())
