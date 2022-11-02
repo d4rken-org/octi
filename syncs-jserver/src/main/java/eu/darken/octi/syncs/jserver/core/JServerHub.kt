@@ -2,6 +2,8 @@ package eu.darken.octi.syncs.jserver.core
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
@@ -46,7 +48,11 @@ class JServerHub @Inject constructor(
     override suspend fun remove(connectorId: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "remove(id=$connectorId)" }
         val connector = _connectors.first().single { it.identifier == connectorId }
-        connector.deleteDevice(syncSettings.deviceId)
+        try {
+            connector.deleteDevice(syncSettings.deviceId)
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "Failed to delete ourselves from $connectorId: ${e.asLog()}" }
+        }
         accountRepo.remove(connector.credentials.accountId)
     }
 

@@ -132,7 +132,7 @@ class SyncManager @Inject constructor(
             }
             if (wipe) connector.deleteAll()
         } catch (e: Exception) {
-            log(TAG, ERROR) { "Wiping data pre deletion failed: ${e.asLog()}" }
+            log(TAG, ERROR) { "disconnect($identifier,$wipe=$wipe) failed: ${e.asLog()}" }
         } finally {
             disabledConnectors.value = disabledConnectors.value - connector
         }
