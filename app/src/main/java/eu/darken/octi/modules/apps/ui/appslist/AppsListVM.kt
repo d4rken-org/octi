@@ -36,8 +36,8 @@ class AppsListVM @Inject constructor(
         metaRepo.state,
         appsRepo.state
     ) { metaState, appsState ->
-        val metaData = (metaState.others + metaState.self).firstOrNull { it?.deviceId == navArgs.deviceId }
-        val moduleData = (appsState.others + appsState.self).firstOrNull { it?.deviceId == navArgs.deviceId }
+        val metaData = metaState.all.firstOrNull { it.deviceId == navArgs.deviceId }
+        val moduleData = appsState.all.firstOrNull { it.deviceId == navArgs.deviceId }
 
         if (metaData == null || moduleData == null) {
             log(TAG, ERROR) { "No module data found for ${navArgs.deviceId}" }

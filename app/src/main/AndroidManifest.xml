@@ -16,6 +16,7 @@
         <activity
             android:name="eu.darken.octi.main.ui.MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:label="@string/app_name"
             android:theme="@style/AppThemeSplash">
             <intent-filter>
@@ -48,6 +49,17 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="sensor"
             tools:replace="screenOrientation" />
+
+        <receiver
+            android:name=".modules.power.ui.widget.BatteryWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/battery_widget_info" />
+        </receiver>
 
         <!-- Debug stuff-->
         <activity

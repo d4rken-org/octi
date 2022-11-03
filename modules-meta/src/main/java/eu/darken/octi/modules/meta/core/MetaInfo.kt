@@ -24,6 +24,9 @@ data class MetaInfo(
     @Json(name = "androidSecurityPatch") val androidSecurityPatch: String?,
 ) {
 
+    val labelOrFallback: String
+        get() = deviceLabel ?: deviceName
+
     @JsonClass(generateAdapter = false)
     enum class DeviceType {
         @Json(name = "PHONE") PHONE,

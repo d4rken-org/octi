@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/battery_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignTop="@id/device_label"
+        android:layout_alignBottom="@id/battery_progressbar"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/widget_battery_full_24" />
+
+    <TextView
+        android:id="@+id/device_label"
+        style="@style/BatteryWidget.Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/battery_progressbar"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:text="Pixel 6"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/battery_progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_below="@id/device_label"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="8dp"
+        android:layout_toEndOf="@id/battery_icon"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="60" />
+</RelativeLayout>
