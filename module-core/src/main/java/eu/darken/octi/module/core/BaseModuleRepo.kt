@@ -26,15 +26,26 @@ abstract class BaseModuleRepo<T : Any> constructor(
 
     data class State<T>(
         val moduleId: ModuleId,
+        val isSelfLoaded: Boolean = false,
         val self: ModuleData<T>? = null,
+        val isOthersLoaded: Boolean = false,
         val others: Collection<ModuleData<T>> = emptySet(),
     ) : ModuleRepo.State<T> {
+
+        val isInitialized: Boolean
+            get() = isSelfLoaded && isOthersLoaded
+
         override val all: Collection<ModuleData<T>>
             get() = (self?.let { listOf(it) } ?: emptyList()) + others
     }
 
+    private var initializeStart = 0L
+    private var initializeStop = 0L
     private val _state = DynamicStateFlow(parentScope = scope + dispatcherProvider.Default) {
-        State<T>(moduleId = moduleId)
+        State<T>(moduleId = moduleId).also {
+            log(tag) { "PERF: Initializing START, new state, not initialized." }
+            initializeStart = System.currentTimeMillis()
+        }
     }
 
     override val state: Flow<State<T>> = _state.flow
@@ -43,15 +54,29 @@ abstract class BaseModuleRepo<T : Any> constructor(
 
     override suspend fun updateSelf(self: ModuleData<T>?) {
         log(tag) { "updateSelf(self=$self)" }
-        _state.updateBlocking {
-            copy(self = self)
+        val result = _state.updateBlocking {
+            copy(
+                self = self,
+                isSelfLoaded = true,
+            )
+        }
+        if (result.isInitialized && initializeStop == 0L) {
+            initializeStop = System.currentTimeMillis()
+            log(tag) { "PERF: Initializing DONE, self and others loaded (${initializeStop - initializeStart}ms)." }
         }
     }
 
     override suspend fun updateOthers(newOthers: Collection<ModuleData<T>>) {
         log(tag) { "updateOthers(newOthers=$newOthers)" }
-        _state.updateBlocking {
-            copy(others = newOthers)
+        val result = _state.updateBlocking {
+            copy(
+                others = newOthers,
+                isOthersLoaded = true,
+            )
+        }
+        if (result.isInitialized && initializeStop == 0L) {
+            initializeStop = System.currentTimeMillis()
+            log(tag) { "PERF: Initializing DONE, self and others loaded (${initializeStop - initializeStart}ms)." }
         }
     }
 

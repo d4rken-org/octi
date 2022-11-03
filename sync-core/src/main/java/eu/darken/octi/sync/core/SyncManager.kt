@@ -38,11 +38,6 @@ class SyncManager @Inject constructor(
     ) { connectors, disabledConnectors ->
         connectors.filter { !disabledConnectors.contains(it) }
     }
-        .onEach { scs ->
-            scs.forEach {
-                scope.launch { it.sync(SyncOptions()) }
-            }
-        }
         .setupCommonEventHandlers(TAG) { "syncConnectors" }
         .shareLatest(scope + dispatcherProvider.Default)
 
@@ -55,12 +50,21 @@ class SyncManager @Inject constructor(
         .shareLatest(scope + dispatcherProvider.Default)
 
     val data: Flow<Collection<SyncRead.Device>> = connectors
-        .flatMapLatest { hs ->
-            if (hs.isEmpty()) {
+        .flatMapLatest { connectorList ->
+            if (connectorList.isEmpty()) {
                 flowOf(emptyList())
             } else {
-                val cons = hs.map { con -> con.data.map { con.identifier to it } }
-                combine(cons) { it.toSet() }
+                val connectorDataFlows: List<Flow<Pair<ConnectorId, SyncRead?>>> = connectorList.map { con ->
+                    con.data.map { syncRead -> con.identifier to syncRead }
+                }
+                // Combine all new emissions
+                combine(connectorDataFlows) { it.toSet() }.onStart {
+                    // Start empty to allow fast restore from cache
+                    val initial = connectorList
+                        .map { it.identifier to null as SyncRead? }
+                        .toSet()
+                    emit(initial)
+                }
             }
         }
         .map { pairs ->
