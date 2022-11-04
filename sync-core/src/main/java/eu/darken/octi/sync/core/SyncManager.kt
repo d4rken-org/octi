@@ -8,6 +8,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.sync.core.cache.SyncCache
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -18,6 +19,7 @@ class SyncManager @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     private val syncSettings: SyncSettings,
+    private val syncCache: SyncCache,
     private val connectorHubs: Set<@JvmSuppressWildcards ConnectorHub>,
 ) {
 
@@ -52,10 +54,17 @@ class SyncManager @Inject constructor(
             if (connectorList.isEmpty()) {
                 flowOf(emptyList())
             } else {
-                val connectorDataFlows: List<Flow<SyncRead>> = connectorList.map { connector ->
-                    connector.data.filterNotNull()
+                val connectorDataFlows: List<Flow<Pair<ConnectorId, SyncRead?>>> = connectorList.map { con ->
+                    con.data.map { syncRead -> con.identifier to syncRead }
                 }
+                // Combine all new emissions
                 combine(connectorDataFlows) { it.toSet() }
+            }
+        }
+        .map { pairs ->
+            pairs.mapNotNull { (id, read) ->
+                if (read != null) syncCache.save(id, read)
+                read ?: syncCache.load(id)
             }
         }
         .map { it.latestData() }
