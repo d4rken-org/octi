@@ -1,11 +1,12 @@
 package eu.darken.octi.common.debug.recording.core
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.IBinder
+import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
@@ -39,11 +40,11 @@ class RecorderService : Service2() {
 
     override fun onCreate() {
         super.onCreate()
-        NotificationChannel(
-            NOTIF_CHANID_DEBUG,
-            getString(R.string.debug_notification_channel_label),
-            NotificationManager.IMPORTANCE_MAX
-        ).run { notificationManager.createNotificationChannel(this) }
+        val compatChannel = NotificationChannelCompat
+            .Builder(NOTIF_CHANID_DEBUG, NotificationManager.IMPORTANCE_MAX)
+            .setName(getString(R.string.debug_notification_channel_label))
+            .build()
+        NotificationManagerCompat.from(this).createNotificationChannel(compatChannel)
 
         val openIntent = Intent(this, MainActivity::class.java)
         val openPi = PendingIntent.getActivity(
