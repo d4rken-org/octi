@@ -131,6 +131,8 @@ class BatteryWidgetProvider : AppWidgetProvider() {
                     else R.drawable.widget_battery_full_24
                 )
 
+                setTextViewText(R.id.charge_percent, "${(powerInfo.data.battery.percent * 100).toInt()}%")
+
                 setProgressBar(
                     R.id.battery_progressbar,
                     100,
