@@ -33,7 +33,7 @@ class DevicePowerVH(parent: ViewGroup) :
 
         powerIcon.apply {
             setImageResource(powerInfo.batteryIconRes)
-            if (powerInfo.battery.percent < 0.1f) {
+            if (powerInfo.battery.percent < 0.1f && !powerInfo.isCharging) {
                 ImageViewCompat.setImageTintList(
                     this,
                     ColorStateList.valueOf(context.getColor(R.color.error))
@@ -66,7 +66,7 @@ class DevicePowerVH(parent: ViewGroup) :
             }
             text = "$percentTxt% • $stateTxt"
 
-            if (powerInfo.battery.percent < 0.1f) {
+            if (powerInfo.battery.percent < 0.1f && !powerInfo.isCharging) {
                 setTextColor(context.getColor(R.color.error))
             } else {
                 setTextColor(context.getColorForAttr(R.attr.colorOnSurface))

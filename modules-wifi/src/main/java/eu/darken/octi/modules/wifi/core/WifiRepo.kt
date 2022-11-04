@@ -4,7 +4,6 @@ import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.module.core.BaseModuleRepo
-import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.modules.wifi.WifiModule
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
@@ -17,16 +16,17 @@ class WifiRepo @Inject constructor(
     wifiSettings: WifiSettings,
     wifiInfoSource: WifiInfoSource,
     wifiSync: WifiSync,
+    wifiCache: WifiCache,
 ) : BaseModuleRepo<WifiInfo>(
     tag = TAG,
+    moduleId = WifiModule.MODULE_ID,
     scope = scope,
     dispatcherProvider = dispatcherProvider,
     moduleSettings = wifiSettings,
     infoSource = wifiInfoSource,
     moduleSync = wifiSync,
+    moduleCache = wifiCache,
 ) {
-
-    override val moduleId: ModuleId = WifiModule.MODULE_ID
 
     companion object {
         val TAG = logTag("Module", "Wifi", "Repo")

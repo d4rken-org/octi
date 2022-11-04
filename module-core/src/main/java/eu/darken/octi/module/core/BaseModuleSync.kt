@@ -6,12 +6,8 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.*
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.flow.setupCommonEventHandlers
-import eu.darken.octi.sync.core.SyncManager
-import eu.darken.octi.sync.core.SyncRead
-import eu.darken.octi.sync.core.SyncSettings
-import eu.darken.octi.sync.core.SyncWrite
+import eu.darken.octi.sync.core.*
 import eu.darken.octi.sync.core.errors.PayloadDecodingException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okio.ByteString
@@ -21,17 +17,16 @@ import java.time.Instant
 
 
 abstract class BaseModuleSync<T : Any> constructor(
+    override val moduleId: ModuleId,
     private val tag: String,
-    private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val syncSettings: SyncSettings,
     private val syncManager: SyncManager,
+    private val moduleSerializer: ModuleSerializer<T>,
 ) : ModuleSync<T> {
 
-    abstract override val moduleId: ModuleId
-
-    abstract fun onSerialize(item: T): ByteString
-    abstract fun onDeserialize(raw: ByteString): T
+    override val ourDeviceId: DeviceId
+        get() = syncSettings.deviceId
 
     override val others: Flow<List<ModuleData<T>>> = syncManager.data
         .map { reads ->
@@ -78,7 +73,7 @@ abstract class BaseModuleSync<T : Any> constructor(
 
     private fun serialize(item: T): SyncWrite.Device.Module {
         val serialized = try {
-            onSerialize(item)
+            moduleSerializer.serialize(item)
         } catch (e: Exception) {
             throw IOException("Failed to serialize $this", e)
         }
@@ -94,7 +89,7 @@ abstract class BaseModuleSync<T : Any> constructor(
             throw IllegalArgumentException("Wrong moduleId: ${moduleId}\n$this")
         }
         return try {
-            onDeserialize(raw.payload)
+            moduleSerializer.deserialize(raw.payload)
         } catch (e: Exception) {
             throw IllegalArgumentException("Failed to deserialize ${raw.payload}", e)
         }

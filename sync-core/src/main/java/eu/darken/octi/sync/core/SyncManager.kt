@@ -8,7 +8,6 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
-import eu.darken.octi.sync.core.cache.SyncCache
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -19,7 +18,6 @@ class SyncManager @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     private val syncSettings: SyncSettings,
-    private val syncCache: SyncCache,
     private val connectorHubs: Set<@JvmSuppressWildcards ConnectorHub>,
 ) {
 
@@ -54,23 +52,10 @@ class SyncManager @Inject constructor(
             if (connectorList.isEmpty()) {
                 flowOf(emptyList())
             } else {
-                val connectorDataFlows: List<Flow<Pair<ConnectorId, SyncRead?>>> = connectorList.map { con ->
-                    con.data.map { syncRead -> con.identifier to syncRead }
+                val connectorDataFlows: List<Flow<SyncRead>> = connectorList.map { connector ->
+                    connector.data.filterNotNull()
                 }
-                // Combine all new emissions
-                combine(connectorDataFlows) { it.toSet() }.onStart {
-                    // Start empty to allow fast restore from cache
-                    val initial = connectorList
-                        .map { it.identifier to null as SyncRead? }
-                        .toSet()
-                    emit(initial)
-                }
-            }
-        }
-        .map { pairs ->
-            pairs.mapNotNull { (id, read) ->
-                if (read != null) syncCache.save(id, read)
-                read ?: syncCache.load(id)
+                combine(connectorDataFlows) { it.toSet() }
             }
         }
         .map { it.latestData() }
@@ -127,8 +112,6 @@ class SyncManager @Inject constructor(
         val connector = getConnectorById<SyncConnector>(identifier).first()
 
         disabledConnectors.value = disabledConnectors.value + connector
-
-        syncCache.remove(identifier)
 
         try {
             hubs.first().filter { it.owns(identifier) }.forEach {

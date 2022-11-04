@@ -1,30 +1,31 @@
 package eu.darken.octi.modules.meta.core
 
+import android.content.Context
+import com.squareup.moshi.Moshi
+import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.module.core.BaseModuleSync
+import eu.darken.octi.module.core.BaseModuleCache
 import eu.darken.octi.modules.meta.MetaModule
-import eu.darken.octi.sync.core.SyncManager
-import eu.darken.octi.sync.core.SyncSettings
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MetaSync @Inject constructor(
+class MetaCache @Inject constructor(
+    @ApplicationContext private val context: Context,
     dispatcherProvider: DispatcherProvider,
-    syncSettings: SyncSettings,
-    syncManager: SyncManager,
     metaSerializer: MetaSerializer,
-) : BaseModuleSync<MetaInfo>(
-    tag = TAG,
+    moshi: Moshi,
+) : BaseModuleCache<MetaInfo>(
     moduleId = MetaModule.MODULE_ID,
+    tag = TAG,
     dispatcherProvider = dispatcherProvider,
-    syncSettings = syncSettings,
-    syncManager = syncManager,
+    context = context,
     moduleSerializer = metaSerializer,
+    moshi = moshi,
 ) {
 
     companion object {
-        val TAG = logTag("Module", "Meta", "Sync")
+        val TAG = logTag("Module", "Meta", "Cache")
     }
 }

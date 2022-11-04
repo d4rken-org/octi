@@ -4,7 +4,6 @@ import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.module.core.BaseModuleRepo
-import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.modules.apps.AppsModule
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
@@ -17,16 +16,17 @@ class AppsRepo @Inject constructor(
     appsSettings: AppsSettings,
     appsInfoSource: AppsInfoSource,
     appsSync: AppsSync,
+    appsCache: AppsCache,
 ) : BaseModuleRepo<AppsInfo>(
     tag = TAG,
+    moduleId = AppsModule.MODULE_ID,
     scope = scope,
     dispatcherProvider = dispatcherProvider,
     moduleSettings = appsSettings,
     infoSource = appsInfoSource,
     moduleSync = appsSync,
+    moduleCache = appsCache,
 ) {
-
-    override val moduleId: ModuleId = AppsModule.MODULE_ID
 
     companion object {
         val TAG = logTag("Module", "Apps", "Repo")
