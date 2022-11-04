@@ -20,15 +20,21 @@
     </style>
 
     <style name="BatteryWidget.Container">
+
+        <item name="android:background">?android:attr/colorBackground</item>
+        <item name="android:theme">@style/Theme.Material3.DynamicColors.DayNight</item>
         <item name="android:paddingStart">4dp</item>
         <item name="android:paddingEnd">8dp</item>
         <item name="android:paddingTop">4dp</item>
         <item name="android:paddingBottom">4dp</item>
-        <item name="android:background">@color/widgetBackground</item>
+        <!--        <item name="android:background">@color/widgetBackground</item>-->
     </style>
 
-    <style name="BatteryWidget.Text">
-        <item name="android:textColor">@color/widgetOnBackground</item>
+    <style name="BatteryWidget.TextPrimary">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
+    <style name="BatteryWidget.TextSecondary">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
 </resources>

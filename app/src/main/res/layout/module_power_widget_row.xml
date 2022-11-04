@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -15,7 +14,7 @@
 
     <TextView
         android:id="@+id/device_label"
-        style="@style/BatteryWidget.Text"
+        style="@style/BatteryWidget.TextPrimary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/battery_progressbar"
@@ -27,15 +26,15 @@
 
     <TextView
         android:id="@+id/charge_percent"
-        style="@style/BatteryWidget.Text"
+        style="@style/BatteryWidget.TextSecondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/battery_progressbar"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:gravity="center"
-        android:textSize="12sp"
-        tool:text="60%" />
+        android:text="60%"
+        android:textSize="12sp" />
 
     <ProgressBar
         android:id="@+id/battery_progressbar"
