@@ -41,7 +41,7 @@ class RecorderService : Service2() {
     override fun onCreate() {
         super.onCreate()
         val compatChannel = NotificationChannelCompat
-            .Builder(NOTIF_CHANID_DEBUG, NotificationManager.IMPORTANCE_MAX)
+            .Builder(NOTIF_CHANID_DEBUG, NotificationManagerCompat.IMPORTANCE_MAX)
             .setName(getString(R.string.debug_notification_channel_label))
             .build()
         NotificationManagerCompat.from(this).createNotificationChannel(compatChannel)
