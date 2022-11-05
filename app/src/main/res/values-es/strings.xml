@@ -155,7 +155,7 @@
 
     <string name="sync_setting_background_enable_title">Sincronización en segundo plano</string>
     <string name="sync_setting_background_enable_desc">Sincronizar los datos cuando la aplicación no está abierta.</string>
-    <string name="sync_setting_background_mobile_label">Red móvil/string>
+    <string name="sync_setting_background_mobile_label">Red móvil</string>
     <string name="sync_setting_background_mobile_desc">Permitir la sincronización en segundo plano utilizando su conexión de red móvil si el Wi-Fi no está disponible.</string>
 
     <string name="modules_settings_label">Módulos</string>
