@@ -1,5 +1,6 @@
 package eu.darken.octi.syncs.gdrive.core
 
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
@@ -44,7 +45,11 @@ class GDriveHub @Inject constructor(
     override suspend fun remove(connectorId: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "remove(id=$connectorId)" }
         val connector = _connectors.first().single { it.identifier == connectorId }
-        connector.deleteDevice(syncSettings.deviceId)
+        try {
+            connector.deleteDevice(syncSettings.deviceId)
+        } catch (e: UserRecoverableAuthIOException) {
+            // User was locked out
+        }
         accountRepo.remove(connector.account.id)
     }
 
