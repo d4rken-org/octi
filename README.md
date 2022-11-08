@@ -16,6 +16,7 @@ Information modules:
 * Battery: Charge level, speed and estimates.
 * Connectivity: Wifi SSID, IP.
 * Installed apps: Last installed app, app list.
+* Clipboard: Copy clipboard text into Octi to share it with other devices.
 * ...
 
 Synchronization options:

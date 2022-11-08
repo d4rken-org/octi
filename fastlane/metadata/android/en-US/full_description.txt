@@ -6,6 +6,7 @@ Available information modules:
 * Battery status
 * WiFi connectivity
 * Installed applications
+* Clipboard sharing
 * and more... if you have a good idea, let me know!
 
 You can pick different ways to synchronize the information:
