@@ -13,6 +13,7 @@
     <string name="general_create_account_action">Create account</string>
     <string name="general_link_existing_action">Link to existing account</string>
     <string name="general_na_label">N/A</string>
+    <string name="general_empty_label">Empty</string>
     <string name="general_dismiss_action">Dismiss</string>
     <string name="general_maybe_later_action">Maybe later</string>
     <string name="general_manage_action">Manage</string>
@@ -194,6 +195,12 @@
     <string name="pro_device_limit_reached_title">Device limit reached</string>
     <string name="pro_device_limit_reached_description">You currently have %1$d  synced devices. To view more than %2$d devices, upgrade to Octi Pro or remove devices.</string>
     <string name="module_power_widget_description">Display the battery status of your synced devices.</string>
+
     <string name="module_apps_label">Apps module</string>
     <string name="module_apps_desc">Information about installed apps.</string>
+
+    <string name="module_clipboard_label">Clipboard module</string>
+    <string name="module_clipboard_desc">Copy and paste text between devices.</string>
+    <string name="module_clipboard_copied_octi_to_os">Copied Octi to system clipboard</string>
+    <string name="module_clipboard_copied_os_to_octi">Copied system to Octi clipboard</string>
 </resources>

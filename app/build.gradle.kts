@@ -136,6 +136,7 @@ dependencies {
     implementation(project(":modules-power"))
     implementation(project(":modules-wifi"))
     implementation(project(":modules-apps"))
+    implementation(project(":modules-clipboard"))
 
     addDI()
     addCoroutines()

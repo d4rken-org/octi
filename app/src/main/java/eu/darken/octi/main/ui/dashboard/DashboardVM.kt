@@ -31,6 +31,9 @@ import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.ui.dashboard.DeviceAppsVH
+import eu.darken.octi.modules.clipboard.ClipboardHandler
+import eu.darken.octi.modules.clipboard.ClipboardInfo
+import eu.darken.octi.modules.clipboard.ClipboardVH
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
@@ -60,6 +63,7 @@ class DashboardVM @Inject constructor(
     private val syncSettings: SyncSettings,
     private val upgradeRepo: UpgradeRepo,
     private val webpageTool: WebpageTool,
+    private val clipboardHandler: ClipboardHandler,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     val dashboardEvents = SingleLiveEvent<DashboardEvent>()
@@ -205,6 +209,7 @@ class DashboardVM @Inject constructor(
                             is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem()
                             is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
                             is AppsInfo -> (moduleData as ModuleData<AppsInfo>).createVHItem()
+                            is ClipboardInfo -> (moduleData as ModuleData<ClipboardInfo>).createVHItem()
                             else -> {
                                 log(TAG, WARN) { "Unsupported module data: ${moduleData.data}" }
                                 null
@@ -265,10 +270,20 @@ class DashboardVM @Inject constructor(
         }
     )
 
+    private fun ModuleData<ClipboardInfo>.createVHItem() = ClipboardVH.Item(
+        data = this,
+        isOurDevice = deviceId == syncSettings.deviceId,
+        onClearClicked = { launch { clipboardHandler.setSharedClipboard(ClipboardInfo()) } },
+        onPasteClicked = { launch { clipboardHandler.shareCurrentOSClipboard() } }
+            .takeIf { deviceId == syncSettings.deviceId },
+        onCopyClicked = { launch { clipboardHandler.setOSClipboard(data) } }
+    )
+
     companion object {
         private val INFO_ORDER = listOf(
             PowerInfo::class,
             WifiInfo::class,
+            ClipboardInfo::class,
             AppsInfo::class,
         )
         private const val DEVICE_LIMIT = 3
