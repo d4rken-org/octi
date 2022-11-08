@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 import okio.ByteString
 
 @JsonClass(generateAdapter = true)
-data class ClipboardInfo(
+data class ClipboardItem(
     @Json(name = "type") val type: Type = Type.EMPTY,
     @Json(name = "data") val data: ByteString = ByteString.EMPTY,
 ) {

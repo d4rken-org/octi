@@ -14,7 +14,7 @@ class ClipboardSync @Inject constructor(
     syncSettings: SyncSettings,
     syncManager: SyncManager,
     appsSerializer: ClipboardSerializer,
-) : BaseModuleSync<ClipboardInfo>(
+) : BaseModuleSync<ClipboardItem>(
     tag = TAG,
     moduleId = ClipboardModule.MODULE_ID,
     dispatcherProvider = dispatcherProvider,

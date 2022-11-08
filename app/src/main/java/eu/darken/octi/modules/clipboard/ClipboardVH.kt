@@ -1,6 +1,7 @@
 package eu.darken.octi.modules.clipboard
 
 import android.view.ViewGroup
+import android.widget.Toast
 import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardDeviceClipboardItemBinding
 import eu.darken.octi.main.ui.dashboard.items.perdevice.PerDeviceModuleAdapter
@@ -21,12 +22,28 @@ class ClipboardVH(parent: ViewGroup) :
     ) -> Unit = { item, _ ->
         val clip = item.data.data
 
+        secondary.text = when (clip.type) {
+            ClipboardItem.Type.EMPTY -> getString(R.string.general_empty_label)
+            ClipboardItem.Type.SIMPLE_TEXT -> clip.data.utf8()
+            else -> clip.data.toString()
+        }.let { "\"$it\"" }
+
+        pasteAction.setOnClickListener {
+            item.onPasteClicked()
+            Toast.makeText(context, R.string.module_clipboard_copied_os_to_octi, Toast.LENGTH_SHORT).show()
+        }
+        copyAction.setOnClickListener {
+            it.requestFocus()
+            item.onCopyClicked(clip)
+            Toast.makeText(context, R.string.module_clipboard_copied_octi_to_os, Toast.LENGTH_SHORT).show()
+        }
     }
 
     data class Item(
-        val data: ModuleData<ClipboardInfo>,
+        val data: ModuleData<ClipboardItem>,
+        val isOurDevice: Boolean,
         val onPasteClicked: (() -> Unit),
-        val onCopyClicked: (() -> Unit),
+        val onCopyClicked: ((ClipboardItem) -> Unit),
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
     }

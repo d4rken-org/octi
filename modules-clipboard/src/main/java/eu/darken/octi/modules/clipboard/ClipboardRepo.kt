@@ -13,10 +13,10 @@ class ClipboardRepo @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     appsSettings: ClipboardSettings,
-    appsInfoSource: ClipboardInfoSource,
+    appsInfoSource: ClipboardHandler,
     appsSync: ClipboardSync,
     appsCache: ClipboardCache,
-) : BaseModuleRepo<ClipboardInfo>(
+) : BaseModuleRepo<ClipboardItem>(
     tag = TAG,
     moduleId = ClipboardModule.MODULE_ID,
     scope = scope,

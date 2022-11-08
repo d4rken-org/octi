@@ -15,7 +15,7 @@ class ClipboardCache @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     appsSerializer: ClipboardSerializer,
     moshi: Moshi,
-) : BaseModuleCache<ClipboardInfo>(
+) : BaseModuleCache<ClipboardItem>(
     moduleId = ClipboardModule.MODULE_ID,
     tag = TAG,
     dispatcherProvider = dispatcherProvider,

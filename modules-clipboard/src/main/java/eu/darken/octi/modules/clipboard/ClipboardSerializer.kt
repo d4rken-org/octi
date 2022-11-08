@@ -13,13 +13,13 @@ import javax.inject.Inject
 @Reusable
 class ClipboardSerializer @Inject constructor(
     private val moshi: Moshi,
-) : ModuleSerializer<ClipboardInfo> {
+) : ModuleSerializer<ClipboardItem> {
 
-    private val adapter by lazy { moshi.adapter<ClipboardInfo>() }
+    private val adapter by lazy { moshi.adapter<ClipboardItem>() }
 
-    override fun serialize(item: ClipboardInfo): ByteString = adapter.toByteString(item)
+    override fun serialize(item: ClipboardItem): ByteString = adapter.toByteString(item)
 
-    override fun deserialize(raw: ByteString): ClipboardInfo = adapter.fromJson(raw)!!
+    override fun deserialize(raw: ByteString): ClipboardItem = adapter.fromJson(raw)!!
 
     companion object {
         val TAG = logTag("Module", "Clipboard", "Serializer")
