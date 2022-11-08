@@ -198,6 +198,7 @@
 
     <string name="module_apps_label">Apps module</string>
     <string name="module_apps_desc">Information about installed apps.</string>
+
     <string name="module_clipboard_label">Clipboard module</string>
     <string name="module_clipboard_desc">Copy and paste text between devices.</string>
     <string name="module_clipboard_copied_octi_to_os">Copied Octi to system clipboard</string>
