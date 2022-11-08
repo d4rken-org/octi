@@ -101,8 +101,13 @@ abstract class BaseModuleCache<T : Any> constructor(
             null
         }
 
-        uncachedData?.toModuleData().also {
-            log(tag, VERBOSE) { "get(id=$deviceId): $it" }
+        try {
+            uncachedData?.toModuleData().also {
+                log(tag, VERBOSE) { "get(id=$deviceId): $it" }
+            }
+        } catch (e: Exception) {
+            log(tag, ERROR) { "Failed to deserialize: ${e.asLog()}\nraw=$uncachedData" }
+            null
         }
     }
 
