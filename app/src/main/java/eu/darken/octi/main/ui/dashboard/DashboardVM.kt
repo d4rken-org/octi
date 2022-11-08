@@ -32,7 +32,7 @@ import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.ui.dashboard.DeviceAppsVH
 import eu.darken.octi.modules.clipboard.ClipboardHandler
-import eu.darken.octi.modules.clipboard.ClipboardItem
+import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.clipboard.ClipboardVH
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
@@ -209,7 +209,7 @@ class DashboardVM @Inject constructor(
                             is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem()
                             is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
                             is AppsInfo -> (moduleData as ModuleData<AppsInfo>).createVHItem()
-                            is ClipboardItem -> (moduleData as ModuleData<ClipboardItem>).createVHItem()
+                            is ClipboardInfo -> (moduleData as ModuleData<ClipboardInfo>).createVHItem()
                             else -> {
                                 log(TAG, WARN) { "Unsupported module data: ${moduleData.data}" }
                                 null
@@ -270,18 +270,20 @@ class DashboardVM @Inject constructor(
         }
     )
 
-    private fun ModuleData<ClipboardItem>.createVHItem() = ClipboardVH.Item(
+    private fun ModuleData<ClipboardInfo>.createVHItem() = ClipboardVH.Item(
         data = this,
         isOurDevice = deviceId == syncSettings.deviceId,
-        onPasteClicked = { clipboardHandler.shareCurrentOSClipboard() },
-        onCopyClicked = { clipboardHandler.setOSClipboard(data) }
+        onClearClicked = { launch { clipboardHandler.setSharedClipboard(ClipboardInfo()) } },
+        onPasteClicked = { launch { clipboardHandler.shareCurrentOSClipboard() } }
+            .takeIf { deviceId == syncSettings.deviceId },
+        onCopyClicked = { launch { clipboardHandler.setOSClipboard(data) } }
     )
 
     companion object {
         private val INFO_ORDER = listOf(
             PowerInfo::class,
             WifiInfo::class,
-            ClipboardItem::class,
+            ClipboardInfo::class,
             AppsInfo::class,
         )
         private const val DEVICE_LIMIT = 3

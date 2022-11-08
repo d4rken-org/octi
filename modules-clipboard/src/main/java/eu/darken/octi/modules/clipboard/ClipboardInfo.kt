@@ -5,10 +5,14 @@ import com.squareup.moshi.JsonClass
 import okio.ByteString
 
 @JsonClass(generateAdapter = true)
-data class ClipboardItem(
+data class ClipboardInfo(
     @Json(name = "type") val type: Type = Type.EMPTY,
     @Json(name = "data") val data: ByteString = ByteString.EMPTY,
 ) {
+
+    init {
+        if (data.size > 32 * 1024) throw java.lang.IllegalArgumentException("Size limit exceeded (>32KB)")
+    }
 
     @JsonClass(generateAdapter = false)
     enum class Type {

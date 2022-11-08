@@ -31,6 +31,8 @@ class ClipboardSettings @Inject constructor(
         isEnabled
     )
 
+    val lastClipboard = dataStore.createValue("module.clipboard.last", null as String?)
+
     companion object {
         internal val TAG = logTag("Module", "Clipboard", "Settings")
     }

@@ -16,7 +16,7 @@ class ClipboardRepo @Inject constructor(
     appsInfoSource: ClipboardHandler,
     appsSync: ClipboardSync,
     appsCache: ClipboardCache,
-) : BaseModuleRepo<ClipboardItem>(
+) : BaseModuleRepo<ClipboardInfo>(
     tag = TAG,
     moduleId = ClipboardModule.MODULE_ID,
     scope = scope,
