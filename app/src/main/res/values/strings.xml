@@ -194,4 +194,6 @@
     <string name="pro_device_limit_reached_title">Device limit reached</string>
     <string name="pro_device_limit_reached_description">You currently have %1$d  synced devices. To view more than %2$d devices, upgrade to Octi Pro or remove devices.</string>
     <string name="module_power_widget_description">Display the battery status of your synced devices.</string>
+    <string name="module_apps_label">Apps module</string>
+    <string name="module_apps_desc">Information about installed apps.</string>
 </resources>

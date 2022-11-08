@@ -9,8 +9,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ModuleSettingsVM @Inject constructor(
-    private val handle: SavedStateHandle,
-    private val dispatcherProvider: DispatcherProvider,
+    @Suppress("unused") private val handle: SavedStateHandle,
+    dispatcherProvider: DispatcherProvider,
 ) : ViewModel3(dispatcherProvider) {
 
     companion object {
