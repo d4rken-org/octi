@@ -31,6 +31,8 @@ import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.ui.dashboard.DeviceAppsVH
+import eu.darken.octi.modules.clipboard.ClipboardInfo
+import eu.darken.octi.modules.clipboard.ClipboardVH
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
@@ -205,6 +207,7 @@ class DashboardVM @Inject constructor(
                             is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem()
                             is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
                             is AppsInfo -> (moduleData as ModuleData<AppsInfo>).createVHItem()
+                            is ClipboardInfo -> (moduleData as ModuleData<ClipboardInfo>).createVHItem()
                             else -> {
                                 log(TAG, WARN) { "Unsupported module data: ${moduleData.data}" }
                                 null
@@ -262,6 +265,16 @@ class DashboardVM @Inject constructor(
             val pkg =
                 data.installedPackages.maxByOrNull { it.installedAt }?.packageName ?: BuildConfigWrap.APPLICATION_ID
             webpageTool.open("https://play.google.com/store/apps/details?id=$pkg")
+        }
+    )
+
+    private fun ModuleData<ClipboardInfo>.createVHItem() = ClipboardVH.Item(
+        data = this,
+        onCopyClicked = {
+
+        },
+        onPasteClicked = {
+
         }
     )
 
