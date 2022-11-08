@@ -9,6 +9,7 @@ import eu.darken.octi.common.datastore.PreferenceScreenData
 import eu.darken.octi.common.datastore.PreferenceStoreMapper
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.modules.apps.core.AppsSettings
+import eu.darken.octi.modules.clipboard.ClipboardSettings
 import eu.darken.octi.modules.power.core.PowerSettings
 import eu.darken.octi.modules.wifi.core.WifiSettings
 import javax.inject.Inject
@@ -20,6 +21,7 @@ class GeneralModuleSettings @Inject constructor(
     private val powerSettings: PowerSettings,
     private val wifiSettings: WifiSettings,
     private val appsSettings: AppsSettings,
+    private val clipboardSettings: ClipboardSettings,
 ) : PreferenceScreenData {
     private val Context.dataStore by preferencesDataStore(name = "module_settings")
 
@@ -30,6 +32,7 @@ class GeneralModuleSettings @Inject constructor(
         powerSettings.isEnabled,
         wifiSettings.isEnabled,
         appsSettings.isEnabled,
+        clipboardSettings.isEnabled,
     )
 
     companion object {

@@ -196,4 +196,6 @@
     <string name="module_power_widget_description">Display the battery status of your synced devices.</string>
     <string name="module_apps_label">Apps module</string>
     <string name="module_apps_desc">Information about installed apps.</string>
+    <string name="module_clipboard_label">Clipboard module</string>
+    <string name="module_clipboard_desc">Copy and paste text between devices.</string>
 </resources>
