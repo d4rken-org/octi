@@ -13,4 +13,10 @@
         android:summary="@string/module_wifi_desc"
         android:title="@string/module_wifi_label" />
 
+    <CheckBoxPreference
+        android:icon="@drawable/ic_baseline_apps_24"
+        android:key="module.apps.enabled"
+        android:summary="@string/module_apps_desc"
+        android:title="@string/module_apps_label" />
+
 </PreferenceScreen>
