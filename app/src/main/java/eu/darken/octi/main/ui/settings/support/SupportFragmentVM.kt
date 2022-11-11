@@ -42,7 +42,7 @@ class SupportFragmentVM @Inject constructor(
 
         val email = EmailTool.Email(
             receipients = listOf("support@darken.eu"),
-            subject = "[SD Maid] Question/Suggestion/Request\n",
+            subject = "[Octi] Question/Suggestion/Request\n",
             body = bodyInfo.toString()
         )
 
