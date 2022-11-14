@@ -194,4 +194,12 @@
     <string name="pro_device_limit_reached_title">Límite de dispositivos alcanzado</string>
     <string name="pro_device_limit_reached_description">Actualmente tienes %1$d  dispositivos sincronizados. Para ver más de %2$d dispositivos, actualizar a Octi Pro o eliminar dispositivos.</string>
     <string name="module_power_widget_description">Muestra el estado de la batería de tus dispositivos sincronizados.</string>
+
+    <string name="module_apps_label">Módulo de aplicaciones</string>
+    <string name="module_apps_desc">Información sobre aplicaciones instaladas.</string>
+
+    <string name="module_clipboard_label">Módulo de portapapeles</string>
+    <string name="module_clipboard_desc">Copia y pega texto entre diapositivos.</string>
+    <string name="module_clipboard_copied_octi_to_os">Copiado de Octi al portapaples del sistema</string>
+    <string name="module_clipboard_copied_os_to_octi">Copiado del sistema al portapapeles de Octi</string>
 </resources>
