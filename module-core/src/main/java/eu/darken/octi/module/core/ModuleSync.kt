@@ -12,5 +12,5 @@ interface ModuleSync<T : Any> {
 
     val others: Flow<List<ModuleData<T>>>
 
-    suspend fun sync(self: T): ModuleData<T>
+    suspend fun sync(self: ModuleData<T>)
 }

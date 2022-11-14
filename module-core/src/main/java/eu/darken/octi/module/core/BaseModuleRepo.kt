@@ -2,7 +2,10 @@ package eu.darken.octi.module.core
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.Bugs
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.replayingShare
@@ -10,6 +13,7 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.plus
+import java.time.Instant
 import java.util.*
 
 
@@ -58,6 +62,7 @@ abstract class BaseModuleRepo<T : Any> constructor(
     override suspend fun updateOthers(newOthers: Collection<ModuleData<T>>) {
         log(tag) { "updateOthers(newOthers=$newOthers)" }
         _state.updateBlocking {
+            // Delete all except ourself, then set with new known data, to remove stale data
             (moduleCache.cachedDevices() - moduleSync.ourDeviceId).forEach { moduleCache.set(it, null) }
             newOthers.forEach { moduleCache.set(it.deviceId, it) }
             copy(others = newOthers)
@@ -93,8 +98,23 @@ abstract class BaseModuleRepo<T : Any> constructor(
             }
         }
         .distinctUntilChanged()
+        .map {
+            if (it == null) return@map null
+            ModuleData(
+                modifiedAt = Instant.now(),
+                deviceId = moduleSync.ourDeviceId,
+                moduleId = moduleId,
+                data = it
+            )
+        }
         .onEach { selfData ->
-            updateSelf(selfData?.let { moduleSync.sync(it) })
+            try {
+                selfData?.let { moduleSync.sync(selfData) }
+            } catch (e: Exception) {
+                log(tag, ERROR) { "Failed to sync data: ${e.asLog()}" }
+                Bugs.report(e)
+            }
+            updateSelf(selfData)
         }
         .setupCommonEventHandlers(tag) { "writeFLow" }
 

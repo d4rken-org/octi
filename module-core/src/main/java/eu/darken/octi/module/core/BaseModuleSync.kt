@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.map
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import java.io.IOException
-import java.time.Instant
 
 
 abstract class BaseModuleSync<T : Any> constructor(
@@ -57,18 +56,14 @@ abstract class BaseModuleSync<T : Any> constructor(
         }
         .setupCommonEventHandlers(tag) { "others" }
 
-    override suspend fun sync(self: T): ModuleData<T> {
+    override suspend fun sync(self: ModuleData<T>) {
         log(tag, VERBOSE) { "sync(self=$self)" }
-        val container = ModuleData(
-            modifiedAt = Instant.now(),
-            deviceId = syncSettings.deviceId,
-            moduleId = moduleId,
-            data = self
-        )
 
-        syncManager.write(serialize(self))
+        if (self.deviceId != ourDeviceId) {
+            throw IllegalArgumentException("You can only sync your own device data.")
+        }
 
-        return container
+        syncManager.write(serialize(self.data))
     }
 
     private fun serialize(item: T): SyncWrite.Device.Module {

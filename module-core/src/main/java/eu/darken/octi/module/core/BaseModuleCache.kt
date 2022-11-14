@@ -107,6 +107,7 @@ abstract class BaseModuleCache<T : Any> constructor(
             }
         } catch (e: Exception) {
             log(tag, ERROR) { "Failed to deserialize: ${e.asLog()}\nraw=$uncachedData" }
+            Bugs.report(e)
             null
         }
     }
