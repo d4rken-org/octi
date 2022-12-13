@@ -13,6 +13,7 @@
     <string name="general_create_account_action">Crear cuenta</string>
     <string name="general_link_existing_action">Vincular con cuenta existente</string>
     <string name="general_na_label">N/A</string>
+    <string name="general_empty_label">Vacío</string>
     <string name="general_dismiss_action">Dimitir</string>
     <string name="general_maybe_later_action">Quizá luego</string>
     <string name="general_manage_action">Administrar</string>
