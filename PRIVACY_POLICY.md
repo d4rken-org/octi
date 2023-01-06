@@ -4,15 +4,11 @@ This is the privacy policy for the Android app "Octi".
 
 ## Preamble
 
-Octi respects your privacy.
-
 I do not collect, share or sell personal information.
 
 Send a [quick mail](mailto:support@darken.eu) if you have questions.
 
 My underlying privacy principle is the [Golden Rule](https://en.wikipedia.org/wiki/Golden_Rule).
-
-"Octi" neither collects nor allows 3rd party services to collect any user data. Not even anonymously.
 
 ## Permissions 
 
@@ -30,8 +26,7 @@ Camera data is not stored and only used for processing the QR-Code.
 
 ### Query installed apps
 
-Octi allows you to see which apps are installed on your other devices, to do this, the `QUERY_ALL_PACKAGES` is required.
-Only you have access to this data.
+Octi allows you to see which apps are installed on your other devices, to do this, the `QUERY_ALL_PACKAGES` is required. This information is only available to you and encrypted when exchanged between devices. Two edge cases exist: Information about installed apps may be contained in manually generated [debug logs](#debug-log) and [automatic error reports](#automatic-error-reports).
 
 ## Sync services
 
@@ -61,7 +56,7 @@ If you sync data using Google Drive, only you and Google have access to it.
 Google Drive's privacy policy applies:
 https://support.google.com/drive/answer/10375054?hl=en
 
-## Automatic crash reports
+## Automatic error reports
 
 Anonymous device information may be collected in the event of an app crash or error.
 
@@ -71,6 +66,10 @@ https://www.bugsnag.com/
 Bugsnag's privacy policy can be found here:
 https://docs.bugsnag.com/legal/privacy-policy/
 
-Crash reports may contain device and app related information, e.g. your phone model, Android version and app version.
+Error reports contain information related to the error that occured, your device and software versions, e.g. what happened when the error occured, your phone model, Android version and app version.
 
 You can disable automatic reports in the app's settings.
+
+## Debug log
+
+This app has debug log feature that can be used to assist troubleshooting efforts. It is manually triggered by the user through an option in the app settings. This feature creates a log file that contains verbose output of what the app is doing. The recorded log file can be shared with compatible apps (e.g. your email app) using the system's share dialog. As this log file may contain sensitive information (e.g. your installed applications) it should only be shared with trusted parties.
