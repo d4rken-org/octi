@@ -27,6 +27,7 @@
     <string name="general_check_action">Check</string>
     <string name="general_internal_not_available_msg">Internet connection unavailable</string>
     <string name="general_refresh_action">Refresh</string>
+    <string name="general_continue">Continue</string>
 
     <string name="dashboard_click_hint">Some entries can be clicked to view more details.</string>
 
@@ -62,6 +63,8 @@
     <string name="support_debuglog_label">Debug log</string>
     <string name="support_debuglog_desc">Record everything the app is doing into a text file that you can share.</string>
     <string name="settings_support_label">Support</string>
+    <string name="debug_debuglog_sensitive_information_message">This file contains sensitive information (e.g. your installed applications). Only share it with trusted parties.</string>
+    <string name="settings_debuglog_explanation">This feature records everything the app is doing into a shareable file. The generated file contains sensitive information (e.g. your installed applications). Only share it with trusted parties (e.g. the app developer if you are troubleshooting an issue together).</string>
 
     <string name="sync_last_update_label">Last update</string>
     <string name="sync_last_sync_label">Last sync</string>
