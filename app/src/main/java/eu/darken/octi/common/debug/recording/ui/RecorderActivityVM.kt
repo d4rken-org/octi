@@ -9,6 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.PrivacyPolicy
+import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.compression.Zipper
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
@@ -30,6 +32,7 @@ class RecorderActivityVM @Inject constructor(
     handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
+    private val webpageTool: WebpageTool,
 ) : ViewModel3(dispatcherProvider) {
 
     private val recordedPath = handle.get<String>(RecorderActivity.RECORD_PATH)!!
@@ -100,6 +103,10 @@ class RecorderActivityVM @Inject constructor(
 
         val chooserIntent = Intent.createChooser(intent, context.getString(R.string.debug_debuglog_file_label))
         shareEvent.postValue(chooserIntent)
+    }
+
+    fun goPrivacyPolicy() {
+        webpageTool.open(PrivacyPolicy.URL)
     }
 
     data class State(
