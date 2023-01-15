@@ -27,6 +27,7 @@
     <string name="general_check_action">Revisar</string>
     <string name="general_internal_not_available_msg">Conexión a Internet no disponible</string>
     <string name="general_refresh_action">Actualizar</string>
+    <string name="general_continue">Continuar</string>
 
     <string name="dashboard_click_hint">Se puede tocar en algunas entradas para ver más detalles.</string>
 
@@ -62,6 +63,8 @@
     <string name="support_debuglog_label">Registro de depuración</string>
     <string name="support_debuglog_desc">Registra todo lo que hace la aplicación en un archivo de texto que puedes compartir.</string>
     <string name="settings_support_label">Soporte</string>
+	<string name="debug_debuglog_sensitive_information_message">Este archivo contiene información sensible (por ejemplo, tus aplicaciones instaladas). Compártalo sólo con personas de confianza.</string>
+    <string name="settings_debuglog_explanation">Esta función registra todo lo que hace la aplicación en un archivo que se puede compartir. El archivo generado contiene información confidencial (por ejemplo, las aplicaciones instaladas). Compártelo solo con personas de confianza (por ejemplo, el desarrollador de la aplicación si están solucionando un problema juntos).</string>
 
     <string name="sync_last_update_label">Última actualización</string>
     <string name="sync_last_sync_label">Última sincronización</string>
