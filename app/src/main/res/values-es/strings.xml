@@ -1,76 +1,79 @@
 <resources>
-    <string name="label_settings">Configuraciones</string>
+    <string name="label_settings">Configuración</string>
     <string name="label_help">Ayuda</string>
 
     <string name="general_share_action">Compartir</string>
-    <string name="general_done_action">Hecho</string>
+    <string name="general_done_action">Listo</string>
     <string name="general_copy_action">Copiar</string>
-    <string name="general_remove_action">Remover</string>
+    <string name="general_remove_action">Eliminar</string>
     <string name="general_wipe_action">Limpiar</string>
     <string name="general_cancel_action">Cancelar</string>
     <string name="general_thanks_action">Gracias</string>
-    <string name="general_gotit_action">Lo tengo</string>
-    <string name="general_create_account_action">Crear cuenta</string>
-    <string name="general_link_existing_action">Vincular con cuenta existente</string>
-    <string name="general_na_label">N/A</string>
+    <string name="general_gotit_action">Entendido</string>
+    <string name="general_create_account_action">Crear una cuenta</string>
+    <string name="general_link_existing_action">Enlace a cuenta ya existente</string>
+    <string name="general_na_label">N/D</string>
     <string name="general_empty_label">Vacío</string>
-    <string name="general_dismiss_action">Dimitir</string>
-    <string name="general_maybe_later_action">Quizá luego</string>
+    <string name="general_dismiss_action">Descartar</string>
+    <string name="general_maybe_later_action">Quizás más tarde</string>
     <string name="general_manage_action">Administrar</string>
     <string name="general_sync_action">Sincronizar</string>
     <string name="general_error_label">Error</string>
-    <string name="general_select_server_label">Selecciona un servidor</string>
+    <string name="general_select_server_label">Seleccionar un servidor</string>
     <string name="general_quota_label">Cuota</string>
-    <string name="general_tap_hint_msg">Toca para más opciones</string>
-    <string name="general_upgrade_action">Mejorar</string>
+    <string name="general_tap_hint_msg">Toca para ver más opciones</string>
+    <string name="general_upgrade_action">Actualizar</string>
     <string name="general_donate_action">Donar</string>
-    <string name="general_check_action">Revisar</string>
-    <string name="general_internal_not_available_msg">Conexión a Internet no disponible</string>
+    <string name="general_check_action">Comprobar</string>
+    <string name="general_internal_not_available_msg">La conexión a Internet no está disponible</string>
     <string name="general_refresh_action">Actualizar</string>
+    <string name="general_continue">Continuar</string>
 
-    <string name="dashboard_click_hint">Se puede tocar en algunas entradas para ver más detalles.</string>
+    <string name="dashboard_click_hint">Se puede hacer clic en algunas entradas para ver más detalles.</string>
 
     <string name="debug_debuglog_size_label">Tamaño</string>
     <string name="debug_debuglog_size_compressed_label">Tamaño comprimido</string>
-    <string name="debug_notification_channel_label">Notificaciones de depuración</string>
-    <string name="debug_debuglog_file_label">Archivo de registro</string>
-    <string name="debug_debuglog_record_action">Grabar el registro de depuración</string>
+    <string name="debug_notification_channel_label">Notificaciones sobre la depuración</string>
+    <string name="debug_debuglog_file_label">Archivo de registro grabado</string>
+    <string name="debug_debuglog_record_action">Registrar el registro de depuración</string>
 
     <string name="onboarding_card_title">Bienvenido a Octi</string>
-    <string name="onboarding_card_message">Octi es una aplicación muy reciente y todavía se está mejorando. Si experimentas problemas o simplemente tienes una buena idea, ¡házmelo saber!\n\nConsidere la posibilidad de actualizar a Octi Pro para apoyarme en su desarrollo.</string>
+    <string name="onboarding_card_message">Octi es una aplicación muy joven y todavía se está mejorando. Si experimenta problemas o simplemente tiene una gran idea, ¡hágamelo saber!\n\nConsidera actualizar a Octi Pro para ayudarme en el desarrollarlo.</string>
     <string name="onboarding_setupsync_title">Configurar la sincronización</string>
-    <string name="onboarding_setupsync_message">Actualmente sólo verá este dispositivo. Para conectar sus instalaciones de Octi, configure un servicio de sincronización en común.</string>
+    <string name="onboarding_setupsync_message">Actualmente solo ves este dispositivo. Para conectar tus instalaciones Octi, configura un servicio de sincronización común.</string>
 
     <string name="settings_privacy_policy_label">Política de privacidad</string>
-    <string name="settings_privacy_policy_desc">Tratamiento responsable de los datos.</string>
+    <string name="settings_privacy_policy_desc">Uso responsable de los datos.</string>
     <string name="settings_licenses_label">Licencias</string>
     <string name="general_thank_you_label">Gracias</string>
-  <string name="settings_category_other_label">Otro</string>
+    <string name="settings_category_other_label">Otro</string>
 
     <string name="general_settings_label">General</string>
-    <string name="general_settings_desc">Ajustes generales que afectan a toda la aplicación.</string>
+    <string name="general_settings_desc">Retoques generales que afectan a toda la aplicación.</string>
     <string name="changelog_label">Registro de cambios</string>
     <string name="settings_acknowledgements_label">Agradecimientos</string>
     <string name="documentation_label">Documentación</string>
-    <string name="email_developer_label">Correo electrónico del desarrollador</string>
+    <string name="email_developer_label">Desarrollador de correo electrónico</string>
 
-    <string name="issue_tracker_label">Seguimiento de problemas</string>
-    <string name="issue_tracker_description">Un gestor de problemas público para los informes de errores y las solicitudes de funciones.</string>
+    <string name="issue_tracker_label">Rastreador de problemas</string>
+    <string name="issue_tracker_description">Un rastreador público de problemas para informes de errores y solicitudes de funciones.</string>
 
-    <string name="support_installid_label">ID de la instalación</string>
-    <string name="support_installid_desc">Los informes de error automáticos son anónimos. Comparta su ID de instalación si el desarrollador necesita encontrar sus informes de error.</string>
+    <string name="support_installid_label">ID de instalación</string>
+    <string name="support_installid_desc">Los informes de errores automáticos son anónimos. Comparta su ID de instalación si el desarrollador necesita encontrar sus informes de error.</string>
     <string name="support_debuglog_label">Registro de depuración</string>
     <string name="support_debuglog_desc">Registra todo lo que hace la aplicación en un archivo de texto que puedes compartir.</string>
     <string name="settings_support_label">Soporte</string>
+    <string name="debug_debuglog_sensitive_information_message">Este archivo contiene información confidencial (p. ej., sus aplicaciones instaladas). Compártelo solo con partes de confianza.</string>
+    <string name="settings_debuglog_explanation">Esta función registra todo lo que hace la aplicación en un archivo que se puede compartir. El archivo generado contiene información confidencial (por ejemplo, sus aplicaciones instaladas). Compártalo solo con partes de confianza (p. ej., el desarrollador de la aplicación si están solucionando un problema juntos).</string>
 
     <string name="sync_last_update_label">Última actualización</string>
     <string name="sync_last_sync_label">Última sincronización</string>
     <string name="sync_last_never_label">Nunca</string>
-    <string name="sync_quota_storage_msg">%s libre (%s / %s)</string>
+    <string name="sync_quota_storage_msg">%s gratis (%s / %s)</string>
 
     <string name="battery_status_card_label">Estado de la batería</string>
 
-    <string name="device_uptime_x">Tiempo de funcionamiento: %s</string>
+    <string name="device_uptime_x">Tiempo de actividad: %s</string>
     <string name="general_disconnect_action">Desconectar</string>
     <string name="generic_info_action">Información</string>
 
@@ -78,8 +81,8 @@
     <string name="sync_account_label">Cuenta</string>
     <string name="sync_services_label">Servicios de sincronización</string>
 
-    <string name="sync_add_label">Añadir servicio de sincronización</string>
-    <string name="sync_add_help_desc">Se requiere un servicio de sincronización para el intercambio de información entre instalaciones de Octi. ¡Los dispositivos sólo pueden verse entre sí si tienen un servicio de sincronización en común!</string>
+    <string name="sync_add_label">Agregar servicio de sincronización</string>
+    <string name="sync_add_help_desc">Se requiere un servicio de sincronización para el intercambio de información entre las instalaciones de Octi.\n\n¡Los dispositivos solo pueden verse entre sí si tienen un servicio de sincronización común!</string>
 
     <string name="sync_synced_devices_label">Dispositivos sincronizados</string>
 
@@ -88,101 +91,101 @@
         <item quantity="other">%d dispositivos</item>
     </plurals>
     <plurals name="general_unique_devices_count_label">
-        <item quantity="one">%d único, sólo disponible aquí</item>
-        <item quantity="other">%d único, sólo disponible aquí</item>
+        <item quantity="one">%d único, solo disponible aquí</item>
+        <item quantity="other">%d único, solo disponible aquí</item>
     </plurals>
 
     <string name="sync_settings_label">Sincronización</string>
-    <string name="sync_settings_desc">Nombre del dispositivo, temporización y condiciones de activación.</string>
+    <string name="sync_settings_desc">Nombre del dispositivo, tiempo y condiciones de activación.</string>
     <string name="sync_setting_devicelabel_label">Etiqueta del dispositivo</string>
     <string name="sync_setting_devicelabel_desc">Un nombre para este dispositivo. Visible para otros dispositivos sincronizados.</string>
-    <string name="sync_setting_devicelabel_hint">Si la etiqueta está vacía, se utiliza el modelo de dispositivo.</string>
+    <string name="sync_setting_devicelabel_hint">Si la etiqueta está vacía, se usa el modelo del dispositivo.</string>
     <string name="sync_setting_interval_label">Intervalo de sincronización</string>
-    <string name="sync_setting_interval_desc">Intervalo de sincronización en segundo plano (en minutos).</string>
-    <string name="sync_setting_category_background_label">Sincronización en segundo plano</string>
+    <string name="sync_setting_interval_desc">Intervalo de sincronización de fondo (en minutos).</string>
+    <string name="sync_setting_category_background_label">Sincronización de fondo</string>
 
     <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">Alcance de los datos de la aplicación</string>
-    <string name="sync_gdrive_type_appdata_description">Los datos se colocan en Google Drive. Esta variante específica utiliza el ámbito "app-data". Sólo se concede acceso a una nueva carpeta sólo para esta aplicación. La carpeta no es visible en su unidad. Es similar a cómo funcionan las copias de seguridad de WhatsApp.</string>
-    <string name="sync_gdrive_add_label">Añadir nuevo Google Drive</string>
-    <string name="sync_gdrive_add_description">Haz clic en el botón de inicio de sesión que aparece a continuación para configurar el acceso a Google Drive.</string>
-    <string name="sync_gdrive_wipe_confirmation_desc">Restablece todos los datos de Octi almacenados en Google Drive. Tu dispositivo seguirá conectado a Google Drive.</string>
-    <string name="sync_gdrive_disconnect_confirmation_desc">Cerrar la sesión de Google Drive y eliminar los datos de este dispositivo.</string>
+    <string name="sync_gdrive_type_appdata_description">Los datos se colocan en Google Drive. Esta variante específicada utiliza el alcance "datos de la aplicación". Solo se otorga acceso a una nueva carpeta solo para esta aplicación. La carpeta no está visible en su disco. Es similar a cómo funcionan las copias de seguridad de WhatsApp.</string>
+    <string name="sync_gdrive_add_label">Agregar un nuevo Google Drive</string>
+    <string name="sync_gdrive_add_description">Haz clic en el botón de inicio de sesión a continuación para configurar el acceso a Google Drive.</string>
+    <string name="sync_gdrive_wipe_confirmation_desc">Restablezce todos los datos de Octi almacenados en Google Drive. Tu dispositivo permanece conectado a Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Cerrar la sesión en Google Drive y eliminar los datos de este dispositivo.</string>
     <string name="sync_gdrive_error_no_account_on_device">Este dispositivo no está registrado en ninguna cuenta de Google.</string>
 
-    <string name="sync_jserver_type_label">J-Server</string>
-    <string name="sync_jserver_type_description">Un servidor de sincronización de código abierto para Octi hecho por un amigo. Los datos están encriptados del lado del cliente, sólo tus dispositivos pueden desencriptarlos.\n\nComo tanto la aplicación como el servidor aún están siendo mejorados, puede ser menos estable que otras opciones de sincronización.</string>
-    <string name="sync_jserver_add_create_action_hint">Las cuentas inactivas se eliminan al cabo de unas semanas.</string>
-    <string name="sync_jserver_add_subtitle">Añadir nuevo Google Drive</string>
-    <string name="sync_jserver_add_link_action_hint">Necesitarás acceder a otro dispositivo que ya esté vinculado.</string>
-    <string name="sync_jserver_about_title">Sobre JServer</string>
+    <string name="sync_jserver_type_label">Servidor J</string>
+    <string name="sync_jserver_type_description">Un servidor de sincronización de código abierto para Octi creado por un amigo. Los datos están encriptados del lado del cliente, solo tus dispositivos pueden desencriptarlos.\n\nComo tanto la aplicación como el servidor aún se están mejorando, es posible que sean menos estables que otras opciones de sincronización.</string>
+    <string name="sync_jserver_add_create_action_hint">Las cuentas inactivas se eliminan después de algunas semanas.</string>
+    <string name="sync_jserver_add_subtitle">Agregar un nuevo Google Drive</string>
+    <string name="sync_jserver_add_link_action_hint">Necesitará acceso a otro dispositivo que ya estea vinculado.</string>
+    <string name="sync_jserver_about_title">Acerca de JServer</string>
     <string name="sync_jserver_about_desc">JServer es un servidor de sincronización de código abierto para Octi de Jakob Möller.</string>
     <string name="sync_jserver_about_author_action">Autor</string>
     <string name="sync_jserver_about_source_action">Código fuente</string>
-    <string name="sync_jserver_wipe_confirmation_desc">Restablece esta cuenta y elimina todos los datos almacenados. Tu dispositivo seguirá vinculado a la cuenta.</string>
-    <string name="sync_jserver_disconnect_confirmation_desc">Esto eliminará este dispositivo de su cuenta. Si este es el último dispositivo vinculado, su cuenta será eliminada.</string>
-    <string name="sync_jserver_link_device_action">Vincular nuevo dispositivo</string>
-    <string name="sync_jserver_link_code_label">Código de enlace</string>
-    <string name="sync_jserver_link_host_option_direct">Crea un código de texto que puedas enviar a través de otras aplicaciones</string>
-    <string name="sync_jserver_link_host_option_qrcode">Mostrar un código QR</string>
-    <string name="sync_jserver_link_host_option_nfc">Vincular el dispositivo a través de NFC</string>
-    <string name="sync_jserver_link_host_device_linked_message">Se ha vinculado un nuevo dispositivo a tu cuenta.</string>
-    <string name="sync_jserver_link_host_nfc_action">Buscando el cliente NFC. Mantenga este dispositivo cerca del dispositivo que desea vincular a su cuenta.</string>
-    <string name="sync_jserver_link_client_option_direct">Copiar y pegar manualmente un código de enlace</string>
+    <string name="sync_jserver_wipe_confirmation_desc">Restablece esta cuenta y elimine todos los datos almacenados. Tu dispositivo permanecerá vinculado a la cuenta.</string>
+    <string name="sync_jserver_disconnect_confirmation_desc">Esto eliminará este dispositivo de tu cuenta. Si este es el último dispositivo vinculado, tu cuenta será eliminada.</string>
+    <string name="sync_jserver_link_device_action">Vincular un nuevo dispositivo</string>
+    <string name="sync_jserver_link_code_label">Código del enlace</string>
+    <string name="sync_jserver_link_host_option_direct">Crea un código de texto que puede enviar a través de otras aplicaciones</string>
+    <string name="sync_jserver_link_host_option_qrcode">Mostrar un código Qr</string>
+    <string name="sync_jserver_link_host_option_nfc">Vincular un dispositivo a través del NFC</string>
+    <string name="sync_jserver_link_host_device_linked_message">Se vinculó un nuevo dispositivo a tu cuenta.</string>
+    <string name="sync_jserver_link_host_nfc_action">Buscando un cliente NFC. Sostén este dispositivo cerca del dispositivo que deseas vincular a tu cuenta.</string>
+    <string name="sync_jserver_link_client_option_direct">Copiar y pegar manualmente un código del enlace</string>
     <string name="sync_jserver_link_client_option_qrcode">Escanear un código QR desde otro dispositivo</string>
-    <string name="sync_jserver_link_client_option_nfc">Utilizar dos dispositivos con NFC</string>
-    <string name="sync_jserver_link_client_startcamera_action">Iniciar cámara</string>
-    <string name="sync_jserver_link_client_link_action">Vincular dispositivo</string>
-    <string name="sync_jserver_link_client_nfc_action">Buscando el receptor NFC. Acércalo al dispositivo que va a compartir el acceso a la cuenta.</string>
+    <string name="sync_jserver_link_client_option_nfc">Usar dos dispositivos con NFC</string>
+    <string name="sync_jserver_link_client_startcamera_action">Iniciar la cámara</string>
+    <string name="sync_jserver_link_client_link_action">Vincular un dispositivo</string>
+    <string name="sync_jserver_link_client_nfc_action">Buscando un host NFC. Manten lo cerca del dispositivo que comparte el acceso a la cuenta.</string>
 
     <string name="module_meta_android_name_x_label">Android %s</string>
-    <string name="settings_category_ui_label">Interfaz de usuario</string>
+    <string name="settings_category_ui_label">Interfaz del usuario</string>
 
     <string name="ui_theme_setting_label">Tema</string>
     <string name="ui_theme_dark_label">Oscuro</string>
     <string name="ui_theme_light_label">Claro</string>
     <string name="ui_theme_system_label">Sistema</string>
 
-    <string name="permission_required_label">Se requiere permiso</string>
-    <string name="permission_grant_action">Conceder permiso</string>
-    <string name="permission_dismiss_hint">Visite la configuración del sistema de la aplicación para permitir posteriormente los permisos rechazados.</string>
+    <string name="permission_required_label">Permiso requerido</string>
+    <string name="permission_grant_action">Otorgar permiso</string>
+    <string name="permission_dismiss_hint">Visita la configuración del sistema de la aplicación para permitir los permisos o descarta los más tarde.</string>
 
-    <string name="permission_location_label">Permiso de ubicación</string>
-    <string name="permission_location_desc">El permiso de localización permite a Octi mostrar sus nombres Wifi, o mostrar la posición actual de su dispositivo.</string>
-    <string name="permission_battery_optimization_label">Optimización de la batería</string>
-    <string name="permission_battery_optimization_desc">Desactivar las optimizaciones de la batería para permitir la sincronización sin abrir la aplicación.</string>
-    <string name="permission_notifications_post_label">Notificaciones posteriores</string>
-    <string name="permission_notifications_post_desc">El permiso de notificación posterior permite que Octi le notifique sobre eventos en otros dispositivos que haya configurado.</string>
+    <string name="permission_location_label">Permiso a la ubicación</string>
+    <string name="permission_location_desc">El permiso de ubicación permite que Octi muestre tus nombres de la Wi-Fi o te muestra la posición actual de tu dispositivo.</string>
+    <string name="permission_battery_optimization_label">Optimizaciones de la batería</string>
+    <string name="permission_battery_optimization_desc">Deshabilitar las optimizaciones de la batería para permitir la sincronización sin abrir la aplicación.</string>
+    <string name="permission_notifications_post_label">Publicar las notificaciones</string>
+    <string name="permission_notifications_post_desc">El permiso de notificaciones permite a Octi notificarte sobre los eventos en otros dispositivos que hayas configurado.</string>
 
     <string name="sync_setting_background_enable_title">Sincronización en segundo plano</string>
-    <string name="sync_setting_background_enable_desc">Sincronizar los datos cuando la aplicación no está abierta.</string>
+    <string name="sync_setting_background_enable_desc">Sincroniza datos cuando la aplicación no está abierta.</string>
     <string name="sync_setting_background_mobile_label">Red móvil</string>
-    <string name="sync_setting_background_mobile_desc">Permitir la sincronización en segundo plano utilizando su conexión de red móvil si el Wi-Fi no está disponible.</string>
+    <string name="sync_setting_background_mobile_desc">Permitir la sincronización en segundo plano usando tu conexión de red móvil si la Wi-Fi no está disponible.</string>
 
     <string name="modules_settings_label">Módulos</string>
-    <string name="modules_settings_desc">Activa los diferentes módulos y modifica su configuración.</string>
+    <string name="modules_settings_desc">Alternar los  diferentes módulos y ajustar tus configuraciones.</string>
     <string name="device_x_label">Dispositivo: %s</string>
 
     <string name="module_power_battery_status_unknown">Estado desconocido</string>
-    <string name="module_power_battery_status_full">Completa</string>
+    <string name="module_power_battery_status_full">Completo</string>
     <string name="module_power_battery_status_charging">Cargando</string>
-    <string name="module_power_battery_status_charging_slow">Carga lenta</string>
-    <string name="module_power_battery_status_charging_fast">Carga rápida</string>
+    <string name="module_power_battery_status_charging_slow">Cargando lentamente</string>
+    <string name="module_power_battery_status_charging_fast">Cargando rápidamente</string>
     <string name="module_power_battery_status_discharging">Descargando</string>
     <string name="module_power_battery_status_discharging_slow">Descargando lentamente</string>
-    <string name="module_power_battery_status_discharging_fast">Descargando rápido</string>
-    <string name="module_power_battery_full_since_x">Carga terminada: %s</string>
+    <string name="module_power_battery_status_discharging_fast">Descargando rápidamente</string>
+    <string name="module_power_battery_full_since_x">Carga finalizada: %s</string>
     <string name="module_power_battery_full_in_x">Totalmente cargado: %s</string>
-    <string name="module_power_battery_empty_in_x">Se acabó la energía: %s</string>
+    <string name="module_power_battery_empty_in_x">Fuera de jugo: %s</string>
     <string name="module_power_battery_estimation_na">Estimación no disponible</string>
 
     <string name="module_wifi_unknown_ssid_label">SSID desconocido</string>
     <string name="module_wifi_unknown_ip_label">IP desconocida</string>
     <string name="module_wifi_reception_good_label">Buena señal</string>
-    <string name="module_wifi_reception_okay_label">Señal aceptable</string>
-    <string name="module_wifi_reception_bad_label">Mala señal</string>
+    <string name="module_wifi_reception_okay_label">Señal Correcta</string>
+    <string name="module_wifi_reception_bad_label">Señal Mala</string>
 
-    <string name="module_power_label">Módulo de energía</string>
+    <string name="module_power_label">Módulo de potencia</string>
     <string name="module_power_desc">Batería, carga, estimaciones, temperatura, etc.</string>
 
     <string name="module_wifi_label">Módulo Wi-Fi</string>
@@ -192,15 +195,15 @@
     <string name="module_apps_last_installed_x">Última aplicación instalada: %s</string>
     <string name="module_apps_list_title">Aplicaciones instaladas</string>
 
-    <string name="pro_device_limit_reached_title">Límite de dispositivos alcanzado</string>
-    <string name="pro_device_limit_reached_description">Actualmente tienes %1$d  dispositivos sincronizados. Para ver más de %2$d dispositivos, actualizar a Octi Pro o eliminar dispositivos.</string>
+    <string name="pro_device_limit_reached_title">Límite de dispositivo alcanzado</string>
+    <string name="pro_device_limit_reached_description">Actualmente tienes %1$d dispositivos sincronizados. Para ver más de %2$d dispositivos, actualice a Octi Pro o elimine dispositivos.</string>
     <string name="module_power_widget_description">Muestra el estado de la batería de tus dispositivos sincronizados.</string>
 
     <string name="module_apps_label">Módulo de aplicaciones</string>
-    <string name="module_apps_desc">Información sobre aplicaciones instaladas.</string>
+    <string name="module_apps_desc">Información sobre las aplicaciones instaladas.</string>
 
-    <string name="module_clipboard_label">Módulo de portapapeles</string>
-    <string name="module_clipboard_desc">Copia y pega texto entre diapositivos.</string>
-    <string name="module_clipboard_copied_octi_to_os">Copiado de Octi al portapaples del sistema</string>
-    <string name="module_clipboard_copied_os_to_octi">Copiado del sistema al portapapeles de Octi</string>
+    <string name="module_clipboard_label">Módulo portapapeles</string>
+    <string name="module_clipboard_desc">Copiar y pegar el texto entre los dispositivos.</string>
+    <string name="module_clipboard_copied_octi_to_os">Octi copiado al portapapeles del sistema</string>
+    <string name="module_clipboard_copied_os_to_octi">Sistema copiado al portapapeles Octi</string>
 </resources>
