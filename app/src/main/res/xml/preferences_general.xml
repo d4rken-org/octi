@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/settings_category_ui_label">
 
@@ -9,13 +10,16 @@
             android:title="@string/ui_theme_setting_label" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/settings_category_other_label">
+    <PreferenceCategory
+        android:title="@string/settings_category_other_label"
+        app:isPreferenceVisible="false">
 
         <CheckBoxPreference
             android:icon="@drawable/ic_spider_thread_onsurface"
             android:key="debug.bugreport.automatic.enabled"
             android:summary="Automatically reports issues, e.g. details on the app crashes so I can figure out why and fix it."
-            android:title="Automatic bug reports" />
+            android:title="Automatic bug reports"
+            app:isPreferenceVisible="false" />
 
     </PreferenceCategory>
 

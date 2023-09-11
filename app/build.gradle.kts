@@ -6,7 +6,6 @@ plugins {
 }
 apply(plugin = "dagger.hilt.android.plugin")
 apply(plugin = "androidx.navigation.safeargs.kotlin")
-apply(plugin = "com.bugsnag.android.gradle")
 
 android {
     val packageName = ProjectConfig.packageName
@@ -31,10 +30,6 @@ android {
         buildConfigField("String", "BUILDTIME", "\"${buildTime()}\"")
         buildConfigField("String", "VERSION_CODE", "\"${ProjectConfig.Version.code}\"")
         buildConfigField("String", "VERSION_NAME", "\"${ProjectConfig.Version.name}\"")
-
-        manifestPlaceholders["bugsnagApiKey"] = getBugSnagApiKey(
-            File(System.getProperty("user.home"), ".appconfig/${packageName}/bugsnag.properties")
-        ) ?: "fake"
     }
 
     signingConfigs {
@@ -143,9 +138,6 @@ dependencies {
     addSerialization()
     addIO()
     addRetrofit()
-
-    "gplayImplementation"("com.bugsnag:bugsnag-android:5.9.2")
-    "gplayImplementation"("com.getkeepsafe.relinker:relinker:1.4.3")
 
     addAndroidCore()
     addAndroidUI()

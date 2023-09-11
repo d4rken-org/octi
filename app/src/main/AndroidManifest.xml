@@ -41,10 +41,6 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
 
-        <meta-data
-            android:name="com.bugsnag.android.API_KEY"
-            android:value="${bugsnagApiKey}" />
-
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="sensor"

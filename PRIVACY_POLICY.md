@@ -58,6 +58,8 @@ https://support.google.com/drive/answer/10375054?hl=en
 
 ## Automatic error reports
 
+*Removed in 0.8.3*
+
 Anonymous device information may be collected in the event of an app crash or error.
 
 To do this the app uses the service "Bugsnag":
@@ -66,7 +68,8 @@ https://www.bugsnag.com/
 Bugsnag's privacy policy can be found here:
 https://docs.bugsnag.com/legal/privacy-policy/
 
-Error reports contain information related to the error that occured, your device and software versions, e.g. what happened when the error occured, your phone model, Android version and app version.
+Error reports contain information related to the error that occured, your device and software versions, e.g. what
+happened when the error occured, your phone model, Android version and app version.
 
 You can disable automatic reports in the app's settings.
 
