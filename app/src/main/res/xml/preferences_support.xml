@@ -27,7 +27,8 @@
             android:icon="@drawable/ic_id_onsurface"
             android:key="support.installid"
             android:summary="@string/support_installid_desc"
-            android:title="@string/support_installid_label" />
+            android:title="@string/support_installid_label"
+            app:isPreferenceVisible="false" />
         <Preference
             android:icon="@drawable/ic_baseline_bug_report_24"
             android:key="support.debuglog"
