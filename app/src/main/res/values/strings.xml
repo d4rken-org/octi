@@ -29,6 +29,10 @@
     <string name="general_refresh_action">Refresh</string>
     <string name="general_continue">Continue</string>
 
+    <string name="onboarding_body1">Octi is a tool for people with multiple Android devices.</string>
+    <string name="onboarding_body2">It synchronizes information between the devices so you can see one device from all other devices.</string>
+    <string name="onboarding_body3">You can upgrade to Octi Pro to gain extra features and support development.</string>
+
     <string name="dashboard_click_hint">Some entries can be clicked to view more details.</string>
 
     <string name="debug_debuglog_size_label">Size</string>

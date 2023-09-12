@@ -12,6 +12,7 @@ import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.datastore.value
+import eu.darken.octi.common.datastore.valueBlocking
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -65,6 +66,12 @@ class DashboardVM @Inject constructor(
     private val webpageTool: WebpageTool,
     private val clipboardHandler: ClipboardHandler,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+
+    init {
+        if (!generalSettings.isOnboardingDone.valueBlocking) {
+            DashboardFragmentDirections.actionDashFragmentToOnboardingFragment().navigate()
+        }
+    }
 
     val dashboardEvents = SingleLiveEvent<DashboardEvent>()
 
