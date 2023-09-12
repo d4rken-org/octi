@@ -30,6 +30,8 @@ class GeneralSettings @Inject constructor(
     override val dataStore: DataStore<Preferences>
         get() = context.dataStore
 
+    val isOnboardingDone = dataStore.createValue("onboarding.finished", false)
+
     val isWelcomeDismissed = dataStore.createValue("onboarding.welcome.dismissed", false)
 
     val isSyncSetupDismissed = dataStore.createValue("onboarding.syncsetup.dismissed", false)

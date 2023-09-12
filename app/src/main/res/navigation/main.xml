@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_dashFragment_to_appsListFragment"
             app:destination="@id/appsListFragment" />
+        <action
+            android:id="@+id/action_dashFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment" />
     </fragment>
 
     <fragment
@@ -106,6 +109,14 @@
         <argument
             android:name="deviceId"
             app:argType="eu.darken.octi.sync.core.DeviceId" />
+    </fragment>
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="eu.darken.octi.main.ui.onboarding.ui.OnboardingFragment"
+        tools:layout="@layout/onboarding_fragment">
+        <action
+            android:id="@+id/action_onboardingFragment_to_dashFragment"
+            app:destination="@id/dashFragment" />
     </fragment>
 
 
