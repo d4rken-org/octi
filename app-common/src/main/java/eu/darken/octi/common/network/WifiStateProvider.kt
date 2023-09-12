@@ -134,10 +134,18 @@ class WifiStateProvider @Inject constructor(
             }
 
             Wifi(
-                signalStrength = if (hasApiLevel(30)) {
-                    wifiManager.calculateSignalLevel(capabilities.signalStrength) / wifiManager.maxSignalLevel.toFloat()
-                } else {
-                    WifiManager.calculateSignalLevel(capabilities.signalStrength, 6) / 6f
+                signalStrength = when {
+                    hasApiLevel(30) -> {
+                        wifiManager.calculateSignalLevel(capabilities.signalStrength) / wifiManager.maxSignalLevel.toFloat()
+                    }
+
+                    hasApiLevel(29) -> {
+                        WifiManager.calculateSignalLevel(capabilities.signalStrength, 6) / 6f
+                    }
+
+                    else -> {
+                        WifiManager.calculateSignalLevel(wifiManager.connectionInfo.rssi, 6) / 6f
+                    }
                 }.takeIf { it.isFinite() } ?: -1f,
                 ssid = ssid,
                 addressIpv4 = linkProperties.linkAddresses.firstOrNull { it.address is Inet4Address }?.address as Inet4Address?,
