@@ -1,6 +1,6 @@
 package eu.darken.octi.syncs.jserver.ui.link
 
-enum class LinkOption {
+enum class JServerLinkOption {
     DIRECT,
     QRCODE,
     NFC
