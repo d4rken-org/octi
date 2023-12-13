@@ -18,7 +18,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.Fragment3
 import eu.darken.octi.common.viewbinding.viewBinding
 import eu.darken.octi.databinding.SyncJserverLinkClientFragmentBinding
-import eu.darken.octi.syncs.jserver.ui.link.LinkOption
+import eu.darken.octi.syncs.jserver.ui.link.JServerLinkOption
 
 
 @AndroidEntryPoint
@@ -43,9 +43,9 @@ class JServerLinkClientFragment : Fragment3(R.layout.sync_jserver_link_client_fr
 
         ui.linkOptions.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.link_option_direct -> vm.onLinkOptionSelected(LinkOption.DIRECT)
-                R.id.link_option_qrcode -> vm.onLinkOptionSelected(LinkOption.QRCODE)
-                R.id.link_option_nfc -> vm.onLinkOptionSelected(LinkOption.NFC)
+                R.id.link_option_direct -> vm.onLinkOptionSelected(JServerLinkOption.DIRECT)
+                R.id.link_option_qrcode -> vm.onLinkOptionSelected(JServerLinkOption.QRCODE)
+                R.id.link_option_nfc -> vm.onLinkOptionSelected(JServerLinkOption.NFC)
             }
         }
 
@@ -70,19 +70,21 @@ class JServerLinkClientFragment : Fragment3(R.layout.sync_jserver_link_client_fr
         }
 
         vm.state.observe2(ui) { state ->
-            linkContainerDirect.isGone = state.linkOption != LinkOption.DIRECT
-            linkContainerQrcode.isGone = state.linkOption != LinkOption.QRCODE
-            linkContainerNfc.isGone = state.linkOption != LinkOption.NFC
+            linkContainerDirect.isGone = state.linkOption != JServerLinkOption.DIRECT
+            linkContainerQrcode.isGone = state.linkOption != JServerLinkOption.QRCODE
+            linkContainerNfc.isGone = state.linkOption != JServerLinkOption.NFC
 
             when (state.linkOption) {
-                LinkOption.DIRECT -> {
+                JServerLinkOption.DIRECT -> {
                     linkOptions.check(R.id.link_option_direct)
                     linkCodeActual.text = null
                 }
-                LinkOption.QRCODE -> {
+
+                JServerLinkOption.QRCODE -> {
                     linkOptions.check(R.id.link_option_qrcode)
                 }
-                LinkOption.NFC -> {
+
+                JServerLinkOption.NFC -> {
                     linkOptions.check(R.id.link_option_nfc)
                     // TODO NOOP?
                 }
