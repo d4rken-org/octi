@@ -11,6 +11,8 @@ import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
 import eu.darken.octi.syncs.gdrive.ui.GDriveStateVH
 import eu.darken.octi.syncs.jserver.core.JServerConnector
 import eu.darken.octi.syncs.jserver.ui.JServerStateVH
+import eu.darken.octi.syncs.kserver.core.KServerConnector
+import eu.darken.octi.syncs.kserver.ui.KServerStateVH
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -49,16 +51,29 @@ class SyncListVM @Inject constructor(
                                 ).navigate()
                             }
                         )
+
                         is JServerConnector -> JServerStateVH.Item(
                             credentials = connector.credentials,
                             ourState = state,
                             otherStates = (connectors - connector).map { it.state.first() },
                             onManage = {
-                                SyncListFragmentDirections.actionSyncListFragmentToSyrvJServerActionsFragment(
+                                SyncListFragmentDirections.actionSyncListFragmentToJServerActionsFragment(
                                     connector.identifier
                                 ).navigate()
                             }
                         )
+
+                        is KServerConnector -> KServerStateVH.Item(
+                            credentials = connector.credentials,
+                            ourState = state,
+                            otherStates = (connectors - connector).map { it.state.first() },
+                            onManage = {
+                                SyncListFragmentDirections.actionSyncListFragmentToKServerActionsFragment(
+                                    connector.identifier
+                                ).navigate()
+                            }
+                        )
+
                         else -> {
                             log(TAG, WARN) { "Unknown connector type: $connector" }
                             null

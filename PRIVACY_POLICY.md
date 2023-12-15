@@ -26,18 +26,34 @@ Camera data is not stored and only used for processing the QR-Code.
 
 ### Query installed apps
 
-Octi allows you to see which apps are installed on your other devices, to do this, the `QUERY_ALL_PACKAGES` is required. This information is only available to you and encrypted when exchanged between devices. Two edge cases exist: Information about installed apps may be contained in manually generated [debug logs](#debug-log) and [automatic error reports](#automatic-error-reports).
+Octi allows you to see which apps are installed on your other devices, to do this, the `QUERY_ALL_PACKAGES` is required.
+This information is only available to you and encrypted when exchanged between devices. Two edge cases exist:
+Information about installed apps may be contained in manually generated [debug logs](#debug-log)
+and [automatic error reports](#automatic-error-reports).
 
 ## Sync services
 
 Octi provides different mechanisms to syncronize data across different devices. The following explains the different
 mechanisms and how your data is handled.
 
+### K-Server
+
+K-Server is an end to end encrypted open-source sync server hosted by me.
+
+Synced data can't be viewed by me. Data is encrypted client-side. The encryption key is only available on your devices
+and is unknown to the server.
+
+Some meta data like access times and IP addresses are temporarily stored to allow for anti-abuse mechanisms.
+
+Any stored data can be deleted from within the app by deleting your account. If your account is not accessed at least
+once within 30 days, your data is also deleted.
+
 ### J-Server
 
 J-Server is an end to end encrypted open-source sync server hosted by me.
 
-Synced data can't be viewed by me. Data is encrypted client-side. The encryption key is only available on your devices and is unknown to the server.
+Synced data can't be viewed by me. Data is encrypted client-side. The encryption key is only available on your devices
+and is unknown to the server.
 
 Some meta data like access times and IP addresses are temporarily stored to allow for anti-abuse mechanisms.
 
