@@ -116,6 +116,11 @@ android {
             useJUnitPlatform()
         }
     }
+    packaging {
+        resources {
+            excludes += "META-INF/INDEX.LIST"
+        }
+    }
 }
 
 dependencies {
