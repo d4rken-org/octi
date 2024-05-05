@@ -48,7 +48,7 @@
             tools:ignore="HardcodedText" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/server_kserver_grylls_item"
+            android:id="@+id/server_kserver_beta_item"
             style="@style/Widget.Material3.CompoundButton.RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,6 +61,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="dev.kserver.octi.darken.eu (Testing)"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/server_kserver_local_item"
+            style="@style/Widget.Material3.CompoundButton.RadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="localhost (Local)"
             tools:ignore="HardcodedText" />
     </RadioGroup>
 

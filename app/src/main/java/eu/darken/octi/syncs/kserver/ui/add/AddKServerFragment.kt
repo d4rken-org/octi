@@ -43,27 +43,33 @@ class AddKServerFragment : Fragment3(R.layout.sync_add_new_kserver_fragment) {
         ui.serverGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.server_kserver_prod_item -> vm.selectType(KServer.Official.PROD)
-                R.id.server_kserver_grylls_item -> vm.selectType(KServer.Official.GRYLLS)
+                R.id.server_kserver_beta_item -> vm.selectType(KServer.Official.BETA)
                 R.id.server_kserver_dev_item -> vm.selectType(KServer.Official.DEV)
+                R.id.server_kserver_local_item -> vm.selectType(KServer.Official.LOCAL)
             }
         }
         ui.serverKserverProdItem.apply {
             text = "${KServer.Official.PROD.address.domain} (Production)"
         }
-        ui.serverKserverGryllsItem.apply {
-            text = "${KServer.Official.GRYLLS.address.domain} (Beta)"
+        ui.serverKserverBetaItem.apply {
+            text = "${KServer.Official.BETA.address.domain} (Beta)"
             isGone = BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.RELEASE
         }
         ui.serverKserverDevItem.apply {
             text = "${KServer.Official.DEV.address.domain} (dev)"
             isGone = !BuildConfigWrap.DEBUG
         }
+        ui.serverKserverLocalItem.apply {
+            text = "${KServer.Official.LOCAL.address.domain} (local)"
+            isGone = !BuildConfigWrap.DEBUG
+        }
 
         vm.state.observe2(ui) { state ->
             when (state.serverType) {
                 KServer.Official.PROD -> serverGroup.check(R.id.server_kserver_prod_item)
-                KServer.Official.GRYLLS -> serverGroup.check(R.id.server_kserver_grylls_item)
+                KServer.Official.BETA -> serverGroup.check(R.id.server_kserver_beta_item)
                 KServer.Official.DEV -> serverGroup.check(R.id.server_kserver_dev_item)
+                KServer.Official.LOCAL -> serverGroup.check(R.id.server_kserver_local_item)
             }
             createNewAccount.isEnabled = !state.isBusy
             linkExistingAccount.isEnabled = !state.isBusy
