@@ -44,12 +44,13 @@ interface KServerApi {
 
     @JsonClass(generateAdapter = true)
     data class DevicesResponse(
-        @Json(name = "count") val count: Int,
-        @Json(name = "items") val items: List<Device>,
+        @Json(name = "devices") val devices: List<Device>,
     ) {
         @JsonClass(generateAdapter = true)
         data class Device(
-            @Json(name = "id") val id: String
+            @Json(name = "id") val id: String,
+            @Json(name = "label") val label: String?,
+            @Json(name = "version") val version: String?,
         )
     }
 

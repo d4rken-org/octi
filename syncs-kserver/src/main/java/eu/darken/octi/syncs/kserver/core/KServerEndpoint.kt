@@ -99,7 +99,7 @@ class KServerEndpoint @AssistedInject constructor(
             val response = api.getDeviceList(
                 deviceID = ourDeviceIdString,
             )
-            response.items.map { DeviceId(it.id) }
+            response.devices.map { DeviceId(it.id) }
         }
 
     data class ReadData(
