@@ -49,7 +49,6 @@ interface KServerApi {
         @JsonClass(generateAdapter = true)
         data class Device(
             @Json(name = "id") val id: String,
-            @Json(name = "label") val label: String?,
             @Json(name = "version") val version: String?,
         )
     }
