@@ -20,6 +20,8 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class KServerEndpoint @AssistedInject constructor(
     @Assisted private val serverAdress: KServer.Address,
@@ -112,12 +114,14 @@ class KServerEndpoint @AssistedInject constructor(
         val response = api.readModule(
             callerDeviceId = ourDeviceIdString,
             moduleId = moduleId.id,
-            targetDeviceId = deviceId.id.takeIf { it != ourDeviceIdString }
+            targetDeviceId = deviceId.id,
         )
 
         if (!response.isSuccessful) throw HttpException(response)
 
-        val lastModifiedAt = response.headers()["X-Modified-At"]?.let { Instant.parse(it) } ?: return@withContext null
+        val lastModifiedAt = response.headers()["X-Modified-At"]
+            ?.let { ZonedDateTime.parse(it, DateTimeFormatter.RFC_1123_DATE_TIME) }?.toInstant()
+            ?: return@withContext null
 
         val body = response.body()?.byteString()?.takeIf { it != NULL_BODY } ?: ByteString.EMPTY
 
@@ -132,6 +136,7 @@ class KServerEndpoint @AssistedInject constructor(
         api.writeModule(
             deviceId = ourDeviceIdString,
             moduleId = moduleId.id,
+            targetDeviceId = ourDeviceIdString,
             payload = payload.toRequestBody(),
         )
     }
@@ -139,7 +144,7 @@ class KServerEndpoint @AssistedInject constructor(
     suspend fun deleteModules(deviceId: DeviceId) = withContext(dispatcherProvider.IO) {
         api.deleteModules(
             callerDeviceId = ourDeviceIdString,
-            targetDeviceId = deviceId.id.takeIf { it != ourDeviceIdString }
+            targetDeviceId = deviceId.id,
         )
     }
 

@@ -17,7 +17,7 @@ interface KServerApi {
 
     @JsonClass(generateAdapter = true)
     data class RegisterResponse(
-        @Json(name = "username") val accountID: String,
+        @Json(name = "account") val accountID: String,
         @Json(name = "password") val password: String
     )
 
@@ -62,20 +62,21 @@ interface KServerApi {
     suspend fun readModule(
         @Path("moduleId") moduleId: String,
         @Header("X-Device-ID") callerDeviceId: String,
-        @Query("device-id") targetDeviceId: String?,
+        @Query("device-id") targetDeviceId: String,
     ): Response<ResponseBody>
 
     @POST("module/{moduleId}")
     suspend fun writeModule(
         @Path("moduleId") moduleId: String,
         @Header("X-Device-ID") deviceId: String,
+        @Query("device-id") targetDeviceId: String,
         @Body payload: RequestBody,
     )
 
     @DELETE("module")
     suspend fun deleteModules(
         @Header("X-Device-ID") callerDeviceId: String,
-        @Query("device-id") targetDeviceId: String?,
+        @Query("device-id") targetDeviceId: String,
     )
 
     @JsonClass(generateAdapter = true)
