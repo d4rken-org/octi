@@ -34,10 +34,10 @@ interface KServerApi {
 
     @JsonClass(generateAdapter = true)
     data class ShareCodeResponse(
-        @Json(name = "shareCode") val shareCode: String,
+        @Json(name = "code") val shareCode: String,
     )
 
-    @POST("auth/share")
+    @POST("account/share")
     suspend fun createShareCode(
         @Header("X-Device-ID") deviceID: String,
     ): ShareCodeResponse
