@@ -16,7 +16,7 @@ interface KServer {
         @Json(name = "PROD") PROD(Address("prod.kserver.octi.darken.eu")),
         @Json(name = "BETA") BETA(Address("beta.kserver.octi.darken.eu")),
         @Json(name = "DEV") DEV(Address("dev.kserver.octi.darken.eu")),
-        @Json(name = "LOCAL") LOCAL(Address("blasphemy", protocol = "http")),
+        @Json(name = "LOCAL") LOCAL(Address("blasphemy", protocol = "http", port = 8080)),
     }
 
     @JsonClass(generateAdapter = true)
@@ -24,7 +24,7 @@ interface KServer {
     data class Address(
         @Json(name = "domain") val domain: String,
         @Json(name = "protocol") val protocol: String = "https",
-        @Json(name = "port") val port: Int = 8080,
+        @Json(name = "port") val port: Int = 443,
     ) : Parcelable {
         val httpUrl: String
             get() = "$protocol://$domain:$port/v1/"

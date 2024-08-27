@@ -53,11 +53,11 @@ class AddKServerFragment : Fragment3(R.layout.sync_add_new_kserver_fragment) {
         }
         ui.serverKserverBetaItem.apply {
             text = "${KServer.Official.BETA.address.domain} (Beta)"
-            isGone = BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.RELEASE
+            isGone = true
         }
         ui.serverKserverDevItem.apply {
             text = "${KServer.Official.DEV.address.domain} (dev)"
-            isGone = !BuildConfigWrap.DEBUG
+            isGone = true
         }
         ui.serverKserverLocalItem.apply {
             text = "${KServer.Official.LOCAL.address.domain} (local)"
