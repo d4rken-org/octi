@@ -38,6 +38,7 @@ class HttpModule {
     fun baseHttpClient(
         @BaseCache cache: Cache,
         loggingInterceptor: HttpLoggingInterceptor,
+        userAgentInterceptor: UserAgentInterceptor,
     ): OkHttpClient = OkHttpClient().newBuilder().apply {
         cache(cache)
         connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
@@ -45,6 +46,7 @@ class HttpModule {
         writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
         retryOnConnectionFailure(true)
         addInterceptor(loggingInterceptor)
+        addInterceptor(userAgentInterceptor)
     }.build()
 
     @BaseCache
