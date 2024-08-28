@@ -104,6 +104,24 @@ class KServerEndpoint @AssistedInject constructor(
             response.devices.map { DeviceId(it.id) }
         }
 
+    suspend fun resetDevices(deviceIds: Set<DeviceId> = emptySet()): Unit = withContext(dispatcherProvider.IO) {
+        log(TAG) { "resetDevices(deviceIds=$deviceIds)" }
+
+        api.resetDevices(
+            deviceId = ourDeviceIdString,
+            targets = KServerApi.ResetRequest(targets = deviceIds)
+        )
+    }
+
+    suspend fun deleteDevice(deviceId: DeviceId): Unit = withContext(dispatcherProvider.IO) {
+        log(TAG) { "deleteDevice($deviceId)" }
+
+        api.deleteDevice(
+            callerDeviceId = ourDeviceIdString,
+            target = deviceId.id,
+        )
+    }
+
     data class ReadData(
         val modifiedAt: Instant,
         val payload: ByteString,
@@ -138,13 +156,6 @@ class KServerEndpoint @AssistedInject constructor(
             moduleId = moduleId.id,
             targetDeviceId = ourDeviceIdString,
             payload = payload.toRequestBody(),
-        )
-    }
-
-    suspend fun deleteModules(deviceId: DeviceId) = withContext(dispatcherProvider.IO) {
-        api.deleteModules(
-            callerDeviceId = ourDeviceIdString,
-            targetDeviceId = deviceId.id,
         )
     }
 

@@ -7,7 +7,11 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
-import eu.darken.octi.common.debug.logging.Logging.Priority.*
+import eu.darken.octi.common.debug.logging.Logging.Priority.DEBUG
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
+import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -15,11 +19,29 @@ import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
-import eu.darken.octi.sync.core.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.SyncConnector
+import eu.darken.octi.sync.core.SyncConnectorState
+import eu.darken.octi.sync.core.SyncOptions
+import eu.darken.octi.sync.core.SyncRead
+import eu.darken.octi.sync.core.SyncWrite
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import kotlin.math.max
 
@@ -88,8 +110,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    override suspend fun deleteAll() {
-        log(TAG, INFO) { "deleteAll()" }
+    override suspend fun resetData() {
+        log(TAG, INFO) { "resetData()" }
         writeAction {
             appDataRoot()
                 .listFiles()

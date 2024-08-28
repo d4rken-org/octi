@@ -2,6 +2,7 @@ package eu.darken.octi.syncs.kserver.core
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import eu.darken.octi.sync.core.DeviceId
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -58,6 +59,23 @@ interface KServerApi {
         @Header("X-Device-ID") deviceID: String,
     ): DevicesResponse
 
+    @JsonClass(generateAdapter = true)
+    data class ResetRequest(
+        @Json(name = "targets") val targets: Set<DeviceId>,
+    )
+
+    @POST("devices/reset")
+    suspend fun resetDevices(
+        @Header("X-Device-ID") deviceId: String,
+        @Body targets: ResetRequest,
+    )
+
+    @DELETE("devices/{deviceId}")
+    suspend fun deleteDevice(
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Path("deviceId") target: String,
+    )
+
     @GET("module/{moduleId}")
     suspend fun readModule(
         @Path("moduleId") moduleId: String,
@@ -73,9 +91,4 @@ interface KServerApi {
         @Body payload: RequestBody,
     )
 
-    @DELETE("module")
-    suspend fun deleteModules(
-        @Header("X-Device-ID") callerDeviceId: String,
-        @Query("device-id") targetDeviceId: String,
-    )
 }

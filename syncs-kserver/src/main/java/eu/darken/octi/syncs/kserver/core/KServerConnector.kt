@@ -45,7 +45,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okio.ByteString
-import retrofit2.HttpException
 import java.time.Duration
 import java.time.Instant
 import kotlin.math.max
@@ -124,33 +123,14 @@ class KServerConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    override suspend fun deleteAll() = writeServerWrapper {
-        log(TAG, INFO) { "deleteAll()" }
-        val deviceIds = endpoint.listDevices()
-        log(TAG, VERBOSE) { "deleteAll(): Found devices: $deviceIds" }
-
-        deviceIds.forEach {
-            log(TAG, VERBOSE) { "deleteAll(): Deleting module data for $it" }
-            try {
-                endpoint.deleteModules(it)
-            } catch (e: Exception) {
-                log(TAG, WARN) { "Failed to delete $it" }
-            }
-        }
+    override suspend fun resetData() = writeServerWrapper {
+        log(TAG, INFO) { "resetData()" }
+        endpoint.resetDevices()
     }
 
     override suspend fun deleteDevice(deviceId: DeviceId) = writeServerWrapper {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
-        try {
-            endpoint.deleteModules(deviceId)
-        } catch (e: HttpException) {
-            // TODO once we have device deletion as an API, remove this edge case catch
-            if (e.code() == 401) {
-                log(TAG, WARN) { "Can't delete device because we are not authorized" }
-            } else {
-                throw e
-            }
-        }
+        endpoint.deleteDevice(deviceId)
     }
 
     suspend fun createLinkCode(): LinkingData {
