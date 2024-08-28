@@ -109,31 +109,30 @@ class SyncManager @Inject constructor(
         log(TAG) { "write(data=$toWrite) done (${System.currentTimeMillis() - start}ms)" }
     }
 
-    suspend fun wipe(identifier: ConnectorId) = withContext(NonCancellable) {
-        log(TAG) { "wipe(identifier=$identifier)" }
-        getConnectorById<SyncConnector>(identifier).first().deleteAll()
-        log(TAG) { "wipe(identifier=$identifier) done" }
+    suspend fun resetData(identifier: ConnectorId) = withContext(NonCancellable) {
+        log(TAG) { "resetData(identifier=$identifier)" }
+        getConnectorById<SyncConnector>(identifier).first().resetData()
+        log(TAG) { "resetData(identifier=$identifier) done" }
     }
 
-    suspend fun disconnect(identifier: ConnectorId, wipe: Boolean = false) = withContext(NonCancellable) {
-        log(TAG) { "disconnect(identifier=$identifier, wipe=$wipe)" }
+    suspend fun disconnect(identifier: ConnectorId) = withContext(NonCancellable) {
+        log(TAG) { "disconnect(identifier=$identifier)" }
 
         val connector = getConnectorById<SyncConnector>(identifier).first()
 
-        disabledConnectors.value = disabledConnectors.value + connector
+        disabledConnectors.value += connector
 
         try {
             hubs.first().filter { it.owns(identifier) }.forEach {
                 it.remove(identifier)
             }
-            if (wipe) connector.deleteAll()
         } catch (e: Exception) {
-            log(TAG, ERROR) { "disconnect($identifier,$wipe=$wipe) failed: ${e.asLog()}" }
+            log(TAG, ERROR) { "disconnect($identifier) failed: ${e.asLog()}" }
         } finally {
-            disabledConnectors.value = disabledConnectors.value - connector
+            disabledConnectors.value -= connector
         }
 
-        log(TAG) { "disconnect(connector=$connector, wipe=$wipe) done" }
+        log(TAG) { "disconnect(connector=$connector) done" }
     }
 
     companion object {

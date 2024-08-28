@@ -17,7 +17,7 @@ interface SyncConnector {
     /**
      * Wipe all Octi data stored via this connector
      */
-    suspend fun deleteAll()
+    suspend fun resetData()
 
     suspend fun deleteDevice(deviceId: DeviceId)
 
