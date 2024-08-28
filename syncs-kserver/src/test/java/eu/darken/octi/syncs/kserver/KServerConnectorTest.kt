@@ -1,4 +1,4 @@
-package eu.darken.octi.syncs.jserver
+package eu.darken.octi.syncs.kserver
 
 import eu.darken.octi.common.collections.fromGzip
 import eu.darken.octi.common.collections.toByteString
@@ -8,7 +8,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 
-class JServerConnectorTest {
+class KServerConnectorTest {
     @Test
     fun `test encryption`() {
         val testData = "The cake is a lie!"
