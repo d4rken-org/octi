@@ -6,7 +6,6 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.syncs.gdrive.ui.add.AddGDriveVH
-import eu.darken.octi.syncs.jserver.ui.add.AddJServerDataVH
 import eu.darken.octi.syncs.kserver.ui.add.AddKServerDataVH
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -24,9 +23,9 @@ class SyncAddVM @Inject constructor(
         AddGDriveVH.Item {
             SyncAddFragmentDirections.actionSyncAddFragmentToGDriveAddFragment().navigate()
         }.run { items.add(this) }
-        AddJServerDataVH.Item {
-            SyncAddFragmentDirections.actionSyncAddFragmentToAddJServerFragment().navigate()
-        }.run { items.add(this) }
+//        AddJServerDataVH.Item {
+//            SyncAddFragmentDirections.actionSyncAddFragmentToAddJServerFragment().navigate()
+//        }.run { items.add(this) }
         AddKServerDataVH.Item {
             SyncAddFragmentDirections.actionSyncAddFragmentToAddKServerFragment().navigate()
         }.run { items.add(this) }

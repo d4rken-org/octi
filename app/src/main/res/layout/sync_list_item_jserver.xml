@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="?selectableItemBackground"
     android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
     android:padding="16dp">
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -80,10 +80,10 @@
         android:id="@+id/quota_label"
         style="@style/TextAppearance.Material3.LabelMedium"
         android:layout_width="0dp"
-        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/general_quota_label"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/last_sync_text" />
 
@@ -91,9 +91,9 @@
         android:id="@+id/quota_text"
         style="@style/TextAppearance.Material3.BodyMedium"
         android:layout_width="0dp"
-        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/quota_label"
@@ -120,6 +120,21 @@
         app:layout_constraintTop_toBottomOf="@id/devices_label"
         tools:text="4 devices (2 unique)" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/deprecation_hint"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="?colorError"
+        android:text="@string/sync_jserver_deprecation_hint"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices_text" />
+
     <ImageView
         android:id="@+id/manage_hint_icon"
         android:layout_width="16dp"
@@ -142,7 +157,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/devices_text" />
+        app:layout_constraintTop_toBottomOf="@id/deprecation_hint" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

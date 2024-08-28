@@ -116,7 +116,7 @@
     <string name="sync_gdrive_add_label">Add new Google Drive</string>
     <string name="sync_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
     <string name="sync_gdrive_wipe_confirmation_desc">Reset all Octi data stored on Google Drive. Your device stays logged into Google Drive.</string>
-    <string name="sync_gdrive_disconnect_confirmation_desc">Log out from Google Drive and delete data from this device.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Log out from Google Drive and delete data related to this device.</string>
     <string name="sync_gdrive_error_no_account_on_device">This device is not signed into any Google account.</string>
 
     <string name="sync_jserver_type_label">J-Server</string>
@@ -143,6 +143,7 @@
     <string name="sync_jserver_link_client_startcamera_action">Start camera</string>
     <string name="sync_jserver_link_client_link_action">Link device</string>
     <string name="sync_jserver_link_client_nfc_action">Looking for NFC host. Hold it close to the device offering to share account access.</string>
+    <string name="sync_jserver_deprecation_hint">Please switch to \'K-Server\'. The hardware behind \'J-Server\' will soon no longer be available.</string>
 
     <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">A open-source sync server for Octi made by this app\'s developer. Data is encrypted client-side, only your devices can decrypt it.\n\nAs both the app and the server are still being improved, it may be less stable than other sync options.</string>
