@@ -36,11 +36,11 @@ class KServerActionsFragment : BottomSheetDialogFragment2() {
                 }
             }.show()
         }
-        ui.wipeAction.setOnClickListener {
+        ui.resetAction.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext()).apply {
-                setMessage(R.string.sync_kserver_wipe_confirmation_desc)
-                setPositiveButton(R.string.general_wipe_action) { _, _ ->
-                    vm.wipe()
+                setMessage(R.string.sync_kserver_reset_confirmation_desc)
+                setPositiveButton(R.string.general_reset_action) { _, _ ->
+                    vm.reset()
                 }
                 setNegativeButton(R.string.general_cancel_action) { _, _ ->
 

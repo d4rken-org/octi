@@ -6,7 +6,6 @@
     <string name="general_done_action">Done</string>
     <string name="general_copy_action">Copy</string>
     <string name="general_remove_action">Remove</string>
-    <string name="general_wipe_action">Wipe</string>
     <string name="general_cancel_action">Cancel</string>
     <string name="general_thanks_action">Thanks</string>
     <string name="general_gotit_action">Got it</string>
@@ -82,6 +81,7 @@
     <string name="device_uptime_x">Uptime: %s</string>
     <string name="general_disconnect_action">Disconnect</string>
     <string name="generic_info_action">Info</string>
+    <string name="general_reset_action">Reset</string>
 
     <string name="sync_server_label">Server</string>
     <string name="sync_account_label">Account</string>
@@ -115,7 +115,7 @@
     <string name="sync_gdrive_type_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. It is similar to how WhatsApp backups work.</string>
     <string name="sync_gdrive_add_label">Add new Google Drive</string>
     <string name="sync_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
-    <string name="sync_gdrive_wipe_confirmation_desc">Reset all Octi data stored on Google Drive. Your device stays logged into Google Drive.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Reset all Octi data stored on Google Drive. Your device stays logged into Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Log out from Google Drive and delete data related to this device.</string>
     <string name="sync_gdrive_error_no_account_on_device">This device is not signed into any Google account.</string>
 
@@ -128,7 +128,7 @@
     <string name="sync_jserver_about_desc">JServer is an open-source sync server for Octi by Jakob Möller.</string>
     <string name="sync_jserver_about_author_action">Author</string>
     <string name="sync_jserver_about_source_action">Source code</string>
-    <string name="sync_jserver_wipe_confirmation_desc">Reset this account and delete all stored data. Your device stays linked to the account.</string>
+    <string name="sync_jserver_reset_confirmation_desc">Reset this account and delete stored data. Your device stays linked to the account.</string>
     <string name="sync_jserver_disconnect_confirmation_desc">This will remove this device from your account. If this is the last linked device, your account will be deleted.</string>
     <string name="sync_jserver_link_device_action">Link new device</string>
     <string name="sync_jserver_link_code_label">Link code</string>
@@ -154,7 +154,7 @@
     <string name="sync_kserver_about_desc">KServer is an open-source sync server (in Kotlin) for Octi by darken.</string>
     <string name="sync_kserver_about_author_action">Author</string>
     <string name="sync_kserver_about_source_action">Source code</string>
-    <string name="sync_kserver_wipe_confirmation_desc">Reset this account and delete all stored data. Your device stays linked to the account.</string>
+    <string name="sync_kserver_reset_confirmation_desc">Clear device\'s data on this account. Devices stay linked but their stored data is removed.</string>
     <string name="sync_kserver_disconnect_confirmation_desc">This will remove this device from your account. If this is the last linked device, your account will be deleted.</string>
     <string name="sync_kserver_link_device_action">Link new device</string>
     <string name="sync_kserver_link_code_label">Link code</string>
