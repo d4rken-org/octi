@@ -61,6 +61,8 @@
 
     <string name="issue_tracker_label">Issue tracker</string>
     <string name="issue_tracker_description">A public issue tracker for bug reports and feature requests.</string>
+    <string name="discord_label">Discord</string>
+    <string name="discord_description">A place to hang out in and ask questions.</string>
 
     <string name="support_installid_label">Install ID</string>
     <string name="support_installid_desc">Automatic error reports are anonymous. Share your install ID if the developer needs to find your error reports.</string>
