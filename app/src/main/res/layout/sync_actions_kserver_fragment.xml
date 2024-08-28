@@ -31,16 +31,6 @@
         tools:text="Account: 1234-55667" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/check_health"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Check health"
-        app:icon="@drawable/ic_baseline_health_and_safety_24"
-        app:iconGravity="textStart" />
-
-    <com.google.android.material.button.MaterialButton
         android:id="@+id/sync_action"
         style="@style/Widget.Material3.Button"
         android:layout_width="match_parent"

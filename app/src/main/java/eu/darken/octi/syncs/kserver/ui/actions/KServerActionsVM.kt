@@ -13,7 +13,6 @@ import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.kserver.core.KServer
 import eu.darken.octi.syncs.kserver.core.KServerConnector
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -64,12 +63,6 @@ class KServerActionsVM @Inject constructor(
     fun forceSync() = launch {
         log(TAG) { "forceSync()" }
         syncManager.sync(navArgs.identifier)
-        popNavStack()
-    }
-
-    fun checkHealth() = launch {
-        val health = syncManager.getConnectorById<KServerConnector>(navArgs.identifier).first().checkHealth()
-        actionEvents.postValue(ActionEvents.HealthCheck(health))
         popNavStack()
     }
 

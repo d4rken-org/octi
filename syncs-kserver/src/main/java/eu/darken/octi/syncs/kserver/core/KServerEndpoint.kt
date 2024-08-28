@@ -148,11 +148,6 @@ class KServerEndpoint @AssistedInject constructor(
         )
     }
 
-    suspend fun getHealth(): KServerApi.Health = withContext(dispatcherProvider.IO) {
-        log(TAG) { "getHealth()" }
-        api.getHealth()
-    }
-
     @AssistedFactory
     interface Factory {
         fun create(account: KServer.Address): KServerEndpoint
