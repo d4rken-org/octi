@@ -1,19 +1,19 @@
 object Versions {
     object Gradle {
-        const val buildTools = "7.3.0"
+        const val buildTools = "8.4.0"
     }
 
     object Kotlin {
-        const val core = "1.6.10"
-        const val coroutines = "1.6.0"
+        const val core = "1.9.23"
+        const val coroutines = "1.8.0"
     }
 
     object Dagger {
-        const val core = "2.40.5"
+        const val core = "2.51.1"
     }
 
     object Moshi {
-        const val core = "1.13.0"
+        const val core = "1.15.1"
     }
 
     object AndroidX {

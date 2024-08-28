@@ -9,7 +9,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.syncs.jserver.core.JServerHub
 import eu.darken.octi.syncs.jserver.core.LinkingData
-import eu.darken.octi.syncs.jserver.ui.link.LinkOption
+import eu.darken.octi.syncs.jserver.ui.link.JServerLinkOption
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -27,14 +27,14 @@ class JServerLinkClientVM @Inject constructor(
 
     data class State(
         val encodedLinkCode: String? = null,
-        val linkOption: LinkOption = LinkOption.QRCODE,
+        val linkOption: JServerLinkOption = JServerLinkOption.QRCODE,
         val isBusy: Boolean = false,
     )
 
     private val _state = MutableStateFlow(State())
     val state = _state.asLiveData2()
 
-    fun onLinkOptionSelected(option: LinkOption) = launch {
+    fun onLinkOptionSelected(option: JServerLinkOption) = launch {
         log(TAG) { "onLinkOptionSelected(option=$option)" }
         stateLock.withLock {
             _state.value = _state.value.copy(linkOption = option)

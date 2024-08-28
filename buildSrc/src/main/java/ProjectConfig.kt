@@ -1,10 +1,11 @@
+import com.android.build.api.dsl.Packaging
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import java.io.File
 import java.io.FileInputStream
 import java.time.Instant
-import java.util.*
+import java.util.Properties
 
 object ProjectConfig {
     const val minSdk = 23
@@ -79,7 +80,7 @@ fun LibraryExtension.setupLibraryDefaults() {
         )
     }
 
-    packagingOptions {
+    fun Packaging.() {
         resources.excludes += "DebugProbesKt.bin"
     }
 }
@@ -89,6 +90,8 @@ fun com.android.build.api.dsl.CommonExtension<
         com.android.build.api.dsl.LibraryBuildType,
         com.android.build.api.dsl.LibraryDefaultConfig,
         com.android.build.api.dsl.LibraryProductFlavor,
+        *,
+        *
         >.setupModuleBuildTypes() {
     buildTypes {
         debug {

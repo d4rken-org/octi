@@ -116,6 +116,11 @@ android {
             useJUnitPlatform()
         }
     }
+    packaging {
+        resources {
+            excludes += "META-INF/INDEX.LIST"
+        }
+    }
 }
 
 dependencies {
@@ -124,8 +129,9 @@ dependencies {
     implementation(project(":app-common"))
     testImplementation(project(":app-common-test"))
     implementation(project(":sync-core"))
-    implementation(project(":syncs-jserver"))
     implementation(project(":syncs-gdrive"))
+    implementation(project(":syncs-jserver"))
+    implementation(project(":syncs-kserver"))
     implementation(project(":module-core"))
     implementation(project(":modules-meta"))
     implementation(project(":modules-power"))
