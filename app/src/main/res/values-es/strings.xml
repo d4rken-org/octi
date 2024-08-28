@@ -6,7 +6,6 @@
     <string name="general_done_action">Listo</string>
     <string name="general_copy_action">Copiar</string>
     <string name="general_remove_action">Eliminar</string>
-    <string name="general_wipe_action">Limpiar</string>
     <string name="general_cancel_action">Cancelar</string>
     <string name="general_thanks_action">Gracias</string>
     <string name="general_gotit_action">Entendido</string>
@@ -109,7 +108,7 @@
     <string name="sync_gdrive_type_appdata_description">Los datos se colocan en Google Drive. Esta variante específicada utiliza el alcance "datos de la aplicación". Solo se otorga acceso a una nueva carpeta solo para esta aplicación. La carpeta no está visible en su disco. Es similar a cómo funcionan las copias de seguridad de WhatsApp.</string>
     <string name="sync_gdrive_add_label">Agregar un nuevo Google Drive</string>
     <string name="sync_gdrive_add_description">Haz clic en el botón de inicio de sesión a continuación para configurar el acceso a Google Drive.</string>
-    <string name="sync_gdrive_wipe_confirmation_desc">Restablezce todos los datos de Octi almacenados en Google Drive. Tu dispositivo permanece conectado a Google Drive.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Restablezce todos los datos de Octi almacenados en Google Drive. Tu dispositivo permanece conectado a Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Cerrar la sesión en Google Drive y eliminar los datos de este dispositivo.</string>
     <string name="sync_gdrive_error_no_account_on_device">Este dispositivo no está registrado en ninguna cuenta de Google.</string>
 
@@ -122,7 +121,7 @@
     <string name="sync_jserver_about_desc">JServer es un servidor de sincronización de código abierto para Octi de Jakob Möller.</string>
     <string name="sync_jserver_about_author_action">Autor</string>
     <string name="sync_jserver_about_source_action">Código fuente</string>
-    <string name="sync_jserver_wipe_confirmation_desc">Restablece esta cuenta y elimine todos los datos almacenados. Tu dispositivo permanecerá vinculado a la cuenta.</string>
+    <string name="sync_jserver_reset_confirmation_desc">Restablece esta cuenta y elimine todos los datos almacenados. Tu dispositivo permanecerá vinculado a la cuenta.</string>
     <string name="sync_jserver_disconnect_confirmation_desc">Esto eliminará este dispositivo de tu cuenta. Si este es el último dispositivo vinculado, tu cuenta será eliminada.</string>
     <string name="sync_jserver_link_device_action">Vincular un nuevo dispositivo</string>
     <string name="sync_jserver_link_code_label">Código del enlace</string>

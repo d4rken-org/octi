@@ -59,12 +59,11 @@
         app:iconGravity="textStart" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/wipe_action"
-        style="@style/Widget.Material3.Button"
+        android:id="@+id/reset_action"
+        style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/general_wipe_action"
-        app:backgroundTint="@color/error"
+        android:text="@string/general_reset_action"
         app:icon="@drawable/ic_baseline_delete_sweep_24"
         app:iconGravity="textStart" />
 

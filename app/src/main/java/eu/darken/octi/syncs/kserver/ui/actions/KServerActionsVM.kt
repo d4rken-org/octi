@@ -54,9 +54,9 @@ class KServerActionsVM @Inject constructor(
         navEvents.postValue(null)
     }
 
-    fun wipe() = launch {
-        log(TAG) { "wipe()" }
-        syncManager.wipe(navArgs.identifier)
+    fun reset() = launch {
+        log(TAG) { "reset()" }
+        syncManager.resetData(navArgs.identifier)
         navEvents.postValue(null)
     }
 

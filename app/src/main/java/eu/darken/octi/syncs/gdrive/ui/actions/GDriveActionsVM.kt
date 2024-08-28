@@ -42,9 +42,9 @@ class GDriveActionsVM @Inject constructor(
         popNavStack()
     }
 
-    fun wipe() = launch {
-        log(TAG) { "wipe()" }
-        syncManager.wipe(navArgs.identifier)
+    fun reset() = launch {
+        log(TAG) { "reset()" }
+        syncManager.resetData(navArgs.identifier)
         popNavStack()
     }
 
