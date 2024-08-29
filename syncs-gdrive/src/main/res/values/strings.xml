@@ -1,3 +1,4 @@
 <resources>
-
+    <string name="gdrive_account_scope_error_label">Permission error</string>
+    <string name="gdrive_account_scope_error_description">Octi has not been granted the required access scope. Try again and check that permissions are being granted.</string>
 </resources>

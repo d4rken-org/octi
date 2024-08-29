@@ -11,6 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.collections.mutate
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -29,11 +30,12 @@ class GoogleAccountRepo @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
 
+    private val requiredScope = Scope(DriveScopes.DRIVE_APPDATA)
     private val defaultOptions: GoogleSignInOptions
         get() = GoogleSignInOptions.Builder().apply {
             requestId()
             requestEmail()
-            requestScopes(Scope(DriveScopes.DRIVE_APPDATA))
+            requestScopes(requiredScope)
         }.build()
 
     private fun createClient(account: GoogleAccount?): GoogleSignInClient {
@@ -56,6 +58,12 @@ class GoogleAccountRepo @Inject constructor(
 
     suspend fun add(acc: GoogleAccount): Boolean {
         log(TAG) { "add(account=$acc)" }
+
+        if (!acc.isAppDataScope) {
+            log(TAG, ERROR) { "Sign in didn't grant access to $requiredScope" }
+            throw ScopeNotGrantedException("DRIVE_APPDATA")
+        }
+
         var added = false
 
         _accounts.updateBlocking {
@@ -87,7 +95,7 @@ class GoogleAccountRepo @Inject constructor(
                 return@updateBlocking this
             }
 
-//            toRemove.signOut()
+            toRemove.signOut()
 
             mutate { remove(toRemove.id) }
         }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Octi</string>
+    <string name="general_error_label">Error</string>
 </resources>

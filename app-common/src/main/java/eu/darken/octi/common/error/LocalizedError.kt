@@ -1,7 +1,7 @@
 package eu.darken.octi.common.error
 
 import android.content.Context
-import eu.darken.octi.R
+import eu.darken.octi.common.R
 
 interface HasLocalizedError {
     fun getLocalizedError(context: Context): LocalizedError

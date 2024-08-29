@@ -17,7 +17,6 @@
     <string name="general_maybe_later_action">Maybe later</string>
     <string name="general_manage_action">Manage</string>
     <string name="general_sync_action">Synchronize</string>
-    <string name="general_error_label">Error</string>
     <string name="general_select_server_label">Select server</string>
     <string name="general_quota_label">Quota</string>
     <string name="general_tap_hint_msg">Tap for more options</string>
