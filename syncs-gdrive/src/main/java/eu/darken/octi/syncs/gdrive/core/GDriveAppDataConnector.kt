@@ -46,7 +46,6 @@ import java.time.Instant
 import kotlin.math.max
 
 
-@Suppress("BlockingMethodInNonBlockingContext")
 class GDriveAppDataConnector @AssistedInject constructor(
     @Assisted private val client: GoogleClient,
     @AppScope private val scope: CoroutineScope,
@@ -91,7 +90,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     init {
         writeQueue
             .onEach { toWrite ->
-                writeAction {
+                writeAction("write-queue: $toWrite") {
                     writeDrive(toWrite)
                 }
             }
@@ -112,7 +111,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     override suspend fun resetData() {
         log(TAG, INFO) { "resetData()" }
-        writeAction {
+        writeAction("reset-data") {
             appDataRoot()
                 .listFiles()
                 .forEach { it.deleteAll() }
@@ -122,7 +121,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     override suspend fun deleteDevice(deviceId: DeviceId) {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
-        writeAction {
+        writeAction("delete-device: $deviceId") {
             appDataRoot().child(DEVICE_DATA_DIR_NAME)
                 ?.listFiles()
                 ?.onEach { log(TAG, DEBUG) { "deleteDevice(): Checking $it" } }
@@ -211,7 +210,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         if (options.readData) {
             try {
-                readAction {
+                readAction("sync-readData") {
                     _data.value = readDrive()
                 }
             } catch (e: Exception) {
@@ -240,7 +239,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
-    private suspend fun writeDrive(data: SyncWrite) {
+
+    private suspend fun WriteEnv.writeDrive(data: SyncWrite) {
         log(TAG, DEBUG) { "writeDrive(): $data)" }
 
         // TODO cache write data for when we are online again?
@@ -293,65 +293,74 @@ class GDriveAppDataConnector @AssistedInject constructor(
         )
     }
 
-    private suspend fun readAction(block: suspend () -> Unit) = withContext(dispatcherProvider.IO) {
-        val start = System.currentTimeMillis()
-        log(TAG, VERBOSE) { "readAction(block=$block)" }
+    interface DriveEnv
 
-        if (_state.value().readActions > 0) {
-            log(TAG, WARN) { "Already executing read skipping." }
-            return@withContext
-        }
-        try {
-            _state.updateBlocking {
-                copy(readActions = readActions + 1)
+    interface ReadEnv : DriveEnv
+
+    private suspend fun readAction(tag: String, block: suspend ReadEnv.() -> Unit) =
+        withContext(dispatcherProvider.IO) {
+            val start = System.currentTimeMillis()
+            log(TAG, VERBOSE) { "readAction($tag)" }
+
+            if (_state.value().readActions > 0) {
+                log(TAG, WARN) { "Already executing read skipping." }
+                return@withContext
             }
-
-            block()
-        } catch (e: Exception) {
-            log(TAG, ERROR) { "readAction(block=$block) failed: ${e.asLog()}" }
-            throw e
-        } finally {
-            _state.updateBlocking {
-                copy(
-                    readActions = max(readActions - 1, 0),
-                    lastReadAt = Instant.now(),
-                )
-            }
-        }
-
-        log(TAG, VERBOSE) { "readAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
-    }
-
-    private suspend fun writeAction(block: suspend () -> Unit) = withContext(dispatcherProvider.IO + NonCancellable) {
-        val start = System.currentTimeMillis()
-        log(TAG, VERBOSE) { "writeAction(block=$block)" }
-
-        _state.updateBlocking { copy(writeActions = writeActions + 1) }
-
-        try {
-            writeLock.withLock {
-                if (_state.value().isDead) {
-                    log(TAG, WARN) { "Connector is DEAD" }
-                    return@withLock
+            try {
+                _state.updateBlocking {
+                    copy(readActions = readActions + 1)
                 }
-                try {
-                    block()
-                } catch (e: Exception) {
-                    log(TAG, ERROR) { "writeAction(block=$block) failed: ${e.asLog()}" }
-                    throw e
+                val env = object : ReadEnv {}
+                block(env)
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "readAction($tag) failed: ${e.asLog()}" }
+                throw e
+            } finally {
+                _state.updateBlocking {
+                    copy(
+                        readActions = max(readActions - 1, 0),
+                        lastReadAt = Instant.now(),
+                    )
                 }
             }
-        } finally {
-            _state.updateBlocking {
-                log(TAG, VERBOSE) { "writeAction(block=$block) finished" }
-                copy(
-                    writeActions = writeActions - 1,
-                    lastWriteAt = Instant.now(),
-                )
-            }
-            log(TAG, VERBOSE) { "writeAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
+
+            log(TAG, VERBOSE) { "readAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
         }
-    }
+
+    interface WriteEnv : DriveEnv
+
+    private suspend fun writeAction(tag: String, block: suspend WriteEnv.() -> Unit) =
+        withContext(dispatcherProvider.IO + NonCancellable) {
+            val start = System.currentTimeMillis()
+            log(TAG, VERBOSE) { "writeAction($tag)" }
+
+            _state.updateBlocking { copy(writeActions = writeActions + 1) }
+
+            try {
+                writeLock.withLock {
+                    if (_state.value().isDead) {
+                        log(TAG, WARN) { "Connector is DEAD" }
+                        return@withLock
+                    }
+                    try {
+                        val env = object : WriteEnv {}
+                        block(env)
+                    } catch (e: Exception) {
+                        log(TAG, ERROR) { "writeAction($tag) failed: ${e.asLog()}" }
+                        throw e
+                    }
+                }
+            } finally {
+                _state.updateBlocking {
+                    log(TAG, VERBOSE) { "writeAction($tag) finished" }
+                    copy(
+                        writeActions = writeActions - 1,
+                        lastWriteAt = Instant.now(),
+                    )
+                }
+                log(TAG, VERBOSE) { "writeAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
+            }
+        }
 
     @AssistedFactory
     interface Factory {
