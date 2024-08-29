@@ -1,4 +1,6 @@
 <resources>
     <string name="gdrive_account_scope_error_label">Permission error</string>
     <string name="gdrive_account_scope_error_description">Octi has not been granted the required access scope. Try again and check that permissions are being granted.</string>
+    <string name="gdrive_account_lockout_error_label">Lock out error</string>
+    <string name="gdrive_account_lockout_error_description">This device is locked out and can\'t access Google Drive anymore. It\'s access to your Google account has been revoked. Re-grant access and try again.</string>
 </resources>

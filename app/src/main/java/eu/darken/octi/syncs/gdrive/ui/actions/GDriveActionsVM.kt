@@ -8,6 +8,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.getConnectorById
+import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -25,16 +26,14 @@ class GDriveActionsVM @Inject constructor(
         val account: eu.darken.octi.syncs.gdrive.core.GoogleAccount
     )
 
-    val state =
-        syncManager.getConnectorById<eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector>(navArgs.identifier)
-            .map {
-                State(it.account)
-            }
-            .catch {
-                if (it is NoSuchElementException) popNavStack()
-                else throw it
-            }
-            .asLiveData2()
+    val state = syncManager.getConnectorById<GDriveAppDataConnector>(navArgs.identifier)
+        .map {
+            State(it.account)
+        }
+        .catch {
+            if (it is NoSuchElementException) popNavStack() else throw it
+        }
+        .asLiveData2()
 
     fun disconnct() = launch {
         log(TAG) { "disconnct()" }

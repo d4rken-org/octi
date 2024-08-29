@@ -9,8 +9,21 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.sync.core.cache.SyncCache
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -128,6 +141,7 @@ class SyncManager @Inject constructor(
             }
         } catch (e: Exception) {
             log(TAG, ERROR) { "disconnect($identifier) failed: ${e.asLog()}" }
+            throw e
         } finally {
             disabledConnectors.value -= connector
         }
