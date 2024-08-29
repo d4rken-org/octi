@@ -19,7 +19,7 @@ enum class Permission(
         permissionId = "android.permission.ACCESS_FINE_LOCATION",
     ),
     IGNORE_BATTERY_OPTIMIZATION(
-        permissionId = "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+        permissionId = "android.permission.IGNORE_BATTERY_OPTIMIZATION",
         isGranted = {
             val pwm = it.getSystemService(Context.POWER_SERVICE) as PowerManager
             pwm.isIgnoringBatteryOptimizations(BuildConfigWrap.APPLICATION_ID)

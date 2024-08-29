@@ -1,5 +1,6 @@
 package eu.darken.octi.main.ui.dashboard
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -65,14 +66,17 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                         vm.goToSyncServices()
                         true
                     }
+
                     R.id.action_upgrade -> {
                         vm.upgradeToOctiPro()
                         true
                     }
+
                     R.id.action_settings -> {
                         doNavigate(DashboardFragmentDirections.actionDashFragmentToSettingsContainerFragment())
                         true
                     }
+
                     else -> super.onOptionsItemSelected(it)
                 }
             }
@@ -107,21 +111,28 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                     when (event.permission) {
                         Permission.IGNORE_BATTERY_OPTIMIZATION -> {
                             awaitingPermission = true
-                            startActivity(
-                                Intent(
-                                    Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                                    Uri.parse("package:${requireContext().packageName}")
+                            try {
+                                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+                            } catch (e: ActivityNotFoundException) {
+                                startActivity(
+                                    Intent(
+                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.parse("package:${requireContext().packageName}")
+                                    )
                                 )
-                            )
+                            }
                         }
+
                         else -> permissionLauncher.launch(event.permission.permissionId)
                     }
                 }
+
                 is DashboardEvent.ShowPermissionDismissHint -> {
                     Snackbar
                         .make(view, R.string.permission_dismiss_hint, Snackbar.LENGTH_SHORT)
                         .show()
                 }
+
                 is DashboardEvent.ShowPermissionPopup -> {
                     val binding = DashboardPermissionItemBinding.inflate(layoutInflater)
                     val dialog = MaterialAlertDialogBuilder(requireContext()).setView(binding.root).create()
@@ -138,6 +149,7 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                     )
                     dialog.show()
                 }
+
                 is DashboardEvent.LaunchUpgradeFlow -> vm.launchUpgradeFlow(requireActivity())
             }
         }
