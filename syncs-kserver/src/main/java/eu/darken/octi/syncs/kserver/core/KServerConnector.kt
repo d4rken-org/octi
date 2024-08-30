@@ -151,22 +151,6 @@ class KServerConnector @AssistedInject constructor(
             return
         }
 
-        if (options.writeData) {
-            // TODO
-        }
-
-        if (options.readData) {
-            log(TAG) { "read()" }
-            try {
-                runServerAction("read-server") {
-                    _data.value = readServer()
-                }
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
-                _state.updateBlocking { copy(lastError = e) }
-            }
-        }
-
         if (options.stats) {
             try {
 
@@ -184,6 +168,22 @@ class KServerConnector @AssistedInject constructor(
 //                _state.updateBlocking { copy(devices = knownDeviceIds) }
             } catch (e: Exception) {
                 log(TAG, ERROR) { "Failed to read stats: ${e.asLog()}" }
+            }
+        }
+
+        if (options.writeData) {
+            // TODO
+        }
+
+        if (options.readData) {
+            log(TAG) { "read()" }
+            try {
+                runServerAction("read-server") {
+                    _data.value = readServer()
+                }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
+                _state.updateBlocking { copy(lastError = e) }
             }
         }
     }

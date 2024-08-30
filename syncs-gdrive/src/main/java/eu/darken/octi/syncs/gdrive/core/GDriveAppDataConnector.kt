@@ -215,21 +215,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
         }
 
-        if (options.writeData) {
-            // TODO Attempt to write data if we were offline and are now online?
-        }
-
-        if (options.readData) {
-            try {
-                runDriveAction("sync-readData") {
-                    _data.value = readDrive()
-                }
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "sync(): Failed to read: ${e.asLog()}" }
-                _state.updateBlocking { copy(lastError = e) }
-            }
-        }
-
         if (options.stats) {
             try {
                 val deviceDirs = runDriveAction("sync-devicelist") {
@@ -247,6 +232,21 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 _state.updateBlocking { copy(quota = newQuota) }
             } catch (e: Exception) {
                 log(TAG, ERROR) { "sync(): Failed to update storage quota: ${e.asLog()}" }
+            }
+        }
+
+        if (options.writeData) {
+            // TODO Attempt to write data if we were offline and are now online?
+        }
+
+        if (options.readData) {
+            try {
+                runDriveAction("sync-readData") {
+                    _data.value = readDrive()
+                }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "sync(): Failed to read: ${e.asLog()}" }
+                _state.updateBlocking { copy(lastError = e) }
             }
         }
 
