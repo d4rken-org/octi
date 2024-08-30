@@ -93,6 +93,7 @@ class SyncManager @Inject constructor(
         log(TAG) { "sync(options=$options)" }
         val syncJobs = connectors.first().map {
             scope.launch {
+                // TODO error handling
                 sync(it.identifier, options = options)
             }
         }
