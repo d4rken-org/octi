@@ -2,6 +2,7 @@ package eu.darken.octi.syncs.kserver.ui.actions
 
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -12,13 +13,15 @@ import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.kserver.core.KServer
 import eu.darken.octi.syncs.kserver.core.KServerConnector
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
 class KServerActionsVM @Inject constructor(
-    @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
+    handle: SavedStateHandle,
+    @AppScope private val appScope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val syncManager: SyncManager,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
@@ -48,22 +51,22 @@ class KServerActionsVM @Inject constructor(
         ).navigate()
     }
 
-    fun disconnct() = launch {
+    fun forceSync() = launch(appScope) {
+        log(TAG) { "forceSync()" }
+        syncManager.sync(navArgs.identifier)
+        popNavStack()
+    }
+
+    fun disconnct() = launch(appScope) {
         log(TAG) { "disconnct()" }
         syncManager.disconnect(navArgs.identifier)
         navEvents.postValue(null)
     }
 
-    fun reset() = launch {
+    fun reset() = launch(appScope) {
         log(TAG) { "reset()" }
         syncManager.resetData(navArgs.identifier)
         navEvents.postValue(null)
-    }
-
-    fun forceSync() = launch {
-        log(TAG) { "forceSync()" }
-        syncManager.sync(navArgs.identifier)
-        popNavStack()
     }
 
     companion object {
