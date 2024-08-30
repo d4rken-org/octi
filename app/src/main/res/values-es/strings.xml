@@ -65,7 +65,7 @@
     <string name="settings_debuglog_explanation">Esta función registra todo lo que hace la aplicación en un archivo que se puede compartir. El archivo generado contiene información confidencial (por ejemplo, sus aplicaciones instaladas). Compártalo solo con partes de confianza (p. ej., el desarrollador de la aplicación si están solucionando un problema juntos).</string>
 
     <string name="sync_last_update_label">Última actualización</string>
-    <string name="sync_last_sync_label">Última sincronización</string>
+    <string name="sync_last_action_label">Última sincronización</string>
     <string name="sync_last_never_label">Nunca</string>
     <string name="sync_quota_storage_msg">%s gratis (%s / %s)</string>
 

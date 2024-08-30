@@ -71,7 +71,7 @@
     <string name="settings_debuglog_explanation">This feature records everything the app is doing into a shareable file. The generated file contains sensitive information (e.g. your installed applications). Only share it with trusted parties (e.g. the app developer if you are troubleshooting an issue together).</string>
 
     <string name="sync_last_update_label">Last update</string>
-    <string name="sync_last_sync_label">Last sync</string>
+    <string name="sync_last_action_label">Last action</string>
     <string name="sync_last_never_label">Never</string>
     <string name="sync_quota_storage_msg">%s free (%s / %s)</string>
 

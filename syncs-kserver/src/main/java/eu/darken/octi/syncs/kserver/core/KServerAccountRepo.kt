@@ -58,7 +58,6 @@ class KServerAccountRepo @Inject constructor(
 
     val accounts: Flow<Collection<KServer.Credentials>> = _accounts.flow
 
-
     suspend fun add(acc: KServer.Credentials): Boolean {
         log(TAG) { "add(acc=$acc)" }
         var added = false
