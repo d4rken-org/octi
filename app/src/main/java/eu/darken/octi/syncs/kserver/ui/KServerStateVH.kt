@@ -36,6 +36,10 @@ class KServerStateVH(parent: ViewGroup) :
                 setTextColor(context.getColorForAttr(android.R.attr.textColorPrimary))
             }
         }
+        lastSyncError.apply {
+            isGone = item.ourState.lastError == null
+            text = item.ourState.lastError?.toString()
+        }
         syncProgressIndicator.isGone = !item.ourState.isBusy
 
         quotaText.text = item.ourState.quota

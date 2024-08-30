@@ -75,6 +75,16 @@
         app:layout_constraintTop_toBottomOf="@id/last_sync_label"
         tools:text="5 minute ago" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/last_sync_error"
+        style="@style/TextAppearance.Material3.BodySmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="?colorError"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/last_sync_text"
+        tools:text="Some error or exception" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/quota_label"
@@ -85,7 +95,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/general_quota_label"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/last_sync_text" />
+        app:layout_constraintTop_toBottomOf="@id/last_sync_error" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/quota_text"
