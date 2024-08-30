@@ -58,7 +58,11 @@ class KServerEndpoint @AssistedInject constructor(
 
     suspend fun createNewAccount(): KServer.Credentials = withContext(dispatcherProvider.IO) {
         log(TAG) { "createNewAccount()" }
-        val response = api.register(deviceID = ourDeviceIdString)
+        val response = try {
+            api.register(deviceID = ourDeviceIdString)
+        } catch (e: HttpException) {
+            throw KServerHttpException(e)
+        }
 
         KServer.Credentials(
             createdAt = Instant.now(),
@@ -78,10 +82,14 @@ class KServerEndpoint @AssistedInject constructor(
         linkCode: KServer.Credentials.LinkCode,
     ): LinkedAccount = withContext(dispatcherProvider.IO) {
         log(TAG) { "linkToExistingAccount(linkCode=$linkCode)" }
-        val response = api.register(
-            deviceID = ourDeviceIdString,
-            shareCode = linkCode.code,
-        )
+        val response = try {
+            api.register(
+                deviceID = ourDeviceIdString,
+                shareCode = linkCode.code,
+            )
+        } catch (e: HttpException) {
+            throw KServerHttpException(e)
+        }
 
         LinkedAccount(
             accountId = KServer.Credentials.AccountId(response.accountID),
@@ -91,35 +99,50 @@ class KServerEndpoint @AssistedInject constructor(
 
     suspend fun createLinkCode(): KServer.Credentials.LinkCode = withContext(dispatcherProvider.IO) {
         log(TAG) { "createLinkCode(account=$credentials)" }
-        val response = api.createShareCode(deviceID = ourDeviceIdString)
+        val response = try {
+            api.createShareCode(deviceID = ourDeviceIdString)
+        } catch (e: HttpException) {
+            throw KServerHttpException(e)
+        }
         return@withContext KServer.Credentials.LinkCode(code = response.shareCode)
     }
 
-    suspend fun listDevices(linkCode: KServer.Credentials.LinkCode? = null): Collection<DeviceId> =
-        withContext(dispatcherProvider.IO) {
-            log(TAG) { "listDevices(linkCode=$linkCode)" }
-            val response = api.getDeviceList(
+    suspend fun listDevices(
+        linkCode: KServer.Credentials.LinkCode? = null
+    ): Collection<DeviceId> = withContext(dispatcherProvider.IO) {
+        log(TAG) { "listDevices(linkCode=$linkCode)" }
+        val response = try {
+            api.getDeviceList(
                 deviceID = ourDeviceIdString,
             )
-            response.devices.map { DeviceId(it.id) }
+        } catch (e: HttpException) {
+            throw KServerHttpException(e)
         }
+        response.devices.map { DeviceId(it.id) }
+    }
 
     suspend fun resetDevices(deviceIds: Set<DeviceId> = emptySet()): Unit = withContext(dispatcherProvider.IO) {
         log(TAG) { "resetDevices(deviceIds=$deviceIds)" }
-
-        api.resetDevices(
-            deviceId = ourDeviceIdString,
-            targets = KServerApi.ResetRequest(targets = deviceIds)
-        )
+        try {
+            api.resetDevices(
+                deviceId = ourDeviceIdString,
+                targets = KServerApi.ResetRequest(targets = deviceIds)
+            )
+        } catch (e: HttpException) {
+            throw KServerHttpException(e)
+        }
     }
 
     suspend fun deleteDevice(deviceId: DeviceId): Unit = withContext(dispatcherProvider.IO) {
         log(TAG) { "deleteDevice($deviceId)" }
-
-        api.deleteDevice(
-            callerDeviceId = ourDeviceIdString,
-            target = deviceId.id,
-        )
+        try {
+            api.deleteDevice(
+                callerDeviceId = ourDeviceIdString,
+                target = deviceId.id,
+            )
+        } catch (e: HttpException) {
+            throw KServerHttpException(e)
+        }
     }
 
     data class ReadData(
@@ -129,11 +152,15 @@ class KServerEndpoint @AssistedInject constructor(
 
     suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId): ReadData? = withContext(dispatcherProvider.IO) {
         log(TAG) { "readModule(deviceId=$deviceId, moduleId=$moduleId)" }
-        val response = api.readModule(
-            callerDeviceId = ourDeviceIdString,
-            moduleId = moduleId.id,
-            targetDeviceId = deviceId.id,
-        )
+        val response = try {
+            api.readModule(
+                callerDeviceId = ourDeviceIdString,
+                moduleId = moduleId.id,
+                targetDeviceId = deviceId.id,
+            )
+        } catch (e: HttpException) {
+            throw KServerHttpException(e)
+        }
 
         if (!response.isSuccessful) throw HttpException(response)
 
@@ -151,12 +178,16 @@ class KServerEndpoint @AssistedInject constructor(
 
     suspend fun writeModule(moduleId: ModuleId, payload: ByteString) = withContext(dispatcherProvider.IO) {
         log(TAG) { "writeModule(moduleId=$moduleId, payload=$payload)" }
-        api.writeModule(
-            deviceId = ourDeviceIdString,
-            moduleId = moduleId.id,
-            targetDeviceId = ourDeviceIdString,
-            payload = payload.toRequestBody(),
-        )
+        try {
+            api.writeModule(
+                deviceId = ourDeviceIdString,
+                moduleId = moduleId.id,
+                targetDeviceId = ourDeviceIdString,
+                payload = payload.toRequestBody(),
+            )
+        } catch (e: HttpException) {
+            throw KServerHttpException(e)
+        }
     }
 
     @AssistedFactory
