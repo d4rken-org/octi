@@ -2,28 +2,33 @@ package eu.darken.octi.syncs.gdrive.ui.actions
 
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
+import eu.darken.octi.syncs.gdrive.core.GoogleAccount
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
 class GDriveActionsVM @Inject constructor(
-    @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
+    handle: SavedStateHandle,
+    @AppScope private val appScope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
-    private val syncManager: eu.darken.octi.sync.core.SyncManager,
+    private val syncManager: SyncManager,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     private val navArgs: GDriveActionsFragmentArgs by handle.navArgs()
 
     data class State(
-        val account: eu.darken.octi.syncs.gdrive.core.GoogleAccount
+        val account: GoogleAccount
     )
 
     val state = syncManager.getConnectorById<GDriveAppDataConnector>(navArgs.identifier)
@@ -35,21 +40,21 @@ class GDriveActionsVM @Inject constructor(
         }
         .asLiveData2()
 
-    fun disconnct() = launch {
+    fun forceSync() = launch(appScope) {
+        log(TAG) { "forceSync()" }
+        syncManager.sync(navArgs.identifier)
+        popNavStack()
+    }
+
+    fun disconnct() = launch(appScope) {
         log(TAG) { "disconnct()" }
         syncManager.disconnect(navArgs.identifier)
         popNavStack()
     }
 
-    fun reset() = launch {
+    fun reset() = launch(appScope) {
         log(TAG) { "reset()" }
         syncManager.resetData(navArgs.identifier)
-        popNavStack()
-    }
-
-    fun forceSync() = launch {
-        log(TAG) { "forceSync()" }
-        syncManager.sync(navArgs.identifier)
         popNavStack()
     }
 
