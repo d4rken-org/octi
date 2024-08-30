@@ -39,6 +39,7 @@ class DeviceVH(parent: ViewGroup) :
             when (meta.deviceType) {
                 MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
                 MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
+                MetaInfo.DeviceType.UNKNOWN -> R.drawable.ic_baseline_question_mark_24
             }
         )
         deviceLabel.text = meta.deviceLabel

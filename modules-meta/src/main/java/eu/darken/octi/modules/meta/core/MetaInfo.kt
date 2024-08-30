@@ -31,5 +31,6 @@ data class MetaInfo(
     enum class DeviceType {
         @Json(name = "PHONE") PHONE,
         @Json(name = "TABLET") TABLET,
+        @Json(name = "UNKNOWN") UNKNOWN,
     }
 }
