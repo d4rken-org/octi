@@ -45,9 +45,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okio.ByteString
-import java.time.Duration
 import java.time.Instant
-import kotlin.math.max
 
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -70,10 +68,8 @@ class KServerConnector @AssistedInject constructor(
     private val crypti by lazy { PayloadEncryption(credentials.encryptionKeyset) }
 
     data class State(
-        override val readActions: Int = 0,
-        override val writeActions: Int = 0,
-        override val lastReadAt: Instant? = null,
-        override val lastWriteAt: Instant? = null,
+        override val activeActions: Int = 0,
+        override val lastActionAt: Instant? = null,
         override val lastError: Exception? = null,
         override val quota: SyncConnectorState.Quota? = null,
         override val devices: Collection<DeviceId>? = null,
@@ -92,8 +88,7 @@ class KServerConnector @AssistedInject constructor(
     override val data: Flow<SyncRead?> = _data
 
     private val writeQueue = MutableSharedFlow<SyncWrite>()
-    private val writeLock = Mutex()
-    private val readLock = Mutex()
+    private val serverLock = Mutex()
 
     override val identifier: ConnectorId = ConnectorId(
         type = "kserver",
@@ -104,7 +99,7 @@ class KServerConnector @AssistedInject constructor(
     init {
         writeQueue
             .onEach { toWrite ->
-                writeServerWrapper {
+                runServerAction("write-queue") {
                     writeServer(toWrite)
                 }
             }
@@ -123,14 +118,18 @@ class KServerConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    override suspend fun resetData() = writeServerWrapper {
+    override suspend fun resetData() {
         log(TAG, INFO) { "resetData()" }
-        endpoint.resetDevices()
+        runServerAction("reset-devices") {
+            endpoint.resetDevices()
+        }
     }
 
-    override suspend fun deleteDevice(deviceId: DeviceId) = writeServerWrapper {
+    override suspend fun deleteDevice(deviceId: DeviceId) {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
-        endpoint.deleteDevice(deviceId)
+        runServerAction("delete-device-$deviceId") {
+            endpoint.deleteDevice(deviceId)
+        }
     }
 
     suspend fun createLinkCode(): LinkingData {
@@ -159,7 +158,7 @@ class KServerConnector @AssistedInject constructor(
         if (options.readData) {
             log(TAG) { "read()" }
             try {
-                readServerWrapper {
+                runServerAction("read-server") {
                     _data.value = readServer()
                 }
             } catch (e: Exception) {
@@ -170,10 +169,21 @@ class KServerConnector @AssistedInject constructor(
 
         if (options.stats) {
             try {
-                val knownDeviceIds = endpoint.listDevices()
+
+                val knownDeviceIds = runServerAction("read-devicelist") {
+                    endpoint.listDevices()
+                }
                 _state.updateBlocking { copy(devices = knownDeviceIds) }
             } catch (e: Exception) {
                 log(TAG, ERROR) { "Failed to list of known devices: ${e.asLog()}" }
+            }
+            try {
+//                val knownDeviceIds = runServerAction("read-stats") {
+//                    endpoint.listDevices()
+//                }
+//                _state.updateBlocking { copy(devices = knownDeviceIds) }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to read stats: ${e.asLog()}" }
             }
         }
     }
@@ -250,72 +260,36 @@ class KServerConnector @AssistedInject constructor(
 
     private fun getStorageStats(): SyncConnectorState.Quota {
         log(TAG, VERBOSE) { "getStorageStats()" }
-
         return SyncConnectorState.Quota()
     }
 
-    private suspend fun readServerWrapper(block: suspend () -> Unit) {
+    private suspend fun <R> runServerAction(
+        tag: String,
+        block: suspend () -> R,
+    ): R {
         val start = System.currentTimeMillis()
-        log(TAG, VERBOSE) { "readAction(block=$block)" }
+        log(TAG, VERBOSE) { "runServerAction($tag)" }
 
-        var newStorageQuota: SyncConnectorState.Quota? = null
+        return try {
+            _state.updateBlocking { copy(activeActions = activeActions + 1) }
 
-        if (_state.value().readActions > 0) {
-            log(TAG, WARN) { "Already executing read skipping." }
-            return
-        }
-        try {
-            _state.updateBlocking {
-                copy(readActions = readActions + 1)
-            }
-
-            block()
-
-            val lastStats = _state.value().quota?.updatedAt
-            if (lastStats == null || Duration.between(lastStats, Instant.now()) > Duration.ofSeconds(60)) {
-                log(TAG) { "readAction(block=$block): Updating storage stats" }
-                newStorageQuota = getStorageStats()
-            }
-        } catch (e: Exception) {
-            log(TAG, ERROR) { "readAction(block=$block) failed: ${e.asLog()}" }
-            throw e
-        } finally {
-            _state.updateBlocking {
-                copy(
-                    readActions = max(readActions - 1, 0),
-                    quota = newStorageQuota ?: quota,
-                    lastReadAt = Instant.now(),
-                )
-            }
-        }
-
-        log(TAG, VERBOSE) { "readAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
-    }
-
-    private suspend fun writeServerWrapper(block: suspend () -> Unit) = withContext(NonCancellable) {
-        val start = System.currentTimeMillis()
-        log(TAG, VERBOSE) { "writeAction(block=$block)" }
-
-        _state.updateBlocking { copy(writeActions = writeActions + 1) }
-
-        try {
-            writeLock.withLock {
-                try {
-                    block()
-                } catch (e: Exception) {
-                    log(TAG, ERROR) { "writeAction(block=$block) failed: ${e.asLog()}" }
-                    throw e
+            try {
+                serverLock.withLock {
+                    withContext(NonCancellable) { block() }
                 }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "runServerAction($tag) failed: ${e.asLog()}" }
+                throw e
             }
         } finally {
             _state.updateBlocking {
-                log(TAG, VERBOSE) { "writeAction(block=$block) finished" }
+                log(TAG, VERBOSE) { "runServerAction($tag) finished" }
                 copy(
-                    writeActions = writeActions - 1,
-                    lastWriteAt = Instant.now(),
+                    activeActions = activeActions - 1,
+                    lastActionAt = Instant.now(),
                 )
             }
-            log(TAG, VERBOSE) { "writeAction(block=$block) finished after ${System.currentTimeMillis() - start}ms" }
+            log(TAG, VERBOSE) { "runServerAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
         }
     }
 

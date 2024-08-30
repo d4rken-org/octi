@@ -26,6 +26,7 @@ import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncWrite
+import eu.darken.octi.syncs.gdrive.core.GDriveEnvironment.Companion.APPDATAFOLDER
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
@@ -42,8 +43,8 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import okio.IOException
 import java.time.Instant
-import kotlin.math.max
 
 
 class GDriveAppDataConnector @AssistedInject constructor(
@@ -56,10 +57,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
 ) : GDriveBaseConnector(dispatcherProvider, context, client), SyncConnector {
 
     data class State(
-        override val readActions: Int = 0,
-        override val writeActions: Int = 0,
-        override val lastReadAt: Instant? = null,
-        override val lastWriteAt: Instant? = null,
+        override val activeActions: Int = 0,
+        override val lastActionAt: Instant? = null,
         override val lastError: Exception? = null,
         override val quota: SyncConnectorState.Quota? = null,
         override val devices: Collection<DeviceId>? = null,
@@ -77,9 +76,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
     override val state: Flow<State> = _state.flow
     private val _data = MutableStateFlow<SyncRead?>(null)
     override val data: Flow<SyncRead?> = _data
-
+    private val driveLock = Mutex()
     private val writeQueue = MutableSharedFlow<SyncWrite>()
-    private val writeLock = Mutex()
 
     override val identifier: ConnectorId = ConnectorId(
         type = "gdrive",
@@ -90,7 +88,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     init {
         writeQueue
             .onEach { toWrite ->
-                writeAction("write-queue: $toWrite") {
+                runDriveAction("write-queue: $toWrite") {
                     writeDrive(toWrite)
                 }
             }
@@ -109,20 +107,20 @@ class GDriveAppDataConnector @AssistedInject constructor(
         writeQueue.emit(toWrite)
     }
 
-    override suspend fun resetData() {
+    override suspend fun resetData(): Unit = withContext(NonCancellable) {
         log(TAG, INFO) { "resetData()" }
-        writeAction("reset-data") {
-            appDataRoot()
+        runDriveAction("reset-data") {
+            appDataRoot
                 .listFiles()
                 .forEach { it.deleteAll() }
             _state.updateBlocking { copy(isDead = true) }
         }
     }
 
-    override suspend fun deleteDevice(deviceId: DeviceId) {
+    override suspend fun deleteDevice(deviceId: DeviceId): Unit = withContext(NonCancellable) {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
-        writeAction("delete-device: $deviceId") {
-            appDataRoot().child(DEVICE_DATA_DIR_NAME)
+        runDriveAction("delete-device: $deviceId") {
+            appDataRoot.child(DEVICE_DATA_DIR_NAME)
                 ?.listFiles()
                 ?.onEach { log(TAG, DEBUG) { "deleteDevice(): Checking $it" } }
                 ?.singleOrNull { it.name == deviceId.id }
@@ -132,11 +130,11 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
-    private suspend fun readDrive(): GDriveData {
+    private suspend fun GDriveEnvironment.readDrive(): GDriveData {
         log(TAG, DEBUG) { "readDrive(): Starting..." }
         val start = System.currentTimeMillis()
 
-        val deviceDataDir = appDataRoot().child(DEVICE_DATA_DIR_NAME)
+        val deviceDataDir = appDataRoot.child(DEVICE_DATA_DIR_NAME)
         log(TAG, VERBOSE) { "readDrive(): userDir=$deviceDataDir" }
 
         if (deviceDataDir?.isDirectory != true) {
@@ -196,6 +194,9 @@ class GDriveAppDataConnector @AssistedInject constructor(
         )
     }
 
+    private val syncLock = Mutex()
+    private var isSyncing = false
+
     override suspend fun sync(options: SyncOptions) {
         log(TAG) { "sync(options=$options)" }
 
@@ -204,13 +205,23 @@ class GDriveAppDataConnector @AssistedInject constructor(
             return
         }
 
+        syncLock.withLock {
+            if (isSyncing) {
+                log(TAG, WARN) { "Already syncing, skipping" }
+                return
+            } else {
+                isSyncing = true
+                log(TAG, VERBOSE) { "Starting sync, acquiring" }
+            }
+        }
+
         if (options.writeData) {
             // TODO Attempt to write data if we were offline and are now online?
         }
 
         if (options.readData) {
             try {
-                readAction("sync-readData") {
+                runDriveAction("sync-readData") {
                     _data.value = readDrive()
                 }
             } catch (e: Exception) {
@@ -221,38 +232,43 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         if (options.stats) {
             try {
-                val deviceDirs = appDataRoot().child(DEVICE_DATA_DIR_NAME)
-                    ?.listFiles()
-                    ?.filter { it.isDirectory }
-                    ?.map { DeviceId(id = it.name) }
-
+                val deviceDirs = runDriveAction("sync-devicelist") {
+                    appDataRoot.child(DEVICE_DATA_DIR_NAME)
+                        ?.listFiles()
+                        ?.filter { it.isDirectory }
+                        ?.map { DeviceId(id = it.name) }
+                }
                 _state.updateBlocking { copy(devices = deviceDirs) }
             } catch (e: Exception) {
                 log(TAG, ERROR) { "sync(): Failed to list of known devices: ${e.asLog()}" }
             }
             try {
-                val newQuota = getStorageQuota()
+                val newQuota = runDriveAction("sync-quota") { getStorageQuota() }
                 _state.updateBlocking { copy(quota = newQuota) }
             } catch (e: Exception) {
                 log(TAG, ERROR) { "sync(): Failed to update storage quota: ${e.asLog()}" }
             }
         }
+
+        syncLock.withLock {
+            isSyncing = false
+            log(TAG, VERBOSE) { "Sync done, releasing" }
+        }
     }
 
-
-    private suspend fun WriteEnv.writeDrive(data: SyncWrite) {
+    private suspend fun GDriveEnvironment.writeDrive(data: SyncWrite) = withContext(NonCancellable) {
         log(TAG, DEBUG) { "writeDrive(): $data)" }
 
         // TODO cache write data for when we are online again?
         if (!isInternetAvailable()) {
             log(TAG, WARN) { "writeDrive(): Skipping, we are offline." }
-            return
+            return@withContext
         }
 
-        val userDir = appDataRoot().child(DEVICE_DATA_DIR_NAME)
+        val userDir = appDataRoot.child(DEVICE_DATA_DIR_NAME)
             ?.also { if (!it.isDirectory) throw IllegalStateException("devices is not a directory: $it") }
             ?: run {
-                appDataRoot().createDir(folderName = DEVICE_DATA_DIR_NAME)
+                appDataRoot.createDir(folderName = DEVICE_DATA_DIR_NAME)
                     .also { log(TAG, INFO) { "write(): Created devices dir $it" } }
             }
 
@@ -272,95 +288,62 @@ class GDriveAppDataConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeDrive(): Done" }
     }
 
-    private suspend fun getStorageQuota(): SyncConnectorState.Quota = withContext(dispatcherProvider.IO) {
+    private suspend fun GDriveEnvironment.getStorageQuota(): SyncConnectorState.Quota {
         log(TAG, VERBOSE) { "getStorageStats()" }
-        val allItems = gdrive.files()
+        val allItems = drive.files()
             .list().apply {
                 spaces = APPDATAFOLDER
                 fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
             }
             .execute().files
 
-        val storageTotal = gdrive.about()
+        val storageTotal = drive.about()
             .get().setFields("storageQuota")
             .execute().storageQuota
             .limit
 
-        SyncConnectorState.Quota(
+        return SyncConnectorState.Quota(
             updatedAt = Instant.now(),
             storageUsed = allItems.sumOf { it.quotaBytesUsed ?: 0 },
             storageTotal = storageTotal
         )
     }
 
-    interface DriveEnv
+    private suspend fun <R> runDriveAction(
+        tag: String,
+        block: suspend GDriveEnvironment.() -> R,
+    ): R {
+        val start = System.currentTimeMillis()
+        log(TAG, VERBOSE) { "runDriveAction($tag)" }
 
-    interface ReadEnv : DriveEnv
+        if (_state.value().isDead) {
+            log(TAG, WARN) { "Connector is DEAD" }
+            throw IOException("Connector is dead")
+        }
 
-    private suspend fun readAction(tag: String, block: suspend ReadEnv.() -> Unit) =
-        withContext(dispatcherProvider.IO) {
-            val start = System.currentTimeMillis()
-            log(TAG, VERBOSE) { "readAction($tag)" }
-
-            if (_state.value().readActions > 0) {
-                log(TAG, WARN) { "Already executing read skipping." }
-                return@withContext
-            }
+        return try {
+            _state.updateBlocking { copy(activeActions = activeActions + 1) }
             try {
-                _state.updateBlocking {
-                    copy(readActions = readActions + 1)
+                withDrive {
+                    driveLock.withLock {
+                        block()
+                    }
                 }
-                val env = object : ReadEnv {}
-                block(env)
             } catch (e: Exception) {
-                log(TAG, ERROR) { "readAction($tag) failed: ${e.asLog()}" }
+                log(TAG, ERROR) { "runDriveAction($tag) failed: ${e.asLog()}" }
                 throw e
-            } finally {
-                _state.updateBlocking {
-                    copy(
-                        readActions = max(readActions - 1, 0),
-                        lastReadAt = Instant.now(),
-                    )
-                }
             }
-
-            log(TAG, VERBOSE) { "readAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
-        }
-
-    interface WriteEnv : DriveEnv
-
-    private suspend fun writeAction(tag: String, block: suspend WriteEnv.() -> Unit) =
-        withContext(dispatcherProvider.IO + NonCancellable) {
-            val start = System.currentTimeMillis()
-            log(TAG, VERBOSE) { "writeAction($tag)" }
-
-            _state.updateBlocking { copy(writeActions = writeActions + 1) }
-
-            try {
-                writeLock.withLock {
-                    if (_state.value().isDead) {
-                        log(TAG, WARN) { "Connector is DEAD" }
-                        return@withLock
-                    }
-                    try {
-                        val env = object : WriteEnv {}
-                        block(env)
-                    } catch (e: Exception) {
-                        log(TAG, ERROR) { "writeAction($tag) failed: ${e.asLog()}" }
-                        throw e
-                    }
-                }
-            } finally {
-                _state.updateBlocking {
-                    log(TAG, VERBOSE) { "writeAction($tag) finished" }
-                    copy(
-                        writeActions = writeActions - 1,
-                        lastWriteAt = Instant.now(),
-                    )
-                }
-                log(TAG, VERBOSE) { "writeAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
+        } finally {
+            _state.updateBlocking {
+                log(TAG, VERBOSE) { "runDriveAction($tag) finished" }
+                copy(
+                    activeActions = activeActions - 1,
+                    lastActionAt = Instant.now(),
+                )
             }
+            log(TAG, VERBOSE) { "runDriveAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
         }
+    }
 
     @AssistedFactory
     interface Factory {

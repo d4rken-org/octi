@@ -3,11 +3,8 @@ package eu.darken.octi.sync.core
 import java.time.Instant
 
 interface SyncConnectorState {
-    val readActions: Int
-    val lastReadAt: Instant?
-
-    val writeActions: Int
-    val lastWriteAt: Instant?
+    val activeActions: Int
+    val lastActionAt: Instant?
 
     val lastError: Exception?
 
@@ -23,10 +20,10 @@ interface SyncConnectorState {
     val quota: Quota?
 
     val isBusy: Boolean
-        get() = readActions > 0 || writeActions > 0
+        get() = activeActions > 0
 
     val lastSyncAt: Instant?
-        get() = setOf(lastReadAt, lastWriteAt).filterNotNull().maxByOrNull { it }
+        get() = lastActionAt
 
     val devices: Collection<DeviceId>?
 

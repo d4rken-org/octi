@@ -71,15 +71,22 @@ class JServerConnector @AssistedInject constructor(
     private val crypti by lazy { PayloadEncryption(credentials.encryptionKeyset) }
 
     data class State(
-        override val readActions: Int = 0,
-        override val writeActions: Int = 0,
-        override val lastReadAt: Instant? = null,
-        override val lastWriteAt: Instant? = null,
         override val lastError: Exception? = null,
         override val quota: SyncConnectorState.Quota? = null,
         override val devices: Collection<DeviceId>? = null,
         override val isAvailable: Boolean = true,
-    ) : SyncConnectorState
+        val readActions: Int = 0,
+        val lastReadAt: Instant? = null,
+        val writeActions: Int = 0,
+        val lastWriteAt: Instant? = null,
+    ) : SyncConnectorState {
+        override val activeActions: Int
+            get() = readActions + writeActions
+
+        override val lastActionAt: Instant?
+            get() = setOf(lastReadAt, lastWriteAt).filterNotNull().maxByOrNull { it }
+
+    }
 
     private val _state = DynamicStateFlow(
         parentScope = scope + dispatcherProvider.IO,
