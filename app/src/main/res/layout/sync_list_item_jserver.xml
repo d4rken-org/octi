@@ -137,27 +137,12 @@
 
     <ImageView
         android:id="@+id/manage_hint_icon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginEnd="4dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:alpha="0.6"
-        android:src="@drawable/ic_baseline_settings_24"
-        app:layout_constraintBottom_toBottomOf="@id/manage_hint"
-        app:layout_constraintEnd_toStartOf="@id/manage_hint"
-        app:layout_constraintTop_toTopOf="@id/manage_hint" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/manage_hint"
-        style="@style/TextAppearance.Material3.LabelSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:alpha="0.6"
-        android:text="@string/general_tap_hint_msg"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_gesture_tap_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/deprecation_hint" />
-
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

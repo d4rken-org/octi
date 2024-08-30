@@ -10,11 +10,13 @@ import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.kserver.core.KServer
 import eu.darken.octi.syncs.kserver.core.KServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -22,8 +24,9 @@ import javax.inject.Inject
 class KServerActionsVM @Inject constructor(
     handle: SavedStateHandle,
     @AppScope private val appScope: CoroutineScope,
-    private val dispatcherProvider: DispatcherProvider,
+    dispatcherProvider: DispatcherProvider,
     private val syncManager: SyncManager,
+    private val syncSettings: SyncSettings,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     private val navArgs: KServerActionsFragmentArgs by handle.navArgs()
@@ -31,18 +34,29 @@ class KServerActionsVM @Inject constructor(
     val actionEvents = SingleLiveEvent<ActionEvents>()
 
     data class State(
-        val credentials: KServer.Credentials
+        val credentials: KServer.Credentials,
+        val isPaused: Boolean,
     )
 
-    val state = syncManager.getConnectorById<KServerConnector>(navArgs.identifier)
-        .map {
-            State(it.credentials)
-        }
+    val state = combine(
+        syncManager.getConnectorById<KServerConnector>(navArgs.identifier),
+        syncSettings.pausedConnectors.flow.map { it.contains(navArgs.identifier) },
+    ) { connector, paused ->
+        State(
+            connector.credentials,
+            isPaused = paused,
+        )
+    }
         .catch {
             if (it is NoSuchElementException) navEvents.postValue(null)
             else throw it
         }
         .asLiveData2()
+
+    fun togglePause() = launch {
+        log(TAG) { "togglePause()" }
+        syncManager.togglePause(navArgs.identifier)
+    }
 
     fun linkNewDevice() {
         log(TAG) { "linkNewDevice()" }

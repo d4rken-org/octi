@@ -23,6 +23,7 @@ class GDriveActionsFragment : BottomSheetDialogFragment2() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ui.pausedToggle.setOnClickListener { vm.togglePause() }
         ui.syncAction.setOnClickListener { vm.forceSync() }
         ui.disconnectAction.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext()).apply {
@@ -47,8 +48,8 @@ class GDriveActionsFragment : BottomSheetDialogFragment2() {
                 text = getString(R.string.sync_gdrive_type_label)
                 if (it.account.isAppDataScope) append(" (${getString(R.string.sync_gdrive_appdata_label)})")
             }
-
             subtitle.text = it.account.email
+            pausedToggle.isChecked = it.isPaused
         }
         super.onViewCreated(view, savedInstanceState)
     }

@@ -29,7 +29,7 @@ abstract class GDriveBaseConnector(
     val account: GoogleAccount
         get() = client.account
 
-    suspend fun <R> withDrive(action: suspend GDriveEnvironment.() -> R): R {
+    internal suspend fun <R> withDrive(action: suspend GDriveEnvironment.() -> R): R {
         val env = object : GDriveEnvironment {
             override val drive: Drive
                 get() = gdrive

@@ -7,20 +7,28 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
 import eu.darken.octi.syncs.gdrive.ui.GDriveStateVH
 import eu.darken.octi.syncs.jserver.core.JServerConnector
 import eu.darken.octi.syncs.jserver.ui.JServerStateVH
 import eu.darken.octi.syncs.kserver.core.KServerConnector
 import eu.darken.octi.syncs.kserver.ui.KServerStateVH
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
 @HiltViewModel
 class SyncListVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
-    syncManager: eu.darken.octi.sync.core.SyncManager,
+    syncManager: SyncManager,
+    private val syncSettings: SyncSettings,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
@@ -34,8 +42,9 @@ class SyncListVM @Inject constructor(
         }
     }
 
-    val state = syncManager.connectors
-        .flatMapLatest { connectors ->
+    val state = syncSettings.pausedConnectors.flow
+        .combine(syncManager.connectors) { paused, connectorList -> paused to connectorList }
+        .flatMapLatest { (paused, connectors) ->
             if (connectors.isEmpty()) return@flatMapLatest flowOf(emptyList())
 
             val withStates = connectors.map { connector ->
@@ -45,6 +54,7 @@ class SyncListVM @Inject constructor(
                             account = connector.account,
                             ourState = state,
                             otherStates = (connectors - connector).map { it.state.first() },
+                            isPaused = paused.contains(connector.identifier),
                             onManage = {
                                 SyncListFragmentDirections.actionSyncListFragmentToGDriveActionsFragment(
                                     connector.identifier
@@ -67,6 +77,7 @@ class SyncListVM @Inject constructor(
                             credentials = connector.credentials,
                             ourState = state,
                             otherStates = (connectors - connector).map { it.state.first() },
+                            isPaused = paused.contains(connector.identifier),
                             onManage = {
                                 SyncListFragmentDirections.actionSyncListFragmentToKServerActionsFragment(
                                     connector.identifier

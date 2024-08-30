@@ -23,6 +23,7 @@ class KServerActionsFragment : BottomSheetDialogFragment2() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ui.pausedToggle.setOnClickListener { vm.togglePause() }
         ui.syncAction.setOnClickListener { vm.forceSync() }
         ui.linkAction.setOnClickListener { vm.linkNewDevice() }
         ui.disconnectAction.setOnClickListener {
@@ -51,6 +52,7 @@ class KServerActionsFragment : BottomSheetDialogFragment2() {
         vm.state.observe2(ui) {
             title.text = "${getString(R.string.sync_kserver_type_label)} (${it.credentials.serverAdress.domain})"
             subtitle.text = it.credentials.accountId.id
+            pausedToggle.isChecked = it.isPaused
         }
 
         vm.actionEvents.observe2(ui) {
