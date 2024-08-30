@@ -2,7 +2,9 @@ package eu.darken.octi.sync.core
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -62,7 +64,8 @@ class SyncManager @Inject constructor(
         .setupCommonEventHandlers(TAG) { "syncStates" }
         .shareLatest(scope + dispatcherProvider.Default)
 
-    val data: Flow<Collection<SyncRead.Device>> = connectors
+    val data: Flow<Collection<SyncRead.Device>> = syncSettings.pausedConnectors.flow
+        .combine(connectors) { paused, connectorList -> connectorList.filter { !paused.contains(it.identifier) } }
         .flatMapLatest { connectorList ->
             if (connectorList.isEmpty()) {
                 flowOf(emptyList())
@@ -91,12 +94,18 @@ class SyncManager @Inject constructor(
 
     suspend fun sync(options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(options=$options)" }
-        val syncJobs = connectors.first().map {
-            scope.launch {
-                // TODO error handling
-                sync(it.identifier, options = options)
+        val syncJobs = connectors.first()
+            .filter {
+                val paused = syncSettings.pausedConnectors.value().contains(it.identifier)
+                if (paused) log(TAG, INFO) { "Connector is paused: $it" }
+                !paused
             }
-        }
+            .map {
+                scope.launch {
+                    // TODO error handling
+                    sync(it.identifier, options = options)
+                }
+            }
         syncJobs.joinAll()
     }
 
@@ -109,16 +118,20 @@ class SyncManager @Inject constructor(
     suspend fun write(toWrite: SyncWrite.Device.Module) {
         val start = System.currentTimeMillis()
         log(TAG) { "write(data=$toWrite)..." }
-        connectors.first().forEach {
-            it.write(
-                SyncWriteContainer(
-                    deviceId = syncSettings.deviceId,
-                    modules = listOf(
-                        toWrite
+        connectors.first()
+            .filter {
+                val paused = syncSettings.pausedConnectors.value().contains(it.identifier)
+                if (paused) log(TAG, INFO) { "Connector is paused: $it" }
+                !paused
+            }
+            .forEach {
+                it.write(
+                    SyncWriteContainer(
+                        deviceId = syncSettings.deviceId,
+                        modules = listOf(toWrite)
                     )
                 )
-            )
-        }
+            }
 
         log(TAG) { "write(data=$toWrite) done (${System.currentTimeMillis() - start}ms)" }
     }
@@ -148,6 +161,20 @@ class SyncManager @Inject constructor(
         }
 
         log(TAG) { "disconnect(connector=$connector) done" }
+    }
+
+    suspend fun togglePause(identifier: ConnectorId, paused: Boolean? = null) {
+        log(TAG, INFO) { "togglePause($identifier, enabled=$paused)" }
+        val pause = paused ?: !syncSettings.pausedConnectors.value().contains(identifier)
+        when (pause) {
+            true -> syncSettings.pausedConnectors.update {
+                it + identifier
+            }
+
+            false -> syncSettings.pausedConnectors.update {
+                it - identifier
+            }
+        }
     }
 
     companion object {

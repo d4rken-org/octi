@@ -19,7 +19,6 @@
     <string name="general_sync_action">Synchronize</string>
     <string name="general_select_server_label">Select server</string>
     <string name="general_quota_label">Quota</string>
-    <string name="general_tap_hint_msg">Tap for more options</string>
     <string name="general_upgrade_action">Upgrade</string>
     <string name="general_donate_action">Donate</string>
     <string name="general_check_action">Check</string>
@@ -90,6 +89,7 @@
     <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
 
     <string name="sync_synced_devices_label">Synced devices</string>
+    <string name="sync_connector_paused_label">Pause synchronization</string>
 
     <plurals name="general_devices_count_label">
         <item quantity="one">%d device</item>

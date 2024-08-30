@@ -40,7 +40,9 @@ class KServerStateVH(parent: ViewGroup) :
             isGone = item.ourState.lastError == null
             text = item.ourState.lastError?.toString()
         }
+
         syncProgressIndicator.isGone = !item.ourState.isBusy
+        pauseIcon.isGone = !item.isPaused
 
         quotaText.text = item.ourState.quota
             ?.let { stats ->
@@ -71,6 +73,7 @@ class KServerStateVH(parent: ViewGroup) :
         val credentials: KServer.Credentials,
         val ourState: SyncConnectorState,
         val otherStates: Collection<SyncConnectorState>,
+        val isPaused: Boolean,
         val onManage: () -> Unit,
     ) : SyncListAdapter.Item {
         override val stableId: Long

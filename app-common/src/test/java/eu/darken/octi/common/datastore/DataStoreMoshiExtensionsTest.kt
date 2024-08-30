@@ -81,6 +81,80 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
     }
 
     @Test
+    fun `reading and writing sets`() = runTest {
+        val testStore = createDataStore(this)
+
+        val testData = TestGson(string = "teststring")
+
+        testStore.createSetValue<TestGson>(
+            key = "testKey",
+            defaultValue = emptySet(),
+            moshi = Moshi.Builder().build()
+        ).apply {
+            flow.first() shouldBe emptySet()
+            testStore.data.first()[stringPreferencesKey(keyName)] shouldBe null
+
+            update {
+                setOf<TestGson>() + testData + testData
+            }
+            testStore.data.first()[stringPreferencesKey(keyName)]!!.toComparableJson() shouldBe """
+                [
+                    {
+                        "string":"teststring",
+                        "boolean":true,
+                        "float":1.0,
+                        "int":1,
+                        "long":1
+                    }
+                ]
+            """.toComparableJson()
+
+            flow.first() shouldBe setOf(testData)
+            flow.first().contains(testData) shouldBe true
+        }
+    }
+
+    @Test
+    fun `reading and writing lists`() = runTest {
+        val testStore = createDataStore(this)
+
+        val testData = TestGson(string = "teststring")
+
+        testStore.createListValue<TestGson>(
+            key = "testKey",
+            defaultValue = emptyList(),
+            moshi = Moshi.Builder().build()
+        ).apply {
+            flow.first() shouldBe emptyList()
+            testStore.data.first()[stringPreferencesKey(keyName)] shouldBe null
+
+            update {
+                listOf<TestGson>() + testData + testData
+            }
+            testStore.data.first()[stringPreferencesKey(keyName)]!!.toComparableJson() shouldBe """
+                [
+                    {
+                        "string":"teststring",
+                        "boolean":true,
+                        "float":1.0,
+                        "int":1,
+                        "long":1
+                    }, {
+                        "string":"teststring",
+                        "boolean":true,
+                        "float":1.0,
+                        "int":1,
+                        "long":1
+                    }
+                ]
+            """.toComparableJson()
+
+            flow.first() shouldBe listOf(testData, testData)
+            flow.first().contains(testData) shouldBe true
+        }
+    }
+
+    @Test
     fun `reading and writing using autocreated reader and writer`() = runTest {
         val testStore = createDataStore(this)
 
