@@ -183,7 +183,6 @@ class KServerConnector @AssistedInject constructor(
                 }
             } catch (e: Exception) {
                 log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
-                _state.updateBlocking { copy(lastError = e) }
             }
         }
     }
@@ -258,11 +257,6 @@ class KServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeServer(): Done" }
     }
 
-    private fun getStorageStats(): SyncConnectorState.Quota {
-        log(TAG, VERBOSE) { "getStorageStats()" }
-        return SyncConnectorState.Quota()
-    }
-
     private suspend fun <R> runServerAction(
         tag: String,
         block: suspend () -> R,
@@ -273,14 +267,13 @@ class KServerConnector @AssistedInject constructor(
         return try {
             _state.updateBlocking { copy(activeActions = activeActions + 1) }
 
-            try {
-                serverLock.withLock {
-                    withContext(NonCancellable) { block() }
-                }
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "runServerAction($tag) failed: ${e.asLog()}" }
-                throw e
+            serverLock.withLock {
+                withContext(NonCancellable) { block() }
             }
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "runServerAction($tag) failed: ${e.asLog()}" }
+            _state.updateBlocking { copy(lastError = e) }
+            throw e
         } finally {
             _state.updateBlocking {
                 log(TAG, VERBOSE) { "runServerAction($tag) finished" }
