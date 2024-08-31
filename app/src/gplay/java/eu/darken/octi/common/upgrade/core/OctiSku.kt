@@ -1,9 +1,35 @@
 package eu.darken.octi.common.upgrade.core
 
-import eu.darken.octi.common.BuildConfigWrap
-import eu.darken.octi.common.upgrade.core.data.AvailableSku
-import eu.darken.octi.common.upgrade.core.data.Sku
+import eu.darken.octi.common.upgrade.core.billing.Sku
 
-enum class OctiSku constructor(override val sku: Sku) : AvailableSku {
-    PRO_UPGRADE(Sku("${BuildConfigWrap.APPLICATION_ID}.iap.upgrade.pro"))
+@Suppress("ClassName")
+interface OurSku {
+    interface Iap : OurSku {
+        object PRO_UPGRADE : Sku.Iap, Iap {
+            override val id: String = "eu.darken.octi.iap.upgrade.pro"
+        }
+    }
+
+    interface Sub : Sku.Subscription {
+        object PRO_UPGRADE : Sku.Subscription, Sub {
+            override val id: String = "upgrade.pro"
+            override val offers: Collection<Sku.Subscription.Offer> = setOf(
+                BASE_OFFER, TRIAL_OFFER
+            )
+
+            object BASE_OFFER : Sku.Subscription.Offer {
+                override val basePlanId: String = "upgrade-pro-baseplan"
+                override val offerId: String? = null
+            }
+
+            object TRIAL_OFFER : Sku.Subscription.Offer {
+                override val basePlanId: String = "upgrade-pro-baseplan"
+                override val offerId: String = "upgrade-pro-baseplan-trial"
+            }
+        }
+    }
+
+    companion object {
+        val PRO_SKUS = setOf(Sub.PRO_UPGRADE, Iap.PRO_UPGRADE)
+    }
 }
