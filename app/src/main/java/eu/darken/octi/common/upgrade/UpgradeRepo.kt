@@ -1,13 +1,14 @@
 package eu.darken.octi.common.upgrade
 
-import android.app.Activity
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
 
 interface UpgradeRepo {
+    val mainWebsite: String
+
     val upgradeInfo: Flow<Info>
 
-    fun launchBillingFlow(activity: Activity)
+    suspend fun refresh()
 
     interface Info {
         val type: Type

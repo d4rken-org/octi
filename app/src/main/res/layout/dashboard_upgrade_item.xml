@@ -3,58 +3,61 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/DashboardCardItem"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:backgroundTint="?colorSecondaryContainer">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp">
 
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_baseline_stars_24"
+            app:layout_constraintBottom_toBottomOf="@id/title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/title" />
+
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/welcome_title"
+            android:id="@+id/title"
             style="@style/TextAppearance.Material3.TitleMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/onboarding_card_title"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            android:text="@string/upgrades_dashcard_title"
+            android:textColor="?colorOnSecondaryContainer"
+            app:layout_constraintStart_toEndOf="@id/icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/welcome_body"
+            android:id="@+id/body"
             style="@style/TextAppearance.Material3.BodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/onboarding_card_message"
-            app:layout_constraintBottom_toTopOf="@id/dismiss_action"
-            app:layout_constraintEnd_toEndOf="@id/welcome_title"
-            app:layout_constraintStart_toStartOf="@id/welcome_title"
-            app:layout_constraintTop_toBottomOf="@id/welcome_title" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/dismiss_action"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/general_dismiss_action"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/welcome_body" />
+            android:text="@string/upgrades_dashcard_body"
+            android:textColor="?colorOnSecondaryContainer"
+            app:layout_constraintBottom_toTopOf="@id/upgrade_action"
+            app:layout_constraintEnd_toEndOf="@id/title"
+            app:layout_constraintStart_toStartOf="@id/title"
+            app:layout_constraintTop_toBottomOf="@id/title" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/upgrade_action"
-            style="@style/Widget.Material3.Button"
+            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/general_upgrade_action"
+            android:clickable="false"
+            android:focusable="false"
+            android:text="@string/upgrades_dashcard_upgrade_action"
+            app:icon="@drawable/ic_heart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintTop_toBottomOf="@id/welcome_body" />
+            app:layout_constraintTop_toBottomOf="@id/body" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

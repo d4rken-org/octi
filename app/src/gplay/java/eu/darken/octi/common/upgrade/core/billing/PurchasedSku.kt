@@ -1,4 +1,4 @@
-package eu.darken.octi.common.upgrade.core.data
+package eu.darken.octi.common.upgrade.core.billing
 
 import com.android.billingclient.api.Purchase
 

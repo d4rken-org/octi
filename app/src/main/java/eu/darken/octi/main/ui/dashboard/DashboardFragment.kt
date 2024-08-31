@@ -68,7 +68,7 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                     }
 
                     R.id.action_upgrade -> {
-                        vm.upgradeToOctiPro()
+                        DashboardFragmentDirections.goToUpgradeFragment().navigate()
                         true
                     }
 
@@ -93,9 +93,7 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
             val baseTitle = when {
                 state.isPro -> getString(R.string.app_name_upgraded)
                 else -> getString(R.string.app_name)
-            }.split(" ".toRegex())
-                .dropLastWhile { it.isEmpty() }
-                .toTypedArray()
+            }.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
             toolbar.title = if (baseTitle.size == 2) {
                 val builder = SpannableStringBuilder(baseTitle[0] + " ")
@@ -149,8 +147,6 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                     )
                     dialog.show()
                 }
-
-                is DashboardEvent.LaunchUpgradeFlow -> vm.launchUpgradeFlow(requireActivity())
             }
         }
 

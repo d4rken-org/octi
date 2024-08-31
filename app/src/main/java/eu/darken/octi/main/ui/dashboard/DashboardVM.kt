@@ -1,7 +1,6 @@
 package eu.darken.octi.main.ui.dashboard
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
@@ -26,7 +25,7 @@ import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.ui.dashboard.items.DeviceLimitVH
 import eu.darken.octi.main.ui.dashboard.items.PermissionVH
 import eu.darken.octi.main.ui.dashboard.items.SyncSetupVH
-import eu.darken.octi.main.ui.dashboard.items.WelcomeVH
+import eu.darken.octi.main.ui.dashboard.items.UpgradeCardVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
@@ -42,8 +41,17 @@ import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
@@ -62,7 +70,7 @@ class DashboardVM @Inject constructor(
     private val networkStateProvider: NetworkStateProvider,
     private val permissionTool: PermissionTool,
     private val syncSettings: SyncSettings,
-    private val upgradeRepo: UpgradeRepo,
+    upgradeRepo: UpgradeRepo,
     private val webpageTool: WebpageTool,
     private val clipboardHandler: ClipboardHandler,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
@@ -97,21 +105,13 @@ class DashboardVM @Inject constructor(
     val state: LiveData<State> = combine(
         tickerUiRefresh,
         networkStateProvider.networkState,
-        generalSettings.isWelcomeDismissed.flow,
         generalSettings.isSyncSetupDismissed.flow,
         deviceItems(),
         permissionTool.missingPermissions,
         isManuallyRefreshing,
         upgradeRepo.upgradeInfo,
-    ) { now, networkState, isWelcomeDismissed, isSyncSetupDismissed, deviceItems, missingPermissions, isRefreshing, upgradeInfo ->
+    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, isRefreshing, upgradeInfo ->
         val items = mutableListOf<DashboardAdapter.Item>()
-
-        if (!isWelcomeDismissed && !upgradeInfo.isPro) {
-            WelcomeVH.Item(
-                onDismiss = { launch { generalSettings.isWelcomeDismissed.value(true) } },
-                onUpgrade = { upgradeToOctiPro() }
-            ).run { items.add(this) }
-        }
 
         val connectorCount = syncManager.connectors.first().size
         if (!isSyncSetupDismissed && connectorCount == 0) {
@@ -141,11 +141,17 @@ class DashboardVM @Inject constructor(
             DeviceLimitVH.Item(
                 current = deviceItems.size,
                 maximum = DEVICE_LIMIT,
-                onUpgrade = { dashboardEvents.postValue(DashboardEvent.LaunchUpgradeFlow(UpgradeRepo.Type.GPLAY)) },
+                onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() },
             ).run { items.add(this) }
             items.addAll(deviceItems.take(DEVICE_LIMIT))
         } else {
             items.addAll(deviceItems)
+        }
+
+        if (!upgradeInfo.isPro) {
+            UpgradeCardVH.Item(
+                onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() }
+            ).run { items.add(this) }
         }
 
         val lastConnectorActivity = syncManager.states.first().mapNotNull { it.lastSyncAt }.maxByOrNull { it }
@@ -162,11 +168,6 @@ class DashboardVM @Inject constructor(
     fun goToSyncServices() = launch {
         log(TAG) { "goToSyncServices()" }
         DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate()
-    }
-
-    fun upgradeToOctiPro() = launch {
-        log(TAG) { "upgradeToOctiPro()" }
-        dashboardEvents.postValue(DashboardEvent.LaunchUpgradeFlow(UpgradeRepo.Type.GPLAY))
     }
 
     private val refreshLock = Mutex()
@@ -187,11 +188,6 @@ class DashboardVM @Inject constructor(
 
     fun onPermissionResult(granted: Boolean) {
         if (granted) permissionTool.recheck()
-    }
-
-    fun launchUpgradeFlow(activity: Activity) {
-        log(TAG) { "launchUpgradeFlow(activity=$activity)" }
-        upgradeRepo.launchBillingFlow(activity)
     }
 
     private fun deviceItems(): Flow<List<DeviceVH.Item>> = combine(

@@ -167,7 +167,8 @@ dependencies {
 
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
-    "gplayImplementation"("com.android.billingclient:billing:4.0.0")
+    "gplayImplementation"("com.android.billingclient:billing:7.0.0")
+    "gplayImplementation"("com.android.billingclient:billing-ktx:7.0.0")
 
     implementation("io.coil-kt:coil:2.0.0-rc02")
 }

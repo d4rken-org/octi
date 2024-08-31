@@ -60,7 +60,7 @@ class KServerLinkHostFragment : Fragment3(R.layout.sync_kserver_link_host_fragme
                         }
                         qrcodeImage.setImageBitmap(qrcode)
                     } catch (e: Exception) {
-                        e.asErrorDialogBuilder(requireContext()).show()
+                        e.asErrorDialogBuilder(requireActivity()).show()
                     }
                 }
 
