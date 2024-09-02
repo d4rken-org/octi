@@ -12,8 +12,6 @@
     <string name="onboarding_body2">It synchronizes information between the devices so you can see one device from all other devices.</string>
     <string name="onboarding_body3">You can upgrade to Octi Pro to gain extra features and support development.</string>
 
-    <string name="dashboard_click_hint">Some entries can be clicked to view more details.</string>
-
     <string name="debug_debuglog_size_label">Size</string>
     <string name="debug_debuglog_size_compressed_label">Compressed size</string>
     <string name="debug_notification_channel_label">Debug notifications</string>
