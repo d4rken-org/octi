@@ -19,15 +19,12 @@
     <string name="general_sync_action">Sincronizar</string>
     <string name="general_select_server_label">Seleccionar un servidor</string>
     <string name="general_quota_label">Cuota</string>
-    <string name="general_tap_hint_msg">Toca para ver más opciones</string>
     <string name="general_upgrade_action">Actualizar</string>
     <string name="general_donate_action">Donar</string>
     <string name="general_check_action">Comprobar</string>
     <string name="general_internal_not_available_msg">La conexión a Internet no está disponible</string>
     <string name="general_refresh_action">Actualizar</string>
     <string name="general_continue">Continuar</string>
-
-    <string name="dashboard_click_hint">Se puede hacer clic en algunas entradas para ver más detalles.</string>
 
     <string name="debug_debuglog_size_label">Tamaño</string>
     <string name="debug_debuglog_size_compressed_label">Tamaño comprimido</string>

@@ -5,12 +5,23 @@
     style="@style/DashboardDeviceInfoRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?selectableItemBackground">
+    android:background="?selectableItemBackground"
+    android:paddingStart="0dp">
+
+    <ImageView
+        android:id="@+id/tap_indicator"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_chevron_right_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/wifi_icon"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:layout_marginStart="16dp"
         android:src="@drawable/ic_baseline_apps_24"
         app:layout_constraintBottom_toBottomOf="@id/apps_secondary"
         app:layout_constraintStart_toStartOf="parent"

@@ -4,7 +4,8 @@
     style="@style/DashboardCardItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="?colorSecondaryContainer">
+    android:layout_marginBottom="32dp"
+    android:backgroundTint="?colorTertiaryContainer">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -47,7 +48,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/upgrade_action"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="@style/Widget.Material3.FloatingActionButton.Tertiary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

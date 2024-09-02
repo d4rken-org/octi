@@ -47,6 +47,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
         android:contentDescription="@string/general_refresh_action"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
         app:srcCompat="@drawable/ic_baseline_refresh_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
