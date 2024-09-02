@@ -1,17 +1,16 @@
 package eu.darken.octi.main.ui.settings.general
 
+import android.os.Bundle
+import android.view.View
 import androidx.annotation.Keep
 import androidx.fragment.app.viewModels
-import androidx.preference.ListPreference
-import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
+import eu.darken.octi.MainDirections
 import eu.darken.octi.R
-import eu.darken.octi.common.BuildConfigWrap
-import eu.darken.octi.common.datastore.valueBlocking
+import eu.darken.octi.common.preferences.ListPreference2
+import eu.darken.octi.common.preferences.setupWithEnum
 import eu.darken.octi.common.uix.PreferenceFragment3
 import eu.darken.octi.main.core.GeneralSettings
-import eu.darken.octi.main.core.ThemeType
-import eu.darken.octi.main.core.labelRes
 import javax.inject.Inject
 
 @Keep
@@ -25,22 +24,40 @@ class GeneralSettingsFragment : PreferenceFragment3() {
     override val settings: GeneralSettings by lazy { generalSettings }
     override val preferenceFile: Int = R.xml.preferences_general
 
-    private val themePref by lazy { findPreference<ListPreference>(settings.themeType.keyName)!! }
+    private val themeModePref: ListPreference2
+        get() = findPreference(settings.themeMode.keyName)!!
+    private val themeStylePref: ListPreference2
+        get() = findPreference(settings.themeStyle.keyName)!!
 
     override fun onPreferencesCreated() {
-        themePref.apply {
-            entries = ThemeType.values().map { getString(it.labelRes) }.toTypedArray()
-            entryValues = ThemeType.values().map { it.name }.toTypedArray()
-            setSummary(ThemeType.valueOf(settings.themeType.valueBlocking).labelRes)
-        }
-        findPreference<Preference>("debug.bugreport.automatic.enabled")?.isEnabled =
-            BuildConfigWrap.FLAVOR != BuildConfigWrap.Flavor.FOSS
+
+        themeModePref.setupWithEnum(settings.themeMode)
+        themeStylePref.setupWithEnum(settings.themeStyle)
+
         super.onPreferencesCreated()
     }
 
-    override fun onPreferencesChanged() {
-        themePref.setSummary(ThemeType.valueOf(settings.themeType.valueBlocking).labelRes)
-        super.onPreferencesChanged()
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        vm.state.observe2 { state ->
+            themeModePref.alternativeClickListener = when {
+                state.isPro -> null
 
+                else -> {
+                    {
+                        MainDirections.goToUpgradeFragment().navigate()
+                    }
+                }
+            }
+            themeStylePref.alternativeClickListener = when {
+                state.isPro -> null
+
+                else -> {
+                    {
+                        MainDirections.goToUpgradeFragment().navigate()
+                    }
+                }
+            }
+        }
+        super.onViewCreated(view, savedInstanceState)
+    }
 }

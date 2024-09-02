@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
-import androidx.preference.Preference
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -18,7 +17,7 @@ class IntentPreference @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = androidx.preference.R.attr.preferenceStyle,
     @StyleRes defStyleRes: Int = 0,
-) : Preference(context, attrs, defStyleAttr, defStyleRes) {
+) : Preference2(context, attrs, defStyleAttr, defStyleRes) {
 
     override fun setIntent(_intent: Intent?) {
         super.setIntent(_intent)
