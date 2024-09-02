@@ -8,6 +8,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkCapabilities.*
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import androidx.core.net.ConnectivityManagerCompat
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
@@ -120,6 +121,7 @@ class NetworkStateProvider @Inject constructor(
         .distinctUntilChanged()
         .replayingShare(scope = appScope)
 
+    @get:RequiresPermission("android.permission.ACCESS_NETWORK_STATE")
     private val currentState: State
         @SuppressLint("NewApi")
         get() = try {
@@ -135,6 +137,7 @@ class NetworkStateProvider @Inject constructor(
         }
 
     @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresPermission("android.permission.ACCESS_NETWORK_STATE")
     private fun modernNetworkState(): State = manager.activeNetwork.let { network ->
         State.Modern(
             activeNetwork = network,
@@ -150,6 +153,7 @@ class NetworkStateProvider @Inject constructor(
     }
 
     @Suppress("DEPRECATION")
+    @RequiresPermission("android.permission.ACCESS_NETWORK_STATE")
     private fun legacyNetworkState(): State = State.LegacyAPI21(
         isInternetAvailable = manager.activeNetworkInfo?.isConnected ?: false,
         isMeteredConnection = ConnectivityManagerCompat.isActiveNetworkMetered(manager)
