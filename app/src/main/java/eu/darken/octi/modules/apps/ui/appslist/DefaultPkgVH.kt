@@ -26,10 +26,13 @@ class DefaultPkgVH(parent: ViewGroup) :
 
         primary.text = pkg.label ?: pkg.packageName
         secondary.text = "${pkg.versionName} (${pkg.versionCode}) - ${pkg.packageName}"
+
+        root.setOnClickListener { item.onClick() }
     }
 
     data class Item(
         val pkg: AppsInfo.Pkg,
+        val onClick: () -> Unit,
     ) : AppsListAdapter.Item {
         override val stableId: Long = this.javaClass.hashCode().toLong()
     }
