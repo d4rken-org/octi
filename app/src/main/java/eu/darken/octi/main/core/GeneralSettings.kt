@@ -15,6 +15,8 @@ import eu.darken.octi.common.debug.autoreport.DebugSettings
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.permissions.Permission
+import eu.darken.octi.common.theming.ThemeMode
+import eu.darken.octi.common.theming.ThemeStyle
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,7 +38,8 @@ class GeneralSettings @Inject constructor(
 
     val isSyncSetupDismissed = dataStore.createValue("onboarding.syncsetup.dismissed", false)
 
-    val themeType = dataStore.createValue("core.ui.theme.type", ThemeType.SYSTEM.identifier)
+    val themeMode = dataStore.createValue("core.ui.theme.mode", ThemeMode.SYSTEM, moshi)
+    val themeStyle = dataStore.createValue("core.ui.theme.style", ThemeStyle.DEFAULT, moshi)
 
     val dismissedPermissions: DataStoreValue<Set<Permission>> = dataStore.createValue(
         stringPreferencesKey("core.permission.dismissed"),
@@ -57,7 +60,8 @@ class GeneralSettings @Inject constructor(
 
     override val mapper = PreferenceStoreMapper(
         debugSettings.isAutoReportingEnabled,
-        themeType
+        themeMode,
+        themeStyle,
     )
 
     companion object {

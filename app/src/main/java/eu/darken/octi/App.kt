@@ -1,7 +1,6 @@
 package eu.darken.octi
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import coil.Coil
@@ -11,20 +10,21 @@ import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.AutomaticBugReporter
-import eu.darken.octi.common.debug.logging.*
+import eu.darken.octi.common.debug.logging.LogCatLogger
+import eu.darken.octi.common.debug.logging.Logging
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
+import eu.darken.octi.common.debug.logging.asLog
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.debug.recording.core.RecorderModule
-import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.common.theming.Theming
 import eu.darken.octi.main.core.GeneralSettings
-import eu.darken.octi.main.core.ThemeType
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -40,6 +40,7 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var generalSettings: GeneralSettings
     @Inject lateinit var recorderModule: RecorderModule
     @Inject lateinit var imageLoaderFactory: ImageLoaderFactory
+    @Inject lateinit var theming: Theming
 
     override fun onCreate() {
         super.onCreate()
@@ -62,19 +63,7 @@ open class App : Application(), Configuration.Provider {
 
         syncWorkerControl.start()
 
-        generalSettings.themeType.flow
-            .map { ThemeType.valueOf(it) }
-            .onEach {
-                withContext(dispatcherProvider.Main) {
-                    when (it) {
-                        ThemeType.SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        ThemeType.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        ThemeType.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-                }
-            }
-            .setupCommonEventHandlers(TAG) { "themeMode" }
-            .launchIn(appScope)
+        theming.setup()
 
         Coil.setImageLoader(imageLoaderFactory)
 

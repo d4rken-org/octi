@@ -7,6 +7,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.debug.recording.core.RecorderModule
 import eu.darken.octi.common.navigation.findNavController
+import eu.darken.octi.common.theming.Theming
 import eu.darken.octi.common.uix.Activity2
 import eu.darken.octi.databinding.MainActivityBinding
 import javax.inject.Inject
@@ -21,12 +22,13 @@ class MainActivity : Activity2() {
     var showSplashScreen = true
 
     @Inject lateinit var recorderModule: RecorderModule
+    @Inject lateinit var theming: Theming
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val splashScreen = installSplashScreen()
-
+        theming.notifySplashScreenDone(this)
         splashScreen.setKeepOnScreenCondition { showSplashScreen && savedInstanceState == null }
 
         ui = MainActivityBinding.inflate(layoutInflater)

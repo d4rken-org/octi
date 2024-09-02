@@ -2,7 +2,6 @@
     <string name="label_settings">Settings</string>
     <string name="label_help">Help</string>
 
-
     <string name="general_create_account_action">Create account</string>
     <string name="general_link_existing_action">Link to existing account</string>
     <string name="general_sync_action">Synchronize</string>
@@ -35,6 +34,17 @@
     <string name="settings_acknowledgements_label">Acknowledgements</string>
     <string name="documentation_label">Documentation</string>
     <string name="email_developer_label">Email developer</string>
+
+    <string name="ui_theme_mode_setting_label">Theme mode</string>
+    <string name="ui_theme_mode_setting_explanation">The mode used when theming the app (e.g. night or day).</string>
+    <string name="ui_theme_mode_dark_label">Dark</string>
+    <string name="ui_theme_mode_light_label">Light</string>
+    <string name="ui_theme_mode_system_label">System</string>
+
+    <string name="ui_theme_style_setting_label">Theme style</string>
+    <string name="ui_theme_style_setting_explanation">The color style used when theming the app.</string>
+    <string name="ui_theme_style_default_label">Default</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 
     <string name="issue_tracker_label">Issue tracker</string>
     <string name="issue_tracker_description">A public issue tracker for bug reports and feature requests.</string>

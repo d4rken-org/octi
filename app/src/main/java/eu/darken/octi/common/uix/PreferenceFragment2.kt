@@ -10,6 +10,8 @@ import androidx.annotation.XmlRes
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import eu.darken.octi.common.datastore.PreferenceScreenData
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
@@ -65,6 +67,8 @@ abstract class PreferenceFragment2 : PreferenceFragmentCompat() {
     open fun onPreferencesChanged() {
 
     }
+
+    fun NavDirections.navigate() = findNavController().navigate(this)
 
     fun setupMenu(@MenuRes menuResId: Int, block: (MenuItem) -> Unit) {
         toolbar.apply {
