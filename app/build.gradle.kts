@@ -159,9 +159,9 @@ dependencies {
         exclude("org.apache.httpcomponents")
     }
 
-    implementation("androidx.navigation:navigation-fragment-ktx:2.5.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.5.0")
-    androidTestImplementation("androidx.navigation:navigation-testing:2.5.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
 
     implementation("androidx.core:core-splashscreen:1.0.0")
 
