@@ -2,13 +2,27 @@
 
 package eu.darken.octi.common.network
 
-import android.net.*
-import android.net.ConnectivityManager.*
+import android.net.ConnectivityManager
+import android.net.ConnectivityManager.NetworkCallback
+import android.net.ConnectivityManager.TYPE_WIFI
+import android.net.LinkProperties
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkInfo
+import android.net.NetworkRequest
 import eu.darken.octi.common.BuildWrap
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.shouldBe
-import io.mockk.*
+import io.mockk.Called
+import io.mockk.MockKAnnotations
+import io.mockk.Runs
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.verify
+import io.mockk.verifySequence
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -246,34 +260,6 @@ class NetworkStateProviderTest : BaseTest() {
             isMeteredConnection shouldBe true
         }
         testObs.cancelAndJoin()
-    }
-
-    @Test
-    fun `current state is correctly determined below API 23`() = runTest2(autoCancel = true) {
-        every { BuildWrap.VERSION.SDK_INT } returns 22
-
-        createInstance(this).apply {
-            networkState.first().apply {
-                isInternetAvailable shouldBe true
-                isMeteredConnection shouldBe false
-            }
-            advanceUntilIdle()
-
-            every { networkInfo.type } returns TYPE_MOBILE
-            networkState.first().apply {
-                isInternetAvailable shouldBe true
-                isMeteredConnection shouldBe true
-            }
-            advanceUntilIdle()
-
-            every { networkInfo.isConnected } returns false
-            networkState.first().apply {
-                isInternetAvailable shouldBe false
-                isMeteredConnection shouldBe true
-            }
-        }
-
-        verify { connectivityManager.activeNetworkInfo }
     }
 }
 
