@@ -1,5 +1,6 @@
 package eu.darken.octi.common.uix
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import eu.darken.octi.common.datastore.PreferenceScreenData
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
@@ -37,21 +39,21 @@ abstract class PreferenceFragment2 : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = settings.mapper
+        addPreferencesFromResource(preferenceFile)
+        onPreferencesCreated()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        refreshPreferenceScreen()
-
+        super.onViewCreated(view, savedInstanceState)
         settings.dataStore.data
             .onEach {
-                log(VERBOSE) { "Preferences changed." }
+                log(VERBOSE) { "Preferences changed: $it" }
                 onPreferencesChanged()
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
-
-        super.onViewCreated(view, savedInstanceState)
     }
 
+    @SuppressLint("RestrictedApi")
     override fun getCallbackFragment(): Fragment? = parentFragment
 
     fun refreshPreferenceScreen() {
@@ -66,6 +68,10 @@ abstract class PreferenceFragment2 : PreferenceFragmentCompat() {
 
     open fun onPreferencesChanged() {
 
+    }
+
+    fun Preference.appendSummary(text: String) {
+        summary = summary.toString() + text
     }
 
     fun NavDirections.navigate() = findNavController().navigate(this)
