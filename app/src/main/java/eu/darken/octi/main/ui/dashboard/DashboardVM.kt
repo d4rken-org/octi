@@ -77,7 +77,7 @@ class DashboardVM @Inject constructor(
 
     init {
         if (!generalSettings.isOnboardingDone.valueBlocking) {
-            DashboardFragmentDirections.actionDashFragmentToOnboardingFragment().navigate()
+            DashboardFragmentDirections.actionDashFragmentToWelcomeFragment().navigate()
         }
     }
 

@@ -7,9 +7,17 @@
     <string name="general_sync_action">Synchronize</string>
     <string name="general_select_server_label">Select server</string>
 
-    <string name="onboarding_body1">Octi is a tool for people with multiple Android devices.</string>
-    <string name="onboarding_body2">It synchronizes information between the devices so you can see one device from all other devices.</string>
-    <string name="onboarding_body3">You can upgrade to Octi Pro to gain extra features and support development.</string>
+    <string name="onboarding_welcome_subtitle">Your Device Buddy</string>
+    <string name="onboarding_welcome_body1">Octi is a tool for people with multiple Android devices.</string>
+    <string name="onboarding_welcome_body2">It keeps you in the loop with all your devices. Whether it\'s your phone, tablet or any other gadget with Octi installed, you\'ll get key details at a glance.</string>
+    <string name="onboarding_welcome_body3">You can upgrade to Octi Pro to gain extra features and support development.</string>
+    <string name="onboarding_welcome_beta_hint">Just a heads-up, this is a beta version, so thanks for your patience as I keep improving the app!</string>
+
+    <string name="onboarding_privacy_subtitle">Privacy policy</string>
+    <string name="onboarding_privacy_body1">Octi has no ads and does not sell user data.</string>
+
+    <string name="updatecheck_setting_enabled_label">Update check</string>
+    <string name="updatecheck_setting_enabled_explanation">Allow Octi to check for updates to let you know if a newer version is available.</string>
 
     <string name="debug_debuglog_size_label">Size</string>
     <string name="debug_debuglog_size_compressed_label">Compressed size</string>
@@ -17,8 +25,6 @@
     <string name="debug_debuglog_file_label">Recorded log file</string>
     <string name="debug_debuglog_record_action">Record debug log</string>
 
-    <string name="onboarding_card_title">Welcome to Octi</string>
-    <string name="onboarding_card_message">Octi is a very young app and still being improved. If you experience issues or just have a great idea, please let me know!\n\nConsider upgrading to Octi Pro to support me developing it.</string>
     <string name="onboarding_setupsync_title">Setup synchronization</string>
     <string name="onboarding_setupsync_message">Currently you are only seeing this device. To connect your Octi installations, setup a common synchronization service.</string>
 

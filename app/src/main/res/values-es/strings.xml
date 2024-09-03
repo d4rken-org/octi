@@ -13,8 +13,6 @@
     <string name="debug_debuglog_file_label">Archivo de registro grabado</string>
     <string name="debug_debuglog_record_action">Registrar el registro de depuración</string>
 
-    <string name="onboarding_card_title">Bienvenido a Octi</string>
-    <string name="onboarding_card_message">Octi es una aplicación muy joven y todavía se está mejorando. Si experimenta problemas o simplemente tiene una gran idea, ¡hágamelo saber!\n\nConsidera actualizar a Octi Pro para ayudarme en el desarrollarlo.</string>
     <string name="onboarding_setupsync_title">Configurar la sincronización</string>
     <string name="onboarding_setupsync_message">Actualmente solo ves este dispositivo. Para conectar tus instalaciones Octi, configura un servicio de sincronización común.</string>
 

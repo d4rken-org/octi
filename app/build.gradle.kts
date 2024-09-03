@@ -7,6 +7,8 @@ plugins {
 apply(plugin = "dagger.hilt.android.plugin")
 apply(plugin = "androidx.navigation.safeargs.kotlin")
 
+val commitHashProvider = providers.of(CommitHashValueSource::class) {}
+
 android {
     val packageName = ProjectConfig.packageName
 
@@ -26,8 +28,7 @@ android {
         testInstrumentationRunner = "eu.darken.octi.HiltTestRunner"
 
         buildConfigField("String", "PACKAGENAME", "\"${ProjectConfig.packageName}\"")
-        buildConfigField("String", "GITSHA", "\"${lastCommitHash()}\"")
-        buildConfigField("String", "BUILDTIME", "\"${buildTime()}\"")
+        buildConfigField("String", "GITSHA", "\"${commitHashProvider.get()}\"")
         buildConfigField("String", "VERSION_CODE", "\"${ProjectConfig.Version.code}\"")
         buildConfigField("String", "VERSION_NAME", "\"${ProjectConfig.Version.name}\"")
     }
@@ -94,7 +95,7 @@ android {
         if (listOf("release", "beta").any { variantName.toLowerCase().contains(it) }) {
             val outputFileName = packageName +
                     "-v${defaultConfig.versionName}-${defaultConfig.versionCode}" +
-                    "-${variantName.toUpperCase()}-${lastCommitHash()}.apk"
+                    "-${variantName.toUpperCase()}.apk"
 
             variantOutputImpl.outputFileName = outputFileName
         }

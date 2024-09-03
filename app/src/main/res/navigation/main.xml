@@ -20,8 +20,8 @@
             android:id="@+id/action_dashFragment_to_appsListFragment"
             app:destination="@id/appsListFragment" />
         <action
-            android:id="@+id/action_dashFragment_to_onboardingFragment"
-            app:destination="@id/onboardingFragment" />
+            android:id="@+id/action_dashFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
         <action
             android:id="@+id/action_dashFragment_to_upgradeFragment"
             app:destination="@id/upgradeFragment" />
@@ -154,14 +154,6 @@
             android:name="deviceId"
             app:argType="eu.darken.octi.sync.core.DeviceId" />
     </fragment>
-    <fragment
-        android:id="@+id/onboardingFragment"
-        android:name="eu.darken.octi.main.ui.onboarding.ui.OnboardingFragment"
-        tools:layout="@layout/onboarding_fragment">
-        <action
-            android:id="@+id/action_onboardingFragment_to_dashFragment"
-            app:destination="@id/dashFragment" />
-    </fragment>
     <action
         android:id="@+id/goToUpgradeFragment"
         app:destination="@id/upgradeFragment" />
@@ -173,6 +165,22 @@
             android:name="forced"
             android:defaultValue="false"
             app:argType="boolean" />
+    </fragment>
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="eu.darken.octi.main.ui.onboarding.welcome.WelcomeFragment"
+        tools:layout="@layout/onboarding_welcome_fragment">
+        <action
+            android:id="@+id/action_welcomeFragment_to_privacyFragment"
+            app:destination="@id/privacyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/privacyFragment"
+        android:name="eu.darken.octi.main.ui.onboarding.privacy.PrivacyFragment"
+        tools:layout="@layout/onboarding_privacy_fragment">
+        <action
+            android:id="@+id/action_privacyFragment_to_dashFragment"
+            app:destination="@id/dashFragment" />
     </fragment>
 
 </navigation>
