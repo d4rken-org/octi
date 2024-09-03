@@ -5,6 +5,8 @@
 -keepclassmembers class * {
   @com.google.api.client.util.Key <fields>;
 }
+-keep class * extends com.google.api.client.json.GenericJson { *; }
+-keep class com.google.api.services.drive.** { *; }
 
 # Needed by google-http-client-android when linking against an older platform version
 
