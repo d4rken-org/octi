@@ -154,7 +154,7 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("io.coil-kt:coil:2.0.0-rc02")
 
-    implementation("com.google.android.gms:play-services-auth:20.3.0")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation("com.google.api-client:google-api-client-android:+") {
         exclude("org.apache.httpcomponents")
     }
