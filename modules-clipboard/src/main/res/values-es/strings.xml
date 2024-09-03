@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_clipboard_label">Módulo portapapeles</string>
+    <string name="module_clipboard_desc">Copiar y pegar el texto entre los dispositivos.</string>
+    <string name="module_clipboard_copied_octi_to_os">Octi copiado al portapapeles del sistema</string>
+    <string name="module_clipboard_copied_os_to_octi">Sistema copiado al portapapeles Octi</string>
+</resources>

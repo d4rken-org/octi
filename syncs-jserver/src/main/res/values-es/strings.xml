@@ -1,0 +1,26 @@
+<resources>
+    <string name="sync_jserver_type_label">Servidor J</string>
+    <string name="sync_jserver_type_description">Un servidor de sincronización de código abierto para Octi creado por un amigo. Los datos están encriptados del lado del cliente, solo tus dispositivos pueden desencriptarlos.\n\nComo tanto la aplicación como el servidor aún se están mejorando, es posible que sean menos estables que otras opciones de sincronización.</string>
+    <string name="sync_jserver_add_create_action_hint">Las cuentas inactivas se eliminan después de algunas semanas.</string>
+    <string name="sync_jserver_add_subtitle">Agregar un nuevo Google Drive</string>
+    <string name="sync_jserver_add_link_action_hint">Necesitará acceso a otro dispositivo que ya estea vinculado.</string>
+    <string name="sync_jserver_about_title">Acerca de JServer</string>
+    <string name="sync_jserver_about_desc">JServer es un servidor de sincronización de código abierto para Octi de Jakob Möller.</string>
+    <string name="sync_jserver_about_author_action">Autor</string>
+    <string name="sync_jserver_about_source_action">Código fuente</string>
+    <string name="sync_jserver_reset_confirmation_desc">Restablece esta cuenta y elimine todos los datos almacenados. Tu dispositivo permanecerá vinculado a la cuenta.</string>
+    <string name="sync_jserver_disconnect_confirmation_desc">Esto eliminará este dispositivo de tu cuenta. Si este es el último dispositivo vinculado, tu cuenta será eliminada.</string>
+    <string name="sync_jserver_link_device_action">Vincular un nuevo dispositivo</string>
+    <string name="sync_jserver_link_code_label">Código del enlace</string>
+    <string name="sync_jserver_link_host_option_direct">Crea un código de texto que puede enviar a través de otras aplicaciones</string>
+    <string name="sync_jserver_link_host_option_qrcode">Mostrar un código Qr</string>
+    <string name="sync_jserver_link_host_option_nfc">Vincular un dispositivo a través del NFC</string>
+    <string name="sync_jserver_link_host_device_linked_message">Se vinculó un nuevo dispositivo a tu cuenta.</string>
+    <string name="sync_jserver_link_host_nfc_action">Buscando un cliente NFC. Sostén este dispositivo cerca del dispositivo que deseas vincular a tu cuenta.</string>
+    <string name="sync_jserver_link_client_option_direct">Copiar y pegar manualmente un código del enlace</string>
+    <string name="sync_jserver_link_client_option_qrcode">Escanear un código QR desde otro dispositivo</string>
+    <string name="sync_jserver_link_client_option_nfc">Usar dos dispositivos con NFC</string>
+    <string name="sync_jserver_link_client_startcamera_action">Iniciar la cámara</string>
+    <string name="sync_jserver_link_client_link_action">Vincular un dispositivo</string>
+    <string name="sync_jserver_link_client_nfc_action">Buscando un host NFC. Manten lo cerca del dispositivo que comparte el acceso a la cuenta.</string>
+</resources>
