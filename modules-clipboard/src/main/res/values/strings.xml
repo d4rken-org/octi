@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_clipboard_label">Clipboard module</string>
+    <string name="module_clipboard_desc">Copy and paste text between devices.</string>
+    <string name="module_clipboard_copied_octi_to_os">Copied Octi to system clipboard</string>
+    <string name="module_clipboard_copied_os_to_octi">Copied system to Octi clipboard</string>
+</resources>

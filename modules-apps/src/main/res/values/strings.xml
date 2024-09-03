@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_apps_label">Apps module</string>
+    <string name="module_apps_desc">Information about installed apps.</string>
+
+    <string name="module_apps_x_installed">%d apps installed</string>
+    <string name="module_apps_last_installed_x">Last installed app: %s</string>
+    <string name="module_apps_list_title">Installed apps</string>
+</resources>

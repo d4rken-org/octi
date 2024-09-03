@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_wifi_label">Módulo Wi-Fi</string>
+    <string name="module_wifi_desc">Nombres, recepción, IPs, etc.</string>
+    <string name="module_wifi_unknown_ssid_label">SSID desconocido</string>
+    <string name="module_wifi_unknown_ip_label">IP desconocida</string>
+    <string name="module_wifi_reception_good_label">Buena señal</string>
+    <string name="module_wifi_reception_okay_label">Señal Correcta</string>
+    <string name="module_wifi_reception_bad_label">Señal Mala</string>
+</resources>

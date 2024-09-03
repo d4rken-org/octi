@@ -108,67 +108,6 @@
     <string name="sync_setting_interval_desc">Background synchronization interval (in minutes).</string>
     <string name="sync_setting_category_background_label">Background synchronization</string>
 
-    <string name="sync_gdrive_type_label">Google Drive</string>
-    <string name="sync_gdrive_appdata_label">App-data scope</string>
-    <string name="sync_gdrive_type_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. It is similar to how WhatsApp backups work.</string>
-    <string name="sync_gdrive_add_label">Add new Google Drive</string>
-    <string name="sync_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
-    <string name="sync_gdrive_reset_confirmation_desc">Reset all Octi data stored on Google Drive. Your device stays logged into Google Drive.</string>
-    <string name="sync_gdrive_disconnect_confirmation_desc">Log out from Google Drive and delete data related to this device.</string>
-    <string name="sync_gdrive_error_no_account_on_device">This device is not signed into any Google account.</string>
-
-    <string name="sync_jserver_type_label">J-Server</string>
-    <string name="sync_jserver_type_description">A open-source sync server for Octi made by a friend. Data is encrypted client-side, only your devices can decrypt it.\n\nAs both the app and the server are still being improved, it may be less stable than other sync options.</string>
-    <string name="sync_jserver_add_create_action_hint">Inactive accounts are deleted after a few weeks.</string>
-    <string name="sync_jserver_add_subtitle">Add new Google Drive</string>
-    <string name="sync_jserver_add_link_action_hint">You will need access to another device that is already linked.</string>
-    <string name="sync_jserver_about_title">About JServer</string>
-    <string name="sync_jserver_about_desc">JServer is an open-source sync server for Octi by Jakob Möller.</string>
-    <string name="sync_jserver_about_author_action">Author</string>
-    <string name="sync_jserver_about_source_action">Source code</string>
-    <string name="sync_jserver_reset_confirmation_desc">Reset this account and delete stored data. Your device stays linked to the account.</string>
-    <string name="sync_jserver_disconnect_confirmation_desc">This will remove this device from your account. If this is the last linked device, your account will be deleted.</string>
-    <string name="sync_jserver_link_device_action">Link new device</string>
-    <string name="sync_jserver_link_code_label">Link code</string>
-    <string name="sync_jserver_link_host_option_direct">Create a text code that you can send through other apps</string>
-    <string name="sync_jserver_link_host_option_qrcode">Show a QRCode</string>
-    <string name="sync_jserver_link_host_option_nfc">Link device via NFC</string>
-    <string name="sync_jserver_link_host_device_linked_message">A new device was linked to your account.</string>
-    <string name="sync_jserver_link_host_nfc_action">Looking for NFC client. Hold this device close to the device you want link to your account.</string>
-    <string name="sync_jserver_link_client_option_direct">Manually copy and paste a  link code</string>
-    <string name="sync_jserver_link_client_option_qrcode">Scan a QR code from another device</string>
-    <string name="sync_jserver_link_client_option_nfc">Use two devices with NFC</string>
-    <string name="sync_jserver_link_client_startcamera_action">Start camera</string>
-    <string name="sync_jserver_link_client_link_action">Link device</string>
-    <string name="sync_jserver_link_client_nfc_action">Looking for NFC host. Hold it close to the device offering to share account access.</string>
-    <string name="sync_jserver_deprecation_hint">Please switch to \'K-Server\'. The hardware behind \'J-Server\' will soon no longer be available.</string>
-
-    <string name="sync_kserver_type_label">K-Server</string>
-    <string name="sync_kserver_type_description">A open-source sync server for Octi made by this app\'s developer. Data is encrypted client-side, only your devices can decrypt it.\n\nAs both the app and the server are still being improved, it may be less stable than other sync options.</string>
-    <string name="sync_kserver_add_create_action_hint">Inactive accounts are deleted after a few weeks.</string>
-    <string name="sync_kserver_add_subtitle">Add new Google Drive</string>
-    <string name="sync_kserver_add_link_action_hint">You will need access to another device that is already linked.</string>
-    <string name="sync_kserver_about_title">About KServer</string>
-    <string name="sync_kserver_about_desc">KServer is an open-source sync server (in Kotlin) for Octi by darken.</string>
-    <string name="sync_kserver_about_author_action">Author</string>
-    <string name="sync_kserver_about_source_action">Source code</string>
-    <string name="sync_kserver_reset_confirmation_desc">Clear device\'s data on this account. Devices stay linked but their stored data is removed.</string>
-    <string name="sync_kserver_disconnect_confirmation_desc">This will remove this device from your account. If this is the last linked device, your account will be deleted.</string>
-    <string name="sync_kserver_link_device_action">Link new device</string>
-    <string name="sync_kserver_link_code_label">Link code</string>
-    <string name="sync_kserver_link_host_option_direct">Create a text code that you can send through other apps</string>
-    <string name="sync_kserver_link_host_option_qrcode">Show a QRCode</string>
-    <string name="sync_kserver_link_host_option_nfc">Link device via NFC</string>
-    <string name="sync_kserver_link_host_device_linked_message">A new device was linked to your account.</string>
-    <string name="sync_kserver_link_host_nfc_action">Looking for NFC client. Hold this device close to the device you want link to your account.</string>
-    <string name="sync_kserver_link_client_option_direct">Manually copy and paste a  link code</string>
-    <string name="sync_kserver_link_client_option_qrcode">Scan a QR code from another device</string>
-    <string name="sync_kserver_link_client_option_nfc">Use two devices with NFC</string>
-    <string name="sync_kserver_link_client_startcamera_action">Start camera</string>
-    <string name="sync_kserver_link_client_link_action">Link device</string>
-    <string name="sync_kserver_link_client_nfc_action">Looking for NFC host. Hold it close to the device offering to share account access.</string>
-
-    <string name="module_meta_android_name_x_label">Android %s</string>
     <string name="settings_category_ui_label">User interface</string>
 
     <string name="ui_theme_setting_label">Theme</string>
@@ -196,44 +135,6 @@
     <string name="modules_settings_desc">Toggle different modules and tweak their settings.</string>
     <string name="device_x_label">Device: %s</string>
 
-    <string name="module_power_battery_status_unknown">Unknown status</string>
-    <string name="module_power_battery_status_full">Full</string>
-    <string name="module_power_battery_status_charging">Charging</string>
-    <string name="module_power_battery_status_charging_slow">Charging slowly</string>
-    <string name="module_power_battery_status_charging_fast">Charging fast</string>
-    <string name="module_power_battery_status_discharging">Discharging</string>
-    <string name="module_power_battery_status_discharging_slow">Discharging slowly</string>
-    <string name="module_power_battery_status_discharging_fast">Discharging fast</string>
-    <string name="module_power_battery_full_since_x">Charging finished: %s</string>
-    <string name="module_power_battery_full_in_x">Fully charged: %s</string>
-    <string name="module_power_battery_empty_in_x">Out of juice: %s</string>
-    <string name="module_power_battery_estimation_na">Estimation not available</string>
-
-    <string name="module_wifi_unknown_ssid_label">Unknown SSID</string>
-    <string name="module_wifi_unknown_ip_label">Unknown IP</string>
-    <string name="module_wifi_reception_good_label">Good signal</string>
-    <string name="module_wifi_reception_okay_label">OK signal</string>
-    <string name="module_wifi_reception_bad_label">Bad signal</string>
-
-    <string name="module_power_label">Power module</string>
-    <string name="module_power_desc">Battery, charging, estimates, temperature, etc.</string>
-
-    <string name="module_wifi_label">Wi-Fi module</string>
-    <string name="module_wifi_desc">Names, reception, IPs, etc.</string>
-
-    <string name="module_apps_x_installed">%d apps installed</string>
-    <string name="module_apps_last_installed_x">Last installed app: %s</string>
-    <string name="module_apps_list_title">Installed apps</string>
-
     <string name="pro_device_limit_reached_title">Device limit reached</string>
     <string name="pro_device_limit_reached_description">You currently have %1$d  synced devices. To view more than %2$d devices, upgrade to Octi Pro or remove devices.</string>
-    <string name="module_power_widget_description">Display the battery status of your synced devices.</string>
-
-    <string name="module_apps_label">Apps module</string>
-    <string name="module_apps_desc">Information about installed apps.</string>
-
-    <string name="module_clipboard_label">Clipboard module</string>
-    <string name="module_clipboard_desc">Copy and paste text between devices.</string>
-    <string name="module_clipboard_copied_octi_to_os">Copied Octi to system clipboard</string>
-    <string name="module_clipboard_copied_os_to_octi">Copied system to Octi clipboard</string>
 </resources>
