@@ -39,7 +39,6 @@
     <string name="changelog_label">Changelog</string>
     <string name="settings_acknowledgements_label">Acknowledgements</string>
     <string name="documentation_label">Documentation</string>
-    <string name="email_developer_label">Email developer</string>
 
     <string name="ui_theme_mode_setting_label">Theme mode</string>
     <string name="ui_theme_mode_setting_explanation">The mode used when theming the app (e.g. night or day).</string>
@@ -57,27 +56,20 @@
     <string name="discord_label">Discord</string>
     <string name="discord_description">A place to hang out in and ask questions.</string>
 
-    <string name="support_installid_label">Install ID</string>
-    <string name="support_installid_desc">Automatic error reports are anonymous. Share your install ID if the developer needs to find your error reports.</string>
     <string name="support_debuglog_label">Debug log</string>
     <string name="support_debuglog_desc">Record everything the app is doing into a text file that you can share.</string>
     <string name="settings_support_label">Support</string>
     <string name="debug_debuglog_sensitive_information_message">This file contains sensitive information (e.g. your installed applications). Only share it with trusted parties.</string>
     <string name="settings_debuglog_explanation">This feature records everything the app is doing into a shareable file. The generated file contains sensitive information (e.g. your installed applications). Only share it with trusted parties (e.g. the app developer if you are troubleshooting an issue together).</string>
 
-    <string name="sync_last_update_label">Last update</string>
     <string name="sync_last_action_label">Last action</string>
     <string name="sync_last_never_label">Never</string>
     <string name="sync_quota_storage_msg">%s free (%s / %s)</string>
 
-    <string name="battery_status_card_label">Battery status</string>
-
-    <string name="device_uptime_x">Uptime: %s</string>
     <string name="general_disconnect_action">Disconnect</string>
     <string name="generic_info_action">Info</string>
     <string name="general_reset_action">Reset</string>
 
-    <string name="sync_server_label">Server</string>
     <string name="sync_account_label">Account</string>
     <string name="sync_services_label">Sync services</string>
 
@@ -109,11 +101,6 @@
     <string name="sync_setting_category_background_label">Background synchronization</string>
 
     <string name="settings_category_ui_label">User interface</string>
-
-    <string name="ui_theme_setting_label">Theme</string>
-    <string name="ui_theme_dark_label">Dark</string>
-    <string name="ui_theme_light_label">Light</string>
-    <string name="ui_theme_system_label">System</string>
 
     <string name="permission_required_label">Permission required</string>
     <string name="permission_grant_action">Grant permission</string>
