@@ -180,6 +180,8 @@
         tools:layout="@layout/onboarding_privacy_fragment">
         <action
             android:id="@+id/action_privacyFragment_to_dashFragment"
+            app:popUpTo="@id/main"
+            app:popUpToInclusive="true"
             app:destination="@id/dashFragment" />
     </fragment>
 
