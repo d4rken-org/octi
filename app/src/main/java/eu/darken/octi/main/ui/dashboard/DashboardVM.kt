@@ -1,11 +1,9 @@
 package eu.darken.octi.main.ui.dashboard
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.coroutine.AppScope
@@ -22,9 +20,11 @@ import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.main.core.GeneralSettings
+import eu.darken.octi.main.core.updater.UpdateService
 import eu.darken.octi.main.ui.dashboard.items.DeviceLimitVH
 import eu.darken.octi.main.ui.dashboard.items.PermissionVH
 import eu.darken.octi.main.ui.dashboard.items.SyncSetupVH
+import eu.darken.octi.main.ui.dashboard.items.UpdateCardVH
 import eu.darken.octi.main.ui.dashboard.items.UpgradeCardVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import eu.darken.octi.module.core.ModuleData
@@ -49,6 +49,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -62,17 +63,17 @@ import javax.inject.Inject
 class DashboardVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
-    @ApplicationContext private val context: Context,
     @AppScope private val appScope: CoroutineScope,
     private val generalSettings: GeneralSettings,
     private val syncManager: SyncManager,
     private val moduleManager: ModuleManager,
-    private val networkStateProvider: NetworkStateProvider,
+    networkStateProvider: NetworkStateProvider,
     private val permissionTool: PermissionTool,
     private val syncSettings: SyncSettings,
     upgradeRepo: UpgradeRepo,
     private val webpageTool: WebpageTool,
     private val clipboardHandler: ClipboardHandler,
+    private val updateService: UpdateService,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -110,7 +111,8 @@ class DashboardVM @Inject constructor(
         permissionTool.missingPermissions,
         isManuallyRefreshing,
         upgradeRepo.upgradeInfo,
-    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, isRefreshing, upgradeInfo ->
+        updateService.availableUpdate.onStart { emit(null) },
+    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, isRefreshing, upgradeInfo, update ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
         val connectorCount = syncManager.connectors.first().size
@@ -135,6 +137,24 @@ class DashboardVM @Inject constructor(
                     }
                 )
             }.run { items.addAll(this) }
+
+        if (update != null) {
+            UpdateCardVH.Item(
+                update = update,
+                onDismiss = {
+                    launch {
+                        updateService.dismissUpdate(update)
+                        updateService.refresh()
+                    }
+                },
+                onViewUpdate = {
+                    launch { updateService.viewUpdate(update) }
+                },
+                onUpdate = {
+                    launch { updateService.startUpdate(update) }
+                }
+            ).run { items.add(this) }
+        }
 
         if (deviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro) {
             log(TAG, WARN) { "Exceeding device limit: $deviceItems" }

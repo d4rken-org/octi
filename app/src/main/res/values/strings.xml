@@ -96,6 +96,9 @@
         <item quantity="other">%d unique, only available here</item>
     </plurals>
 
+    <string name="updates_dashcard_title">Update available</string>
+    <string name="updates_dashcard_body">An update is available. You have %1$s and the latest version is %2$s.</string>
+
     <string name="sync_settings_label">Synchronization</string>
     <string name="sync_settings_desc">Device name, timing and trigger conditions.</string>
     <string name="sync_setting_devicelabel_label">Device label</string>

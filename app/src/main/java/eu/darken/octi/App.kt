@@ -18,13 +18,16 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.debug.recording.core.RecorderModule
 import eu.darken.octi.common.theming.Theming
+import eu.darken.octi.main.core.CurriculumVitae
 import eu.darken.octi.main.core.GeneralSettings
+import eu.darken.octi.main.core.release.ReleaseManager
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -41,6 +44,8 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var recorderModule: RecorderModule
     @Inject lateinit var imageLoaderFactory: ImageLoaderFactory
     @Inject lateinit var theming: Theming
+    @Inject lateinit var curriculumVitae: CurriculumVitae
+    @Inject lateinit var releaseManager: ReleaseManager
 
     override fun onCreate() {
         super.onCreate()
@@ -62,6 +67,12 @@ open class App : Application(), Configuration.Provider {
         moduleManager.start()
 
         syncWorkerControl.start()
+
+        curriculumVitae.updateAppLaunch()
+
+        appScope.launch {
+            releaseManager.checkEarlyAdopter()
+        }
 
         theming.setup()
 

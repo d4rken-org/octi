@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.Keep
 import androidx.fragment.app.viewModels
+import androidx.preference.CheckBoxPreference
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.MainDirections
 import eu.darken.octi.R
@@ -28,6 +29,8 @@ class GeneralSettingsFragment : PreferenceFragment3() {
         get() = findPreference(settings.themeMode.keyName)!!
     private val themeStylePref: ListPreference2
         get() = findPreference(settings.themeStyle.keyName)!!
+    private val updateCheck: CheckBoxPreference
+        get() = findPreference(settings.isUpdateCheckEnabled.keyName)!!
 
     override fun onPreferencesCreated() {
 
@@ -39,6 +42,7 @@ class GeneralSettingsFragment : PreferenceFragment3() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         vm.state.observe2 { state ->
+            updateCheck.isVisible = state.isUpdateCheckSupported
             themeModePref.alternativeClickListener = when {
                 state.isPro -> null
 
