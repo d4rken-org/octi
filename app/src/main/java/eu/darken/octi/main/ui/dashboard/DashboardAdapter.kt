@@ -14,6 +14,7 @@ import eu.darken.octi.common.lists.modular.mods.TypedVHCreatorMod
 import eu.darken.octi.main.ui.dashboard.items.DeviceLimitVH
 import eu.darken.octi.main.ui.dashboard.items.PermissionVH
 import eu.darken.octi.main.ui.dashboard.items.SyncSetupVH
+import eu.darken.octi.main.ui.dashboard.items.UpdateCardVH
 import eu.darken.octi.main.ui.dashboard.items.UpgradeCardVH
 import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import javax.inject.Inject
@@ -34,6 +35,7 @@ class DashboardAdapter @Inject constructor() :
         modules.add(TypedVHCreatorMod({ data[it] is DeviceLimitVH.Item }) { DeviceLimitVH(it) })
         modules.add(TypedVHCreatorMod({ data[it] is PermissionVH.Item }) { PermissionVH(it) })
         modules.add(TypedVHCreatorMod({ data[it] is DeviceVH.Item }) { DeviceVH(it) })
+        modules.add(TypedVHCreatorMod({ data[it] is UpdateCardVH.Item }) { UpdateCardVH(it) })
     }
 
     abstract class BaseVH<D : Item, B : ViewBinding>(

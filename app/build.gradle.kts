@@ -92,10 +92,10 @@ android {
         val variantOutputImpl = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
         val variantName: String = variantOutputImpl.name
 
-        if (listOf("release", "beta").any { variantName.toLowerCase().contains(it) }) {
+        if (listOf("release", "beta").any { variantName.lowercase().contains(it) }) {
             val outputFileName = packageName +
                     "-v${defaultConfig.versionName}-${defaultConfig.versionCode}" +
-                    "-${variantName.toUpperCase()}.apk"
+                    "-${variantName.uppercase()}.apk"
 
             variantOutputImpl.outputFileName = outputFileName
         }
@@ -172,4 +172,6 @@ dependencies {
     "gplayImplementation"("com.android.billingclient:billing-ktx:7.0.0")
 
     implementation("io.coil-kt:coil:2.0.0-rc02")
+
+    implementation("io.github.z4kn4fein:semver:1.4.2")
 }
