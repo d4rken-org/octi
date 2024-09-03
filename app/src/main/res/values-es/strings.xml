@@ -27,31 +27,23 @@
     <string name="changelog_label">Registro de cambios</string>
     <string name="settings_acknowledgements_label">Agradecimientos</string>
     <string name="documentation_label">Documentación</string>
-    <string name="email_developer_label">Desarrollador de correo electrónico</string>
 
     <string name="issue_tracker_label">Rastreador de problemas</string>
     <string name="issue_tracker_description">Un rastreador público de problemas para informes de errores y solicitudes de funciones.</string>
 
-    <string name="support_installid_label">ID de instalación</string>
-    <string name="support_installid_desc">Los informes de errores automáticos son anónimos. Comparta su ID de instalación si el desarrollador necesita encontrar sus informes de error.</string>
     <string name="support_debuglog_label">Registro de depuración</string>
     <string name="support_debuglog_desc">Registra todo lo que hace la aplicación en un archivo de texto que puedes compartir.</string>
     <string name="settings_support_label">Soporte</string>
     <string name="debug_debuglog_sensitive_information_message">Este archivo contiene información confidencial (p. ej., sus aplicaciones instaladas). Compártelo solo con partes de confianza.</string>
     <string name="settings_debuglog_explanation">Esta función registra todo lo que hace la aplicación en un archivo que se puede compartir. El archivo generado contiene información confidencial (por ejemplo, sus aplicaciones instaladas). Compártalo solo con partes de confianza (p. ej., el desarrollador de la aplicación si están solucionando un problema juntos).</string>
 
-    <string name="sync_last_update_label">Última actualización</string>
     <string name="sync_last_action_label">Última sincronización</string>
     <string name="sync_last_never_label">Nunca</string>
     <string name="sync_quota_storage_msg">%s gratis (%s / %s)</string>
 
-    <string name="battery_status_card_label">Estado de la batería</string>
-
-    <string name="device_uptime_x">Tiempo de actividad: %s</string>
     <string name="general_disconnect_action">Desconectar</string>
     <string name="generic_info_action">Información</string>
 
-    <string name="sync_server_label">Servidor</string>
     <string name="sync_account_label">Cuenta</string>
     <string name="sync_services_label">Servicios de sincronización</string>
 
@@ -80,11 +72,6 @@
 
 
     <string name="settings_category_ui_label">Interfaz del usuario</string>
-
-    <string name="ui_theme_setting_label">Tema</string>
-    <string name="ui_theme_dark_label">Oscuro</string>
-    <string name="ui_theme_light_label">Claro</string>
-    <string name="ui_theme_system_label">Sistema</string>
 
     <string name="permission_required_label">Permiso requerido</string>
     <string name="permission_grant_action">Otorgar permiso</string>
