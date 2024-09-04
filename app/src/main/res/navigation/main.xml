@@ -65,6 +65,9 @@
         <action
             android:id="@+id/action_syncListFragment_to_KServerActionsFragment"
             app:destination="@id/KServerActionsFragment" />
+        <action
+            android:id="@+id/action_syncListFragment_to_syncDevicesFragment"
+            app:destination="@id/syncDevicesFragment" />
     </fragment>
     <fragment
         android:id="@+id/addGDriveFragment"
@@ -111,6 +114,9 @@
             android:id="@+id/action_KServerActionsFragment_to_KServerLinkFragment"
             app:destination="@id/KServerLinkFragment"
             app:popUpTo="@layout/sync_list_fragment" />
+        <action
+            android:id="@+id/action_KServerActionsFragment_to_syncDevicesFragment"
+            app:destination="@id/syncDevicesFragment" />
     </dialog>
     <dialog
         android:id="@+id/GDriveActionsFragment"
@@ -119,6 +125,9 @@
         <argument
             android:name="identifier"
             app:argType="eu.darken.octi.sync.core.ConnectorId" />
+        <action
+            android:id="@+id/action_GDriveActionsFragment_to_syncDevicesFragment"
+            app:destination="@id/syncDevicesFragment" />
     </dialog>
     <fragment
         android:id="@+id/JServerLinkFragment"
@@ -180,9 +189,32 @@
         tools:layout="@layout/onboarding_privacy_fragment">
         <action
             android:id="@+id/action_privacyFragment_to_dashFragment"
+            app:destination="@id/dashFragment"
             app:popUpTo="@id/main"
-            app:popUpToInclusive="true"
-            app:destination="@id/dashFragment" />
+            app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/syncDevicesFragment"
+        android:name="eu.darken.octi.sync.ui.devices.SyncDevicesFragment"
+        tools:layout="@layout/sync_devices_fragment">
+        <argument
+            android:name="connectorId"
+            app:argType="eu.darken.octi.sync.core.ConnectorId" />
+        <action
+            android:id="@+id/action_syncDevicesFragment_to_deviceActionsFragment"
+            app:destination="@id/deviceActionsFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/deviceActionsFragment"
+        android:name="eu.darken.octi.sync.ui.devices.actions.DeviceActionsFragment"
+        tools:layout="@layout/sync_devices_device_actions">
+        <argument
+            android:name="connectorId"
+            app:argType="eu.darken.octi.sync.core.ConnectorId" />
+        <argument
+            android:name="deviceId"
+            app:argType="eu.darken.octi.sync.core.DeviceId" />
+    </dialog>
+
 
 </navigation>

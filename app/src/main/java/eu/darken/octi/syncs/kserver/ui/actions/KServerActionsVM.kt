@@ -9,6 +9,8 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.getConnectorById
@@ -26,7 +28,8 @@ class KServerActionsVM @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     private val syncManager: SyncManager,
-    private val syncSettings: SyncSettings,
+    syncSettings: SyncSettings,
+    private val upgradeRepo: UpgradeRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     private val navArgs: KServerActionsFragmentArgs by handle.navArgs()
@@ -55,6 +58,10 @@ class KServerActionsVM @Inject constructor(
 
     fun togglePause() = launch {
         log(TAG) { "togglePause()" }
+        if (!upgradeRepo.isPro()) {
+            KServerActionsFragmentDirections.goToUpgradeFragment().navigate()
+            return@launch
+        }
         syncManager.togglePause(navArgs.identifier)
     }
 
@@ -81,6 +88,17 @@ class KServerActionsVM @Inject constructor(
         log(TAG) { "reset()" }
         syncManager.resetData(navArgs.identifier)
         navEvents.postValue(null)
+    }
+
+    fun viewDevices() = launch(appScope) {
+        log(TAG) { "viewDevices()" }
+        if (!upgradeRepo.isPro()) {
+            KServerActionsFragmentDirections.goToUpgradeFragment().navigate()
+            return@launch
+        }
+        KServerActionsFragmentDirections.actionKServerActionsFragmentToSyncDevicesFragment(
+            navArgs.identifier
+        ).navigate()
     }
 
     companion object {

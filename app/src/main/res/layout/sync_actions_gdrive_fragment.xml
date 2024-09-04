@@ -42,13 +42,12 @@
         app:iconGravity="textStart" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/disconnect_action"
-        style="@style/Widget.Material3.Button"
+        android:id="@+id/devices_action"
+        style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/general_disconnect_action"
-        app:backgroundTint="@color/error"
-        app:icon="@drawable/ic_baseline_link_off_24"
+        android:text="@string/sync_synced_devices_label"
+        app:icon="@drawable/ic_devices_24"
         app:iconGravity="textStart" />
 
     <com.google.android.material.button.MaterialButton
@@ -58,6 +57,16 @@
         android:layout_height="wrap_content"
         android:text="@string/general_reset_action"
         app:icon="@drawable/ic_baseline_delete_sweep_24"
+        app:iconGravity="textStart" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/disconnect_action"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/general_disconnect_action"
+        app:backgroundTint="@color/error"
+        app:icon="@drawable/ic_baseline_link_off_24"
         app:iconGravity="textStart" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

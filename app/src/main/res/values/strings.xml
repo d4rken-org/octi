@@ -124,4 +124,7 @@
 
     <string name="pro_device_limit_reached_title">Device limit reached</string>
     <string name="pro_device_limit_reached_description">You currently have %1$d  synced devices. To view more than %2$d devices, upgrade to Octi Pro or remove devices.</string>
+
+    <string name="sync_delete_device_keepaccess_caveat">Removing this device will delete its data but won\'t revoke access. To revoke access, disconnect Octi on the device.</string>
+    <string name="sync_delete_device_revokeaccess_caveat">Deleting this device will remove its data and revoke its access.</string>
 </resources>

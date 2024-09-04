@@ -75,12 +75,12 @@ class GDriveHub @Inject constructor(
         val connector = _connectors.first().single { it.identifier == connectorId }
         try {
             connector.deleteDevice(syncSettings.deviceId)
+            accountRepo.remove(connector.account.id)
         } catch (e: UserRecoverableAuthIOException) {
             // User was locked out
             log(TAG, ERROR) { "Failed to delete device, access was locked out:\n${e.asLog()}" }
             throw UserLockedOutException(e)
         }
-        accountRepo.remove(connector.account.id)
     }
 
     companion object {

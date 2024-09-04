@@ -48,12 +48,30 @@
         app:iconGravity="textStart" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/devices_action"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sync_synced_devices_label"
+        app:icon="@drawable/ic_devices_24"
+        app:iconGravity="textStart" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/link_action"
         style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sync_kserver_link_device_action"
         app:icon="@drawable/ic_baseline_add_link_24"
+        app:iconGravity="textStart" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/reset_action"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/general_reset_action"
+        app:icon="@drawable/ic_baseline_delete_sweep_24"
         app:iconGravity="textStart" />
 
     <com.google.android.material.button.MaterialButton
@@ -64,15 +82,6 @@
         android:text="@string/general_disconnect_action"
         app:backgroundTint="@color/error"
         app:icon="@drawable/ic_baseline_link_off_24"
-        app:iconGravity="textStart" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/reset_action"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/general_reset_action"
-        app:icon="@drawable/ic_baseline_delete_sweep_24"
         app:iconGravity="textStart" />
 
 </LinearLayout>

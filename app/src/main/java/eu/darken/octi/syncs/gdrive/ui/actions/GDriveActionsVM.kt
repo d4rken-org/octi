@@ -8,6 +8,8 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.getConnectorById
@@ -26,6 +28,7 @@ class GDriveActionsVM @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val syncManager: SyncManager,
     private val syncSettings: SyncSettings,
+    private val upgradeRepo: UpgradeRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     private val navArgs: GDriveActionsFragmentArgs by handle.navArgs()
@@ -49,6 +52,10 @@ class GDriveActionsVM @Inject constructor(
 
     fun togglePause() = launch {
         log(TAG) { "togglePause()" }
+        if (!upgradeRepo.isPro()) {
+            GDriveActionsFragmentDirections.goToUpgradeFragment().navigate()
+            return@launch
+        }
         syncManager.togglePause(navArgs.identifier)
     }
 
@@ -68,6 +75,18 @@ class GDriveActionsVM @Inject constructor(
         log(TAG) { "reset()" }
         syncManager.resetData(navArgs.identifier)
         popNavStack()
+    }
+
+    fun viewDevices() = launch(appScope) {
+        log(TAG) { "viewDevices()" }
+        if (!upgradeRepo.isPro()) {
+            GDriveActionsFragmentDirections.goToUpgradeFragment().navigate()
+            return@launch
+        }
+        GDriveActionsFragmentDirections.actionGDriveActionsFragmentToSyncDevicesFragment(
+            navArgs
+                .identifier
+        ).navigate()
     }
 
     companion object {
