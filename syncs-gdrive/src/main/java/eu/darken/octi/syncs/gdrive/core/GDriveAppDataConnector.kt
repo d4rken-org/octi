@@ -127,9 +127,12 @@ class GDriveAppDataConnector @AssistedInject constructor(
         runDriveAction("delete-device: $deviceId") {
             appDataRoot.child(DEVICE_DATA_DIR_NAME)
                 ?.listFiles()
-                ?.onEach { log(TAG, DEBUG) { "deleteDevice(): Checking $it" } }
-                ?.singleOrNull { it.name == deviceId.id }
-                ?.onEach { log(TAG, INFO) { "deleteDevice(): Deleting $it" } }
+                ?.onEach { log(TAG, DEBUG) { "deleteDevice(): Checking device dir ${it.name}" } }
+                ?.singleOrNull { file ->
+                    (file.name == deviceId.id).also {
+                        if (it) log(TAG) { "deleteDevice(): Deleting device dir $file" }
+                    }
+                }
                 ?.deleteAll()
             if (deviceId == syncSettings.deviceId) {
                 log(TAG, WARN) { "We just deleted ourselves, this connector is dead now" }

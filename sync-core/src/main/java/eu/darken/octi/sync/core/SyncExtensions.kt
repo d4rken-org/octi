@@ -1,7 +1,9 @@
 package eu.darken.octi.sync.core
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 
 inline fun <reified T : SyncConnector> SyncManager.getConnectorById(identifier: ConnectorId): Flow<T> {
@@ -28,3 +30,9 @@ fun Collection<SyncRead>.latestData(): Collection<SyncRead.Device> = this
         }
     }
     .toList()
+
+suspend inline fun <reified T : SyncConnector> ConnectorHub.findConnector(crossinline matcher: (T) -> Boolean): T {
+    return connectors.mapNotNull { connectors ->
+        connectors.map { it as T }.singleOrNull { matcher(it) }
+    }.first()
+}
