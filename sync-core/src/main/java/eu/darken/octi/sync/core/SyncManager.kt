@@ -149,12 +149,17 @@ class SyncManager @Inject constructor(
 
         disabledConnectors.value += connector
 
+        if (syncSettings.pausedConnectors.value().contains(identifier)) {
+            log(TAG) { "disconnect(...) was paused, clearing it" }
+            syncSettings.pausedConnectors.update { it - identifier }
+        }
+
         try {
             hubs.first().filter { it.owns(identifier) }.forEach {
                 it.remove(identifier)
             }
         } catch (e: Exception) {
-            log(TAG, ERROR) { "disconnect($identifier) failed: ${e.asLog()}" }
+            log(TAG, ERROR) { "disconnect(...) failed: ${e.asLog()}" }
             throw e
         } finally {
             disabledConnectors.value -= connector
