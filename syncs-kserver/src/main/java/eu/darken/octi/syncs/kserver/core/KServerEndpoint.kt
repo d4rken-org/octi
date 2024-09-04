@@ -107,10 +107,8 @@ class KServerEndpoint @AssistedInject constructor(
         return@withContext KServer.Credentials.LinkCode(code = response.shareCode)
     }
 
-    suspend fun listDevices(
-        linkCode: KServer.Credentials.LinkCode? = null
-    ): Collection<DeviceId> = withContext(dispatcherProvider.IO) {
-        log(TAG) { "listDevices(linkCode=$linkCode)" }
+    suspend fun listDevices(): Collection<DeviceId> = withContext(dispatcherProvider.IO) {
+        log(TAG) { "listDevices()" }
         val response = try {
             api.getDeviceList(
                 deviceID = ourDeviceIdString,
