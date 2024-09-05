@@ -100,6 +100,8 @@
     <string name="sync_setting_interval_desc">Background synchronization interval (in minutes).</string>
     <string name="sync_setting_category_background_label">Background synchronization</string>
 
+    <string name="sync_custom_server_label">Custom server</string>
+
     <string name="settings_category_ui_label">User interface</string>
 
     <string name="permission_required_label">Permission required</string>

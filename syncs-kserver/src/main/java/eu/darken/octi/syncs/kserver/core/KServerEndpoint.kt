@@ -40,7 +40,7 @@ class KServerEndpoint @AssistedInject constructor(
 
     private val api: KServerApi by lazy {
         Retrofit.Builder().apply {
-            baseUrl(serverAdress.httpUrl)
+            baseUrl("${serverAdress.address}/v1/")
             client(httpClient)
             addConverterFactory(MoshiConverterFactory.create(baseMoshi).asLenient())
         }.build().create(KServerApi::class.java)

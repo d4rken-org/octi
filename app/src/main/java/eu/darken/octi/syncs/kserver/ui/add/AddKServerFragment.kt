@@ -44,8 +44,8 @@ class AddKServerFragment : Fragment3(R.layout.sync_add_new_kserver_fragment) {
             when (checkedId) {
                 R.id.server_kserver_prod_item -> vm.selectType(KServer.Official.PROD)
                 R.id.server_kserver_beta_item -> vm.selectType(KServer.Official.BETA)
-                R.id.server_kserver_dev_item -> vm.selectType(KServer.Official.DEV)
                 R.id.server_kserver_local_item -> vm.selectType(KServer.Official.LOCAL)
+                R.id.server_kserver_custom_item -> vm.selectType(null)
             }
         }
         ui.serverKserverProdItem.apply {
@@ -53,10 +53,6 @@ class AddKServerFragment : Fragment3(R.layout.sync_add_new_kserver_fragment) {
         }
         ui.serverKserverBetaItem.apply {
             text = "${KServer.Official.BETA.address.domain} (Beta)"
-            isGone = true
-        }
-        ui.serverKserverDevItem.apply {
-            text = "${KServer.Official.DEV.address.domain} (dev)"
             isGone = true
         }
         ui.serverKserverLocalItem.apply {
@@ -68,15 +64,27 @@ class AddKServerFragment : Fragment3(R.layout.sync_add_new_kserver_fragment) {
             when (state.serverType) {
                 KServer.Official.PROD -> serverGroup.check(R.id.server_kserver_prod_item)
                 KServer.Official.BETA -> serverGroup.check(R.id.server_kserver_beta_item)
-                KServer.Official.DEV -> serverGroup.check(R.id.server_kserver_dev_item)
                 KServer.Official.LOCAL -> serverGroup.check(R.id.server_kserver_local_item)
+                null -> serverGroup.check(R.id.server_kserver_custom_item)
             }
+            customServerInputLayout.isGone = state.serverType != null
+
             createNewAccount.isEnabled = !state.isBusy
             linkExistingAccount.isEnabled = !state.isBusy
             serverGroup.isEnabled = !state.isBusy
         }
 
-        ui.createNewAccount.setOnClickListener { vm.createAccount() }
+        ui.apply {
+            createNewAccount.setOnClickListener {
+                vm.createAccount(
+                    if (serverKserverCustomItem.isChecked) {
+                        customServerInput.text.toString()
+                    } else {
+                        null
+                    }
+                )
+            }
+        }
         ui.linkExistingAccount.setOnClickListener { vm.linkAccount() }
 
         super.onViewCreated(view, savedInstanceState)

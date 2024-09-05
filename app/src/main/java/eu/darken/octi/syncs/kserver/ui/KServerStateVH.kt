@@ -21,8 +21,15 @@ class KServerStateVH(parent: ViewGroup) :
         item: Item,
         payloads: List<Any>
     ) -> Unit = { item, _ ->
-        title.text = "${getString(R.string.sync_kserver_type_label)} (${item.credentials.serverAdress.domain})"
+        title.text = when {
+            item.credentials.serverAdress.domain.endsWith(".darken.eu") -> {
+                "${getString(R.string.sync_kserver_type_label)} (${item.credentials.serverAdress})"
+            }
 
+            else -> {
+                "${getString(R.string.sync_kserver_type_label)} (${item.credentials.serverAdress.address})"
+            }
+        }
         accountText.text = item.credentials.accountId.id
 
         lastSyncText.apply {

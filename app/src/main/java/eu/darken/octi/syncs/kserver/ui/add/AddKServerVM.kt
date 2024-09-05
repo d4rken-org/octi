@@ -7,7 +7,6 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.syncs.kserver.core.KServer
 import eu.darken.octi.syncs.kserver.core.KServerAccountRepo
 import eu.darken.octi.syncs.kserver.core.KServerEndpoint
@@ -22,29 +21,40 @@ class AddKServerVM @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val kServerAccountRepo: KServerAccountRepo,
     private val kServerEndpointFactory: KServerEndpoint.Factory,
-    private val syncSettings: SyncSettings,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     data class State(
-        val serverType: KServer.Official = KServer.Official.PROD,
+        val serverType: KServer.Official? = KServer.Official.PROD,
         val isBusy: Boolean = false
     )
 
     private val _state = MutableStateFlow(State())
     val state = _state.asLiveData2()
 
-    fun selectType(type: KServer.Official) {
+    fun selectType(type: KServer.Official?) {
         log(TAG) { "selectType(type=$type)" }
         _state.value = _state.value.copy(serverType = type)
     }
 
-    fun createAccount() = launch {
-        log(TAG) { "createAccount()" }
+    private fun parseCustomServer(raw: String): KServer.Address {
+        val regex = Regex("([a-zA-Z]+)://([a-zA-Z0-9.-]+):(\\d+)")
+        val matchResult = regex.find(raw) ?: throw IllegalArgumentException("Invalid address input")
+
+        val (protocol, address, port) = matchResult.destructured
+        return KServer.Address(
+            domain = address,
+            protocol = protocol,
+            port = port.toInt()
+        )
+    }
+
+    fun createAccount(customServer: String?) = launch {
+        log(TAG) { "createAccount($customServer)" }
         _state.value = _state.value.copy(isBusy = true)
         try {
-            val type = _state.value.serverType.address
-            log(TAG) { "createAccount(): $type" }
-            val endpoint = kServerEndpointFactory.create(type)
+            val address = _state.value.serverType?.address ?: parseCustomServer(customServer!!)
+            log(TAG) { "createAccount(): $address" }
+            val endpoint = kServerEndpointFactory.create(address)
 
             withContext(NonCancellable) {
                 log(TAG) { "Creating account..." }
