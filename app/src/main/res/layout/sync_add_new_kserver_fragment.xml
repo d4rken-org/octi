@@ -56,21 +56,45 @@
             tools:ignore="HardcodedText" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/server_kserver_dev_item"
-            style="@style/Widget.Material3.CompoundButton.RadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="dev.kserver.octi.darken.eu (Testing)"
-            tools:ignore="HardcodedText" />
-
-        <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/server_kserver_local_item"
             style="@style/Widget.Material3.CompoundButton.RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="localhost (Local)"
             tools:ignore="HardcodedText" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/server_kserver_custom_item"
+            style="@style/Widget.Material3.CompoundButton.RadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sync_custom_server_label"
+            tools:ignore="HardcodedText" />
     </RadioGroup>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/custom_server_input_layout"
+        style="@style/Widget.Material3.TextInputEditText.FilledBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/create_new_account"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/server_group"
+        tools:visibility="visible">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/custom_server_input"
+            style="@style/Widget.Material3.TextInputEditText.FilledBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="protocol://server:port"
+            android:imeOptions="actionGo"
+            android:inputType="text"
+            tools:ignore="HardcodedText" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/create_new_account"
@@ -82,7 +106,7 @@
         android:text="@string/general_create_account_action"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/server_group" />
+        app:layout_constraintTop_toBottomOf="@id/custom_server_input_layout" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/create_new_account_hint"

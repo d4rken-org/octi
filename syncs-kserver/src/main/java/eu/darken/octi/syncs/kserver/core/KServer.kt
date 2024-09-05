@@ -15,7 +15,6 @@ interface KServer {
     enum class Official(val address: Address) {
         @Json(name = "PROD") PROD(Address("prod.kserver.octi.darken.eu")),
         @Json(name = "BETA") BETA(Address("beta.kserver.octi.darken.eu")),
-        @Json(name = "DEV") DEV(Address("dev.kserver.octi.darken.eu")),
         @Json(name = "LOCAL") LOCAL(Address("blasphemy", protocol = "http", port = 8080)),
     }
 
@@ -26,8 +25,8 @@ interface KServer {
         @Json(name = "protocol") val protocol: String = "https",
         @Json(name = "port") val port: Int = 443,
     ) : Parcelable {
-        val httpUrl: String
-            get() = "$protocol://$domain:$port/v1/"
+        val address: String
+            get() = "$protocol://$domain:$port"
     }
 
     @JsonClass(generateAdapter = true)
