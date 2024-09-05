@@ -269,6 +269,8 @@ class KServerConnector @AssistedInject constructor(
 
             serverLock.withLock {
                 withContext(NonCancellable) { block() }
+            }.also {
+                _state.updateBlocking { copy(lastError = null) }
             }
         } catch (e: Exception) {
             log(TAG, ERROR) { "runServerAction($tag) failed: ${e.asLog()}" }
