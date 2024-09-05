@@ -23,7 +23,7 @@ class KServerStateVH(parent: ViewGroup) :
     ) -> Unit = { item, _ ->
         title.text = when {
             item.credentials.serverAdress.domain.endsWith(".darken.eu") -> {
-                "${getString(R.string.sync_kserver_type_label)} (${item.credentials.serverAdress})"
+                "${getString(R.string.sync_kserver_type_label)} (${item.credentials.serverAdress.domain})"
             }
 
             else -> {
