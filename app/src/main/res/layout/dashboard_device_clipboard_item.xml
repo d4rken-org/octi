@@ -9,8 +9,9 @@
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
         android:src="@drawable/ic_baseline_content_paste_24"
         app:layout_constraintBottom_toBottomOf="@id/secondary"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,12 +24,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:singleLine="true"
         android:text="@string/module_clipboard_label"
         app:layout_constraintBottom_toTopOf="@id/secondary"
         app:layout_constraintEnd_toStartOf="@id/paste_action"
         app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="Clipboard" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -36,6 +40,7 @@
         style="@style/TextAppearance.Material3.BodySmall"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:singleLine="true"
         android:text="@string/general_empty_label"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -63,6 +68,7 @@
         android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
         app:icon="@drawable/ic_baseline_content_copy_24"
         app:iconGravity="textStart"
         app:iconPadding="0dp"

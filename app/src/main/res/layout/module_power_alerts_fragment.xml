@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/module_power_alerts_title"
+        tools:subtitle="Some device label" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingVertical="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                style="Widget.Material3.CardView.Elevated"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_marginBottom="32dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp">
+
+                    <ImageView
+                        android:id="@+id/lowbattery_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_baseline_battery_1_bar_24"
+                        app:layout_constraintBottom_toBottomOf="@id/lowbattery_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/lowbattery_title" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/lowbattery_title"
+                        style="@style/TextAppearance.Material3.TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/module_power_alerts_lowbattery_title"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:layout_constraintStart_toEndOf="@id/lowbattery_icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/lowbattery_body"
+                        style="@style/TextAppearance.Material3.BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/module_power_alerts_lowbattery_description"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:layout_constraintBottom_toTopOf="@id/lowbattery_threshold_slider"
+                        app:layout_constraintEnd_toEndOf="@id/lowbattery_title"
+                        app:layout_constraintStart_toStartOf="@id/lowbattery_title"
+                        app:layout_constraintTop_toBottomOf="@id/lowbattery_title" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/lowbattery_threshold_slider"
+                        style="@style/Widget.Material3.Slider"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/lowbattery_body" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/lowbattery_threshold_slider_caption"
+                        style="@style/TextAppearance.Material3.LabelMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="32dp"
+                        android:gravity="center"
+                        android:text="@string/module_power_alerts_lowbattery_disabled_caption"
+                        app:layout_constraintEnd_toEndOf="@id/lowbattery_threshold_slider"
+                        app:layout_constraintStart_toStartOf="@id/lowbattery_threshold_slider"
+                        app:layout_constraintTop_toBottomOf="@id/lowbattery_threshold_slider" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

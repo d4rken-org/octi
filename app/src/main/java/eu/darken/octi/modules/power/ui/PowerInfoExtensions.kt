@@ -1,7 +1,7 @@
 package eu.darken.octi.modules.power.ui
 
 import androidx.annotation.DrawableRes
-import eu.darken.octi.R
+import eu.darken.octi.modules.power.R
 import eu.darken.octi.modules.power.core.PowerInfo
 
 @get:DrawableRes

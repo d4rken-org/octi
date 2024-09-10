@@ -9,9 +9,11 @@ import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.datastore.PreferenceScreenData
 import eu.darken.octi.common.datastore.PreferenceStoreMapper
+import eu.darken.octi.common.datastore.createSetValue
 import eu.darken.octi.common.datastore.createValue
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.module.core.ModuleSettings
+import eu.darken.octi.modules.power.core.alerts.BatteryLowAlert
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,6 +36,9 @@ class PowerSettings @Inject constructor(
     )
 
     val chargedFullAt = dataStore.createValue<Instant?>("module.power.status.full.at", null, moshi)
+
+    val lowBatteryAlerts =
+        dataStore.createSetValue<BatteryLowAlert>("module.power.alerts.lowbattery", emptySet(), moshi)
 
     companion object {
         internal val TAG = logTag("Module", "Power", "Settings")

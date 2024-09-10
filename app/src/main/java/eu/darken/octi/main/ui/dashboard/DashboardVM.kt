@@ -36,6 +36,9 @@ import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.clipboard.ClipboardVH
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
+import eu.darken.octi.modules.power.core.alerts.BatteryLowAlert
+import eu.darken.octi.modules.power.core.alerts.PowerAlert
+import eu.darken.octi.modules.power.core.alerts.PowerAlertManager
 import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
@@ -46,7 +49,6 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -74,6 +76,7 @@ class DashboardVM @Inject constructor(
     private val webpageTool: WebpageTool,
     private val clipboardHandler: ClipboardHandler,
     private val updateService: UpdateService,
+    private val alertManager: PowerAlertManager,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -215,21 +218,22 @@ class DashboardVM @Inject constructor(
         moduleManager.byDevice,
         permissionTool.missingPermissions,
         syncManager.connectors,
-    ) { now, byDevice, missingPermissions, connectors ->
+        alertManager.alerts,
+    ) { now, byDevice, missingPermissions, connectors, alerts ->
         byDevice.devices
             .mapNotNull { (deviceId, moduleDatas) ->
-                val metaModule =
-                    moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
+                val metaModule = moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
                 if (metaModule == null) {
                     log(TAG, WARN) { "Missing meta module for $deviceId" }
                     return@mapNotNull null
                 }
 
+                val powerAlerts = alerts.filter { it.deviceId == deviceId }
                 val moduleItems = (moduleDatas.toList() - metaModule)
                     .sortedBy { it.orderPrio }
                     .mapNotNull { moduleData ->
                         when (moduleData.data) {
-                            is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem()
+                            is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem(powerAlerts)
                             is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
                             is AppsInfo -> (moduleData as ModuleData<AppsInfo>).createVHItem()
                             is ClipboardInfo -> (moduleData as ModuleData<ClipboardInfo>).createVHItem()
@@ -253,8 +257,14 @@ class DashboardVM @Inject constructor(
     private val ModuleData<out Any>.orderPrio: Int
         get() = INFO_ORDER.indexOfFirst { it.isInstance(this.data) }
 
-    private fun ModuleData<PowerInfo>.createVHItem() = DevicePowerVH.Item(
+    private fun ModuleData<PowerInfo>.createVHItem(
+        powerAlerts: Collection<PowerAlert>
+    ): DevicePowerVH.Item = DevicePowerVH.Item(
         data = this,
+        batteryLowAlert = powerAlerts.filterIsInstance<BatteryLowAlert>().firstOrNull(),
+        onSettingsAction = {
+            DashboardFragmentDirections.actionDashFragmentToPowerAlertsFragment(deviceId).navigate()
+        }.takeIf { deviceId != syncSettings.deviceId },
     )
 
     private fun ModuleData<WifiInfo>.createVHItem(

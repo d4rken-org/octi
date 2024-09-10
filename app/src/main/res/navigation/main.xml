@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_dashFragment_to_upgradeFragment"
             app:destination="@id/upgradeFragment" />
+        <action
+            android:id="@+id/action_dashFragment_to_powerAlertsFragment"
+            app:destination="@id/powerAlertsFragment" />
     </fragment>
 
     <fragment
@@ -215,6 +218,13 @@
             android:name="deviceId"
             app:argType="eu.darken.octi.sync.core.DeviceId" />
     </dialog>
-
+    <fragment
+        android:id="@+id/powerAlertsFragment"
+        android:name="eu.darken.octi.modules.power.ui.alerts.PowerAlertsFragment"
+        tools:layout="@layout/module_power_alerts_fragment">
+        <argument
+            android:name="deviceId"
+            app:argType="eu.darken.octi.sync.core.DeviceId" />
+    </fragment>
 
 </navigation>
