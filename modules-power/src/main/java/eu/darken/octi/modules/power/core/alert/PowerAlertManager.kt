@@ -83,10 +83,10 @@ class PowerAlertManager @Inject constructor(
 
                     when (rule) {
                         is BatteryLowAlertRule -> {
-                            val isTriggered =
-                                !powerState.data.isCharging && powerState.data.battery.percent < rule.threshold
-                            val isRecovered =
-                                powerState.data.battery.percent > (rule.threshold + 0.05f).coerceAtMost(0.95f)
+                            val isTriggered = !powerState.data.isCharging &&
+                                    powerState.data.battery.percent < rule.threshold
+                            val isRecovered = powerState.data.isCharging ||
+                                    powerState.data.battery.percent > (rule.threshold + 0.05f).coerceAtMost(0.95f)
                             when {
                                 event == null && isTriggered && !isRecovered -> {
                                     log(TAG, INFO) { "Rule has triggered" }
