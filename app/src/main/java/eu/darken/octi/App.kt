@@ -70,9 +70,7 @@ open class App : Application(), Configuration.Provider {
 
         curriculumVitae.updateAppLaunch()
 
-        appScope.launch {
-            releaseManager.checkEarlyAdopter()
-        }
+        appScope.launch { releaseManager.checkEarlyAdopter() }
 
         theming.setup()
 

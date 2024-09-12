@@ -22,4 +22,7 @@
     <string name="module_power_alerts_lowbattery_description">Get notified when this device\'s battery drops below your specified threshold. Set your preferred percentage for alerts.</string>
     <string name="module_power_alerts_lowbattery_slider_value_caption">Notify when battery is below %s</string>
     <string name="module_power_alerts_lowbattery_disabled_caption">Don\'t notify when battery is low</string>
+    <string name="module_power_alerts_notification_channel_label">Battery alerts</string>
+    <string name="module_power_alerts_notification_battery_low_title">Low battery: %s</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s is below %2$d%% battery(currently %3$d%%) and not charging.</string>
 </resources>

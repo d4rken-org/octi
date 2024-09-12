@@ -11,8 +11,9 @@ import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.modules.meta.core.MetaRepo
-import eu.darken.octi.modules.power.core.alerts.BatteryLowAlert
-import eu.darken.octi.modules.power.core.alerts.PowerAlertManager
+import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
+import eu.darken.octi.modules.power.core.alert.PowerAlert
+import eu.darken.octi.modules.power.core.alert.PowerAlertManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import java.util.Locale
@@ -32,12 +33,12 @@ class PowerAlertsVM @Inject constructor(
     val events = SingleLiveEvent<PowerAlertsAction>()
 
     init {
-        launch { alertsManager.dismissBatteryLowAlert(navArgs.deviceId) }
+        launch { alertsManager.dismissAlerts(navArgs.deviceId) }
     }
 
     data class State(
         val deviceLabel: String = "",
-        val batteryLowAlert: BatteryLowAlert? = null,
+        val batteryLowAlert: PowerAlert<BatteryLowAlertRule>? = null,
     )
 
     val state = combine(
@@ -54,7 +55,7 @@ class PowerAlertsVM @Inject constructor(
 
         State(
             deviceLabel = metaData.data.deviceLabel ?: metaData.data.deviceName,
-            batteryLowAlert = alerts.find { it is BatteryLowAlert } as BatteryLowAlert?
+            batteryLowAlert = alerts.find { it.rule is BatteryLowAlertRule } as PowerAlert<BatteryLowAlertRule>?
         )
     }.asLiveData2()
 

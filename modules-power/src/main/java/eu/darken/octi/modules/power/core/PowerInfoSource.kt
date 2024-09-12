@@ -5,7 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import android.os.BatteryManager.*
+import android.os.BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE
+import android.os.BatteryManager.BATTERY_PROPERTY_CURRENT_NOW
+import android.os.BatteryManager.EXTRA_HEALTH
+import android.os.BatteryManager.EXTRA_LEVEL
+import android.os.BatteryManager.EXTRA_SCALE
+import android.os.BatteryManager.EXTRA_STATUS
+import android.os.BatteryManager.EXTRA_TEMPERATURE
 import android.os.Build
 import android.os.PowerManager
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,7 +26,12 @@ import eu.darken.octi.common.ifApiLevel
 import eu.darken.octi.module.core.ModuleInfoSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import java.time.Instant
 import javax.inject.Inject
@@ -125,7 +136,11 @@ class PowerInfoSource @Inject constructor(
         batteryChangedRaw,
         powerStatus
     ) { _, newStatus ->
-        val chargedFullAt = ifApiLevel(Build.VERSION_CODES.P) { batteryManager.computeChargeTimeRemaining() }
+
+        val chargedFullAt = ifApiLevel(Build.VERSION_CODES.P) {
+            @Suppress("NewApi")
+            batteryManager.computeChargeTimeRemaining()
+        }
             ?.takeIf { it != -1L }
             ?.let { Instant.now().plusMillis(it) }
 

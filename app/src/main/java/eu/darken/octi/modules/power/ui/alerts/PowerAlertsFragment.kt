@@ -55,7 +55,7 @@ class PowerAlertsFragment : Fragment3(R.layout.module_power_alerts_fragment) {
 
         vm.state.observe2(this@PowerAlertsFragment, ui) { state ->
             ui.toolbar.subtitle = getString(R.string.device_x_label, state.deviceLabel)
-            lowbatteryThresholdSlider.value = state.batteryLowAlert?.threshold ?: 0f
+            lowbatteryThresholdSlider.value = state.batteryLowAlert?.rule?.threshold ?: 0f
             lowbatteryTitle.isBold = state.batteryLowAlert != null
         }
 
