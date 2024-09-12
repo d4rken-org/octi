@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":app-common"))
     testImplementation(project(":app-common-test"))
     implementation(project(":module-core"))
+    implementation(project(":modules-meta"))
     implementation(project(":sync-core"))
 
     addAndroidCore()

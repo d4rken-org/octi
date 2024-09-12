@@ -36,9 +36,9 @@ import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.clipboard.ClipboardVH
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
-import eu.darken.octi.modules.power.core.alerts.BatteryLowAlert
-import eu.darken.octi.modules.power.core.alerts.PowerAlert
-import eu.darken.octi.modules.power.core.alerts.PowerAlertManager
+import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
+import eu.darken.octi.modules.power.core.alert.PowerAlert
+import eu.darken.octi.modules.power.core.alert.PowerAlertManager
 import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
@@ -257,11 +257,15 @@ class DashboardVM @Inject constructor(
     private val ModuleData<out Any>.orderPrio: Int
         get() = INFO_ORDER.indexOfFirst { it.isInstance(this.data) }
 
+
     private fun ModuleData<PowerInfo>.createVHItem(
-        powerAlerts: Collection<PowerAlert>
+        powerAlertRules: Collection<PowerAlert<*>>
     ): DevicePowerVH.Item = DevicePowerVH.Item(
         data = this,
-        batteryLowAlert = powerAlerts.filterIsInstance<BatteryLowAlert>().firstOrNull(),
+        batteryLowAlert = run {
+            @Suppress("UNCHECKED_CAST")
+            powerAlertRules.firstOrNull { it.rule is BatteryLowAlertRule } as PowerAlert<BatteryLowAlertRule>?
+        },
         onSettingsAction = {
             DashboardFragmentDirections.actionDashFragmentToPowerAlertsFragment(deviceId).navigate()
         }.takeIf { deviceId != syncSettings.deviceId },

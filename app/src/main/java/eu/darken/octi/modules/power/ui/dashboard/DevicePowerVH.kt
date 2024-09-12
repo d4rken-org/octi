@@ -14,7 +14,8 @@ import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
-import eu.darken.octi.modules.power.core.alerts.BatteryLowAlert
+import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
+import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.ui.batteryIconRes
 import java.time.Duration
 import java.time.Instant
@@ -143,7 +144,7 @@ class DevicePowerVH(parent: ViewGroup) :
 
     data class Item(
         val data: ModuleData<PowerInfo>,
-        val batteryLowAlert: BatteryLowAlert?,
+        val batteryLowAlert: PowerAlert<BatteryLowAlertRule>?,
         val onSettingsAction: (() -> Unit)?,
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
