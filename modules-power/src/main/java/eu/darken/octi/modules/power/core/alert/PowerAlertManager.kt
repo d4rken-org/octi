@@ -122,18 +122,22 @@ class PowerAlertManager @Inject constructor(
     suspend fun setBatteryLowAlert(deviceId: DeviceId, threshold: Float?): Unit = mutex.withLock {
         log(TAG) { "setBatteryLowAlert($deviceId,$threshold)" }
 
-        val newRule = powerSettings.alertRules.update { oldRules ->
+        var newRule: BatteryLowAlertRule? = null
+
+        powerSettings.alertRules.update { oldRules ->
             val otherRules = oldRules.filterNot { it.deviceId == deviceId && it is BatteryLowAlertRule }
 
             if (threshold == null) {
                 otherRules
             } else {
-                otherRules + BatteryLowAlertRule(deviceId = deviceId, threshold = threshold)
+                otherRules + BatteryLowAlertRule(deviceId = deviceId, threshold = threshold).also {
+                    newRule = it
+                }
             }.toSet()
-        }.new.filterIsInstance<BatteryLowAlertRule>().single()
+        }
 
         powerSettings.alertEvents.update { old ->
-            val previousEvent = old.singleOrNull { it.id == newRule.id } ?: return@update old
+            val previousEvent = old.singleOrNull { it.id == newRule?.id } ?: return@update old
             log(TAG) { "setBatteryLowAlert(...): Removing old event" }
             (old - previousEvent).toSet()
         }
