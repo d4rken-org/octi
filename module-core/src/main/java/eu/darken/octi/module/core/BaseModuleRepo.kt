@@ -10,14 +10,22 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.common.flow.throttleLatest
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.plus
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 
-abstract class BaseModuleRepo<T : Any> constructor(
+abstract class BaseModuleRepo<T : Any>(
     private val tag: String,
     @AppScope private val scope: CoroutineScope,
     private val moduleId: ModuleId,
@@ -94,7 +102,9 @@ abstract class BaseModuleRepo<T : Any> constructor(
                 log(tag, WARN) { "$moduleId is disabled" }
                 flowOf(null)
             } else {
-                refreshTrigger.flatMapLatest { infoSource.info }
+                refreshTrigger.flatMapLatest {
+                    infoSource.info.throttleLatest(1000)
+                }
             }
         }
         .distinctUntilChanged()
