@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditTextPreference
+    <eu.darken.octi.common.preferences.CleanInputEditTextPreference
         android:dialogMessage="@string/sync_setting_devicelabel_hint"
         android:icon="@drawable/ic_changelog_onsurface"
         android:key="sync.device.self.label"
