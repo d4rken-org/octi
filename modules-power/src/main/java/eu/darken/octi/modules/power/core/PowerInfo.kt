@@ -32,13 +32,7 @@ data class PowerInfo(
                         else -> Speed.SLOW
                     }
                 }
-                else -> {
-                    when {
-                        currentNow > (0.05 * 1000000) -> Speed.SLOW
-                        currentNow > (0.25 * 1000000) -> Speed.NORMAL
-                        else -> Speed.FAST
-                    }
-                }
+                else -> Speed.NORMAL
             }
 
         @JsonClass(generateAdapter = false)
