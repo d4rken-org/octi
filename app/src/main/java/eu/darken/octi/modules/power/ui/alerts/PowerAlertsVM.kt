@@ -10,6 +10,8 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.modules.meta.core.MetaRepo
 import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
 import eu.darken.octi.modules.power.core.alert.PowerAlert
@@ -26,6 +28,7 @@ class PowerAlertsVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     metaRepo: MetaRepo,
     private val alertsManager: PowerAlertManager,
+    private val upgradeRepo: UpgradeRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
 
     private val navArgs: PowerAlertsFragmentArgs by handle.navArgs()
@@ -61,6 +64,10 @@ class PowerAlertsVM @Inject constructor(
 
     fun setBatteryLowAlert(threshold: Float) = launch {
         log(TAG) { "setBatteryLowAlert($threshold)" }
+        if (!upgradeRepo.isPro()) {
+            PowerAlertsFragmentDirections.goToUpgradeFragment().navigate()
+            return@launch
+        }
         val cleanThreshold = String.format(Locale.ROOT, "%.2f", threshold.coerceIn(0f, 95f)).toFloat()
         alertsManager.setBatteryLowAlert(navArgs.deviceId, cleanThreshold.takeIf { it > 0f })
     }
