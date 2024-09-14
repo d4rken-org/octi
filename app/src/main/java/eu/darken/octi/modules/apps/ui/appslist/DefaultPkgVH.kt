@@ -1,11 +1,13 @@
 package eu.darken.octi.modules.apps.ui.appslist
 
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import eu.darken.octi.R
 import eu.darken.octi.common.coil.loadAppIcon
 import eu.darken.octi.common.lists.binding
 import eu.darken.octi.databinding.ModuleAppsListDefaultItemBinding
 import eu.darken.octi.modules.apps.core.AppsInfo
+import eu.darken.octi.modules.apps.core.installerIconRes
 
 
 class DefaultPkgVH(parent: ViewGroup) :
@@ -23,6 +25,10 @@ class DefaultPkgVH(parent: ViewGroup) :
         val pkg = item.pkg
 
         icon.loadAppIcon(pkg)
+        installerIcon.apply {
+            isGone = pkg.installerPkg == null
+            setImageResource(pkg.installerIconRes)
+        }
 
         primary.text = pkg.label ?: pkg.packageName
         secondary.text = "${pkg.versionName} (${pkg.versionCode}) - ${pkg.packageName}"

@@ -123,6 +123,12 @@
 
     <string name="modules_settings_label">Modules</string>
     <string name="modules_settings_desc">Toggle different modules and tweak their settings.</string>
+
+    <string name="modules_category_connectivity_label">Connectivity</string>
+    <string name="modules_category_energy_label">Battery</string>
+    <string name="modules_category_apps_label">Apps</string>
+    <string name="modules_category_misc_label">Misc</string>
+    <string name="module_apps_category_label">Apps</string>
     <string name="device_x_label">Device: %s</string>
 
     <string name="pro_device_limit_reached_title">Device limit reached</string>
