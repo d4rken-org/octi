@@ -56,7 +56,8 @@
     <string name="discord_label">Discord</string>
     <string name="discord_description">A place to hang out in and ask questions.</string>
 
-    <string name="support_debuglog_label">Debug log</string>
+    <string name="support_debuglog_label">Record debug log</string>
+    <string name="support_debuglog_inprogress_label">Stop debug log</string>
     <string name="support_debuglog_desc">Record everything the app is doing into a text file that you can share.</string>
     <string name="settings_support_label">Support</string>
     <string name="debug_debuglog_sensitive_information_message">This file contains sensitive information (e.g. your installed applications). Only share it with trusted parties.</string>
