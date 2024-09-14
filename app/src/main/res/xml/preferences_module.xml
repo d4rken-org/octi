@@ -21,6 +21,7 @@
             android:summary="@string/module_apps_desc"
             android:title="@string/module_apps_label" />
         <CheckBoxPreference
+            android:enabled="false"
             android:icon="@drawable/ic_store_24"
             android:key="module.apps.include.installer"
             android:summary="@string/module_apps_installer_desc"

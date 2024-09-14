@@ -27,7 +27,7 @@ class AppsSettings @Inject constructor(
 
     override val isEnabled = dataStore.createValue("module.apps.enabled", true)
 
-    val includeInstaller = dataStore.createValue("module.apps.include.installer", true)
+    val includeInstaller = dataStore.createValue("module.apps.include.installer", false)
 
     override val mapper: PreferenceStoreMapper = PreferenceStoreMapper(
         isEnabled,
