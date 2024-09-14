@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
+        tools:node="remove" />
 
     <application
         android:name="eu.darken.octi.App"
@@ -60,23 +60,10 @@
                 android:resource="@xml/battery_widget_info" />
         </receiver>
 
-        <service
-            android:name="androidx.work.impl.foreground.SystemForegroundService"
-            android:foregroundServiceType="dataSync"
-            tools:node="merge" />
-
         <!-- Debug stuff-->
         <activity
             android:name="eu.darken.octi.common.debug.recording.ui.RecorderActivity"
             android:theme="@style/AppThemeFloating" />
-
-        <service
-            android:name="eu.darken.octi.common.debug.recording.core.RecorderService"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="This service is part of a bug reporting mechanism. It is explicitly launched by the user to create debug logs and troubleshoot issues within Octi itself. It shows an on-going foreground notification that allows the user to control the debug log functionality while the debug log is being created and the user is reproducing the issue." />
-        </service>
     </application>
 
 </manifest>
