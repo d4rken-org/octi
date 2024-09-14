@@ -32,6 +32,7 @@ class GeneralModuleSettings @Inject constructor(
         powerSettings.isEnabled,
         wifiSettings.isEnabled,
         appsSettings.isEnabled,
+        appsSettings.includeInstaller,
         clipboardSettings.isEnabled,
     )
 

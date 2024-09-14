@@ -1,8 +1,6 @@
 package eu.darken.octi.modules.apps.ui.appslist
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +12,7 @@ import eu.darken.octi.common.livedata.SingleLiveEvent
 import eu.darken.octi.common.navigation.navArgs
 import eu.darken.octi.common.uix.ViewModel3
 import eu.darken.octi.modules.apps.core.AppsRepo
+import eu.darken.octi.modules.apps.core.getInstallerIntent
 import eu.darken.octi.modules.meta.core.MetaRepo
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -54,16 +53,8 @@ class AppsListVM @Inject constructor(
                 DefaultPkgVH.Item(
                     pkg = pkg,
                     onClick = {
-                        val intent = Intent().apply {
-                            action = Intent.ACTION_VIEW
-                            data = Uri.parse("market://details?id=${pkg.packageName}")
-                            setPackage("com.android.vending")
-                        }
-                        val fallback = Intent().apply {
-                            action = Intent.ACTION_VIEW
-                            data = Uri.parse("https://play.google.com/store/apps/details?id=${pkg.packageName}")
-                        }
-                        events.postValue(AppListAction.OpenAppOrStore(intent, fallback))
+                        val (main, fallback) = pkg.getInstallerIntent()
+                        events.postValue(AppListAction.OpenAppOrStore(main, fallback))
                     }
                 )
             }

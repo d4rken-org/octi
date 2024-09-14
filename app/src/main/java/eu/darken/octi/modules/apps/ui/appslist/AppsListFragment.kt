@@ -54,7 +54,6 @@ class AppsListFragment : Fragment3(R.layout.module_apps_list_fragment) {
                             e.asErrorDialogBuilder(requireActivity()).show()
                         }
                     }
-
                 }
             }
         }

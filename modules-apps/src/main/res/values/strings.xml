@@ -6,4 +6,7 @@
     <string name="module_apps_x_installed">%d apps installed</string>
     <string name="module_apps_last_installed_x">Last installed app: %s</string>
     <string name="module_apps_list_title">Installed apps</string>
+
+    <string name="module_apps_installer_label">App installation source</string>
+    <string name="module_apps_installer_desc">Sync and include information about the source from which each app was installed.</string>
 </resources>

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
-import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
@@ -30,6 +29,7 @@ import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.apps.core.AppsInfo
+import eu.darken.octi.modules.apps.core.getInstallerIntent
 import eu.darken.octi.modules.apps.ui.dashboard.DeviceAppsVH
 import eu.darken.octi.modules.clipboard.ClipboardHandler
 import eu.darken.octi.modules.clipboard.ClipboardInfo
@@ -301,9 +301,10 @@ class DashboardVM @Inject constructor(
             DashboardFragmentDirections.actionDashFragmentToAppsListFragment(deviceId).navigate()
         },
         onInstallClicked = {
-            val pkg =
-                data.installedPackages.maxByOrNull { it.installedAt }?.packageName ?: BuildConfigWrap.APPLICATION_ID
-            webpageTool.open("https://play.google.com/store/apps/details?id=$pkg")
+            this.data.installedPackages.maxByOrNull { it.installedAt }?.let {
+                val (main, fallback) = it.getInstallerIntent()
+                dashboardEvents.postValue(DashboardEvent.OpenAppOrStore(main, fallback))
+            }
         }
     )
 

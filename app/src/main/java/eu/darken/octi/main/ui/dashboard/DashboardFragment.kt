@@ -19,6 +19,7 @@ import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.colorString
 import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.error.asErrorDialogBuilder
 import eu.darken.octi.common.getQuantityString2
 import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.common.lists.setupDefaults
@@ -146,6 +147,17 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
                         }
                     )
                     dialog.show()
+                }
+                is DashboardEvent.OpenAppOrStore -> {
+                    try {
+                        startActivity(event.intent)
+                    } catch (e: Exception) {
+                        try {
+                            startActivity(event.fallback)
+                        } catch (e: Exception) {
+                            e.asErrorDialogBuilder(requireActivity()).show()
+                        }
+                    }
                 }
             }
         }

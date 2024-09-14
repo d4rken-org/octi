@@ -6,6 +6,7 @@ import eu.darken.octi.databinding.DashboardDeviceAppsItemBinding
 import eu.darken.octi.main.ui.dashboard.items.perdevice.PerDeviceModuleAdapter
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.apps.core.AppsInfo
+import eu.darken.octi.modules.apps.core.installerIconRes
 
 
 class DeviceAppsVH(parent: ViewGroup) :
@@ -25,15 +26,16 @@ class DeviceAppsVH(parent: ViewGroup) :
         appsPrimary.apply {
             text = getString(R.string.module_apps_x_installed, apps.installedPackages.size)
         }
-
-        appsSecondary.apply {
-            val last = apps.installedPackages.maxByOrNull { it.installedAt }
-            text = last?.let { getString(R.string.module_apps_last_installed_x, "${it.label} (${it.versionName})") }
-        }
+        val last = apps.installedPackages.maxByOrNull { it.installedAt }
+        appsSecondary.text =
+            last?.let { getString(R.string.module_apps_last_installed_x, "${it.label} (${it.versionName})") }
 
         itemView.setOnClickListener { item.onAppsInfoClicked() }
 
-        installAction.setOnClickListener { item.onInstallClicked() }
+        installAction.apply {
+            setIconResource(last.installerIconRes)
+            setOnClickListener { item.onInstallClicked() }
+        }
     }
 
     data class Item(
