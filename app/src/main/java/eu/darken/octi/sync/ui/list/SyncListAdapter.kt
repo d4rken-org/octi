@@ -12,7 +12,6 @@ import eu.darken.octi.common.lists.modular.ModularAdapter
 import eu.darken.octi.common.lists.modular.mods.DataBinderMod
 import eu.darken.octi.common.lists.modular.mods.TypedVHCreatorMod
 import eu.darken.octi.syncs.gdrive.ui.GDriveStateVH
-import eu.darken.octi.syncs.jserver.ui.JServerStateVH
 import eu.darken.octi.syncs.kserver.ui.KServerStateVH
 import javax.inject.Inject
 
@@ -28,7 +27,6 @@ class SyncListAdapter @Inject constructor() :
     init {
         modules.add(DataBinderMod(data))
         modules.add(TypedVHCreatorMod({ data[it] is GDriveStateVH.Item }) { GDriveStateVH(it) })
-        modules.add(TypedVHCreatorMod({ data[it] is JServerStateVH.Item }) { JServerStateVH(it) })
         modules.add(TypedVHCreatorMod({ data[it] is KServerStateVH.Item }) { KServerStateVH(it) })
     }
 

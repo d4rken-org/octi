@@ -23,9 +23,6 @@ class SyncAddVM @Inject constructor(
         AddGDriveVH.Item {
             SyncAddFragmentDirections.actionSyncAddFragmentToGDriveAddFragment().navigate()
         }.run { items.add(this) }
-//        AddJServerDataVH.Item {
-//            SyncAddFragmentDirections.actionSyncAddFragmentToAddJServerFragment().navigate()
-//        }.run { items.add(this) }
         AddKServerDataVH.Item {
             SyncAddFragmentDirections.actionSyncAddFragmentToAddKServerFragment().navigate()
         }.run { items.add(this) }

@@ -11,8 +11,6 @@ import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
 import eu.darken.octi.syncs.gdrive.ui.GDriveStateVH
-import eu.darken.octi.syncs.jserver.core.JServerConnector
-import eu.darken.octi.syncs.jserver.ui.JServerStateVH
 import eu.darken.octi.syncs.kserver.core.KServerConnector
 import eu.darken.octi.syncs.kserver.ui.KServerStateVH
 import kotlinx.coroutines.flow.combine
@@ -57,17 +55,6 @@ class SyncListVM @Inject constructor(
                             isPaused = paused.contains(connector.identifier),
                             onManage = {
                                 SyncListFragmentDirections.actionSyncListFragmentToGDriveActionsFragment(
-                                    connector.identifier
-                                ).navigate()
-                            }
-                        )
-
-                        is JServerConnector -> JServerStateVH.Item(
-                            credentials = connector.credentials,
-                            ourState = state,
-                            otherStates = (connectors - connector).map { it.state.first() },
-                            onManage = {
-                                SyncListFragmentDirections.actionSyncListFragmentToJServerActionsFragment(
                                     connector.identifier
                                 ).navigate()
                             }

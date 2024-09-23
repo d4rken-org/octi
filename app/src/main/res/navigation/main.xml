@@ -44,10 +44,6 @@
             app:destination="@id/addGDriveFragment"
             app:popUpTo="@id/syncListFragment" />
         <action
-            android:id="@+id/action_syncAddFragment_to_addJServerFragment"
-            app:destination="@id/addJServerFragment"
-            app:popUpTo="@id/syncListFragment" />
-        <action
             android:id="@+id/action_syncAddFragment_to_addKServerFragment"
             app:destination="@id/addKServerFragment"
             app:popUpTo="@id/syncListFragment" />
@@ -59,9 +55,6 @@
         <action
             android:id="@+id/action_syncListFragment_to_syncAddFragment"
             app:destination="@id/syncAddFragment" />
-        <action
-            android:id="@+id/action_syncListFragment_to_JServerActionsFragment"
-            app:destination="@id/JServerActionsFragment" />
         <action
             android:id="@+id/action_syncListFragment_to_GDriveActionsFragment"
             app:destination="@id/GDriveActionsFragment" />
@@ -77,15 +70,6 @@
         android:name="eu.darken.octi.syncs.gdrive.ui.add.AddGDriveFragment"
         tools:layout="@layout/sync_add_new_gdrive_fragment" />
     <fragment
-        android:id="@+id/addJServerFragment"
-        android:name="eu.darken.octi.syncs.jserver.ui.add.AddJServerFragment"
-        tools:layout="@layout/sync_add_new_jserver_fragment">
-        <action
-            android:id="@+id/action_addJServerFragment_to_JServerLinkClientFragment"
-            app:destination="@id/JServerLinkClientFragment"
-            app:popUpTo="@id/syncListFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/addKServerFragment"
         android:name="eu.darken.octi.syncs.kserver.ui.add.AddKServerFragment"
         tools:layout="@layout/sync_add_new_kserver_fragment">
@@ -94,18 +78,6 @@
             app:destination="@id/KServerLinkClientFragment"
             app:popUpTo="@id/syncListFragment" />
     </fragment>
-    <dialog
-        android:id="@+id/JServerActionsFragment"
-        android:name="eu.darken.octi.syncs.jserver.ui.actions.JServerActionsFragment"
-        tools:layout="@layout/sync_actions_jserver_fragment">
-        <argument
-            android:name="identifier"
-            app:argType="eu.darken.octi.sync.core.ConnectorId" />
-        <action
-            android:id="@+id/action_JServerActionsFragment_to_JServerLinkFragment"
-            app:destination="@id/JServerLinkFragment"
-            app:popUpTo="@layout/sync_list_fragment" />
-    </dialog>
     <dialog
         android:id="@+id/KServerActionsFragment"
         android:name="eu.darken.octi.syncs.kserver.ui.actions.KServerActionsFragment"
@@ -132,19 +104,6 @@
             android:id="@+id/action_GDriveActionsFragment_to_syncDevicesFragment"
             app:destination="@id/syncDevicesFragment" />
     </dialog>
-    <fragment
-        android:id="@+id/JServerLinkFragment"
-        android:name="eu.darken.octi.syncs.jserver.ui.link.host.JServerLinkHostFragment"
-        tools:layout="@layout/sync_jserver_link_host_fragment">
-        <argument
-            android:name="identifier"
-            app:argType="eu.darken.octi.sync.core.ConnectorId" />
-    </fragment>
-    <fragment
-        android:id="@+id/JServerLinkClientFragment"
-        android:name="eu.darken.octi.syncs.jserver.ui.link.client.JServerLinkClientFragment"
-        tools:layout="@layout/sync_jserver_link_client_fragment" />
-
     <fragment
         android:id="@+id/KServerLinkFragment"
         android:name="eu.darken.octi.syncs.kserver.ui.link.host.KServerLinkHostFragment"
