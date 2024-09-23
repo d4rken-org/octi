@@ -12,7 +12,6 @@ import eu.darken.octi.common.lists.modular.ModularAdapter
 import eu.darken.octi.common.lists.modular.mods.DataBinderMod
 import eu.darken.octi.common.lists.modular.mods.TypedVHCreatorMod
 import eu.darken.octi.syncs.gdrive.ui.add.AddGDriveVH
-import eu.darken.octi.syncs.jserver.ui.add.AddJServerDataVH
 import eu.darken.octi.syncs.kserver.ui.add.AddKServerDataVH
 import javax.inject.Inject
 
@@ -28,7 +27,6 @@ class SyncAddAdapter @Inject constructor() :
     init {
         modules.add(DataBinderMod(data))
         modules.add(TypedVHCreatorMod({ data[it] is AddGDriveVH.Item }) { AddGDriveVH(it) })
-        modules.add(TypedVHCreatorMod({ data[it] is AddJServerDataVH.Item }) { AddJServerDataVH(it) })
         modules.add(TypedVHCreatorMod({ data[it] is AddKServerDataVH.Item }) { AddKServerDataVH(it) })
     }
 

@@ -131,7 +131,6 @@ dependencies {
     testImplementation(project(":app-common-test"))
     implementation(project(":sync-core"))
     implementation(project(":syncs-gdrive"))
-    implementation(project(":syncs-jserver"))
     implementation(project(":syncs-kserver"))
     implementation(project(":module-core"))
     implementation(project(":modules-meta"))

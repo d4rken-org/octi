@@ -25,7 +25,6 @@ Synchronization options:
 
 * Google Drive: Easy to use if all devices use the same account.
 * [K-Server](https://github.com/d4rken/octi-sync-server-kotlin): End-To-End encrypted server that doesn't require a Google account.
-* [J-Server](https://github.com/jakobmoellerdev/octi-sync-server): End-To-End encrypted server if you don't want to use Google Drive (deprecated).
 
 Hungry for details? [Check the wiki](https://github.com/d4rken-org/octi/wiki). Still have
 questions? [Join us on discord](https://discord.gg/s7V4C6zuVy)!
@@ -56,7 +55,7 @@ If you like the app, consider:
 
 ## Thanks
 
-* Huge thanks to [@jakmoe](https://github.com/jakmoe) for writing Octi's open source sync
+* Huge thanks to [@jakmoe](https://github.com/jakmoe) for writing Octi's first open source sync
   server [J-Server](https://github.com/jakob-moeller-cloud/octi-sync-server)
 
 ## Screenshots
