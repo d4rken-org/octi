@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_power_label">電源モジュール</string>
+    <string name="module_power_desc">バッテリー、充電、測定値、温度などを表示します。</string>
+    <string name="module_power_battery_status_unknown">不明な状態</string>
+    <string name="module_power_battery_status_full">満充電</string>
+    <string name="module_power_battery_status_charging">充電中</string>
+    <string name="module_power_battery_status_charging_slow">低速で充電中</string>
+    <string name="module_power_battery_status_charging_fast">高速で充電中</string>
+    <string name="module_power_battery_status_discharging">放電中</string>
+    <string name="module_power_battery_status_discharging_slow">低速で放電中</string>
+    <string name="module_power_battery_status_discharging_fast">高速で放電中</string>
+    <string name="module_power_battery_full_since_x">充電完了: %s</string>
+    <string name="module_power_battery_full_in_x">満充電: %s</string>
+    <string name="module_power_battery_empty_in_x">バッテリー切れ: %s</string>
+    <string name="module_power_battery_estimation_na">おおよその情報は利用できません</string>
+    <string name="module_power_widget_description">同期されたデバイスのバッテリー情報を表示します。</string>
+    <string name="module_power_alerts_title">バッテリーアラート</string>
+    <string name="module_power_alerts_lowbattery_title">バッテリー低残量</string>
+    <string name="module_power_alerts_lowbattery_description">このデバイスのバッテリー残量が指定したしきい値に下回ったときに通知を送信します。アラートを通知するパーセンテージを設定します。</string>
+    <string name="module_power_alerts_lowbattery_slider_value_caption">バッテリー残量が %s を下回ったときに通知する</string>
+    <string name="module_power_alerts_lowbattery_disabled_caption">バッテリー残量が少なくなっても通知しない</string>
+    <string name="module_power_alerts_notification_channel_label">バッテリーアラート</string>
+    <string name="module_power_alerts_notification_battery_low_title">バッテリー低残量: %s</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s のバッテリー残量は %3$d % (&lt;%2$d%%) 、充電されていません。</string>
+</resources>
