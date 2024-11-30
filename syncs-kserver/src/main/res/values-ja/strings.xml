@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">このアプリを開発した Octi 用のオープンソース同期サーバーです。データはクライアント側で暗号化され、デバイスのみが複合化できます。\n\nアプリとサーバーの両方がまだ改良中のため、他の同期オプションよりも安定性が低い可能性があります。</string>
+    <string name="sync_kserver_add_create_action_hint">非アクティブなアカウントは数週間後に削除されます。</string>
+    <string name="sync_kserver_add_subtitle">新しい Google ドライブを追加</string>
+    <string name="sync_kserver_add_link_action_hint">すでにリンクされている別のデバイスにアクセスする必要があります。</string>
+    <string name="sync_kserver_about_title">KServer について</string>
+    <string name="sync_kserver_about_desc">KServer は darken による Octi 用のオープンソース同期サーバー (Kotlin 製) です。</string>
+    <string name="sync_kserver_about_author_action">作者</string>
+    <string name="sync_kserver_about_source_action">ソースコード</string>
+    <string name="sync_kserver_reset_confirmation_desc">このアカウントのデバイスのデータを削除します。デバイスはリンクされたままですが、保存されているデータは削除されます。</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">これにより、このデバイスのデータがアカウントから削除されます。これが最後にリンクされたデバイスである場合、アカウントは削除されます。</string>
+    <string name="sync_kserver_link_device_action">新しいデバイスをリンク</string>
+    <string name="sync_kserver_link_code_label">リンクコード</string>
+    <string name="sync_kserver_link_host_option_direct">他のアプリから送信できるテキストコードを作成します</string>
+    <string name="sync_kserver_link_host_option_qrcode">QR コードを表示</string>
+    <string name="sync_kserver_link_host_option_nfc">NFC でデバイスをリンク</string>
+    <string name="sync_kserver_link_host_device_linked_message">新しいデバイスがアカウントにリンクされました</string>
+    <string name="sync_kserver_link_host_nfc_action">NFC クライアントを探しています。このデバイスをアカウントにリンクするデバイスを近づけてください。</string>
+    <string name="sync_kserver_link_client_option_direct">リンクコードを手動でコピーして貼り付け</string>
+    <string name="sync_kserver_link_client_option_qrcode">別のデバイスから QR コードをスキャン</string>
+    <string name="sync_kserver_link_client_option_nfc">NFC で 2 台のデバイスを使用する</string>
+    <string name="sync_kserver_link_client_startcamera_action">カメラを起動</string>
+    <string name="sync_kserver_link_client_link_action">デバイスをリンク</string>
+    <string name="sync_kserver_link_client_nfc_action">NFC ホストを探しています。アカウントアクセスの共有を提供するデバイスに近づけてください。</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdrive_account_scope_error_label">権限エラー</string>
+    <string name="gdrive_account_scope_error_description">Octi に必要なアクセススコープが付与されていません。再度権限が付与されているか確認してください。</string>
+    <string name="gdrive_account_lockout_error_label">ロックアウトエラー</string>
+    <string name="gdrive_account_lockout_error_description">このデバイスはロックアウトされており、Google ドライブにアクセスできません。Google アカウントへのアクセスが取り消されています。アクセスを再度許可して、もう一度お試しください。</string>
+    <string name="sync_gdrive_type_label">Google ドライブ</string>
+    <string name="sync_gdrive_appdata_label">アプリデータスコープ</string>
+    <string name="sync_gdrive_type_appdata_description">データは Google ドライブに保存されます。この特定のバリアントは、アプリデータスコープを使用します。このアプリ専用の新しいフォルダへのアクセスのみが許可されます。フォルダはドライブ上には表示されません。これは WhatsApp のバックアップの仕組みに似せています。</string>
+    <string name="sync_gdrive_add_label">新しい Google ドライブを追加</string>
+    <string name="sync_gdrive_add_description">Google ドライブへのアクセスを設定するには、下のサインインボタンをタップしてください。</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Google ドライブに保存されているすべての Octi のデータをリセットします。デバイスは Google ドライブにログインしたままになります。</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Google ドライブからログアウトしてこのデバイスに関連するデータを削除します。</string>
+    <string name="sync_gdrive_error_no_account_on_device">このデバイスはどの Google アカウントにもログインしていません。</string>
+</resources>

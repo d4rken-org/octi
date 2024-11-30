@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_wifi_label">Wi-Fi モジュール</string>
+    <string name="module_wifi_desc">名前、受付、IP などを表示します。</string>
+    <string name="module_wifi_unknown_ssid_label">不明な SSID</string>
+    <string name="module_wifi_unknown_ip_label">不明な IP</string>
+    <string name="module_wifi_reception_good_label">かなり良好</string>
+    <string name="module_wifi_reception_okay_label">良好</string>
+    <string name="module_wifi_reception_bad_label">不安定</string>
+</resources>
