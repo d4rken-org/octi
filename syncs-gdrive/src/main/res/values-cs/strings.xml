@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdrive_account_scope_error_label">Chyba oprávnění</string>
+    <string name="gdrive_account_scope_error_description">Aplikaci Octi nebyl udělen požadovaný rozsah přístupu. Zkuste to znovu a zkontrolujte, zda jsou oprávnění udělena.</string>
+    <string name="gdrive_account_lockout_error_label">Chyba uzamčení</string>
+    <string name="gdrive_account_lockout_error_description">Toto zařízení je uzamčeno a nemá přístup k Disku Google. Jeho přístup k účtu Google byl zrušen. Obnovte přístup a zkuste to znovu.</string>
+    <string name="sync_gdrive_type_label">Disk Google</string>
+    <string name="sync_gdrive_appdata_label">Rozsah dat aplikací</string>
+    <string name="sync_gdrive_type_appdata_description">Data jsou umístěna na Disku Google. Tato konkrétní varianta používá rozsah \"app-data\". Přístup je udělen pouze do nové složky určené pouze pro tuto aplikaci. Složka není ve vaší jednotce viditelná. Funguje to podobně jako zálohování v aplikaci WhatsApp.</string>
+    <string name="sync_gdrive_add_label">Přidat nový Disk Google</string>
+    <string name="sync_gdrive_add_description">Kliknutím na přihlašovací tlačítko níže nastavíte přístup k Disku Google.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Obnovení všech dat Octi uložených na Disku Google. Vaše zařízení zůstane přihlášeno k Disku Google.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Odhlášení z Disku Google a odstranění dat souvisejících s tímto zařízením.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Toto zařízení není přihlášeno k žádnému účtu Google.</string>
+</resources>

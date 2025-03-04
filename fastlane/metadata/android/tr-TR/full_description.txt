@@ -1,0 +1,22 @@
+<i>Octi</i> birden fazla Android cihaz arasında bilgileri senkronize eder.
+
+Mevcut bilgi modülleri:
+
+* Cihaz ve Android İşletim Sistemi ayrıntıları
+* Pil durumu
+* WiFi bağlantısı
+* Yüklü uygulamalar
+* Pano paylaşımı
+* ve daha fazlası... eğer iyi bir fikriniz varsa, bana bildirin!
+
+Bilgileri senkronize etmek için farklı yollar seçebilirsiniz:
+
+* Google Drive'ınız
+* Benim tarafımdan barındırılan ücretsiz bir sunucu
+* Kendi sunucunuzu kendiniz barındırın
+* Daha fazlası yakında...
+
+Senkronizasyon seçenekleri karıştırılabilir ve eşleştirilebilir.
+
+Octi açık kaynaklıdır, reklam içermez ve sizi takip etmez.
+Birkaç ekstra özellik almak ve uygulama geliştirmeyi desteklemek için uygulama içi satın alma yapabilirsiniz.

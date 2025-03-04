@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Služba Google Play není k dispozici</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi se nemůže připojit k Google Play. Je Google Play nainstalován a aktuální? Je váš účet Google přihlášen? Zkuste vyčistit mezipaměť aplikace Google Play a restartovat zařízení.</string>
+    <string name="upgrades_no_purchases_found_check_account">Nebyly nalezeny žádné nákupy. Používáte správný účet?</string>
+    <string name="upgrades_dashcard_title">Získat Octi Pro</string>
+    <string name="upgrades_dashcard_body">Upgradujte a odemkněte další funkce a podpořte vývoj!</string>
+    <string name="upgrades_dashcard_upgrade_action">Upgradovat</string>
+    <string name="upgrade_screen_title">Získat Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi neobsahuje žádné reklamy a neprodává data uživatelů. Mou práci financujete vy ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Výhody</string>
+    <string name="upgrade_screen_benefits_body">• Více než 3 zařízení 💯\n• Různé motivy 🎨\n• Více možností ⚙️\n• Extra synchronizace serverů🖥️\n• Pokračování ve vývoji ☕\n• Motivovaný vývojář 🧙</string>
+    <string name="upgrade_screen_how_title">Možnosti</string>
+    <string name="upgrade_screen_how_body">Můžete si vybrat mezi jednorázovým nákupem a levnějším ročním předplatným.\nPředplatné začíná 14denní bezplatnou zkušební dobou, po které budete jednou ročně účtováni. Zkušební dobu a předplatné je možné kdykoliv zrušit.\nStejné funkce, jen různé cenové modely.</string>
+    <string name="upgrade_screen_subscription_trial_action">Zahájit bezplatnou 14denní zkušební dobu</string>
+    <string name="upgrade_screen_subscription_action">Předplatit</string>
+    <string name="upgrade_screen_subscription_action_hint">Předplatné stojí %s ročně.</string>
+    <string name="upgrade_screen_iap_action">Jednorázový nákup</string>
+    <string name="upgrade_screen_iap_action_hint">Jednorázový nákup stojí %s.</string>
+    <string name="upgrade_screen_thanks_toast">Jste nejlepší! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Obnovit nákup</string>
+    <string name="upgrade_screen_restore_purchase_message">Váš upgrade platí pro všechna zařízení na stejném účtu Google.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Tipy pro řešení problémů s nerozpoznanými upgrady:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Synchronizace Obchodu Play může chvíli trvat. Zkuste restartovat, vymazat mezipaměť Google Play nebo prostě počkat.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Více účtů může zmást Google Play. Odhlaste se z jiných účtů nebo nainstalujte přes webové stránky Google Play, což nutí sdružení k určitému účtu.</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play は利用できません</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi が Google Play に接続できません。Google Play はインストールされている環境ですか？Google アカウントにログインをしていますか？その他に Google Play アプリのキャッシュを削除して、デバイスの再起動をお試しください。</string>
+    <string name="upgrades_no_purchases_found_check_account">購入履歴が見つかりません。正しいアカウントを使用していますか？</string>
+    <string name="upgrades_dashcard_title">Octi Pro を入手</string>
+    <string name="upgrades_dashcard_body">アップグレードで追加機能の入手と開発を支援します！</string>
+    <string name="upgrades_dashcard_upgrade_action">アップグレード</string>
+    <string name="upgrade_screen_title">Octi Pro を入手</string>
+    <string name="upgrade_screen_preamble">Octi は無広告、ユーザーデータの販売もしません。あなたの支援で成り立っています ❤️</string>
+    <string name="upgrade_screen_benefits_title">利点</string>
+    <string name="upgrade_screen_benefits_body">• 3 台以上のデバイスを同期 💯\n• 様々なテーマ 🎨\n• より多くのオプション ⚙️\n• 追加の同期サーバー 🖥️\n• 開発の継続 ☕\n• 開発者のやる気 🧙</string>
+    <string name="upgrade_screen_how_title">オプション</string>
+    <string name="upgrade_screen_how_body">1 回限りの購入か、より安価な年間の定期購入のどちらかを選択できます。\n定期購入は 14 日間の無料試用期間から開始され、その後に 1 年に 1 回の課金がされます。試用と定期購入はいつでもキャンセルが可能です。\n価格モデルは異なりますが、機能は同じです。</string>
+    <string name="upgrade_screen_subscription_trial_action">14 日間の試用期間を開始</string>
+    <string name="upgrade_screen_subscription_action">定期購入</string>
+    <string name="upgrade_screen_subscription_action_hint">定期購入は年間で %s が必要です。</string>
+    <string name="upgrade_screen_iap_action">1 回限りの購入</string>
+    <string name="upgrade_screen_iap_action_hint">1 回限りの購入は %s が必要です。</string>
+    <string name="upgrade_screen_thanks_toast">あなたは最高です！❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">購入を復元</string>
+    <string name="upgrade_screen_restore_purchase_message">アップグレードは、同じ Google アカウントのデバイス間で有効です。</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">認識されないアップグレードのトラブルシューティングのヒント:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Play ストアの同期には時間がかかる場合があります。再起動、Google Play キャッシュの消去、または暫く待ってください。</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">複数のアカウントがあると Google Play が混乱する可能性があります。他のアカウントをログアウトするか、Google Play のウェブサイトからインストールして特定のアカウントの関連付けを強制してください。</string>
+</resources>

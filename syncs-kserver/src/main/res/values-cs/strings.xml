@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Synchronizační server s otevřeným zdrojovým kódem pro Octi vytvořený vývojářem této aplikace. Data jsou šifrována na straně klienta, dešifrovat je mohou pouze vaše zařízení.\n\nJelikož se aplikace i server stále vylepšují, může být méně stabilní než jiné možnosti synchronizace.</string>
+    <string name="sync_kserver_add_create_action_hint">Neaktivní účty jsou po několika týdnech smazány.</string>
+    <string name="sync_kserver_add_subtitle">Přidat nový Disk Google</string>
+    <string name="sync_kserver_add_link_action_hint">Budete potřebovat přístup k jinému zařízení, které je již propojeno.</string>
+    <string name="sync_kserver_about_title">Info o KServer</string>
+    <string name="sync_kserver_about_desc">KServer je open-source synchronizační server (v Kotlinu) pro Octi od vývojáře darken.</string>
+    <string name="sync_kserver_about_author_action">Autor</string>
+    <string name="sync_kserver_about_source_action">Zdrojový kód</string>
+    <string name="sync_kserver_reset_confirmation_desc">Vymazání dat zařízení na tomto účtu. Zařízení zůstanou propojena, ale jejich uložená data budou odstraněna.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Tím odstraníte toto zařízení ze svého účtu. Pokud se jedná o poslední připojené zařízení, váš účet bude odstraněn.</string>
+    <string name="sync_kserver_link_device_action">Propojit nové zařízení</string>
+    <string name="sync_kserver_link_code_label">Kód propojení</string>
+    <string name="sync_kserver_link_host_option_direct">Vytvoření textového kódu, který můžete odeslat prostřednictvím jiných aplikací</string>
+    <string name="sync_kserver_link_host_option_qrcode">Zobrazit QRCode</string>
+    <string name="sync_kserver_link_host_option_nfc">Propojit zařízení skrze NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">S vaším účtem bylo propojeno nové zařízení.</string>
+    <string name="sync_kserver_link_host_nfc_action">Vyhledávání klienta NFC. Přiložte toto zařízení k zařízení, které chcete propojit se svým účtem.</string>
+    <string name="sync_kserver_link_client_option_direct">Ručně kopírovat a vložit kód propojení</string>
+    <string name="sync_kserver_link_client_option_qrcode">Naskenovat QR kód z jiného zařízení</string>
+    <string name="sync_kserver_link_client_option_nfc">Použít dvě zařízení s NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">Spustit fotoaparát</string>
+    <string name="sync_kserver_link_client_link_action">Propojit zařížení</string>
+    <string name="sync_kserver_link_client_nfc_action">Vyhledávání NFC hostitele. Držte se blízko zařízení, které nabízí sdílení přístupu k účtu.</string>
+</resources>

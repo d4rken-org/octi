@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdrive_account_scope_error_label">Errore di permessi</string>
+    <string name="gdrive_account_scope_error_description">Octi non ha i permessi per soddisfare la richiesta. Riprova e verifica che i permessi richiesti siano forniti.</string>
+    <string name="gdrive_account_lockout_error_label">Errore di blocco</string>
+    <string name="gdrive_account_lockout_error_description">Questo dispositivo è stato bloccato e non può più accedere a Google Drive. Il suo accesso al tuo account Google è stato revocato. Riconcedi l\'accesso e riprova.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">Ambito dei dati dell\'app</string>
+    <string name="sync_gdrive_type_appdata_description">I dati sono archiviati su Google Drive. Questa specifica variante utilizza l\'ambito \"app-data\". L\'accesso è concesso solo a una nuova cartella dedicata a questa app. La cartella non è visibile nel tuo drive. Funziona in modo simile ai backup di WhatsApp.</string>
+    <string name="sync_gdrive_add_label">Aggiungi un nuovo account Google Drive</string>
+    <string name="sync_gdrive_add_description">Clicca il bottone qui sotto per effettuare l\'accesso a google drive.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Reimposta tutti i dati di Octi archiviati su Google Drive. Il tuo dispositivo rimarrà connesso a Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Disconnetti da google drive e cancella i dati relativi a questo dispositivo.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Il dispositivo non ha accesso a nessun account google.</string>
+</resources>

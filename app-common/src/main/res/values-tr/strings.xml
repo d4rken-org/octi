@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Hata</string>
+    <string name="general_error_no_compatible_app_found_msg">Bu isteği işlemek için uyumlu bir uygulama bulunamadı.</string>
+    <string name="general_share_action">Paylaş</string>
+    <string name="general_done_action">Tamamlandı</string>
+    <string name="general_copy_action">Kopyala</string>
+    <string name="general_remove_action">Kaldır</string>
+    <string name="general_cancel_action">İptal</string>
+    <string name="general_thanks_action">Teşekkürler</string>
+    <string name="general_gotit_action">Anlaşıldı</string>
+    <string name="general_na_label">Mevcut değil</string>
+    <string name="general_empty_label">Boş</string>
+    <string name="general_dismiss_action">Yoksay</string>
+    <string name="general_maybe_later_action">Daha sonra</string>
+    <string name="general_manage_action">Yönet</string>
+    <string name="general_quota_label">Kota</string>
+    <string name="general_upgrade_action">Yükselt</string>
+    <string name="general_update_action">Güncelle</string>
+    <string name="general_donate_action">Bağış yap</string>
+    <string name="general_check_action">Denetle</string>
+    <string name="general_internal_not_available_msg">İnternet bağlantısı kullanılamıyor</string>
+    <string name="general_refresh_action">Yenile</string>
+    <string name="general_continue">Devam</string>
+    <string name="general_show_details_action">Detayları göster</string>
+</resources>

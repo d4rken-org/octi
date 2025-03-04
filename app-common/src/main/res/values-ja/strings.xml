@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">エラー</string>
+    <string name="general_error_no_compatible_app_found_msg">このリクエストを処理する互換性のあるアプリが見つかりませんでした。</string>
+    <string name="general_share_action">共有</string>
+    <string name="general_done_action">完了</string>
+    <string name="general_copy_action">コピー</string>
+    <string name="general_remove_action">削除</string>
+    <string name="general_cancel_action">キャンセル</string>
+    <string name="general_thanks_action">ありがとうございます</string>
+    <string name="general_gotit_action">わかりました</string>
+    <string name="general_na_label">なし</string>
+    <string name="general_empty_label">空</string>
+    <string name="general_dismiss_action">破棄</string>
+    <string name="general_maybe_later_action">また後で</string>
+    <string name="general_manage_action">管理</string>
+    <string name="general_quota_label">クォータ</string>
+    <string name="general_upgrade_action">アップグレード</string>
+    <string name="general_update_action">更新</string>
+    <string name="general_donate_action">寄付</string>
+    <string name="general_check_action">確認</string>
+    <string name="general_internal_not_available_msg">インターネット接続が利用できません</string>
+    <string name="general_refresh_action">更新</string>
+    <string name="general_continue">続行</string>
+    <string name="general_show_details_action">詳細を表示</string>
+</resources>

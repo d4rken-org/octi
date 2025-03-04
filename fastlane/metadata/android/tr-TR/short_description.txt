@@ -1,0 +1,1 @@
+Birden fazla Android cihaz arasında bilgileri izleyin ve senkronize edin

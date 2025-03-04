@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi FOSS</string>
+    <string name="upgrade_feature_requires_pro">Vyžaduje Octi Pro</string>
+    <string name="upgrades_dashcard_title">Získat Octi Pro</string>
+    <string name="upgrades_dashcard_body">Odemkněte další funkce a staňte se patronem, který podpoří další vývoj!</string>
+    <string name="upgrades_dashcard_upgrade_action">Upgradovat</string>
+    <string name="upgrade_screen_title">Upgradovat na Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi neobsahuje žádné reklamy a neprodává data uživatelů. Mou práci financujete vy ❤️</string>
+    <string name="upgrade_screen_how_title">Co dělat</string>
+    <string name="upgrade_screen_how_body">Staňte se patronem a sponzorem vývoje! Klepnutím na tlačítko níže aktivujete všechny další funkce a otevřete můj profil sponzora na GitHubu.</string>
+    <string name="upgrade_screen_why_title">Výhody 🪄</string>
+    <string name="upgrade_screen_benefits_body">• Více než 3 zařízení 💯\n• Různé motivy 🎨\n• Více možností ⚙️\n• Extra synchronizace serverů🖥️\n• Pokračování vývoje open-source 🧙</string>
+    <string name="upgrade_screen_sponsor_action">Sponzorovat vývoj</string>
+    <string name="upgrade_screen_sponsor_action_hint">Alternativou jsou reklamy, analytika a Google Play 🙁</string>
+    <string name="upgrade_screen_thanks_toast">Děkujeme vám za podporu vývoje open-source ❤️</string>
+</resources>
