@@ -1,16 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="gdrive_account_scope_error_label">Permission error</string>
-    <string name="gdrive_account_scope_error_description">Octi has not been granted the required access scope. Try again and check that permissions are being granted.</string>
-    <string name="gdrive_account_lockout_error_label">Lock out error</string>
-    <string name="gdrive_account_lockout_error_description">This device is locked out and can\'t access Google Drive anymore. It\'s access to your Google account has been revoked. Re-grant access and try again.</string>
-
-    <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">Alcance de los datos de la aplicación</string>
-    <string name="sync_gdrive_type_appdata_description">Los datos se colocan en Google Drive. Esta variante específicada utiliza el alcance "datos de la aplicación". Solo se otorga acceso a una nueva carpeta solo para esta aplicación. La carpeta no está visible en su disco. Es similar a cómo funcionan las copias de seguridad de WhatsApp.</string>
+    <string name="sync_gdrive_type_appdata_description">Los datos se colocan en Google Drive. Esta variante específicada utiliza el alcance \"datos de la aplicación\". Solo se otorga acceso a una nueva carpeta solo para esta aplicación. La carpeta no está visible en su disco. Es similar a cómo funcionan las copias de seguridad de WhatsApp.</string>
     <string name="sync_gdrive_add_label">Agregar un nuevo Google Drive</string>
     <string name="sync_gdrive_add_description">Haz clic en el botón de inicio de sesión a continuación para configurar el acceso a Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Restablezce todos los datos de Octi almacenados en Google Drive. Tu dispositivo permanece conectado a Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Cerrar la sesión en Google Drive y eliminar los datos de este dispositivo.</string>
     <string name="sync_gdrive_error_no_account_on_device">Este dispositivo no está registrado en ninguna cuenta de Google.</string>
-
 </resources>
