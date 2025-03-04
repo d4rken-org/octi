@@ -3,8 +3,8 @@
 <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/featureGraphic.jpg" width="400">
 
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/d4rken-org/octi?include_prereleases)](https://github.com/d4rken-org/octi/releases/latest)
-[![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
 [![Code tests & eval](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml/badge.svg)](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml)
+[![Crowdin](https://badges.crowdin.net/octi/localized.svg)](https://crowdin.com/project/octi)
 [![Github Downloads](https://img.shields.io/github/downloads/d4rken-org/octi/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/d4rken-org/octi/main/README.md#download)
 [![Google Play Downloads](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Deu.darken.octi%26l%3DGoogle%2520Play%26m%3D%24totalinstalls)](https://github.com/d4rken-org/octi/main/README.md#download)
 [![⭐](https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Deu.darken.octi%26gl%3DUS%26hl%3Den%26l%3D%25E2%25AD%2590%26m%3D%24rating)](https://github.com/d4rken-org/octi/main/README.md#download)
@@ -48,7 +48,7 @@ Want to chat? Join our [discord server here](https://discord.gg/s7V4C6zuVy).
 
 If you like the app, consider:
 
-* Contributing translations
+* [Contributing translations on Crowdin](https://crowdin.com/project/octi)
 * Contributing features or bugfixes
 * Buying the upgrade on [Google Play](https://play.google.com/store/apps/details?id=eu.darken.octi)
 * [Sponsoring the project](https://github.com/sponsors/d4rken)

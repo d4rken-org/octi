@@ -36,7 +36,15 @@
             app:fragment="eu.darken.octi.main.ui.settings.support.SupportFragment"
             app:summary="¯\\_(ツ)_/¯"
             app:title="@string/settings_support_label" />
-
+        <eu.darken.octi.common.preferences.IntentPreference
+            android:icon="@drawable/ic_baseline_translate_24"
+            android:key="core.translation"
+            android:title="@string/help_translate_label"
+            app:summary="@string/help_translate_description">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://crowdin.com/project/octi" />
+        </eu.darken.octi.common.preferences.IntentPreference>
         <Preference
             android:icon="@drawable/ic_heart"
             app:fragment="eu.darken.octi.main.ui.settings.acks.AcknowledgementsFragment"
