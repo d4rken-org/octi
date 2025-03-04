@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Chyba</string>
+    <string name="general_error_no_compatible_app_found_msg">Nebyla nalezena žádná kompatibilní aplikace, která by tento požadavek zpracovala.</string>
+    <string name="general_share_action">Sdílet</string>
+    <string name="general_done_action">Hotovo</string>
+    <string name="general_copy_action">Kopírovat</string>
+    <string name="general_remove_action">Odstranit</string>
+    <string name="general_cancel_action">Zrušit</string>
+    <string name="general_thanks_action">Děkuji</string>
+    <string name="general_gotit_action">Rozumím</string>
+    <string name="general_na_label">N/A</string>
+    <string name="general_empty_label">Prázdné</string>
+    <string name="general_dismiss_action">Zamítnout</string>
+    <string name="general_maybe_later_action">Možná později</string>
+    <string name="general_manage_action">Spravovat</string>
+    <string name="general_quota_label">Kvóta</string>
+    <string name="general_upgrade_action">Upgradovat</string>
+    <string name="general_update_action">Aktualizovat</string>
+    <string name="general_donate_action">Přispět</string>
+    <string name="general_check_action">Zkontrolovat</string>
+    <string name="general_internal_not_available_msg">Připojení k Internetu není k dispozici</string>
+    <string name="general_refresh_action">Obnovit</string>
+    <string name="general_continue">Pokračovat</string>
+    <string name="general_show_details_action">Zobrazit detaily</string>
+</resources>

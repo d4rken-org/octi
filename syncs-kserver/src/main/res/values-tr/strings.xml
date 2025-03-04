@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Octi için bu uygulamanın geliştiricisi tarafından yapılmış açık kaynaklı bir senkronizasyon sunucusu. Veriler istemci tarafında şifrelenir, yalnızca cihazlarınız şifresini çözebilir.\n\nHem uygulama hem de sunucu hala geliştirilmekte olduğundan, diğer senkronizasyon seçeneklerinden daha az kararlı olabilir.</string>
+    <string name="sync_kserver_add_create_action_hint">Aktif olmayan hesaplar birkaç hafta sonra silinir.</string>
+    <string name="sync_kserver_add_subtitle">Yeni Google Drive ekleyin</string>
+    <string name="sync_kserver_add_link_action_hint">Halihazırda bağlı olan başka bir cihaza erişmeniz gerekecektir.</string>
+    <string name="sync_kserver_about_title">KServer Hakkında</string>
+    <string name="sync_kserver_about_desc">KServer, darken tarafından Octi için açık kaynaklı bir senkronizasyon sunucusudur (Kotlin\'de).</string>
+    <string name="sync_kserver_about_author_action">Yapımcı</string>
+    <string name="sync_kserver_about_source_action">Kaynak kodu</string>
+    <string name="sync_kserver_reset_confirmation_desc">Bu hesaptaki cihaz verilerini temizleyin. Cihazlar bağlı kalır ancak depolanan verileri kaldırılır.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Bu, bu cihazı hesabınızdan kaldıracaktır. Bu son bağlanan cihazsa, hesabınız silinecektir.</string>
+    <string name="sync_kserver_link_device_action">Yeni cihaz bağla</string>
+    <string name="sync_kserver_link_code_label">Bağlantı kodu</string>
+    <string name="sync_kserver_link_host_option_direct">Diğer uygulamalar aracılığıyla gönderebileceğiniz bir metin kodu oluşturun</string>
+    <string name="sync_kserver_link_host_option_qrcode">QR kodu göster</string>
+    <string name="sync_kserver_link_host_option_nfc">Cihazı NFC ile bağlayın</string>
+    <string name="sync_kserver_link_host_device_linked_message">Hesabınıza yeni bir cihaz bağlandı.</string>
+    <string name="sync_kserver_link_host_nfc_action">NFC istemcisi aranıyor. Bu cihazı hesabınıza bağlamak istediğiniz cihaza yakın tutun.</string>
+    <string name="sync_kserver_link_client_option_direct">Bir bağlantı kodunu manuel olarak kopyalayıp yapıştırma</string>
+    <string name="sync_kserver_link_client_option_qrcode">Başka bir cihazdan QR kodu tarama</string>
+    <string name="sync_kserver_link_client_option_nfc">Iki cihaz ile NFC kullanın</string>
+    <string name="sync_kserver_link_client_startcamera_action">Kamerayı Aç</string>
+    <string name="sync_kserver_link_client_link_action">Cihazı bağla</string>
+    <string name="sync_kserver_link_client_nfc_action">NFC ana bilgisayarı aranıyor. Hesap erişimini paylaşmayı teklif eden cihaza yakın tutun.</string>
+</resources>

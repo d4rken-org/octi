@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi FOSS</string>
+    <string name="upgrade_feature_requires_pro">Richiede Octi Pro</string>
+    <string name="upgrades_dashcard_title">Ottieni Octi Pro</string>
+    <string name="upgrades_dashcard_body">Sblocca funzionalità aggiuntive e diventa sostenitore dello sviluppo dell\'applicazione!</string>
+    <string name="upgrades_dashcard_upgrade_action">Aggiorna</string>
+    <string name="upgrade_screen_title">Aggiorna ad Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi non ha pubblicità e non vende i dati degli utenti. Il mio lavoro è finanziato da te ❤️</string>
+    <string name="upgrade_screen_how_title">Cosa fare</string>
+    <string name="upgrade_screen_how_body">Diventa sostenitore dello sviluppo! Clicca il bottone qui sotto per attivare funzionalità extra e vsualizza il mio profilo github sponsors.</string>
+    <string name="upgrade_screen_why_title">Privilegi</string>
+    <string name="upgrade_screen_benefits_body">• Più di 3 dispositivi 💯
+• Temi diversi 🎨
+• Più opzioni ⚙️
+• Server di sincronizzazione extra 🖥️
+• Sviluppo open source continuo 🧙</string>
+    <string name="upgrade_screen_sponsor_action">Sviluppi sponsor</string>
+    <string name="upgrade_screen_sponsor_action_hint">L\'alternativa sono annunci, analytics e google play</string>
+    <string name="upgrade_screen_thanks_toast">Grazie per supportare un progetto open-source</string>
+</resources>

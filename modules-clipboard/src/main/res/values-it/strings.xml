@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_clipboard_label">Modulo appunti</string>
+    <string name="module_clipboard_desc">Copia e incolla testo tra dispositivi.</string>
+    <string name="module_clipboard_copied_octi_to_os">Copiato da Octi negli appunti</string>
+    <string name="module_clipboard_copied_os_to_octi">Copiato dagli appunti agli appunti di Octi</string>
+</resources>

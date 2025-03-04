@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_apps_label">Modul aplikací</string>
+    <string name="module_apps_desc">Informace o nainstalovaných aplikacích.</string>
+    <string name="module_apps_x_installed">Nainstalováno aplikací: %d</string>
+    <string name="module_apps_last_installed_x">Naposledy nainstalovaná aplikace: %s</string>
+    <string name="module_apps_list_title">Nainstalované aplikace</string>
+    <string name="module_apps_installer_label">Zdroj instalace aplikace</string>
+    <string name="module_apps_installer_desc">Synchronizujte a uveďte informace o zdroji, ze kterého byly jednotlivé aplikace nainstalovány.</string>
+</resources>
