@@ -56,6 +56,8 @@ once within 30 days, your data is also deleted.
 
 ### J-Server
 
+*Removed in 0.10.0-rc0*
+
 J-Server is an end to end encrypted open-source sync server hosted by me.
 
 Synced data can't be viewed by me. Data is encrypted client-side. The encryption key is only available on your devices
