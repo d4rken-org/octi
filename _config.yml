@@ -1,0 +1,18 @@
+theme: minima
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+
+title: "Octi"
+description: "A multi-device manager for Android"
+author: "Matthias Urhahn"
+
+include:
+  - PRIVACY_POLICY.md
+  - README.md
+exclude:
+  - app
+  - buildSrc
+  - gradle/wrapper
