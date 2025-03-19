@@ -1,6 +1,6 @@
-# Octi
-
 <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/featureGraphic.jpg" width="400">
+
+# Octi
 
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/d4rken-org/octi?include_prereleases)](https://github.com/d4rken-org/octi/releases/latest)
 [![Code tests & eval](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml/badge.svg)](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml)
