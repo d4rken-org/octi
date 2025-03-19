@@ -7,12 +7,23 @@ relative_links:
 
 title: "Octi"
 description: "A multi-device manager for Android"
-author: "Matthias Urhahn"
+author: "by Matthias Urhahn"
 
 include:
   - PRIVACY_POLICY.md
   - README.md
 exclude:
-  - app
   - buildSrc
   - gradle/wrapper
+  - fastlane
+  - app
+  - app-common-test
+  - app-common
+  - module-core
+  - modules-clipboard
+  - modules-meta
+  - modules-power
+  - modules-wifi
+  - sync-core
+  - syncs-gdrive
+  - syncs-kserver
