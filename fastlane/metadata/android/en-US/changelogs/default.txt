@@ -1,2 +1,5 @@
-Bugfixes, performance improvements and maybe new features.
-¯\_(ツ)_/¯
+Updates contain bugfixes, performance improvements and maybe new features. A detailed changelog is always available on GitHub.
+
+If you have cool ideas for Octi, let me know 😊!
+
+FYI: It’s just me here, sometimes replies might take a bit. ¯\_(ツ)_/¯
