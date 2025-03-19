@@ -6,7 +6,7 @@ title: "Privacy Policy"
 
 # Privacy policy
 
-This is the privacy policy for the Android app "Octi" by Matthias Urhahn (darken).
+This is the privacy policy for the Android app "Octi - Multi-Device Monitor" by Matthias Urhahn (darken).
 
 ## Preamble
 
