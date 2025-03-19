@@ -1,3 +1,9 @@
+---
+layout: plain
+permalink: /privacy
+title: "Privacy Policy"
+---
+
 # Privacy policy
 
 This is the privacy policy for the Android app "Octi".
