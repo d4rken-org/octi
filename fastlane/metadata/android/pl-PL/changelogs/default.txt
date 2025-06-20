@@ -1,7 +1,7 @@
-🐛 Poprawki błędów, 🚀 usprawnienia wydajności, może nawet ✨ nowe funkcje.
+🐛 Poprawki błędów, 🚀 usprawnienia wydajności, a może nawet ✨ nowe funkcje.
 
 Jeśli masz fajne pomysły na Octi, daj mi znać 😊!
 
 Dziennik zmian: https://octi.darken.eu/changelog
 
-FYI: To tylko ja tutaj — dzięki za zrozumienie, jeśli odpowiedzi trochę potrwają. ¯\_(ツ)_/¯
+Tak dla informacji: To tylko ja — dzięki za zrozumienie, jeśli odpowiedzi trochę potrwają. ¯\_(ツ)_/¯
