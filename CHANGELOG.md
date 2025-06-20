@@ -4,7 +4,7 @@ permalink: /changelog
 title: "Changelog"
 ---
 
-# Changelog for CAPod
+# Changelog for Octi
 
 {% for release in site.github.releases %}
 
