@@ -1,7 +1,7 @@
 🐛 Buggfixar, 🚀 prestandaförbättringar, kanske till och med ✨ nya funktioner.
 
-Om du har coola idéer för Octi, låt mig veta 😊!
+Om du har bra idéer för Octi, låt mig veta 😊!
 
 Ändringslogg: https://octi.darken.eu/changelog
 
-FYI: Det är bara jag här — tack för förståelsen om svar tar lite tid. ¯\_(ツ)_/¯
+Bara så du vet: Det är bara jag här — tack för din förståelse om svar tar lite tid. ¯\_(ツ)_/¯
