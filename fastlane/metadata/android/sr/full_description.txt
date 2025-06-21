@@ -1,0 +1,22 @@
+<i>Octi</i> sinhronizuje informacije između više Android uređaja.
+
+Dostupni informacioni moduli:
+
+* Detalji o uređaju i Android operativnom sistemu
+* Status baterije
+* WiFi konekcija
+* Instalirane aplikacije
+* Deljenje clipboard-a
+* i još mnogo toga... ako imate dobru ideju, javite mi!
+
+Možete birati različite načine sinhronizacije informacija:
+
+* Vaš Google Drive
+* Besplatan server koji hostujem ja
+* Hostuješ svoj vlastiti server
+* Uskoro još više...
+
+Opcije sinhronizacije mogu biti kombinovane i prilagođene.
+
+Octi je open-source, nema reklame i ne prati vas.
+Možete kupiti in-app kupovinu da dobijete neke dodatne funkcije i podržite razvoj aplikacije.

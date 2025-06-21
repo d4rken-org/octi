@@ -1,0 +1,1 @@
+Superviseu i sincronitzeu la informació entre diversos dispositius Android

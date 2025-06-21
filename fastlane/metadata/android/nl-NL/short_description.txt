@@ -1,0 +1,1 @@
+Monitor en synchroniseer informatie tussen meerdere Android-apparaten
