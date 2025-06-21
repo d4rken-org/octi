@@ -1,0 +1,22 @@
+<i>Octi</i> synkroniserer informasjon mellom flere Android-enheter.
+
+Tilgjengelige informasjonsmoduler:
+
+* Enhet og Android OS detaljer
+* Batteristatus
+* WiFi-tilkobling
+* Installerte applikasjoner
+* Utklippstavle-deling
+* og mer... hvis du har en god idé, gi meg beskjed!
+
+Du kan velge forskjellige måter å synkronisere informasjonen på:
+
+* Din Google Drive
+* En gratis server hostet av meg
+* Selv-host din egen server
+* Mer snart...
+
+Synkroniseringsalternativer kan blandes og matches.
+
+Octi er åpen kildekode, har ingen annonser og sporer deg ikke.
+Du kan kjøpe et in-app kjøp for å få noen ekstra funksjoner og støtte app-utvikling.
