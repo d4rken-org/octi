@@ -1,1 +1,1 @@
-Supervisa y sincroniza la información entre varios dispositivos Android
+Supervisa y sincrónica la información entre varios dispositivos en Android
