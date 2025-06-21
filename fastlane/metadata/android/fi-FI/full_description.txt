@@ -1,0 +1,22 @@
+<i>Octi</i> synkronoi tietoja useiden Android-laitteiden välillä.
+
+Saatavilla olevat tietomoduulit:
+
+* Laitteen ja Android-käyttöjärjestelmän tiedot
+* Akun tila
+* WiFi-yhteys
+* Asennetut sovellukset
+* Leikepöydän jakaminen
+* ja lisää... jos sinulla on hyvä idea, kerro minulle!
+
+Voit valita eri tapoja synkronoida tiedot:
+
+* Google Drive
+* Ilmainen palvelin, jota ylläpidän
+* Isännöi oma palvelimesi
+* Lisää pian...
+
+Synkronointivaihtoehtoja voidaan yhdistellä.
+
+Octi on avoimen lähdekoodin sovellus, jossa ei ole mainoksia eikä se seuraa sinua.
+Voit ostaa sovelluksen sisäisen oston saadaksesi muutaman lisäominaisuuden ja tukeaksesi sovelluksen kehitystä.
