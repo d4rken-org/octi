@@ -1,0 +1,22 @@
+<i>Octi</i> synchronizuje informacje między wieloma urządzeniami Android.
+
+Dostępne moduły informacyjne:
+
+* Szczegóły urządzenia i systemu Android
+* Stan baterii
+* Łączność WiFi
+* Zainstalowane aplikacje
+* Udostępnianie schowka
+* i więcej... jeśli masz dobry pomysł, daj mi znać!
+
+Możesz wybrać różne sposoby synchronizacji informacji:
+
+* Twój Dysk Google
+* Darmowy serwer hostowany przeze mnie
+* Własny serwer
+* Więcej wkrótce...
+
+Opcje synchronizacji można mieszać i dopasowywać.
+
+Octi jest open-source, nie ma reklam i nie śledzi Cię.
+Możesz dokonać zakupu w aplikacji, aby uzyskać kilka dodatkowych funkcji i wesprzeć rozwój aplikacji.
