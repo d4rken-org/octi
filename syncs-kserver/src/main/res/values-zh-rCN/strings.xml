@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">此应用程序开发人员为Octi制作的开源同步服务器。数据是客户端加密的，只有您的设备可以解密。\n\n由于应用程序和服务器仍在改进中，因此它可能不如其他同步选项稳定。</string>
+    <string name="sync_kserver_add_create_action_hint">非活动帐户将在几周后删除。</string>
+    <string name="sync_kserver_add_subtitle">添加新的Google云端硬盘</string>
+    <string name="sync_kserver_add_link_action_hint">您需要访问已链接的另一台设备。</string>
+    <string name="sync_kserver_about_title">关于KServer</string>
+    <string name="sync_kserver_about_desc">KServer是一个开源的Octi同步服务器（基于Kotlin）。</string>
+    <string name="sync_kserver_about_author_action">作者</string>
+    <string name="sync_kserver_about_source_action">源代码</string>
+    <string name="sync_kserver_reset_confirmation_desc">清除该帐户上的设备数据。设备保持连接，但它们存储的数据被删除。</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">这将从您的帐户中删除该设备。如果这是最后一个链接设备，您的帐户将被删除。</string>
+    <string name="sync_kserver_link_device_action">链接新设备</string>
+    <string name="sync_kserver_link_code_label">链接代码</string>
+    <string name="sync_kserver_link_host_option_direct">创建可通过其他应用发送的文本代码</string>
+    <string name="sync_kserver_link_host_option_qrcode">显示二维码</string>
+    <string name="sync_kserver_link_host_option_nfc">通过NFC链接设备</string>
+    <string name="sync_kserver_link_host_device_linked_message">一个新设备被链接到你的账户。</string>
+    <string name="sync_kserver_link_host_nfc_action">正在查找NFC客户端。将此设备靠近您要链接到帐户的设备。</string>
+    <string name="sync_kserver_link_client_option_direct">手动复制粘贴链接代码</string>
+    <string name="sync_kserver_link_client_option_qrcode">从另一台设备扫描QR码</string>
+    <string name="sync_kserver_link_client_option_nfc">使用两台设备进行NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">启动摄像机</string>
+    <string name="sync_kserver_link_client_link_action">链接设备</string>
+    <string name="sync_kserver_link_client_nfc_action">正在查找NFC主机。将其靠近设备以共享帐户访问权限。</string>
+</resources>

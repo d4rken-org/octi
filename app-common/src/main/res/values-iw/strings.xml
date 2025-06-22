@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">שגיאה</string>
+    <string name="general_error_no_compatible_app_found_msg">לא נמצאה אפליקציה תואמת לטיפול בבקשה זו.</string>
+    <string name="general_share_action">שתף</string>
+    <string name="general_done_action">בוצע</string>
+    <string name="general_copy_action">העתק</string>
+    <string name="general_remove_action">הסר</string>
+    <string name="general_cancel_action">בטל</string>
+    <string name="general_thanks_action">תודה</string>
+    <string name="general_gotit_action">הבנתי</string>
+    <string name="general_na_label">לא זמין</string>
+    <string name="general_empty_label">ריק</string>
+    <string name="general_dismiss_action">התעלם</string>
+    <string name="general_maybe_later_action">אולי מאוחר יותר</string>
+    <string name="general_manage_action">ניהול</string>
+    <string name="general_quota_label">מיכסה</string>
+    <string name="general_upgrade_action">שדרג</string>
+    <string name="general_update_action">עדכן</string>
+    <string name="general_donate_action">תרום</string>
+    <string name="general_check_action">בדוק</string>
+    <string name="general_internal_not_available_msg">חיבור לאינטרנט לא זמין</string>
+    <string name="general_refresh_action">רענן</string>
+    <string name="general_continue">המשך</string>
+    <string name="general_show_details_action">הצג פרטים</string>
+</resources>

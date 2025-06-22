@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_settings">Настройки</string>
+    <string name="label_help">Помощь</string>
+
+    <string name="general_create_account_action">Создать аккаунт</string>
+    <string name="general_link_existing_action">Привязать к существующему аккаунту</string>
+    <string name="general_sync_action">Синхронизировать</string>
+    <string name="general_select_server_label">Выбрать сервер</string>
+
+    <string name="onboarding_welcome_subtitle">Ваш помощник устройств</string>
+    <string name="onboarding_welcome_body1">Octi — это инструмент для людей с несколькими Android-устройствами.</string>
+    <string name="onboarding_welcome_body2">Он держит вас в курсе всех ваших устройств. Будь то ваш телефон, планшет или любой другой гаджет с установленным Octi, вы получите ключевую информацию с первого взгляда.</string>
+    <string name="onboarding_welcome_body3">Вы можете обновиться до Octi Pro, чтобы получить дополнительные функции и поддержать разработку.</string>
+    <string name="onboarding_welcome_beta_hint">Просто к сведению, это бета-версия, так что спасибо за ваше терпение, пока я продолжаю улучшать приложение!</string>
+
+    <string name="onboarding_privacy_subtitle">Политика конфиденциальности</string>
+    <string name="onboarding_privacy_body1">Octi не содержит рекламы и не продает пользовательские данные.</string>
+
+    <string name="updatecheck_setting_enabled_label">Проверка обновлений</string>
+    <string name="updatecheck_setting_enabled_explanation">Разрешить Octi проверять обновления, чтобы уведомлять вас о доступности новой версии.</string>
+
+    <string name="debug_debuglog_size_label">Размер</string>
+    <string name="debug_debuglog_size_compressed_label">Сжатый размер</string>
+    <string name="debug_notification_channel_label">Уведомления отладки</string>
+    <string name="debug_debuglog_file_label">Записанный файл журнала</string>
+    <string name="debug_debuglog_record_action">Записать журнал отладки</string>
+
+    <string name="onboarding_setupsync_title">Настройка синхронизации</string>
+    <string name="onboarding_setupsync_message">В настоящее время вы видите только это устройство. Чтобы подключить ваши установки Octi, настройте общий сервис синхронизации.</string>
+
+    <string name="settings_privacy_policy_label">Политика конфиденциальности</string>
+    <string name="settings_privacy_policy_desc">Ответственное обращение с данными.</string>
+    <string name="settings_licenses_label">Лицензии</string>
+    <string name="general_thank_you_label">Спасибо</string>
+    <string name="settings_category_other_label">Другое</string>
+
+    <string name="general_settings_label">Общие</string>
+    <string name="general_settings_desc">Общие настройки, которые влияют на все приложение.</string>
+    <string name="changelog_label">Журнал изменений</string>
+    <string name="settings_acknowledgements_label">Благодарности</string>
+    <string name="documentation_label">Документация</string>
+
+    <string name="help_translate_label">Перевод</string>
+    <string name="help_translate_description">Помогите перевести это приложение на ваш любимый язык.</string>
+
+    <string name="ui_theme_mode_setting_label">Режим темы</string>
+    <string name="ui_theme_mode_setting_explanation">Режим, используемый при оформлении приложения (например, ночь или день).</string>
+    <string name="ui_theme_mode_dark_label">Темная</string>
+    <string name="ui_theme_mode_light_label">Светлая</string>
+    <string name="ui_theme_mode_system_label">Системная</string>
+
+    <string name="ui_theme_style_setting_label">Стиль темы</string>
+    <string name="ui_theme_style_setting_explanation">Цветовой стиль, используемый при оформлении приложения.</string>
+    <string name="ui_theme_style_default_label">По умолчанию</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
+
+    <string name="issue_tracker_label">Трекер проблем</string>
+    <string name="issue_tracker_description">Публичный трекер проблем для отчетов об ошибках и запросов функций.</string>
+    <string name="discord_label">Discord</string>
+    <string name="discord_description">Место для общения и вопросов.</string>
+
+    <string name="support_debuglog_label">Записать журнал отладки</string>
+    <string name="support_debuglog_inprogress_label">Остановить журнал отладки</string>
+    <string name="support_debuglog_desc">Записать все, что делает приложение, в текстовый файл, которым можно поделиться.</string>
+    <string name="settings_support_label">Поддержка</string>
+    <string name="debug_debuglog_sensitive_information_message">Этот файл содержит конфиденциальную информацию (например, ваши установленные приложения). Делитесь им только с доверенными сторонами.</string>
+    <string name="settings_debuglog_explanation">Эта функция записывает все, что делает приложение, в файл, которым можно поделиться. Созданный файл содержит конфиденциальную информацию (например, ваши установленные приложения). Делитесь им только с доверенными сторонами (например, с разработчиком приложения, если вы вместе устраняете проблему).</string>
+
+    <string name="sync_last_action_label">Последнее действие</string>
+    <string name="sync_last_never_label">Никогда</string>
+    <string name="sync_quota_storage_msg">%1$s свободно (%2$s / %3$s)</string>
+
+    <string name="general_disconnect_action">Отключить</string>
+    <string name="generic_info_action">Информация</string>
+    <string name="general_reset_action">Сбросить</string>
+
+    <string name="sync_account_label">Аккаунт</string>
+    <string name="sync_services_label">Сервисы синхронизации</string>
+
+    <string name="sync_add_label">Добавить сервис синхронизации</string>
+    <string name="sync_add_help_desc">Сервис синхронизации необходим для обмена информацией между установками Octi.\n\nУстройства могут видеть друг друга только если у них есть общий сервис синхронизации!</string>
+
+    <string name="sync_synced_devices_label">Синхронизированные устройства</string>
+    <string name="sync_connector_paused_label">Приостановить синхронизацию</string>
+
+    <plurals name="general_devices_count_label">
+        <item quantity="one">%d устройство</item>
+        <item quantity="few">%d устройства</item>
+        <item quantity="many">%d устройств</item>
+        <item quantity="other">%d устройств</item>
+    </plurals>
+    <plurals name="general_unique_devices_count_label">
+        <item quantity="one">%d уникальное, доступно только здесь</item>
+        <item quantity="few">%d уникальных, доступны только здесь</item>
+        <item quantity="many">%d уникальных, доступны только здесь</item>
+        <item quantity="other">%d уникальных, доступны только здесь</item>
+    </plurals>
+
+    <string name="updates_dashcard_title">Доступно обновление</string>
+    <string name="updates_dashcard_body">Доступно обновление. У вас версия %1$s, а последняя версия %2$s.</string>
+
+    <string name="sync_settings_label">Синхронизация</string>
+    <string name="sync_settings_desc">Имя устройства, время и условия запуска.</string>
+    <string name="sync_setting_devicelabel_label">Метка устройства</string>
+    <string name="sync_setting_devicelabel_desc">Имя для этого устройства. Видимо другим синхронизированным устройствам.</string>
+    <string name="sync_setting_devicelabel_hint">Если метка пуста, используется модель устройства.</string>
+    <string name="sync_setting_interval_label">Интервал синхронизации</string>
+    <string name="sync_setting_interval_desc">Интервал фоновой синхронизации (в минутах).</string>
+    <string name="sync_setting_category_background_label">Фоновая синхронизация</string>
+
+    <string name="sync_custom_server_label">Пользовательский сервер</string>
+
+    <string name="settings_category_ui_label">Пользовательский интерфейс</string>
+
+    <string name="permission_required_label">Требуется разрешение</string>
+    <string name="permission_grant_action">Предоставить разрешение</string>
+    <string name="permission_dismiss_hint">Посетите системные настройки приложения, чтобы позже разрешить отклоненные разрешения.</string>
+
+    <string name="permission_location_label">Разрешение на местоположение</string>
+    <string name="permission_location_desc">Разрешение на местоположение позволяет Octi отображать имена ваших Wi-Fi сетей или показывать текущее положение вашего устройства.</string>
+    <string name="permission_battery_optimization_label">Оптимизация батареи</string>
+    <string name="permission_battery_optimization_desc">Отключите оптимизацию батареи, чтобы разрешить синхронизацию без открытия приложения.</string>
+    <string name="permission_notifications_post_label">Отправка уведомлений</string>
+    <string name="permission_notifications_post_desc">Разрешение на отправку уведомлений позволяет Octi уведомлять вас о событиях на других устройствах, которые вы настроили.</string>
+
+    <string name="sync_setting_background_enable_title">Фоновая синхронизация</string>
+    <string name="sync_setting_background_enable_desc">Синхронизировать данные, когда приложение не открыто.</string>
+    <string name="sync_setting_background_mobile_label">Мобильная сеть</string>
+    <string name="sync_setting_background_mobile_desc">Разрешить фоновую синхронизацию через мобильное подключение, если Wi-Fi недоступен.</string>
+
+    <string name="modules_settings_label">Модули</string>
+    <string name="modules_settings_desc">Переключайте различные модули и настраивайте их параметры.</string>
+
+    <string name="modules_category_connectivity_label">Подключение</string>
+    <string name="modules_category_energy_label">Батарея</string>
+    <string name="modules_category_apps_label">Приложения</string>
+    <string name="modules_category_misc_label">Разное</string>
+    <string name="module_apps_category_label">Приложения</string>
+    <string name="device_x_label">Устройство: %s</string>
+
+    <string name="pro_device_limit_reached_title">Достигнут лимит устройств</string>
+    <string name="pro_device_limit_reached_description">У вас сейчас %1$d синхронизированных устройств. Чтобы просматривать более %2$d устройств, обновитесь до Octi Pro или удалите устройства.</string>
+
+    <string name="sync_delete_device_keepaccess_caveat">Удаление этого устройства удалит его данные, но не отзовет доступ. Чтобы отозвать доступ, отключите Octi на устройстве.</string>
+    <string name="sync_delete_device_revokeaccess_caveat">Удаление этого устройства удалит его данные и отзовет его доступ.</string>
+</resources>

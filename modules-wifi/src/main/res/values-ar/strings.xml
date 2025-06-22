@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_wifi_label">وحدة الواي فاي</string>
+    <string name="module_wifi_desc">الأسماء، الاستقبال، عناوين IP، إلخ.</string>
+    <string name="module_wifi_unknown_ssid_label">SSID غير معروف</string>
+    <string name="module_wifi_unknown_ip_label">IP غير معروف</string>
+    <string name="module_wifi_reception_good_label">إشارة جيدة</string>
+    <string name="module_wifi_reception_okay_label">إشارة موافق</string>
+    <string name="module_wifi_reception_bad_label">إشارة سيئة</string>
+</resources>

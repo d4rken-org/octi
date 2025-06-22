@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Keine Verbindung zu Google Play</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi kann sich nicht mit Google Play verbinden. Ist Google Play installiert und aktuell? Bist du angemeldet bei Google Play? Versuche den Cache von der Google Play App zu bereinigen und starte dein Gerät neu.</string>
+    <string name="upgrades_no_purchases_found_check_account">Keine Zahlung gefunden. Benutzt du den richtigen Account?</string>
+    <string name="upgrades_dashcard_title">Hole dir Octi Pro</string>
+    <string name="upgrades_dashcard_body">Freischalten für weitere Funktionen und Unterstützung des Entwicklers!</string>
+    <string name="upgrades_dashcard_upgrade_action">Freischalten</string>
+    <string name="upgrade_screen_title">Hole dir Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi zeigt keine Werbung an und verkauft keine Nutzerdaten.  Mein Werk wird von dir finanziert❤️.</string>
+    <string name="upgrade_screen_benefits_title">Vorteile</string>
+    <string name="upgrade_screen_benefits_body">• Mehr als 3 Geräte 💯\n• Verschiedene Skins</string>
+    <string name="upgrade_screen_how_title">Optionen</string>
+    <string name="upgrade_screen_subscription_trial_action">Starte eine 14 Tage Testversion</string>
+    <string name="upgrade_screen_subscription_action">Abonnement</string>
+    <string name="upgrade_screen_subscription_action_hint">Das Abonnement kostet %s im Jahr.</string>
+    <string name="upgrade_screen_iap_action">Einmalzahlung</string>
+    <string name="upgrade_screen_iap_action_hint">Eine Einmalzahlung kostet %s.</string>
+    <string name="upgrade_screen_thanks_toast">Du bist der Beste! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Zahlungen wiederherstellen</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Play Store synchronization may take time. Try rebooting, clearing Google Play cache or simply wait.</string>
+</resources>

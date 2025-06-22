@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">שרת סנכרון בקוד פתוח עבור Octi שנוצר על ידי מפתח אפליקציה זו. הנתונים מוצפנים בצד הלקוח, רק המכשירים שלך יכולים לפענח אותם.\n\nמכיוון שגם האפליקציה וגם השרת עדיין בשיפור, ייתכן שזה יהיה פחות יציב מאשר אפשרויות סנכרון אחרות.</string>
+    <string name="sync_kserver_add_create_action_hint">חשבונות לא פעילים נמחקים לאחר מספר שבועות.</string>
+    <string name="sync_kserver_add_subtitle">הוסף Google Drive חדש</string>
+    <string name="sync_kserver_add_link_action_hint">תצטרך גישה למכשיר אחר שכבר מקושר.</string>
+    <string name="sync_kserver_about_title">אודות KServer</string>
+    <string name="sync_kserver_about_desc">KServer הוא שרת סנכרון בקוד פתוח (ב-Kotlin) עבור Octi של Darken.</string>
+    <string name="sync_kserver_about_author_action">יוצר</string>
+    <string name="sync_kserver_about_source_action">קוד מקור</string>
+    <string name="sync_kserver_reset_confirmation_desc">נקה את נתוני המכשיר בחשבון זה. המכשירים נשארים מקושרים אך הנתונים המאוחסנים שלהם מוסרים.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">פעולה זו תסיר את המכשיר מהחשבון שלך. שים לב שאם זה המכשיר האחרון המקושר, החשבון שלך יימחק.</string>
+    <string name="sync_kserver_link_device_action">קשר מכשיר חדש</string>
+    <string name="sync_kserver_link_code_label">קוד קישור</string>
+    <string name="sync_kserver_link_host_option_direct">צור קוד טקסט שתוכל לשלוח דרך אפליקציות אחרות</string>
+    <string name="sync_kserver_link_host_option_qrcode">הצג QRCode</string>
+    <string name="sync_kserver_link_host_option_nfc">קשר מכשיר באמצעות NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">מכשיר חדש קושר לחשבון שלך.</string>
+    <string name="sync_kserver_link_host_nfc_action">מחפש לקוח NFC. החזק את המכשירים שברצונך לקשר קרובים אחד לשני.</string>
+    <string name="sync_kserver_link_client_option_direct">העתק והדבק ידנית קוד קישור</string>
+    <string name="sync_kserver_link_client_option_qrcode">סרוק קוד QR ממכשיר אחר</string>
+    <string name="sync_kserver_link_client_option_nfc">השתמש בשני מכשירים עם NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">הפעל מצלמה</string>
+    <string name="sync_kserver_link_client_link_action">קשר מכשיר</string>
+    <string name="sync_kserver_link_client_nfc_action">מחפש מארח NFC. החזק אותו קרוב למכשיר המציע לשתף גישה לחשבון.</string>
+</resources>

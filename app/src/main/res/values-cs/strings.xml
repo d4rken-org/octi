@@ -53,7 +53,7 @@
     <string name="settings_debuglog_explanation">Tato funkce zaznamenává vše, co aplikace dělá do souboru ke sdílení. Vygenerovaný soubor obsahuje citlivé informace (např. vaše nainstalované aplikace). Sdílejte ho pouze s důvěryhodnými stranami (např. vývojářem aplikace, pokud společně řešíte problémy).</string>
     <string name="sync_last_action_label">Poslední akce</string>
     <string name="sync_last_never_label">Nikdy</string>
-    <string name="sync_quota_storage_msg">%s volných (%s / %s)</string>
+    <string name="sync_quota_storage_msg">%1$s volných (%2$s / %3$s)</string>
     <string name="general_disconnect_action">Odpojit</string>
     <string name="generic_info_action">Informace</string>
     <string name="general_reset_action">Resetovat</string>

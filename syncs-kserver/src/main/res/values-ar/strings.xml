@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_kserver_type_label">كي-سيرفر</string>
+    <string name="sync_kserver_type_description">خادم مزامنة مفتوح المصدر لأوكتي من تطوير مطور هذا التطبيق. يتم تشفير البيانات من جانب العميل، ولا يمكن فك تشفيرها إلا بواسطة أجهزتك.\n\nنظرًا لأن التطبيق والخادم لا يزالان قيد التحسين، فقد يكون أقل استقرارًا من خيارات المزامنة الأخرى.</string>
+    <string name="sync_kserver_add_create_action_hint">تُحذف الحسابات غير النشطة بعد بضعة أسابيع.</string>
+    <string name="sync_kserver_add_subtitle">إضافة حساب كي-سيرفر جديد</string>
+    <string name="sync_kserver_add_link_action_hint">ستحتاج إلى الوصول إلى جهاز آخر مرتبط بالفعل.</string>
+    <string name="sync_kserver_about_title">حول كي-سيرفر</string>
+    <string name="sync_kserver_about_desc">كي-سيرفر هو خادم مزامنة مفتوح المصدر (بلغة كوتلن) لأوكتي من تطوير darken.</string>
+    <string name="sync_kserver_about_author_action">المطور</string>
+    <string name="sync_kserver_about_source_action">الكود المصدري</string>
+    <string name="sync_kserver_reset_confirmation_desc">مسح بيانات الجهاز على هذا الحساب. تظل الأجهزة مرتبطة ولكن تتم إزالة بياناتها المخزنة.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">سيؤدي هذا إلى إزالة هذا الجهاز من حسابك. إذا كان هذا هو آخر جهاز مرتبط، فسيتم حذف حسابك.</string>
+    <string name="sync_kserver_link_device_action">ربط جهاز جديد</string>
+    <string name="sync_kserver_link_code_label">رمز الربط</string>
+    <string name="sync_kserver_link_host_option_direct">إنشاء رمز نصي يمكنك إرساله عبر تطبيقات أخرى</string>
+    <string name="sync_kserver_link_host_option_qrcode">عرض رمز استجابة سريعة (QR)</string>
+    <string name="sync_kserver_link_host_option_nfc">ربط الجهاز عبر NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">تم ربط جهاز جديد بحسابك.</string>
+    <string name="sync_kserver_link_host_nfc_action">جاري البحث عن عميل NFC. قرّب هذا الجهاز من الجهاز الذي تريد ربطه بحسابك.</string>
+    <string name="sync_kserver_link_client_option_direct">نسخ ولصق رمز الربط يدويًا</string>
+    <string name="sync_kserver_link_client_option_qrcode">مسح رمز استجابة سريعة (QR) من جهاز آخر</string>
+    <string name="sync_kserver_link_client_option_nfc">استخدام جهازين يدعمان NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">تشغيل الكاميرا</string>
+    <string name="sync_kserver_link_client_link_action">ربط الجهاز</string>
+    <string name="sync_kserver_link_client_nfc_action">جاري البحث عن مضيف NFC. قرّبه من الجهاز الذي يعرض مشاركة الوصول إلى الحساب.</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdrive_account_scope_error_label">Erreur de permission</string>
+    <string name="gdrive_account_scope_error_description">Octi n\'a pas reçu le scope d\'accès requis. Réessayez et vérifiez que les permissions sont accordées.</string>
+    <string name="gdrive_account_lockout_error_label">Erreur de verrouillage</string>
+    <string name="gdrive_account_lockout_error_description">Cet appareil est verrouillé et ne peut plus accéder à Google Drive. Son accès à votre compte Google a été révoqué. Accordez à nouveau l\'accès et réessayez.</string>
+
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">Portée des données d\'application</string>
+    <string name="sync_gdrive_type_appdata_description">Les données sont placées dans Google Drive. Cette variante spécifique utilise la portée "app-data". L\'accès n\'est accordé qu\'à un nouveau dossier uniquement pour cette application. Le dossier n\'est pas visible dans votre drive. C\'est similaire au fonctionnement des sauvegardes WhatsApp.</string>
+    <string name="sync_gdrive_add_label">Ajouter un nouveau Google Drive</string>
+    <string name="sync_gdrive_add_description">Cliquez sur le bouton de connexion ci-dessous pour configurer l\'accès à Google Drive.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Réinitialiser toutes les données Octi stockées sur Google Drive. Votre appareil reste connecté à Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Se déconnecter de Google Drive et supprimer les données liées à cet appareil.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Cet appareil n\'est connecté à aucun compte Google.</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Error</string>
+    <string name="general_error_no_compatible_app_found_msg">No s\'ha trobat cap aplicació compatible per gestionar aquesta sol·licitud.</string>
+    <string name="general_share_action">Comparteix</string>
+    <string name="general_done_action">Fet</string>
+    <string name="general_copy_action">Copia</string>
+    <string name="general_remove_action">Elimina</string>
+    <string name="general_cancel_action">Cancel·la</string>
+    <string name="general_thanks_action">Gràcies</string>
+    <string name="general_gotit_action">D\'acord</string>
+    <string name="general_na_label">N/D</string>
+    <string name="general_empty_label">Buit</string>
+    <string name="general_dismiss_action">Ignora</string>
+    <string name="general_maybe_later_action">Potser més tard</string>
+    <string name="general_manage_action">Gestiona</string>
+    <string name="general_quota_label">Quota</string>
+    <string name="general_upgrade_action">Millora</string>
+    <string name="general_update_action">Actualitza</string>
+    <string name="general_donate_action">Donacions</string>
+    <string name="general_check_action">Comprova</string>
+    <string name="general_internal_not_available_msg">Connexió a Internet no disponible</string>
+    <string name="general_refresh_action">Actualitza</string>
+    <string name="general_continue">Continua</string>
+    <string name="general_show_details_action">Mostra els detalls</string>
+</resources>

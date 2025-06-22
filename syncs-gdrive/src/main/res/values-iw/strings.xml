@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdrive_account_scope_error_label">שגיאת הרשאה</string>
+    <string name="gdrive_account_scope_error_description">Octi לא קיבל את ההרשאה הנדרשת. נסה שוב ובדוק שההרשאות ניתנות.</string>
+    <string name="gdrive_account_lockout_error_label">שגיאת נעילה</string>
+    <string name="gdrive_account_lockout_error_description">המכשיר הזה נעול ואינו יכול לגשת יותר ל-Google Drive. הגישה שלו לחשבון Google שלך בוטלה. הענק שוב גישה ונסה שוב.</string>
+    <string name="sync_gdrive_type_label">גוגל דרייב</string>
+    <string name="sync_gdrive_appdata_label">היקף נתוני אפליקציה</string>
+    <string name="sync_gdrive_type_appdata_description">הנתונים ממוקמים ב-Google Drive. הגרסה הספציפית הזו משתמשת בהיקף \"אפליקציה-נתונים\". גישה ניתנת רק לתיקיה חדשה רק עבור האפליקציה הזו. התיקיה אינה גלויה בכונן שלך. זה דומה לאופן שבו פועלים גיבויים של WhatsApp.</string>
+    <string name="sync_gdrive_add_label">הוסף Google Drive חדש</string>
+    <string name="sync_gdrive_add_description">לחץ על לחצן הכניסה למטה כדי להגדיר גישה ל-Google Drive.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">אפס את כל נתוני Octi המאוחסנים ב-Google Drive. המכשיר שלך ישאר מחובר ל-Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">צא מ-Google Drive ומחק נתונים הקשורים למכשיר זה.</string>
+    <string name="sync_gdrive_error_no_account_on_device">מכשיר זה אינו מחובר לשום חשבון Google.</string>
+</resources>

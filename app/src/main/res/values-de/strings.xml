@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_settings">Einstellungen</string>
+    <string name="label_help">Hilfe</string>
+    <string name="general_create_account_action">Erstelle ein Konto</string>
+    <string name="general_link_existing_action">Verbinde zu vorhandenem Konto</string>
+    <string name="general_sync_action">Synchronisieren</string>
+    <string name="general_select_server_label">Server auswählen</string>
+    <string name="onboarding_welcome_subtitle">Dein Geräte Partner</string>
+    <string name="onboarding_welcome_body1">Octi ist eine App für Menschen mit mehreren Androidgeräten.</string>
+    <string name="onboarding_welcome_body2">Es hält Sie über alle Ihre Geräte auf dem Laufenden. Ob es sich um Ihr Telefon, Tablet oder ein anderes Gerät mit installiertem Octi handelt, Sie erhalten wichtige Details auf einen Blick.</string>
+    <string name="onboarding_welcome_body3">Sie können auf Octi Pro upgraden, um zusätzliche Funktionen zu erhalten und die Entwicklung zu unterstützen.</string>
+    <string name="onboarding_welcome_beta_hint">Nur zur Information, dies ist eine Beta-Version, also danke für Ihre Geduld, während ich die App weiter verbessere!</string>
+    <string name="onboarding_privacy_subtitle">Datenschutzerklärung</string>
+    <string name="onboarding_privacy_body1">Octi zeigt keine Werbung und verkauft keine Nutzerdaten.</string>
+    <string name="updatecheck_setting_enabled_label">Prüfe auf Aktualisierung</string>
+    <string name="updatecheck_setting_enabled_explanation">Erlauben Sie Octi, nach Updates zu suchen, um Sie zu benachrichtigen, wenn eine neuere Version verfügbar ist.</string>
+    <string name="debug_debuglog_size_label">Größe</string>
+    <string name="debug_debuglog_size_compressed_label">Komprimierte Größe</string>
+    <string name="debug_notification_channel_label">Debug-Benachrichtigungen</string>
+    <string name="debug_debuglog_file_label">Aufgezeichnete Protokolldatei</string>
+    <string name="debug_debuglog_record_action">Debug-Protokoll aufzeichnen</string>
+
+    <string name="onboarding_setupsync_title">Synchronisation einrichten</string>
+    <string name="onboarding_setupsync_message">Derzeit sehen Sie nur dieses Gerät. Um Ihre Octi-Installationen zu verbinden, richten Sie einen gemeinsamen Synchronisationsdienst ein.</string>
+    <string name="settings_privacy_policy_label">Datenschutzerklärung</string>
+    <string name="settings_privacy_policy_desc">Verantwortungsbewusste Datenerhebung.</string>
+    <string name="settings_licenses_label">Lizenz</string>
+    <string name="general_thank_you_label">Dankeschön</string>
+    <string name="settings_category_other_label">Andere</string>
+    <string name="general_settings_label">Allgemein</string>
+    <string name="general_settings_desc">Allgemeine Einstellungen, die die gesamte App betreffen.</string>
+    <string name="changelog_label">Änderungsprotokoll</string>
+    <string name="settings_acknowledgements_label">Danksagungen</string>
+    <string name="documentation_label">Dokumentation</string>
+
+    <string name="help_translate_label">Übersetzung</string>
+    <string name="help_translate_description">Helfen Sie dabei, diese App in Ihre Lieblingssprache zu übersetzen.</string>
+    <string name="ui_theme_mode_setting_label">Aussehen</string>
+    <string name="ui_theme_mode_setting_explanation">Der Modus, der beim Gestalten der App verwendet wird (z.B. Nacht oder Tag).</string>
+    <string name="ui_theme_mode_dark_label">Dunkel</string>
+    <string name="ui_theme_mode_light_label">Hell</string>
+    <string name="ui_theme_mode_system_label">System</string>
+    <string name="ui_theme_style_default_label">Standard</string>
+
+    <string name="ui_theme_style_setting_label">Design-Stil</string>
+    <string name="ui_theme_style_setting_explanation">Der Farbstil, der beim Gestalten der App verwendet wird.</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
+
+    <string name="issue_tracker_label">Issue-Tracker</string>
+    <string name="issue_tracker_description">Ein öffentlicher Issue-Tracker für Fehlerberichte und Feature-Anfragen.</string>
+    <string name="discord_label">Discord</string>
+    <string name="discord_description">Ein Ort zum Abhängen und Fragen stellen.</string>
+
+    <string name="support_debuglog_label">Debug-Protokoll aufzeichnen</string>
+    <string name="support_debuglog_inprogress_label">Debug-Protokoll stoppen</string>
+    <string name="support_debuglog_desc">Zeichnet alles auf, was die App tut, in eine Textdatei, die Sie teilen können.</string>
+    <string name="settings_support_label">Hilfe</string>
+    <string name="debug_debuglog_sensitive_information_message">Diese Datei enthält sensible Informationen (z.B. Ihre installierten Anwendungen). Teilen Sie sie nur mit vertrauenswürdigen Parteien.</string>
+    <string name="settings_debuglog_explanation">Diese Funktion zeichnet alles auf, was die App tut, in eine teilbare Datei. Die generierte Datei enthält sensible Informationen (z.B. Ihre installierten Anwendungen). Teilen Sie sie nur mit vertrauenswürdigen Parteien (z.B. dem App-Entwickler, wenn Sie gemeinsam ein Problem beheben).</string>
+    <string name="sync_last_action_label">Letzte Aktion</string>
+    <string name="sync_last_never_label">Niemals</string>
+    <string name="sync_quota_storage_msg">%1$s frei (%2$s / %3$s)</string>
+    <string name="general_disconnect_action">Verbindung unterbrochen</string>
+    <string name="generic_info_action">Info</string>
+    <string name="general_reset_action">Zurücksetzen</string>
+    <string name="sync_account_label">Konto</string>
+    <string name="sync_services_label">Synchronisation Angebot</string>
+    <string name="sync_add_label">Synchronitations Angebot hinzufügen</string>
+    <string name="sync_add_help_desc">Ein Synchronisationsdienst ist für den Informationsaustausch zwischen Octi-Installationen erforderlich.\n\nGeräte können sich nur sehen, wenn sie einen gemeinsamen Synchronisationsdienst haben!</string>
+    <string name="sync_synced_devices_label">Synchronisierte Geräte</string>
+    <string name="sync_connector_paused_label">Synchronisation pausieren</string>
+    <plurals name="general_devices_count_label">
+        <item quantity="one">%d Gerät</item>
+        <item quantity="other">%d Geräte</item>
+    </plurals>
+    <plurals name="general_unique_devices_count_label">
+        <item quantity="one">%d einzigartig, nur hier verfügbar</item>
+        <item quantity="other">%d einzigartig, nur hier verfügbar</item>
+    </plurals>
+    <string name="updates_dashcard_title">Update verfügbar</string>
+    <string name="updates_dashcard_body">Ein Update ist verfügbar. Du hast %1$s und die aktuellste Version ist %2$s.</string>
+    <string name="sync_settings_label">Synchronisation</string>
+    <string name="sync_settings_desc">Gerätename, Timing und Auslösebedingungen.</string>
+    <string name="sync_setting_devicelabel_label">Gerätebezeichnung</string>
+    <string name="sync_setting_devicelabel_desc">Bezeichnung für dieses Gerät. Es ist sichtbar für andere Geräte.</string>
+    <string name="sync_setting_devicelabel_hint">Wenn die Bezeichnung leer ist, wird das Gerät benutzt.</string>
+    <string name="sync_setting_interval_label">Synchronisationsintervall</string>
+    <string name="sync_setting_interval_desc">Hintergrundsynchronisationsintervall (in Minuten).</string>
+    <string name="sync_setting_category_background_label">Hintergrundsynchronisation</string>
+    <string name="sync_custom_server_label">Benutzerdefinierter Server</string>
+    <string name="settings_category_ui_label">Benutzeroberfläche</string>
+    <string name="permission_required_label">Berechtigung erforderlich</string>
+    <string name="permission_grant_action">Berechtigung akzeptiert</string>
+    <string name="permission_dismiss_hint">Besuchen Sie die Systemeinstellungen der App, um später abgelehnte Berechtigungen zu erlauben.</string>
+    <string name="permission_location_label">Standort Berechtigung</string>
+    <string name="permission_location_desc">Die Standortberechtigung ermöglicht es Octi, Ihre WLAN-Namen anzuzeigen oder Ihnen die aktuelle Position Ihres Geräts zu zeigen.</string>
+    <string name="permission_battery_optimization_label">Akku</string>
+    <string name="permission_battery_optimization_desc">Deaktivieren Sie Akkuoptimierungen, um Synchronisation ohne Öffnen der App zu ermöglichen.</string>
+    <string name="permission_notifications_post_label">Benachrichtigung anzeigen</string>
+    <string name="permission_notifications_post_desc">Die Berechtigung zum Senden von Benachrichtigungen ermöglicht es Octi, Sie über Ereignisse auf anderen Geräten zu benachrichtigen, die Sie konfiguriert haben.</string>
+    <string name="sync_setting_background_enable_title">Hintergrund Synchronisation</string>
+    <string name="sync_setting_background_enable_desc">Synchronisiere Daten wenn die App geschlossen ist.</string>
+    <string name="sync_setting_background_mobile_label">Mobilfunk</string>
+    <string name="sync_setting_background_mobile_desc">Hintergrundsynchronisation über Ihr Mobilfunknetz zulassen, wenn WLAN nicht verfügbar ist.</string>
+    <string name="modules_settings_label">Module</string>
+    <string name="modules_settings_desc">Verschiedene Module umschalten und deren Einstellungen anpassen.</string>
+    <string name="modules_category_connectivity_label">Verbindung</string>
+    <string name="modules_category_energy_label">Akku</string>
+    <string name="modules_category_apps_label">Apps</string>
+    <string name="modules_category_misc_label">Misc</string>
+    <string name="module_apps_category_label">Apps</string>
+    <string name="device_x_label">Gerät: %s</string>
+    <string name="pro_device_limit_reached_title">Geräte Limit erreicht</string>
+    <string name="pro_device_limit_reached_description">Sie haben derzeit %1$d synchronisierte Geräte. Um mehr als %2$d Geräte anzuzeigen, upgraden Sie auf Octi Pro oder entfernen Sie Geräte.</string>
+
+    <string name="sync_delete_device_keepaccess_caveat">Das Entfernen dieses Geräts löscht seine Daten, widerruft aber nicht den Zugriff. Um den Zugriff zu widerrufen, trennen Sie Octi auf dem Gerät.</string>
+    <string name="sync_delete_device_revokeaccess_caveat">Das Löschen dieses Geräts entfernt seine Daten und widerruft seinen Zugriff.</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_clipboard_label">Mòdul de porta-retalls</string>
+    <string name="module_clipboard_desc">Copia i enganxa text entre dispositius.</string>
+    <string name="module_clipboard_copied_octi_to_os">S\'ha copiat l\'Octi al porta-retalls del sistema</string>
+    <string name="module_clipboard_copied_os_to_octi">S\'ha copiat el sistema al porta-retalls de l\'Octi</string>
+</resources>

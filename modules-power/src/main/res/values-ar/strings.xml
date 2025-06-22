@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_power_label">وحدة الطاقة</string>
+    <string name="module_power_desc">البطارية، الشحن، التقديرات، درجة الحرارة، إلخ.</string>
+    <string name="module_power_battery_status_unknown">حالة غير معروفة</string>
+    <string name="module_power_battery_status_full">ممتلئة</string>
+    <string name="module_power_battery_status_charging">جاري الشحن</string>
+    <string name="module_power_battery_status_charging_slow">جاري الشحن ببطء</string>
+    <string name="module_power_battery_status_charging_fast">جاري الشحن بسرعة</string>
+    <string name="module_power_battery_status_discharging">جاري التفريغ</string>
+    <string name="module_power_battery_status_discharging_slow">جاري التفريغ ببطء</string>
+    <string name="module_power_battery_status_discharging_fast">جاري التفريغ بسرعة</string>
+    <string name="module_power_battery_full_since_x">اكتمل الشحن: %s</string>
+    <string name="module_power_battery_full_in_x">ستُشحن بالكامل: %s</string>
+    <string name="module_power_battery_empty_in_x">ستنفد البطارية: %s</string>
+    <string name="module_power_battery_estimation_na">التقدير غير متوفر</string>
+    <string name="module_power_widget_description">عرض حالة بطارية أجهزتك المتزامنة.</string>
+    <string name="module_power_alerts_title">تنبيهات البطارية</string>
+    <string name="module_power_alerts_lowbattery_title">بطارية منخفضة</string>
+    <string name="module_power_alerts_lowbattery_description">تلقي إشعار عندما تنخفض بطارية هذا الجهاز إلى ما دون الحد الذي حددته. عيّين النسبة المئوية المفضلة لديك للتنبيهات.</string>
+    <string name="module_power_alerts_lowbattery_slider_value_caption">إشعار عندما تكون البطارية أقل من %s</string>
+    <string name="module_power_alerts_lowbattery_disabled_caption">عدم الإشعار عندما تكون البطارية منخفضة</string>
+    <string name="module_power_alerts_notification_channel_label">تنبيهات البطارية</string>
+    <string name="module_power_alerts_notification_battery_low_title">بطارية منخفضة: %s</string>
+    <string name="module_power_alerts_notification_battery_low_body">بطارية %1$s عند %3$d%% (&lt;%2$d%%) ولا يتم شحنها.</string>
+</resources>
