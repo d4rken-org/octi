@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi פרו</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play לא זמין</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi לא מצליח להתחבר ל-Google Play. האם Google Play מותקן ומעודכן? האם נכנסת עם חשבון Google שלך? נסה לנקות את המטמון של אפליקציית Google Play ולהפעיל מחדש את המכשיר.</string>
+    <string name="upgrades_no_purchases_found_check_account">לא נמצאו רכישות. האם אתה משתמש בחשבון הנכון?</string>
+    <string name="upgrades_dashcard_title">קבל את Octi פרו</string>
+    <string name="upgrades_dashcard_body">שדרג כדי לפתוח תכונות נוספות ולתמוך בפיתוח!</string>
+    <string name="upgrades_dashcard_upgrade_action">שדרג</string>
+    <string name="upgrade_screen_title">קבל את Octi פרו</string>
+    <string name="upgrade_screen_preamble">באוקטי אין פרסומות ואיננו מוכרים נתוני משתמשים. העבודה שלי ממומנת על ידך ❤️.</string>
+    <string name="upgrade_screen_benefits_title">יתרונות</string>
+    <string name="upgrade_screen_benefits_body">• יותר מ-3 מכשירים 💯
+• ערכות נושא מגוונות 🎨
+• אפשרויות נוספות ⚙️
+• שרתי סנכרון נוספים 🖥️️
+• המשך פיתוח ☕
+• מפתח חדור מוטיבציה 🧙</string>
+    <string name="upgrade_screen_how_title">אפשרויות</string>
+    <string name="upgrade_screen_how_body">באפשרותך לבחור בין רכישה חד פעמית למנוי שנתי מוזל.
+המנוי מתחיל בניסיון חינם ל-14 ימים, ואחריו תחויב פעם בשנה. ניתן לבטל את הניסיון ואת המנוי בכל עת.
+אותן תכונות, מודלי תמחור שונים בלבד.</string>
+    <string name="upgrade_screen_subscription_trial_action">התחל ניסיון חינם ל-14 ימים</string>
+    <string name="upgrade_screen_subscription_action">הירשם כמנוי</string>
+    <string name="upgrade_screen_subscription_action_hint">עלות המנוי היא %s לשנה.</string>
+    <string name="upgrade_screen_iap_action">רכישה חד פעמית</string>
+    <string name="upgrade_screen_iap_action_hint">הרכישה החד פעמית עולה %s.</string>
+    <string name="upgrade_screen_thanks_toast">אתה הכי טוב! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">שחזור רכישה</string>
+    <string name="upgrade_screen_restore_purchase_message">השדרוג שלך תקף בכל המכשירים באותו חשבון Google.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">טיפים לפתרון בעיות ברכישות שלא זוהו:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">הסנכרון עם חנות Play עשוי להימשך זמן מה. נסה להפעיל מחדש את המכשיר, לנקות את מטמון Google Play או פשוט להמתין.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">חשבונות נוספים עלולים לבלבל את Google Play. התנתק מחשבונות אחרים או התקן מהאתר של Google Play כדי לקשר לחשבון מסוים.</string>
+</resources>

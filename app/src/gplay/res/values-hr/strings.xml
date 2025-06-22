@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play nije dostupan</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi se ne može povezati s Google Playom. Je li Google Play instaliran i ažuriran? Jeste li prijavljeni na svoj Google račun? Pokušajte izbrisati predmemoriju aplikacije Google Play i ponovno pokrenuti uređaj.</string>
+    <string name="upgrades_no_purchases_found_check_account">Nema pronađenih kupnji. Koristite li pravi račun?</string>
+    <string name="upgrades_dashcard_title">Nabavite Octi Pro</string>
+    <string name="upgrades_dashcard_body">Nadogradite kako biste otključali dodatne značajke i podržali razvoj!</string>
+    <string name="upgrades_dashcard_upgrade_action">Nadogradi</string>
+    <string name="upgrade_screen_title">Nabavite Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi nema oglase i ne prodaje korisničke podatke. Moj rad financirate vi ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Prednosti</string>
+    <string name="upgrade_screen_benefits_body">• Više od 3 uređaja 💯
+• Različite teme 🎨
+• Više opcija ⚙️
+• Dodatni serveri za sinkronizaciju🖥️️
+• Kontinuirani razvoj ☕
+• Motivirani programer 🧙</string>
+    <string name="upgrade_screen_how_title">Mogućnosti</string>
+    <string name="upgrade_screen_how_body">Možete birati između jednokratne kupnje i jeftinije godišnje pretplate.
+Pretplata započinje besplatnim probnim razdobljem od 14 dana, nakon čega se naplaćuje jednom godišnje. Probno razdoblje i pretplatu moguće je otkazati u bilo kojem trenutku.
+Iste značajke, samo različiti modeli cijena.</string>
+    <string name="upgrade_screen_subscription_trial_action">Pokreni besplatno probno razdoblje od 14 dana</string>
+    <string name="upgrade_screen_subscription_action">Pretplati se</string>
+    <string name="upgrade_screen_subscription_action_hint">Pretplata košta %s godišnje.</string>
+    <string name="upgrade_screen_iap_action">Jednokratna kupnja</string>
+    <string name="upgrade_screen_iap_action_hint">Jednokratna kupnja košta %s.</string>
+    <string name="upgrade_screen_thanks_toast">Najbolji ste! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Vrati kupnju</string>
+    <string name="upgrade_screen_restore_purchase_message">Vaša nadogradnja vrijedi na svim uređajima koristeći isti Google račun.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Savjeti za rješavanje problema s neprepoznatim nadogradnjama:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Sinkronizacija s Play Storeom može potrajati. Pokušajte ponovno pokrenuti uređaj, očistiti predmemoriju Google Playa ili jednostavno pričekajte.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Više računa može zbuniti Google Play. Odjavite se s drugih računa ili instalirajte putem Google Play web-mjesta kako bi se prisililo povezivanje s određenim računom.</string>
+</resources>

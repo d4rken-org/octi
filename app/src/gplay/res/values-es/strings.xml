@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play no está disponible</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi no puede conectarse a Google Play. ¿Está instalada y actualizada Google Play? ¿Has iniciado sesión con tu cuenta de Google? Prueba a borrar la caché de la aplicación de Google Play y reiniciar tu dispositivo.</string>
+    <string name="upgrades_no_purchases_found_check_account">No se encontraron compras. ¿Estás usando la cuenta correcta?</string>
+    <string name="upgrades_dashcard_title">Obtén Octi Pro</string>
+    <string name="upgrades_dashcard_body">¡Actualiza para desbloquear funciones adicionales y apoyar el desarrollo!</string>
+    <string name="upgrades_dashcard_upgrade_action">Actualizar</string>
+    <string name="upgrade_screen_title">Obtén Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi no tiene anuncios y no vende datos de usuario. Mi trabajo está financiado por ti ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Ventajas</string>
+    <string name="upgrade_screen_benefits_body">• Más de 3 dispositivos 💯\n• Diferentes temas 🎨\n• Más opciones ⚙️\n• Servidores de sincronización extra🖥️️\n• Desarrollo continuo ☕\n• Un desarrollador motivado 🧙</string>
+    <string name="upgrade_screen_how_title">Opciones</string>
+    <string name="upgrade_screen_how_body">Puedes elegir entre una compra única y una suscripción anual más económica.\nLa suscripción comienza con una prueba gratuita de 14 días, después serás cobrado una vez al año. La prueba y suscripción pueden cancelarse en cualquier momento.\nLas mismas funciones, solo diferentes modelos de precios.</string>
+    <string name="upgrade_screen_subscription_trial_action">Comenzar prueba gratuita de 14 días</string>
+    <string name="upgrade_screen_subscription_action">Suscribirse</string>
+    <string name="upgrade_screen_subscription_action_hint">La suscripción cuesta %s al año.</string>
+    <string name="upgrade_screen_iap_action">Compra única</string>
+    <string name="upgrade_screen_iap_action_hint">La compra única cuesta %s.</string>
+    <string name="upgrade_screen_thanks_toast">¡Eres el mejor! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Restaurar compra</string>
+    <string name="upgrade_screen_restore_purchase_message">Tu mejora es válida en todos los dispositivos con la misma cuenta de Google.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Consejos para solucionar actualizaciones no reconocidas:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">La sincronización con Play Store puede demorar. Prueba a reiniciar, borrar la caché de Google Play o simplemente espera.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Varias cuentas pueden confundir a Google Play. Cierra sesión de otras cuentas o instala a través del sitio web de Google Play, lo cual asocia el dispositivo con una cuenta específica.</string>
+</resources>

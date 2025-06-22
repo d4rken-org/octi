@@ -1,2 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play är inte tillgängligt</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi kan inte ansluta till Google Play. Är Google Play installerat och uppdaterat? Är ditt Google-konto inloggat? Prova att rensa cacheminnet för Google Play-appen och starta om enheten.</string>
+    <string name="upgrades_no_purchases_found_check_account">Inga köp hittades. Använder du rätt konto?</string>
+    <string name="upgrades_dashcard_title">Skaffa Octi Pro</string>
+    <string name="upgrades_dashcard_body">Uppgradera för att låsa upp fler funktioner och stödja utvecklingen!</string>
+    <string name="upgrades_dashcard_upgrade_action">Uppgradera</string>
+    <string name="upgrade_screen_title">Skaffa Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi har inga annonser och säljer inte användardata. Mitt arbete finansieras av dig ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Fördelar</string>
+    <string name="upgrade_screen_benefits_body">• Mer än 3 enheter 💯
+• Olika teman 🎨
+• Fler alternativ ⚙️
+• Extra synkroniseringsservrar🖥️️
+• Fortsatt utveckling ☕
+• En motiverad utvecklare 🧙</string>
+    <string name="upgrade_screen_how_title">Alternativ</string>
+    <string name="upgrade_screen_how_body">Du kan välja mellan ett engångsköp och en billigare årlig prenumeration.
+Prenumerationen börjar med en gratis 14-dagars provperiod, därefter debiteras du en gång per år. Provet och prenumerationen kan när som helst avbrytas.
+Samma funktioner, bara olika prismodeller.</string>
+    <string name="upgrade_screen_subscription_trial_action">Börja gratis 14-dagars provperiod</string>
+    <string name="upgrade_screen_subscription_action">Prenumerera</string>
+    <string name="upgrade_screen_subscription_action_hint">Prenumerationen kostar %s per år.</string>
+    <string name="upgrade_screen_iap_action">Engångsköp</string>
+    <string name="upgrade_screen_iap_action_hint">Engångsköpet kostar %s.</string>
+    <string name="upgrade_screen_thanks_toast">Du är bäst! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Återställ köp</string>
+    <string name="upgrade_screen_restore_purchase_message">Din uppgradering är giltig på alla enheter med samma Google-konto.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Felsökningstips för okända uppgraderingar:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Play Store-synkronisering kan ta tid. Prova att starta om, rensa Google Play-cache eller bara vänta.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Flera konton kan förvirra Google Play. Logga ut från andra konton eller installera via Google Play-webben, vilket tvingar koppling till ett specifikt konto.</string>
+</resources>

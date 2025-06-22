@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play ei ole käytettävissä</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi ei voi yhdistää Google Playhin. Onko Google Play asennettu ja ajan tasalla? Onko Google-tilisi kirjautuneena? Kokeile tyhjentää Google Play -sovelluksen välimuisti ja käynnistää laite uudelleen.</string>
+    <string name="upgrades_no_purchases_found_check_account">Ostoja ei löytynyt. Käytätkö oikeaa tiliä?</string>
+    <string name="upgrades_dashcard_title">Hanki Octi Pro</string>
+    <string name="upgrades_dashcard_body">Päivitä avataksesi lisää ominaisuuksia ja tukeaksesi kehitystä!</string>
+    <string name="upgrades_dashcard_upgrade_action">Päivitä</string>
+    <string name="upgrade_screen_title">Hanki Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octissa ei ole mainoksia eikä se myy käyttäjätietoja. Työni rahoitetaan sinun avullasi ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Edut</string>
+    <string name="upgrade_screen_benefits_body">• Yli 3 laitetta 💯\n• Erilaiset teemat 🎨\n• Lisää vaihtoehtoja ⚙️\n• Lisäsynkronointipalvelimet🖥️️\n• Jatkuva kehitys ☕\n• Motivoitunut kehittäjä 🧙</string>
+    <string name="upgrade_screen_how_title">Vaihtoehdot</string>
+    <string name="upgrade_screen_how_body">Voit valita kertamaksun ja halvemman vuositilauksen välillä.\nTilaus alkaa ilmaisella 14 päivän kokeilulla, jonka jälkeen maksu veloitetaan vuosittain. Kokeilu ja tilaus ovat peruttavissa milloin tahansa.\nSamat ominaisuudet, vain eri hinnoittelumallit.</string>
+    <string name="upgrade_screen_subscription_trial_action">Aloita ilmainen 14 päivän kokeilu</string>
+    <string name="upgrade_screen_subscription_action">Tilaa</string>
+    <string name="upgrade_screen_subscription_action_hint">Tilauksen hinta on %s vuodessa.</string>
+    <string name="upgrade_screen_iap_action">Kertamaksu</string>
+    <string name="upgrade_screen_iap_action_hint">Kertamaksun hinta on %s.</string>
+    <string name="upgrade_screen_thanks_toast">Olet paras! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Palauta osto</string>
+    <string name="upgrade_screen_restore_purchase_message">Päivityksesi on voimassa kaikilla samaa Google-tiliä käyttävillä laitteilla.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Vinkkejä jos päivitystä ei tunnisteta:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Play Storen synkronointi saattaa kestää. Kokeile käynnistää uudelleen, tyhjentää Google Playn välimuisti tai odottaa hetki.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Monet tilit voivat sekoittaa Google Playn. Kirjaudu ulos muista tileistä tai asenna Google Playn verkkosivujen kautta, jolloin yhdistys tapahtuu tiettyyn tiliin.</string>
+</resources>

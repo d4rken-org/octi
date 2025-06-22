@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play pole saadaval</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi ei saa Google Playga ühendust. Kas Google Play on paigaldatud ja ajakohane? Kas Sinu Google'i konto on sisse logitud? Proovi Google Play rakenduse vahemälu tühjendada ja seadme taaskäivitada.</string>
+    <string name="upgrades_no_purchases_found_check_account">Ostud ei leitud. Kas kasutad õiget kontot?</string>
+    <string name="upgrades_dashcard_title">Hangi Octi Pro</string>
+    <string name="upgrades_dashcard_body">Uuenda, et avada lisafunktsioone ja toetada arendust!</string>
+    <string name="upgrades_dashcard_upgrade_action">Uuenda</string>
+    <string name="upgrade_screen_title">Hangi Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octil pole reklaame ega müü ta kasutajaandmeid. Minu tööd rahastad Sina ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Eelised</string>
+    <string name="upgrade_screen_benefits_body">• Rohkem kui 3 seadet 💯
+• Erinevad teemad 🎨
+• Rohkem valikuid ⚙️
+• Lisanduvad sünkroonimisserverid🖥️️
+• Jätkuv arendus ☕
+• Motiveeritud arendaja 🧙</string>
+    <string name="upgrade_screen_how_title">Valikud</string>
+    <string name="upgrade_screen_how_body">Saad valida ühekordse ostu ja odavama aastase tellimuse vahel.
+Tellige alustuseks tasuta 14-päevane prooviperiood, mille järel arvestatakse tasu kord aastas. Prooviperioodi ja tellimust saab igal ajal tühistada.
+Sama funktsionaalsus, lihtsalt erinevad hinnamudelid.</string>
+    <string name="upgrade_screen_subscription_trial_action">Alusta tasuta 14-päevast prooviperioodi</string>
+    <string name="upgrade_screen_subscription_action">Telli</string>
+    <string name="upgrade_screen_subscription_action_hint">Tellimus maksab %s aastas.</string>
+    <string name="upgrade_screen_iap_action">Ühekordne ost</string>
+    <string name="upgrade_screen_iap_action_hint">Ühekordne ost maksab %s.</string>
+    <string name="upgrade_screen_thanks_toast">Oled parim! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Taasta ost</string>
+    <string name="upgrade_screen_restore_purchase_message">Sinu uuendus kehtib kõigis seadmetes, millel on sama Google'i konto.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Vihjed tundmatute uuenduste lahendamiseks:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Play Store'i sünkroonimine võib võtta aega. Proovi taaskäivitada, tühjendada Google Play vahemälu või lihtsalt oodata.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Mitmed kontod võivad Google Play’d segadusse ajada. Logi muudest kontodest välja või paigalda Google Play veebisaidi kaudu, mis seob konkreetse kontoga.</string>
+</resources>

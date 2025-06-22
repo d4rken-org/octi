@@ -1,2 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play is niet beschikbaar</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi kan geen verbinding maken met Google Play. Is Google Play geïnstalleerd en up-to-date? Is je Google-account aangemeld? Probeer de cache van de Google Play-app te wissen en je apparaat opnieuw op te starten.</string>
+    <string name="upgrades_no_purchases_found_check_account">Geen aankopen gevonden. Gebruik je het juiste account?</string>
+    <string name="upgrades_dashcard_title">Krijg Octi Pro</string>
+    <string name="upgrades_dashcard_body">Upgrade om extra functies te ontgrendelen en de ontwikkeling te steunen!</string>
+    <string name="upgrades_dashcard_upgrade_action">Upgrade</string>
+    <string name="upgrade_screen_title">Krijg Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi bevat geen advertenties en verkoopt geen gebruikersdata. Mijn werk wordt door jou gefinancierd ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Voordelen</string>
+    <string name="upgrade_screen_benefits_body">• Meer dan 3 apparaten 💯
+• Verschillende thema's 🎨
+• Meer opties ⚙️
+• Extra synchronisatie-servers🖥️️
+• Voortgezette ontwikkeling ☕
+• Een gemotiveerde ontwikkelaar 🧙</string>
+    <string name="upgrade_screen_how_title">Opties</string>
+    <string name="upgrade_screen_how_body">Je kunt kiezen tussen een eenmalige aankoop en een goedkoper jaarabonnement.
+Het abonnement begint met een gratis proefperiode van 14 dagen, waarna je jaarlijks wordt gefactureerd. De proefperiode en het abonnement zijn op elk moment opzegbaar.
+Dezelfde functies, alleen andere prijsmodellen.</string>
+    <string name="upgrade_screen_subscription_trial_action">Start gratis proefperiode van 14 dagen</string>
+    <string name="upgrade_screen_subscription_action">Abonneren</string>
+    <string name="upgrade_screen_subscription_action_hint">Het abonnement kost %s per jaar.</string>
+    <string name="upgrade_screen_iap_action">Eenmalige aankoop</string>
+    <string name="upgrade_screen_iap_action_hint">De eenmalige aankoop kost %s.</string>
+    <string name="upgrade_screen_thanks_toast">Je bent de beste! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Aankoop herstellen</string>
+    <string name="upgrade_screen_restore_purchase_message">Je upgrade is geldig op apparaten met hetzelfde Google-account.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Tips voor probleemoplossing bij niet-herkende upgrades:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Play Store-synchronisatie kan enige tijd duren. Probeer opnieuw opstarten, de cache van Google Play wissen of wacht gewoon even.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Meerdere accounts kunnen Google Play verwarren. Log uit bij andere accounts of installeer via de Google Play-website, zodat koppeling aan een specifiek account wordt afgedwongen.</string>
+</resources>

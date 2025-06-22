@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play tidak tersedia</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi tidak dapat menyambung ke Google Play. Adakah Google Play telah dipasang dan dikemas kini? Adakah akaun Google anda telah log masuk? Cuba kosongkan cache aplikasi Google Play dan mulakan semula peranti anda.</string>
+    <string name="upgrades_no_purchases_found_check_account">Tiada pembelian dijumpai. Adakah anda menggunakan akaun yang betul?</string>
+    <string name="upgrades_dashcard_title">Dapatkan Octi Pro</string>
+    <string name="upgrades_dashcard_body">Naik taraf untuk membuka ciri tambahan dan menyokong pembangunan!</string>
+    <string name="upgrades_dashcard_upgrade_action">Naik Taraf</string>
+    <string name="upgrade_screen_title">Dapatkan Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi tiada iklan dan tidak menjual data pengguna. Kerja saya dibiayai oleh anda ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Kelebihan</string>
+    <string name="upgrade_screen_benefits_body">• Lebih daripada 3 peranti 💯
+• Tema yang berbeza 🎨
+• Pilihan tambahan ⚙️
+• Pelayan segerak tambahan 🖥️️
+• Pembangunan berterusan ☕
+• Pembangun bermotivasi 🧙</string>
+    <string name="upgrade_screen_how_title">Pilihan</string>
+    <string name="upgrade_screen_how_body">Anda boleh memilih antara pembelian sekali dan langganan tahunan yang lebih murah.
+Langganan bermula dengan percubaan percuma selama 14 hari, selepas itu anda akan dikenakan caj setahun sekali. Percubaan dan langganan boleh dibatalkan pada bila-bila masa.
+Fungsi yang sama, cuma model harga berbeza.</string>
+    <string name="upgrade_screen_subscription_trial_action">Mulakan percubaan percuma 14 hari</string>
+    <string name="upgrade_screen_subscription_action">Langgan</string>
+    <string name="upgrade_screen_subscription_action_hint">Langganan berharga %s setahun.</string>
+    <string name="upgrade_screen_iap_action">Pembelian Sekali</string>
+    <string name="upgrade_screen_iap_action_hint">Pembelian sekali berharga %s.</string>
+    <string name="upgrade_screen_thanks_toast">Anda yang terbaik! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Pulihkan pembelian</string>
+    <string name="upgrade_screen_restore_purchase_message">Naik taraf anda sah untuk semua peranti yang menggunakan akaun Google yang sama.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Petua penyelesaian masalah untuk naik taraf tidak dikenali:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Penyegerakan Play Store mungkin mengambil masa. Cuba mulakan semula, kosongkan cache Google Play, atau hanya tunggu.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Akaun berbilang boleh mengelirukan Google Play. Log keluar akaun lain atau pasang melalui laman web Google Play, yang memaksa perkaitan dengan akaun tertentu.</string>
+</resources>

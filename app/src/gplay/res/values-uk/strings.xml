@@ -1,2 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play недоступний</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi не може підключитися до Google Play. Чи встановлено і оновлено Google Play? Ви ввійшли у свій обліковий запис Google? Спробуйте очистити кеш застосунку Google Play і перезапустити пристрій.</string>
+    <string name="upgrades_no_purchases_found_check_account">Покупки не знайдено. Ви використовуєте правильний обліковий запис?</string>
+    <string name="upgrades_dashcard_title">Отримати Octi Pro</string>
+    <string name="upgrades_dashcard_body">Оновіть до Pro, щоб розблокувати додаткові функції та підтримати розвиток!</string>
+    <string name="upgrades_dashcard_upgrade_action">Оновити</string>
+    <string name="upgrade_screen_title">Отримати Octi Pro</string>
+    <string name="upgrade_screen_preamble">В Octi немає реклами й не продаються дані користувача. Моя робота фінансується вами ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Переваги</string>
+    <string name="upgrade_screen_benefits_body">• Більше ніж 3 пристрої 💯
+• Різні теми 🎨
+• Більше опцій ⚙️
+• Додаткові сервери синхронізації🖥️️
+• Безперервна розробка ☕
+• Мотивований розробник 🧙</string>
+    <string name="upgrade_screen_how_title">Варіанти</string>
+    <string name="upgrade_screen_how_body">Ви можете обрати між одноразовою покупкою та дешевшою річною підпискою.
+Підписка починається з безкоштовного 14-денного пробного періоду, після чого буде здійснюватися річна оплата. Пробний період і підписку можна скасувати будь-коли.
+Ті ж функції, лише різні моделі оплати.</string>
+    <string name="upgrade_screen_subscription_trial_action">Почати безкоштовний 14-денний пробний період</string>
+    <string name="upgrade_screen_subscription_action">Оформити підписку</string>
+    <string name="upgrade_screen_subscription_action_hint">Підписка коштує %s на рік.</string>
+    <string name="upgrade_screen_iap_action">Одноразова покупка</string>
+    <string name="upgrade_screen_iap_action_hint">Одноразова покупка коштує %s.</string>
+    <string name="upgrade_screen_thanks_toast">Ви найкращі! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Відновити покупку</string>
+    <string name="upgrade_screen_restore_purchase_message">Ваша покупка дійсна на всіх пристроях із цим же Google-акаунтом.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Поради щодо усунення проблем з невизнаними оновленнями:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Синхронізація Play Store може зайняти деякий час. Спробуйте перезапустити, очистити кеш Google Play або просто зачекайте.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Декілька акаунтів можуть заплутати Google Play. Вийдіть з інших акаунтів або встановлюйте через сайт Google Play, щоб прив'язати до конкретного акаунта.</string>
+</resources>
