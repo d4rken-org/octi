@@ -68,7 +68,7 @@
 
     <string name="sync_last_action_label">Last action</string>
     <string name="sync_last_never_label">Never</string>
-    <string name="sync_quota_storage_msg">%s free (%s / %s)</string>
+    <string name="sync_quota_storage_msg">%1$s free (%2$s / %3$s)</string>
 
     <string name="general_disconnect_action">Disconnect</string>
     <string name="generic_info_action">Info</string>

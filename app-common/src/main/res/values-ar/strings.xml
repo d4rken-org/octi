@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">أوكتي</string>
+    <string name="general_error_label">خطأ</string>
+    <string name="general_error_no_compatible_app_found_msg">لم يتم العثور على تطبيق مناسب.</string>
+    <string name="general_share_action">مشاركة</string>
+    <string name="general_done_action">تم</string>
+    <string name="general_copy_action">نسخ</string>
+    <string name="general_remove_action">إزالة</string>
+    <string name="general_cancel_action">إلغاء</string>
+    <string name="general_thanks_action">شكرًا</string>
+    <string name="general_gotit_action">حسنًا</string>
+    <string name="general_na_label">غير متوفر</string>
+    <string name="general_empty_label">فارغ</string>
+    <string name="general_dismiss_action">تجاهل</string>
+    <string name="general_maybe_later_action">ربما لاحقًا</string>
+    <string name="general_manage_action">إدارة</string>
+    <string name="general_quota_label">الحصة</string>
+    <string name="general_upgrade_action">ترقية</string>
+    <string name="general_update_action">تحديث</string>
+    <string name="general_donate_action">تبرع</string>
+    <string name="general_check_action">تحقق</string>
+    <string name="general_internal_not_available_msg">الاتصال بالإنترنت غير متوفر</string>
+    <string name="general_refresh_action">تحديث</string>
+    <string name="general_continue">متابعة</string>
+    <string name="general_show_details_action">عرض التفاصيل</string>
+</resources>

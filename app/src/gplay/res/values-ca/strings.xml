@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">El Google Play no està disponible</string>
+    <string name="upgrades_gplay_unavailable_error_description">L\'Octi no es pot connectar al Google Play. El Google Play està instal·lat i actualitzat? Heu iniciat sessió amb el vostre compte de Google? Proveu d\'esborrar la memòria cau de l\'aplicació Google Play i reinicieu el dispositiu.</string>
+    <string name="upgrades_no_purchases_found_check_account">No s\'han trobat compres. Esteu utilitzant el compte correcte?</string>
+    <string name="upgrades_dashcard_title">Obtén l\'Octi Pro</string>
+    <string name="upgrades_dashcard_body">Actualitzeu per desbloquejar funcions addicionals i donar suport al desenvolupament!</string>
+    <string name="upgrades_dashcard_upgrade_action">Millora</string>
+    <string name="upgrade_screen_title">Obtén l\'Octi Pro</string>
+    <string name="upgrade_screen_preamble">L\'Octi no té anuncis i no ven dades d\'usuari. El meu treball està finançat per usuaris com vós ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Avantatges</string>
+    <string name="upgrade_screen_benefits_body">• Més de 3 dispositius 💯\n• Temes diferents 🎨\n• Més opcions ⚙️\n• Servidors de sincronització addicionals🖥️️\n• Desenvolupament continu ☕\n• Un desenvolupador motivat 🧙</string>
+    <string name="upgrade_screen_how_title">Opcions</string>
+    <string name="upgrade_screen_how_body">Podeu triar entre una compra única i una subscripció anual més barata.\nLa subscripció comença amb una prova gratuïta de 14 dies, després de la qual se li cobrarà un cop l\'any. La prova i la subscripció es poden cancel·lar en qualsevol moment.\nLes mateixes funcions, només models de preus diferents.</string>
+    <string name="upgrade_screen_subscription_trial_action">Comença la prova gratuïta de 14 dies</string>
+    <string name="upgrade_screen_subscription_action">Subscriure’s</string>
+    <string name="upgrade_screen_subscription_action_hint">La subscripció costa %s a l\'any.</string>
+    <string name="upgrade_screen_iap_action">Compra única</string>
+    <string name="upgrade_screen_iap_action_hint">La compra única costa %s.</string>
+    <string name="upgrade_screen_thanks_toast">Sou el millor! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Recupera la compra</string>
+    <string name="upgrade_screen_restore_purchase_message">La vostra millora és vàlida en tots els dispositius del mateix compte de Google.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Consells de resolució de problemes per a actualitzacions no reconegudes:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">La sincronització de la Play Store pot trigar un temps. Proveu a reiniciar, esborrar la memòria cau del Google Play o simplement espereu.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Diversos comptes poden confondre al Google Play. Tanqueu la sessió d\'altres comptes o instal·leu-lo a través del lloc web del Google Play, que obliga a associar-los amb un compte específic.</string>
+</resources>

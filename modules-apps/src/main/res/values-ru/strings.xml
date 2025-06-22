@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_apps_label">Модуль приложений</string>
+    <string name="module_apps_desc">Информация об установленных приложениях.</string>
+
+    <string name="module_apps_x_installed">Установлено приложений: %d</string>
+    <string name="module_apps_last_installed_x">Последнее установленное приложение: %s</string>
+    <string name="module_apps_list_title">Установленные приложения</string>
+
+    <string name="module_apps_installer_label">Источник установки приложения</string>
+    <string name="module_apps_installer_desc">Синхронизировать и включать информацию об источнике, из которого было установлено каждое приложение.</string>
+</resources>

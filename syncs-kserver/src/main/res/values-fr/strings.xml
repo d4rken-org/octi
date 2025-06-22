@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Un serveur de synchronisation open-source pour Octi créé par le développeur de cette application. Les données sont chiffrées côté client, seuls vos appareils peuvent les déchiffrer.\n\nComme l\'application et le serveur sont encore en cours d\'amélioration, il peut être moins stable que d\'autres options de synchronisation.</string>
+    <string name="sync_kserver_add_create_action_hint">Les comptes inactifs sont supprimés après quelques semaines.</string>
+    <string name="sync_kserver_add_subtitle">Ajouter un nouveau Google Drive</string>
+    <string name="sync_kserver_add_link_action_hint">Vous aurez besoin d\'accéder à un autre appareil qui est déjà lié.</string>
+    <string name="sync_kserver_about_title">À propos de KServer</string>
+    <string name="sync_kserver_about_desc">KServer est un serveur de synchronisation open-source (en Kotlin) pour Octi par darken.</string>
+    <string name="sync_kserver_about_author_action">Auteur</string>
+    <string name="sync_kserver_about_source_action">Code source</string>
+    <string name="sync_kserver_reset_confirmation_desc">Effacer les données de l\'appareil sur ce compte. Les appareils restent liés mais leurs données stockées sont supprimées.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Ceci supprimera cet appareil de votre compte. Si c\'est le dernier appareil lié, votre compte sera supprimé.</string>
+    <string name="sync_kserver_link_device_action">Lier un nouvel appareil</string>
+    <string name="sync_kserver_link_code_label">Code de liaison</string>
+    <string name="sync_kserver_link_host_option_direct">Créer un code texte que vous pouvez envoyer via d\'autres applications</string>
+    <string name="sync_kserver_link_host_option_qrcode">Afficher un QR Code</string>
+    <string name="sync_kserver_link_host_option_nfc">Lier l\'appareil via NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">Un nouvel appareil a été lié à votre compte.</string>
+    <string name="sync_kserver_link_host_nfc_action">Recherche d\'un client NFC. Tenez cet appareil près de l\'appareil que vous voulez lier à votre compte.</string>
+    <string name="sync_kserver_link_client_option_direct">Copier et coller manuellement un code de liaison</string>
+    <string name="sync_kserver_link_client_option_qrcode">Scanner un QR code depuis un autre appareil</string>
+    <string name="sync_kserver_link_client_option_nfc">Utiliser deux appareils avec NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">Démarrer la caméra</string>
+    <string name="sync_kserver_link_client_link_action">Lier l\'appareil</string>
+    <string name="sync_kserver_link_client_nfc_action">Recherche d\'un hôte NFC. Tenez-le près de l\'appareil proposant de partager l\'accès au compte.</string>
+</resources>

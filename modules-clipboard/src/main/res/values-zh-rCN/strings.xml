@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_clipboard_label">剪贴板模块</string>
+    <string name="module_clipboard_desc">在设备之间复制和粘贴文本。</string>
+    <string name="module_clipboard_copied_octi_to_os">将Octi复制到系统剪贴板</string>
+    <string name="module_clipboard_copied_os_to_octi">将系统复制到Octi剪贴板</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_power_label">Energie-Modul</string>
+    <string name="module_power_desc">Batterie, Laden, Schätzungen, Temperatur, etc.</string>
+    <string name="module_power_battery_status_unknown">Unbekannter Status</string>
+    <string name="module_power_battery_status_full">Voll</string>
+    <string name="module_power_battery_status_charging">Wird aufgeladen</string>
+    <string name="module_power_battery_status_charging_slow">Langsames aufladen</string>
+    <string name="module_power_battery_status_charging_fast">Schnelles aufladen</string>
+    <string name="module_power_battery_status_discharging">Entlädt sich</string>
+    <string name="module_power_battery_status_discharging_slow">Entlädt sich langsam</string>
+    <string name="module_power_battery_status_discharging_fast">Entlädt sich schnell</string>
+    <string name="module_power_battery_full_since_x">Vollständig aufgeladen: %s</string>
+    <string name="module_power_battery_full_in_x">Vollständig aufgeladen in: %s</string>
+    <string name="module_power_battery_empty_in_x">Leer in: %s</string>
+    <string name="module_power_battery_estimation_na">Schätzung nicht verfügbar</string>
+
+    <string name="module_power_widget_description">Zeigt den Akkustatus Ihrer synchronisierten Geräte an.</string>
+
+    <string name="module_power_alerts_title">Akku Warnung</string>
+    <string name="module_power_alerts_lowbattery_title">Akkustand niedrig</string>
+    <string name="module_power_alerts_lowbattery_description">Erhalten Sie eine Benachrichtigung, wenn der Akku dieses Geräts unter Ihren festgelegten Schwellenwert fällt. Stellen Sie Ihren bevorzugten Prozentsatz für Warnungen ein.</string>
+    <string name="module_power_alerts_lowbattery_slider_value_caption">Benachrichtigung sobald der Akku unter %s ist</string>
+    <string name="module_power_alerts_lowbattery_disabled_caption">Keine Benachrichtigung wenn der Akku niedrig ist</string>
+    <string name="module_power_alerts_notification_channel_label">Akku Warnung</string>
+    <string name="module_power_alerts_notification_battery_low_title">Akkustand niedrig: %s</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s hat %3$d%% Akku (&lt;%2$d%%) und lädt nicht.</string>
+</resources>

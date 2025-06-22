@@ -15,4 +15,13 @@
     <string name="module_power_battery_empty_in_x">Fuera de jugo: %s</string>
     <string name="module_power_battery_estimation_na">Estimación no disponible</string>
     <string name="module_power_widget_description">Muestra el estado de la batería de tus dispositivos sincronizados.</string>
+
+    <string name="module_power_alerts_title">Alertas de batería</string>
+    <string name="module_power_alerts_lowbattery_title">Batería baja</string>
+    <string name="module_power_alerts_lowbattery_description">Recibe notificaciones cuando la batería de este dispositivo cae por debajo del umbral especificado. Establece tu porcentaje preferido para las alertas.</string>
+    <string name="module_power_alerts_lowbattery_slider_value_caption">Notificar cuando la batería esté por debajo de %s</string>
+    <string name="module_power_alerts_lowbattery_disabled_caption">No notificar cuando la batería esté baja</string>
+    <string name="module_power_alerts_notification_channel_label">Alertas de batería</string>
+    <string name="module_power_alerts_notification_battery_low_title">Batería baja: %s</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s está al %3$d%% de batería (&lt;%2$d%%) y no se está cargando.</string>
 </resources>

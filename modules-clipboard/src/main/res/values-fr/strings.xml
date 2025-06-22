@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_clipboard_label">Module presse-papiers</string>
+    <string name="module_clipboard_desc">Copier et coller du texte entre les appareils.</string>
+    <string name="module_clipboard_copied_octi_to_os">Copié d\'Octi vers le presse-papiers système</string>
+    <string name="module_clipboard_copied_os_to_octi">Copié du système vers le presse-papiers Octi</string>
+</resources>

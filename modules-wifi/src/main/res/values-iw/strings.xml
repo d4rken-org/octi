@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_wifi_label">מודול Wi-Fi</string>
+    <string name="module_wifi_desc">שמות, קליטה, כתובות IP וכו\'.</string>
+    <string name="module_wifi_unknown_ssid_label">SSID לא ידוע</string>
+    <string name="module_wifi_unknown_ip_label">IP לא ידוע</string>
+    <string name="module_wifi_reception_good_label">אות טוב</string>
+    <string name="module_wifi_reception_okay_label">אות בסדר</string>
+    <string name="module_wifi_reception_bad_label">אות גרוע</string>
+</resources>

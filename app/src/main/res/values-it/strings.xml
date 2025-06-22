@@ -53,7 +53,7 @@
     <string name="settings_debuglog_explanation">Questa funzione registra tutto ciò che l\'app sta facendo in un file condivisibile. Il file generato contiene informazioni sensibili (ad esempio, le applicazioni installate). Condividilo solo con parti fidate (ad esempio, lo sviluppatore dell\'app se stai risolvendo insieme un problema).</string>
     <string name="sync_last_action_label">Ultima azione</string>
     <string name="sync_last_never_label">Mai</string>
-    <string name="sync_quota_storage_msg">%s libera (%s/%s)</string>
+    <string name="sync_quota_storage_msg">%1$s libera (%2$s/%3$s)</string>
     <string name="general_disconnect_action">Disconnetti</string>
     <string name="generic_info_action">Informazioni</string>
     <string name="general_reset_action">Reset</string>

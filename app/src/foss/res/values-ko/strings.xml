@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi FOSS</string>
+    <string name="upgrade_feature_requires_pro">Octi Pro가 필요합니다</string>
+    <string name="upgrades_dashcard_title">Octi Pro 얻기</string>
+    <string name="upgrades_dashcard_body">추가 기능을 잠금 해제하고 계속된 개발을 지원하는 후원자가 되어주세요!</string>
+    <string name="upgrades_dashcard_upgrade_action">업그레이드</string>
+    <string name="upgrade_screen_title">Octi Pro로 업그레이드</string>
+    <string name="upgrade_screen_preamble">Octi는 광고가 없고 사용자 데이터를 판매하지 않습니다. 제 작업은 여러분의 도움으로 이루어집니다 ❤️</string>
+    <string name="upgrade_screen_how_title">해야 할 일</string>
+    <string name="upgrade_screen_how_body">후원자가 되어 개발을 지원하세요! 아래 버튼을 터치하여 모든 추가 기능을 활성화하고 제 GitHub Sponsors 프로필을 여세요.</string>
+    <string name="upgrade_screen_why_title">혜택 🪄</string>
+    <string name="upgrade_screen_benefits_body">• 3개 이상의 기기 💯
+• 다양한 테마 🎨
+• 더 많은 옵션 ⚙️
+• 추가 동기화 서버🖥️
+• 지속적인 오픈 소스 개발 🧙</string>
+    <string name="upgrade_screen_sponsor_action">개발 후원하기</string>
+    <string name="upgrade_screen_sponsor_action_hint">대안은 광고, 분석, Google Play입니다 🙁</string>
+    <string name="upgrade_screen_thanks_toast">오픈소스 개발을 지원해 주셔서 감사합니다 ❤️</string>
+</resources>

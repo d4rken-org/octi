@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Un servidor de sincronització de codi obert per a l\'Octi fet pel desenvolupador d\'aquesta aplicació. Les dades estan xifrades pel costat del client, només els vostres dispositius poden desxifrar-les.\n\nCom que l\'aplicació i el servidor encara s\'estan millorant, pot ser que sigui menys estable que altres opcions de sincronització.</string>
+    <string name="sync_kserver_add_create_action_hint">Els comptes inactius se suprimeixen al cap d\'unes setmanes.</string>
+    <string name="sync_kserver_add_subtitle">Afegeix un Google Drive nou</string>
+    <string name="sync_kserver_add_link_action_hint">Necessitareu accedir a un altre dispositiu que ja estigui enllaçat.</string>
+    <string name="sync_kserver_about_title">Quant al K-Server</string>
+    <string name="sync_kserver_about_desc">El K-Server és un servidor de sincronització de codi obert (en Kotlin) per a l\'Octi pel darken.</string>
+    <string name="sync_kserver_about_author_action">Autor</string>
+    <string name="sync_kserver_about_source_action">Codi font</string>
+    <string name="sync_kserver_reset_confirmation_desc">Esborra les dades del dispositiu en aquest compte. Els dispositius romanen enllaçats, però les seves dades emmagatzemades s\'eliminen.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Això eliminarà aquest dispositiu del vostre compte. Si aquest és l\'últim dispositiu enllaçat, el vostre compte se suprimirà.</string>
+    <string name="sync_kserver_link_device_action">Enllaça un dispositiu nou</string>
+    <string name="sync_kserver_link_code_label">Codi d\'enllaç</string>
+    <string name="sync_kserver_link_host_option_direct">Crea un codi de text que podeu enviar mitjançant altres aplicacions</string>
+    <string name="sync_kserver_link_host_option_qrcode">Mostra un codi QR</string>
+    <string name="sync_kserver_link_host_option_nfc">Enllaça el dispositiu mitjançant NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">S\'ha enllaçat un dispositiu nou al vostre compte.</string>
+    <string name="sync_kserver_link_host_nfc_action">S\'està cercant un client NFC. Manteniu aquest dispositiu a prop del dispositiu que voleu enllaçar al vostre compte.</string>
+    <string name="sync_kserver_link_client_option_direct">Copia i enganxa manualment un codi d\'enllaç</string>
+    <string name="sync_kserver_link_client_option_qrcode">Escaneja un codi QR des d\'un altre dispositiu</string>
+    <string name="sync_kserver_link_client_option_nfc">Utilitza dos dispositius amb NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">Inicieu la càmera</string>
+    <string name="sync_kserver_link_client_link_action">Enllaça el dispositiu</string>
+    <string name="sync_kserver_link_client_nfc_action">S\'està cercant un amfitrió NFC. Manteniu-lo a prop del dispositiu que ofereix compartir accés al compte.</string>
+</resources>

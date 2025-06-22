@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="gdrive_account_scope_error_label">Error de permiso</string>
+    <string name="gdrive_account_scope_error_description">No se ha concedido a Octi el ámbito de acceso requerido. Inténtalo de nuevo y verifica que se estén otorgando los permisos.</string>
+    <string name="gdrive_account_lockout_error_label">Error de bloqueo</string>
+    <string name="gdrive_account_lockout_error_description">Este dispositivo está bloqueado y ya no puede acceder a Google Drive. Su acceso a tu cuenta de Google ha sido revocado. Vuelve a conceder acceso e inténtalo de nuevo.</string>
+
+    <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">Alcance de los datos de la aplicación</string>
     <string name="sync_gdrive_type_appdata_description">Los datos se colocan en Google Drive. Esta variante específicada utiliza el alcance \"datos de la aplicación\". Solo se otorga acceso a una nueva carpeta solo para esta aplicación. La carpeta no está visible en su disco. Es similar a cómo funcionan las copias de seguridad de WhatsApp.</string>
     <string name="sync_gdrive_add_label">Agregar un nuevo Google Drive</string>

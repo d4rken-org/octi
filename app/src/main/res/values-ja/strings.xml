@@ -53,7 +53,7 @@
     <string name="settings_debuglog_explanation">この機能は、アプリが行っているすべてのことを共有可能なファイルに記録します。生成されたファイルには機密事項 (例: インストール済みのアプリなど) が含まれます。信頼できる関係者 (例: 一緒に問題のトラブルシューティングを行っているアプリ開発者など) とのみ共有してください。</string>
     <string name="sync_last_action_label">最後のアクション</string>
     <string name="sync_last_never_label">常にしない</string>
-    <string name="sync_quota_storage_msg">%s の空き (%s / %s)</string>
+    <string name="sync_quota_storage_msg">%1$s の空き (%2$s / %3$s)</string>
     <string name="general_disconnect_action">切断</string>
     <string name="generic_info_action">情報</string>
     <string name="general_reset_action">リセット</string>

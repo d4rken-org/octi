@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play不可用</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi 无法连接到 Google Play。Google Play 是否已安装并更新？您的 Google 帐户是否已登录？尝试清除 Google Play 应用的缓存并重新启动您的设备。</string>
+    <string name="upgrades_no_purchases_found_check_account">未找到任何购买记录。您使用的是正确的帐户吗？</string>
+    <string name="upgrades_dashcard_title">获取Octi Pro</string>
+    <string name="upgrades_dashcard_body">升级以解锁附加功能并支持开发！</string>
+    <string name="upgrades_dashcard_upgrade_action">升级</string>
+    <string name="upgrade_screen_title">获取Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi 没有广告，也不会出售用户数据。我的工作由您资助 ❤️。</string>
+    <string name="upgrade_screen_benefits_title">优点</string>
+    <string name="upgrade_screen_benefits_body">• 超过 3 台设备 💯\n• 不同主题 🎨\n• 更多选项 ⚙️\n• 额外的同步服务器🖥️️\n• 持续开发 ☕\n• 积极进取的开发者 🧙</string>
+    <string name="upgrade_screen_how_title">选项</string>
+    <string name="upgrade_screen_how_body">您可以选择一次性购买或更便宜的年度订阅。\n订阅从 14 天免费试用开始，之后每年收费一次。试用和订阅可随时取消。\n功能相同，只是定价模式不同。</string>
+    <string name="upgrade_screen_subscription_trial_action">开始14天免费试用</string>
+    <string name="upgrade_screen_subscription_action">订阅</string>
+    <string name="upgrade_screen_subscription_action_hint">每年的订阅费用为 %s。</string>
+    <string name="upgrade_screen_iap_action">一次性购买</string>
+    <string name="upgrade_screen_iap_action_hint">一次性购买费用为 %s。</string>
+    <string name="upgrade_screen_thanks_toast">你是最棒的！❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">恢复购买</string>
+    <string name="upgrade_screen_restore_purchase_message">您的升级适用于同一 Google 帐户下的所有设备。</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">无法识别升级的故障排除提示：</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Play Store的同步可能需要一些时间。可以尝试重启设备、清除Google Play的缓存，或者简单地等待。</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">多个账户可能会使Google Play产生混淆。请退出其他账户，或者通过Google Play官网进行安装，这样会强制关联到特定账户。</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_apps_label">מודול יישומים</string>
+    <string name="module_apps_desc">מידע אודות יישומים מותקנים.</string>
+    <string name="module_apps_x_installed">%d יישומים מותקנים</string>
+    <string name="module_apps_last_installed_x">יישום אחרון שהותקן: %s</string>
+    <string name="module_apps_list_title">יישומים מותקנים</string>
+    <string name="module_apps_installer_label">מקור התקנת היישום</string>
+    <string name="module_apps_installer_desc">סנכרן וכלול מידע על המקור שממנו הותקן היישום.</string>
+</resources>

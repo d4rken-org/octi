@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_apps_label">وحدة التطبيقات</string>
+    <string name="module_apps_desc">معلومات عن التطبيقات المثبتة.</string>
+    <string name="module_apps_x_installed">تم تثبيت %d تطبيق</string>
+    <string name="module_apps_last_installed_x">آخر تطبيق تم تثبيته: %s</string>
+    <string name="module_apps_list_title">التطبيقات المثبتة</string>
+    <string name="module_apps_installer_label">مصدر تثبيت التطبيق</string>
+    <string name="module_apps_installer_desc">مزامنة وتضمين معلومات حول المصدر الذي تم تثبيت كل تطبيق منه.</string>
+</resources>

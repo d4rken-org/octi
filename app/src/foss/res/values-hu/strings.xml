@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi FOSS</string>
+    <string name="upgrade_feature_requires_pro">Octi Pro szükséges</string>
+    <string name="upgrades_dashcard_title">Szerezze be az Octi Pro-t</string>
+    <string name="upgrades_dashcard_body">Oldjon fel további funkciókat és legyen támogató a folyamatos fejlesztéshez!</string>
+    <string name="upgrades_dashcard_upgrade_action">Frissítés</string>
+    <string name="upgrade_screen_title">Frissítés Octi Pro-ra</string>
+    <string name="upgrade_screen_preamble">Az Octi nem tartalmaz hirdetéseket és nem árulja felhasználói adatokat. A munkámat te finanszírozod ❤️</string>
+    <string name="upgrade_screen_how_title">Mit kell tenni</string>
+    <string name="upgrade_screen_how_body">Légy támogató és szponzoráld a fejlesztést! Érintsd meg az alábbi gombot minden extra funkció aktiválásához és a GitHub Sponsors profilom megnyitásához.</string>
+    <string name="upgrade_screen_why_title">Előnyök 🪄</string>
+    <string name="upgrade_screen_benefits_body">• Több mint 3 eszköz 💯
+• Különböző témák 🎨
+• Több lehetőség ⚙️
+• Extra szinkronizáló szerverek 🖥️
+• Folyamatos nyílt forráskódú fejlesztés 🧙</string>
+    <string name="upgrade_screen_sponsor_action">Fejlesztés szponzorálása</string>
+    <string name="upgrade_screen_sponsor_action_hint">Az alternatíva hirdetések, analitika és Google Play 🙁</string>
+    <string name="upgrade_screen_thanks_toast">Köszönjük, hogy támogatod a nyílt forráskódú fejlesztést ❤️</string>
+</resources>
