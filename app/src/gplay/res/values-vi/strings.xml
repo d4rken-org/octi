@@ -1,2 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play không khả dụng</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi không thể kết nối với Google Play. Google Play đã được cài đặt và cập nhật chưa? Bạn đã đăng nhập tài khoản Google chưa? Hãy thử xóa bộ nhớ cache của ứng dụng Google Play và khởi động lại thiết bị.</string>
+    <string name="upgrades_no_purchases_found_check_account">Không tìm thấy giao dịch mua nào. Bạn có dùng đúng tài khoản không?</string>
+    <string name="upgrades_dashcard_title">Nhận Octi Pro</string>
+    <string name="upgrades_dashcard_body">Nâng cấp để mở khóa các tính năng bổ sung và hỗ trợ phát triển!</string>
+    <string name="upgrades_dashcard_upgrade_action">Nâng cấp</string>
+    <string name="upgrade_screen_title">Nhận Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi không có quảng cáo và không bán dữ liệu người dùng. Công việc của tôi được tài trợ bởi bạn ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Lợi ích</string>
+    <string name="upgrade_screen_benefits_body">• Hơn 3 thiết bị 💯
+• Chủ đề khác nhau 🎨
+• Nhiều tùy chọn hơn ⚙️
+• Máy chủ đồng bộ hóa bổ sung 🖥️️
+• Tiếp tục phát triển ☕
+• Nhà phát triển đầy nhiệt huyết 🧙</string>
+    <string name="upgrade_screen_how_title">Tùy chọn</string>
+    <string name="upgrade_screen_how_body">Bạn có thể chọn giữa mua một lần và đăng ký hàng năm rẻ hơn.
+Đăng ký bắt đầu với 14 ngày dùng thử miễn phí, sau đó bạn sẽ bị tính phí một lần mỗi năm. Có thể hủy dùng thử và đăng ký bất cứ lúc nào.
+Cùng các chức năng, chỉ khác mô hình giá.</string>
+    <string name="upgrade_screen_subscription_trial_action">Bắt đầu dùng thử miễn phí 14 ngày</string>
+    <string name="upgrade_screen_subscription_action">Đăng ký</string>
+    <string name="upgrade_screen_subscription_action_hint">Đăng ký có giá %s một năm.</string>
+    <string name="upgrade_screen_iap_action">Mua một lần</string>
+    <string name="upgrade_screen_iap_action_hint">Mua một lần có giá %s.</string>
+    <string name="upgrade_screen_thanks_toast">Bạn là tuyệt nhất! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Khôi phục giao dịch mua</string>
+    <string name="upgrade_screen_restore_purchase_message">Nâng cấp của bạn có hiệu lực trên tất cả các thiết bị dùng cùng một tài khoản Google.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Mẹo khắc phục sự cố đối với nâng cấp không được nhận diện:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Đồng bộ Play Store có thể mất một lúc. Thử khởi động lại, xóa bộ nhớ cache của Google Play hoặc chỉ cần chờ đợi.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Nhiều tài khoản có thể khiến Google Play nhầm lẫn. Đăng xuất khỏi các tài khoản khác hoặc cài đặt qua trang web Google Play để liên kết với tài khoản cụ thể.</string>
+</resources>

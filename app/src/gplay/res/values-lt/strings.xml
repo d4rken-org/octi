@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play nepasiekiama</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi nepavyksta prisijungti prie Google Play. Ar Google Play įdiegta ir atnaujinta? Ar jūsų Google paskyra yra prisijungusi? Pabandykite išvalyti Google Play programos podėlį ir paleisti įrenginį iš naujo.</string>
+    <string name="upgrades_no_purchases_found_check_account">Nerasta jokių pirkinių. Ar naudojate tinkamą paskyrą?</string>
+    <string name="upgrades_dashcard_title">Gauti Octi Pro</string>
+    <string name="upgrades_dashcard_body">Atnaujinkite, kad atrakintumėte papildomas funkcijas ir palaikytumėte tobulinimą!</string>
+    <string name="upgrades_dashcard_upgrade_action">Atnaujinti</string>
+    <string name="upgrade_screen_title">Gauti Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi neturi reklamų ir neparduoda naudotojų duomenų. Mano darbą finansuojate jūs ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Privalumai</string>
+    <string name="upgrade_screen_benefits_body">• Daugiau nei 3 įrenginiai 💯
+• Skirtingos temos 🎨
+• Daugiau parinkčių ⚙️
+• Papildomi sinchronizavimo serveriai 🖥️️
+• Nuolatinė plėtra ☕
+• Motyvuotas kūrėjas 🧙</string>
+    <string name="upgrade_screen_how_title">Pasirinkimai</string>
+    <string name="upgrade_screen_how_body">Galite pasirinkti vienkartinį pirkimą arba pigesnį metinį prenumeratą.
+Prenumerata prasideda nuo 14 dienų nemokamo bandomojo laikotarpio, po kurio būsite apmokestinti kartą per metus. Bandomasis laikotarpis ir prenumerata gali būti bet kada atšaukti.
+Tie patys funkcionalumai, tik skirtingi kainodaros modeliai.</string>
+    <string name="upgrade_screen_subscription_trial_action">Pradėti nemokamą 14 dienų bandomąją versiją</string>
+    <string name="upgrade_screen_subscription_action">Prenumeruoti</string>
+    <string name="upgrade_screen_subscription_action_hint">Prenumerata kainuoja %s per metus.</string>
+    <string name="upgrade_screen_iap_action">Vienkartinis pirkimas</string>
+    <string name="upgrade_screen_iap_action_hint">Vienkartinis pirkimas kainuoja %s.</string>
+    <string name="upgrade_screen_thanks_toast">Jūs šauniausi! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Atkurti pirkimą</string>
+    <string name="upgrade_screen_restore_purchase_message">Jūsų atnaujinimas galioja visuose įrenginiuose su ta pačia Google paskyra.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Patarimai dėl neatpažintų atnaujinimų:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Synchrinizacija su Play Store gali užtrukti. Pabandykite paleisti iš naujo, išvalyti Google Play podėlį arba tiesiog palaukti.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Kelių paskyrų naudojimas gali supainioti Google Play. Atsijunkite nuo kitų paskyrų arba diekite per Google Play tinklalapį, kuris pririša prie konkrečios paskyros.</string>
+</resources>

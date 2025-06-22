@@ -1,2 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play 無法使用</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi 無法連接到 Google Play。Google Play 是否已安裝且為最新版本？您的 Google 帳戶是否已登入？請嘗試清除 Google Play 應用程式的快取並重新啟動您的裝置。</string>
+    <string name="upgrades_no_purchases_found_check_account">找不到任何購買記錄。您是否使用了正確的帳戶？</string>
+    <string name="upgrades_dashcard_title">取得 Octi Pro</string>
+    <string name="upgrades_dashcard_body">升級以解鎖額外功能並支持開發！</string>
+    <string name="upgrades_dashcard_upgrade_action">升級</string>
+    <string name="upgrade_screen_title">取得 Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi 沒有廣告，也不販售使用者資料。我的工作由你贊助 ❤️。</string>
+    <string name="upgrade_screen_benefits_title">優點</string>
+    <string name="upgrade_screen_benefits_body">• 超過 3 台裝置 💯
+• 不同主題 🎨
+• 更多選項 ⚙️
+• 額外同步伺服器🖥️️
+• 持續開發 ☕
+• 積極進取的開發者 🧙</string>
+    <string name="upgrade_screen_how_title">選項</string>
+    <string name="upgrade_screen_how_body">您可以選擇一次性購買或更便宜的年度訂閱。
+訂閱從 14 天免費試用開始，之後每年收費一次。試用與訂閱可隨時取消。
+功能相同，只是價格模式不同。</string>
+    <string name="upgrade_screen_subscription_trial_action">開始 14 天免費試用</string>
+    <string name="upgrade_screen_subscription_action">訂閱</string>
+    <string name="upgrade_screen_subscription_action_hint">訂閱費用為 %s/年。</string>
+    <string name="upgrade_screen_iap_action">一次性購買</string>
+    <string name="upgrade_screen_iap_action_hint">一次性購買費用為 %s。</string>
+    <string name="upgrade_screen_thanks_toast">你最棒！❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">恢復購買</string>
+    <string name="upgrade_screen_restore_purchase_message">你的升級適用於同一 Google 帳戶下的所有裝置。</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">無法識別升級項目的疑難排解提示：</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Play 商店同步可能需要一點時間。請嘗試重啟裝置、清除 Google Play 快取或耐心等待。</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">多個帳戶可能會讓 Google Play 產生混淆。請登出其他帳戶，或透過 Google Play 網站安裝以強制綁定特定帳戶。</string>
+</resources>

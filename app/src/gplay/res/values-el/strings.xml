@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name_upgraded">Octi Pro</string>
+    <string name="upgrades_gplay_unavailable_error_title">Το Google Play δεν είναι διαθέσιμο</string>
+    <string name="upgrades_gplay_unavailable_error_description">Το Octi δεν μπορεί να συνδεθεί με το Google Play. Είναι το Google Play εγκατεστημένο και ενημερωμένο; Έχετε συνδεθεί με τον λογαριασμό σας Google; Δοκιμάστε να διαγράψετε την προσωρινή μνήμη της εφαρμογής Google Play και να επανεκκινήσετε τη συσκευή σας.</string>
+    <string name="upgrades_no_purchases_found_check_account">Δεν βρέθηκαν αγορές. Χρησιμοποιείτε τον σωστό λογαριασμό;</string>
+    <string name="upgrades_dashcard_title">Αποκτήστε το Octi Pro</string>
+    <string name="upgrades_dashcard_body">Αναβαθμίστε για να ξεκλειδώσετε επιπλέον δυνατότητες και να στηρίξετε την ανάπτυξη!</string>
+    <string name="upgrades_dashcard_upgrade_action">Αναβάθμιση</string>
+    <string name="upgrade_screen_title">Αποκτήστε το Octi Pro</string>
+    <string name="upgrade_screen_preamble">Το Octi δεν έχει διαφημίσεις και δεν πουλάει δεδομένα χρηστών. Η δουλειά μου χρηματοδοτείται από εσάς ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Πλεονεκτήματα</string>
+    <string name="upgrade_screen_benefits_body">• Πάνω από 3 συσκευές 💯\n• Διαφορετικά θέματα 🎨\n• Περισσότερες επιλογές ⚙️\n• Πρόσθετοι servers συγχρονισμού🖥️️\n• Συνεχής ανάπτυξη ☕\n• Ένας αφοσιωμένος προγραμματιστής 🧙</string>
+    <string name="upgrade_screen_how_title">Επιλογές</string>
+    <string name="upgrade_screen_how_body">Μπορείτε να επιλέξετε μεταξύ μιας εφάπαξ αγοράς και μιας φθηνότερης ετήσιας συνδρομής.\nΗ συνδρομή ξεκινά με μια δωρεάν δοκιμή 14 ημερών, μετά την οποία θα χρεώνεστε ετησίως. Η δοκιμή και η συνδρομή ακυρώνονται ανά πάσα στιγμή.\nΊδια χαρακτηριστικά, απλά διαφορετικά μοντέλα τιμολόγησης.</string>
+    <string name="upgrade_screen_subscription_trial_action">Έναρξη δωρεάν δοκιμής 14 ημερών</string>
+    <string name="upgrade_screen_subscription_action">Συνδρομή</string>
+    <string name="upgrade_screen_subscription_action_hint">Η συνδρομή κοστίζει %s ετησίως.</string>
+    <string name="upgrade_screen_iap_action">Εφάπαξ αγορά</string>
+    <string name="upgrade_screen_iap_action_hint">Η εφάπαξ αγορά κοστίζει %s.</string>
+    <string name="upgrade_screen_thanks_toast">Είσαι ο καλύτερος! ❤️</string>
+    <string name="upgrade_screen_restore_purchase_action">Επαναφορά αγοράς</string>
+    <string name="upgrade_screen_restore_purchase_message">Η αναβάθμισή σας ισχύει σε όλες τις συσκευές με τον ίδιο λογαριασμό Google.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Συμβουλές για μη αναγνωρισμένες αναβαθμίσεις:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Ο συγχρονισμός με το Play Store μπορεί να διαρκέσει. Δοκιμάστε επανεκκίνηση, εκκαθάριση της cache του Google Play ή περιμένετε λίγο.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Πολλαπλοί λογαριασμοί μπορούν να προκαλέσουν σύγχυση στο Google Play. Αποσυνδεθείτε από άλλους λογαριασμούς ή εγκαταστήστε μέσω του ιστότοπου Google Play, που συσχετίζει το λογαριασμό συγκεκριμένα.</string>
+</resources>
