@@ -10,11 +10,7 @@
     <string name="upgrade_screen_how_title">Vad du ska göra</string>
     <string name="upgrade_screen_how_body">Bli beskyddare och sponsra utvecklingen! Tryck på knappen nedan för att aktivera alla extra funktioner och öppna min GitHub Sponsors-profil.</string>
     <string name="upgrade_screen_why_title">Fördelar 🪄</string>
-    <string name="upgrade_screen_benefits_body">• Mer än 3 enheter 💯
-• Olika teman 🎨
-• Fler alternativ ⚙️
-• Extra synkroniseringsservrar🖥️
-• Fortsatt open source-utveckling 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Mer än 3 enheter 💯\n• Olika teman 🎨\n• Fler alternativ ⚙️\n• Extra synkroniseringsservrar🖥️\n• Fortsatt open source-utveckling 🧙</string>
     <string name="upgrade_screen_sponsor_action">Sponsra utveckling</string>
     <string name="upgrade_screen_sponsor_action_hint">Alternativet är annonser, analys och Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Tack för att du stödjer öppen källkods-utveckling ❤️</string>

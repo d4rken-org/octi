@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">Octi Pro 받기</string>
     <string name="upgrade_screen_preamble">Octi에는 광고가 없으며 사용자 데이터를 판매하지 않습니다. 제 작업은 여러분의 후원으로 이루어집니다 ❤️.</string>
     <string name="upgrade_screen_benefits_title">장점</string>
-    <string name="upgrade_screen_benefits_body">• 3대 이상의 기기 💯
-• 다양한 테마 🎨
-• 더 많은 옵션 ⚙️
-• 추가 동기화 서버 🖥️️
-• 지속적인 개발 ☕
-• 동기부여된 개발자 🧙</string>
+    <string name="upgrade_screen_benefits_body">• 3대 이상의 기기 💯\n• 다양한 테마 🎨\n• 더 많은 옵션 ⚙️\n• 추가 동기화 서버 🖥️️\n• 지속적인 개발 ☕\n• 동기부여된 개발자 🧙</string>
     <string name="upgrade_screen_how_title">옵션</string>
-    <string name="upgrade_screen_how_body">일회성 구매와 더 저렴한 연간 구독 중에서 선택할 수 있습니다.
-구독은 14일 무료 체험으로 시작하며 이후에는 매년 1회 결제됩니다. 체험과 구독은 언제든지 취소할 수 있습니다.
-동일한 기능, 단지 가격 모델만 다릅니다.</string>
+    <string name="upgrade_screen_how_body">일회성 구매와 더 저렴한 연간 구독 중에서 선택할 수 있습니다.\n구독은 14일 무료 체험으로 시작하며 이후에는 매년 1회 결제됩니다. 체험과 구독은 언제든지 취소할 수 있습니다.\n동일한 기능, 단지 가격 모델만 다릅니다.</string>
     <string name="upgrade_screen_subscription_trial_action">14일 무료 체험 시작</string>
     <string name="upgrade_screen_subscription_action">구독</string>
     <string name="upgrade_screen_subscription_action_hint">구독료는 연 %s입니다.</string>

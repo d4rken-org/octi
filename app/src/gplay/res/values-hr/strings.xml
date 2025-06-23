@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">Nabavite Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi nema oglase i ne prodaje korisničke podatke. Moj rad financirate vi ❤️.</string>
     <string name="upgrade_screen_benefits_title">Prednosti</string>
-    <string name="upgrade_screen_benefits_body">• Više od 3 uređaja 💯
-• Različite teme 🎨
-• Više opcija ⚙️
-• Dodatni serveri za sinkronizaciju🖥️️
-• Kontinuirani razvoj ☕
-• Motivirani programer 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Više od 3 uređaja 💯\n• Različite teme 🎨\n• Više opcija ⚙️\n• Dodatni serveri za sinkronizaciju🖥️️\n• Kontinuirani razvoj ☕\n• Motivirani programer 🧙</string>
     <string name="upgrade_screen_how_title">Mogućnosti</string>
-    <string name="upgrade_screen_how_body">Možete birati između jednokratne kupnje i jeftinije godišnje pretplate.
-Pretplata započinje besplatnim probnim razdobljem od 14 dana, nakon čega se naplaćuje jednom godišnje. Probno razdoblje i pretplatu moguće je otkazati u bilo kojem trenutku.
-Iste značajke, samo različiti modeli cijena.</string>
+    <string name="upgrade_screen_how_body">Možete birati između jednokratne kupnje i jeftinije godišnje pretplate.\nPretplata započinje besplatnim probnim razdobljem od 14 dana, nakon čega se naplaćuje jednom godišnje. Probno razdoblje i pretplatu moguće je otkazati u bilo kojem trenutku.\nIste značajke, samo različiti modeli cijena.</string>
     <string name="upgrade_screen_subscription_trial_action">Pokreni besplatno probno razdoblje od 14 dana</string>
     <string name="upgrade_screen_subscription_action">Pretplati se</string>
     <string name="upgrade_screen_subscription_action_hint">Pretplata košta %s godišnje.</string>

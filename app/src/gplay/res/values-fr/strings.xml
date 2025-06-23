@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">Obtenir Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi n\'a pas de publicités et ne vend pas les données des utilisateurs. Mon travail est financé par vous ❤️.</string>
     <string name="upgrade_screen_benefits_title">Avantages</string>
-    <string name="upgrade_screen_benefits_body">• Plus de 3 appareils 💯
-• Différents thèmes 🎨
-• Plus d\'options ⚙️
-• Serveurs de synchronisation supplémentaires🖥️️
-• Développement continu ☕
-• Un développeur motivé 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Plus de 3 appareils 💯\n• Différents thèmes 🎨\n• Plus d\'options ⚙️\n• Serveurs de synchronisation supplémentaires🖥️️\n• Développement continu ☕\n• Un développeur motivé 🧙</string>
     <string name="upgrade_screen_how_title">Options</string>
-    <string name="upgrade_screen_how_body">Vous pouvez choisir entre un achat unique et un abonnement annuel moins cher.
-L\'abonnement commence par un essai gratuit de 14 jours, après quoi vous serez débité une fois par an. Essai et abonnement annulables à tout moment.
-Même fonctionnalités, juste différents modèles tarifaires.</string>
+    <string name="upgrade_screen_how_body">Vous pouvez choisir entre un achat unique et un abonnement annuel moins cher.\nL\'abonnement commence par un essai gratuit de 14 jours, après quoi vous serez débité une fois par an. Essai et abonnement annulables à tout moment.\nMême fonctionnalités, juste différents modèles tarifaires.</string>
     <string name="upgrade_screen_subscription_trial_action">Commencer l\'essai gratuit de 14 jours</string>
     <string name="upgrade_screen_subscription_action">S\'abonner</string>
     <string name="upgrade_screen_subscription_action_hint">L\'abonnement coûte %s par an.</string>

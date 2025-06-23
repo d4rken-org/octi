@@ -10,11 +10,7 @@
     <string name="upgrade_screen_how_title">Nên làm gì</string>
     <string name="upgrade_screen_how_body">Trở thành nhà bảo trợ và tài trợ cho phát triển! Nhấn nút bên dưới để kích hoạt tất cả các tính năng bổ sung và mở trang hồ sơ GitHub Sponsors của tôi.</string>
     <string name="upgrade_screen_why_title">Lợi ích 🪄</string>
-    <string name="upgrade_screen_benefits_body">• Hơn 3 thiết bị 💯
-• Chủ đề khác nhau 🎨
-• Nhiều tùy chọn hơn ⚙️
-• Máy chủ đồng bộ hóa bổ sung🖥️
-• Tiếp tục phát triển mã nguồn mở 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Hơn 3 thiết bị 💯\n• Chủ đề khác nhau 🎨\n• Nhiều tùy chọn hơn ⚙️\n• Máy chủ đồng bộ hóa bổ sung🖥️\n• Tiếp tục phát triển mã nguồn mở 🧙</string>
     <string name="upgrade_screen_sponsor_action">Tài trợ phát triển</string>
     <string name="upgrade_screen_sponsor_action_hint">Giải pháp thay thế là quảng cáo, phân tích và Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Cảm ơn bạn đã hỗ trợ phát triển mã nguồn mở ❤️</string>

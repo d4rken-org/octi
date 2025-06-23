@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">קבל את Octi פרו</string>
     <string name="upgrade_screen_preamble">באוקטי אין פרסומות ואיננו מוכרים נתוני משתמשים. העבודה שלי ממומנת על ידך ❤️.</string>
     <string name="upgrade_screen_benefits_title">יתרונות</string>
-    <string name="upgrade_screen_benefits_body">• יותר מ-3 מכשירים 💯
-• ערכות נושא מגוונות 🎨
-• אפשרויות נוספות ⚙️
-• שרתי סנכרון נוספים 🖥️️
-• המשך פיתוח ☕
-• מפתח חדור מוטיבציה 🧙</string>
+    <string name="upgrade_screen_benefits_body">• יותר מ-3 מכשירים 💯\n• ערכות נושא מגוונות 🎨\n• אפשרויות נוספות ⚙️\n• שרתי סנכרון נוספים 🖥️️\n• המשך פיתוח ☕\n• מפתח חדור מוטיבציה 🧙</string>
     <string name="upgrade_screen_how_title">אפשרויות</string>
-    <string name="upgrade_screen_how_body">באפשרותך לבחור בין רכישה חד פעמית למנוי שנתי מוזל.
-המנוי מתחיל בניסיון חינם ל-14 ימים, ואחריו תחויב פעם בשנה. ניתן לבטל את הניסיון ואת המנוי בכל עת.
-אותן תכונות, מודלי תמחור שונים בלבד.</string>
+    <string name="upgrade_screen_how_body">באפשרותך לבחור בין רכישה חד פעמית למנוי שנתי מוזל.\nהמנוי מתחיל בניסיון חינם ל-14 ימים, ואחריו תחויב פעם בשנה. ניתן לבטל את הניסיון ואת המנוי בכל עת.\nאותן תכונות, מודלי תמחור שונים בלבד.</string>
     <string name="upgrade_screen_subscription_trial_action">התחל ניסיון חינם ל-14 ימים</string>
     <string name="upgrade_screen_subscription_action">הירשם כמנוי</string>
     <string name="upgrade_screen_subscription_action_hint">עלות המנוי היא %s לשנה.</string>

@@ -10,11 +10,7 @@
     <string name="upgrade_screen_how_title">Cosa fare</string>
     <string name="upgrade_screen_how_body">Diventa sostenitore dello sviluppo! Clicca il bottone qui sotto per attivare funzionalità extra e vsualizza il mio profilo github sponsors.</string>
     <string name="upgrade_screen_why_title">Privilegi</string>
-    <string name="upgrade_screen_benefits_body">• Più di 3 dispositivi 💯
-• Temi diversi 🎨
-• Più opzioni ⚙️
-• Server di sincronizzazione extra 🖥️
-• Sviluppo open source continuo 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Più di 3 dispositivi 💯\n• Temi diversi 🎨\n• Più opzioni ⚙️\n• Server di sincronizzazione extra 🖥️\n• Sviluppo open source continuo 🧙</string>
     <string name="upgrade_screen_sponsor_action">Sviluppi sponsor</string>
     <string name="upgrade_screen_sponsor_action_hint">L\'alternativa sono annunci, analytics e google play</string>
     <string name="upgrade_screen_thanks_toast">Grazie per supportare un progetto open-source</string>

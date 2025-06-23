@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">Faigh Octi Pro</string>
     <string name="upgrade_screen_preamble">Níl fógraí ar Octi agus ní dhíoltar sonraí úsáideora. Maoiníonn tusa mo chuid oibre ❤️.</string>
     <string name="upgrade_screen_benefits_title">Buntáistí</string>
-    <string name="upgrade_screen_benefits_body">• Níos mó ná 3 ghléas 💯
-• Téamaí éagsúla 🎨
-• Tuilleadh roghanna ⚙️
-• Freastalaithe sioncrónaithe breise🖥️️
-• Forbairt leanúnach ☕
-• Forbróir spreagtha 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Níos mó ná 3 ghléas 💯\n• Téamaí éagsúla 🎨\n• Tuilleadh roghanna ⚙️\n• Freastalaithe sioncrónaithe breise🖥️️\n• Forbairt leanúnach ☕\n• Forbróir spreagtha 🧙</string>
     <string name="upgrade_screen_how_title">Roghanna</string>
-    <string name="upgrade_screen_how_body">Is féidir leat rogha a dhéanamh idir ceannach aonuaire agus síntiús bliantúil níos saoire.
-Tosaíonn an síntiús le triail saor in aisce ar feadh 14 lá, ansin gearrfar ort uair sa bhliain. Is féidir an triail agus an síntiús a chur ar ceal am ar bith.
-Na gnéithe céanna, ach samhlacha praghsála éagsúla.</string>
+    <string name="upgrade_screen_how_body">Is féidir leat rogha a dhéanamh idir ceannach aonuaire agus síntiús bliantúil níos saoire.\nTosaíonn an síntiús le triail saor in aisce ar feadh 14 lá, ansin gearrfar ort uair sa bhliain. Is féidir an triail agus an síntiús a chur ar ceal am ar bith.\nNa gnéithe céanna, ach samhlacha praghsála éagsúla.</string>
     <string name="upgrade_screen_subscription_trial_action">Cuir tús le triail saor in aisce 14 lá</string>
     <string name="upgrade_screen_subscription_action">Liostáil</string>
     <string name="upgrade_screen_subscription_action_hint">Cosnaíonn an síntiús %s sa bhliain.</string>

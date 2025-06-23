@@ -10,11 +10,7 @@
     <string name="upgrade_screen_how_title">Ce să faci</string>
     <string name="upgrade_screen_how_body">Devino patron și sponsorizează dezvoltarea! Atinge butonul de mai jos pentru a activa toate funcțiile suplimentare și a deschide profilul meu GitHub Sponsors.</string>
     <string name="upgrade_screen_why_title">Beneficii 🪄</string>
-    <string name="upgrade_screen_benefits_body">• Mai mult de 3 dispozitive 💯
-• Diferite teme 🎨
-• Mai multe opțiuni ⚙️
-• Servere suplimentare de sincronizare🖥️
-• Dezvoltare open source continuă 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Mai mult de 3 dispozitive 💯\n• Diferite teme 🎨\n• Mai multe opțiuni ⚙️\n• Servere suplimentare de sincronizare🖥️\n• Dezvoltare open source continuă 🧙</string>
     <string name="upgrade_screen_sponsor_action">Sponsorizează dezvoltarea</string>
     <string name="upgrade_screen_sponsor_action_hint">Alternativa constă în reclame, analitice și Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Mulțumim pentru susținerea dezvoltării open-source ❤️</string>

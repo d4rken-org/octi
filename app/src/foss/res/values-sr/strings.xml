@@ -10,11 +10,7 @@
     <string name="upgrade_screen_how_title">Šta uraditi</string>
     <string name="upgrade_screen_how_body">Postanite pokrovitelj i sponzorišite razvoj! Dodirnite dugme ispod da aktivirate sve dodatne funkcije i otvorite moj GitHub Sponsors profil.</string>
     <string name="upgrade_screen_why_title">Prednosti 🪄</string>
-    <string name="upgrade_screen_benefits_body">• Više od 3 uređaja 💯
-• Različite teme 🎨
-• Više opcija ⚙️
-• Dodatni serveri za sinhronizaciju 🖥️
-• Stalni open source razvoj 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Više od 3 uređaja 💯\n• Različite teme 🎨\n• Više opcija ⚙️\n• Dodatni serveri za sinhronizaciju 🖥️\n• Stalni open source razvoj 🧙</string>
     <string name="upgrade_screen_sponsor_action">Sponzoriši razvoj</string>
     <string name="upgrade_screen_sponsor_action_hint">Alternativa su reklame, analitika i Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Hvala što podržavate open-source razvoj ❤️</string>

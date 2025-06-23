@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">Obține Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi nu are reclame și nu vinde datele utilizatorilor. Munca mea este finanțată de tine ❤️.</string>
     <string name="upgrade_screen_benefits_title">Avantaje</string>
-    <string name="upgrade_screen_benefits_body">• Mai mult de 3 dispozitive 💯
-• Teme diferite 🎨
-• Mai multe opțiuni ⚙️
-• Servere suplimentare de sincronizare🖥️️
-• Dezvoltare continuă ☕
-• Un dezvoltator motivat 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Mai mult de 3 dispozitive 💯\n• Teme diferite 🎨\n• Mai multe opțiuni ⚙️\n• Servere suplimentare de sincronizare🖥️️\n• Dezvoltare continuă ☕\n• Un dezvoltator motivat 🧙</string>
     <string name="upgrade_screen_how_title">Opțiuni</string>
-    <string name="upgrade_screen_how_body">Poți alege între o achiziție unică și un abonament anual mai ieftin.
-Abonamentul începe cu o perioadă de probă gratuită de 14 zile, după care vei fi taxat o dată pe an. Perioada de probă și abonamentul pot fi anulate oricând.
-Aceleași funcții, doar modele de preț diferite.</string>
+    <string name="upgrade_screen_how_body">Poți alege între o achiziție unică și un abonament anual mai ieftin.\nAbonamentul începe cu o perioadă de probă gratuită de 14 zile, după care vei fi taxat o dată pe an. Perioada de probă și abonamentul pot fi anulate oricând.\nAceleași funcții, doar modele de preț diferite.</string>
     <string name="upgrade_screen_subscription_trial_action">Începe perioada de probă gratuită de 14 zile</string>
     <string name="upgrade_screen_subscription_action">Abonare</string>
     <string name="upgrade_screen_subscription_action_hint">Abonamentul costă %s pe an.</string>

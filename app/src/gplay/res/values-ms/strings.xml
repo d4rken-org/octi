@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">Dapatkan Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi tiada iklan dan tidak menjual data pengguna. Kerja saya dibiayai oleh anda ❤️.</string>
     <string name="upgrade_screen_benefits_title">Kelebihan</string>
-    <string name="upgrade_screen_benefits_body">• Lebih daripada 3 peranti 💯
-• Tema yang berbeza 🎨
-• Pilihan tambahan ⚙️
-• Pelayan segerak tambahan 🖥️️
-• Pembangunan berterusan ☕
-• Pembangun bermotivasi 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Lebih daripada 3 peranti 💯\n• Tema yang berbeza 🎨\n• Pilihan tambahan ⚙️\n• Pelayan segerak tambahan 🖥️️\n• Pembangunan berterusan ☕\n• Pembangun bermotivasi 🧙</string>
     <string name="upgrade_screen_how_title">Pilihan</string>
-    <string name="upgrade_screen_how_body">Anda boleh memilih antara pembelian sekali dan langganan tahunan yang lebih murah.
-Langganan bermula dengan percubaan percuma selama 14 hari, selepas itu anda akan dikenakan caj setahun sekali. Percubaan dan langganan boleh dibatalkan pada bila-bila masa.
-Fungsi yang sama, cuma model harga berbeza.</string>
+    <string name="upgrade_screen_how_body">Anda boleh memilih antara pembelian sekali dan langganan tahunan yang lebih murah.\nLangganan bermula dengan percubaan percuma selama 14 hari, selepas itu anda akan dikenakan caj setahun sekali. Percubaan dan langganan boleh dibatalkan pada bila-bila masa.\nFungsi yang sama, cuma model harga berbeza.</string>
     <string name="upgrade_screen_subscription_trial_action">Mulakan percubaan percuma 14 hari</string>
     <string name="upgrade_screen_subscription_action">Langgan</string>
     <string name="upgrade_screen_subscription_action_hint">Langganan berharga %s setahun.</string>

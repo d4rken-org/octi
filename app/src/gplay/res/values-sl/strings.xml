@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">Pridobite Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi ne prikazuje oglasov in ne prodaja podatkov uporabnikov. Moje delo financirate vi ❤️.</string>
     <string name="upgrade_screen_benefits_title">Prednosti</string>
-    <string name="upgrade_screen_benefits_body">• Več kot 3 naprave 💯
-• Različne teme 🎨
-• Več možnosti ⚙️
-• Dodatni strežniki za sinhronizacijo 🖥️️
-• Neprekinjen razvoj ☕
-• Motiviran razvijalec 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Več kot 3 naprave 💯\n• Različne teme 🎨\n• Več možnosti ⚙️\n• Dodatni strežniki za sinhronizacijo 🖥️️\n• Neprekinjen razvoj ☕\n• Motiviran razvijalec 🧙</string>
     <string name="upgrade_screen_how_title">Možnosti</string>
-    <string name="upgrade_screen_how_body">Izbirate lahko med enkratnim nakupom in cenejšo letno naročnino.
-Naročnina se začne z brezplačnim 14-dnevnim preizkusom, nato boste zaračunani enkrat letno. Preizkus in naročnino lahko kadarkoli prekličete.
-Enake funkcije, le drugačni modeli cen.</string>
+    <string name="upgrade_screen_how_body">Izbirate lahko med enkratnim nakupom in cenejšo letno naročnino.\nNaročnina se začne z brezplačnim 14-dnevnim preizkusom, nato boste zaračunani enkrat letno. Preizkus in naročnino lahko kadarkoli prekličete.\nEnake funkcije, le drugačni modeli cen.</string>
     <string name="upgrade_screen_subscription_trial_action">Začni brezplačni 14-dnevni preizkus</string>
     <string name="upgrade_screen_subscription_action">Naroči se</string>
     <string name="upgrade_screen_subscription_action_hint">Naročnina stane %s letno.</string>

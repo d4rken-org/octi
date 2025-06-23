@@ -10,11 +10,7 @@
     <string name="upgrade_screen_how_title">Mit kell tenni</string>
     <string name="upgrade_screen_how_body">Légy támogató és szponzoráld a fejlesztést! Érintsd meg az alábbi gombot minden extra funkció aktiválásához és a GitHub Sponsors profilom megnyitásához.</string>
     <string name="upgrade_screen_why_title">Előnyök 🪄</string>
-    <string name="upgrade_screen_benefits_body">• Több mint 3 eszköz 💯
-• Különböző témák 🎨
-• Több lehetőség ⚙️
-• Extra szinkronizáló szerverek 🖥️
-• Folyamatos nyílt forráskódú fejlesztés 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Több mint 3 eszköz 💯\n• Különböző témák 🎨\n• Több lehetőség ⚙️\n• Extra szinkronizáló szerverek 🖥️\n• Folyamatos nyílt forráskódú fejlesztés 🧙</string>
     <string name="upgrade_screen_sponsor_action">Fejlesztés szponzorálása</string>
     <string name="upgrade_screen_sponsor_action_hint">Az alternatíva hirdetések, analitika és Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Köszönjük, hogy támogatod a nyílt forráskódú fejlesztést ❤️</string>
