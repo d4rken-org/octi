@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_wifi_label">Modul Wi-Fi</string>
+    <string name="module_wifi_desc">Nume, recepție, IP-uri, etc.</string>
+    <string name="module_wifi_unknown_ssid_label">SSID necunoscut</string>
+    <string name="module_wifi_unknown_ip_label">IP necunoscut</string>
+    <string name="module_wifi_reception_good_label">Semnal bun</string>
+    <string name="module_wifi_reception_okay_label">Semnal OK</string>
+    <string name="module_wifi_reception_bad_label">Semnal slab</string>
+</resources>

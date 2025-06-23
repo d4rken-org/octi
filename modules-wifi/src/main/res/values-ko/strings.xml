@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_wifi_label">Wi-Fi 모듈</string>
+    <string name="module_wifi_desc">이름, 수신, IP 등</string>
+    <string name="module_wifi_unknown_ssid_label">알 수 없는 SSID</string>
+    <string name="module_wifi_unknown_ip_label">알 수 없는 IP</string>
+    <string name="module_wifi_reception_good_label">좋은 신호</string>
+    <string name="module_wifi_reception_okay_label">보통 신호</string>
+    <string name="module_wifi_reception_bad_label">나쁜 신호</string>
+</resources>

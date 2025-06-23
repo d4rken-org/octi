@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_wifi_label">Wi-Fi-moduuli</string>
+    <string name="module_wifi_desc">Nimet, kuuluvuus, IP-osoitteet jne.</string>
+    <string name="module_wifi_unknown_ssid_label">Tuntematon SSID</string>
+    <string name="module_wifi_unknown_ip_label">Tuntematon IP</string>
+    <string name="module_wifi_reception_good_label">Hyvä signaali</string>
+    <string name="module_wifi_reception_okay_label">OK-signaali</string>
+    <string name="module_wifi_reception_bad_label">Huono signaali</string>
+</resources>
