@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play pole saadaval</string>
-    <string name="upgrades_gplay_unavailable_error_description">Octi ei saa Google Playga ühendust. Kas Google Play on paigaldatud ja ajakohane? Kas Sinu Google'i konto on sisse logitud? Proovi Google Play rakenduse vahemälu tühjendada ja seadme taaskäivitada.</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi ei saa Google Playga ühendust. Kas Google Play on paigaldatud ja ajakohane? Kas Sinu Google\'i konto on sisse logitud? Proovi Google Play rakenduse vahemälu tühjendada ja seadme taaskäivitada.</string>
     <string name="upgrades_no_purchases_found_check_account">Ostud ei leitud. Kas kasutad õiget kontot?</string>
     <string name="upgrades_dashcard_title">Hangi Octi Pro</string>
     <string name="upgrades_dashcard_body">Uuenda, et avada lisafunktsioone ja toetada arendust!</string>
@@ -27,8 +27,8 @@ Sama funktsionaalsus, lihtsalt erinevad hinnamudelid.</string>
     <string name="upgrade_screen_iap_action_hint">Ühekordne ost maksab %s.</string>
     <string name="upgrade_screen_thanks_toast">Oled parim! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Taasta ost</string>
-    <string name="upgrade_screen_restore_purchase_message">Sinu uuendus kehtib kõigis seadmetes, millel on sama Google'i konto.</string>
+    <string name="upgrade_screen_restore_purchase_message">Sinu uuendus kehtib kõigis seadmetes, millel on sama Google\'i konto.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Vihjed tundmatute uuenduste lahendamiseks:</string>
-    <string name="upgrade_screen_restore_sync_patience_hint">Play Store'i sünkroonimine võib võtta aega. Proovi taaskäivitada, tühjendada Google Play vahemälu või lihtsalt oodata.</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Play Store\'i sünkroonimine võib võtta aega. Proovi taaskäivitada, tühjendada Google Play vahemälu või lihtsalt oodata.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Mitmed kontod võivad Google Play’d segadusse ajada. Logi muudest kontodest välja või paigalda Google Play veebisaidi kaudu, mis seob konkreetse kontoga.</string>
 </resources>
