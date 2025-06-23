@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Ένας διακομιστής συγχρονισμού ανοικτού κώδικα για το Octi που κατασκευάστηκε από τον προγραμματιστή αυτής της εφαρμογής. Τα δεδομένα κρυπτογραφούνται από την πλευρά του πελάτη, μόνο οι συσκευές σας μπορούν να τα αποκρυπτογραφήσουν.\n\nΚαθώς τόσο η εφαρμογή όσο και ο διακομιστής εξακολουθούν να βελτιώνονται, μπορεί να είναι λιγότερο σταθερός από άλλες επιλογές συγχρονισμού.</string>
+    <string name="sync_kserver_add_create_action_hint">Οι ανενεργοί λογαριασμοί διαγράφονται μετά από μερικές εβδομάδες.</string>
+    <string name="sync_kserver_add_subtitle">Προσθήκη νέου Google Drive</string>
+    <string name="sync_kserver_add_link_action_hint">Θα χρειαστείτε πρόσβαση σε μια άλλη συσκευή που έχει ήδη συνδεθεί.</string>
+    <string name="sync_kserver_about_title">Σχετικά με το KServer</string>
+    <string name="sync_kserver_about_desc">Το KServer είναι ένας διακομιστής συγχρονισμού ανοικτού κώδικα (σε Kotlin) για το Octi από τον darken.</string>
+    <string name="sync_kserver_about_author_action">Συγγραφέας</string>
+    <string name="sync_kserver_about_source_action">Πηγαίος κώδικας</string>
+    <string name="sync_kserver_reset_confirmation_desc">Διαγραφή των δεδομένων της συσκευής σε αυτό τον λογαριασμό. Οι συσκευές παραμένουν συνδεδεμένες αλλά τα αποθηκευμένα δεδομένα τους διαγράφονται.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Αυτό θα καταργήσει αυτή τη συσκευή από τον λογαριασμό σας. Εάν πρόκειται για την τελευταία συνδεδεμένη συσκευή, ο λογαριασμός σας θα διαγραφεί.</string>
+    <string name="sync_kserver_link_device_action">Σύνδεση νέας συσκευής</string>
+    <string name="sync_kserver_link_code_label">Κωδικός σύνδεσης</string>
+    <string name="sync_kserver_link_host_option_direct">Δημιουργία κειμενικού κωδικού που μπορείτε να στείλετε με άλλες εφαρμογές</string>
+    <string name="sync_kserver_link_host_option_qrcode">Εμφάνιση QRCode</string>
+    <string name="sync_kserver_link_host_option_nfc">Σύνδεση συσκευής μέσω NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">Μια νέα συσκευή συνδέθηκε στον λογαριασμό σας.</string>
+    <string name="sync_kserver_link_host_nfc_action">Αναζήτηση πελάτη NFC. Κρατήστε αυτή τη συσκευή κοντά στη συσκευή που θέλετε να συνδέσετε στον λογαριασμό σας.</string>
+    <string name="sync_kserver_link_client_option_direct">Αντιγραφή και επικόλληση κωδικού σύνδεσης χειροκίνητα</string>
+    <string name="sync_kserver_link_client_option_qrcode">Σάρωση QR κωδικού από άλλη συσκευή</string>
+    <string name="sync_kserver_link_client_option_nfc">Χρησιμοποιήστε δύο συσκευές με NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">Έναρξη κάμερας</string>
+    <string name="sync_kserver_link_client_link_action">Σύνδεση συσκευής</string>
+    <string name="sync_kserver_link_client_nfc_action">Αναζήτηση διακομιστή NFC. Κρατήστε το κοντά στη συσκευή που προσφέρει κοινή χρήση πρόσβασης λογαριασμού.</string>
+</resources>

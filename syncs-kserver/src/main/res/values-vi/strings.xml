@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Máy chủ đồng bộ hóa mã nguồn mở cho Octi do nhà phát triển ứng dụng này tạo ra. Dữ liệu được mã hóa phía máy khách, chỉ thiết bị của bạn mới có thể giải mã.\\n\\nVì cả ứng dụng và máy chủ vẫn đang được cải thiện, nó có thể kém ổn định hơn các tùy chọn đồng bộ hóa khác.</string>
+    <string name="sync_kserver_add_create_action_hint">Các tài khoản không hoạt động sẽ bị xóa sau vài tuần.</string>
+    <string name="sync_kserver_add_subtitle">Thêm Google Drive mới</string>
+    <string name="sync_kserver_add_link_action_hint">Bạn sẽ cần quyền truy cập vào một thiết bị khác đã được liên kết.</string>
+    <string name="sync_kserver_about_title">Giới thiệu về KServer</string>
+    <string name="sync_kserver_about_desc">KServer là một máy chủ đồng bộ hóa mã nguồn mở (bằng Kotlin) cho Octi của darken.</string>
+    <string name="sync_kserver_about_author_action">Tác giả</string>
+    <string name="sync_kserver_about_source_action">Mã nguồn</string>
+    <string name="sync_kserver_reset_confirmation_desc">Xóa dữ liệu của thiết bị trên tài khoản này. Các thiết bị vẫn được liên kết nhưng dữ liệu đã lưu trữ của chúng sẽ bị xóa.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Thao tác này sẽ xóa thiết bị này khỏi tài khoản của bạn. Nếu đây là thiết bị được liên kết cuối cùng, tài khoản của bạn sẽ bị xóa.</string>
+    <string name="sync_kserver_link_device_action">Liên kết thiết bị mới</string>
+    <string name="sync_kserver_link_code_label">Mã liên kết</string>
+    <string name="sync_kserver_link_host_option_direct">Tạo mã văn bản mà bạn có thể gửi qua các ứng dụng khác</string>
+    <string name="sync_kserver_link_host_option_qrcode">Hiển thị mã QR</string>
+    <string name="sync_kserver_link_host_option_nfc">Liên kết thiết bị qua NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">Một thiết bị mới đã được liên kết với tài khoản của bạn.</string>
+    <string name="sync_kserver_link_host_nfc_action">Đang tìm kiếm máy khách NFC. Giữ thiết bị này gần thiết bị bạn muốn liên kết với tài khoản của mình.</string>
+    <string name="sync_kserver_link_client_option_direct">Sao chép và dán mã liên kết theo cách thủ công</string>
+    <string name="sync_kserver_link_client_option_qrcode">Quét mã QR từ thiết bị khác</string>
+    <string name="sync_kserver_link_client_option_nfc">Sử dụng hai thiết bị có NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">Khởi động máy ảnh</string>
+    <string name="sync_kserver_link_client_link_action">Liên kết thiết bị</string>
+    <string name="sync_kserver_link_client_nfc_action">Đang tìm kiếm máy chủ NFC. Giữ nó gần thiết bị đang cung cấp quyền truy cập tài khoản chia sẻ.</string>
+</resources>

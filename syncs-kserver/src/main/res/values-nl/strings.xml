@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Een open-source synchronisatieserver voor Octi gemaakt door de ontwikkelaar van deze app. Gegevens worden aan de clientzijde versleuteld, alleen je apparaten kunnen deze ontsleutelen.\n\nOmdat zowel de app als de server nog worden verbeterd, kan deze minder stabiel zijn dan andere synchronisatieopties.</string>
+    <string name="sync_kserver_add_create_action_hint">Inactieve accounts worden na een paar weken verwijderd.</string>
+    <string name="sync_kserver_add_subtitle">Nieuwe Google Drive toevoegen</string>
+    <string name="sync_kserver_add_link_action_hint">Je moet toegang hebben tot een ander apparaat dat al gekoppeld is.</string>
+    <string name="sync_kserver_about_title">Over KServer</string>
+    <string name="sync_kserver_about_desc">KServer is een open-source synchronisatieserver (in Kotlin) voor Octi door darken.</string>
+    <string name="sync_kserver_about_author_action">Auteur</string>
+    <string name="sync_kserver_about_source_action">Broncode</string>
+    <string name="sync_kserver_reset_confirmation_desc">Wis de apparaatgegevens op dit account. Apparaten blijven gekoppeld, maar hun opgeslagen gegevens worden verwijderd.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Dit verwijdert dit apparaat uit je account. Als dit het laatste gekoppelde apparaat is, wordt je account verwijderd.</string>
+    <string name="sync_kserver_link_device_action">Nieuw apparaat koppelen</string>
+    <string name="sync_kserver_link_code_label">Koppelcode</string>
+    <string name="sync_kserver_link_host_option_direct">Maak een tekstcode die je via andere apps kunt versturen</string>
+    <string name="sync_kserver_link_host_option_qrcode">Toon een QR-code</string>
+    <string name="sync_kserver_link_host_option_nfc">Koppel apparaat via NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">Er is een nieuw apparaat gekoppeld aan je account.</string>
+    <string name="sync_kserver_link_host_nfc_action">Op zoek naar NFC-client. Houd dit apparaat dicht bij het apparaat dat je aan je account wilt koppelen.</string>
+    <string name="sync_kserver_link_client_option_direct">Kopieer en plak handmatig een koppelcode</string>
+    <string name="sync_kserver_link_client_option_qrcode">Scan een QR-code van een ander apparaat</string>
+    <string name="sync_kserver_link_client_option_nfc">Gebruik twee apparaten met NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">Start camera</string>
+    <string name="sync_kserver_link_client_link_action">Koppel apparaat</string>
+    <string name="sync_kserver_link_client_nfc_action">Op zoek naar een NFC-host. Houd deze dicht bij het apparaat dat aanbiedt om accounttoegang te delen.</string>
+</resources>

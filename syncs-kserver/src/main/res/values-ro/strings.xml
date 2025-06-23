@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Un server de sincronizare open source pentru Octi realizat de dezvoltatorul acestei aplicații. Datele sunt criptate pe partea clientului, doar dispozitivele tale le pot decripta.\n\nDeoarece atât aplicația, cât și serverul sunt încă îmbunătățite, poate fi mai puțin stabil decât alte opțiuni de sincronizare.</string>
+    <string name="sync_kserver_add_create_action_hint">Conturile inactive sunt șterse după câteva săptămâni.</string>
+    <string name="sync_kserver_add_subtitle">Adaugă un Google Drive nou</string>
+    <string name="sync_kserver_add_link_action_hint">Vei avea nevoie de acces la un alt dispozitiv care este deja conectat.</string>
+    <string name="sync_kserver_about_title">Despre KServer</string>
+    <string name="sync_kserver_about_desc">KServer este un server de sincronizare open-source (în Kotlin) pentru Octi, realizat de darken.</string>
+    <string name="sync_kserver_about_author_action">Autor</string>
+    <string name="sync_kserver_about_source_action">Cod sursă</string>
+    <string name="sync_kserver_reset_confirmation_desc">Șterge datele dispozitivului pentru acest cont. Dispozitivele rămân conectate, dar datele stocate sunt eliminate.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Aceasta va elimina acest dispozitiv din contul tău. Dacă acesta este ultimul dispozitiv conectat, contul tău va fi șters.</string>
+    <string name="sync_kserver_link_device_action">Conectează dispozitiv nou</string>
+    <string name="sync_kserver_link_code_label">Cod de conectare</string>
+    <string name="sync_kserver_link_host_option_direct">Creează un cod text pe care îl poți trimite prin alte aplicații</string>
+    <string name="sync_kserver_link_host_option_qrcode">Afișează un cod QR</string>
+    <string name="sync_kserver_link_host_option_nfc">Conectează dispozitivul prin NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">Un dispozitiv nou a fost conectat la contul tău.</string>
+    <string name="sync_kserver_link_host_nfc_action">Caută client NFC. Ține acest dispozitiv aproape de cel pe care vrei să-l conectezi la contul tău.</string>
+    <string name="sync_kserver_link_client_option_direct">Copiază și lipește manual codul de conectare</string>
+    <string name="sync_kserver_link_client_option_qrcode">Scanează un cod QR de pe alt dispozitiv</string>
+    <string name="sync_kserver_link_client_option_nfc">Folosește două dispozitive cu NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">Pornește camera</string>
+    <string name="sync_kserver_link_client_link_action">Conectează dispozitiv</string>
+    <string name="sync_kserver_link_client_nfc_action">Caută gazdă NFC. Ține aproape de dispozitivul care dorește să partajeze accesul la cont.</string>
+</resources>
