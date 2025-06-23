@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">取得 Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi 沒有廣告，也不販售使用者資料。我的工作由你贊助 ❤️。</string>
     <string name="upgrade_screen_benefits_title">優點</string>
-    <string name="upgrade_screen_benefits_body">• 超過 3 台裝置 💯
-• 不同主題 🎨
-• 更多選項 ⚙️
-• 額外同步伺服器🖥️️
-• 持續開發 ☕
-• 積極進取的開發者 🧙</string>
+    <string name="upgrade_screen_benefits_body">• 超過 3 台裝置 💯\n• 不同主題 🎨\n• 更多選項 ⚙️\n• 額外同步伺服器🖥️️\n• 持續開發 ☕\n• 積極進取的開發者 🧙</string>
     <string name="upgrade_screen_how_title">選項</string>
-    <string name="upgrade_screen_how_body">您可以選擇一次性購買或更便宜的年度訂閱。
-訂閱從 14 天免費試用開始，之後每年收費一次。試用與訂閱可隨時取消。
-功能相同，只是價格模式不同。</string>
+    <string name="upgrade_screen_how_body">您可以選擇一次性購買或更便宜的年度訂閱。\n訂閱從 14 天免費試用開始，之後每年收費一次。試用與訂閱可隨時取消。\n功能相同，只是價格模式不同。</string>
     <string name="upgrade_screen_subscription_trial_action">開始 14 天免費試用</string>
     <string name="upgrade_screen_subscription_action">訂閱</string>
     <string name="upgrade_screen_subscription_action_hint">訂閱費用為 %s/年。</string>

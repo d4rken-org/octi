@@ -10,11 +10,7 @@
     <string name="upgrade_screen_how_title">該怎麼做</string>
     <string name="upgrade_screen_how_body">成為支持者並贊助開發！點擊下方按鈕以啟用所有額外功能並打開我的 GitHub Sponsors 個人頁面。</string>
     <string name="upgrade_screen_why_title">好處 🪄</string>
-    <string name="upgrade_screen_benefits_body">• 超過 3 台裝置 💯
-• 不同主題 🎨
-• 更多選項 ⚙️
-• 額外同步伺服器🖥️
-• 持續開放原始碼開發 🧙</string>
+    <string name="upgrade_screen_benefits_body">• 超過 3 台裝置 💯\n• 不同主題 🎨\n• 更多選項 ⚙️\n• 額外同步伺服器🖥️\n• 持續開放原始碼開發 🧙</string>
     <string name="upgrade_screen_sponsor_action">贊助開發</string>
     <string name="upgrade_screen_sponsor_action_hint">替代方案是廣告、分析和 Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">感謝你支持開源開發 ❤️</string>

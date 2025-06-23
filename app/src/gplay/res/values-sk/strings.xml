@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">Získať Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi nemá reklamy a nepredáva údaje používateľov. Moja práca je financovaná vami ❤️.</string>
     <string name="upgrade_screen_benefits_title">Výhody</string>
-    <string name="upgrade_screen_benefits_body">• Viac ako 3 zariadenia 💯
-• Rôzne témy 🎨
-• Viac možností ⚙️
-• Extra servery na synchronizáciu🖥️️
-• Pokračujúci vývoj ☕
-• Motivovaný vývojár 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Viac ako 3 zariadenia 💯\n• Rôzne témy 🎨\n• Viac možností ⚙️\n• Extra servery na synchronizáciu🖥️️\n• Pokračujúci vývoj ☕\n• Motivovaný vývojár 🧙</string>
     <string name="upgrade_screen_how_title">Možnosti</string>
-    <string name="upgrade_screen_how_body">Môžete si vybrať medzi jednorazovým nákupom a lacnejším ročným predplatným.
-Predplatné začína bezplatnou 14-dňovou skúšobnou dobou, po ktorej vás budeme raz ročne účtovať. Skúšobnú dobu a predplatné možno kedykoľvek zrušiť.
-Rovnaké funkcie, len iné cenové modely.</string>
+    <string name="upgrade_screen_how_body">Môžete si vybrať medzi jednorazovým nákupom a lacnejším ročným predplatným.\nPredplatné začína bezplatnou 14-dňovou skúšobnou dobou, po ktorej vás budeme raz ročne účtovať. Skúšobnú dobu a predplatné možno kedykoľvek zrušiť.\nRovnaké funkcie, len iné cenové modely.</string>
     <string name="upgrade_screen_subscription_trial_action">Začať bezplatnú 14-dňovú skúšku</string>
     <string name="upgrade_screen_subscription_action">Predplatiť</string>
     <string name="upgrade_screen_subscription_action_hint">Predplatné stojí %s ročne.</string>

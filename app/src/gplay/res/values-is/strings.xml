@@ -10,16 +10,9 @@
     <string name="upgrade_screen_title">Fá Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi er án auglýsinga og selur ekki notendagögn. Verk mitt er fjármagnað af þér ❤️.</string>
     <string name="upgrade_screen_benefits_title">Kostir</string>
-    <string name="upgrade_screen_benefits_body">• Meira en 3 tæki 💯
-• Mismunandi þemu 🎨
-• Fleiri stillingar ⚙️
-• Aukalegir samstillingarþjónar 🖥️️
-• Samfelld þróun ☕
-• Áhugasamur hugbúnaðarþróari 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Meira en 3 tæki 💯\n• Mismunandi þemu 🎨\n• Fleiri stillingar ⚙️\n• Aukalegir samstillingarþjónar 🖥️️\n• Samfelld þróun ☕\n• Áhugasamur hugbúnaðarþróari 🧙</string>
     <string name="upgrade_screen_how_title">Valkostir</string>
-    <string name="upgrade_screen_how_body">Þú getur valið milli einskiptiskaupa eða hagstæðrar árstillaga.
-Áskrift byrjar með 14 daga fría prufu, og verður rukkað árlega eftir það. Hægt er að hætta bæði áskrift og prufu hvenær sem er.
-Sömu eiginleikar, bara mismunandi verðmódel.</string>
+    <string name="upgrade_screen_how_body">Þú getur valið milli einskiptiskaupa eða hagstæðrar árstillaga.\nÁskrift byrjar með 14 daga fría prufu, og verður rukkað árlega eftir það. Hægt er að hætta bæði áskrift og prufu hvenær sem er.\nSömu eiginleikar, bara mismunandi verðmódel.</string>
     <string name="upgrade_screen_subscription_trial_action">Byrja 14 daga fría prufu</string>
     <string name="upgrade_screen_subscription_action">Gerast áskrifandi</string>
     <string name="upgrade_screen_subscription_action_hint">Áskrift kostar %s á ári.</string>
