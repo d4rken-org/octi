@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_wifi_label">Wi-Fi модул</string>
+    <string name="module_wifi_desc">Имена, пријем, IP-еви, итд.</string>
+    <string name="module_wifi_unknown_ssid_label">Непознат SSID</string>
+    <string name="module_wifi_unknown_ip_label">Непознат IP</string>
+    <string name="module_wifi_reception_good_label">Добар сигнал</string>
+    <string name="module_wifi_reception_okay_label">ОК сигнал</string>
+    <string name="module_wifi_reception_bad_label">Лош сигнал</string>
+</resources>

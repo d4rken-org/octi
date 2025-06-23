@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_wifi_label">Wi-Fi modul</string>
+    <string name="module_wifi_desc">Nevek, vétel, IP-címek stb.</string>
+    <string name="module_wifi_unknown_ssid_label">Ismeretlen SSID</string>
+    <string name="module_wifi_unknown_ip_label">Ismeretlen IP</string>
+    <string name="module_wifi_reception_good_label">Jó jel</string>
+    <string name="module_wifi_reception_okay_label">OK jel</string>
+    <string name="module_wifi_reception_bad_label">Gyenge jel</string>
+</resources>

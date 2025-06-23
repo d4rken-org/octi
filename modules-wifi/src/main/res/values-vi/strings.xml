@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_wifi_label">Mô-đun Wi-Fi</string>
+    <string name="module_wifi_desc">Tên, thu nhận, địa chỉ IP, v.v.</string>
+    <string name="module_wifi_unknown_ssid_label">SSID không xác định</string>
+    <string name="module_wifi_unknown_ip_label">IP không xác định</string>
+    <string name="module_wifi_reception_good_label">Tín hiệu tốt</string>
+    <string name="module_wifi_reception_okay_label">Tín hiệu ổn</string>
+    <string name="module_wifi_reception_bad_label">Tín hiệu kém</string>
+</resources>
