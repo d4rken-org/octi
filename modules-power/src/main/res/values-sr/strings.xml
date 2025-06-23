@@ -1,2 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_power_label">Модул напајања</string>
+    <string name="module_power_desc">Батерија, пуњење, процене, температура итд.</string>
+    <string name="module_power_battery_status_unknown">Непознат статус</string>
+    <string name="module_power_battery_status_full">Пуна</string>
+    <string name="module_power_battery_status_charging">Пуни се</string>
+    <string name="module_power_battery_status_charging_slow">Споро пуњење</string>
+    <string name="module_power_battery_status_charging_fast">Брзо пуњење</string>
+    <string name="module_power_battery_status_discharging">Празни се</string>
+    <string name="module_power_battery_status_discharging_slow">Споро пражњење</string>
+    <string name="module_power_battery_status_discharging_fast">Брзо пражњење</string>
+    <string name="module_power_battery_full_since_x">Пуњење завршено: %s</string>
+    <string name="module_power_battery_full_in_x">Потпуно пуњење: %s</string>
+    <string name="module_power_battery_empty_in_x">Пражњење: %s</string>
+    <string name="module_power_battery_estimation_na">Процена није доступна</string>
+    <string name="module_power_widget_description">Прикажи статус батерије синхронизованих уређаја.</string>
+    <string name="module_power_alerts_title">Упозорења о батерији</string>
+    <string name="module_power_alerts_lowbattery_title">Слаба батерија</string>
+    <string name="module_power_alerts_lowbattery_description">Добићете обавештење када батерија овог уређаја падне испод наведеног прага. Подесите жељени проценат за упозорења.</string>
+    <string name="module_power_alerts_lowbattery_slider_value_caption">Обавести када батерија падне испод %s</string>
+    <string name="module_power_alerts_lowbattery_disabled_caption">Не обавештавај када је батерија слаба</string>
+    <string name="module_power_alerts_notification_channel_label">Упозорења о батерији</string>
+    <string name="module_power_alerts_notification_battery_low_title">Слаба батерија: %s</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s је на %3$d%% батерије (&lt;%2$d%%) и не пуни се.</string>
+</resources>

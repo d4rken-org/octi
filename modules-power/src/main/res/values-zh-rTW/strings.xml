@@ -1,2 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_power_label">電源模組</string>
+    <string name="module_power_desc">電池、充電、估算、溫度等。</string>
+    <string name="module_power_battery_status_unknown">未知狀態</string>
+    <string name="module_power_battery_status_full">充滿</string>
+    <string name="module_power_battery_status_charging">充電中</string>
+    <string name="module_power_battery_status_charging_slow">緩慢充電中</string>
+    <string name="module_power_battery_status_charging_fast">快速充電中</string>
+    <string name="module_power_battery_status_discharging">放電中</string>
+    <string name="module_power_battery_status_discharging_slow">緩慢放電中</string>
+    <string name="module_power_battery_status_discharging_fast">快速放電中</string>
+    <string name="module_power_battery_full_since_x">充電完成：%s</string>
+    <string name="module_power_battery_full_in_x">充滿電：%s</string>
+    <string name="module_power_battery_empty_in_x">沒電：%s</string>
+    <string name="module_power_battery_estimation_na">無法估算</string>
+    <string name="module_power_widget_description">顯示您同步裝置的電池狀態。</string>
+    <string name="module_power_alerts_title">電池警示</string>
+    <string name="module_power_alerts_lowbattery_title">低電量</string>
+    <string name="module_power_alerts_lowbattery_description">當此裝置的電池低於您指定的門檻時取得通知。可自訂低電量警示的百分比。</string>
+    <string name="module_power_alerts_lowbattery_slider_value_caption">當電池低於 %s 時通知</string>
+    <string name="module_power_alerts_lowbattery_disabled_caption">電池電量低時不要通知</string>
+    <string name="module_power_alerts_notification_channel_label">電池警示</string>
+    <string name="module_power_alerts_notification_battery_low_title">低電量：%s</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s 的電池剩餘 %3$d%%（&lt;%2$d%%），且未充電。</string>
+</resources>
