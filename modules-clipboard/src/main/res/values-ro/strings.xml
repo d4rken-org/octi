@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Modul clipboard</string>
+    <string name="module_clipboard_desc">Copiază și lipește text între dispozitive.</string>
+    <string name="module_clipboard_copied_octi_to_os">Copiat din Octi în clipboard-ul sistemului</string>
+    <string name="module_clipboard_copied_os_to_octi">Copiat din sistem în clipboard-ul Octi</string>
+</resources>

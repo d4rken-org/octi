@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Urklippsmodul</string>
+    <string name="module_clipboard_desc">Kopiera och klistra in text mellan enheter.</string>
+    <string name="module_clipboard_copied_octi_to_os">Kopierat från Octi till systemets urklipp</string>
+    <string name="module_clipboard_copied_os_to_octi">Kopierat från systemet till Octis urklipp</string>
+</resources>

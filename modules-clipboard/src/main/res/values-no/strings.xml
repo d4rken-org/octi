@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Utklippstavlemodul</string>
+    <string name="module_clipboard_desc">Kopier og lim inn tekst mellom enheter.</string>
+    <string name="module_clipboard_copied_octi_to_os">Kopiert fra Octi til systemets utklippstavle</string>
+    <string name="module_clipboard_copied_os_to_octi">Kopiert fra systemet til Octi\'s utklippstavle</string>
+</resources>

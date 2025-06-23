@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Lỗi</string>
+    <string name="general_error_no_compatible_app_found_msg">Không tìm thấy ứng dụng tương thích để xử lý yêu cầu này.</string>
+    <string name="general_share_action">Chia sẻ</string>
+    <string name="general_done_action">Xong</string>
+    <string name="general_copy_action">Sao chép</string>
+    <string name="general_remove_action">Xóa</string>
+    <string name="general_cancel_action">Hủy</string>
+    <string name="general_thanks_action">Cảm ơn</string>
+    <string name="general_gotit_action">Đã hiểu</string>
+    <string name="general_na_label">Không áp dụng</string>
+    <string name="general_empty_label">Trống</string>
+    <string name="general_dismiss_action">Đóng</string>
+    <string name="general_maybe_later_action">Có thể sau</string>
+    <string name="general_manage_action">Quản lý</string>
+    <string name="general_quota_label">Hạn mức</string>
+    <string name="general_upgrade_action">Nâng cấp</string>
+    <string name="general_update_action">Cập nhật</string>
+    <string name="general_donate_action">Quyên góp</string>
+    <string name="general_check_action">Kiểm tra</string>
+    <string name="general_internal_not_available_msg">Kết nối Internet không khả dụng</string>
+    <string name="general_refresh_action">Làm mới</string>
+    <string name="general_continue">Tiếp tục</string>
+    <string name="general_show_details_action">Hiển thị chi tiết</string>
+</resources>

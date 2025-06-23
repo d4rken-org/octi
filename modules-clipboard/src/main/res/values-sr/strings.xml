@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Модул клипборда</string>
+    <string name="module_clipboard_desc">Копирај и налепи текст између уређаја.</string>
+    <string name="module_clipboard_copied_octi_to_os">Окти копиран у системски клипборд</string>
+    <string name="module_clipboard_copied_os_to_octi">Систем копиран у Окти-јев клипборд</string>
+</resources>

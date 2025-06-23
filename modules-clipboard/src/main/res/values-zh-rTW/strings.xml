@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">剪貼簿模組</string>
+    <string name="module_clipboard_desc">在裝置間複製與貼上文字。</string>
+    <string name="module_clipboard_copied_octi_to_os">已從 Octi 複製到系統剪貼簿</string>
+    <string name="module_clipboard_copied_os_to_octi">已從系統複製到 Octi 剪貼簿</string>
+</resources>

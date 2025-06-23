@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Klipbordmodule</string>
+    <string name="module_clipboard_desc">Kopieer en plak teks tussen toestelle.</string>
+    <string name="module_clipboard_copied_octi_to_os">Het van Octi na stelselklipbord gekopieer</string>
+    <string name="module_clipboard_copied_os_to_octi">Het van stelsel na Octi-klipbord gekopieer</string>
+</resources>

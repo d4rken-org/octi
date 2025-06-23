@@ -12,7 +12,7 @@
     <string name="general_gotit_action">Compris</string>
     <string name="general_na_label">N/A</string>
     <string name="general_empty_label">Vide</string>
-    <string name="general_dismiss_action">Ignorer</string>
+    <string name="general_dismiss_action">Fermer</string>
     <string name="general_maybe_later_action">Peut-être plus tard</string>
     <string name="general_manage_action">Gérer</string>
     <string name="general_quota_label">Quota</string>

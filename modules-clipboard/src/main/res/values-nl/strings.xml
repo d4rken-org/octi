@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Klembordmodule</string>
+    <string name="module_clipboard_desc">Kopieer en plak tekst tussen apparaten.</string>
+    <string name="module_clipboard_copied_octi_to_os">Octi gekopieerd naar het systeemklembord</string>
+    <string name="module_clipboard_copied_os_to_octi">Systeem gekopieerd naar Octi\'s klembord</string>
+</resources>

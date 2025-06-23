@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">오류</string>
+    <string name="general_error_no_compatible_app_found_msg">이 요청을 처리할 호환 가능한 앱을 찾을 수 없습니다.</string>
+    <string name="general_share_action">공유</string>
+    <string name="general_done_action">완료</string>
+    <string name="general_copy_action">복사</string>
+    <string name="general_remove_action">제거</string>
+    <string name="general_cancel_action">취소</string>
+    <string name="general_thanks_action">감사합니다</string>
+    <string name="general_gotit_action">알겠습니다</string>
+    <string name="general_na_label">해당 없음</string>
+    <string name="general_empty_label">비어 있음</string>
+    <string name="general_dismiss_action">닫기</string>
+    <string name="general_maybe_later_action">나중에</string>
+    <string name="general_manage_action">관리</string>
+    <string name="general_quota_label">쿼터</string>
+    <string name="general_upgrade_action">업그레이드</string>
+    <string name="general_update_action">업데이트</string>
+    <string name="general_donate_action">기부</string>
+    <string name="general_check_action">확인</string>
+    <string name="general_internal_not_available_msg">인터넷 연결을 사용할 수 없습니다</string>
+    <string name="general_refresh_action">새로고침</string>
+    <string name="general_continue">계속</string>
+    <string name="general_show_details_action">자세히 보기</string>
+</resources>

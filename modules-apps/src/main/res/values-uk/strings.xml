@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_apps_label">Модуль додатків</string>
+    <string name="module_apps_desc">Інформація про встановлені додатки.</string>
+    <string name="module_apps_x_installed">%d встановлених додатків</string>
+    <string name="module_apps_last_installed_x">Останній встановлений додаток: %s</string>
+    <string name="module_apps_list_title">Встановлені додатки</string>
+    <string name="module_apps_installer_label">Джерело встановлення додатка</string>
+    <string name="module_apps_installer_desc">Синхронізуйте та додайте інформацію про джерело, з якого було встановлено кожен додаток.</string>
+</resources>

@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Módulo da área de transferência</string>
+    <string name="module_clipboard_desc">Copie e cole texto entre dispositivos.</string>
+    <string name="module_clipboard_copied_octi_to_os">Copiado do Octi para a área de transferência do sistema</string>
+    <string name="module_clipboard_copied_os_to_octi">Copiado do sistema para a área de transferência do Octi</string>
+</resources>

@@ -12,10 +12,10 @@
     <string name="general_gotit_action">Capito</string>
     <string name="general_na_label">N/A</string>
     <string name="general_empty_label">Vuoto</string>
-    <string name="general_dismiss_action">Ignora</string>
+    <string name="general_dismiss_action">Chiudi</string>
     <string name="general_maybe_later_action">Forse dopo</string>
     <string name="general_manage_action">Gestisci</string>
-    <string name="general_quota_label">Percentuale</string>
+    <string name="general_quota_label">Quota</string>
     <string name="general_upgrade_action">Aggiorna</string>
     <string name="general_update_action">Aggiorna</string>
     <string name="general_donate_action">Dona</string>
