@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="gdrive_account_scope_error_label">權限錯誤</string>
+    <string name="gdrive_account_scope_error_description">Octi 尚未被授予必要的存取範圍。請重試並檢查權限是否已被授予。</string>
+    <string name="gdrive_account_lockout_error_label">鎖定錯誤</string>
+    <string name="gdrive_account_lockout_error_description">此裝置已被鎖定，無法再存取 Google Drive。其對您 Google 帳戶的存取已被撤銷。請重新授權並再試一次。</string>
+    <string name="sync_gdrive_type_label">Google 雲端硬碟</string>
+    <string name="sync_gdrive_appdata_label">App 資料範圍</string>
+    <string name="sync_gdrive_type_appdata_description">資料會被放到 Google 雲端硬碟。此變體會使用「app-data」範圍。只授權此 app 專屬的新資料夾。該資料夾在您的雲端硬碟中不可見。這類似於 WhatsApp 備份的運作方式。</string>
+    <string name="sync_gdrive_add_label">新增 Google Drive</string>
+    <string name="sync_gdrive_add_description">請點下方登入按鈕以設定 Google Drive 存取權限。</string>
+    <string name="sync_gdrive_reset_confirmation_desc">重設所有儲存在 Google 雲端硬碟上的 Octi 資料。您的裝置將維持登入 Google 雲端硬碟。</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">從 Google 雲端硬碟登出並刪除與此裝置相關的資料。</string>
+    <string name="sync_gdrive_error_no_account_on_device">此裝置尚未登入任何 Google 帳戶。</string>
+</resources>

@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="gdrive_account_scope_error_label">Erro de permissão</string>
+    <string name="gdrive_account_scope_error_description">O Octi não recebeu o escopo de acesso necessário. Tente novamente e verifique se as permissões estão sendo concedidas.</string>
+    <string name="gdrive_account_lockout_error_label">Erro de bloqueio</string>
+    <string name="gdrive_account_lockout_error_description">Este dispositivo foi bloqueado e não pode mais acessar o Google Drive. O acesso dele à sua conta Google foi revogado. Conceda o acesso novamente e tente outra vez.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">Escopo de dados do app</string>
+    <string name="sync_gdrive_type_appdata_description">Os dados são armazenados no Google Drive. Esta variante específica usa o escopo "app-data". O acesso é concedido apenas a uma nova pasta exclusiva para este app. A pasta não é visível no seu drive. É semelhante a como funcionam os backups do WhatsApp.</string>
+    <string name="sync_gdrive_add_label">Adicionar novo Google Drive</string>
+    <string name="sync_gdrive_add_description">Clique no botão de login abaixo para configurar o acesso ao Google Drive.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Redefinir todos os dados do Octi armazenados no Google Drive. Seu dispositivo permanece conectado ao Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Desconectar do Google Drive e excluir os dados relacionados a este dispositivo.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Este dispositivo não está conectado a nenhuma conta Google.</string>
+</resources>
