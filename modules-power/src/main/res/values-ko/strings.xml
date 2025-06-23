@@ -1,2 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_power_label">전원 모듈</string>
+    <string name="module_power_desc">배터리, 충전, 예상, 온도 등</string>
+    <string name="module_power_battery_status_unknown">알 수 없음</string>
+    <string name="module_power_battery_status_full">완전 충전</string>
+    <string name="module_power_battery_status_charging">충전 중</string>
+    <string name="module_power_battery_status_charging_slow">느리게 충전 중</string>
+    <string name="module_power_battery_status_charging_fast">빠르게 충전 중</string>
+    <string name="module_power_battery_status_discharging">방전 중</string>
+    <string name="module_power_battery_status_discharging_slow">느리게 방전 중</string>
+    <string name="module_power_battery_status_discharging_fast">빠르게 방전 중</string>
+    <string name="module_power_battery_full_since_x">충전 완료: %s</string>
+    <string name="module_power_battery_full_in_x">완전 충전: %s</string>
+    <string name="module_power_battery_empty_in_x">배터리 소모: %s</string>
+    <string name="module_power_battery_estimation_na">예상 정보 없음</string>
+    <string name="module_power_widget_description">동기화된 기기의 배터리 상태를 표시합니다.</string>
+    <string name="module_power_alerts_title">배터리 알림</string>
+    <string name="module_power_alerts_lowbattery_title">배터리 부족</string>
+    <string name="module_power_alerts_lowbattery_description">이 기기의 배터리가 지정된 임계값 아래로 내려가면 알림을 받습니다. 알림 비율을 설정하세요.</string>
+    <string name="module_power_alerts_lowbattery_slider_value_caption">배터리가 %s 이하일 때 알림 표시</string>
+    <string name="module_power_alerts_lowbattery_disabled_caption">배터리가 낮을 때 알림을 표시하지 않음</string>
+    <string name="module_power_alerts_notification_channel_label">배터리 알림</string>
+    <string name="module_power_alerts_notification_battery_low_title">배터리 부족: %s</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s의 배터리가 %3$d%% (&lt;%2$d%%)이며 충전 중이 아닙니다.</string>
+</resources>

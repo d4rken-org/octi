@@ -1,2 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_power_label">Moduł zasilania</string>
+    <string name="module_power_desc">Bateria, ładowanie, szacunki, temperatura itp.</string>
+    <string name="module_power_battery_status_unknown">Nieznany status</string>
+    <string name="module_power_battery_status_full">Pełna</string>
+    <string name="module_power_battery_status_charging">Ładowanie</string>
+    <string name="module_power_battery_status_charging_slow">Wolne ładowanie</string>
+    <string name="module_power_battery_status_charging_fast">Szybkie ładowanie</string>
+    <string name="module_power_battery_status_discharging">Rozładowywanie</string>
+    <string name="module_power_battery_status_discharging_slow">Wolne rozładowywanie</string>
+    <string name="module_power_battery_status_discharging_fast">Szybkie rozładowywanie</string>
+    <string name="module_power_battery_full_since_x">Ładowanie zakończone: %s</string>
+    <string name="module_power_battery_full_in_x">Pełne naładowanie: %s</string>
+    <string name="module_power_battery_empty_in_x">Brak energii: %s</string>
+    <string name="module_power_battery_estimation_na">Szacunek niedostępny</string>
+    <string name="module_power_widget_description">Wyświetl stan baterii Twoich zsynchronizowanych urządzeń.</string>
+    <string name="module_power_alerts_title">Alerty baterii</string>
+    <string name="module_power_alerts_lowbattery_title">Niski poziom baterii</string>
+    <string name="module_power_alerts_lowbattery_description">Otrzymuj powiadomienie, gdy bateria tego urządzenia spadnie poniżej określonego progu. Ustaw preferowany procent do alertów.</string>
+    <string name="module_power_alerts_lowbattery_slider_value_caption">Powiadom, gdy bateria jest poniżej %s</string>
+    <string name="module_power_alerts_lowbattery_disabled_caption">Nie powiadamiaj, gdy bateria jest niska</string>
+    <string name="module_power_alerts_notification_channel_label">Alerty baterii</string>
+    <string name="module_power_alerts_notification_battery_low_title">Niski poziom baterii: %s</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s ma %3$d%% baterii (&lt;%2$d%%) i nie ładuje się.</string>
+</resources>

@@ -1,2 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_power_label">Virta-moduuli</string>
+    <string name="module_power_desc">Akku, lataus, arviot, lämpötila ym.</string>
+    <string name="module_power_battery_status_unknown">Tila tuntematon</string>
+    <string name="module_power_battery_status_full">Täynnä</string>
+    <string name="module_power_battery_status_charging">Lataa</string>
+    <string name="module_power_battery_status_charging_slow">Lataa hitaasti</string>
+    <string name="module_power_battery_status_charging_fast">Lataa nopeasti</string>
+    <string name="module_power_battery_status_discharging">Purkaa</string>
+    <string name="module_power_battery_status_discharging_slow">Purkaa hitaasti</string>
+    <string name="module_power_battery_status_discharging_fast">Purkaa nopeasti</string>
+    <string name="module_power_battery_full_since_x">Lataus päättynyt: %s</string>
+    <string name="module_power_battery_full_in_x">Täyteen ladattu: %s</string>
+    <string name="module_power_battery_empty_in_x">Virta loppuu: %s</string>
+    <string name="module_power_battery_estimation_na">Arvio ei saatavilla</string>
+    <string name="module_power_widget_description">Näytä synkronoitujen laitteidesi akun tila.</string>
+    <string name="module_power_alerts_title">Akkuilmoitukset</string>
+    <string name="module_power_alerts_lowbattery_title">Alhainen akun varaus</string>
+    <string name="module_power_alerts_lowbattery_description">Saat ilmoituksen, kun tämän laitteen akku laskee määrittämäsi raja-arvon alle. Aseta ilmoitusten prosenttiraja mieleiseksesi.</string>
+    <string name="module_power_alerts_lowbattery_slider_value_caption">Ilmoita, kun akun varaus on alle %s</string>
+    <string name="module_power_alerts_lowbattery_disabled_caption">Älä ilmoita, kun akun varaus on alhainen</string>
+    <string name="module_power_alerts_notification_channel_label">Akkuilmoitukset</string>
+    <string name="module_power_alerts_notification_battery_low_title">Alhainen akun varaus: %s</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s on %3$d%% akkua (&lt;%2$d%%) eikä lataudu.</string>
+</resources>
