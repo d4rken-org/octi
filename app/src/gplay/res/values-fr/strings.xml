@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <string name="upgrades_gplay_unavailable_error_title">Google Play n'est pas disponible</string>
-    <string name="upgrades_gplay_unavailable_error_description">Octi ne peut pas se connecter à Google Play. Google Play est-il installé et à jour ? Votre compte Google est-il connecté ? Essayez de vider le cache de l'application Google Play et de redémarrer votre appareil.</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play n\'est pas disponible</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi ne peut pas se connecter à Google Play. Google Play est-il installé et à jour ? Votre compte Google est-il connecté ? Essayez de vider le cache de l\'application Google Play et de redémarrer votre appareil.</string>
     <string name="upgrades_no_purchases_found_check_account">Aucun achat trouvé. Utilisez-vous le bon compte ?</string>
     <string name="upgrades_dashcard_title">Obtenir Octi Pro</string>
     <string name="upgrades_dashcard_body">Mettez à niveau pour débloquer des fonctionnalités supplémentaires et soutenir le développement !</string>
     <string name="upgrades_dashcard_upgrade_action">Mettre à niveau</string>
     <string name="upgrade_screen_title">Obtenir Octi Pro</string>
-    <string name="upgrade_screen_preamble">Octi n'a pas de publicités et ne vend pas les données des utilisateurs. Mon travail est financé par vous ❤️.</string>
+    <string name="upgrade_screen_preamble">Octi n\'a pas de publicités et ne vend pas les données des utilisateurs. Mon travail est financé par vous ❤️.</string>
     <string name="upgrade_screen_benefits_title">Avantages</string>
     <string name="upgrade_screen_benefits_body">• Plus de 3 appareils 💯
 • Différents thèmes 🎨
-• Plus d'options ⚙️
+• Plus d\'options ⚙️
 • Serveurs de synchronisation supplémentaires🖥️️
 • Développement continu ☕
 • Un développeur motivé 🧙</string>
     <string name="upgrade_screen_how_title">Options</string>
     <string name="upgrade_screen_how_body">Vous pouvez choisir entre un achat unique et un abonnement annuel moins cher.
-L'abonnement commence par un essai gratuit de 14 jours, après quoi vous serez débité une fois par an. Essai et abonnement annulables à tout moment.
+L\'abonnement commence par un essai gratuit de 14 jours, après quoi vous serez débité une fois par an. Essai et abonnement annulables à tout moment.
 Même fonctionnalités, juste différents modèles tarifaires.</string>
-    <string name="upgrade_screen_subscription_trial_action">Commencer l'essai gratuit de 14 jours</string>
-    <string name="upgrade_screen_subscription_action">S'abonner</string>
-    <string name="upgrade_screen_subscription_action_hint">L'abonnement coûte %s par an.</string>
+    <string name="upgrade_screen_subscription_trial_action">Commencer l\'essai gratuit de 14 jours</string>
+    <string name="upgrade_screen_subscription_action">S\'abonner</string>
+    <string name="upgrade_screen_subscription_action_hint">L\'abonnement coûte %s par an.</string>
     <string name="upgrade_screen_iap_action">Achat unique</string>
-    <string name="upgrade_screen_iap_action_hint">L'achat unique coûte %s.</string>
+    <string name="upgrade_screen_iap_action_hint">L\'achat unique coûte %s.</string>
     <string name="upgrade_screen_thanks_toast">Vous êtes le meilleur ! ❤️</string>
-    <string name="upgrade_screen_restore_purchase_action">Restaurer l'achat</string>
+    <string name="upgrade_screen_restore_purchase_action">Restaurer l\'achat</string>
     <string name="upgrade_screen_restore_purchase_message">Votre mise à niveau est valable sur les appareils utilisant le même compte Google.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Conseils de dépannage pour les mises à niveau non reconnues :</string>
     <string name="upgrade_screen_restore_sync_patience_hint">La synchronisation Play Store peut prendre du temps. Essayez de redémarrer, vider le cache de Google Play ou attendez simplement.</string>
-    <string name="upgrade_screen_restore_multiaccount_hint">Plusieurs comptes peuvent perturber Google Play. Déconnectez-vous des autres comptes ou installez via le site Web Google Play, ce qui force l'association avec un compte spécifique.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Plusieurs comptes peuvent perturber Google Play. Déconnectez-vous des autres comptes ou installez via le site Web Google Play, ce qui force l\'association avec un compte spécifique.</string>
 </resources>

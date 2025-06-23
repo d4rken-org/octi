@@ -30,5 +30,5 @@
     <string name="upgrade_screen_restore_purchase_message">Ваша покупка дійсна на всіх пристроях із цим же Google-акаунтом.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Поради щодо усунення проблем з невизнаними оновленнями:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Синхронізація Play Store може зайняти деякий час. Спробуйте перезапустити, очистити кеш Google Play або просто зачекайте.</string>
-    <string name="upgrade_screen_restore_multiaccount_hint">Декілька акаунтів можуть заплутати Google Play. Вийдіть з інших акаунтів або встановлюйте через сайт Google Play, щоб прив'язати до конкретного акаунта.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Декілька акаунтів можуть заплутати Google Play. Вийдіть з інших акаунтів або встановлюйте через сайт Google Play, щоб прив\'язати до конкретного акаунта.</string>
 </resources>

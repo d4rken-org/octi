@@ -27,7 +27,7 @@ Na gnéithe céanna, ach samhlacha praghsála éagsúla.</string>
     <string name="upgrade_screen_iap_action_hint">Cosnaíonn an ceannach aonuaire %s.</string>
     <string name="upgrade_screen_thanks_toast">Is tú an duine is fearr! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Aisghabhann an ceannach</string>
-    <string name="upgrade_screen_restore_purchase_message">Tá d'uasghrádú bailí ar ghléasanna leis an gcuntas Google céanna.</string>
+    <string name="upgrade_screen_restore_purchase_message">Tá d\'uasghrádú bailí ar ghléasanna leis an gcuntas Google céanna.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Leideanna fabhtcheartaithe le haghaidh uasghráduithe gan aithint:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">D’fhéadfadh sé tamall a ghlacadh chun sioncrónú leis an Play Store. Bain triail as atosú, taisce Google Play a ghlanadh nó fan go simplí.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Is féidir le cuntais iolracha mearbhall a chur ar Google Play. Logáil amach as cuntais eile nó suiteáil tríd an suíomh Gréasáin Google Play chun nasc le cuntas áirithe a éileamh.</string>

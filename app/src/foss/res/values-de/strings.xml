@@ -3,10 +3,15 @@
     <string name="app_name_upgraded">Octi FOSS</string>
     <string name="upgrade_feature_requires_pro">Erfordert Octi Pro</string>
     <string name="upgrades_dashcard_title">Hole dir Octi Pro</string>
-    <string name="upgrades_dashcard_upgrade_action"></string>
+    <string name="upgrades_dashcard_body">Schalte zusätzliche Funktionen frei und unterstütze die Weiterentwicklung!</string>
+    <string name="upgrades_dashcard_upgrade_action">Erweitern</string>
     <string name="upgrade_screen_title">Erweitere auf Octi Pro</string>
-    <string name="upgrade_screen_preamble">Octi hat keine Werbung und verkauft keine Nutzerdaten. Mein Werk wird von dir finanziert ❤️</string>
+    <string name="upgrade_screen_preamble">Octi hat keine Werbung und verkauft keine Nutzerdaten. Meine Arbeit wird von dir finanziert ❤️</string>
     <string name="upgrade_screen_how_title">Was ist zu tun</string>
-    <string name="upgrade_screen_why_title">Geschenke</string>
+    <string name="upgrade_screen_how_body">Werde ein Förderer und sponsere die Entwicklung! Tippe auf die Schaltfläche unten, um alle zusätzlichen Funktionen zu aktivieren und mein GitHub-Sponsorenprofil zu öffnen.</string>
+    <string name="upgrade_screen_why_title">Vorteile 🪄</string>
+    <string name="upgrade_screen_benefits_body">• Mehr als 3 Geräte 💯\n• Verschiedene Designs 🎨\n• Mehr Optionen ⚙️\n• Zusätzliche Sync-Server🖥️\n• Kontinuierliche Open-Source-Entwicklung 🧙</string>
+    <string name="upgrade_screen_sponsor_action">Entwicklung sponsern</string>
+    <string name="upgrade_screen_sponsor_action_hint">Die Alternative sind Anzeigen, Analysen und Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Vielen Dank für die Unterstützung von Open-Source Software ❤️</string>
 </resources>
