@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Moduł schowka</string>
+    <string name="module_clipboard_desc">Kopiuj i wklejaj tekst między urządzeniami.</string>
+    <string name="module_clipboard_copied_octi_to_os">Skopiowano z Octi do schowka systemu</string>
+    <string name="module_clipboard_copied_os_to_octi">Skopiowano z systemu do schowka Octi</string>
+</resources>

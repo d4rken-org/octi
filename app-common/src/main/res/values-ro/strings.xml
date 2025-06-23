@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Eroare</string>
+    <string name="general_error_no_compatible_app_found_msg">Nu a fost găsită nicio aplicație compatibilă pentru a gestiona această solicitare.</string>
+    <string name="general_share_action">Partajează</string>
+    <string name="general_done_action">Gata</string>
+    <string name="general_copy_action">Copiază</string>
+    <string name="general_remove_action">Șterge</string>
+    <string name="general_cancel_action">Anulează</string>
+    <string name="general_thanks_action">Mulțumesc</string>
+    <string name="general_gotit_action">Am înțeles</string>
+    <string name="general_na_label">N/A</string>
+    <string name="general_empty_label">Gol</string>
+    <string name="general_dismiss_action">Închide</string>
+    <string name="general_maybe_later_action">Poate mai târziu</string>
+    <string name="general_manage_action">Gestionează</string>
+    <string name="general_quota_label">Cotă</string>
+    <string name="general_upgrade_action">Upgradează</string>
+    <string name="general_update_action">Actualizează</string>
+    <string name="general_donate_action">Donează</string>
+    <string name="general_check_action">Verifică</string>
+    <string name="general_internal_not_available_msg">Conexiune la internet indisponibilă</string>
+    <string name="general_refresh_action">Reîmprospătează</string>
+    <string name="general_continue">Continuă</string>
+    <string name="general_show_details_action">Afișează detalii</string>
+</resources>

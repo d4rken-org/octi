@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_apps_label">應用程式模組</string>
+    <string name="module_apps_desc">已安裝應用程式的資訊。</string>
+    <string name="module_apps_x_installed">已安裝 %d 個應用程式</string>
+    <string name="module_apps_last_installed_x">最後安裝的應用程式：%s</string>
+    <string name="module_apps_list_title">已安裝的應用程式</string>
+    <string name="module_apps_installer_label">應用程式安裝來源</string>
+    <string name="module_apps_installer_desc">同步並包含每個應用程式安裝來源的資訊。</string>
+</resources>

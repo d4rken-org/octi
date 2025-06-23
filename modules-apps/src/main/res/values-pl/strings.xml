@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_apps_label">Moduł aplikacji</string>
+    <string name="module_apps_desc">Informacje o zainstalowanych aplikacjach.</string>
+    <string name="module_apps_x_installed">%d zainstalowanych aplikacji</string>
+    <string name="module_apps_last_installed_x">Ostatnio zainstalowana aplikacja: %s</string>
+    <string name="module_apps_list_title">Zainstalowane aplikacje</string>
+    <string name="module_apps_installer_label">Źródło instalacji aplikacji</string>
+    <string name="module_apps_installer_desc">Synchronizuj i uwzględnij informacje o źródle, z którego zainstalowano każdą aplikację.</string>
+</resources>

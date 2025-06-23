@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_apps_label">Appmodul</string>
+    <string name="module_apps_desc">Informasjon om installerte apper.</string>
+    <string name="module_apps_x_installed">%d apper installert</string>
+    <string name="module_apps_last_installed_x">Sist installerte app: %s</string>
+    <string name="module_apps_list_title">Installerte apper</string>
+    <string name="module_apps_installer_label">Appens installasjonskilde</string>
+    <string name="module_apps_installer_desc">Synkroniser og inkluder informasjon om kilden hver app ble installert fra.</string>
+</resources>

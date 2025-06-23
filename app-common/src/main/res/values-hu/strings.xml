@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Hiba</string>
+    <string name="general_error_no_compatible_app_found_msg">Nem található kompatibilis alkalmazás ehhez a kéréshez.</string>
+    <string name="general_share_action">Megosztás</string>
+    <string name="general_done_action">Kész</string>
+    <string name="general_copy_action">Másolás</string>
+    <string name="general_remove_action">Eltávolítás</string>
+    <string name="general_cancel_action">Mégse</string>
+    <string name="general_thanks_action">Köszönöm</string>
+    <string name="general_gotit_action">Értettem</string>
+    <string name="general_na_label">N/A</string>
+    <string name="general_empty_label">Üres</string>
+    <string name="general_dismiss_action">Bezárás</string>
+    <string name="general_maybe_later_action">Talán később</string>
+    <string name="general_manage_action">Kezelés</string>
+    <string name="general_quota_label">Kvóta</string>
+    <string name="general_upgrade_action">Frissítés</string>
+    <string name="general_update_action">Frissítés</string>
+    <string name="general_donate_action">Adományozás</string>
+    <string name="general_check_action">Ellenőrzés</string>
+    <string name="general_internal_not_available_msg">Nincs elérhető internetkapcsolat</string>
+    <string name="general_refresh_action">Frissítés</string>
+    <string name="general_continue">Folytatás</string>
+    <string name="general_show_details_action">Részletek megjelenítése</string>
+</resources>

@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Σφάλμα</string>
+    <string name="general_error_no_compatible_app_found_msg">Δεν βρέθηκε συμβατή εφαρμογή για να χειριστεί αυτό το αίτημα.</string>
+    <string name="general_share_action">Κοινοποίηση</string>
+    <string name="general_done_action">Τέλος</string>
+    <string name="general_copy_action">Αντιγραφή</string>
+    <string name="general_remove_action">Αφαίρεση</string>
+    <string name="general_cancel_action">Ακύρωση</string>
+    <string name="general_thanks_action">Ευχαριστώ</string>
+    <string name="general_gotit_action">Κατάλαβα</string>
+    <string name="general_na_label">Χ/Δ</string>
+    <string name="general_empty_label">Κενό</string>
+    <string name="general_dismiss_action">Κλείσιμο</string>
+    <string name="general_maybe_later_action">Ίσως αργότερα</string>
+    <string name="general_manage_action">Διαχείριση</string>
+    <string name="general_quota_label">Ποσόστωση</string>
+    <string name="general_upgrade_action">Αναβάθμιση</string>
+    <string name="general_update_action">Ενημέρωση</string>
+    <string name="general_donate_action">Δωρεά</string>
+    <string name="general_check_action">Έλεγχος</string>
+    <string name="general_internal_not_available_msg">Η σύνδεση στο διαδίκτυο δεν είναι διαθέσιμη</string>
+    <string name="general_refresh_action">Ανανέωση</string>
+    <string name="general_continue">Συνέχεια</string>
+    <string name="general_show_details_action">Εμφάνιση λεπτομερειών</string>
+</resources>

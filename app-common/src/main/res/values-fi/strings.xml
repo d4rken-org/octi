@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Virhe</string>
+    <string name="general_error_no_compatible_app_found_msg">Yhteensopivaa sovellusta ei löytynyt tämän pyynnön käsittelemiseksi.</string>
+    <string name="general_share_action">Jaa</string>
+    <string name="general_done_action">Valmis</string>
+    <string name="general_copy_action">Kopioi</string>
+    <string name="general_remove_action">Poista</string>
+    <string name="general_cancel_action">Peruuta</string>
+    <string name="general_thanks_action">Kiitos</string>
+    <string name="general_gotit_action">Selvä</string>
+    <string name="general_na_label">E/T</string>
+    <string name="general_empty_label">Tyhjä</string>
+    <string name="general_dismiss_action">Sulje</string>
+    <string name="general_maybe_later_action">Ehkä myöhemmin</string>
+    <string name="general_manage_action">Hallinnoi</string>
+    <string name="general_quota_label">Kiintiö</string>
+    <string name="general_upgrade_action">Päivitä</string>
+    <string name="general_update_action">Päivitä</string>
+    <string name="general_donate_action">Lahjoita</string>
+    <string name="general_check_action">Tarkista</string>
+    <string name="general_internal_not_available_msg">Internet-yhteys ei ole käytettävissä</string>
+    <string name="general_refresh_action">Päivitä</string>
+    <string name="general_continue">Jatka</string>
+    <string name="general_show_details_action">Näytä tiedot</string>
+</resources>

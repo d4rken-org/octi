@@ -18,7 +18,7 @@
     <string name="general_quota_label">Quota</string>
     <string name="general_upgrade_action">Millora</string>
     <string name="general_update_action">Actualitza</string>
-    <string name="general_donate_action">Donacions</string>
+    <string name="general_donate_action">Donació</string>
     <string name="general_check_action">Comprova</string>
     <string name="general_internal_not_available_msg">Connexió a Internet no disponible</string>
     <string name="general_refresh_action">Actualitza</string>

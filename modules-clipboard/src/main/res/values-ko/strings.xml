@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">클립보드 모듈</string>
+    <string name="module_clipboard_desc">기기 간에 텍스트를 복사하고 붙여넣으세요.</string>
+    <string name="module_clipboard_copied_octi_to_os">Octi에서 시스템 클립보드로 복사됨</string>
+    <string name="module_clipboard_copied_os_to_octi">시스템에서 Octi 클립보드로 복사됨</string>
+</resources>

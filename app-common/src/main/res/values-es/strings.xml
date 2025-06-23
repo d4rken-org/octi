@@ -6,7 +6,7 @@
     <string name="general_share_action">Compartir</string>
     <string name="general_done_action">Realizado</string>
     <string name="general_copy_action">Copiar</string>
-    <string name="general_remove_action">Remover</string>
+    <string name="general_remove_action">Eliminar</string>
     <string name="general_cancel_action">Cancelar</string>
     <string name="general_thanks_action">Gracias</string>
     <string name="general_gotit_action">Entendido</string>

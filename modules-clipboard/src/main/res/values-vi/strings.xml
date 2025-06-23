@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Mô-đun bảng tạm</string>
+    <string name="module_clipboard_desc">Sao chép và dán văn bản giữa các thiết bị.</string>
+    <string name="module_clipboard_copied_octi_to_os">Đã sao chép từ Octi sang bảng tạm hệ thống</string>
+    <string name="module_clipboard_copied_os_to_octi">Đã sao chép từ hệ thống sang bảng tạm của Octi</string>
+</resources>

@@ -1,4 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name"></string>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">錯誤</string>
+    <string name="general_error_no_compatible_app_found_msg">找不到可處理此請求的相容應用程式。</string>
+    <string name="general_share_action">分享</string>
+    <string name="general_done_action">完成</string>
+    <string name="general_copy_action">複製</string>
+    <string name="general_remove_action">移除</string>
+    <string name="general_cancel_action">取消</string>
+    <string name="general_thanks_action">謝謝</string>
+    <string name="general_gotit_action">知道了</string>
+    <string name="general_na_label">不適用</string>
+    <string name="general_empty_label">空</string>
+    <string name="general_dismiss_action">關閉</string>
+    <string name="general_maybe_later_action">也許之後</string>
+    <string name="general_manage_action">管理</string>
+    <string name="general_quota_label">配額</string>
+    <string name="general_upgrade_action">升級</string>
+    <string name="general_update_action">更新</string>
+    <string name="general_donate_action">捐贈</string>
+    <string name="general_check_action">檢查</string>
+    <string name="general_internal_not_available_msg">無法使用網路連線</string>
+    <string name="general_refresh_action">重新整理</string>
+    <string name="general_continue">繼續</string>
+    <string name="general_show_details_action">顯示詳細資訊</string>
 </resources>

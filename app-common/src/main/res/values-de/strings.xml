@@ -12,7 +12,7 @@
     <string name="general_gotit_action">Erledigt</string>
     <string name="general_na_label">N/A</string>
     <string name="general_empty_label">Leer</string>
-    <string name="general_dismiss_action">Ablehnen</string>
+    <string name="general_dismiss_action">Schließen</string>
     <string name="general_maybe_later_action">Vielleicht später</string>
     <string name="general_manage_action">Verwalten</string>
     <string name="general_quota_label">Kontingent</string>
@@ -20,7 +20,7 @@
     <string name="general_update_action">Aktualisieren</string>
     <string name="general_donate_action">Spenden</string>
     <string name="general_check_action">Prüfen</string>
-    <string name="general_internal_not_available_msg">Keine Verbindung</string>
+    <string name="general_internal_not_available_msg">Internetverbindung nicht verfügbar</string>
     <string name="general_refresh_action">Aktualisieren</string>
     <string name="general_continue">Weiter</string>
     <string name="general_show_details_action">Details anzeigen</string>

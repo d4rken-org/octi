@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Udklipsholdermodul</string>
+    <string name="module_clipboard_desc">Kopier og indsæt tekst mellem enheder.</string>
+    <string name="module_clipboard_copied_octi_to_os">Kopieret fra Octi til systemets udklipsholder</string>
+    <string name="module_clipboard_copied_os_to_octi">Kopieret fra systemet til Octi\'s udklipsholder</string>
+</resources>

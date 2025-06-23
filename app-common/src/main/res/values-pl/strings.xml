@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Błąd</string>
+    <string name="general_error_no_compatible_app_found_msg">Nie znaleziono kompatybilnej aplikacji do obsługi tego żądania.</string>
+    <string name="general_share_action">Udostępnij</string>
+    <string name="general_done_action">Gotowe</string>
+    <string name="general_copy_action">Kopiuj</string>
+    <string name="general_remove_action">Usuń</string>
+    <string name="general_cancel_action">Anuluj</string>
+    <string name="general_thanks_action">Dziękuję</string>
+    <string name="general_gotit_action">Zrozumiano</string>
+    <string name="general_na_label">N/D</string>
+    <string name="general_empty_label">Puste</string>
+    <string name="general_dismiss_action">Zamknij</string>
+    <string name="general_maybe_later_action">Może później</string>
+    <string name="general_manage_action">Zarządzaj</string>
+    <string name="general_quota_label">Limit</string>
+    <string name="general_upgrade_action">Uaktualnij</string>
+    <string name="general_update_action">Aktualizuj</string>
+    <string name="general_donate_action">Przekaż darowiznę</string>
+    <string name="general_check_action">Sprawdź</string>
+    <string name="general_internal_not_available_msg">Brak dostępnego połączenia z internetem</string>
+    <string name="general_refresh_action">Odśwież</string>
+    <string name="general_continue">Kontynuuj</string>
+    <string name="general_show_details_action">Pokaż szczegóły</string>
+</resources>

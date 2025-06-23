@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Feil</string>
+    <string name="general_error_no_compatible_app_found_msg">Ingen kompatibel app ble funnet for å håndtere denne forespørselen.</string>
+    <string name="general_share_action">Del</string>
+    <string name="general_done_action">Ferdig</string>
+    <string name="general_copy_action">Kopier</string>
+    <string name="general_remove_action">Fjern</string>
+    <string name="general_cancel_action">Avbryt</string>
+    <string name="general_thanks_action">Takk</string>
+    <string name="general_gotit_action">Forstått</string>
+    <string name="general_na_label">I/T</string>
+    <string name="general_empty_label">Tom</string>
+    <string name="general_dismiss_action">Lukk</string>
+    <string name="general_maybe_later_action">Kanskje senere</string>
+    <string name="general_manage_action">Administrer</string>
+    <string name="general_quota_label">Kvote</string>
+    <string name="general_upgrade_action">Oppgrader</string>
+    <string name="general_update_action">Oppdater</string>
+    <string name="general_donate_action">Doner</string>
+    <string name="general_check_action">Sjekk</string>
+    <string name="general_internal_not_available_msg">Internett-tilkobling utilgjengelig</string>
+    <string name="general_refresh_action">Oppdater</string>
+    <string name="general_continue">Fortsett</string>
+    <string name="general_show_details_action">Vis detaljer</string>
+</resources>

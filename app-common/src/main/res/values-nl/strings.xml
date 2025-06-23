@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Octi</string>
+    <string name="general_error_label">Fout</string>
+    <string name="general_error_no_compatible_app_found_msg">Er is geen compatibele app gevonden om dit verzoek te verwerken.</string>
+    <string name="general_share_action">Delen</string>
+    <string name="general_done_action">Gereed</string>
+    <string name="general_copy_action">Kopiëren</string>
+    <string name="general_remove_action">Verwijderen</string>
+    <string name="general_cancel_action">Annuleren</string>
+    <string name="general_thanks_action">Bedankt</string>
+    <string name="general_gotit_action">Begrepen</string>
+    <string name="general_na_label">N/B</string>
+    <string name="general_empty_label">Leeg</string>
+    <string name="general_dismiss_action">Sluiten</string>
+    <string name="general_maybe_later_action">Misschien later</string>
+    <string name="general_manage_action">Beheren</string>
+    <string name="general_quota_label">Quota</string>
+    <string name="general_upgrade_action">Upgraden</string>
+    <string name="general_update_action">Bijwerken</string>
+    <string name="general_donate_action">Doneren</string>
+    <string name="general_check_action">Controleren</string>
+    <string name="general_internal_not_available_msg">Internetverbinding niet beschikbaar</string>
+    <string name="general_refresh_action">Vernieuwen</string>
+    <string name="general_continue">Doorgaan</string>
+    <string name="general_show_details_action">Details tonen</string>
+</resources>

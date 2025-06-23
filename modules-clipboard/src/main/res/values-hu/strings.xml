@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="module_clipboard_label">Vágólap modul</string>
+    <string name="module_clipboard_desc">Szöveg másolása és beillesztése eszközök között.</string>
+    <string name="module_clipboard_copied_octi_to_os">Az Octiból a rendszer vágólapjára másolva</string>
+    <string name="module_clipboard_copied_os_to_octi">A rendszerből az Octi vágólapjára másolva</string>
+</resources>
