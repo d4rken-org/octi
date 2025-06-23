@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Egy nyílt forráskódú szinkronizáló szerver Octi-hoz, amit az alkalmazás fejlesztője készített. Az adatok kliens oldalon titkosítva vannak, csak a saját eszközeid tudják visszafejteni.\n\nMivel az alkalmazás és a szerver is folyamatosan fejlődik, kevésbé stabil lehet, mint más szinkronizálási lehetőségek.</string>
+    <string name="sync_kserver_add_create_action_hint">Az inaktív fiókok néhány hét után törlődnek.</string>
+    <string name="sync_kserver_add_subtitle">Új Google Drive hozzáadása</string>
+    <string name="sync_kserver_add_link_action_hint">Szükséged lesz egy már összekapcsolt másik eszköz hozzáférésére.</string>
+    <string name="sync_kserver_about_title">A KServer-ről</string>
+    <string name="sync_kserver_about_desc">A KServer egy nyílt forráskódú szinkronizálási szerver (Kotlin nyelven) Octi-hoz, darken által.</string>
+    <string name="sync_kserver_about_author_action">Szerző</string>
+    <string name="sync_kserver_about_source_action">Forráskód</string>
+    <string name="sync_kserver_reset_confirmation_desc">Az eszköz adatainak törlése erről a fiókról. Az eszközök kapcsolva maradnak, de a tárolt adataik törlődnek.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Ez eltávolítja az eszközt a fiókodból. Ha ez az utolsó kapcsolt eszköz, akkor a fiókod törlődik.</string>
+    <string name="sync_kserver_link_device_action">Új eszköz összekapcsolása</string>
+    <string name="sync_kserver_link_code_label">Összekapcsolási kód</string>
+    <string name="sync_kserver_link_host_option_direct">Hozz létre egy szöveges kódot, amit más alkalmazásokon keresztül küldhetsz el</string>
+    <string name="sync_kserver_link_host_option_qrcode">QR kód megjelenítése</string>
+    <string name="sync_kserver_link_host_option_nfc">Eszköz összekapcsolása NFC-vel</string>
+    <string name="sync_kserver_link_host_device_linked_message">Új eszköz lett kapcsolva a fiókodhoz.</string>
+    <string name="sync_kserver_link_host_nfc_action">NFC kliens keresése. Tartsd ezt az eszközt közel ahhoz, amit hozzá akarsz kapcsolni a fiókodhoz.</string>
+    <string name="sync_kserver_link_client_option_direct">Illesztési kód kézi másolása és beillesztése</string>
+    <string name="sync_kserver_link_client_option_qrcode">QR kód leolvasása másik eszközről</string>
+    <string name="sync_kserver_link_client_option_nfc">Két eszköz használata NFC-vel</string>
+    <string name="sync_kserver_link_client_startcamera_action">Kamera indítása</string>
+    <string name="sync_kserver_link_client_link_action">Eszköz összekapcsolása</string>
+    <string name="sync_kserver_link_client_nfc_action">NFC szerver keresése. Tartsd közel ahhoz az eszközhöz, ami hozzáférést kínál a fiókhoz.</string>
+</resources>

@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">此應用程式開發者為 Octi 製作的開源同步伺服器。資料在用戶端加密，只有您的裝置可以解密。\\n\\n由於應用程式和伺服器仍在改進中，因此它可能不如其他同步選項穩定。</string>
+    <string name="sync_kserver_add_create_action_hint">閒置帳戶將在幾週後刪除。</string>
+    <string name="sync_kserver_add_subtitle">新增 Google Drive</string>
+    <string name="sync_kserver_add_link_action_hint">您需要存取已連結的另一部裝置。</string>
+    <string name="sync_kserver_about_title">關於 KServer</string>
+    <string name="sync_kserver_about_desc">KServer 是 darken 為 Octi 開發的開源同步伺服器 (Kotlin)。</string>
+    <string name="sync_kserver_about_author_action">作者</string>
+    <string name="sync_kserver_about_source_action">原始碼</string>
+    <string name="sync_kserver_reset_confirmation_desc">清除此帳戶上的裝置資料。裝置仍保持連結，但其儲存的資料將被移除。</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">這將從您的帳戶中移除此裝置。如果這是最後一個連結的裝置，您的帳戶將被刪除。</string>
+    <string name="sync_kserver_link_device_action">連結新裝置</string>
+    <string name="sync_kserver_link_code_label">連結代碼</string>
+    <string name="sync_kserver_link_host_option_direct">建立可透過其他應用程式傳送的文字代碼</string>
+    <string name="sync_kserver_link_host_option_qrcode">顯示 QR Code</string>
+    <string name="sync_kserver_link_host_option_nfc">透過 NFC 連結裝置</string>
+    <string name="sync_kserver_link_host_device_linked_message">新裝置已連結至您的帳戶。</string>
+    <string name="sync_kserver_link_host_nfc_action">正在尋找 NFC 用戶端。請將此裝置靠近您要連結至帳戶的裝置。</string>
+    <string name="sync_kserver_link_client_option_direct">手動複製並貼上連結代碼</string>
+    <string name="sync_kserver_link_client_option_qrcode">從其他裝置掃描 QR Code</string>
+    <string name="sync_kserver_link_client_option_nfc">使用兩部具有 NFC 功能的裝置</string>
+    <string name="sync_kserver_link_client_startcamera_action">啟動相機</string>
+    <string name="sync_kserver_link_client_link_action">連結裝置</string>
+    <string name="sync_kserver_link_client_nfc_action">正在尋找 NFC 主機。請將其靠近提供分享帳戶存取權限的裝置。</string>
+</resources>

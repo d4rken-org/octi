@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">En åpen kildekode synkroniseringsserver for Octi laget av utvikleren av denne appen. Data er kryptert på klientsiden, bare enhetene dine kan dekryptere det.\n\nSiden både appen og serveren fortsatt forbedres, kan den være mindre stabil enn andre synkroniseringsalternativer.</string>
+    <string name="sync_kserver_add_create_action_hint">Inaktive kontoer slettes etter noen uker.</string>
+    <string name="sync_kserver_add_subtitle">Legg til ny Google Drive</string>
+    <string name="sync_kserver_add_link_action_hint">Du må ha tilgang til en annen enhet som allerede er koblet.</string>
+    <string name="sync_kserver_about_title">Om KServer</string>
+    <string name="sync_kserver_about_desc">KServer er en åpen kildekode synkroniseringsserver (i Kotlin) for Octi av darken.</string>
+    <string name="sync_kserver_about_author_action">Forfatter</string>
+    <string name="sync_kserver_about_source_action">Kildekode</string>
+    <string name="sync_kserver_reset_confirmation_desc">Slett denne enhetens data på denne kontoen. Enheter forblir koblet, men lagret data fjernes.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Dette vil fjerne denne enheten fra kontoen din. Hvis dette er den siste koblede enheten, vil kontoen din bli slettet.</string>
+    <string name="sync_kserver_link_device_action">Koble ny enhet</string>
+    <string name="sync_kserver_link_code_label">Koblingskode</string>
+    <string name="sync_kserver_link_host_option_direct">Lag en tekstkode du kan sende via andre apper</string>
+    <string name="sync_kserver_link_host_option_qrcode">Vis en QR-kode</string>
+    <string name="sync_kserver_link_host_option_nfc">Koble enhet via NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">En ny enhet er koblet til kontoen din.</string>
+    <string name="sync_kserver_link_host_nfc_action">Søker etter NFC-klient. Hold denne enheten nær enheten du vil koble til kontoen din.</string>
+    <string name="sync_kserver_link_client_option_direct">Kopier og lim inn en koblingskode manuelt</string>
+    <string name="sync_kserver_link_client_option_qrcode">Skann en QR-kode fra en annen enhet</string>
+    <string name="sync_kserver_link_client_option_nfc">Bruk to enheter med NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">Start kamera</string>
+    <string name="sync_kserver_link_client_link_action">Koble enhet</string>
+    <string name="sync_kserver_link_client_nfc_action">Søker etter NFC-vert. Hold den nær enheten som tilbyr å dele konto-tilgang.</string>
+</resources>

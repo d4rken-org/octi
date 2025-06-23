@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">Отворени сервер за синхронизацију за Octi који је направио програмер ове апликације. Подаци се шифрују на клијентској страни, само ваши уређаји могу да их дешифрују.\n\nПошто се и апликација и сервер и даље унапређују, може бити мање стабилан од других опција синхронизације.</string>
+    <string name="sync_kserver_add_create_action_hint">Неактивни налози се бришу након неколико недеља.</string>
+    <string name="sync_kserver_add_subtitle">Додај нови Google Drive</string>
+    <string name="sync_kserver_add_link_action_hint">Потребан вам је приступ другом уређају који је већ повезан.</string>
+    <string name="sync_kserver_about_title">О KServer-у</string>
+    <string name="sync_kserver_about_desc">KServer је сервер за синхронизацију отвореног кода (у Kotlin-у) за Octi који је направио darken.</string>
+    <string name="sync_kserver_about_author_action">Аутор</string>
+    <string name="sync_kserver_about_source_action">Изворни код</string>
+    <string name="sync_kserver_reset_confirmation_desc">Обриши податке овог уређаја на овом налогу. Уређаји остају повезани, али њихови сачувани подаци се уклањају.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Ово ће уклонити овај уређај са вашег налога. Ако је ово последњи повезани уређај, ваш налог ће бити обрисан.</string>
+    <string name="sync_kserver_link_device_action">Повежи нови уређај</string>
+    <string name="sync_kserver_link_code_label">Код за повезивање</string>
+    <string name="sync_kserver_link_host_option_direct">Креирај текстуални код који можете послати преко других апликација</string>
+    <string name="sync_kserver_link_host_option_qrcode">Прикажи QR код</string>
+    <string name="sync_kserver_link_host_option_nfc">Повежи уређај преко NFC-а</string>
+    <string name="sync_kserver_link_host_device_linked_message">Нови уређај је повезан са вашим налогом.</string>
+    <string name="sync_kserver_link_host_nfc_action">Тражим NFC клијента. Држите овај уређај близу уређаја који желите да повежете на налог.</string>
+    <string name="sync_kserver_link_client_option_direct">Ручно копирај и залепи код за повезивање</string>
+    <string name="sync_kserver_link_client_option_qrcode">Скенирај QR код са другог уређаја</string>
+    <string name="sync_kserver_link_client_option_nfc">Користите два уређаја са NFC-ом</string>
+    <string name="sync_kserver_link_client_startcamera_action">Покрени камеру</string>
+    <string name="sync_kserver_link_client_link_action">Повежи уређај</string>
+    <string name="sync_kserver_link_client_nfc_action">Тражим NFC домаћина. Држите га поред уређаја који дели приступ налогу.</string>
+</resources>

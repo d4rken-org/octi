@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_kserver_type_label">K-Server</string>
+    <string name="sync_kserver_type_description">\'n Oopbron-sinkroniseerbediener vir Octi wat deur hierdie toepassing se ontwikkelaar gemaak is. Data word aan die kliëntkant geïnkripteer, net jou toestelle kan dit dekripteer.\n\nAangesien beide die toepassing en die bediener steeds verbeter word, kan dit minder stabiel wees as ander sinkroniseringsopsies.</string>
+    <string name="sync_kserver_add_create_action_hint">Onaktiewe rekeninge word na \'n paar weke uitgevee.</string>
+    <string name="sync_kserver_add_subtitle">Voeg nuwe Google Drive by</string>
+    <string name="sync_kserver_add_link_action_hint">Jy het toegang nodig tot \'n ander toestel wat reeds gekoppel is.</string>
+    <string name="sync_kserver_about_title">Oor KServer</string>
+    <string name="sync_kserver_about_desc">KServer is \'n oopbron-sinkroniseerbediener (in Kotlin) vir Octi deur darken.</string>
+    <string name="sync_kserver_about_author_action">Outeur</string>
+    <string name="sync_kserver_about_source_action">Bronkode</string>
+    <string name="sync_kserver_reset_confirmation_desc">Vee hierdie toestel se data op hierdie rekening uit. Toestelle bly gekoppel maar hul gestoor data word verwyder.</string>
+    <string name="sync_kserver_disconnect_confirmation_desc">Hierdie gaan die toestel van jou rekening verwyder. As dit die laaste gekoppelde toestel is, word jou rekening uitgevee.</string>
+    <string name="sync_kserver_link_device_action">Koppel nuwe toestel</string>
+    <string name="sync_kserver_link_code_label">Koppel kode</string>
+    <string name="sync_kserver_link_host_option_direct">Skep \'n tekskode wat jy via ander programme kan stuur</string>
+    <string name="sync_kserver_link_host_option_qrcode">Wys \'n QR-kode</string>
+    <string name="sync_kserver_link_host_option_nfc">Koppel toestel via NFC</string>
+    <string name="sync_kserver_link_host_device_linked_message">\'n Nuwe toestel is aan jou rekening gekoppel.</string>
+    <string name="sync_kserver_link_host_nfc_action">Soek NFC-kliënt. Hou hierdie toestel naby aan die toestel wat jy aan jou rekening wil koppel.</string>
+    <string name="sync_kserver_link_client_option_direct">Kopieer en plak \'n koppel kode handmatig</string>
+    <string name="sync_kserver_link_client_option_qrcode">Skandeer \'n QR-kode van \'n ander toestel</string>
+    <string name="sync_kserver_link_client_option_nfc">Gebruik twee toestelle met NFC</string>
+    <string name="sync_kserver_link_client_startcamera_action">Begin kamera</string>
+    <string name="sync_kserver_link_client_link_action">Koppel toestel</string>
+    <string name="sync_kserver_link_client_nfc_action">Soek na NFC-gasheer. Hou dit naby aan die toestel wat toegang wil deel.</string>
+</resources>
