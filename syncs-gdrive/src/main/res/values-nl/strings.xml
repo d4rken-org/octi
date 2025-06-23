@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="gdrive_account_scope_error_label">Toestemmingsfout</string>
+    <string name="gdrive_account_scope_error_description">Octi heeft niet het vereiste toegangsniveau gekregen. Probeer het opnieuw en controleer of de vereiste toestemmingen zijn toegekend.</string>
+    <string name="gdrive_account_lockout_error_label">Uitsluitingsfout</string>
+    <string name="gdrive_account_lockout_error_description">Dit apparaat is buitengesloten en heeft geen toegang meer tot Google Drive. De toegang tot uw Google-account is ingetrokken. Verleen opnieuw toegang en probeer het opnieuw.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">App-data bereik</string>
+    <string name="sync_gdrive_type_appdata_description">Gegevens worden op Google Drive geplaatst. Deze variant gebruikt het \"app-data\" bereik. Alleen toegang tot een nieuwe map voor deze app wordt toegekend. De map is niet zichtbaar in uw drive. Dit lijkt op de werking van WhatsApp-back-ups.</string>
+    <string name="sync_gdrive_add_label">Nieuwe Google Drive toevoegen</string>
+    <string name="sync_gdrive_add_description">Klik op de onderstaande aanmeldknop om toegang tot Google Drive in te stellen.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Alle Octi-data op Google Drive resetten. Uw apparaat blijft aangemeld bij Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Log uit van Google Drive en verwijder gegevens die aan dit apparaat zijn gekoppeld.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Dit apparaat is niet aangemeld bij een Google-account.</string>
+</resources>

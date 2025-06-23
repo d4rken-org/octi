@@ -1,2 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="gdrive_account_scope_error_label">Engedélyezési hiba</string>
+    <string name="gdrive_account_scope_error_description">Az Octi nem kapta meg a szükséges hozzáférést. Próbáld újra, és ellenőrizd, hogy minden engedély meg van adva.</string>
+    <string name="gdrive_account_lockout_error_label">Zárolási hiba</string>
+    <string name="gdrive_account_lockout_error_description">Ez az eszköz le van tiltva, és többé nem fér hozzá a Google Drive-hoz. A Google-fiókodhoz tartozó hozzáférése vissza lett vonva. Adj újra hozzáférést, és próbáld meg ismét.</string>
+
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">App-adat tartomány</string>
+    <string name="sync_gdrive_type_appdata_description">Az adatok a Google Drive-ban tárolódnak. Ez a változat az „app-data” tartományt használja. A hozzáférés kizárólag ennek az alkalmazásnak egy új mappájához biztosított. Ez a mappa a saját drive-odon nem látható. Hasonlóan működik, mint a WhatsApp biztonsági mentések.</string>
+    <string name="sync_gdrive_add_label">Új Google Drive hozzáadása</string>
+    <string name="sync_gdrive_add_description">Az alábbi bejelentkezés gombra kattintva állíthatod be a Google Drive hozzáférést.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Az összes, a Google Drive-on tárolt Octi-adat visszaállítása. Az eszköz bejelentkezve marad a Google Drive-ra.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Kijelentkezés a Google Drive-ból és az adott eszközhöz tartozó adatok törlése.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Ez az eszköz nincs bejelentkezve egyetlen Google-fiókba sem.</string>
+</resources>

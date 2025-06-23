@@ -1,2 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="gdrive_account_scope_error_label">권한 오류</string>
+    <string name="gdrive_account_scope_error_description">Octi에 필요한 액세스 권한이 부여되지 않았습니다. 다시 시도하고 권한이 부여되어 있는지 확인하세요.</string>
+    <string name="gdrive_account_lockout_error_label">잠금 오류</string>
+    <string name="gdrive_account_lockout_error_description">이 기기는 잠금 처리되어 더 이상 Google Drive에 접근할 수 없습니다. Google 계정에 대한 접근 권한이 취소되었습니다. 접근을 다시 허용하고 재시도하세요.</string>
+
+    <string name="sync_gdrive_type_label">Google 드라이브</string>
+    <string name="sync_gdrive_appdata_label">앱 데이터 범위</string>
+    <string name="sync_gdrive_type_appdata_description">데이터는 Google 드라이브에 저장됩니다. 이 변형은 "app-data" 범위를 사용합니다. 이 앱 전용 새 폴더에만 접근할 수 있습니다. 폴더는 내 드라이브에 표시되지 않습니다. WhatsApp 백업 작동 방식과 유사합니다.</string>
+    <string name="sync_gdrive_add_label">새 Google 드라이브 추가</string>
+    <string name="sync_gdrive_add_description">아래 로그인 버튼을 클릭하여 Google 드라이브 접근을 설정하세요.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Google 드라이브에 저장된 모든 Octi 데이터를 재설정합니다. 기기는 Google 드라이브에 계속 로그인됩니다.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Google 드라이브에서 로그아웃하고 이 기기 관련 데이터를 삭제합니다.</string>
+    <string name="sync_gdrive_error_no_account_on_device">이 기기는 어떤 Google 계정에도 로그인되어 있지 않습니다.</string>
+</resources>

@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="gdrive_account_scope_error_label">Behörighetsfel</string>
+    <string name="gdrive_account_scope_error_description">Octi har inte fått den åtkomst som krävs. Försök igen och kontrollera att behörigheterna godkänns.</string>
+    <string name="gdrive_account_lockout_error_label">Utelåsningsfel</string>
+    <string name="gdrive_account_lockout_error_description">Den här enheten är utelåst och kan inte längre komma åt Google Drive. Dess åtkomst för ditt Google-konto har upphävts. Ge åtkomst på nytt och försök igen.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">App-dataintervall</string>
+    <string name="sync_gdrive_type_appdata_description">Data placeras i Google Drive. Den här varianten använder intervallet "app-data". Åtkomst ges endast till en ny mapp bara för den här appen. Mappen är inte synlig på din drive. Det fungerar som WhatsApp-säkerhetskopior.</string>
+    <string name="sync_gdrive_add_label">Lägg till ny Google Drive</string>
+    <string name="sync_gdrive_add_description">Klicka på logga in-knappen nedan för att ställa in åtkomst till Google Drive.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Återställ all Octi-data som lagrats på Google Drive. Din enhet förblir inloggad på Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Logga ut från Google Drive och ta bort data relaterat till den här enheten.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Den här enheten är inte inloggad på något Google-konto.</string>
+</resources>

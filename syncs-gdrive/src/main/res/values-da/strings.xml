@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="gdrive_account_scope_error_label">Tilladelsesfejl</string>
+    <string name="gdrive_account_scope_error_description">Octi har ikke fået den nødvendige adgang. Prøv igen og sørg for, at tilladelserne gives.</string>
+    <string name="gdrive_account_lockout_error_label">Låsefejl</string>
+    <string name="gdrive_account_lockout_error_description">Denne enhed er blevet låst ude og kan ikke længere tilgå Google Drive. Adgangen til din Google-konto er blevet tilbagekaldt. Tildel adgangen igen og prøv igen.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">App-data adgangsomfang</string>
+    <string name="sync_gdrive_type_appdata_description">Data placeres i Google Drive. Denne variant bruger \"app-data\"-adgang. Adgang gives kun til en ny mappe udelukkende til denne app. Mappen er ikke synlig i din drive. Virker på samme måde som WhatsApp-backups.</string>
+    <string name="sync_gdrive_add_label">Tilføj ny Google Drive</string>
+    <string name="sync_gdrive_add_description">Klik på log-ind-knappen nedenfor for at opsætte adgang til Google Drive.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Nulstil alle Octi-data gemt på Google Drive. Din enhed forbliver logget ind på Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Log ud af Google Drive og slet data relateret til denne enhed.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Denne enhed er ikke logget ind på nogen Google-konto.</string>
+</resources>

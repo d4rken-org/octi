@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="gdrive_account_scope_error_label">Lỗi quyền truy cập</string>
+    <string name="gdrive_account_scope_error_description">Octi chưa được cấp phạm vi quyền truy cập cần thiết. Vui lòng thử lại và kiểm tra xem quyền đã được cấp chưa.</string>
+    <string name="gdrive_account_lockout_error_label">Lỗi khóa tài khoản</string>
+    <string name="gdrive_account_lockout_error_description">Thiết bị này đã bị khóa và không thể truy cập Google Drive nữa. Quyền truy cập vào tài khoản Google của bạn đã bị thu hồi. Cấp lại quyền truy cập và thử lại.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">Phạm vi dữ liệu ứng dụng</string>
+    <string name="sync_gdrive_type_appdata_description">Dữ liệu được lưu trong Google Drive. Biến thể này sử dụng phạm vi "app-data". Chỉ cấp quyền truy cập vào một thư mục mới dành riêng cho ứng dụng này. Thư mục này không hiển thị trong ổ đĩa của bạn. Điều này tương tự như cách sao lưu WhatsApp hoạt động.</string>
+    <string name="sync_gdrive_add_label">Thêm Google Drive mới</string>
+    <string name="sync_gdrive_add_description">Nhấn vào nút đăng nhập bên dưới để cài đặt quyền truy cập Google Drive.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Đặt lại tất cả dữ liệu Octi được lưu trên Google Drive. Thiết bị của bạn vẫn đăng nhập Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Đăng xuất khỏi Google Drive và xóa dữ liệu liên quan đến thiết bị này.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Thiết bị này chưa đăng nhập vào bất kỳ tài khoản Google nào.</string>
+</resources>
