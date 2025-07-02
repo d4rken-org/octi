@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.uix.Fragment3
 import eu.darken.octi.common.viewbinding.viewBinding
 import eu.darken.octi.databinding.SyncAddNewGdriveFragmentBinding
@@ -28,6 +29,11 @@ class AddGDriveFragment : Fragment3(R.layout.sync_add_new_gdrive_fragment) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true, bottom = true)
+            insetsPadding(ui.toolbar, top = true)
+        }
+
         ui.toolbar.setupWithNavController(findNavController())
         ui.signInAction.setOnClickListener { vm.startSignIn() }
 

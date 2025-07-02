@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.common.lists.setupDefaults
 import eu.darken.octi.common.uix.Fragment3
@@ -24,6 +25,12 @@ class SyncListFragment : Fragment3(R.layout.sync_list_fragment) {
     @Inject lateinit var adapter: SyncListAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true)
+            insetsPadding(ui.toolbar, top = true)
+            insetsPadding(ui.list, bottom = true)
+            insetsPadding(ui.fabContainer, bottom = true)
+        }
         ui.toolbar.setupWithNavController(findNavController())
         ui.fab.setOnClickListener { vm.addConnector() }
 

@@ -100,7 +100,7 @@ class CurriculumVitae @Inject constructor(
         log(TAG) { "Current version history is $history" }
 
         val lastVersion = history.lastOrNull()
-        val current = usPkgInfo.versionName
+        val current = usPkgInfo.versionName ?: BuildConfigWrap.VERSION_NAME
         if (lastVersion != current) {
             val versionHistory = history + current
             log(TAG) { "Update happened, new version history is $versionHistory" }

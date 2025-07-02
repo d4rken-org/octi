@@ -8,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.uix.Fragment3
 import eu.darken.octi.common.viewbinding.viewBinding
 import eu.darken.octi.databinding.UpgradeFragmentBinding
@@ -19,6 +20,11 @@ class UpgradeFragment : Fragment3(R.layout.upgrade_fragment) {
     override val ui: UpgradeFragmentBinding by viewBinding()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true)
+            insetsPadding(ui.toolbar, top = true)
+            insetsPadding(ui.scrollView, bottom = true)
+        }
         ui.toolbar.setupWithNavController(findNavController())
 
         ui.upgradeGithubSponsorsAction.setOnClickListener {

@@ -10,6 +10,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.uix.Fragment3
 import eu.darken.octi.common.viewbinding.viewBinding
@@ -26,6 +27,11 @@ class AddKServerFragment : Fragment3(R.layout.sync_add_new_kserver_fragment) {
     @Inject lateinit var webpageTool: WebpageTool
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true, bottom = true)
+            insetsPadding(ui.toolbar, top = true)
+        }
+
         ui.toolbar.apply {
             setupWithNavController(findNavController())
             setOnMenuItemClickListener {

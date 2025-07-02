@@ -6,6 +6,7 @@ import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.PrivacyPolicy
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.setChecked2
@@ -24,6 +25,9 @@ class PrivacyFragment : Fragment3(R.layout.onboarding_privacy_fragment) {
     @Inject lateinit var webpageTool: WebpageTool
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, top = true, left = true, right = true, bottom = true)
+        }
         vm.state.observe2(ui) { state ->
             updateContainer.isGone = !state.isUpdateCheckSupported
             updateToggle.setChecked2(state.isUpdateCheckEnabled, false)

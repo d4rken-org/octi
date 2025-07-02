@@ -9,6 +9,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.uix.Fragment2
 import eu.darken.octi.common.viewbinding.viewBinding
 import eu.darken.octi.databinding.SettingsFragmentBinding
@@ -33,6 +34,10 @@ class SettingsFragment : Fragment2(R.layout.settings_fragment),
     ) : Parcelable
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true)
+            insetsPadding(ui.toolbar, top = true)
+        }
         childFragmentManager.addOnBackStackChangedListener {
             val backStackCnt = childFragmentManager.backStackEntryCount
             val newScreenInfo = when {
