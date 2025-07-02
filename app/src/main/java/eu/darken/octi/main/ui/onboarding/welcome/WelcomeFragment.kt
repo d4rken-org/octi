@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.uix.Fragment3
 import eu.darken.octi.common.viewbinding.viewBinding
@@ -23,6 +24,9 @@ class WelcomeFragment : Fragment3(R.layout.onboarding_welcome_fragment) {
     @Inject lateinit var webpageTool: WebpageTool
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, top = true, left = true, right = true, bottom = true)
+        }
         ui.continueAction.setOnClickListener { vm.finishScreen() }
         ui.betaHint.isVisible = BuildConfigWrap.BUILD_TYPE != BuildConfigWrap.BuildType.RELEASE
         super.onViewCreated(view, savedInstanceState)

@@ -40,14 +40,20 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/refresh_action"
+    <FrameLayout
+        android:id="@+id/refresh_action_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:contentDescription="@string/general_refresh_action"
-        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
-        app:srcCompat="@drawable/ic_baseline_refresh_24" />
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/refresh_action"
+            style="@style/Widget.Material3.FloatingActionButton.Primary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="32dp"
+            android:contentDescription="@string/general_refresh_action"
+            app:srcCompat="@drawable/ic_baseline_refresh_24" />
+    </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

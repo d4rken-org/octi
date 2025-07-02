@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.error.asErrorDialogBuilder
 import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.common.lists.setupDefaults
@@ -26,6 +27,12 @@ class AppsListFragment : Fragment3(R.layout.module_apps_list_fragment) {
     @Inject lateinit var appsAdapter: AppsListAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true)
+            insetsPadding(ui.toolbar, top = true)
+            insetsPadding(ui.list, bottom = true)
+        }
+
         ui.toolbar.apply {
             setupWithNavController(findNavController())
             setOnMenuItemClickListener {

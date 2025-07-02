@@ -13,6 +13,7 @@ import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.uix.Fragment3
@@ -37,6 +38,11 @@ class KServerLinkClientFragment : Fragment3(R.layout.sync_kserver_link_client_fr
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true, bottom = true)
+            insetsPadding(ui.toolbar, top = true)
+        }
+
         ui.toolbar.apply {
             setupWithNavController(findNavController())
         }

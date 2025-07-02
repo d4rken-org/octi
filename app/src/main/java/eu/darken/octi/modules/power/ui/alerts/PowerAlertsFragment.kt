@@ -8,6 +8,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.slider.Slider
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.isBold
 import eu.darken.octi.common.observe2
 import eu.darken.octi.common.uix.Fragment3
@@ -22,6 +23,11 @@ class PowerAlertsFragment : Fragment3(R.layout.module_power_alerts_fragment) {
     override val ui: ModulePowerAlertsFragmentBinding by viewBinding()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true)
+            insetsPadding(ui.toolbar, top = true)
+            insetsPadding(ui.list, bottom = true)
+        }
         ui.toolbar.apply {
             setupWithNavController(findNavController())
             setOnMenuItemClickListener {

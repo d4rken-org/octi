@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.colorString
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.error.asErrorDialogBuilder
@@ -60,6 +61,13 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
     private var offlineSnackbar: Snackbar? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true)
+            insetsPadding(ui.toolbar, top = true)
+            insetsPadding(ui.refreshSwipe, bottom = true)
+            insetsPadding(ui.refreshActionContainer, bottom = true)
+        }
+
         ui.toolbar.apply {
             setOnMenuItemClickListener {
                 when (it.itemId) {

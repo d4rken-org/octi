@@ -2,6 +2,7 @@ package eu.darken.octi.main.core.release
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
@@ -23,7 +24,10 @@ class ReleaseManager @Inject constructor(
 ) {
 
     private val ourVersion: Version by lazy {
-        val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        val versionName = context.packageManager.getPackageInfo(
+            context.packageName,
+            0
+        ).versionName ?: BuildConfigWrap.VERSION_NAME
         try {
             Version.parse(versionName, strict = false).also { log(TAG) { "Current version is $it" } }
         } catch (e: VersionFormatException) {

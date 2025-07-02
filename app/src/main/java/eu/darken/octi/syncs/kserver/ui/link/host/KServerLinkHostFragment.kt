@@ -11,6 +11,7 @@ import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.error.asErrorDialogBuilder
 import eu.darken.octi.common.navigation.popBackStack
 import eu.darken.octi.common.uix.Fragment3
@@ -26,6 +27,11 @@ class KServerLinkHostFragment : Fragment3(R.layout.sync_kserver_link_host_fragme
     override val ui: SyncKserverLinkHostFragmentBinding by viewBinding()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        EdgeToEdgeHelper(requireActivity()).apply {
+            insetsPadding(ui.root, left = true, right = true, bottom = true)
+            insetsPadding(ui.toolbar, top = true)
+        }
+
         ui.toolbar.apply {
             setupWithNavController(findNavController())
         }

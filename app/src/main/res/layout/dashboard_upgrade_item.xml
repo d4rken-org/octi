@@ -48,7 +48,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/upgrade_action"
-            style="@style/Widget.Material3.FloatingActionButton.Tertiary"
+            style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -56,6 +56,7 @@
             android:focusable="false"
             android:text="@string/upgrades_dashcard_upgrade_action"
             app:icon="@drawable/ic_heart"
+            app:iconPadding="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/body" />

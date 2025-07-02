@@ -113,9 +113,9 @@ android {
         unitTests {
             isIncludeAndroidResources = true
         }
-        tasks.withType<Test> {
-            useJUnitPlatform()
-        }
+    }
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
     packaging {
         resources {
