@@ -11,7 +11,6 @@ android {
 
     defaultConfig {
         minSdk = ProjectConfig.minSdk
-        targetSdk = ProjectConfig.targetSdk
     }
 
     setupModuleBuildTypes()
