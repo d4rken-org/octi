@@ -132,8 +132,8 @@ data class BillingConnection(
         }.build()
 
         val (result, details) = suspendCoroutine<Pair<BillingResult, Collection<ProductDetails>?>> { continuation ->
-            client.queryProductDetailsAsync(params) { result: BillingResult, details: Collection<ProductDetails> ->
-                continuation.resume(result to details)
+            client.queryProductDetailsAsync(params) { billingResult, queryResult ->
+                continuation.resume(billingResult to queryResult.productDetailsList)
             }
         }
 

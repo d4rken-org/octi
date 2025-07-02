@@ -5,6 +5,7 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponseCode
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.Purchase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
@@ -33,8 +34,13 @@ class BillingConnectionProvider @Inject constructor(
     private val provider: Flow<BillingConnection> = callbackFlow {
         val purchaseEvents = MutableStateFlow<Pair<BillingResult, Collection<Purchase>?>?>(null)
 
+        val pendingPurchasesParams = PendingPurchasesParams.newBuilder().apply {
+            enableOneTimeProducts()
+            enablePrepaidPlans()
+        }.build()
+
         val client = BillingClient.newBuilder(context).apply {
-            enablePendingPurchases()
+            enablePendingPurchases(pendingPurchasesParams)
             setListener { result, purchases ->
                 if (result.isSuccess) {
                     log(TAG) {
