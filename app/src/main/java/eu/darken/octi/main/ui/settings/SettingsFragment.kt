@@ -37,6 +37,7 @@ class SettingsFragment : Fragment2(R.layout.settings_fragment),
         EdgeToEdgeHelper(requireActivity()).apply {
             insetsPadding(ui.root, left = true, right = true)
             insetsPadding(ui.toolbar, top = true)
+            insetsPadding(ui.contentFrame, bottom = true)
         }
         childFragmentManager.addOnBackStackChangedListener {
             val backStackCnt = childFragmentManager.backStackEntryCount
