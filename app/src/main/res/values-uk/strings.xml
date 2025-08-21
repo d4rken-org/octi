@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">Додатки</string>
     <string name="device_x_label">Пристрій: %s</string>
     <string name="pro_device_limit_reached_title">Досягнуто ліміту пристроїв</string>
-    <string name="pro_device_limit_reached_description">Зараз у вас %1$d синхронізованих пристроїв. Щоб побачити більше ніж %2$d — оновіть до Octi Pro або видаліть зайві пристрої.</string>
     <string name="sync_delete_device_keepaccess_caveat">Видалення пристрою видалить його дані, але не скасує доступ. Щоб скасувати доступ, від’єднайте Octi на пристрої.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Видалення пристрою також видалить дані та скасує доступ.</string>
 </resources>

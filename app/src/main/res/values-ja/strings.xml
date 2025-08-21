@@ -103,7 +103,6 @@
     <string name="module_apps_category_label">アプリ</string>
     <string name="device_x_label">デバイス: %s</string>
     <string name="pro_device_limit_reached_title">デバイスの上限に達しました</string>
-    <string name="pro_device_limit_reached_description">現在、同期されたデバイスは %1$d 台あります。%2$d 台を超えるデバイスを表示するには、Octi Pro にアップグレードするか、デバイスを削除してください。</string>
     <string name="sync_delete_device_keepaccess_caveat">このデバイスを削除するとデータは削除されますが、アクセスは取り消されません。アクセスを取り消すにはデバイス上の Octi を切断してください。</string>
     <string name="sync_delete_device_revokeaccess_caveat">このデバイスを削除するとデータが削除され、アクセスが取り消されます。</string>
 </resources>

@@ -105,7 +105,6 @@
     <string name="module_apps_category_label">Toepassings</string>
     <string name="device_x_label">Toestel: %s</string>
     <string name="pro_device_limit_reached_title">Toestel Beperking Bereik</string>
-    <string name="pro_device_limit_reached_description">Jy het tans %1$d gesinkroniseerde toestelle. Om meer as %2$d te sien, opgradeer na Octi Pro of verwyder toestelle.</string>
     <string name="sync_delete_device_keepaccess_caveat">As jy hierdie toestel verwyder, word sy data geskrap, maar toegang bly. Om toegang te herroep, ontkoppel Octi op die toestel.</string>
     <string name="sync_delete_device_revokeaccess_caveat">As jy hierdie toestel uitvee, word sy data verwyder en sy toegang herroep.</string>
 </resources>

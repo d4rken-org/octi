@@ -105,7 +105,6 @@
     <string name="module_apps_category_label">应用</string>
     <string name="device_x_label">设备: %s</string>
     <string name="pro_device_limit_reached_title">设备达到极限</string>
-    <string name="pro_device_limit_reached_description">您当前有%1$d同步设备。要查看超过%2$d的设备，请升级到Octi Pro或删除设备。</string>
     <string name="sync_delete_device_keepaccess_caveat">删除此设备将删除其数据，但不会撤销访问权限。要撤销访问权限，请断开设备上的Octi连接。</string>
     <string name="sync_delete_device_revokeaccess_caveat">删除此设备将删除其数据并撤销其访问权限。</string>
 </resources>

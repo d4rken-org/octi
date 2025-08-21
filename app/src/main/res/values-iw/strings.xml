@@ -109,7 +109,6 @@
     <string name="module_apps_category_label">יישומים</string>
     <string name="device_x_label">מכשיר: %s</string>
     <string name="pro_device_limit_reached_title">הגעת למגבלת המכשירים</string>
-    <string name="pro_device_limit_reached_description">יש לך כרגע %1$d מכשירים מסונכרנים.  כדי להציג יותר מ-%2$d מכשירים, שדרג ל-Octi פרמיום או הסר מכשירים.</string>
     <string name="sync_delete_device_keepaccess_caveat">הסרת מכשיר זה תמחק את הנתונים שלו אך לא תבטל את הגישה. כדי לבטל גישה, נתק את Octi במכשיר.</string>
     <string name="sync_delete_device_revokeaccess_caveat">מחיקת המכשיר הזה תסיר את הנתונים שלו ותבטל את הגישה שלו.</string>
 </resources>

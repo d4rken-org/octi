@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">應用</string>
     <string name="device_x_label">設備：%s</string>
     <string name="pro_device_limit_reached_title">已達設備上限</string>
-    <string name="pro_device_limit_reached_description">你目前有 %1$d 台同步設備。要查看超過 %2$d 台，請升級到 Octi Pro 或刪除一些裝置。</string>
     <string name="sync_delete_device_keepaccess_caveat">移除本設備將刪除數據但不影響訪問權限。欲撤銷請於該設備上斷開 Octi。</string>
     <string name="sync_delete_device_revokeaccess_caveat">刪除本設備將移除其數據並撤銷訪問權限。</string>
 </resources>

@@ -105,7 +105,6 @@
     <string name="module_apps_category_label">Uygulamalar</string>
     <string name="device_x_label">Cihaz: %s</string>
     <string name="pro_device_limit_reached_title">Cihaz sınırına ulaşıldı</string>
-    <string name="pro_device_limit_reached_description">Şu anda %1$d senkronize cihazınız var. %2$d\'den fazla cihaz görüntülemek için Octi Pro\'ya yükseltin veya cihazları kaldırın.</string>
     <string name="sync_delete_device_keepaccess_caveat">Bu cihazın kaldırılması verilerini silecek ancak erişimi iptal etmeyecektir. Erişimi iptal etmek için cihazdaki Octi bağlantısını kesin.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Bu cihazın silinmesi, verilerini kaldıracak ve erişimini iptal edecektir.</string>
 </resources>

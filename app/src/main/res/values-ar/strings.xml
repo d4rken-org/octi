@@ -113,7 +113,6 @@
     <string name="module_apps_category_label">التطبيقات</string>
     <string name="device_x_label">الجهاز: %s</string>
     <string name="pro_device_limit_reached_title">تم الوصول إلى حد الأجهزة</string>
-    <string name="pro_device_limit_reached_description">لديك حاليًا %1$d أجهزة متزامنة. لعرض أكثر من %2$d أجهزة، قم بالترقية إلى أوكتي احترافي أو قم بإزالة الأجهزة.</string>
     <string name="sync_delete_device_keepaccess_caveat">إزالة هذا الجهاز ستحذف بياناته ولكن لن تلغي الوصول. لإلغاء الوصول، افصل أوكتي على الجهاز.</string>
     <string name="sync_delete_device_revokeaccess_caveat">حذف هذا الجهاز سيزيل بياناته ويلغي وصوله.</string>
 </resources>

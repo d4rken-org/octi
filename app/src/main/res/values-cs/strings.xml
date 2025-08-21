@@ -109,7 +109,6 @@
     <string name="module_apps_category_label">Aplikace</string>
     <string name="device_x_label">Zařízení: %s</string>
     <string name="pro_device_limit_reached_title">Dosažen limit počtu zařízení</string>
-    <string name="pro_device_limit_reached_description">Aktuálně máte %1$d synchronizovaná zařízení. Chcete-li zobrazit více než %2$d zařízení, upgradujte na Octi Pro nebo odstraňte zařízení.</string>
     <string name="sync_delete_device_keepaccess_caveat">Odstraněním tohoto zařízení smažete jeho data, ale nebude odvolán přístup. Chcete-li odvolat přístup, odpojte aplikaci Octi na zařízení.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Smazáním tohoto zařízení se odstraní jeho data a zruší se jeho přístup.</string>
 </resources>

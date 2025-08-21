@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">Alkalmazások</string>
     <string name="device_x_label">Eszköz: %s</string>
     <string name="pro_device_limit_reached_title">Elérted az eszköz limitet</string>
-    <string name="pro_device_limit_reached_description">Jelenleg %1$d szinkronizált eszközöd van. Több, mint %2$d eszköz megtekintéséhez frissíts Octi Pro-ra vagy törölj eszközöket.</string>
     <string name="sync_delete_device_keepaccess_caveat">Az eszköz eltávolításakor annak adatai törlődnek, de a hozzáférést nem vonja vissza. A hozzáférés visszavonásához válaszd le az Octit az eszközön.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Ez az eszköz törlésekor az adatait és a hozzáférését is törlöd.</string>
 </resources>

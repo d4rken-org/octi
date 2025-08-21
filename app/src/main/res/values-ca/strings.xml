@@ -105,7 +105,6 @@
     <string name="module_apps_category_label">Aplicacions</string>
     <string name="device_x_label">Dispositiu: %s</string>
     <string name="pro_device_limit_reached_title">S\'ha assolit el límit de dispositius</string>
-    <string name="pro_device_limit_reached_description">Actualment teniu %1$d dispositius sincronitzats. Per veure més de %2$d dispositius, actualitzeu a l\'Octi Pro o elimineu dispositius.</string>
     <string name="sync_delete_device_keepaccess_caveat">En suprimir aquest dispositiu, se suprimiran les seves dades, però no se\'n revocarà l\'accés. Per revocar l\'accés, desconnecteu l\'Octi al dispositiu.</string>
     <string name="sync_delete_device_revokeaccess_caveat">En suprimir aquest dispositiu, se n\'eliminaran les dades i se\'n revocarà l\'accés.</string>
 </resources>

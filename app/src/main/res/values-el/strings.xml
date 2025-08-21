@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">Εφαρμογές</string>
     <string name="device_x_label">Συσκευή: %s</string>
     <string name="pro_device_limit_reached_title">Έφτασε το όριο συσκευών</string>
-    <string name="pro_device_limit_reached_description">Έχετε %1$d συγχρονισμένες συσκευές. Για να δείτε πάνω από %2$d συσκευές, αναβαθμίστε σε Octi Pro ή αφαιρέστε συσκευές.</string>
     <string name="sync_delete_device_keepaccess_caveat">Η κατάργηση αυτής της συσκευής διαγράφει τα δεδομένα της αλλά δεν αφαιρεί την πρόσβαση. Για να αφαιρέσετε την πρόσβαση, αποσυνδέστε το Octi στη συσκευή.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Διαγράφοντας αυτή τη συσκευή διαγράφονται τα δεδομένα και ακυρώνεται η πρόσβαση.</string>
 </resources>

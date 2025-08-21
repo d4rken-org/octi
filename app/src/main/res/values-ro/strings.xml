@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">Aplicații</string>
     <string name="device_x_label">Dispozitiv: %s</string>
     <string name="pro_device_limit_reached_title">Limită dispozitive atinsă</string>
-    <string name="pro_device_limit_reached_description">Ai acum %1$d dispozitive sincronizate. Pentru a vedea mai mult de %2$d dispozitive, treci la Octi Pro sau elimină dispozitive.</string>
     <string name="sync_delete_device_keepaccess_caveat">Eliminarea acestui dispozitiv îi va șterge datele, dar nu va revoca accesul. Pentru a revoca accesul, deconectează Octi pe acel dispozitiv.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Ștergând acest dispozitiv îi elimini datele și îi revoci accesul.</string>
 </resources>

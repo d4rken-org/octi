@@ -119,7 +119,6 @@
     <string name="module_apps_category_label">Aplicaciones</string>
     <string name="device_x_label">Dispositivo: %s</string>
     <string name="pro_device_limit_reached_title">Límite de dispositivo alcanzado</string>
-    <string name="pro_device_limit_reached_description">Actualmente tienes %1$d dispositivos sincronizados. Para ver más de %2$d dispositivos, actualiza a Octi Pro o elimina dispositivos.</string>
 
     <string name="sync_delete_device_keepaccess_caveat">Eliminar este dispositivo borrará sus datos pero no revocará el acceso. Para revocar el acceso, desconecta Octi en el dispositivo.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Eliminar este dispositivo removerá sus datos y revocará su acceso.</string>
