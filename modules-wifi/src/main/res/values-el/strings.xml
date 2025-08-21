@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="module_wifi_label">Wi-Fi μονάδα</string>
-    <string name="module_wifi_desc">Ονόματα, λήψη, IP\'s, κ.λπ.</string>
+    <string name="module_wifi_label">Μονάδα Wi-Fi</string>
+    <string name="module_wifi_desc">Ονόματα, ισχύς σήματος, IP\'s, κ.λπ.</string>
     <string name="module_wifi_unknown_ssid_label">Άγνωστο SSID</string>
     <string name="module_wifi_unknown_ip_label">Άγνωστη IP</string>
     <string name="module_wifi_reception_good_label">Καλό σήμα</string>

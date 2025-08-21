@@ -13,5 +13,5 @@
     <string name="upgrade_screen_benefits_body">• Πάνω από 3 συσκευές 💯\n• Διαφορετικά θέματα 🎨\n• Περισσότερες επιλογές ⚙️\n• Πρόσθετοι servers συγχρονισμού🖥️\n• Συνεχής ανάπτυξη ανοιχτού κώδικα 🧙</string>
     <string name="upgrade_screen_sponsor_action">Χορηγήστε την ανάπτυξη</string>
     <string name="upgrade_screen_sponsor_action_hint">Η εναλλακτική είναι διαφημίσεις, αναλύσεις και Google Play 🙁</string>
-    <string name="upgrade_screen_thanks_toast">Σας ευχαριστούμε που στηρίζετε την ανοιχτή ανάπτυξη ❤️</string>
+    <string name="upgrade_screen_thanks_toast">Σας ευχαριστούμε που στηρίζετε την ανάπτυξη ανοιχτού κώδικα ❤️</string>
 </resources>

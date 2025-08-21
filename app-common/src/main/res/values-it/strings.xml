@@ -15,7 +15,7 @@
     <string name="general_dismiss_action">Chiudi</string>
     <string name="general_maybe_later_action">Forse dopo</string>
     <string name="general_manage_action">Gestisci</string>
-    <string name="general_quota_label">Quota</string>
+    <string name="general_quota_label">Percentuale</string>
     <string name="general_upgrade_action">Aggiorna</string>
     <string name="general_update_action">Aggiorna</string>
     <string name="general_donate_action">Dona</string>
