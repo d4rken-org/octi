@@ -10,7 +10,7 @@
     <string name="onboarding_welcome_subtitle">Your Device Buddy</string>
     <string name="onboarding_welcome_body1">Octi is a tool for people with multiple Android devices.</string>
     <string name="onboarding_welcome_body2">It keeps you in the loop with all your devices. Whether it\'s your phone, tablet or any other gadget with Octi installed, you\'ll get key details at a glance.</string>
-    <string name="onboarding_welcome_body3">You can upgrade to Octi Pro to gain extra features and support development.</string>
+    <string name="onboarding_welcome_body3">Upgrade to Octi Pro to gain extra features and support development.</string>
     <string name="onboarding_welcome_beta_hint">Just a heads-up, this is a beta version, so thanks for your patience as I keep improving the app!</string>
 
     <string name="onboarding_privacy_subtitle">Privacy policy</string>
@@ -25,8 +25,8 @@
     <string name="debug_debuglog_file_label">Recorded log file</string>
     <string name="debug_debuglog_record_action">Record debug log</string>
 
-    <string name="onboarding_setupsync_title">Setup synchronization</string>
-    <string name="onboarding_setupsync_message">Currently you are only seeing this device. To connect your Octi installations, setup a common synchronization service.</string>
+    <string name="onboarding_setupsync_title">Set up synchronization</string>
+    <string name="onboarding_setupsync_message">Currently you are only seeing this device. To connect your Octi installations, set up a common synchronization service.</string>
 
     <string name="settings_privacy_policy_label">Privacy policy</string>
     <string name="settings_privacy_policy_desc">Handling data responsibly.</string>
@@ -44,7 +44,7 @@
     <string name="help_translate_description">Help translate this app into your favorite language.</string>
 
     <string name="ui_theme_mode_setting_label">Theme mode</string>
-    <string name="ui_theme_mode_setting_explanation">The mode used when theming the app (e.g. night or day).</string>
+    <string name="ui_theme_mode_setting_explanation">The mode used when theming the app (e.g. dark or light).</string>
     <string name="ui_theme_mode_dark_label">Dark</string>
     <string name="ui_theme_mode_light_label">Light</string>
     <string name="ui_theme_mode_system_label">System</string>
@@ -135,7 +135,14 @@
     <string name="device_x_label">Device: %s</string>
 
     <string name="pro_device_limit_reached_title">Device limit reached</string>
-    <string name="pro_device_limit_reached_description">You currently have %1$d  synced devices. To view more than %2$d devices, upgrade to Octi Pro or remove devices.</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">You currently have %1$d synced device.</item>
+        <item quantity="other">You currently have %1$d synced devices.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">To view more than %2$d device, upgrade to Octi Pro or remove devices.</item>
+        <item quantity="other">To view more than %2$d devices, upgrade to Octi Pro or remove devices.</item>
+    </plurals>
 
     <string name="sync_delete_device_keepaccess_caveat">Removing this device will delete its data but won\'t revoke access. To revoke access, disconnect Octi on the device.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Deleting this device will remove its data and revoke its access.</string>

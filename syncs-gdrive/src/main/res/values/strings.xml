@@ -8,7 +8,7 @@
     <string name="sync_gdrive_appdata_label">App-data scope</string>
     <string name="sync_gdrive_type_appdata_description">Data is placed in Google Drive. This specific variant uses the "app-data" scope. Access is only granted to a new folder just for this app. The folder is not visible in your drive. It is similar to how WhatsApp backups work.</string>
     <string name="sync_gdrive_add_label">Add new Google Drive</string>
-    <string name="sync_gdrive_add_description">Click the sign-in button below to setup Google Drive access.</string>
+    <string name="sync_gdrive_add_description">Click the sign-in button below to set up Google Drive access.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Reset all Octi data stored on Google Drive. Your device stays logged into Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Log out from Google Drive and delete data related to this device.</string>
     <string name="sync_gdrive_error_no_account_on_device">This device is not signed into any Google account.</string>
