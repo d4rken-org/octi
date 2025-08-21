@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi FOSS</string>
-    <string name="upgrade_feature_requires_pro">Nécessite Octi Pro</string>
+    <string name="app_name_upgraded">Octi, version libre</string>
+    <string name="upgrade_feature_requires_pro">Seulement avec Octi Pro</string>
     <string name="upgrades_dashcard_title">Obtenir Octi Pro</string>
-    <string name="upgrades_dashcard_body">Débloquez des fonctionnalités supplémentaires et devenez mécène pour soutenir le développement continu !</string>
-    <string name="upgrades_dashcard_upgrade_action">Améliorer</string>
+    <string name="upgrades_dashcard_body">Accédez à des fonctions supplémentaires et financez le développement permanent de l’appli</string>
+    <string name="upgrades_dashcard_upgrade_action">Surclasser</string>
     <string name="upgrade_screen_title">Passer à Octi Pro</string>
-    <string name="upgrade_screen_preamble">Octi n\'utilise pas de publicités et ne vend pas les données des utilisateurs. Mon travail est financé par vous ❤️</string>
+    <string name="upgrade_screen_preamble">Octi n’affiche pas de publicités et ne vend pas les données des utilisateurs. Vous financez mon travail ❤️.</string>
     <string name="upgrade_screen_how_title">Que faire</string>
-    <string name="upgrade_screen_how_body">Devenez mécène et sponsorisez le développement ! Touchez le bouton ci-dessous pour activer toutes les fonctionnalités supplémentaires et ouvrir mon profil GitHub Sponsors.</string>
+    <string name="upgrade_screen_how_body">Devenez mécène et commanditez le développement d’Octi. Touchez le bouton ci-dessous pour activer les fonctions supplémentaires et ouvrir mon profil « GitHub Sponsors ».</string>
     <string name="upgrade_screen_why_title">Avantages 🪄</string>
-    <string name="upgrade_screen_benefits_body">• Plus de 3 appareils 💯\n• Différents thèmes 🎨\n• Plus d\'options ⚙️\n• Serveurs de synchronisation supplémentaires 🖥️\n• Développement open source continu 🧙</string>
-    <string name="upgrade_screen_sponsor_action">Soutenir le développement</string>
-    <string name="upgrade_screen_sponsor_action_hint">L\'alternative, ce sont les publicités, les analyses et Google Play 🙁</string>
-    <string name="upgrade_screen_thanks_toast">Merci de soutenir le développement open-source ❤️</string>
+    <string name="upgrade_screen_benefits_body">• Plus de 3 appareils 💯;\n• Plusieurs thèmes 🎨;\n• Plus d’options ⚙️;\n• Des serveurs de synchronisation supplémentaires ; 🖥️\n• Un développement libre permanent 🧙.</string>
+    <string name="upgrade_screen_sponsor_action">Commanditer le développement</string>
+    <string name="upgrade_screen_sponsor_action_hint">L’alternative est des publicités, des analyses et Google Play 🙁</string>
+    <string name="upgrade_screen_thanks_toast">Merci de soutenir le développement libre ❤️</string>
 </resources>

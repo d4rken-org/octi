@@ -2,8 +2,8 @@
 <resources>
     <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Ein Open-Source-Synchronisierungsserver für Octi, erstellt vom Entwickler dieser App. Daten werden clientseitig verschlüsselt, nur Ihre Geräte können sie entschlüsseln.\n\nDa sowohl die App als auch der Server noch verbessert werden, kann er weniger stabil sein als andere Synchronisierungsoptionen.</string>
-    <string name="sync_kserver_add_subtitle">K-Server Konto hinzufügen</string>
     <string name="sync_kserver_add_create_action_hint">Inaktive Konten werden nach einigen Wochen gelöscht.</string>
+    <string name="sync_kserver_add_subtitle">K-Server Konto hinzufügen</string>
     <string name="sync_kserver_add_link_action_hint">Sie benötigen Zugriff auf ein anderes Gerät, das bereits verbunden ist.</string>
     <string name="sync_kserver_about_title">Über KServer</string>
     <string name="sync_kserver_about_desc">KServer ist ein Open-Source-Synchronisierungsserver (in Kotlin) für Octi von darken.</string>

@@ -14,9 +14,7 @@
     <string name="module_power_battery_full_in_x">Vollständig aufgeladen in: %s</string>
     <string name="module_power_battery_empty_in_x">Leer in: %s</string>
     <string name="module_power_battery_estimation_na">Schätzung nicht verfügbar</string>
-
     <string name="module_power_widget_description">Zeigt den Akkustatus Ihrer synchronisierten Geräte an.</string>
-
     <string name="module_power_alerts_title">Akku Warnung</string>
     <string name="module_power_alerts_lowbattery_title">Akkustand niedrig</string>
     <string name="module_power_alerts_lowbattery_description">Erhalten Sie eine Benachrichtigung, wenn der Akku dieses Geräts unter Ihren festgelegten Schwellenwert fällt. Stellen Sie Ihren bevorzugten Prozentsatz für Warnungen ein.</string>
