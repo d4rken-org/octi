@@ -19,7 +19,11 @@ class DeviceLimitVH(parent: ViewGroup) :
         item: Item,
         payloads: List<Any>
     ) -> Unit = binding { item ->
-        body.text = getString(R.string.pro_device_limit_reached_description, item.current, item.maximum)
+        body.text = buildString {
+            append(getQuantityString(R.plurals.pro_device_limit_current_description, item.current))
+            append(" ")
+            append(getQuantityString(R.plurals.pro_device_limit_current_description, item.maximum))
+        }
         upgradeAction.setOnClickListener { item.onUpgrade() }
     }
 

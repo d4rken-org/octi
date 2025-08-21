@@ -3,10 +3,13 @@
     <string name="module_apps_label">Apps module</string>
     <string name="module_apps_desc">Information about installed apps.</string>
 
-    <string name="module_apps_x_installed">%d apps installed</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d app installed</item>
+        <item quantity="other">%d apps installed</item>
+    </plurals>
     <string name="module_apps_last_installed_x">Last installed app: %s</string>
     <string name="module_apps_list_title">Installed apps</string>
 
     <string name="module_apps_installer_label">App installation source</string>
-    <string name="module_apps_installer_desc">Sync and include information about the source from which each app was installed.</string>
+    <string name="module_apps_installer_desc">Sync and include information about each app’s installation source.</string>
 </resources>

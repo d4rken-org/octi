@@ -24,7 +24,11 @@ class DeviceAppsVH(parent: ViewGroup) :
         val apps = item.data.data
 
         appsPrimary.apply {
-            text = getString(R.string.module_apps_x_installed, apps.installedPackages.size)
+            text = resources.getQuantityString(
+                R.plurals.module_apps_x_installed,
+                apps.installedPackages.size,
+                apps.installedPackages.size
+            )
         }
         val last = apps.installedPackages.maxByOrNull { it.installedAt }
         appsSecondary.text =
