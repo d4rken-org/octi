@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">Apper</string>
     <string name="device_x_label">Enhet: %s</string>
     <string name="pro_device_limit_reached_title">Enhetsgrense nådd</string>
-    <string name="pro_device_limit_reached_description">Du har for øyeblikket %1$d synkroniserte enheter. Oppgrader til Octi Pro eller fjern enheter for å se mer enn %2$d enheter.</string>
     <string name="sync_delete_device_keepaccess_caveat">Å fjerne denne enheten sletter dens data, men fjerner ikke tilgang. For å fjerne tilgang, koble Octi fra enheten.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Å slette denne enheten fjerner både data og tilgang.</string>
 </resources>

@@ -140,7 +140,6 @@
     <string name="device_x_label">Устройство: %s</string>
 
     <string name="pro_device_limit_reached_title">Достигнут лимит устройств</string>
-    <string name="pro_device_limit_reached_description">У вас сейчас %1$d синхронизированных устройств. Чтобы просматривать более %2$d устройств, обновитесь до Octi Pro или удалите устройства.</string>
 
     <string name="sync_delete_device_keepaccess_caveat">Удаление этого устройства удалит его данные, но не отзовет доступ. Чтобы отозвать доступ, отключите Octi на устройстве.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Удаление этого устройства удалит его данные и отзовет его доступ.</string>

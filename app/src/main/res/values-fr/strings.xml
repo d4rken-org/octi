@@ -136,7 +136,6 @@
     <string name="device_x_label">Appareil : %s</string>
 
     <string name="pro_device_limit_reached_title">Limite d\'appareils atteinte</string>
-    <string name="pro_device_limit_reached_description">Vous avez actuellement %1$d appareils synchronisés. Pour voir plus de %2$d appareils, passez à Octi Pro ou supprimez des appareils.</string>
 
     <string name="sync_delete_device_keepaccess_caveat">Supprimer cet appareil supprimera ses données mais ne révoquera pas l\'accès. Pour révoquer l\'accès, déconnectez Octi sur l\'appareil.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Supprimer cet appareil supprimera ses données et révoquera son accès.</string>

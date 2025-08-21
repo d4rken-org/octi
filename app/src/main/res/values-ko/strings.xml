@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">앱</string>
     <string name="device_x_label">기기: %s</string>
     <string name="pro_device_limit_reached_title">기기 제한에 도달함</string>
-    <string name="pro_device_limit_reached_description">현재 %1$d개 동기화된 기기가 있습니다. %2$d개를 초과하여 보려면 Octi Pro로 업그레이드하거나 기기를 제거하세요.</string>
     <string name="sync_delete_device_keepaccess_caveat">이 기기를 삭제하면 데이터는 지워지나 접근 권한은 남아있습니다. 접근권한을 해제하려면 해당 기기에서 Octi 연결을 해제하세요.</string>
     <string name="sync_delete_device_revokeaccess_caveat">이 기기를 삭제하면 데이터와 접근 권한 모두 삭제됩니다.</string>
 </resources>

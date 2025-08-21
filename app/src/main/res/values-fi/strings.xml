@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">Sovellukset</string>
     <string name="device_x_label">Laite: %s</string>
     <string name="pro_device_limit_reached_title">Laitekatto saavutettu</string>
-    <string name="pro_device_limit_reached_description">Sinulla on nyt %1$d synkronoitua laitetta. Nähdäksesi enemmän kuin %2$d laitetta, päivitä Octi Prohon tai poista laitteita.</string>
     <string name="sync_delete_device_keepaccess_caveat">Tämän laitteen poistaminen poistaa sen tiedot, mutta ei poista käyttöoikeutta. Poistaaksesi käyttöoikeuden, irrota Octi laitteessa.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Tämän laitteen poistaminen poistaa sen tiedot ja käyttöoikeudet.</string>
 </resources>

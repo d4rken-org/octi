@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">Appar</string>
     <string name="device_x_label">Enhet: %s</string>
     <string name="pro_device_limit_reached_title">Enhetsgräns uppnådd</string>
-    <string name="pro_device_limit_reached_description">Du har för närvarande %1$d synkroniserade enheter. För att se fler än %2$d, uppgradera till Octi Pro eller ta bort enheter.</string>
     <string name="sync_delete_device_keepaccess_caveat">Att ta bort denna enhet tar bort dess data men tar inte bort åtkomst. För att ta bort åtkomst måste du koppla loss Octi på enheten.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Ta bort denna enhet raderar dess data och tar bort dess åtkomst.</string>
 </resources>

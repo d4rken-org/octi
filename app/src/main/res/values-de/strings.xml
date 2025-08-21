@@ -112,7 +112,6 @@
     <string name="module_apps_category_label">Apps</string>
     <string name="device_x_label">Gerät: %s</string>
     <string name="pro_device_limit_reached_title">Geräte Limit erreicht</string>
-    <string name="pro_device_limit_reached_description">Sie haben derzeit %1$d synchronisierte Geräte. Um mehr als %2$d Geräte anzuzeigen, upgraden Sie auf Octi Pro oder entfernen Sie Geräte.</string>
 
     <string name="sync_delete_device_keepaccess_caveat">Das Entfernen dieses Geräts löscht seine Daten, widerruft aber nicht den Zugriff. Um den Zugriff zu widerrufen, trennen Sie Octi auf dem Gerät.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Das Löschen dieses Geräts entfernt seine Daten und widerruft seinen Zugriff.</string>

@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">Ứng dụng</string>
     <string name="device_x_label">Thiết bị: %s</string>
     <string name="pro_device_limit_reached_title">Đã đạt giới hạn thiết bị</string>
-    <string name="pro_device_limit_reached_description">Bạn có %1$d thiết bị đồng bộ. Để xem nhiều hơn %2$d thiết bị, hãy nâng cấp lên Octi Pro hoặc xóa bớt thiết bị.</string>
     <string name="sync_delete_device_keepaccess_caveat">Xóa thiết bị này sẽ xóa dữ liệu nhưng không thu hồi quyền truy cập. Để thu hồi quyền, hãy ngắt Octi trên thiết bị.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Xóa thiết bị này sẽ xóa dữ liệu và thu hồi cả quyền truy cập.</string>
 </resources>

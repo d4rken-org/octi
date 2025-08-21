@@ -107,7 +107,6 @@
     <string name="module_apps_category_label">Апликације</string>
     <string name="device_x_label">Уређај: %s</string>
     <string name="pro_device_limit_reached_title">Достигнут лимит уређаја</string>
-    <string name="pro_device_limit_reached_description">Тренутно имаш %1$d синхронизованих уређаја. Да видиш више од %2$d, надогради на Octi Pro или уклони уређаје.</string>
     <string name="sync_delete_device_keepaccess_caveat">Уклањањем овог уређаја ће се обрисати његови подаци, али приступ ће остати. Да укинеш приступ, одјави Octi на овом уређају.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Брисањем овог уређаја ће се обрисати његови подаци и потпуно укинути приступ.</string>
 </resources>

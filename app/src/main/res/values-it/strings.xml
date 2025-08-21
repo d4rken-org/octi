@@ -107,7 +107,6 @@ I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comu
     <string name="module_apps_category_label">Applicazioni</string>
     <string name="device_x_label">Dispositivo: %s</string>
     <string name="pro_device_limit_reached_title">Limite dispositivi raggiunto</string>
-    <string name="pro_device_limit_reached_description">Attualmente hai %1$d dispositivi sincronizzati. Per visualizzare più di %2$d dispositivi, esegui l\'upgrade a Octi Pro o rimuovi dei dispositivi.</string>
     <string name="sync_delete_device_keepaccess_caveat">Rimuovere questo dispositivo cancellerà i suoi dati, ma non revoca l\'accesso. Per revocare l\'accesso, disconnetti Octi dal dispositivo.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Eliminare questo dispositivo rimuoverà i suoi dati e revocerà il suo accesso.</string>
 </resources>
