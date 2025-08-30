@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Máy chủ đồng bộ hóa mã nguồn mở cho Octi do nhà phát triển ứng dụng này tạo ra. Dữ liệu được mã hóa phía máy khách, chỉ thiết bị của bạn mới có thể giải mã.\\n\\nVì cả ứng dụng và máy chủ vẫn đang được cải thiện, nó có thể kém ổn định hơn các tùy chọn đồng bộ hóa khác.</string>
     <string name="sync_kserver_add_create_action_hint">Các tài khoản không hoạt động sẽ bị xóa sau vài tuần.</string>
     <string name="sync_kserver_add_subtitle">Thêm Google Drive mới</string>
