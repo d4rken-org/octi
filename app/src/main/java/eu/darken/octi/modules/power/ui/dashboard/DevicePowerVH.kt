@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.widget.ImageViewCompat
 import eu.darken.octi.R
+import eu.darken.octi.common.TemperatureFormatter
 import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.common.isBold
 import eu.darken.octi.databinding.DashboardDevicePowerItemBinding
@@ -26,6 +27,8 @@ class DevicePowerVH(parent: ViewGroup) :
         R.layout.dashboard_device_power_item,
         parent
     ) {
+
+    private val temperatureFormatter = TemperatureFormatter(itemView.context)
 
     override val viewBinding = lazy { DashboardDevicePowerItemBinding.bind(itemView) }
 
@@ -126,7 +129,9 @@ class DevicePowerVH(parent: ViewGroup) :
                 else -> getString(R.string.module_power_battery_estimation_na)
             }
 
-            val temperatureText = powerInfo.battery.temp?.let { "$it C°" }
+            val temperatureText = powerInfo.battery.temp?.let {
+                temperatureFormatter.formatTemperature(it)
+            }
 
             text = if (temperatureText != null) {
                 "$temperatureText - $estimationText"
