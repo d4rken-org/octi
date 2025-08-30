@@ -72,7 +72,7 @@ class DashboardVM @Inject constructor(
     networkStateProvider: NetworkStateProvider,
     private val permissionTool: PermissionTool,
     private val syncSettings: SyncSettings,
-    upgradeRepo: UpgradeRepo,
+    private val upgradeRepo: UpgradeRepo,
     private val webpageTool: WebpageTool,
     private val clipboardHandler: ClipboardHandler,
     private val updateService: UpdateService,
@@ -161,12 +161,12 @@ class DashboardVM @Inject constructor(
 
         if (deviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro) {
             log(TAG, WARN) { "Exceeding device limit: $deviceItems" }
+            items.addAll(deviceItems.take(DEVICE_LIMIT))
             DeviceLimitVH.Item(
                 current = deviceItems.size,
                 maximum = DEVICE_LIMIT,
-                onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() },
             ).run { items.add(this) }
-            items.addAll(deviceItems.take(DEVICE_LIMIT))
+            items.addAll(deviceItems.drop(DEVICE_LIMIT))
         } else {
             items.addAll(deviceItems)
         }
@@ -219,7 +219,8 @@ class DashboardVM @Inject constructor(
         permissionTool.missingPermissions,
         syncManager.connectors,
         alertManager.alerts,
-    ) { now, byDevice, missingPermissions, connectors, alerts ->
+        upgradeRepo.upgradeInfo,
+    ) { now, byDevice, missingPermissions, connectors, alerts, upgradeInfo ->
         byDevice.devices
             .mapNotNull { (deviceId, moduleDatas) ->
                 val metaModule = moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
@@ -252,6 +253,15 @@ class DashboardVM @Inject constructor(
             }
             .sortedBy { it.meta.data.deviceLabel ?: it.meta.data.deviceName }
             .sortedByDescending { it.meta.deviceId == syncSettings.deviceId }
+            .mapIndexed { index, item ->
+                val isLimited = !upgradeInfo.isPro && index >= DEVICE_LIMIT
+                item.copy(
+                    isLimited = isLimited,
+                    onUpgrade = if (isLimited) {
+                        { DashboardFragmentDirections.goToUpgradeFragment().navigate() }
+                    } else null
+                )
+            }
     }
 
     private val ModuleData<out Any>.orderPrio: Int
