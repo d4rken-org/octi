@@ -36,10 +36,14 @@ class DeviceVH(parent: ViewGroup) :
         val meta = item.meta.data
 
         deviceIcon.setImageResource(
-            when (meta.deviceType) {
-                MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
-                MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
-                MetaInfo.DeviceType.UNKNOWN -> R.drawable.ic_baseline_question_mark_24
+            if (item.isLimited) {
+                R.drawable.ic_baseline_stars_24
+            } else {
+                when (meta.deviceType) {
+                    MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
+                    MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
+                    MetaInfo.DeviceType.UNKNOWN -> R.drawable.ic_baseline_question_mark_24
+                }
             }
         )
         deviceLabel.text = meta.deviceLabel
@@ -59,14 +63,24 @@ class DeviceVH(parent: ViewGroup) :
         }
 
         lastSeen.text = DateUtils.getRelativeTimeSpanString(item.meta.modifiedAt.toEpochMilli())
-        moduleDataList.isGone = item.moduleItems.isEmpty()
+        moduleDataList.isGone = item.isLimited || item.moduleItems.isEmpty()
         moduleAdapter.update(item.moduleItems)
+
+        root.setOnClickListener {
+            if (item.isLimited) {
+                item.onUpgrade?.invoke()
+            } else {
+                null
+            }
+        }
     }
 
     data class Item(
         val now: Instant,
         val meta: eu.darken.octi.module.core.ModuleData<MetaInfo>,
         val moduleItems: List<PerDeviceModuleAdapter.Item>,
+        val isLimited: Boolean = false,
+        val onUpgrade: (() -> Unit)? = null,
     ) : DashboardAdapter.Item {
         override val stableId: Long = meta.deviceId.hashCode().toLong()
     }
