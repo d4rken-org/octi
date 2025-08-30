@@ -8,7 +8,6 @@
     <string name="sync_gdrive_appdata_label">Εύρος δεδομένων εφαρμογής</string>
     <string name="sync_gdrive_type_appdata_description">Τα δεδομένα αποθηκεύονται στο Google Drive. Αυτή η παραλλαγή χρησιμοποιεί το εύρος \"app-data\". Η πρόσβαση παρέχεται μόνο σε έναν νέο φάκελο αποκλειστικά για αυτήν την εφαρμογή. Ο φάκελος δεν είναι ορατός στην μονάδα σας. Είναι παρόμοιο με τα αντίγραφα ασφαλείας του WhatsApp.</string>
     <string name="sync_gdrive_add_label">Προσθήκη νέου Google Drive</string>
-    <string name="sync_gdrive_add_description">Κάντε κλικ στο κουμπί σύνδεσης παρακάτω για να ρυθμίσετε την πρόσβαση στο Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Επαναφορά όλων των δεδομένων Octi που είναι αποθηκευμένα στο Google Drive. Η συσκευή σας παραμένει συνδεδεμένη στο Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Αποσύνδεση από το Google Drive και διαγραφή δεδομένων που σχετίζονται με αυτήν τη συσκευή.</string>
     <string name="sync_gdrive_error_no_account_on_device">Αυτή η συσκευή δεν είναι συνδεδεμένη σε κανέναν λογαριασμό Google.</string>

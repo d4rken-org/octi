@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">Din enhetskompis</string>
     <string name="onboarding_welcome_body1">Octi är ett verktyg för personer med flera Android-enheter.</string>
     <string name="onboarding_welcome_body2">Håller dig uppdaterad med alla dina enheter. Det gäller din telefon, surfplatta eller vilken annan Octi-enhet som helst – du får viktiga detaljer direkt.</string>
-    <string name="onboarding_welcome_body3">Du kan uppgradera till Octi Pro för att få extra funktioner och stödja vidare utveckling.</string>
     <string name="onboarding_welcome_beta_hint">Bara så du vet, detta är en betaversion – tack för ditt tålamod medan jag fortsätter förbättra appen!</string>
     <string name="onboarding_privacy_subtitle">Integritetspolicy</string>
     <string name="onboarding_privacy_body1">Octi har inga annonser och säljer inte användardata.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">Debug-notiser</string>
     <string name="debug_debuglog_file_label">Sparad loggfil</string>
     <string name="debug_debuglog_record_action">Spela in debuglogg</string>
-    <string name="onboarding_setupsync_title">Ställ in synkronisering</string>
-    <string name="onboarding_setupsync_message">Du ser just nu bara denna enhet. Anslut dina Octi-installationer genom att konfigurera en gemensam synktjänst.</string>
     <string name="settings_privacy_policy_label">Integritetspolicy</string>
     <string name="settings_privacy_policy_desc">Hantera data ansvarsfullt.</string>
     <string name="settings_licenses_label">Licenser</string>
@@ -35,14 +32,12 @@
     <string name="help_translate_label">Översättning</string>
     <string name="help_translate_description">Hjälp till att översätta den här appen till ditt favoritspråk.</string>
     <string name="ui_theme_mode_setting_label">Temaläge</string>
-    <string name="ui_theme_mode_setting_explanation">Läget som används när appen tematiseras (t.ex. natt eller dag).</string>
     <string name="ui_theme_mode_dark_label">Mörkt</string>
     <string name="ui_theme_mode_light_label">Ljust</string>
     <string name="ui_theme_mode_system_label">System</string>
     <string name="ui_theme_style_setting_label">Temastil</string>
     <string name="ui_theme_style_setting_explanation">Färgstilen som används när appen får tema.</string>
     <string name="ui_theme_style_default_label">Standard</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Problemtracker</string>
     <string name="issue_tracker_description">En publikt problemtracker för buggrapporter och funktionsförfrågningar.</string>
     <string name="discord_label">Discord</string>
@@ -50,7 +45,6 @@
     <string name="support_debuglog_label">Spela in debuglogg</string>
     <string name="support_debuglog_inprogress_label">Stoppa debuglogg</string>
     <string name="support_debuglog_desc">Spelar in allt appen gör i en textfil som du kan dela.</string>
-    <string name="settings_support_label">Support</string>
     <string name="debug_debuglog_sensitive_information_message">Den här filen innehåller känslig information (t.ex. dina installerade appar). Dela endast med betrodda parter.</string>
     <string name="settings_debuglog_explanation">Den här funktionen spelar in allt som appen gör i en delbar fil. Den genererade filen innehåller känslig information (t.ex. dina installerade appar). Dela bara med betrodda parter (t.ex. apputvecklaren om du felsöker tillsammans).</string>
     <string name="sync_last_action_label">Senaste åtgärd</string>

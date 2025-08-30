@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">El teu company del dispositiu</string>
     <string name="onboarding_welcome_body1">L\'Octi és una eina per a persones amb diversos dispositius Android.</string>
     <string name="onboarding_welcome_body2">Us manté al corrent de tots els vostres dispositius. Tant si es tracta del vostre telèfon, tauleta o qualsevol altre giny amb l\'Octi instal·lat, obtindreu els detalls clau d\'un cop d\'ull.</string>
-    <string name="onboarding_welcome_body3">Podeu millorar a l\'Octi Pro per obtenir funcions addicionals i donar suport al desenvolupament.</string>
     <string name="onboarding_welcome_beta_hint">Només un avís: aquesta és una versió beta, així que gràcies per la vostra paciència mentre continuo millorant l\'aplicació!</string>
     <string name="onboarding_privacy_subtitle">Política de privadesa</string>
     <string name="onboarding_privacy_body1">L\'Octi no té anuncis i no ven dades d\'usuari.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">Notificacions de depuració</string>
     <string name="debug_debuglog_file_label">Fitxer de registre gravat</string>
     <string name="debug_debuglog_record_action">Grava el registre de depuració</string>
-    <string name="onboarding_setupsync_title">Configura la sincronització</string>
-    <string name="onboarding_setupsync_message">Actualment només veus aquest dispositiu. Per connectar les vostres instal·lacions de l\'Octi, configureu un servei de sincronització comú.</string>
     <string name="settings_privacy_policy_label">Política de privadesa</string>
     <string name="settings_privacy_policy_desc">Tractament responsable de les dades.</string>
     <string name="settings_licenses_label">Llicencies</string>
@@ -33,7 +30,6 @@
     <string name="settings_acknowledgements_label">Agraïments</string>
     <string name="documentation_label">Documentació</string>
     <string name="ui_theme_mode_setting_label">Mode del tema</string>
-    <string name="ui_theme_mode_setting_explanation">El mode que s\'utilitza quan es defineix l\'aplicació (p. ex., nit o dia).</string>
     <string name="ui_theme_mode_dark_label">Fosc</string>
     <string name="ui_theme_mode_light_label">Clar</string>
     <string name="ui_theme_mode_system_label">Sistema</string>

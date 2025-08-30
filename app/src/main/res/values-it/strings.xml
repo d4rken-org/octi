@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">Il tuo dispositivo</string>
     <string name="onboarding_welcome_body1">Octi è uno strumento per possessori di più dispositivi Android.</string>
     <string name="onboarding_welcome_body2">Ti mantiene aggiornato su tutti i tuoi dispositivi. Che sia un telefono, tablet o qualsiasi altro gadget con Octi installato, potrai avere sott\'occhio le info importanti.</string>
-    <string name="onboarding_welcome_body3">È possibile passare a Octi Pro per ottenere funzionalità extra e supportare lo sviluppo.</string>
     <string name="onboarding_welcome_beta_hint">Avviso. Questa è una versione beta, grazie per la pazienza mentre continuerò a migliorare l\'app!</string>
     <string name="onboarding_privacy_subtitle">Informativa sulla privacy</string>
     <string name="onboarding_privacy_body1">Octi è senza pubblicità e non vende i dati dell\'utente.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">Notifiche di debug</string>
     <string name="debug_debuglog_file_label">File di log</string>
     <string name="debug_debuglog_record_action">Registra log di debug</string>
-    <string name="onboarding_setupsync_title">Configura sincronizzazione</string>
-    <string name="onboarding_setupsync_message">Attualmente stai vedendo solo questo dispositivo. Per collegare i tuoi dispositivi con Octi, configurali con un servizio di sincronizzazione comune.</string>
     <string name="settings_privacy_policy_label">Informativa sulla privacy</string>
     <string name="settings_privacy_policy_desc">I dati sono gestiti responsabilmente.</string>
     <string name="settings_licenses_label">Licenze</string>
@@ -33,7 +30,6 @@
     <string name="settings_acknowledgements_label">Riconoscimenti</string>
     <string name="documentation_label">Documentazione</string>
     <string name="ui_theme_mode_setting_label">Tema</string>
-    <string name="ui_theme_mode_setting_explanation">La modalità utilizzata per il tema (es. notte o giorno).</string>
     <string name="ui_theme_mode_dark_label">Notte</string>
     <string name="ui_theme_mode_light_label">Giorno</string>
     <string name="ui_theme_mode_system_label">Sistema</string>

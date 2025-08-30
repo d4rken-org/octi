@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">חבר מכשיר שלך</string>
     <string name="onboarding_welcome_body1">Octi הוא כלי עבור אנשים עם מספר מכשירי אנדרואיד.</string>
     <string name="onboarding_welcome_body2">זה שומר אותך בעניינים עם כל המכשירים שלך. בין אם זה הטלפון, הטאבלט או כל גאדג\'ט אחר עם Octi מותקן, תקבלו פרטי מפתח במבט חטוף.</string>
-    <string name="onboarding_welcome_body3">אתה יכול לשדרג ל-Octi פרמיום כדי לקבל תכונות נוספות ותמיכה בפיתוח.</string>
     <string name="onboarding_welcome_beta_hint">רק הערה, זו גרסת בטא, אז תודה על הסבלנות בזמן שאני ממשיך לשפר את האפליקציה!</string>
     <string name="onboarding_privacy_subtitle">מדיניות פרטיות</string>
     <string name="onboarding_privacy_body1">ב- Octi אין מודעות ואיננו מוכרים נתוני משתמשים.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">התראות ניפוי באגים</string>
     <string name="debug_debuglog_file_label">קובץ יומן מוקלט</string>
     <string name="debug_debuglog_record_action">הקלט יומן ניפוי באגים</string>
-    <string name="onboarding_setupsync_title">הגדר סנכרון</string>
-    <string name="onboarding_setupsync_message">כרגע אתה רואה רק את המכשיר הזה. כדי לחבר את התקנות Octi שלך, הגדר שירות סנכרון נפוץ.</string>
     <string name="settings_privacy_policy_label">מדיניות פרטיות</string>
     <string name="settings_privacy_policy_desc">טיפול בנתונים בצורה אחראית.</string>
     <string name="settings_licenses_label">רשיונות</string>
@@ -32,13 +29,14 @@
     <string name="changelog_label">יומן שינויים</string>
     <string name="settings_acknowledgements_label">קרדיטים</string>
     <string name="documentation_label">תיעוד</string>
+    <string name="help_translate_label">תרגום</string>
+    <string name="help_translate_description">עזור לתרגם את האפליקציה הזו לשפה המועדפת עליך.</string>
     <string name="ui_theme_mode_setting_label">עיצוב</string>
-    <string name="ui_theme_mode_setting_explanation">המצב המשמש בעת עיצוב האפליקציה (למשל, לילה או יום).</string>
     <string name="ui_theme_mode_dark_label">כהה</string>
     <string name="ui_theme_mode_light_label">בהיר</string>
     <string name="ui_theme_mode_system_label">מערכת</string>
     <string name="ui_theme_style_setting_label">סגנון עיצוב</string>
-    <string name="ui_theme_style_setting_explanation">סגנון הצבע המשמש בעת עיצוב האפליקציה.</string>
+    <string name="ui_theme_style_setting_explanation">הסגנון המשמש לעיצוב האפליקציה.</string>
     <string name="ui_theme_style_default_label">ברירת מחדל</string>
     <string name="ui_theme_style_materialyou_label">Material you</string>
     <string name="issue_tracker_label">מעקב תקלות</string>

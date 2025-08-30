@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">Người bạn thiết bị của bạn</string>
     <string name="onboarding_welcome_body1">Octi là công cụ dành cho người dùng sở hữu nhiều thiết bị Android.</string>
     <string name="onboarding_welcome_body2">Giúp bạn cập nhật thông tin với tất cả thiết bị của mình. Dù là điện thoại, máy tính bảng hay bất kỳ thiết bị nào có cài Octi, bạn sẽ xem ngay được thông tin quan trọng.</string>
-    <string name="onboarding_welcome_body3">Bạn có thể nâng cấp lên Octi Pro để mở khóa thêm tính năng và ủng hộ phát triển.</string>
     <string name="onboarding_welcome_beta_hint">Thông báo: Đây là phiên bản beta, cảm ơn bạn đã kiên nhẫn khi tôi tiếp tục hoàn thiện ứng dụng!</string>
     <string name="onboarding_privacy_subtitle">Chính sách quyền riêng tư</string>
     <string name="onboarding_privacy_body1">Octi không có quảng cáo và không bán dữ liệu người dùng.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">Thông báo debug</string>
     <string name="debug_debuglog_file_label">File log đã ghi</string>
     <string name="debug_debuglog_record_action">Ghi nhật ký debug</string>
-    <string name="onboarding_setupsync_title">Thiết lập đồng bộ</string>
-    <string name="onboarding_setupsync_message">Bạn chỉ đang xem thiết bị này. Để kết nối các cài đặt Octi của bạn, hãy thiết lập dịch vụ đồng bộ chung.</string>
     <string name="settings_privacy_policy_label">Chính sách quyền riêng tư</string>
     <string name="settings_privacy_policy_desc">Quản lý dữ liệu một cách có trách nhiệm.</string>
     <string name="settings_licenses_label">Giấy phép</string>
@@ -35,17 +32,14 @@
     <string name="help_translate_label">Dịch thuật</string>
     <string name="help_translate_description">Hãy giúp dịch ứng dụng này sang ngôn ngữ bạn yêu thích.</string>
     <string name="ui_theme_mode_setting_label">Chế độ giao diện</string>
-    <string name="ui_theme_mode_setting_explanation">Chế độ sử dụng khi thiết lập giao diện app (ví dụ: đêm hoặc ngày).</string>
     <string name="ui_theme_mode_dark_label">Tối</string>
     <string name="ui_theme_mode_light_label">Sáng</string>
     <string name="ui_theme_mode_system_label">Hệ thống</string>
     <string name="ui_theme_style_setting_label">Kiểu giao diện</string>
     <string name="ui_theme_style_setting_explanation">Kiểu màu được dùng khi hiển thị giao diện ứng dụng.</string>
     <string name="ui_theme_style_default_label">Mặc định</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Theo dõi vấn đề</string>
     <string name="issue_tracker_description">Một hệ thống theo dõi vấn đề công khai cho báo cáo lỗi &amp; yêu cầu tính năng.</string>
-    <string name="discord_label">Discord</string>
     <string name="discord_description">Một nơi để trao đổi và hỏi đáp.</string>
     <string name="support_debuglog_label">Ghi nhật ký debug</string>
     <string name="support_debuglog_inprogress_label">Dừng ghi debug</string>
@@ -66,11 +60,9 @@
     <string name="sync_synced_devices_label">Thiết bị đã đồng bộ</string>
     <string name="sync_connector_paused_label">Tạm dừng đồng bộ</string>
     <plurals name="general_devices_count_label">
-        <item quantity="one">%d thiết bị</item>
         <item quantity="other">%d thiết bị</item>
     </plurals>
     <plurals name="general_unique_devices_count_label">
-        <item quantity="one">%d duy nhất, chỉ sẵn có ở đây</item>
         <item quantity="other">%d duy nhất, chỉ sẵn có ở đây</item>
     </plurals>
     <string name="updates_dashcard_title">Đã có bản cập nhật</string>

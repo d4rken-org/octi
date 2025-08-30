@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">앱 모듈</string>
     <string name="module_apps_desc">설치된 앱에 대한 정보입니다.</string>
-    <string name="module_apps_x_installed">%d개의 앱이 설치됨</string>
     <string name="module_apps_last_installed_x">마지막으로 설치된 앱: %s</string>
     <string name="module_apps_list_title">설치된 앱</string>
     <string name="module_apps_installer_label">앱 설치 소스</string>
-    <string name="module_apps_installer_desc">각 앱이 설치된 소스에 대한 정보를 동기화하여 포함합니다.</string>
 </resources>

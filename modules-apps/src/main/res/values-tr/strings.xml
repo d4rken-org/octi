@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Uygulamalar modülü</string>
     <string name="module_apps_desc">Yüklü uygulamalar hakkında bilgi.</string>
-    <string name="module_apps_x_installed">%d yüklü uygulama</string>
     <string name="module_apps_last_installed_x">Son yüklenen uygulama: %s</string>
     <string name="module_apps_list_title">Yüklü uygulamalar</string>
     <string name="module_apps_installer_label">Uygulama yükleme kaynağı</string>
-    <string name="module_apps_installer_desc">Senkronize edin ve her uygulamanın yüklendiği kaynak hakkında bilgi ekleyin.</string>
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Octi</string>
     <string name="general_error_label">Virhe</string>
     <string name="general_error_no_compatible_app_found_msg">Yhteensopivaa sovellusta ei löytynyt tämän pyynnön käsittelemiseksi.</string>
     <string name="general_share_action">Jaa</string>

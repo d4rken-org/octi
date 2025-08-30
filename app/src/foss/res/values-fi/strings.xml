@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi FOSS</string>
     <string name="upgrade_feature_requires_pro">Vaatii Octi Pro:n</string>
     <string name="upgrades_dashcard_title">Hanki Octi Pro</string>
     <string name="upgrades_dashcard_body">Avaa lisäominaisuuksia ja auta tukemaan jatkuvaa kehitystä liittymällä tukijaksi!</string>

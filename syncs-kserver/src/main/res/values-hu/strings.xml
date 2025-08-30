@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Egy nyílt forráskódú szinkronizáló szerver Octi-hoz, amit az alkalmazás fejlesztője készített. Az adatok kliens oldalon titkosítva vannak, csak a saját eszközeid tudják visszafejteni.\n\nMivel az alkalmazás és a szerver is folyamatosan fejlődik, kevésbé stabil lehet, mint más szinkronizálási lehetőségek.</string>
     <string name="sync_kserver_add_create_action_hint">Az inaktív fiókok néhány hét után törlődnek.</string>
     <string name="sync_kserver_add_subtitle">Új Google Drive hozzáadása</string>

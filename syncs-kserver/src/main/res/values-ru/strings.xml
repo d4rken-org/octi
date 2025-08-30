@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Сервер синхронизации с открытым исходным кодом для Octi, созданный разработчиком этого приложения. Данные шифруются на стороне клиента, только ваши устройства могут их расшифровать.\n\nПоскольку и приложение, и сервер все еще совершенствуются, он может быть менее стабильным, чем другие варианты синхронизации.</string>
     <string name="sync_kserver_add_create_action_hint">Неактивные учетные записи удаляются через несколько недель.</string>
     <string name="sync_kserver_add_subtitle">Добавить новый Google Drive</string>

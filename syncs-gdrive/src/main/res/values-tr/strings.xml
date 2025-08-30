@@ -8,7 +8,6 @@
     <string name="sync_gdrive_appdata_label">Uygulama verisi kapsamı</string>
     <string name="sync_gdrive_type_appdata_description">Veriler Google Drive\'a yerleştirilir. Bu özel varyant \"app-data\" kapsamını kullanır. Erişim yalnızca bu uygulama için yeni bir klasöre verilir. Klasör sürücünüzde görünmez. WhatsApp yedeklemelerinin nasıl çalıştığına benzer.</string>
     <string name="sync_gdrive_add_label">Yeni Google Drive ekleyin</string>
-    <string name="sync_gdrive_add_description">Google Drive erişimini ayarlamak için aşağıdaki oturum açma düğmesine tıklayın.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Google Drive\'da depolanan tüm Octi verilerini sıfırlayın. Cihazınız Google Drive\'da oturum açmış olarak kalır.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Google Drive\'dan çıkış yapın ve bu cihazla ilgili verileri silin.</string>
     <string name="sync_gdrive_error_no_account_on_device">Bu cihaz herhangi bir Google hesabında oturum açmamıştır.</string>

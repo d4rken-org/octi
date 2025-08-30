@@ -10,18 +10,18 @@
     <string name="general_cancel_action">Annuler</string>
     <string name="general_thanks_action">Merci</string>
     <string name="general_gotit_action">Compris</string>
-    <string name="general_na_label">N/A</string>
+    <string name="general_na_label">ND</string>
     <string name="general_empty_label">Vide</string>
     <string name="general_dismiss_action">Fermer</string>
     <string name="general_maybe_later_action">Peut-être plus tard</string>
     <string name="general_manage_action">Gérer</string>
     <string name="general_quota_label">Quota</string>
-    <string name="general_upgrade_action">Mettre à niveau</string>
+    <string name="general_upgrade_action">Surclasser</string>
     <string name="general_update_action">Mettre à jour</string>
     <string name="general_donate_action">Faire un don</string>
     <string name="general_check_action">Vérifier</string>
-    <string name="general_internal_not_available_msg">Connexion Internet non disponible</string>
+    <string name="general_internal_not_available_msg">Aucune connexion à Internet</string>
     <string name="general_refresh_action">Actualiser</string>
-    <string name="general_continue">Continuer</string>
+    <string name="general_continue">Poursuivre</string>
     <string name="general_show_details_action">Afficher les détails</string>
 </resources>

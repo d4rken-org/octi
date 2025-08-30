@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Отворени сервер за синхронизацију за Octi који је направио програмер ове апликације. Подаци се шифрују на клијентској страни, само ваши уређаји могу да их дешифрују.\n\nПошто се и апликација и сервер и даље унапређују, може бити мање стабилан од других опција синхронизације.</string>
     <string name="sync_kserver_add_create_action_hint">Неактивни налози се бришу након неколико недеља.</string>
     <string name="sync_kserver_add_subtitle">Додај нови Google Drive</string>

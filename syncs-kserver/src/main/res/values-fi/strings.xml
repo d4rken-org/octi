@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Avoimen lähdekoodin synkronointipalvelin Octille, jonka on tehnyt tämän sovelluksen kehittäjä. Data salataan asiakaspäässä, vain laitteesi voivat purkaa sen.\n\nKoska sekä sovellusta että palvelinta kehitetään yhä, tämä vaihtoehto voi olla vähemmän vakaa kuin muut synkronointitavat.</string>
     <string name="sync_kserver_add_create_action_hint">Passiiviset tilit poistetaan muutaman viikon kuluttua.</string>
     <string name="sync_kserver_add_subtitle">Lisää uusi Google Drive</string>

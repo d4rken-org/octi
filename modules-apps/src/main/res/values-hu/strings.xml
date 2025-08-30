@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Alkalmazások modul</string>
     <string name="module_apps_desc">Információ a telepített alkalmazásokról.</string>
-    <string name="module_apps_x_installed">%d alkalmazás telepítve</string>
     <string name="module_apps_last_installed_x">Utoljára telepített alkalmazás: %s</string>
     <string name="module_apps_list_title">Telepített alkalmazások</string>
     <string name="module_apps_installer_label">Alkalmazás telepítési forrása</string>
-    <string name="module_apps_installer_desc">Szinkronizáld és add meg, hogy honnan lett minden alkalmazás telepítve.</string>
 </resources>

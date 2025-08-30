@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play indisponibil</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi nu se poate conecta la Google Play. Este Google Play instalat și actualizat? Contul tău Google este conectat? Încearcă să ștergi memoria cache a aplicației Google Play și să repornești dispozitivul.</string>
     <string name="upgrades_no_purchases_found_check_account">Nu au fost găsite achiziții. Folosiți contul corect?</string>
@@ -9,7 +8,6 @@
     <string name="upgrades_dashcard_upgrade_action">Actualizează</string>
     <string name="upgrade_screen_title">Obține Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi nu are reclame și nu vinde datele utilizatorilor. Munca mea este finanțată de tine ❤️.</string>
-    <string name="upgrade_screen_benefits_title">Avantaje</string>
     <string name="upgrade_screen_benefits_body">• Mai mult de 3 dispozitive 💯\n• Teme diferite 🎨\n• Mai multe opțiuni ⚙️\n• Servere suplimentare de sincronizare🖥️️\n• Dezvoltare continuă ☕\n• Un dezvoltator motivat 🧙</string>
     <string name="upgrade_screen_how_title">Opțiuni</string>
     <string name="upgrade_screen_how_body">Poți alege între o achiziție unică și un abonament anual mai ieftin.\nAbonamentul începe cu o perioadă de probă gratuită de 14 zile, după care vei fi taxat o dată pe an. Perioada de probă și abonamentul pot fi anulate oricând.\nAceleași funcții, doar modele de preț diferite.</string>

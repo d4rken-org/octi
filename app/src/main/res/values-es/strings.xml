@@ -2,21 +2,16 @@
 <resources>
     <string name="label_settings">Configuración</string>
     <string name="label_help">Ayuda</string>
-
     <string name="general_create_account_action">Crear una cuenta</string>
     <string name="general_link_existing_action">Enlace a cuenta ya existente</string>
     <string name="general_sync_action">Sincronizar</string>
     <string name="general_select_server_label">Seleccionar un servidor</string>
-
     <string name="onboarding_welcome_subtitle">Tu compañero de dispositivos</string>
     <string name="onboarding_welcome_body1">Octi es una herramienta para personas con múltiples dispositivos Android.</string>
     <string name="onboarding_welcome_body2">Te mantiene al día con todos tus dispositivos. Ya sea tu teléfono, tablet o cualquier otro gadget con Octi instalado, obtendrás detalles clave de un vistazo.</string>
-    <string name="onboarding_welcome_body3">Puedes actualizar a Octi Pro para obtener funciones adicionales y apoyar el desarrollo.</string>
     <string name="onboarding_welcome_beta_hint">Solo para que sepas, esta es una versión beta, ¡así que gracias por tu paciencia mientras sigo mejorando la aplicación!</string>
-
     <string name="onboarding_privacy_subtitle">Política de privacidad</string>
     <string name="onboarding_privacy_body1">Octi no tiene anuncios y no vende datos de usuario.</string>
-
     <string name="updatecheck_setting_enabled_label">Verificación de actualizaciones</string>
     <string name="updatecheck_setting_enabled_explanation">Permitir que Octi verifique actualizaciones para informarte si hay una versión más reciente disponible.</string>
     <string name="debug_debuglog_size_label">Tamaño</string>
@@ -24,36 +19,26 @@
     <string name="debug_notification_channel_label">Notificaciones sobre la depuración</string>
     <string name="debug_debuglog_file_label">Archivo de registro grabado</string>
     <string name="debug_debuglog_record_action">Registrar el registro de depuración</string>
-    <string name="onboarding_setupsync_title">Configurar la sincronización</string>
-    <string name="onboarding_setupsync_message">Actualmente solo ves este dispositivo. Para conectar tus instalaciones Octi, configura un servicio de sincronización común.</string>
     <string name="settings_privacy_policy_label">Política de privacidad</string>
     <string name="settings_privacy_policy_desc">Uso responsable de los datos.</string>
     <string name="settings_licenses_label">Licencias</string>
     <string name="general_thank_you_label">Gracias</string>
     <string name="settings_category_other_label">Otro</string>
-
-    <string name="general_settings_label">General</string>
     <string name="general_settings_desc">Retoques generales que afectan a toda la aplicación.</string>
     <string name="changelog_label">Registro de cambios</string>
     <string name="settings_acknowledgements_label">Agradecimientos</string>
     <string name="documentation_label">Documentación</string>
-
     <string name="help_translate_label">Traducción</string>
     <string name="help_translate_description">Ayuda a traducir esta aplicación a tu idioma favorito.</string>
-
     <string name="ui_theme_mode_setting_label">Modo de tema</string>
-    <string name="ui_theme_mode_setting_explanation">El modo usado al tematizar la aplicación (ej. noche o día).</string>
     <string name="ui_theme_mode_dark_label">Oscuro</string>
     <string name="ui_theme_mode_light_label">Claro</string>
     <string name="ui_theme_mode_system_label">Sistema</string>
-
     <string name="ui_theme_style_setting_label">Estilo de tema</string>
     <string name="ui_theme_style_setting_explanation">El estilo de color usado al tematizar la aplicación.</string>
     <string name="ui_theme_style_default_label">Por defecto</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Rastreador de problemas</string>
     <string name="issue_tracker_description">Un rastreador público de problemas para informes de errores y solicitudes de funciones.</string>
-    <string name="discord_label">Discord</string>
     <string name="discord_description">Un lugar para pasar el rato y hacer preguntas.</string>
     <string name="support_debuglog_label">Registro de depuración</string>
     <string name="support_debuglog_inprogress_label">Detener registro de depuración</string>
@@ -81,10 +66,8 @@
         <item quantity="one">%d único, solo disponible aquí</item>
         <item quantity="other">%d único, solo disponible aquí</item>
     </plurals>
-
     <string name="updates_dashcard_title">Actualización disponible</string>
     <string name="updates_dashcard_body">Una actualización está disponible. Tienes %1$s y la última versión es %2$s.</string>
-
     <string name="sync_settings_label">Sincronización</string>
     <string name="sync_settings_desc">Nombre del dispositivo, tiempo y condiciones de activación.</string>
     <string name="sync_setting_devicelabel_label">Etiqueta del dispositivo</string>
@@ -93,7 +76,6 @@
     <string name="sync_setting_interval_label">Intervalo de sincronización</string>
     <string name="sync_setting_interval_desc">Intervalo de sincronización de fondo (en minutos).</string>
     <string name="sync_setting_category_background_label">Sincronización de fondo</string>
-
     <string name="sync_custom_server_label">Servidor personalizado</string>
     <string name="settings_category_ui_label">Interfaz del usuario</string>
     <string name="permission_required_label">Permiso requerido</string>
@@ -111,7 +93,6 @@
     <string name="sync_setting_background_mobile_desc">Permitir la sincronización en segundo plano usando tu conexión de red móvil si la Wi-Fi no está disponible.</string>
     <string name="modules_settings_label">Módulos</string>
     <string name="modules_settings_desc">Alternar los diferentes módulos y ajustar tus configuraciones.</string>
-
     <string name="modules_category_connectivity_label">Conectividad</string>
     <string name="modules_category_energy_label">Batería</string>
     <string name="modules_category_apps_label">Aplicaciones</string>
@@ -119,7 +100,6 @@
     <string name="module_apps_category_label">Aplicaciones</string>
     <string name="device_x_label">Dispositivo: %s</string>
     <string name="pro_device_limit_reached_title">Límite de dispositivo alcanzado</string>
-
     <string name="sync_delete_device_keepaccess_caveat">Eliminar este dispositivo borrará sus datos pero no revocará el acceso. Para revocar el acceso, desconecta Octi en el dispositivo.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Eliminar este dispositivo removerá sus datos y revocará su acceso.</string>
 </resources>

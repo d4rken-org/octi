@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Appmodul</string>
     <string name="module_apps_desc">Information om installerade appar.</string>
-    <string name="module_apps_x_installed">%d appar installerade</string>
     <string name="module_apps_last_installed_x">Senast installerad app: %s</string>
     <string name="module_apps_list_title">Installerade appar</string>
     <string name="module_apps_installer_label">Appens installationskälla</string>
-    <string name="module_apps_installer_desc">Synkronisera och inkludera information om källan från vilken varje app installerades.</string>
 </resources>

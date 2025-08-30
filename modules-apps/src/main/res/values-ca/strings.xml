@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Mòdul d\'aplicacions</string>
     <string name="module_apps_desc">Informació sobre les aplicacions instal·lades.</string>
-    <string name="module_apps_x_installed">%d aplicacions instal·lades</string>
     <string name="module_apps_last_installed_x">Última aplicació instal·lada: %s</string>
     <string name="module_apps_list_title">Aplicacions instal·lades</string>
     <string name="module_apps_installer_label">Origen d\'instal·lació de l\'aplicació</string>
-    <string name="module_apps_installer_desc">Sincronitza i inclou informació sobre l\'origen des de la qual s\'ha instal·lat cada aplicació.</string>
 </resources>

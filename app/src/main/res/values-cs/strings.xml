@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">Váš kamarád v zařízení</string>
     <string name="onboarding_welcome_body1">Octi je nástroj pro uživatele s více zařízeními se systémem Android.</string>
     <string name="onboarding_welcome_body2">Díky němu budete mít přehled o všech svých zařízeních. Ať už se jedná o telefon, tablet nebo jakýkoli jiný přístroj s nainstalovanou aplikací Octi, na první pohled získáte klíčové informace.</string>
-    <string name="onboarding_welcome_body3">Můžete upgradovat na Octi Pro, abyste získali další funkce a podpořili vývoj.</string>
     <string name="onboarding_welcome_beta_hint">Jen upozorňuji, že se jedná o beta verzi, takže děkuji za trpělivost, protože aplikaci stále vylepšuji!</string>
     <string name="onboarding_privacy_subtitle">Zásady ochrany osobních údajů</string>
     <string name="onboarding_privacy_body1">Octi neobsahuje žádné reklamy a neprodává data uživatelů.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">Oznámení o ladění</string>
     <string name="debug_debuglog_file_label">Zaznamenaný log soubor</string>
     <string name="debug_debuglog_record_action">Zaznamenat log ladění</string>
-    <string name="onboarding_setupsync_title">Nastavení synchronizace</string>
-    <string name="onboarding_setupsync_message">V současné době se zobrazuje pouze toto zařízení. Chcete-li propojit své instalace Octi, nastavte společnou synchronizační službu.</string>
     <string name="settings_privacy_policy_label">Zásady ochrany osobních údajů</string>
     <string name="settings_privacy_policy_desc">Zodpovědné nakládání s daty.</string>
     <string name="settings_licenses_label">Licence</string>
@@ -32,8 +29,9 @@
     <string name="changelog_label">Seznam změn</string>
     <string name="settings_acknowledgements_label">Poděkování</string>
     <string name="documentation_label">Dokumentace</string>
+    <string name="help_translate_label">Překlad</string>
+    <string name="help_translate_description">Pomozte přeložit tuto aplikaci do svého oblíbeného jazyka.</string>
     <string name="ui_theme_mode_setting_label">Režim motivu</string>
-    <string name="ui_theme_mode_setting_explanation">Režim použitý v motivu aplikace (např. noční nebo denní).</string>
     <string name="ui_theme_mode_dark_label">Tmavý</string>
     <string name="ui_theme_mode_light_label">Světlý</string>
     <string name="ui_theme_mode_system_label">Systémový</string>

@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Mô-đun ứng dụng</string>
     <string name="module_apps_desc">Thông tin về các ứng dụng đã cài đặt.</string>
-    <string name="module_apps_x_installed">%d ứng dụng đã cài đặt</string>
     <string name="module_apps_last_installed_x">Ứng dụng cài đặt gần đây: %s</string>
     <string name="module_apps_list_title">Các ứng dụng đã cài đặt</string>
     <string name="module_apps_installer_label">Nguồn cài đặt ứng dụng</string>
-    <string name="module_apps_installer_desc">Đồng bộ và bao gồm thông tin về nguồn cài đặt của từng ứng dụng.</string>
 </resources>

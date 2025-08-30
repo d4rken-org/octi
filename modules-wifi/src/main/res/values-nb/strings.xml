@@ -5,6 +5,5 @@
     <string name="module_wifi_unknown_ssid_label">Ukjent SSID</string>
     <string name="module_wifi_unknown_ip_label">Ukjent IP</string>
     <string name="module_wifi_reception_good_label">Godt signal</string>
-    <string name="module_wifi_reception_okay_label">OK signal</string>
     <string name="module_wifi_reception_bad_label">Dårlig signal</string>
 </resources>

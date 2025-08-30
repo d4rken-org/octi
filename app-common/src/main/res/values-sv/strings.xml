@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Octi</string>
     <string name="general_error_label">Fel</string>
     <string name="general_error_no_compatible_app_found_msg">Ingen kompatibel app hittades för att hantera denna begäran.</string>
     <string name="general_share_action">Dela</string>

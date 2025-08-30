@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">رفيق جهازك</string>
     <string name="onboarding_welcome_body1">أوكتي هو أداة للأشخاص الذين يمتلكون أجهزة أندرويد متعددة.</string>
     <string name="onboarding_welcome_body2">يبقيك على اطلاع دائم بجميع أجهزتك. سواء كان هاتفك أو جهازك اللوحي أو أي جهاز آخر مثبت عليه أوكتي، ستحصل على التفاصيل الأساسية بلمحة واحدة.</string>
-    <string name="onboarding_welcome_body3">يمكنك الترقية إلى أوكتي احترافي للحصول على ميزات إضافية ودعم التطوير.</string>
     <string name="onboarding_welcome_beta_hint">تنبيه: هذه نسخة تجريبية، لذا شكرًا لصبركم بينما أواصل تحسين التطبيق!</string>
     <string name="onboarding_privacy_subtitle">سياسة الخصوصية</string>
     <string name="onboarding_privacy_body1">أوكتي خالٍ من الإعلانات ولا يبيع بيانات المستخدمين.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">إشعارات التصحيح</string>
     <string name="debug_debuglog_file_label">ملف السجل المسجل</string>
     <string name="debug_debuglog_record_action">تسجيل سجل التصحيح</string>
-    <string name="onboarding_setupsync_title">إعداد المزامنة</string>
-    <string name="onboarding_setupsync_message">حالياً، أنت ترى هذا الجهاز فقط. لربط تثبيتات أوكتي الخاصة بك، قم بإعداد خدمة مزامنة مشتركة.</string>
     <string name="settings_privacy_policy_label">سياسة الخصوصية</string>
     <string name="settings_privacy_policy_desc">التعامل مع البيانات بمسؤولية.</string>
     <string name="settings_licenses_label">التراخيص</string>
@@ -33,7 +30,6 @@
     <string name="settings_acknowledgements_label">شكر وتقدير</string>
     <string name="documentation_label">التوثيق</string>
     <string name="ui_theme_mode_setting_label">وضع السمة</string>
-    <string name="ui_theme_mode_setting_explanation">الوضع المستخدم عند تطبيق سمة التطبيق (مثل ليلي أو نهاري).</string>
     <string name="ui_theme_mode_dark_label">داكن</string>
     <string name="ui_theme_mode_light_label">فاتح</string>
     <string name="ui_theme_mode_system_label">النظام</string>

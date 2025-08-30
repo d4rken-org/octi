@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Sovellukset-moduuli</string>
     <string name="module_apps_desc">Tietoja asennetuista sovelluksista.</string>
-    <string name="module_apps_x_installed">%d sovellusta asennettu</string>
     <string name="module_apps_last_installed_x">Viimeisin asennettu sovellus: %s</string>
     <string name="module_apps_list_title">Asennetut sovellukset</string>
     <string name="module_apps_installer_label">Sovelluksen asennuslähde</string>
-    <string name="module_apps_installer_desc">Synkronoi ja sisällytä tiedot lähteestä, josta kukin sovellus asennettiin.</string>
 </resources>

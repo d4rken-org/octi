@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi FOSS</string>
     <string name="upgrade_feature_requires_pro">Octi Pro vereist</string>
     <string name="upgrades_dashcard_title">Krijg Octi Pro</string>
     <string name="upgrades_dashcard_body">Ontgrendel extra functies en word een sponsor om verdere ontwikkeling te steunen!</string>
-    <string name="upgrades_dashcard_upgrade_action">Upgrade</string>
     <string name="upgrade_screen_title">Upgrade naar Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi heeft geen advertenties en verkoopt geen gebruikersgegevens. Mijn werk wordt door jou gefinancierd ❤️</string>
     <string name="upgrade_screen_how_title">Wat te doen</string>

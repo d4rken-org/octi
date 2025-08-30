@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">En synkroniseringsserver med öppen källkod för Octi skapad av utvecklaren av denna app. Data krypteras på klientsidan, endast dina enheter kan dekryptera den.\\n\\nEftersom både appen och servern fortfarande förbättras kan den vara mindre stabil än andra synkroniseringsalternativ.</string>
     <string name="sync_kserver_add_create_action_hint">Inaktiva konton raderas efter några veckor.</string>
     <string name="sync_kserver_add_subtitle">Lägg till ny Google Drive</string>

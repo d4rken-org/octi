@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">기기의 동반자</string>
     <string name="onboarding_welcome_body1">Octi는 여러 Android 기기를 가진 사람들을 위한 도구입니다.</string>
     <string name="onboarding_welcome_body2">모든 기기의 정보를 한눈에 확인할 수 있습니다. 휴대폰, 태블릿, 기타 Octi가 설치된 기기 등 주요 정보를 쉽게 볼 수 있습니다.</string>
-    <string name="onboarding_welcome_body3">Octi Pro로 업그레이드하면 추가 기능을 이용하고 개발을 지원할 수 있습니다.</string>
     <string name="onboarding_welcome_beta_hint">참고: 이 앱은 베타버전입니다. 계속 개선하고 있으니 양해해 주세요!</string>
     <string name="onboarding_privacy_subtitle">개인정보 처리방침</string>
     <string name="onboarding_privacy_body1">Octi는 광고가 없으며 사용자 데이터를 판매하지 않습니다.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">디버그 알림</string>
     <string name="debug_debuglog_file_label">기록된 로그 파일</string>
     <string name="debug_debuglog_record_action">디버그 로그 기록</string>
-    <string name="onboarding_setupsync_title">동기화 설정</string>
-    <string name="onboarding_setupsync_message">현재는 이 기기만 표시됩니다. Octi 설치 환경을 연결하려면 공통 동기화 서비스를 설정하세요.</string>
     <string name="settings_privacy_policy_label">개인정보 처리방침</string>
     <string name="settings_privacy_policy_desc">데이터를 책임 있게 처리함.</string>
     <string name="settings_licenses_label">라이선스</string>
@@ -35,14 +32,12 @@
     <string name="help_translate_label">번역</string>
     <string name="help_translate_description">이 앱을 원하는 언어로 번역하는 데 도움을 주세요.</string>
     <string name="ui_theme_mode_setting_label">테마 모드</string>
-    <string name="ui_theme_mode_setting_explanation">앱 테마 적용 시 사용하는 모드(예: 밤 또는 낮)</string>
     <string name="ui_theme_mode_dark_label">다크</string>
     <string name="ui_theme_mode_light_label">라이트</string>
     <string name="ui_theme_mode_system_label">시스템</string>
     <string name="ui_theme_style_setting_label">테마 스타일</string>
     <string name="ui_theme_style_setting_explanation">앱 테마 적용 시 사용되는 색상 스타일</string>
     <string name="ui_theme_style_default_label">기본값</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">이슈 트래커</string>
     <string name="issue_tracker_description">버그 보고와 기능 요청을 위한 공개 이슈 트래커입니다.</string>
     <string name="discord_label">디스코드</string>
@@ -66,11 +61,9 @@
     <string name="sync_synced_devices_label">동기화된 기기</string>
     <string name="sync_connector_paused_label">동기화 일시정지</string>
     <plurals name="general_devices_count_label">
-        <item quantity="one">%d개 기기</item>
         <item quantity="other">%d개 기기</item>
     </plurals>
     <plurals name="general_unique_devices_count_label">
-        <item quantity="one">%d개 고유 - 여기서만 사용 가능</item>
         <item quantity="other">%d개 고유 - 여기서만 사용 가능</item>
     </plurals>
     <string name="updates_dashcard_title">업데이트 가능</string>
