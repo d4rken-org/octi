@@ -140,8 +140,8 @@
         <item quantity="other">You currently have %1$d synced devices.</item>
     </plurals>
     <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">To view more than %2$d device, upgrade to Octi Pro or remove devices.</item>
-        <item quantity="other">To view more than %2$d devices, upgrade to Octi Pro or remove devices.</item>
+        <item quantity="one">To view more than %1$d device, upgrade to Octi Pro or remove devices.</item>
+        <item quantity="other">To view more than %1$d devices, upgrade to Octi Pro or remove devices.</item>
     </plurals>
 
     <string name="sync_delete_device_keepaccess_caveat">Removing this device will delete its data but won\'t revoke access. To revoke access, disconnect Octi on the device.</string>
