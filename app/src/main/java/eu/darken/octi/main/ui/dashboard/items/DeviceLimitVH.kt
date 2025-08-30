@@ -22,7 +22,7 @@ class DeviceLimitVH(parent: ViewGroup) :
         body.text = buildString {
             append(getQuantityString(R.plurals.pro_device_limit_current_description, item.current))
             append(" ")
-            append(getQuantityString(R.plurals.pro_device_limit_current_description, item.maximum))
+            append(getQuantityString(R.plurals.pro_device_limit_maximum_description, item.maximum))
         }
         upgradeAction.setOnClickListener { item.onUpgrade() }
     }

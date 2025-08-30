@@ -112,8 +112,8 @@
         <item quantity="other">%1$d appareils sont synchronisés actuellement.</item>
     </plurals>
     <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Pour afficher plus de %2$d appareil, passez à Octi Pro ou supprimez des périphériques.</item>
-        <item quantity="other">Pour afficher plus de %2$d appareils, passez à Octi Pro ou supprimez des périphériques.</item>
+        <item quantity="one">Pour afficher plus de %1$d appareil, passez à Octi Pro ou supprimez des périphériques.</item>
+        <item quantity="other">Pour afficher plus de %1$d appareils, passez à Octi Pro ou supprimez des périphériques.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Supprimer cet appareil supprimera ses données, mais ne révoquera pas son accès. Pour révoquer l\'accès, déconnectez Octi sur l\'appareil en question.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Supprimer cet appareil supprimera ses données et révoquera son accès.</string>
