@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">你的设备助手</string>
     <string name="onboarding_welcome_body1">Octi 是一款为拥有多台 Android 设备的用户提供的工具。</string>
     <string name="onboarding_welcome_body2">它让您随时掌握所有设备的最新动态。无论是手机、平板电脑还是其他安装了 Octi 的设备，您都可以一目了然地了解关键详细信息。</string>
-    <string name="onboarding_welcome_body3">您可以升级到 Octi Pro 以获得额外的功能并支持开发。</string>
     <string name="onboarding_welcome_beta_hint">请注意，这是一个测试版本，所以感谢您的耐心，我会继续改进应用程序！</string>
     <string name="onboarding_privacy_subtitle">隐私政策</string>
     <string name="onboarding_privacy_body1">Octi 没有广告，也不出售用户数据。</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">调试通知</string>
     <string name="debug_debuglog_file_label">记录日志文件</string>
     <string name="debug_debuglog_record_action">记录调试文件</string>
-    <string name="onboarding_setupsync_title">设置同步</string>
-    <string name="onboarding_setupsync_message">目前您只看到此设备。要连接您的 Octi 安装，请设置通用同步服务。</string>
     <string name="settings_privacy_policy_label">隐私政策</string>
     <string name="settings_privacy_policy_desc">负责任地处理数据。</string>
     <string name="settings_licenses_label">许可证</string>
@@ -33,7 +30,6 @@
     <string name="settings_acknowledgements_label">致谢</string>
     <string name="documentation_label">文档</string>
     <string name="ui_theme_mode_setting_label">主题模式</string>
-    <string name="ui_theme_mode_setting_explanation">设置应用程序主题使用的模式（黑或白）。</string>
     <string name="ui_theme_mode_dark_label">黑</string>
     <string name="ui_theme_mode_light_label">白</string>
     <string name="ui_theme_mode_system_label">系统</string>
@@ -64,12 +60,10 @@
     <string name="sync_synced_devices_label">同步设备</string>
     <string name="sync_connector_paused_label">暂停同步</string>
     <plurals name="general_devices_count_label">
-        <item quantity="other">%d 设备
-%d 设备</item>
+        <item quantity="other">%d 设备</item>
     </plurals>
     <plurals name="general_unique_devices_count_label">
-        <item quantity="other">%d 唯一，只在这里可用
-%d 唯一，只在这里可用</item>
+        <item quantity="other">%d 唯一，只在这里可用</item>
     </plurals>
     <string name="updates_dashcard_title">更新可用</string>
     <string name="updates_dashcard_body">可用更新。您为%1$s，最新版本是%2$s。</string>

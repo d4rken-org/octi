@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="module_power_label">Module d\'alimentation</string>
+    <string name="module_power_label">Module d’alimentation</string>
     <string name="module_power_desc">Batterie, charge, estimations, température, etc.</string>
-    <string name="module_power_battery_status_unknown">L’éttat est inconnu</string>
+    <string name="module_power_battery_status_unknown">L’état est inconnu</string>
     <string name="module_power_battery_status_full">Chargée</string>
     <string name="module_power_battery_status_charging">En charge</string>
     <string name="module_power_battery_status_charging_slow">Charge lente</string>

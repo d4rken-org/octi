@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">此應用程式開發者為 Octi 製作的開源同步伺服器。資料在用戶端加密，只有您的裝置可以解密。\\n\\n由於應用程式和伺服器仍在改進中，因此它可能不如其他同步選項穩定。</string>
     <string name="sync_kserver_add_create_action_hint">閒置帳戶將在幾週後刪除。</string>
     <string name="sync_kserver_add_subtitle">新增 Google Drive</string>

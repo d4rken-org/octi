@@ -12,6 +12,7 @@
     <string name="upgrade_screen_benefits_title">Vorteile</string>
     <string name="upgrade_screen_benefits_body">• Mehr als 3 Geräte 💯\n• Verschiedene Skins</string>
     <string name="upgrade_screen_how_title">Optionen</string>
+    <string name="upgrade_screen_how_body">Sie können zwischen einem einmaligen Kauf und einem günstigeren Jahresabonnement wählen.\nDas Abonnement beginnt mit einer kostenlosen 14-Tage-Testversion. Danach wird Ihnen einmal pro Jahr eine Gebühr berechnet. Testversion und Abonnement sind jederzeit kündbar.\nGleiche Funktionen, nur unterschiedliche Preismodelle.</string>
     <string name="upgrade_screen_subscription_trial_action">Starte eine 14 Tage Testversion</string>
     <string name="upgrade_screen_subscription_action">Abonnement</string>
     <string name="upgrade_screen_subscription_action_hint">Das Abonnement kostet %s im Jahr.</string>
@@ -19,5 +20,8 @@
     <string name="upgrade_screen_iap_action_hint">Eine Einmalzahlung kostet %s.</string>
     <string name="upgrade_screen_thanks_toast">Du bist der Beste! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Zahlungen wiederherstellen</string>
+    <string name="upgrade_screen_restore_purchase_message">Ihr Upgrade ist für alle Geräte auf demselben Google-Konto gültig.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Tipps zur Fehlerbehebung für unbekannte Upgrades:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play Store synchronization may take time. Try rebooting, clearing Google Play cache or simply wait.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Mehrere Konten können Google Play verwirren. Melden Sie sich aus anderen Konten ab, oder installieren Sie über die Google Play-Website, was Verbindungen mit einem bestimmten Konto erzwingt.</string>
 </resources>

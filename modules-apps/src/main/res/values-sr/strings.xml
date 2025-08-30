@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Модул апликација</string>
     <string name="module_apps_desc">Информације о инсталираним апликацијама.</string>
-    <string name="module_apps_x_installed">%d инсталираних апликација</string>
     <string name="module_apps_last_installed_x">Последња инсталирана апликација: %s</string>
     <string name="module_apps_list_title">Инсталиране апликације</string>
     <string name="module_apps_installer_label">Извор инсталације апликације</string>
-    <string name="module_apps_installer_desc">Синхронизујте и укључите информације о извору са којег је свака апликација инсталирана.</string>
 </resources>

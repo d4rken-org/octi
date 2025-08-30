@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play is niet beschikbaar</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi kan geen verbinding maken met Google Play. Is Google Play geïnstalleerd en up-to-date? Is je Google-account aangemeld? Probeer de cache van de Google Play-app te wissen en je apparaat opnieuw op te starten.</string>
     <string name="upgrades_no_purchases_found_check_account">Geen aankopen gevonden. Gebruik je het juiste account?</string>
     <string name="upgrades_dashcard_title">Krijg Octi Pro</string>
     <string name="upgrades_dashcard_body">Upgrade om extra functies te ontgrendelen en de ontwikkeling te steunen!</string>
-    <string name="upgrades_dashcard_upgrade_action">Upgrade</string>
     <string name="upgrade_screen_title">Krijg Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi bevat geen advertenties en verkoopt geen gebruikersdata. Mijn werk wordt door jou gefinancierd ❤️.</string>
-    <string name="upgrade_screen_benefits_title">Voordelen</string>
     <string name="upgrade_screen_benefits_body">• Meer dan 3 apparaten 💯\n• Verschillende thema\'s 🎨\n• Meer opties ⚙️\n• Extra synchronisatie-servers🖥️️\n• Voortgezette ontwikkeling ☕\n• Een gemotiveerde ontwikkelaar 🧙</string>
     <string name="upgrade_screen_how_title">Opties</string>
     <string name="upgrade_screen_how_body">Je kunt kiezen tussen een eenmalige aankoop en een goedkoper jaarabonnement.\nHet abonnement begint met een gratis proefperiode van 14 dagen, waarna je jaarlijks wordt gefactureerd. De proefperiode en het abonnement zijn op elk moment opzegbaar.\nDezelfde functies, alleen andere prijsmodellen.</string>

@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Modul aplikací</string>
     <string name="module_apps_desc">Informace o nainstalovaných aplikacích.</string>
-    <string name="module_apps_x_installed">%d nainstalovaných aplikací</string>
     <string name="module_apps_last_installed_x">Naposledy nainstalovaná aplikace: %s</string>
     <string name="module_apps_list_title">Nainstalované aplikace</string>
     <string name="module_apps_installer_label">Zdroj instalace aplikace</string>
-    <string name="module_apps_installer_desc">Synchronizujte a zahrňte informace o zdroji, ze kterého byla každá aplikace nainstalována.</string>
 </resources>

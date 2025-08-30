@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">アプリモジュール</string>
     <string name="module_apps_desc">インストールされているアプリの情報を表示します。</string>
-    <string name="module_apps_x_installed">%d 個のアプリがインストール済み</string>
     <string name="module_apps_last_installed_x">最後にインストールしたアプリ: %s</string>
     <string name="module_apps_list_title">インストール済みのアプリ</string>
     <string name="module_apps_installer_label">アプリのインストールソース</string>
-    <string name="module_apps_installer_desc">各アプリのインストールされたソースの情報を含ませて同期します。</string>
 </resources>

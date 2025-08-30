@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">你的設備夥伴</string>
     <string name="onboarding_welcome_body1">Octi 是專為擁有多台 Android 裝置的用戶設計的工具。</string>
     <string name="onboarding_welcome_body2">它讓你能隨時掌握所有裝置的最新狀態。不論是手機、平板或其他安裝了 Octi 的裝置，關鍵細節一目了然。</string>
-    <string name="onboarding_welcome_body3">你可以升級到 Octi Pro 以獲得更多功能並支持開發。</string>
     <string name="onboarding_welcome_beta_hint">注意：這是 beta 版本，感謝你的耐心等待，我會持續改進本應用！</string>
     <string name="onboarding_privacy_subtitle">隱私政策</string>
     <string name="onboarding_privacy_body1">Octi 無廣告也不販賣用戶資料。</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">除錯通知</string>
     <string name="debug_debuglog_file_label">錄製日誌檔案</string>
     <string name="debug_debuglog_record_action">記錄除錯日誌</string>
-    <string name="onboarding_setupsync_title">設定同步</string>
-    <string name="onboarding_setupsync_message">目前只顯示這部裝置。要連結你的 Octi 安裝，請設定共同的同步服務。</string>
     <string name="settings_privacy_policy_label">隱私政策</string>
     <string name="settings_privacy_policy_desc">負責任地處理資料。</string>
     <string name="settings_licenses_label">授權</string>
@@ -35,17 +32,14 @@
     <string name="help_translate_label">翻譯</string>
     <string name="help_translate_description">幫助將本 app 翻譯為你喜愛的語言。</string>
     <string name="ui_theme_mode_setting_label">主題模式</string>
-    <string name="ui_theme_mode_setting_explanation">設定應用主題時所用的模式（例：夜間或日間）。</string>
     <string name="ui_theme_mode_dark_label">深色</string>
     <string name="ui_theme_mode_light_label">淺色</string>
     <string name="ui_theme_mode_system_label">系統預設</string>
     <string name="ui_theme_style_setting_label">主題樣式</string>
     <string name="ui_theme_style_setting_explanation">主題中使用的顏色樣式。</string>
     <string name="ui_theme_style_default_label">預設</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">問題追蹤器</string>
     <string name="issue_tracker_description">用於回報漏洞和功能需求的公開問題追蹤器。</string>
-    <string name="discord_label">Discord</string>
     <string name="discord_description">一個可以閒聊提問的地方。</string>
     <string name="support_debuglog_label">記錄除錯日誌</string>
     <string name="support_debuglog_inprogress_label">停止日誌記錄</string>
@@ -66,11 +60,9 @@
     <string name="sync_synced_devices_label">已同步設備</string>
     <string name="sync_connector_paused_label">暫停同步</string>
     <plurals name="general_devices_count_label">
-        <item quantity="one">%d 台裝置</item>
         <item quantity="other">%d 台裝置</item>
     </plurals>
     <plurals name="general_unique_devices_count_label">
-        <item quantity="one">%d 唯一，僅此可用</item>
         <item quantity="other">%d 唯一，僅此可用</item>
     </plurals>
     <string name="updates_dashcard_title">可用更新</string>

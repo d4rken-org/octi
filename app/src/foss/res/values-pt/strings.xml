@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi FOSS</string>
     <string name="upgrade_feature_requires_pro">Requer Octi Pro</string>
     <string name="upgrades_dashcard_title">Obter Octi Pro</string>
     <string name="upgrades_dashcard_body">Desbloqueie recursos adicionais e torne-se um patrocinador para apoiar o desenvolvimento contínuo!</string>

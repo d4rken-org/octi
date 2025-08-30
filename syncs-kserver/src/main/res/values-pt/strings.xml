@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Um servidor de sincronização open-source para Octi feito pelo desenvolvedor deste app. Os dados são criptografados no lado do cliente, somente seus dispositivos podem descriptografá-los.\n\nComo tanto o app quanto o servidor ainda estão em desenvolvimento, pode ser menos estável que outras opções de sincronização.</string>
     <string name="sync_kserver_add_create_action_hint">Contas inativas são excluídas após algumas semanas.</string>
     <string name="sync_kserver_add_subtitle">Adicionar nova Google Drive</string>

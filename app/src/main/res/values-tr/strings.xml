@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">Cihaz Arkadaşınız</string>
     <string name="onboarding_welcome_body1">Octi, birden fazla Android cihazı olan kişiler için bir araçtır.</string>
     <string name="onboarding_welcome_body2">Sizi tüm cihazlarınızla döngü içinde tutar. İster telefonunuz, ister tabletiniz veya Octi yüklü başka bir aygıt olsun, önemli ayrıntıları bir bakışta alırsınız.</string>
-    <string name="onboarding_welcome_body3">Ekstra özellikler kazanmak ve geliştirmeyi desteklemek için Octi Pro\'ya yükseltebilirsiniz.</string>
     <string name="onboarding_welcome_beta_hint">Sadece ufak bir uyarı, bu bir beta sürümüdür, bu yüzden uygulamayı geliştirmeye devam ederken sabrınız için teşekkürler!</string>
     <string name="onboarding_privacy_subtitle">Gizlilik politikası</string>
     <string name="onboarding_privacy_body1">Octi\'de reklam yoktur ve kullanıcı verilerini satmaz.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">Hata ayıklama bildirimleri</string>
     <string name="debug_debuglog_file_label">Kaydedilen günlük dosyası</string>
     <string name="debug_debuglog_record_action">Hata ayıklama günlüğü kaydet</string>
-    <string name="onboarding_setupsync_title">Senkronizasyonu Yapılandır</string>
-    <string name="onboarding_setupsync_message">Şu anda yalnızca bu cihazı görüyorsunuz. Octi kurulumlarınızı bağlamak için ortak bir senkronizasyon hizmeti kurun.</string>
     <string name="settings_privacy_policy_label">Gizlilik politikası</string>
     <string name="settings_privacy_policy_desc">Veriler sorumlu bir şekilde kullanılıyor.</string>
     <string name="settings_licenses_label">Lisanslar</string>
@@ -32,8 +29,9 @@
     <string name="changelog_label">Değişiklikler</string>
     <string name="settings_acknowledgements_label">Beyanlar</string>
     <string name="documentation_label">Dökümantasyon</string>
+    <string name="help_translate_label">Çeviri</string>
+    <string name="help_translate_description">Bu uygulamanın en sevdiğiniz dile çevrilmesine yardımcı olun.</string>
     <string name="ui_theme_mode_setting_label">Tema modu</string>
-    <string name="ui_theme_mode_setting_explanation">Uygulamayı temalaştırırken kullanılan mod (örn. gece veya gündüz).</string>
     <string name="ui_theme_mode_dark_label">Koyu</string>
     <string name="ui_theme_mode_light_label">Aydınlık</string>
     <string name="ui_theme_mode_system_label">Sistem</string>

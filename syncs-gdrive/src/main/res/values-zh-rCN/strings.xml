@@ -8,7 +8,6 @@
     <string name="sync_gdrive_appdata_label">应用数据范围</string>
     <string name="sync_gdrive_type_appdata_description">数据存放在谷歌驱动器中。这个特定的变体使用了“app-data”作用域。访问权限仅授予此应用程序的新文件夹。该文件夹在您的驱动器中不可见。这与WhatsApp备份的工作原理类似。</string>
     <string name="sync_gdrive_add_label">添加新的Google Drive</string>
-    <string name="sync_gdrive_add_description"></string>
     <string name="sync_gdrive_reset_confirmation_desc">重置谷歌硬盘上的所有Octi数据。您的设备一直登录到谷歌驱动器。</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">注销谷歌驱动器，并删除与该设备相关的数据。</string>
     <string name="sync_gdrive_error_no_account_on_device">此设备未登录任何谷歌帐户。</string>

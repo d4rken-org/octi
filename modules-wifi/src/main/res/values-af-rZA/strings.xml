@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="module_wifi_label">Wi-Fi module</string>
     <string name="module_wifi_desc">Name, ontvangs, IP\'s, ens.</string>
     <string name="module_wifi_unknown_ssid_label">Onbekende SSID</string>
     <string name="module_wifi_unknown_ip_label">Onbekende IP</string>

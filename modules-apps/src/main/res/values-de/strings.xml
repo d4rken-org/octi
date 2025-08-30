@@ -2,9 +2,12 @@
 <resources>
     <string name="module_apps_label">App Module</string>
     <string name="module_apps_desc">Informationen über installierte Apps.</string>
-    <string name="module_apps_x_installed">%d Apps installiert</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d App installiert</item>
+        <item quantity="other">%d Apps installiert</item>
+    </plurals>
     <string name="module_apps_last_installed_x">Zuletzt installierte App: %s</string>
     <string name="module_apps_list_title">Installierte Apps</string>
     <string name="module_apps_installer_label">App-Installationsquelle</string>
-    <string name="module_apps_installer_desc">Synchronisiere und füge Informationen über die Quelle hinzu, von der jede App installiert wurde.</string>
+    <string name="module_apps_installer_desc">Synchronisieren und fügen Sie Informationen über die Installationsquelle jeder App hinzu.</string>
 </resources>

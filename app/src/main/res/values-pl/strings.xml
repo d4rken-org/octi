@@ -2,88 +2,62 @@
 <resources>
     <string name="label_settings">Ustawienia</string>
     <string name="label_help">Pomoc</string>
-
     <string name="general_create_account_action">Utwórz konto</string>
     <string name="general_link_existing_action">Połącz z istniejącym kontem</string>
     <string name="general_sync_action">Synchronizuj</string>
     <string name="general_select_server_label">Wybierz serwer</string>
-
     <string name="onboarding_welcome_subtitle">Twój kompan urządzeń</string>
     <string name="onboarding_welcome_body1">Octi to narzędzie dla osób z wieloma urządzeniami Android.</string>
     <string name="onboarding_welcome_body2">Utrzymuje Cię w pętli ze wszystkimi Twoimi urządzeniami. Czy to Twój telefon, tablet czy jakikolwiek inny gadżet z zainstalowanym Octi, otrzymasz kluczowe szczegóły na pierwszy rzut oka.</string>
-    <string name="onboarding_welcome_body3">Możesz uaktualnić do Octi Pro, aby uzyskać dodatkowe funkcje i wesprzeć rozwój.</string>
     <string name="onboarding_welcome_beta_hint">Tylko żeby wiedzieć, to jest wersja beta, więc dzięki za cierpliwość, podczas gdy nadal ulepszam aplikację!</string>
-
     <string name="onboarding_privacy_subtitle">Polityka prywatności</string>
     <string name="onboarding_privacy_body1">Octi nie ma reklam i nie sprzedaje danych użytkowników.</string>
-
     <string name="updatecheck_setting_enabled_label">Sprawdzanie aktualizacji</string>
     <string name="updatecheck_setting_enabled_explanation">Pozwól Octi sprawdzać aktualizacje, aby poinformować Cię, gdy dostępna jest nowsza wersja.</string>
-
     <string name="debug_debuglog_size_label">Rozmiar</string>
     <string name="debug_debuglog_size_compressed_label">Rozmiar skompresowany</string>
     <string name="debug_notification_channel_label">Powiadomienia debugowania</string>
     <string name="debug_debuglog_file_label">Zapisany plik dziennika</string>
     <string name="debug_debuglog_record_action">Nagraj dziennik debugowania</string>
-
-    <string name="onboarding_setupsync_title">Skonfiguruj synchronizację</string>
-    <string name="onboarding_setupsync_message">Obecnie widzisz tylko to urządzenie. Aby połączyć swoje instalacje Octi, skonfiguruj wspólną usługę synchronizacji.</string>
-
     <string name="settings_privacy_policy_label">Polityka prywatności</string>
     <string name="settings_privacy_policy_desc">Odpowiedzialne przetwarzanie danych.</string>
     <string name="settings_licenses_label">Licencje</string>
     <string name="general_thank_you_label">Dziękuję</string>
     <string name="settings_category_other_label">Inne</string>
-
     <string name="general_settings_label">Ogólne</string>
     <string name="general_settings_desc">Ogólne ustawienia, które wpływają na całą aplikację.</string>
     <string name="changelog_label">Dziennik zmian</string>
     <string name="settings_acknowledgements_label">Podziękowania</string>
     <string name="documentation_label">Dokumentacja</string>
-
     <string name="help_translate_label">Tłumaczenie</string>
     <string name="help_translate_description">Pomóż przetłumaczyć tę aplikację na swój ulubiony język.</string>
-
     <string name="ui_theme_mode_setting_label">Tryb motywu</string>
-    <string name="ui_theme_mode_setting_explanation">Tryb używany przy stylizowaniu aplikacji (np. noc lub dzień).</string>
     <string name="ui_theme_mode_dark_label">Ciemny</string>
     <string name="ui_theme_mode_light_label">Jasny</string>
     <string name="ui_theme_mode_system_label">Systemowy</string>
-
     <string name="ui_theme_style_setting_label">Styl motywu</string>
     <string name="ui_theme_style_setting_explanation">Styl kolorów używany przy stylizowaniu aplikacji.</string>
     <string name="ui_theme_style_default_label">Domyślny</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
-
     <string name="issue_tracker_label">Tracker problemów</string>
     <string name="issue_tracker_description">Publiczny tracker problemów dla raportów błędów i próśb o funkcje.</string>
-    <string name="discord_label">Discord</string>
     <string name="discord_description">Miejsce do spędzania czasu i zadawania pytań.</string>
-
     <string name="support_debuglog_label">Nagraj dziennik debugowania</string>
     <string name="support_debuglog_inprogress_label">Zatrzymaj dziennik debugowania</string>
     <string name="support_debuglog_desc">Nagraj wszystko co robi aplikacja do pliku tekstowego, którym możesz się podzielić.</string>
     <string name="settings_support_label">Wsparcie</string>
     <string name="debug_debuglog_sensitive_information_message">Ten plik zawiera informacje wrażliwe (np. zainstalowane aplikacje). Udostępniaj tylko zaufanym stronom.</string>
     <string name="settings_debuglog_explanation">Ta funkcja nagrywa wszystko co robi aplikacja do pliku, którym można się podzielić. Wygenerowany plik zawiera informacje wrażliwe (np. zainstalowane aplikacje). Udostępniaj tylko zaufanym stronom (np. deweloperowi aplikacji, jeśli razem rozwiązujecie problem).</string>
-
     <string name="sync_last_action_label">Ostatnia akcja</string>
     <string name="sync_last_never_label">Nigdy</string>
     <string name="sync_quota_storage_msg">%1$s wolne (%2$s / %3$s)</string>
-
     <string name="general_disconnect_action">Rozłącz</string>
-    <string name="generic_info_action">Info</string>
     <string name="general_reset_action">Resetuj</string>
-
     <string name="sync_account_label">Konto</string>
     <string name="sync_services_label">Usługi synchronizacji</string>
-
     <string name="sync_add_label">Dodaj usługę synchronizacji</string>
     <string name="sync_add_help_desc">Usługa synchronizacji jest wymagana do wymiany informacji między instalacjami Octi.\n\nUrządzenia mogą widzieć się nawzajem tylko jeśli mają wspólną usługę synchronizacji!</string>
-
     <string name="sync_synced_devices_label">Zsynchronizowane urządzenia</string>
     <string name="sync_connector_paused_label">Wstrzymaj synchronizację</string>
-
     <plurals name="general_devices_count_label">
         <item quantity="one">%d urządzenie</item>
         <item quantity="few">%d urządzenia</item>
@@ -96,10 +70,8 @@
         <item quantity="many">%d unikalnych, dostępnych tylko tutaj</item>
         <item quantity="other">%d unikalnych, dostępnych tylko tutaj</item>
     </plurals>
-
     <string name="updates_dashcard_title">Dostępna aktualizacja</string>
     <string name="updates_dashcard_body">Dostępna jest aktualizacja. Masz %1$s, a najnowsza wersja to %2$s.</string>
-
     <string name="sync_settings_label">Synchronizacja</string>
     <string name="sync_settings_desc">Nazwa urządzenia, harmonogram i warunki wyzwalania.</string>
     <string name="sync_setting_devicelabel_label">Etykieta urządzenia</string>
@@ -108,39 +80,30 @@
     <string name="sync_setting_interval_label">Interwał synchronizacji</string>
     <string name="sync_setting_interval_desc">Interwał synchronizacji w tle (w minutach).</string>
     <string name="sync_setting_category_background_label">Synchronizacja w tle</string>
-
     <string name="sync_custom_server_label">Niestandardowy serwer</string>
-
     <string name="settings_category_ui_label">Interfejs użytkownika</string>
-
     <string name="permission_required_label">Wymagane uprawnienie</string>
     <string name="permission_grant_action">Przyznaj uprawnienie</string>
     <string name="permission_dismiss_hint">Odwiedź ustawienia systemowe aplikacji, aby później pozwolić na odrzucone uprawnienia.</string>
-
     <string name="permission_location_label">Uprawnienie lokalizacji</string>
     <string name="permission_location_desc">Uprawnienie lokalizacji umożliwia Octi wyświetlanie nazw Twoich sieci Wi-Fi lub pokazywanie bieżącej pozycji Twojego urządzenia.</string>
     <string name="permission_battery_optimization_label">Optymalizacje baterii</string>
     <string name="permission_battery_optimization_desc">Wyłącz optymalizacje baterii, aby umożliwić synchronizację bez otwierania aplikacji.</string>
     <string name="permission_notifications_post_label">Wysyłanie powiadomień</string>
     <string name="permission_notifications_post_desc">Uprawnienie do wysyłania powiadomień pozwala Octi powiadamiać Cię o zdarzeniach na innych urządzeniach, które skonfigurowałeś.</string>
-
     <string name="sync_setting_background_enable_title">Synchronizacja w tle</string>
     <string name="sync_setting_background_enable_desc">Synchronizuj dane, gdy aplikacja nie jest otwarta.</string>
     <string name="sync_setting_background_mobile_label">Sieć komórkowa</string>
     <string name="sync_setting_background_mobile_desc">Zezwól na synchronizację w tle przy użyciu połączenia sieci komórkowej, jeśli Wi-Fi jest niedostępne.</string>
-
     <string name="modules_settings_label">Moduły</string>
     <string name="modules_settings_desc">Przełączaj różne moduły i dostosowuj ich ustawienia.</string>
-
     <string name="modules_category_connectivity_label">Łączność</string>
     <string name="modules_category_energy_label">Bateria</string>
     <string name="modules_category_apps_label">Aplikacje</string>
     <string name="modules_category_misc_label">Różne</string>
     <string name="module_apps_category_label">Aplikacje</string>
     <string name="device_x_label">Urządzenie: %s</string>
-
     <string name="pro_device_limit_reached_title">Osiągnięto limit urządzeń</string>
-
     <string name="sync_delete_device_keepaccess_caveat">Usunięcie tego urządzenia usunie jego dane, ale nie cofnie dostępu. Aby cofnąć dostęp, rozłącz Octi na urządzeniu.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Usunięcie tego urządzenia usunie jego dane i cofnie jego dostęp.</string>
 </resources>

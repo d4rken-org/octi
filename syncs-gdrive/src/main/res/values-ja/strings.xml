@@ -8,7 +8,6 @@
     <string name="sync_gdrive_appdata_label">アプリデータスコープ</string>
     <string name="sync_gdrive_type_appdata_description">データは Google ドライブに保存されます。この特定のバリアントは、アプリデータスコープを使用します。このアプリ専用の新しいフォルダへのアクセスのみが許可されます。フォルダはドライブ上には表示されません。これは WhatsApp のバックアップの仕組みに似せています。</string>
     <string name="sync_gdrive_add_label">新しい Google ドライブを追加</string>
-    <string name="sync_gdrive_add_description">Google ドライブへのアクセスを設定するには、下のサインインボタンをタップしてください。</string>
     <string name="sync_gdrive_reset_confirmation_desc">Google ドライブに保存されているすべての Octi のデータをリセットします。デバイスは Google ドライブにログインしたままになります。</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Google ドライブからログアウトしてこのデバイスに関連するデータを削除します。</string>
     <string name="sync_gdrive_error_no_account_on_device">このデバイスはどの Google アカウントにもログインしていません。</string>

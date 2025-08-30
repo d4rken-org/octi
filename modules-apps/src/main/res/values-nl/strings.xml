@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Apps-module</string>
     <string name="module_apps_desc">Informatie over geïnstalleerde apps.</string>
-    <string name="module_apps_x_installed">%d apps geïnstalleerd</string>
     <string name="module_apps_last_installed_x">Laatst geïnstalleerde app: %s</string>
     <string name="module_apps_list_title">Geïnstalleerde apps</string>
     <string name="module_apps_installer_label">Installatiebron van de app</string>
-    <string name="module_apps_installer_desc">Synchroniseer en voeg informatie toe over de bron waarvan elke app is geïnstalleerd.</string>
 </resources>

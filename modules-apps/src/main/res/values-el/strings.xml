@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Ενότητα εφαρμογών</string>
     <string name="module_apps_desc">Πληροφορίες για τις εγκατεστημένες εφαρμογές.</string>
-    <string name="module_apps_x_installed">%d εφαρμογές εγκαταστάθηκαν</string>
     <string name="module_apps_last_installed_x">Τελευταία εγκατεστημένη εφαρμογή: %s</string>
     <string name="module_apps_list_title">Εγκατεστημένες εφαρμογές</string>
     <string name="module_apps_installer_label">Πηγή εγκατάστασης εφαρμογής</string>
-    <string name="module_apps_installer_desc">Συγχρονίστε και συμπεριλάβετε πληροφορίες για την πηγή από την οποία εγκαταστάθηκε κάθε εφαρμογή.</string>
 </resources>

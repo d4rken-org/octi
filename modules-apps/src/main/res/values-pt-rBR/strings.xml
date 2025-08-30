@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Módulo de aplicativos</string>
     <string name="module_apps_desc">Informações sobre os aplicativos instalados.</string>
-    <string name="module_apps_x_installed">%d aplicativos instalados</string>
     <string name="module_apps_last_installed_x">Último aplicativo instalado: %s</string>
     <string name="module_apps_list_title">Aplicativos instalados</string>
     <string name="module_apps_installer_label">Fonte de instalação do aplicativo</string>
-    <string name="module_apps_installer_desc">Sincronize e inclua informações sobre a fonte da qual cada aplicativo foi instalado.</string>
 </resources>

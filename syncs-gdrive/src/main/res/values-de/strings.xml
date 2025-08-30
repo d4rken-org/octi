@@ -4,7 +4,6 @@
     <string name="gdrive_account_scope_error_description">Octi wurden nicht die erforderlichen Zugriffsberechtigungen erteilt. Versuchen Sie es erneut und stellen Sie sicher, dass Berechtigungen erteilt werden.</string>
     <string name="gdrive_account_lockout_error_label">Sperrfehler</string>
     <string name="gdrive_account_lockout_error_description">Dieses Gerät ist gesperrt und kann nicht mehr auf Google Drive zugreifen. Der Zugriff auf Ihr Google-Konto wurde widerrufen. Gewähren Sie den Zugriff erneut und versuchen Sie es noch einmal.</string>
-
     <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">App-Daten-Bereich</string>
     <string name="sync_gdrive_type_appdata_description">Daten werden in Google Drive abgelegt. Diese spezifische Variante verwendet den \"App-Daten\"-Bereich. Der Zugriff wird nur auf einen neuen Ordner speziell für diese App gewährt. Der Ordner ist in Ihrem Drive nicht sichtbar. Es ist ähnlich wie bei WhatsApp-Backups.</string>

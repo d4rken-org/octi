@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play er utilgjengelig</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi kan ikke koble til Google Play. Er Google Play installert og oppdatert? Er Google-kontoen din pålogget? Prøv å tømme hurtigbufferen for Google Play-appen og start enheten på nytt.</string>
     <string name="upgrades_no_purchases_found_check_account">Ingen kjøp funnet. Bruker du riktig konto?</string>
@@ -9,7 +8,6 @@
     <string name="upgrades_dashcard_upgrade_action">Oppgrader</string>
     <string name="upgrade_screen_title">Få Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi har ingen annonser og selger ikke brukerdata. Mitt arbeid finansieres av deg ❤️.</string>
-    <string name="upgrade_screen_benefits_title">Fordeler</string>
     <string name="upgrade_screen_benefits_body">• Mer enn 3 enheter 💯\n• Ulike temaer 🎨\n• Flere alternativer ⚙️\n• Ekstra synkroniseringsservere 🖥️️\n• Fortsatt utvikling ☕\n• En motivert utvikler 🧙</string>
     <string name="upgrade_screen_how_title">Alternativer</string>
     <string name="upgrade_screen_how_body">Du kan velge mellom et engangskjøp og et billigere årlig abonnement.\nAbonnementet starter med en gratis 14-dagers prøveperiode, deretter blir du belastet én gang i året. Prøveperioden og abonnementet kan når som helst avbestilles.\nSamme funksjoner, bare ulike prismodeller.</string>

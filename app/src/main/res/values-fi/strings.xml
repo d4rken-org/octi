@@ -9,7 +9,6 @@
     <string name="onboarding_welcome_subtitle">Laitetoverisi</string>
     <string name="onboarding_welcome_body1">Octi on työkalu ihmisille, joilla on useita Android-laitteita.</string>
     <string name="onboarding_welcome_body2">Se pitää sinut ajan tasalla kaikista laitteistasi. Olipa kyse puhelimesta, tabletista tai muusta laitteesta, jossa Octi on asennettuna, näet tärkeimmät tiedot yhdellä silmäyksellä.</string>
-    <string name="onboarding_welcome_body3">Voit päivittää Octi Prohon saadaksesi lisäominaisuuksia ja tukeaksesi kehitystä.</string>
     <string name="onboarding_welcome_beta_hint">Huom! Tämä on beta-versio, joten kiitos kärsivällisyydestäsi kun parannan sovellusta jatkuvasti!</string>
     <string name="onboarding_privacy_subtitle">Tietosuojakäytäntö</string>
     <string name="onboarding_privacy_body1">Octissa ei ole mainoksia eikä myy käyttäjätietoja.</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">Vianetsintäilmoitukset</string>
     <string name="debug_debuglog_file_label">Tallennettu lokitiedosto</string>
     <string name="debug_debuglog_record_action">Tallenna vianetsintäloki</string>
-    <string name="onboarding_setupsync_title">Aseta synkronointi</string>
-    <string name="onboarding_setupsync_message">Näet tällä hetkellä vain tämän laitteen. Liitä Octi-asennukset määrittämällä yhteinen synkronointipalvelu.</string>
     <string name="settings_privacy_policy_label">Tietosuojakäytäntö</string>
     <string name="settings_privacy_policy_desc">Vastuullinen tietojen käsittely.</string>
     <string name="settings_licenses_label">Lisenssit</string>
@@ -35,17 +32,14 @@
     <string name="help_translate_label">Käännös</string>
     <string name="help_translate_description">Auta kääntämään tämä sovellus suosikkikielellesi.</string>
     <string name="ui_theme_mode_setting_label">Teematila</string>
-    <string name="ui_theme_mode_setting_explanation">Teeman tila (esim. yö tai päivä), jota sovellus käyttää.</string>
     <string name="ui_theme_mode_dark_label">Tumma</string>
     <string name="ui_theme_mode_light_label">Vaalea</string>
     <string name="ui_theme_mode_system_label">Järjestelmä</string>
     <string name="ui_theme_style_setting_label">Teemaväri</string>
     <string name="ui_theme_style_setting_explanation">Käytetty teemaväri, kun sovelluksessa on teema.</string>
     <string name="ui_theme_style_default_label">Oletus</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Virhetikettiseuranta</string>
     <string name="issue_tracker_description">Julkinen virheiden ja ominaisuuksien seuranta.</string>
-    <string name="discord_label">Discord</string>
     <string name="discord_description">Paikka keskustelulle ja kysymyksille.</string>
     <string name="support_debuglog_label">Tallenna vianetsintäloki</string>
     <string name="support_debuglog_inprogress_label">Pysäytä vianetsintäloki</string>

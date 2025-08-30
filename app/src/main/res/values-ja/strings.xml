@@ -9,10 +9,9 @@
     <string name="onboarding_welcome_subtitle">あなたのデバイスの相棒</string>
     <string name="onboarding_welcome_body1">Octi は複数の Android デバイスを持っている人のためのツールです。</string>
     <string name="onboarding_welcome_body2">Octi は、あなたのすべてのデバイスを常に最新の状態に保ちます。Octi がインストールされたスマートフォン、タブレット、その他ガジェットを問わずに主要な情報を一目で把握することができます。</string>
-    <string name="onboarding_welcome_body3">Octi Pro にアップグレードすることでさらに多くの機能を使用可能にし、開発のサポートをすることもできます。</string>
     <string name="onboarding_welcome_beta_hint">念のためのお知らせですが、これはベータ版です。アプリの改善に努めますので、ご理解のほどよろしくお願いします！</string>
     <string name="onboarding_privacy_subtitle">プライバシーポリシー</string>
-    <string name="onboarding_privacy_body1">Octi は無広告、ユーザーデータの販売もしません。</string>
+    <string name="onboarding_privacy_body1">Octi は無広告で、ユーザーデータの販売もしません。</string>
     <string name="updatecheck_setting_enabled_label">更新を確認</string>
     <string name="updatecheck_setting_enabled_explanation">Octi の更新を確認して、新しいバージョンが利用可能かどうかを通知できるようにします。</string>
     <string name="debug_debuglog_size_label">サイズ</string>
@@ -20,8 +19,6 @@
     <string name="debug_notification_channel_label">デバッグ通知</string>
     <string name="debug_debuglog_file_label">記録したログファイル</string>
     <string name="debug_debuglog_record_action">デバッグログを記録</string>
-    <string name="onboarding_setupsync_title">同期を停止</string>
-    <string name="onboarding_setupsync_message">現在はこのデバイスのみが表示されています。Octi のインストールを接続するには、共通の同期サービスを設定してください。</string>
     <string name="settings_privacy_policy_label">プライバシーポリシー</string>
     <string name="settings_privacy_policy_desc">責任を持ってデータを取り扱います。</string>
     <string name="settings_licenses_label">ライセンス</string>
@@ -32,8 +29,9 @@
     <string name="changelog_label">更新履歴</string>
     <string name="settings_acknowledgements_label">謝辞</string>
     <string name="documentation_label">ドキュメント</string>
+    <string name="help_translate_label">翻訳</string>
+    <string name="help_translate_description">このアプリの翻訳を手伝ってください。</string>
     <string name="ui_theme_mode_setting_label">テーマモード</string>
-    <string name="ui_theme_mode_setting_explanation">アプリのテーマ設定時に使用するモード (例: 夜間または昼間)</string>
     <string name="ui_theme_mode_dark_label">ダーク</string>
     <string name="ui_theme_mode_light_label">ライト</string>
     <string name="ui_theme_mode_system_label">システム</string>

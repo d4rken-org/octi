@@ -2,10 +2,7 @@
 <resources>
     <string name="module_apps_label">Toepassingsmodule</string>
     <string name="module_apps_desc">Inligting oor geïnstalleerde toepassings.</string>
-
-    <string name="module_apps_x_installed">%d toepassings geïnstalleer</string>
     <string name="module_apps_last_installed_x">Laaste geïnstalleerde toepassing: %s</string>
     <string name="module_apps_list_title">Geïnstalleerde toepassings</string>
     <string name="module_apps_installer_label">Toepassingsinstallasiebron</string>
-    <string name="module_apps_installer_desc">Sinkroniseer en sluit inligting in oor die bron waarvandaan elke toepassing geïnstalleer is.</string>
 </resources>

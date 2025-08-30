@@ -2,9 +2,7 @@
 <resources>
     <string name="module_apps_label">Modul aplicații</string>
     <string name="module_apps_desc">Informații despre aplicațiile instalate.</string>
-    <string name="module_apps_x_installed">%d aplicații instalate</string>
     <string name="module_apps_last_installed_x">Ultima aplicație instalată: %s</string>
     <string name="module_apps_list_title">Aplicații instalate</string>
     <string name="module_apps_installer_label">Sursa de instalare a aplicației</string>
-    <string name="module_apps_installer_desc">Sincronizează și include informații despre sursa de unde a fost instalată fiecare aplicație.</string>
 </resources>
