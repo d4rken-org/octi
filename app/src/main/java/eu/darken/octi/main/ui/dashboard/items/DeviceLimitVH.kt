@@ -1,7 +1,6 @@
 package eu.darken.octi.main.ui.dashboard.items
 
 import android.view.ViewGroup
-import androidx.core.view.isGone
 import eu.darken.octi.R
 import eu.darken.octi.common.lists.binding
 import eu.darken.octi.databinding.DashboardDeviceLimitItemBinding
@@ -25,12 +24,15 @@ class DeviceLimitVH(parent: ViewGroup) :
             append(" ")
             append(getQuantityString(R.plurals.pro_device_limit_maximum_description, item.maximum))
         }
-        upgradeAction.isGone = true
+        manageDevicesAction.setOnClickListener { item.onManageDevices() }
+        upgradeAction.setOnClickListener { item.onUpgrade() }
     }
 
     data class Item(
         val current: Int,
         val maximum: Int,
+        val onManageDevices: () -> Unit,
+        val onUpgrade: () -> Unit,
     ) : DashboardAdapter.Item {
         override val stableId: Long = this.javaClass.hashCode().toLong()
     }
