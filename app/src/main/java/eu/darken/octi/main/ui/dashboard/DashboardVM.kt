@@ -165,6 +165,8 @@ class DashboardVM @Inject constructor(
             DeviceLimitVH.Item(
                 current = deviceItems.size,
                 maximum = DEVICE_LIMIT,
+                onManageDevices = { DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate() },
+                onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() },
             ).run { items.add(this) }
             items.addAll(deviceItems.drop(DEVICE_LIMIT))
         } else {

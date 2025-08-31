@@ -5,6 +5,7 @@
     <string name="general_create_account_action">Create account</string>
     <string name="general_link_existing_action">Link to existing account</string>
     <string name="general_sync_action">Synchronize</string>
+    <string name="general_manage_devices_action">Manage devices</string>
     <string name="general_select_server_label">Select server</string>
 
     <string name="onboarding_welcome_subtitle">Your Device Buddy</string>
