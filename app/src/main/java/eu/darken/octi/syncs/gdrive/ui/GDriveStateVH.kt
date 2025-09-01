@@ -69,6 +69,15 @@ class GDriveStateVH(parent: ViewGroup) :
             deviceString
         } ?: getString(R.string.general_na_label)
 
+        staleDevicesWarning.apply {
+            isGone = item.staleDevicesCount == 0
+            text = getQuantityString(
+                R.plurals.sync_stale_devices_info_message,
+                item.staleDevicesCount,
+                item.staleDevicesCount
+            )
+        }
+
         itemView.setOnClickListener { item.onManage() }
     }
 
@@ -77,6 +86,7 @@ class GDriveStateVH(parent: ViewGroup) :
         val ourState: SyncConnectorState,
         val otherStates: Collection<SyncConnectorState>,
         val isPaused: Boolean,
+        val staleDevicesCount: Int,
         val onManage: () -> Unit,
     ) : SyncListAdapter.Item {
         override val stableId: Long

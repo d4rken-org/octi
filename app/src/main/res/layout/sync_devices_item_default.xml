@@ -60,6 +60,20 @@
         tools:text="Last seen 123 123 123" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/stale_warning"
+        style="@style/TextAppearance.Material3.BodySmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="?colorError"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/last_seen"
+        tools:text="Device hasn't synced in 2 months"
+        tools:visibility="visible" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/error_desc"
         style="@style/TextAppearance.Material3.BodySmall"
         android:layout_width="0dp"
@@ -70,7 +84,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/last_seen"
+        app:layout_constraintTop_toBottomOf="@id/stale_warning"
         tools:text="@tools:sample/lorem/random" />
 
 

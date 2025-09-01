@@ -251,18 +251,17 @@ class DashboardVM @Inject constructor(
                     now = now,
                     meta = metaModule,
                     moduleItems = moduleItems,
+                    onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() },
+                    onManageStaleDevice = {
+                        DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate()
+                    }
                 )
             }
             .sortedBy { it.meta.data.deviceLabel ?: it.meta.data.deviceName }
             .sortedByDescending { it.meta.deviceId == syncSettings.deviceId }
             .mapIndexed { index, item ->
                 val isLimited = !upgradeInfo.isPro && index >= DEVICE_LIMIT
-                item.copy(
-                    isLimited = isLimited,
-                    onUpgrade = if (isLimited) {
-                        { DashboardFragmentDirections.goToUpgradeFragment().navigate() }
-                    } else null
-                )
+                item.copy(isLimited = isLimited)
             }
     }
 

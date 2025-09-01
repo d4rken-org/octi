@@ -12,6 +12,7 @@ import eu.darken.octi.common.lists.differ.update
 import eu.darken.octi.databinding.DashboardDeviceItemBinding
 import eu.darken.octi.main.ui.dashboard.DashboardAdapter
 import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.sync.core.StalenessUtil
 import java.time.Instant
 
 
@@ -63,12 +64,26 @@ class DeviceVH(parent: ViewGroup) :
         }
 
         lastSeen.text = DateUtils.getRelativeTimeSpanString(item.meta.modifiedAt.toEpochMilli())
-        moduleDataList.isGone = item.isLimited || item.moduleItems.isEmpty()
-        moduleAdapter.update(item.moduleItems)
+
+        val isStale = StalenessUtil.isStale(item.meta.modifiedAt)
+
+        val finalModuleItems = if (isStale && !item.isLimited) {
+            val staleItem = StaleDeviceVH.Item(
+                deviceId = item.meta.deviceId,
+                lastSyncTime = item.meta.modifiedAt,
+                onManageDevice = item.onManageStaleDevice
+            )
+            listOf(staleItem) + item.moduleItems
+        } else {
+            item.moduleItems
+        }
+
+        moduleDataList.isGone = item.isLimited || finalModuleItems.isEmpty()
+        moduleAdapter.update(finalModuleItems)
 
         root.setOnClickListener {
             if (item.isLimited) {
-                item.onUpgrade?.invoke()
+                item.onUpgrade()
             } else {
                 null
             }
@@ -80,9 +95,11 @@ class DeviceVH(parent: ViewGroup) :
         val meta: eu.darken.octi.module.core.ModuleData<MetaInfo>,
         val moduleItems: List<PerDeviceModuleAdapter.Item>,
         val isLimited: Boolean = false,
-        val onUpgrade: (() -> Unit)? = null,
+        val onUpgrade: (() -> Unit),
+        val onManageStaleDevice: (() -> Unit),
     ) : DashboardAdapter.Item {
         override val stableId: Long = meta.deviceId.hashCode().toLong()
     }
+
 
 }
