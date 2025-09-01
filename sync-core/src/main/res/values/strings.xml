@@ -1,2 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources />
+<resources>
+    <string name="sync_device_stale_warning_text">Device hasn\'t synced in %s</string>
+
+    <plurals name="sync_stale_devices_info_message">
+        <item quantity="one">%d device hasn\'t synced recently</item>
+        <item quantity="other">%d devices haven\'t synced recently</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_months">
+        <item quantity="one">%d month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_years">
+        <item quantity="one">%d year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
+</resources>

@@ -28,6 +28,7 @@ class PerDeviceModuleAdapter @Inject constructor() :
 
     init {
         modules.add(DataBinderMod(data))
+        modules.add(TypedVHCreatorMod({ data[it] is StaleDeviceVH.Item }) { StaleDeviceVH(it) })
         modules.add(TypedVHCreatorMod({ data[it] is DevicePowerVH.Item }) { DevicePowerVH(it) })
         modules.add(TypedVHCreatorMod({ data[it] is DeviceWifiVH.Item }) { DeviceWifiVH(it) })
         modules.add(TypedVHCreatorMod({ data[it] is DeviceAppsVH.Item }) { DeviceAppsVH(it) })

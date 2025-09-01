@@ -12,7 +12,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/sync_services_label" />
+        app:title="@string/sync_synced_devices_label" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
