@@ -87,6 +87,8 @@ class DashboardVM @Inject constructor(
 
     val dashboardEvents = SingleLiveEvent<DashboardEvent>()
 
+    var onStartDragListener: ((androidx.recyclerview.widget.RecyclerView.ViewHolder) -> Unit)? = null
+
     private val isManuallyRefreshing = MutableStateFlow(false)
 
     private val tickerUiRefresh = flow {
@@ -115,7 +117,8 @@ class DashboardVM @Inject constructor(
         isManuallyRefreshing,
         upgradeRepo.upgradeInfo,
         updateService.availableUpdate.onStart { emit(null) },
-    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, isRefreshing, upgradeInfo, update ->
+        generalSettings.dashboardConfig.flow,
+    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, isRefreshing, upgradeInfo, update, uiConfig ->
         val items = mutableListOf<DashboardAdapter.Item>()
 
         val connectorCount = syncManager.connectors.first().size
@@ -159,18 +162,49 @@ class DashboardVM @Inject constructor(
             ).run { items.add(this) }
         }
 
-        if (deviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro) {
-            log(TAG, WARN) { "Exceeding device limit: $deviceItems" }
-            items.addAll(deviceItems.take(DEVICE_LIMIT))
+        // Clean config to remove stale device data, then apply custom ordering
+        val currentDeviceIds = deviceItems.map { it.meta.deviceId.id }.toSet()
+        val cleanedConfig = uiConfig.toCleaned(currentDeviceIds)
+        
+        // Persist cleaned config if it changed (remove stale data from storage)
+        if (cleanedConfig != uiConfig) {
+            launch { generalSettings.dashboardConfig.value(cleanedConfig) }
+        }
+        
+        val deviceItemsWithOrder = cleanedConfig.applyCustomOrdering(deviceItems.map { it.meta.deviceId.id })
+            .mapNotNull { deviceId -> deviceItems.find { it.meta.deviceId.id == deviceId } }
+            .let { ordered ->
+                // Add any devices not in the ordered list (shouldn't happen, but safety)
+                ordered + deviceItems.filter { device -> 
+                    ordered.none { it.meta.deviceId.id == device.meta.deviceId.id } 
+                }
+            }
+        
+        // Apply device limit status dynamically based on position after reordering
+        val orderedDeviceItems = deviceItemsWithOrder.mapIndexed { index, item ->
+            item.copy(
+                isCollapsed = cleanedConfig.isCollapsed(item.meta.deviceId.id),
+                isLimited = !upgradeInfo.isPro && index >= DEVICE_LIMIT,
+                isCurrentDevice = item.isCurrentDevice, // Preserve current device flag
+                onToggleCollapse = { deviceId: String ->
+                    launch { generalSettings.toggleDeviceCollapsed(deviceId) }
+                },
+                onStartDrag = onStartDragListener
+            )
+        }
+
+        if (orderedDeviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro) {
+            log(TAG, WARN) { "Exceeding device limit: $orderedDeviceItems" }
+            items.addAll(orderedDeviceItems.take(DEVICE_LIMIT))
             DeviceLimitVH.Item(
-                current = deviceItems.size,
+                current = orderedDeviceItems.size,
                 maximum = DEVICE_LIMIT,
                 onManageDevices = { DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate() },
                 onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() },
             ).run { items.add(this) }
-            items.addAll(deviceItems.drop(DEVICE_LIMIT))
+            items.addAll(orderedDeviceItems.drop(DEVICE_LIMIT))
         } else {
-            items.addAll(deviceItems)
+            items.addAll(orderedDeviceItems)
         }
 
         if (!upgradeInfo.isPro) {
@@ -183,7 +217,7 @@ class DashboardVM @Inject constructor(
 
         State(
             items = items,
-            deviceCount = deviceItems.size,
+            deviceCount = orderedDeviceItems.size,
             lastSyncAt = lastConnectorActivity,
             isRefreshing = isRefreshing,
             isOffline = !networkState.isInternetAvailable,
@@ -213,6 +247,11 @@ class DashboardVM @Inject constructor(
 
     fun onPermissionResult(granted: Boolean) {
         if (granted) permissionTool.recheck()
+    }
+
+    fun updateDeviceOrder(newOrder: List<String>) = launch {
+        log(TAG) { "updateDeviceOrder(newOrder=$newOrder)" }
+        generalSettings.updateDeviceOrder(newOrder)
     }
 
     private fun deviceItems(): Flow<List<DeviceVH.Item>> = combine(
@@ -251,18 +290,19 @@ class DashboardVM @Inject constructor(
                     now = now,
                     meta = metaModule,
                     moduleItems = moduleItems,
+                    isCollapsed = false, // Will be updated when applying preferences
+                    isLimited = false, // Will be updated when applying preferences based on position
+                    isCurrentDevice = metaModule.deviceId == syncSettings.deviceId,
                     onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() },
                     onManageStaleDevice = {
                         DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate()
-                    }
+                    },
+                    onToggleCollapse = { _ -> }, // Will be updated when applying preferences
+                    onStartDrag = null // Will be updated when applying preferences
                 )
             }
             .sortedBy { it.meta.data.deviceLabel ?: it.meta.data.deviceName }
             .sortedByDescending { it.meta.deviceId == syncSettings.deviceId }
-            .mapIndexed { index, item ->
-                val isLimited = !upgradeInfo.isPro && index >= DEVICE_LIMIT
-                item.copy(isLimited = isLimited)
-            }
     }
 
     private val ModuleData<out Any>.orderPrio: Int
@@ -327,6 +367,7 @@ class DashboardVM @Inject constructor(
             .takeIf { deviceId == syncSettings.deviceId },
         onCopyClicked = { launch { clipboardHandler.setOSClipboard(data) } }
     )
+
 
     companion object {
         private val INFO_ORDER = listOf(

@@ -18,6 +18,7 @@ import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.theming.ThemeMode
 import eu.darken.octi.common.theming.ThemeStyle
 import eu.darken.octi.main.core.updater.UpdateChecker
+import eu.darken.octi.main.ui.dashboard.DashboardConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -55,9 +56,29 @@ class GeneralSettings @Inject constructor(
         writer = { perms -> perms.joinToString(",") { it.permissionId } }
     )
 
+    val dashboardConfig = dataStore.createValue(
+        "dashboard.ui.config", 
+        DashboardConfig(),
+        moshi
+    )
+
     suspend fun addDismissedPermission(permission: Permission) {
         log(TAG) { "addDismissedPermission(permission=$permission)" }
         dismissedPermissions.update { it + permission }
+    }
+
+    suspend fun toggleDeviceCollapsed(deviceId: String) {
+        log(TAG) { "toggleDeviceCollapsed(deviceId=$deviceId)" }
+        dashboardConfig.update { config ->
+            config.toToggledCollapsed(deviceId)
+        }
+    }
+
+    suspend fun updateDeviceOrder(newOrder: List<String>) {
+        log(TAG) { "updateDeviceOrder(newOrder=$newOrder)" }
+        dashboardConfig.update { config ->
+            config.toUpdatedOrder(newOrder)
+        }
     }
 
     override val mapper = PreferenceStoreMapper(

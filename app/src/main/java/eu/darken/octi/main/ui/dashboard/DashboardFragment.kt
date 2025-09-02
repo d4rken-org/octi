@@ -12,6 +12,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +34,8 @@ import eu.darken.octi.common.viewbinding.viewBinding
 import eu.darken.octi.databinding.DashboardFragmentBinding
 import eu.darken.octi.databinding.DashboardPermissionItemBinding
 import eu.darken.octi.main.ui.dashboard.items.bindItem
+import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
+import java.util.Collections
 import javax.inject.Inject
 
 
@@ -171,6 +175,10 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
         }
 
         ui.list.setupDefaults(dashboardAdapter, dividers = false)
+        
+        // Setup drag-and-drop functionality
+        val itemTouchHelper = ItemTouchHelper(DragCallback())
+        itemTouchHelper.attachToRecyclerView(ui.list)
 
         ui.refreshAction.setOnClickListener { vm.refresh() }
         ui.refreshSwipe.setOnRefreshListener { vm.refresh() }
@@ -224,6 +232,64 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
             log { "awaitingPermission=true" }
             vm.onPermissionResult(true)
         }
+    }
+
+    private inner class DragCallback : ItemTouchHelper.Callback() {
+        
+        override fun getMovementFlags(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder
+        ): Int {
+            // Allow drag for all DeviceVH items, prevent moving the limit card itself
+            val item = dashboardAdapter.data[viewHolder.adapterPosition]
+            if (item !is DeviceVH.Item) {
+                return makeMovementFlags(0, 0)
+            }
+            
+            return makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
+        }
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            val fromPosition = viewHolder.adapterPosition
+            val toPosition = target.adapterPosition
+            
+            // Only allow moving between DeviceVH items
+            val fromItem = dashboardAdapter.data.getOrNull(fromPosition)
+            val toItem = dashboardAdapter.data.getOrNull(toPosition)
+            
+            if (fromItem !is DeviceVH.Item || toItem !is DeviceVH.Item) {
+                return false
+            }
+            
+            // Update the adapter data temporarily for visual feedback
+            val data = dashboardAdapter.data.toMutableList()
+            Collections.swap(data, fromPosition, toPosition)
+            dashboardAdapter.update(data)
+            
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            // Not implemented - we don't support swipe actions
+        }
+        
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+            
+            // Update the device order in settings when drag ends
+            val deviceItems = dashboardAdapter.data.filterIsInstance<DeviceVH.Item>()
+            val newOrder = deviceItems.map { it.meta.deviceId.id }
+            
+            vm.updateDeviceOrder(newOrder)
+        }
+        
+        override fun isLongPressDragEnabled(): Boolean = true
+        
+        override fun isItemViewSwipeEnabled(): Boolean = false
     }
 
 }
