@@ -11,13 +11,24 @@
         android:layout_height="wrap_content">
 
         <ImageView
+            android:id="@+id/expand_chevron"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_chevron_right_24"
+            app:layout_constraintBottom_toBottomOf="@id/device_subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/device_label"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
             android:id="@+id/device_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:src="@drawable/ic_baseline_phone_android_24"
             app:layout_constraintBottom_toBottomOf="@id/device_subtitle"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/expand_chevron"
             app:layout_constraintTop_toTopOf="@id/device_label"
             tools:ignore="ContentDescription" />
 

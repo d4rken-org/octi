@@ -13,7 +13,7 @@
         android:id="@+id/tap_indicator"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:src="@drawable/ic_chevron_right_24"
+        android:src="@drawable/ic_gesture_tap_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

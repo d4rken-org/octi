@@ -1,9 +1,13 @@
 package eu.darken.octi.main.ui.dashboard.items.perdevice
 
+import android.animation.ObjectAnimator
 import android.text.format.DateUtils
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.DividerItemDecoration2
@@ -37,10 +41,10 @@ class DeviceVH(parent: ViewGroup) :
         val meta = item.meta.data
 
         deviceIcon.setImageResource(
-            if (item.isLimited) {
-                R.drawable.ic_baseline_stars_24
-            } else {
-                when (meta.deviceType) {
+            when {
+                item.isLimited -> R.drawable.ic_baseline_stars_24
+                item.isCurrentDevice -> R.drawable.ic_baseline_home_24
+                else -> when (meta.deviceType) {
                     MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
                     MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
                     MetaInfo.DeviceType.UNKNOWN -> R.drawable.ic_baseline_question_mark_24
@@ -78,15 +82,42 @@ class DeviceVH(parent: ViewGroup) :
             item.moduleItems
         }
 
-        moduleDataList.isGone = item.isLimited || finalModuleItems.isEmpty()
+        // Setup expand/collapse functionality
+        val isCollapsed = item.isCollapsed
+        val shouldShowModules = !item.isLimited && finalModuleItems.isNotEmpty() && !isCollapsed
+        
+        moduleDataList.isVisible = shouldShowModules
         moduleAdapter.update(finalModuleItems)
 
-        root.setOnClickListener {
-            if (item.isLimited) {
-                item.onUpgrade()
+        // Update chevron state and visibility
+        expandChevron.apply {
+            if (item.isLimited || finalModuleItems.isEmpty()) {
+                // Hide chevron for limited devices or devices with no modules
+                isVisible = false
             } else {
-                null
+                isVisible = true
+                // Animate chevron rotation based on collapsed state
+                val rotation = if (isCollapsed) 0f else 90f
+                animate().rotation(rotation).setDuration(200).start()
             }
+        }
+
+        // Single click for expand/collapse, long press for drag
+        root.setOnClickListener {
+            when {
+                finalModuleItems.isNotEmpty() && !item.isLimited -> {
+                    item.onToggleCollapse(item.meta.deviceId.id)
+                }
+                item.isLimited -> {
+                    item.onUpgrade()
+                }
+            }
+        }
+        
+        // Long press to start drag
+        root.setOnLongClickListener {
+            item.onStartDrag?.invoke(this@DeviceVH)
+            true
         }
     }
 
@@ -95,8 +126,12 @@ class DeviceVH(parent: ViewGroup) :
         val meta: eu.darken.octi.module.core.ModuleData<MetaInfo>,
         val moduleItems: List<PerDeviceModuleAdapter.Item>,
         val isLimited: Boolean = false,
+        val isCollapsed: Boolean = false,
+        val isCurrentDevice: Boolean = false,
         val onUpgrade: (() -> Unit),
         val onManageStaleDevice: (() -> Unit),
+        val onToggleCollapse: ((String) -> Unit),
+        val onStartDrag: ((RecyclerView.ViewHolder) -> Unit)? = null,
     ) : DashboardAdapter.Item {
         override val stableId: Long = meta.deviceId.hashCode().toLong()
     }
