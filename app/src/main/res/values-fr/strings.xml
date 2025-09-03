@@ -5,6 +5,7 @@
     <string name="general_create_account_action">Créer un compte</string>
     <string name="general_link_existing_action">Relier à un compte existant</string>
     <string name="general_sync_action">Synchroniser</string>
+    <string name="general_manage_devices_action">Gérer les appareils</string>
     <string name="general_select_server_label">Choisir le serveur</string>
     <string name="onboarding_welcome_subtitle">Le compagnon de vos appareils</string>
     <string name="onboarding_welcome_body1">Octi est un outil pour les personnes qui utilisent plusieurs appareils Android.</string>
