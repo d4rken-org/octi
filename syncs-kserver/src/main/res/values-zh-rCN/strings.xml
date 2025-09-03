@@ -18,7 +18,6 @@
     <string name="sync_kserver_link_host_option_nfc">通过NFC链接设备</string>
     <string name="sync_kserver_link_host_device_linked_message">一个新设备被链接到你的账户。</string>
     <string name="sync_kserver_link_host_nfc_action">正在查找NFC客户端。将此设备靠近您要链接到帐户的设备。</string>
-    <string name="sync_kserver_link_client_option_direct">手动复制粘贴链接代码</string>
     <string name="sync_kserver_link_client_option_qrcode">从另一台设备扫描QR码</string>
     <string name="sync_kserver_link_client_option_nfc">使用两台设备进行NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">启动摄像机</string>

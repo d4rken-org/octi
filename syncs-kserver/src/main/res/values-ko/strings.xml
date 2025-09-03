@@ -17,7 +17,6 @@
     <string name="sync_kserver_link_host_option_nfc">NFC로 기기 연결</string>
     <string name="sync_kserver_link_host_device_linked_message">새 기기가 계정에 연결되었습니다.</string>
     <string name="sync_kserver_link_host_nfc_action">NFC 클라이언트 검색 중. 이 기기를 계정에 연결할 기기 근처에 두세요.</string>
-    <string name="sync_kserver_link_client_option_direct">연결 코드를 직접 복사해 붙여넣기</string>
     <string name="sync_kserver_link_client_option_qrcode">다른 기기의 QR 코드 스캔하기</string>
     <string name="sync_kserver_link_client_option_nfc">NFC로 두 기기 사용</string>
     <string name="sync_kserver_link_client_startcamera_action">카메라 시작</string>

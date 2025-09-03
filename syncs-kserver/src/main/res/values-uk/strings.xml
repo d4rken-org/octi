@@ -17,7 +17,6 @@
     <string name="sync_kserver_link_host_option_nfc">Зв\'язати пристрій через NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">Новий пристрій було зв\'язано з вашим обліковим записом.</string>
     <string name="sync_kserver_link_host_nfc_action">Пошук NFC-клієнта. Тримайте цей пристрій поруч із пристроєм, який ви хочете зв\'язати з вашим обліковим записом.</string>
-    <string name="sync_kserver_link_client_option_direct">Вручну скопіювати та вставити код зв\'язку</string>
     <string name="sync_kserver_link_client_option_qrcode">Сканувати QR-код з іншого пристрою</string>
     <string name="sync_kserver_link_client_option_nfc">Використовувати два пристрої з NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Запустити камеру</string>
