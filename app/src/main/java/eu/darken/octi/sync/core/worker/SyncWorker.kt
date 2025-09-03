@@ -14,6 +14,9 @@ import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.power.ui.widget.BatteryWidgetManager
 import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 
@@ -22,20 +25,12 @@ import kotlinx.coroutines.delay
 class SyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters,
-//    syncWorkerComponentBuilder: SyncWorkerComponent.Builder,
     private val syncManager: SyncManager,
     private val moduleManager: ModuleManager,
     private val batteryWidgetManager: BatteryWidgetManager,
 ) : CoroutineWorker(context, params) {
 
-    private val workerScope = SyncWorkerCoroutineScope()
-//    private val monitorComponent = syncWorkerComponentBuilder
-//        .coroutineScope(workerScope)
-//        .build()
-//
-//    private val entryPoint by lazy {
-//        EntryPoints.get(monitorComponent, SyncWorkerEntryPoint::class.java)
-//    }
+    private val workerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private var finishedWithError = false
 
