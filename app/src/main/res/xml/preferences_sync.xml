@@ -23,8 +23,16 @@
             android:max="1440"
             android:summary="@string/sync_setting_interval_desc"
             android:title="@string/sync_setting_interval_label"
-            app:min="15"
+            app:min="1"
             app:showSeekBarValue="true" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_warning_24"
+            android:key="sync.frequent.warning"
+            android:summary="@string/sync_setting_frequent_warning_desc"
+            android:title="@string/sync_setting_frequent_warning_title"
+            android:selectable="false"
+            android:persistent="false" />
 
         <CheckBoxPreference
             android:defaultValue="true"

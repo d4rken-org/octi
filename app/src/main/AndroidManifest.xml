@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission
-        android:name="android.permission.FOREGROUND_SERVICE"
-        tools:node="remove" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:name="eu.darken.octi.App"
@@ -59,6 +58,17 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/battery_widget_info" />
         </receiver>
+
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            tools:replace="android:enabled,android:foregroundServiceType">
+            <meta-data
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-initiated frequent synchronization for real-time device monitoring. Users explicitly enable this feature in settings to sync their device data more frequently than the standard 15-minute interval when they need immediate updates across their devices. The service displays a persistent notification keeping users informed of the active synchronization status. This is particularly useful for users who need real-time battery monitoring, immediate app installation updates, or instant clipboard sharing between devices while actively working." />
+        </service>
 
         <!-- Debug stuff-->
         <activity
