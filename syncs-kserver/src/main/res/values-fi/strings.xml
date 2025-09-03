@@ -17,7 +17,6 @@
     <string name="sync_kserver_link_host_option_nfc">Yhdistä laite NFC:llä</string>
     <string name="sync_kserver_link_host_device_linked_message">Uusi laite yhdistetty tilillesi.</string>
     <string name="sync_kserver_link_host_nfc_action">Etsitään NFC-asiakasta. Pidä laitetta lähellä laitetta, jonka haluat liittää tiliin.</string>
-    <string name="sync_kserver_link_client_option_direct">Kopioi ja liitä yhdistämiskoodi manuaalisesti</string>
     <string name="sync_kserver_link_client_option_qrcode">Skannaa QR-koodi toisesta laitteesta</string>
     <string name="sync_kserver_link_client_option_nfc">Käytä kahta laitetta NFC:llä</string>
     <string name="sync_kserver_link_client_startcamera_action">Käynnistä kamera</string>

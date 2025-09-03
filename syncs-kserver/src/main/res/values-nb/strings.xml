@@ -17,7 +17,6 @@
     <string name="sync_kserver_link_host_option_nfc">Koble enhet via NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">En ny enhet er koblet til kontoen din.</string>
     <string name="sync_kserver_link_host_nfc_action">Søker etter NFC-klient. Hold denne enheten nær enheten du vil koble til kontoen din.</string>
-    <string name="sync_kserver_link_client_option_direct">Kopier og lim inn en koblingskode manuelt</string>
     <string name="sync_kserver_link_client_option_qrcode">Skann en QR-kode fra en annen enhet</string>
     <string name="sync_kserver_link_client_option_nfc">Bruk to enheter med NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Start kamera</string>

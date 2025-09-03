@@ -18,7 +18,6 @@
     <string name="sync_kserver_link_host_option_nfc">Enllaça el dispositiu mitjançant NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">S\'ha enllaçat un dispositiu nou al vostre compte.</string>
     <string name="sync_kserver_link_host_nfc_action">S\'està cercant un client NFC. Manteniu aquest dispositiu a prop del dispositiu que voleu enllaçar al vostre compte.</string>
-    <string name="sync_kserver_link_client_option_direct">Copia i enganxa manualment un codi d\'enllaç</string>
     <string name="sync_kserver_link_client_option_qrcode">Escaneja un codi QR des d\'un altre dispositiu</string>
     <string name="sync_kserver_link_client_option_nfc">Utilitza dos dispositius amb NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Inicieu la càmera</string>

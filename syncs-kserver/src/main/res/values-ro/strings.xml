@@ -17,7 +17,6 @@
     <string name="sync_kserver_link_host_option_nfc">Conectează dispozitivul prin NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">Un dispozitiv nou a fost conectat la contul tău.</string>
     <string name="sync_kserver_link_host_nfc_action">Caută client NFC. Ține acest dispozitiv aproape de cel pe care vrei să-l conectezi la contul tău.</string>
-    <string name="sync_kserver_link_client_option_direct">Copiază și lipește manual codul de conectare</string>
     <string name="sync_kserver_link_client_option_qrcode">Scanează un cod QR de pe alt dispozitiv</string>
     <string name="sync_kserver_link_client_option_nfc">Folosește două dispozitive cu NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Pornește camera</string>

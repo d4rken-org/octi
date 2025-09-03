@@ -8,7 +8,6 @@
     <string name="sync_gdrive_appdata_label">App-Daten-Bereich</string>
     <string name="sync_gdrive_type_appdata_description">Daten werden in Google Drive abgelegt. Diese spezifische Variante verwendet den \"App-Daten\"-Bereich. Der Zugriff wird nur auf einen neuen Ordner speziell für diese App gewährt. Der Ordner ist in Ihrem Drive nicht sichtbar. Es ist ähnlich wie bei WhatsApp-Backups.</string>
     <string name="sync_gdrive_add_label">Neues Google Drive hinzufügen</string>
-    <string name="sync_gdrive_add_description">Klicken Sie auf die Anmelde-Schaltfläche unten, um den Google Drive-Zugriff einzurichten.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Alle auf Google Drive gespeicherten Octi-Daten zurücksetzen. Ihr Gerät bleibt bei Google Drive angemeldet.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Von Google Drive abmelden und Daten zu diesem Gerät löschen.</string>
     <string name="sync_gdrive_error_no_account_on_device">Dieses Gerät ist bei keinem Google-Konto angemeldet.</string>

@@ -18,7 +18,6 @@
     <string name="sync_kserver_link_host_option_nfc">ربط الجهاز عبر NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">تم ربط جهاز جديد بحسابك.</string>
     <string name="sync_kserver_link_host_nfc_action">جاري البحث عن عميل NFC. قرّب هذا الجهاز من الجهاز الذي تريد ربطه بحسابك.</string>
-    <string name="sync_kserver_link_client_option_direct">نسخ ولصق رمز الربط يدويًا</string>
     <string name="sync_kserver_link_client_option_qrcode">مسح رمز استجابة سريعة (QR) من جهاز آخر</string>
     <string name="sync_kserver_link_client_option_nfc">استخدام جهازين يدعمان NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">تشغيل الكاميرا</string>

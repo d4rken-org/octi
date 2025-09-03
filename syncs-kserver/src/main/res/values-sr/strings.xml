@@ -17,7 +17,6 @@
     <string name="sync_kserver_link_host_option_nfc">Повежи уређај преко NFC-а</string>
     <string name="sync_kserver_link_host_device_linked_message">Нови уређај је повезан са вашим налогом.</string>
     <string name="sync_kserver_link_host_nfc_action">Тражим NFC клијента. Држите овај уређај близу уређаја који желите да повежете на налог.</string>
-    <string name="sync_kserver_link_client_option_direct">Ручно копирај и залепи код за повезивање</string>
     <string name="sync_kserver_link_client_option_qrcode">Скенирај QR код са другог уређаја</string>
     <string name="sync_kserver_link_client_option_nfc">Користите два уређаја са NFC-ом</string>
     <string name="sync_kserver_link_client_startcamera_action">Покрени камеру</string>
