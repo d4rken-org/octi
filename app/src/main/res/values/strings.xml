@@ -125,6 +125,15 @@
     <string name="sync_setting_background_mobile_label">Mobile network</string>
     <string name="sync_setting_background_mobile_desc">Allow background synchronization using your mobile network connection if Wi-Fi is unavailable.</string>
 
+    <string name="sync_setting_frequent_warning_title">⚠️ Continuous Sync Mode Active</string>
+    <string name="sync_setting_frequent_warning_desc">Intervals below 15 minutes will:\n• Show a persistent notification\n• Increase battery usage significantly\n• May not work when battery saver is active\n• Require the app to remain installed\n\nThis is best used when your device is charging.</string>
+
+    <string name="sync_notification_channel_name">Continuous Sync</string>
+    <string name="sync_notification_channel_desc">Notifications for continuous synchronization service</string>
+    <string name="sync_notification_title">Octi • Continuous Sync</string>
+    <string name="sync_notification_content">Syncing every %d minutes</string>
+    <string name="sync_notification_content_with_last">Syncing every %1$d minutes • Last: %2$s</string>
+
     <string name="modules_settings_label">Modules</string>
     <string name="modules_settings_desc">Toggle different modules and tweak their settings.</string>
 

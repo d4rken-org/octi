@@ -27,6 +27,12 @@ class SyncSettingsFragment : PreferenceFragment3() {
             findPreference<Preference>(settings.backgroundSyncInterval.keyName)?.isEnabled = it
             findPreference<Preference>(settings.backgroundSyncOnMobile.keyName)?.isEnabled = it
         }
+
+        settings.backgroundSyncInterval.flow.asLiveData().observe2 { interval ->
+            val warningPreference = findPreference<Preference>("sync.frequent.warning")
+            warningPreference?.isVisible = interval < 15
+        }
+        
         super.onViewCreated(view, savedInstanceState)
     }
 
