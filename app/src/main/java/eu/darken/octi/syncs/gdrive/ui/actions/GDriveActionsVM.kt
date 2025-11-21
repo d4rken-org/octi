@@ -79,10 +79,6 @@ class GDriveActionsVM @Inject constructor(
 
     fun viewDevices() = launch(appScope) {
         log(TAG) { "viewDevices()" }
-        if (!upgradeRepo.isPro()) {
-            GDriveActionsFragmentDirections.goToUpgradeFragment().navigate()
-            return@launch
-        }
         GDriveActionsFragmentDirections.actionGDriveActionsFragmentToSyncDevicesFragment(
             navArgs
                 .identifier

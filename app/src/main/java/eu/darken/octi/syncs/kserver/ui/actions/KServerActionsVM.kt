@@ -92,10 +92,6 @@ class KServerActionsVM @Inject constructor(
 
     fun viewDevices() = launch(appScope) {
         log(TAG) { "viewDevices()" }
-        if (!upgradeRepo.isPro()) {
-            KServerActionsFragmentDirections.goToUpgradeFragment().navigate()
-            return@launch
-        }
         KServerActionsFragmentDirections.actionKServerActionsFragmentToSyncDevicesFragment(
             navArgs.identifier
         ).navigate()
