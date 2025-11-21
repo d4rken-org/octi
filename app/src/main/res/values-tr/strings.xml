@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Hesap Oluştur</string>
     <string name="general_link_existing_action">Mevcut hesaba bağlantı</string>
     <string name="general_sync_action">Senkronize et</string>
+    <string name="general_manage_devices_action">Cihazları yönet</string>
     <string name="general_select_server_label">Sunucu seç</string>
     <string name="onboarding_welcome_subtitle">Cihaz Arkadaşınız</string>
     <string name="onboarding_welcome_body1">Octi, birden fazla Android cihazı olan kişiler için bir araçtır.</string>
     <string name="onboarding_welcome_body2">Sizi tüm cihazlarınızla döngü içinde tutar. İster telefonunuz, ister tabletiniz veya Octi yüklü başka bir aygıt olsun, önemli ayrıntıları bir bakışta alırsınız.</string>
+    <string name="onboarding_welcome_body3">Ekstra özellikler ve geliştirme desteği için Octi Pro\'ya yükseltin.</string>
     <string name="onboarding_welcome_beta_hint">Sadece ufak bir uyarı, bu bir beta sürümüdür, bu yüzden uygulamayı geliştirmeye devam ederken sabrınız için teşekkürler!</string>
     <string name="onboarding_privacy_subtitle">Gizlilik politikası</string>
     <string name="onboarding_privacy_body1">Octi\'de reklam yoktur ve kullanıcı verilerini satmaz.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Hata ayıklama bildirimleri</string>
     <string name="debug_debuglog_file_label">Kaydedilen günlük dosyası</string>
     <string name="debug_debuglog_record_action">Hata ayıklama günlüğü kaydet</string>
+    <string name="onboarding_setupsync_title">Senkronizasyonu ayarla</string>
+    <string name="onboarding_setupsync_message">Şu anda yalnızca bu cihazı görüyorsunuz. Octi kurulumlarınızı bağlamak için ortak bir senkronizasyon hizmeti kurun.</string>
     <string name="settings_privacy_policy_label">Gizlilik politikası</string>
     <string name="settings_privacy_policy_desc">Veriler sorumlu bir şekilde kullanılıyor.</string>
     <string name="settings_licenses_label">Lisanslar</string>
@@ -32,6 +36,7 @@
     <string name="help_translate_label">Çeviri</string>
     <string name="help_translate_description">Bu uygulamanın en sevdiğiniz dile çevrilmesine yardımcı olun.</string>
     <string name="ui_theme_mode_setting_label">Tema modu</string>
+    <string name="ui_theme_mode_setting_explanation">Uygulamanın teması belirlenirken kullanılan mod (ör. koyu veya açık).</string>
     <string name="ui_theme_mode_dark_label">Koyu</string>
     <string name="ui_theme_mode_light_label">Aydınlık</string>
     <string name="ui_theme_mode_system_label">Sistem</string>
@@ -103,6 +108,14 @@
     <string name="module_apps_category_label">Uygulamalar</string>
     <string name="device_x_label">Cihaz: %s</string>
     <string name="pro_device_limit_reached_title">Cihaz sınırına ulaşıldı</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Şu anda %1$d senkronize edilmiş cihazınız var.</item>
+        <item quantity="other">Şu anda %1$d senkronize edilmiş cihazınız var.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">%1$d\'den fazla cihazı görüntülemek için Octi Pro\'ya yükseltin veya cihazları kaldırın.</item>
+        <item quantity="other">%1$d\'den fazla cihazı görüntülemek için Octi Pro\'ya yükseltin veya cihazları kaldırın.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Bu cihazın kaldırılması verilerini silecek ancak erişimi iptal etmeyecektir. Erişimi iptal etmek için cihazdaki Octi bağlantısını kesin.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Bu cihazın silinmesi, verilerini kaldıracak ve erişimini iptal edecektir.</string>
 </resources>

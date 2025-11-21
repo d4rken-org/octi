@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_device_stale_warning_text" />
-
+    <string name="sync_device_stale_warning_text">Cihaz %s süredir senkronize edilmedi</string>
     <plurals name="sync_stale_devices_info_message">
-        <item quantity="one" />
-        <item quantity="other" />
+        <item quantity="one">%d cihaz son zamanlarda senkronize edilmedi</item>
+        <item quantity="other">%d cihaz son zamanlarda senkronize edilmedi</item>
     </plurals>
-
     <plurals name="sync_stale_period_days">
-        <item quantity="one" />
-        <item quantity="other" />
+        <item quantity="one">%d gün</item>
+        <item quantity="other">%d gün</item>
     </plurals>
-
     <plurals name="sync_stale_period_months">
-        <item quantity="one" />
-        <item quantity="other" />
+        <item quantity="one">%d ay</item>
+        <item quantity="other">%d ay</item>
     </plurals>
-
     <plurals name="sync_stale_period_years">
-        <item quantity="one" />
-        <item quantity="other" />
+        <item quantity="one">%d yıl</item>
+        <item quantity="other">%d yıl</item>
     </plurals>
 </resources>
