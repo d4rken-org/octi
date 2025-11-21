@@ -9,6 +9,7 @@
     <string name="upgrades_dashcard_upgrade_action">Upgradovat</string>
     <string name="upgrade_screen_title">Získat Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi neobsahuje žádné reklamy a neprodává data uživatelů. Mou práci financujete vy ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Výhody</string>
     <string name="upgrade_screen_benefits_body">• Více než 3 zařízení 💯\n• Různé motivy 🎨\n• Více možností ⚙️\n• Extra synchronizace serverů🖥️\n• Pokračování ve vývoji ☕\n• Motivovaný vývojář 🧙</string>
     <string name="upgrade_screen_how_title">Možnosti</string>
     <string name="upgrade_screen_how_body">Můžete si vybrat mezi jednorázovým nákupem a levnějším ročním předplatným.\nPředplatné začíná 14denní bezplatnou zkušební dobou, po které budete jednou ročně účtováni. Zkušební dobu a předplatné je možné kdykoliv zrušit.\nStejné funkce, jen různé cenové modely.</string>

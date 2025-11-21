@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_device_stale_warning_text" />
-
+    <string name="sync_device_stale_warning_text">Zařízení nebylo synchronizováno %s</string>
     <plurals name="sync_stale_devices_info_message">
-        <item quantity="one" />
-        <item quantity="other" />
+        <item quantity="one">%d zařízení nebylo v poslední době synchronizováno</item>
+        <item quantity="few">%d zařízení nebyla v poslední době synchronizována</item>
+        <item quantity="many">%d zařízení nebylo v poslední době synchronizováno</item>
+        <item quantity="other">%d zařízení nebylo v poslední době synchronizováno</item>
     </plurals>
-
     <plurals name="sync_stale_period_days">
-        <item quantity="one" />
-        <item quantity="other" />
+        <item quantity="one">%d den</item>
+        <item quantity="few">%d dny</item>
+        <item quantity="many">%d dnů</item>
+        <item quantity="other">%d dnů</item>
     </plurals>
-
     <plurals name="sync_stale_period_months">
-        <item quantity="one" />
-        <item quantity="other" />
+        <item quantity="one">%d měsíc</item>
+        <item quantity="few">%d měsíce</item>
+        <item quantity="many">%d měsíců</item>
+        <item quantity="other">%d měsíců</item>
     </plurals>
-
     <plurals name="sync_stale_period_years">
-        <item quantity="one" />
-        <item quantity="other" />
+        <item quantity="one">%d rok</item>
+        <item quantity="few">%d roky</item>
+        <item quantity="many">%d let</item>
+        <item quantity="other">%d let</item>
     </plurals>
 </resources>

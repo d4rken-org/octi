@@ -2,7 +2,14 @@
 <resources>
     <string name="module_apps_label">מודול יישומים</string>
     <string name="module_apps_desc">מידע אודות יישומים מותקנים.</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">יישום %d הותקן</item>
+        <item quantity="two">%d יישומים מותקנים</item>
+        <item quantity="many">%d יישומים מותקנים</item>
+        <item quantity="other">%d יישומים מותקנים</item>
+    </plurals>
     <string name="module_apps_last_installed_x">יישום אחרון שהותקן: %s</string>
     <string name="module_apps_list_title">יישומים מותקנים</string>
     <string name="module_apps_installer_label">מקור התקנת היישום</string>
+    <string name="module_apps_installer_desc">סנכרן וכלול מידע על מקור ההתקנה של כל אפליקציה.</string>
 </resources>

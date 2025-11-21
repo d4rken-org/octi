@@ -5,10 +5,12 @@
     <string name="general_create_account_action">צור חשבון</string>
     <string name="general_link_existing_action">קישור לחשבון קיים</string>
     <string name="general_sync_action">סנכרון</string>
+    <string name="general_manage_devices_action">נהל מכשירים</string>
     <string name="general_select_server_label">בחר שרת</string>
     <string name="onboarding_welcome_subtitle">חבר מכשיר שלך</string>
     <string name="onboarding_welcome_body1">Octi הוא כלי עבור אנשים עם מספר מכשירי אנדרואיד.</string>
     <string name="onboarding_welcome_body2">זה שומר אותך בעניינים עם כל המכשירים שלך. בין אם זה הטלפון, הטאבלט או כל גאדג\'ט אחר עם Octi מותקן, תקבלו פרטי מפתח במבט חטוף.</string>
+    <string name="onboarding_welcome_body3">שדרג ל-Octi Pro כדי לקבל תכונות נוספות ולתמוך בפיתוח.</string>
     <string name="onboarding_welcome_beta_hint">רק הערה, זו גרסת בטא, אז תודה על הסבלנות בזמן שאני ממשיך לשפר את האפליקציה!</string>
     <string name="onboarding_privacy_subtitle">מדיניות פרטיות</string>
     <string name="onboarding_privacy_body1">ב- Octi אין מודעות ואיננו מוכרים נתוני משתמשים.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">התראות ניפוי באגים</string>
     <string name="debug_debuglog_file_label">קובץ יומן מוקלט</string>
     <string name="debug_debuglog_record_action">הקלט יומן ניפוי באגים</string>
+    <string name="onboarding_setupsync_title">הגדר סנכרון</string>
+    <string name="onboarding_setupsync_message">כרגע אתה רואה רק את המכשיר הזה. כדי לחבר את התקנות Octi שלך, הגדר שירות סנכרון נפוץ.</string>
     <string name="settings_privacy_policy_label">מדיניות פרטיות</string>
     <string name="settings_privacy_policy_desc">טיפול בנתונים בצורה אחראית.</string>
     <string name="settings_licenses_label">רשיונות</string>
@@ -32,6 +36,7 @@
     <string name="help_translate_label">תרגום</string>
     <string name="help_translate_description">עזור לתרגם את האפליקציה הזו לשפה המועדפת עליך.</string>
     <string name="ui_theme_mode_setting_label">עיצוב</string>
+    <string name="ui_theme_mode_setting_explanation">המצב המשמש בעת עיצוב האפליקציה (למשל, לילה או יום).</string>
     <string name="ui_theme_mode_dark_label">כהה</string>
     <string name="ui_theme_mode_light_label">בהיר</string>
     <string name="ui_theme_mode_system_label">מערכת</string>
@@ -107,6 +112,18 @@
     <string name="module_apps_category_label">יישומים</string>
     <string name="device_x_label">מכשיר: %s</string>
     <string name="pro_device_limit_reached_title">הגעת למגבלת המכשירים</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">יש לך כרגע מכשיר %1$d מסונכרן.</item>
+        <item quantity="two">יש לך כרגע %1$d מכשירים מסונכרנים.</item>
+        <item quantity="many">יש לך כרגע %1$d מכשירים מסונכרנים.</item>
+        <item quantity="other">יש לך כרגע %1$d מכשירים מסונכרנים.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">כדי לצפות ביותר מ-%1$d מכשירים, שדרג ל-Octi Pro או הסר מכשירים.</item>
+        <item quantity="two">כדי לצפות ביותר מ-%1$d מכשירים, שדרג ל-Octi Pro או הסר מכשירים.</item>
+        <item quantity="many">כדי לצפות ביותר מ-%1$d מכשירים, שדרג ל-Octi Pro או הסר מכשירים.</item>
+        <item quantity="other">כדי לצפות ביותר מ-%1$d מכשירים, שדרג ל-Octi Pro או הסר מכשירים.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">הסרת מכשיר זה תמחק את הנתונים שלו אך לא תבטל את הגישה. כדי לבטל גישה, נתק את Octi במכשיר.</string>
     <string name="sync_delete_device_revokeaccess_caveat">מחיקת המכשיר הזה תסיר את הנתונים שלו ותבטל את הגישה שלו.</string>
 </resources>
