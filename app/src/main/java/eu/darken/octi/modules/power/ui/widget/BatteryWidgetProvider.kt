@@ -112,35 +112,39 @@ class BatteryWidgetProvider : AppWidgetProvider() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val rows = powerStates.others.mapNotNull { powerInfo ->
-            val metaInfo = metaStates.all.firstOrNull { it.deviceId == powerInfo.deviceId } ?: return@mapNotNull null
-
-            log(TAG) { "Generating info row for ${metaInfo.data.labelOrFallback}" }
-            RemoteViews(context.packageName, R.layout.module_power_widget_row).apply {
-                val lastSeen = DateUtils.getRelativeTimeSpanString(metaInfo.modifiedAt.toEpochMilli())
-                val labelText = if (Duration.between(metaInfo.modifiedAt, Instant.now()).toHours() > 1) {
-                    "${metaInfo.data.labelOrFallback} ($lastSeen)"
-                } else {
-                    metaInfo.data.labelOrFallback
-                }
-                setTextViewText(R.id.device_label, labelText)
-
-                setImageViewResource(
-                    R.id.battery_icon,
-                    if (powerInfo.data.isCharging) R.drawable.widget_battery_charging_full_24
-                    else R.drawable.widget_battery_full_24
-                )
-
-                setTextViewText(R.id.charge_percent, "${(powerInfo.data.battery.percent * 100).toInt()}%")
-
-                setProgressBar(
-                    R.id.battery_progressbar,
-                    100,
-                    (powerInfo.data.battery.percent * 100).toInt(),
-                    false,
-                )
+        val rows = powerStates.others
+            .mapNotNull { powerInfo ->
+                val metaInfo = metaStates.all.firstOrNull { it.deviceId == powerInfo.deviceId }
+                metaInfo?.let { powerInfo to it }
             }
-        }
+            .sortedBy { (_, metaInfo) -> metaInfo.data.labelOrFallback.lowercase() }
+            .map { (powerInfo, metaInfo) ->
+                log(TAG) { "Generating info row for ${metaInfo.data.labelOrFallback}" }
+                RemoteViews(context.packageName, R.layout.module_power_widget_row).apply {
+                    val lastSeen = DateUtils.getRelativeTimeSpanString(metaInfo.modifiedAt.toEpochMilli())
+                    val labelText = if (Duration.between(metaInfo.modifiedAt, Instant.now()).toHours() > 1) {
+                        "${metaInfo.data.labelOrFallback} ($lastSeen)"
+                    } else {
+                        metaInfo.data.labelOrFallback
+                    }
+                    setTextViewText(R.id.device_label, labelText)
+
+                    setImageViewResource(
+                        R.id.battery_icon,
+                        if (powerInfo.data.isCharging) R.drawable.widget_battery_charging_full_24
+                        else R.drawable.widget_battery_full_24
+                    )
+
+                    setTextViewText(R.id.charge_percent, "${(powerInfo.data.battery.percent * 100).toInt()}%")
+
+                    setProgressBar(
+                        R.id.battery_progressbar,
+                        100,
+                        (powerInfo.data.battery.percent * 100).toInt(),
+                        false,
+                    )
+                }
+            }
 
         return RemoteViews(context.packageName, R.layout.module_power_widget).apply {
             setOnClickPendingIntent(R.id.widget_root, pendingIntent)
