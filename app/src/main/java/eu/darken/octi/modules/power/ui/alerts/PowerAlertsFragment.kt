@@ -59,10 +59,34 @@ class PowerAlertsFragment : Fragment3(R.layout.module_power_alerts_fragment) {
             valueTo = 0.95f
         }
 
+        ui.highbatteryThresholdSlider.apply {
+            addOnChangeListener { _, value, _ ->
+                ui.highbatteryThresholdSliderCaption.text = when (value) {
+                    0f -> getString(R.string.module_power_alerts_highbattery_disabled_caption)
+                    else -> getString(
+                        R.string.module_power_alerts_highbattery_slider_value_caption,
+                        "${(value * 100).toInt()}%"
+                    )
+                }
+            }
+            addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+                override fun onStartTrackingTouch(slider: Slider) {}
+
+                override fun onStopTrackingTouch(slider: Slider) {
+                    vm.setBatteryHighAlert(slider.value)
+                }
+            })
+            stepSize = 0.05f
+            valueFrom = 0f
+            valueTo = 1f
+        }
+
         vm.state.observe2(this@PowerAlertsFragment, ui) { state ->
             ui.toolbar.subtitle = getString(R.string.device_x_label, state.deviceLabel)
             lowbatteryThresholdSlider.value = state.batteryLowAlert?.rule?.threshold ?: 0f
             lowbatteryTitle.isBold = state.batteryLowAlert != null
+            highbatteryThresholdSlider.value = state.batteryHighAlert?.rule?.threshold ?: 0f
+            highbatteryTitle.isBold = state.batteryHighAlert != null
         }
 
         vm.events.observe2 { event ->

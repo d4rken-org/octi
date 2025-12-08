@@ -25,4 +25,11 @@
     <string name="module_power_alerts_notification_channel_label">Battery alerts</string>
     <string name="module_power_alerts_notification_battery_low_title">Low battery: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s is at %3$d%% battery (&lt;%2$d%%) and not charging.</string>
+
+    <string name="module_power_alerts_highbattery_title">High battery</string>
+    <string name="module_power_alerts_highbattery_description">Get notified when this device\'s battery reaches your specified threshold while charging. Useful for preserving battery health.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Notify when battery is above %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Don\'t notify when battery is high</string>
+    <string name="module_power_alerts_notification_battery_high_title">High battery: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s is at %3$d%% battery (>%2$d%%) and still charging.</string>
 </resources>

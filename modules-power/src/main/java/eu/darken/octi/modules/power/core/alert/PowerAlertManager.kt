@@ -111,6 +111,36 @@ class PowerAlertManager @Inject constructor(
                                 }
                             }
                         }
+
+                        is BatteryHighAlertRule -> {
+                            val isTriggered = powerState.data.isCharging &&
+                                    powerState.data.battery.percent >= rule.threshold
+                            val isRecovered = !powerState.data.isCharging ||
+                                    powerState.data.battery.percent < (rule.threshold - 0.05f).coerceAtLeast(0.05f)
+                            when {
+                                event == null && isTriggered && !isRecovered -> {
+                                    log(TAG, INFO) { "Rule has triggered" }
+                                    val newEvent = PowerAlertRule.Event(rule.id)
+                                    powerSettings.alertEvents.update { it + newEvent }
+                                    notifications.show(rule, powerState.data, metaState.data)
+                                }
+
+                                event != null && !isTriggered && isRecovered -> {
+                                    log(TAG, INFO) { "Rule is no longer triggered" }
+                                    powerSettings.alertEvents.update { it - event }
+                                    notifications.dismiss(rule)
+                                }
+
+                                event == null && !isTriggered -> {
+                                    log(TAG, VERBOSE) { "Rule is not triggered" }
+                                }
+
+                                event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
+                                    log(TAG, VERBOSE) { "Rule is triggered (not dismissed), updating notification" }
+                                    notifications.show(rule, powerState.data, metaState.data)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -143,6 +173,30 @@ class PowerAlertManager @Inject constructor(
         }
     }
 
+    suspend fun setBatteryHighAlert(deviceId: DeviceId, threshold: Float?): Unit = mutex.withLock {
+        log(TAG) { "setBatteryHighAlert($deviceId,$threshold)" }
+
+        var newRule: BatteryHighAlertRule? = null
+
+        powerSettings.alertRules.update { oldRules ->
+            val otherRules = oldRules.filterNot { it.deviceId == deviceId && it is BatteryHighAlertRule }
+
+            if (threshold == null) {
+                otherRules
+            } else {
+                otherRules + BatteryHighAlertRule(deviceId = deviceId, threshold = threshold).also {
+                    newRule = it
+                }
+            }.toSet()
+        }
+
+        powerSettings.alertEvents.update { old ->
+            val previousEvent = old.singleOrNull { it.id == newRule?.id } ?: return@update old
+            log(TAG) { "setBatteryHighAlert(...): Removing old event" }
+            (old - previousEvent).toSet()
+        }
+    }
+
     suspend fun dismissAlert(alertId: PowerAlertRuleId): Unit = mutex.withLock {
         log(TAG) { "dismissAlert($alertId)" }
 
@@ -152,7 +206,7 @@ class PowerAlertManager @Inject constructor(
         log(TAG) { "dismissAlert(...): Found event $event" }
 
         when (rule) {
-            is BatteryLowAlertRule -> when {
+            is BatteryLowAlertRule, is BatteryHighAlertRule -> when {
                 event == null -> log(TAG) { "dismissAlert(...): Alert has not triggered yet" }
 
                 event.dismissedAt != null -> log(TAG) { "dismissAlert(...): Event already dismissed" }
