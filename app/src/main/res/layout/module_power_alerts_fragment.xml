@@ -37,8 +37,7 @@
                 style="Widget.Material3.CardView.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_marginBottom="32dp">
+                android:layout_margin="8dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -99,6 +98,77 @@
                         app:layout_constraintEnd_toEndOf="@id/lowbattery_threshold_slider"
                         app:layout_constraintStart_toStartOf="@id/lowbattery_threshold_slider"
                         app:layout_constraintTop_toBottomOf="@id/lowbattery_threshold_slider" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="Widget.Material3.CardView.Elevated"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_marginBottom="32dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp">
+
+                    <ImageView
+                        android:id="@+id/highbattery_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_baseline_battery_full_24"
+                        app:layout_constraintBottom_toBottomOf="@id/highbattery_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/highbattery_title" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/highbattery_title"
+                        style="@style/TextAppearance.Material3.TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/module_power_alerts_highbattery_title"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:layout_constraintStart_toEndOf="@id/highbattery_icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/highbattery_body"
+                        style="@style/TextAppearance.Material3.BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/module_power_alerts_highbattery_description"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:layout_constraintBottom_toTopOf="@id/highbattery_threshold_slider"
+                        app:layout_constraintEnd_toEndOf="@id/highbattery_title"
+                        app:layout_constraintStart_toStartOf="@id/highbattery_title"
+                        app:layout_constraintTop_toBottomOf="@id/highbattery_title" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/highbattery_threshold_slider"
+                        style="@style/Widget.Material3.Slider"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/highbattery_body" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/highbattery_threshold_slider_caption"
+                        style="@style/TextAppearance.Material3.LabelMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="32dp"
+                        android:gravity="center"
+                        android:text="@string/module_power_alerts_highbattery_disabled_caption"
+                        app:layout_constraintEnd_toEndOf="@id/highbattery_threshold_slider"
+                        app:layout_constraintStart_toStartOf="@id/highbattery_threshold_slider"
+                        app:layout_constraintTop_toBottomOf="@id/highbattery_threshold_slider" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

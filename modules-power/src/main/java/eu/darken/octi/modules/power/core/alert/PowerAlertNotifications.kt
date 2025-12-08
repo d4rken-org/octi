@@ -98,6 +98,23 @@ class PowerAlertNotifications @Inject constructor(
                         )
                     )
                 }
+
+                is BatteryHighAlertRule -> {
+                    setContentTitle(
+                        context.getString(
+                            R.string.module_power_alerts_notification_battery_high_title,
+                            label
+                        )
+                    )
+                    setContentText(
+                        context.getString(
+                            R.string.module_power_alerts_notification_battery_high_body,
+                            label,
+                            (rule.threshold * 100).toInt(),
+                            (power.battery.percent * 100).toInt(),
+                        )
+                    )
+                }
             }
         }
 

@@ -20,6 +20,7 @@ sealed interface PowerAlertRule {
         val moshiFactory: PolymorphicJsonAdapterFactory<PowerAlertRule>
             get() = PolymorphicJsonAdapterFactory.of(PowerAlertRule::class.java, "type")
                 .withSubtype(BatteryLowAlertRule::class.java, "BATTERY_LOW")
+                .withSubtype(BatteryHighAlertRule::class.java, "BATTERY_HIGH")
     }
 }
 
@@ -33,4 +34,14 @@ data class BatteryLowAlertRule(
 
     override val id: PowerAlertRuleId
         get() = "${deviceId.id}-batterlow"
+}
+
+@JsonClass(generateAdapter = true)
+data class BatteryHighAlertRule(
+    override val deviceId: DeviceId,
+    val threshold: Float,
+) : PowerAlertRule {
+
+    override val id: PowerAlertRuleId
+        get() = "${deviceId.id}-batterhigh"
 }
