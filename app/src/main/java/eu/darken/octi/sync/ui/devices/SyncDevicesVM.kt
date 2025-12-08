@@ -82,7 +82,9 @@ class SyncDevicesVM @Inject constructor(
                                         ).navigate()
                                     },
                                 )
-                            }?.run { items.addAll(this) }
+                            }
+                                ?.sortedBy { it.metaInfo?.labelOrFallback?.lowercase() }
+                                ?.run { items.addAll(this) }
                             State(items)
                         }
                 }
