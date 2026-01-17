@@ -6,11 +6,11 @@
     <string name="upgrades_no_purchases_found_check_account">לא נמצאו רכישות. האם אתה משתמש בחשבון הנכון?</string>
     <string name="upgrades_dashcard_title">קבל את Octi פרמיום</string>
     <string name="upgrades_dashcard_body">שדרג כדי לפתוח תכונות נוספות ולתמוך בפיתוח!</string>
-    <string name="upgrades_dashcard_upgrade_action">שדרג</string>
+    <string name="upgrades_dashcard_upgrade_action">שדרוג</string>
     <string name="upgrade_screen_title">קבל את Octi פרמיום</string>
-    <string name="upgrade_screen_preamble">ב- Octi אין מודעות ואיננו מוכרים נתוני משתמשים. העבודה שלי ממומנת על ידך ❤️.</string>
+    <string name="upgrade_screen_preamble">Octi לא מכילה מודעות ואיננו מוכרים נתוני משתמשים. העבודה שלי ממומנת על ידך ❤️.</string>
     <string name="upgrade_screen_benefits_title">יתרונות</string>
-    <string name="upgrade_screen_benefits_body">• יותר מ- 3 מכשירים 💯\n• ערכות נושא שונות 🎨\n• אפשרויות נוספות ⚙️\n• שרתי סנכרון נוספים🖥️️\n• המשך פיתוח ☕\n• מפתח בעל מוטיבציה 🧙</string>
+    <string name="upgrade_screen_benefits_body">• יותר מ- 3 מכשירים 💯\n• ערכות נושא שונות 🎨\n• אפשרויות נוספות ⚙️\n• שרתי סנכרון נוספים🖥️️\n• המשך פיתוח ☕\n• מוטיבציה להמשך הפיתוח 🧙</string>
     <string name="upgrade_screen_how_title">אפשרויות</string>
     <string name="upgrade_screen_how_body">אתה יכול לבחור בין רכישה חד פעמית לבין מנוי שנתי זול יותר.\nהמינוי מתחיל בניסיון חינם של 14 יום, ולאחר מכן תחויב פעם בשנה. גרסת ניסיון ומנוי ניתנים לביטול בכל עת.\nאותן תכונות, רק דגמי תמחור שונים.</string>
     <string name="upgrade_screen_subscription_trial_action">התחל ניסיון חינם למשך 14 יום</string>
@@ -19,7 +19,7 @@
     <string name="upgrade_screen_iap_action">רכישה חד פעמית</string>
     <string name="upgrade_screen_iap_action_hint">הרכישה החד פעמית עולה %s.</string>
     <string name="upgrade_screen_thanks_toast">אתה הכי טוב! ❤️</string>
-    <string name="upgrade_screen_restore_purchase_action">שחזר רכישה</string>
+    <string name="upgrade_screen_restore_purchase_action">שחזור רכישה</string>
     <string name="upgrade_screen_restore_purchase_message">השדרוג שלך תקף בכל המכשירים באותו חשבון Google.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">עצות לפתרון בעיות עבור שדרוגים לא מזוהים:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">הסנכרון של חנות פליי עשוי לקחת זמן. נסה לאתחל מחדש, לנקות את המטמון של Google Play או פשוט המתן.</string>

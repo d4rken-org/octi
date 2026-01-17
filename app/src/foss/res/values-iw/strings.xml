@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi FOSS</string>
-    <string name="upgrade_feature_requires_pro">דורש Octi Pro</string>
+    <string name="upgrade_feature_requires_pro">דורש Octi פרימיום</string>
     <string name="upgrades_dashcard_title">קבל את Octi פרמיום</string>
     <string name="upgrades_dashcard_body">פתח תכונות נוספות והפוך לפטרון לתמיכה בהמשך הפיתוח!</string>
-    <string name="upgrades_dashcard_upgrade_action">שדרג</string>
+    <string name="upgrades_dashcard_upgrade_action">שדרוג</string>
     <string name="upgrade_screen_title">שדרג ל-Octi פרמיום</string>
-    <string name="upgrade_screen_preamble">ב- Octi אין מודעות ואיננו מוכרים נתוני משתמשים. העבודה שלי ממומנת על ידך ❤️</string>
+    <string name="upgrade_screen_preamble">Octi לא מכילה מודעות ואיננו מוכרים נתוני משתמשים. העבודה שלי ממומנת על ידך ❤️</string>
     <string name="upgrade_screen_how_title">מה לעשות</string>
     <string name="upgrade_screen_how_body">הפוך לפטרון ונותן חסות לפיתוח! הקש על הלחצן למטה כדי להפעיל את כל התכונות הנוספות ולפתוח את פרופיל התומכים ב- GitHub שלי.</string>
     <string name="upgrade_screen_why_title">הטבות 🪄</string>

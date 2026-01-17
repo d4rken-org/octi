@@ -5,6 +5,7 @@
     <string name="general_create_account_action">إنشاء حساب</string>
     <string name="general_link_existing_action">الربط بحساب موجود</string>
     <string name="general_sync_action">مزامنة</string>
+    <string name="general_manage_devices_action">التحكم في الجهاز</string>
     <string name="general_select_server_label">اختر الخادم</string>
     <string name="onboarding_welcome_subtitle">رفيق جهازك</string>
     <string name="onboarding_welcome_body1">أوكتي هو أداة للأشخاص الذين يمتلكون أجهزة أندرويد متعددة.</string>
@@ -19,6 +20,7 @@
     <string name="debug_notification_channel_label">إشعارات التصحيح</string>
     <string name="debug_debuglog_file_label">ملف السجل المسجل</string>
     <string name="debug_debuglog_record_action">تسجيل سجل التصحيح</string>
+    <string name="onboarding_setupsync_title">إعداد المزامنة</string>
     <string name="settings_privacy_policy_label">سياسة الخصوصية</string>
     <string name="settings_privacy_policy_desc">التعامل مع البيانات بمسؤولية.</string>
     <string name="settings_licenses_label">التراخيص</string>

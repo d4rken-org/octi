@@ -5,6 +5,7 @@
     <string name="general_create_account_action">Skapa konto</string>
     <string name="general_link_existing_action">Länka till befintligt konto</string>
     <string name="general_sync_action">Synkronisera</string>
+    <string name="general_manage_devices_action">Hantera enheter</string>
     <string name="general_select_server_label">Välj server</string>
     <string name="onboarding_welcome_subtitle">Din enhetskompis</string>
     <string name="onboarding_welcome_body1">Octi är ett verktyg för personer med flera Android-enheter.</string>
@@ -19,6 +20,7 @@
     <string name="debug_notification_channel_label">Debug-notiser</string>
     <string name="debug_debuglog_file_label">Sparad loggfil</string>
     <string name="debug_debuglog_record_action">Spela in debuglogg</string>
+    <string name="onboarding_setupsync_title">Ställ in synkronisering</string>
     <string name="settings_privacy_policy_label">Integritetspolicy</string>
     <string name="settings_privacy_policy_desc">Hantera data ansvarsfullt.</string>
     <string name="settings_licenses_label">Licenser</string>
@@ -38,6 +40,7 @@
     <string name="ui_theme_style_setting_label">Temastil</string>
     <string name="ui_theme_style_setting_explanation">Färgstilen som används när appen får tema.</string>
     <string name="ui_theme_style_default_label">Standard</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Problemtracker</string>
     <string name="issue_tracker_description">En publikt problemtracker för buggrapporter och funktionsförfrågningar.</string>
     <string name="discord_label">Discord</string>
@@ -45,6 +48,7 @@
     <string name="support_debuglog_label">Spela in debuglogg</string>
     <string name="support_debuglog_inprogress_label">Stoppa debuglogg</string>
     <string name="support_debuglog_desc">Spelar in allt appen gör i en textfil som du kan dela.</string>
+    <string name="settings_support_label">Support</string>
     <string name="debug_debuglog_sensitive_information_message">Den här filen innehåller känslig information (t.ex. dina installerade appar). Dela endast med betrodda parter.</string>
     <string name="settings_debuglog_explanation">Den här funktionen spelar in allt som appen gör i en delbar fil. Den genererade filen innehåller känslig information (t.ex. dina installerade appar). Dela bara med betrodda parter (t.ex. apputvecklaren om du felsöker tillsammans).</string>
     <string name="sync_last_action_label">Senaste åtgärd</string>
@@ -101,6 +105,14 @@
     <string name="module_apps_category_label">Appar</string>
     <string name="device_x_label">Enhet: %s</string>
     <string name="pro_device_limit_reached_title">Enhetsgräns uppnådd</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Du har för närvarande %1$d synkroniserad enhet.</item>
+        <item quantity="other">Du har för närvarande %1$d synkroniserade enheter.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">För att se fler än %1$d enhet, uppgradera till Octi Pro eller ta bort enheter.</item>
+        <item quantity="other">För att se fler än %1$d enheter, uppgradera till Octi Pro eller ta bort enheter.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Att ta bort denna enhet tar bort dess data men tar inte bort åtkomst. För att ta bort åtkomst måste du koppla loss Octi på enheten.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Ta bort denna enhet raderar dess data och tar bort dess åtkomst.</string>
 </resources>

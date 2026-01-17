@@ -50,7 +50,7 @@
     <string name="sync_last_action_label">最后的动作</string>
     <string name="sync_last_never_label">永不</string>
     <string name="sync_quota_storage_msg">%1$s 免费（%2$s / %3$s）</string>
-    <string name="general_disconnect_action">未连接</string>
+    <string name="general_disconnect_action">断开连接</string>
     <string name="generic_info_action">信息</string>
     <string name="general_reset_action">重置</string>
     <string name="sync_account_label">账号</string>
@@ -65,7 +65,7 @@
     <plurals name="general_unique_devices_count_label">
         <item quantity="other">%d 唯一，只在这里可用</item>
     </plurals>
-    <string name="updates_dashcard_title">更新可用</string>
+    <string name="updates_dashcard_title">有可用更新</string>
     <string name="updates_dashcard_body">可用更新。您为%1$s，最新版本是%2$s。</string>
     <string name="sync_settings_label">同步</string>
     <string name="sync_settings_desc">设备名称、定时和触发条件。</string>

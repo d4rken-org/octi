@@ -23,4 +23,10 @@
     <string name="module_power_alerts_notification_channel_label">Upozornění na baterii</string>
     <string name="module_power_alerts_notification_battery_low_title">Nízký stav baterie: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s je na %3$d%% baterie (&lt;%2$d%%) a nenabíjí se.</string>
+    <string name="module_power_alerts_highbattery_title">Vysoký stav baterie</string>
+    <string name="module_power_alerts_highbattery_description">Nechte si zaslat upozornění, když baterie tohoto zařízení během nabíjení dosáhne vámi stanovené prahové hodnoty. Užitečné pro zachování dobrého stavu baterie.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Upozornit, když je stav baterie nad %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Neupozorňovat při vysokém stavu baterie</string>
+    <string name="module_power_alerts_notification_battery_high_title">Vysoký stav baterie: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s je na %3$d%% baterie (&gt;%2$d%%) a nenabíjí se.</string>
 </resources>
