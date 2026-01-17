@@ -23,4 +23,10 @@
     <string name="module_power_alerts_notification_channel_label">Pil uyarıları</string>
     <string name="module_power_alerts_notification_battery_low_title">Düşük pil: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s %3$d pil seviyesinde (&lt;%2$d%%) ve şarj olmuyor.</string>
+    <string name="module_power_alerts_highbattery_title">Yüksek pil</string>
+    <string name="module_power_alerts_highbattery_description">Bu cihazın pili şarj olurken belirlediğiniz eşik değerine ulaştığında bildirim alın. Pil sağlığını korumak için kullanışlıdır.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Pil %s\'nin üzerinde olduğunda bildir</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Pil seviyesi yüksekken bildirim gönderme</string>
+    <string name="module_power_alerts_notification_battery_high_title">Yüksek pil seviyesi: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s\'nin pil seviyesi %3$d%% (&gt;%2$d%%) ve hala şarj oluyor.</string>
 </resources>

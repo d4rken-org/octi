@@ -2,6 +2,10 @@
 <resources>
     <string name="module_apps_label">Appmodul</string>
     <string name="module_apps_desc">Information om installerade appar.</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d app installerad</item>
+        <item quantity="other">%d appar installerade</item>
+    </plurals>
     <string name="module_apps_last_installed_x">Senast installerad app: %s</string>
     <string name="module_apps_list_title">Installerade appar</string>
     <string name="module_apps_installer_label">Appens installationskälla</string>

@@ -1,24 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="sync_device_stale_warning_text" />
-
-    <plurals name="sync_stale_devices_info_message">
-        <item quantity="one" />
-        <item quantity="other" />
-    </plurals>
-
-    <plurals name="sync_stale_period_days">
-        <item quantity="one" />
-        <item quantity="other" />
-    </plurals>
-
-    <plurals name="sync_stale_period_months">
-        <item quantity="one" />
-        <item quantity="other" />
-    </plurals>
-
-    <plurals name="sync_stale_period_years">
-        <item quantity="one" />
-        <item quantity="other" />
-    </plurals>
-</resources>
+<resources></resources>

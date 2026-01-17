@@ -23,4 +23,10 @@
     <string name="module_power_alerts_notification_channel_label">התראות סוללה</string>
     <string name="module_power_alerts_notification_battery_low_title">סוללה חלשה: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s נמצא בסוללה %3$d%% (&lt;%2$d%%) ואינו נטען.</string>
+    <string name="module_power_alerts_highbattery_title">סוללה גבוהה</string>
+    <string name="module_power_alerts_highbattery_description">קבל הודעה כאשר הסוללה של מכשיר זה מגיעה לסף שצוין בזמן טעינה. שימושי לשמירה על בריאות הסוללה.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">התראה כאשר הסוללה מעל %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">אל תודיע כאשר הסוללה גבוהה</string>
+    <string name="module_power_alerts_notification_battery_high_title">סוללה גבוהה: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s נמצא במצב סוללה של %3$d%% (&gt;%2$d%%) ועדיין נטען.</string>
 </resources>
