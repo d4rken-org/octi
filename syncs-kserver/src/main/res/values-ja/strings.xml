@@ -15,12 +15,8 @@
     <string name="sync_kserver_link_code_label">リンクコード</string>
     <string name="sync_kserver_link_host_option_direct">他のアプリから送信できるテキストコードを作成します</string>
     <string name="sync_kserver_link_host_option_qrcode">QR コードを表示</string>
-    <string name="sync_kserver_link_host_option_nfc">NFC でデバイスをリンク</string>
     <string name="sync_kserver_link_host_device_linked_message">新しいデバイスがアカウントにリンクされました</string>
-    <string name="sync_kserver_link_host_nfc_action">NFC クライアントを探しています。このデバイスをアカウントにリンクするデバイスを近づけてください。</string>
     <string name="sync_kserver_link_client_option_qrcode">別のデバイスから QR コードをスキャン</string>
-    <string name="sync_kserver_link_client_option_nfc">NFC で 2 台のデバイスを使用する</string>
     <string name="sync_kserver_link_client_startcamera_action">カメラを起動</string>
     <string name="sync_kserver_link_client_link_action">デバイスをリンク</string>
-    <string name="sync_kserver_link_client_nfc_action">NFC ホストを探しています。アカウントアクセスの共有を提供するデバイスに近づけてください。</string>
 </resources>

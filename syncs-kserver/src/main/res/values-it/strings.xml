@@ -17,12 +17,8 @@ Poiché sia l\'app che il server sono ancora in fase di miglioramento, potrebber
     <string name="sync_kserver_link_code_label">Codice di collegamento</string>
     <string name="sync_kserver_link_host_option_direct">Crea un codice da inviare alle diverse app</string>
     <string name="sync_kserver_link_host_option_qrcode">Mostra QRCode</string>
-    <string name="sync_kserver_link_host_option_nfc">Collega via NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">Un nuovo dispositivo è stato collegato al tuo account.</string>
-    <string name="sync_kserver_link_host_nfc_action">In cerca di un client NFC. Tieni questo dispositivo vicino al dispositivo che vuoi collegare al tuo account.</string>
     <string name="sync_kserver_link_client_option_qrcode">Scansiona il QRCode con un altro dispositivo</string>
-    <string name="sync_kserver_link_client_option_nfc">Usa due dispositivi con NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Apri fotocamera</string>
     <string name="sync_kserver_link_client_link_action">Collega dispositivo</string>
-    <string name="sync_kserver_link_client_nfc_action">In cerca di un host NFC. Tieni il dispositivo vicino a quello che sta offrendo di condividere l\'accesso all\'account.</string>
 </resources>

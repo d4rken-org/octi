@@ -14,11 +14,7 @@
     <string name="sync_kserver_link_code_label">Koppelcode</string>
     <string name="sync_kserver_link_host_option_direct">Maak een tekstcode die je via andere apps kunt versturen</string>
     <string name="sync_kserver_link_host_option_qrcode">Toon een QR-code</string>
-    <string name="sync_kserver_link_host_option_nfc">Koppel apparaat via NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">Er is een nieuw apparaat gekoppeld aan je account.</string>
-    <string name="sync_kserver_link_host_nfc_action">Op zoek naar NFC-client. Houd dit apparaat dicht bij het apparaat dat je aan je account wilt koppelen.</string>
     <string name="sync_kserver_link_client_option_qrcode">Scan een QR-code van een ander apparaat</string>
-    <string name="sync_kserver_link_client_option_nfc">Gebruik twee apparaten met NFC</string>
     <string name="sync_kserver_link_client_link_action">Koppel apparaat</string>
-    <string name="sync_kserver_link_client_nfc_action">Op zoek naar een NFC-host. Houd deze dicht bij het apparaat dat aanbiedt om accounttoegang te delen.</string>
 </resources>

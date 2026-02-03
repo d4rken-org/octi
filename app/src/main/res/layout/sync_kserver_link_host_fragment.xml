@@ -47,13 +47,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/sync_kserver_link_host_option_direct" />
 
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/link_option_nfc"
-                style="@style/Widget.Material3.CompoundButton.RadioButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sync_kserver_link_host_option_nfc"
-                android:visibility="gone" />
         </RadioGroup>
     </com.google.android.material.card.MaterialCardView>
 
@@ -138,28 +131,5 @@
 
         </LinearLayout>
     </ScrollView>
-
-
-    <LinearLayout
-        android:id="@+id/link_container_nfc"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginVertical="32dp"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/link_options_card">
-
-        <com.google.android.material.textview.MaterialTextView
-            style="@style/TextAppearance.Material3.HeadlineMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/sync_kserver_link_host_nfc_action" />
-    </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

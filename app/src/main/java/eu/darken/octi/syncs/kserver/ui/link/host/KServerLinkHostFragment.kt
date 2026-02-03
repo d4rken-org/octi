@@ -40,7 +40,6 @@ class KServerLinkHostFragment : Fragment3(R.layout.sync_kserver_link_host_fragme
             when (checkedId) {
                 R.id.link_option_direct -> vm.onLinkOptionSelected(KServerLinkOption.DIRECT)
                 R.id.link_option_qrcode -> vm.onLinkOptionSelected(KServerLinkOption.QRCODE)
-                R.id.link_option_nfc -> vm.onLinkOptionSelected(KServerLinkOption.NFC)
             }
         }
 
@@ -49,7 +48,6 @@ class KServerLinkHostFragment : Fragment3(R.layout.sync_kserver_link_host_fragme
         vm.state.observe2(ui) { state ->
             linkContainerDirect.isGone = state.linkOption != KServerLinkOption.DIRECT
             linkContainerQrcode.isGone = state.linkOption != KServerLinkOption.QRCODE
-            linkContainerNfc.isGone = state.linkOption != KServerLinkOption.NFC
 
             when (state.linkOption) {
                 KServerLinkOption.DIRECT -> {
@@ -68,11 +66,6 @@ class KServerLinkHostFragment : Fragment3(R.layout.sync_kserver_link_host_fragme
                     } catch (e: Exception) {
                         e.asErrorDialogBuilder(requireActivity()).show()
                     }
-                }
-
-                KServerLinkOption.NFC -> {
-                    linkOptions.check(R.id.link_option_nfc)
-                    // TODO NOOP?
                 }
             }
         }

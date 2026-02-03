@@ -14,12 +14,8 @@
     <string name="sync_kserver_link_code_label">Länkkod</string>
     <string name="sync_kserver_link_host_option_direct">Skapa en textkod som du kan skicka via andra appar</string>
     <string name="sync_kserver_link_host_option_qrcode">Visa en QR-kod</string>
-    <string name="sync_kserver_link_host_option_nfc">Länka enhet via NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">En ny enhet har länkats till ditt konto.</string>
-    <string name="sync_kserver_link_host_nfc_action">Söker efter NFC-klient. Håll den här enheten nära den enhet du vill länka till ditt konto.</string>
     <string name="sync_kserver_link_client_option_qrcode">Skanna en QR-kod från en annan enhet</string>
-    <string name="sync_kserver_link_client_option_nfc">Använd två enheter med NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Starta kamera</string>
     <string name="sync_kserver_link_client_link_action">Länka enhet</string>
-    <string name="sync_kserver_link_client_nfc_action">Söker efter NFC-värd. Håll den nära enheten som erbjuder att dela kontoåtkomst.</string>
 </resources>

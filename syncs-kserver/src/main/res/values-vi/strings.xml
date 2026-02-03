@@ -14,12 +14,8 @@
     <string name="sync_kserver_link_code_label">Mã liên kết</string>
     <string name="sync_kserver_link_host_option_direct">Tạo mã văn bản mà bạn có thể gửi qua các ứng dụng khác</string>
     <string name="sync_kserver_link_host_option_qrcode">Hiển thị mã QR</string>
-    <string name="sync_kserver_link_host_option_nfc">Liên kết thiết bị qua NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">Một thiết bị mới đã được liên kết với tài khoản của bạn.</string>
-    <string name="sync_kserver_link_host_nfc_action">Đang tìm kiếm máy khách NFC. Giữ thiết bị này gần thiết bị bạn muốn liên kết với tài khoản của mình.</string>
     <string name="sync_kserver_link_client_option_qrcode">Quét mã QR từ thiết bị khác</string>
-    <string name="sync_kserver_link_client_option_nfc">Sử dụng hai thiết bị có NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Khởi động máy ảnh</string>
     <string name="sync_kserver_link_client_link_action">Liên kết thiết bị</string>
-    <string name="sync_kserver_link_client_nfc_action">Đang tìm kiếm máy chủ NFC. Giữ nó gần thiết bị đang cung cấp quyền truy cập tài khoản chia sẻ.</string>
 </resources>

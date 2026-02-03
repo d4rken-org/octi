@@ -51,7 +51,6 @@ class KServerLinkClientFragment : Fragment3(R.layout.sync_kserver_link_client_fr
             when (checkedId) {
                 R.id.link_option_direct -> vm.onLinkOptionSelected(KServerLinkOption.DIRECT)
                 R.id.link_option_qrcode -> vm.onLinkOptionSelected(KServerLinkOption.QRCODE)
-                R.id.link_option_nfc -> vm.onLinkOptionSelected(KServerLinkOption.NFC)
             }
         }
 
@@ -79,7 +78,6 @@ class KServerLinkClientFragment : Fragment3(R.layout.sync_kserver_link_client_fr
         vm.state.observe2(ui) { state ->
             linkContainerDirect.isGone = state.linkOption != KServerLinkOption.DIRECT
             linkContainerQrcode.isGone = state.linkOption != KServerLinkOption.QRCODE
-            linkContainerNfc.isGone = state.linkOption != KServerLinkOption.NFC
 
             when (state.linkOption) {
                 KServerLinkOption.DIRECT -> {
@@ -89,11 +87,6 @@ class KServerLinkClientFragment : Fragment3(R.layout.sync_kserver_link_client_fr
 
                 KServerLinkOption.QRCODE -> {
                     linkOptions.check(R.id.link_option_qrcode)
-                }
-
-                KServerLinkOption.NFC -> {
-                    linkOptions.check(R.id.link_option_nfc)
-                    // TODO NOOP?
                 }
             }
             busyContainer.isVisible = state.isBusy
