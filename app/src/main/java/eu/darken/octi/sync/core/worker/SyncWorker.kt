@@ -22,20 +22,12 @@ import kotlinx.coroutines.delay
 class SyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters,
-//    syncWorkerComponentBuilder: SyncWorkerComponent.Builder,
     private val syncManager: SyncManager,
     private val moduleManager: ModuleManager,
     private val batteryWidgetManager: BatteryWidgetManager,
 ) : CoroutineWorker(context, params) {
 
     private val workerScope = SyncWorkerCoroutineScope()
-//    private val monitorComponent = syncWorkerComponentBuilder
-//        .coroutineScope(workerScope)
-//        .build()
-//
-//    private val entryPoint by lazy {
-//        EntryPoints.get(monitorComponent, SyncWorkerEntryPoint::class.java)
-//    }
 
     private var finishedWithError = false
 
