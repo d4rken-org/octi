@@ -14,12 +14,8 @@
     <string name="sync_kserver_link_code_label">Koppel kode</string>
     <string name="sync_kserver_link_host_option_direct">Skep \'n tekskode wat jy via ander programme kan stuur</string>
     <string name="sync_kserver_link_host_option_qrcode">Wys \'n QR-kode</string>
-    <string name="sync_kserver_link_host_option_nfc">Koppel toestel via NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">\'n Nuwe toestel is aan jou rekening gekoppel.</string>
-    <string name="sync_kserver_link_host_nfc_action">Soek NFC-kliënt. Hou hierdie toestel naby aan die toestel wat jy aan jou rekening wil koppel.</string>
     <string name="sync_kserver_link_client_option_qrcode">Skandeer \'n QR-kode van \'n ander toestel</string>
-    <string name="sync_kserver_link_client_option_nfc">Gebruik twee toestelle met NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Begin kamera</string>
     <string name="sync_kserver_link_client_link_action">Koppel toestel</string>
-    <string name="sync_kserver_link_client_nfc_action">Soek na NFC-gasheer. Hou dit naby aan die toestel wat toegang wil deel.</string>
 </resources>

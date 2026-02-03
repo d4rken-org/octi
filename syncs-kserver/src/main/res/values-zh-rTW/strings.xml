@@ -14,12 +14,8 @@
     <string name="sync_kserver_link_code_label">連結代碼</string>
     <string name="sync_kserver_link_host_option_direct">建立可透過其他應用程式傳送的文字代碼</string>
     <string name="sync_kserver_link_host_option_qrcode">顯示 QR Code</string>
-    <string name="sync_kserver_link_host_option_nfc">透過 NFC 連結裝置</string>
     <string name="sync_kserver_link_host_device_linked_message">新裝置已連結至您的帳戶。</string>
-    <string name="sync_kserver_link_host_nfc_action">正在尋找 NFC 用戶端。請將此裝置靠近您要連結至帳戶的裝置。</string>
     <string name="sync_kserver_link_client_option_qrcode">從其他裝置掃描 QR Code</string>
-    <string name="sync_kserver_link_client_option_nfc">使用兩部具有 NFC 功能的裝置</string>
     <string name="sync_kserver_link_client_startcamera_action">啟動相機</string>
     <string name="sync_kserver_link_client_link_action">連結裝置</string>
-    <string name="sync_kserver_link_client_nfc_action">正在尋找 NFC 主機。請將其靠近提供分享帳戶存取權限的裝置。</string>
 </resources>

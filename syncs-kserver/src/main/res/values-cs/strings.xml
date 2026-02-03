@@ -15,13 +15,9 @@
     <string name="sync_kserver_link_code_label">Kód propojení</string>
     <string name="sync_kserver_link_host_option_direct">Vytvoření textového kódu, který můžete odeslat prostřednictvím jiných aplikací</string>
     <string name="sync_kserver_link_host_option_qrcode">Zobrazit QRCode</string>
-    <string name="sync_kserver_link_host_option_nfc">Propojit zařízení skrze NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">S vaším účtem bylo propojeno nové zařízení.</string>
-    <string name="sync_kserver_link_host_nfc_action">Vyhledávání klienta NFC. Přiložte toto zařízení k zařízení, které chcete propojit se svým účtem.</string>
     <string name="sync_kserver_link_client_option_direct">Ručně kopírovat a vložit kód propojení</string>
     <string name="sync_kserver_link_client_option_qrcode">Naskenovat QR kód z jiného zařízení</string>
-    <string name="sync_kserver_link_client_option_nfc">Použít dvě zařízení s NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Spustit fotoaparát</string>
     <string name="sync_kserver_link_client_link_action">Propojit zařížení</string>
-    <string name="sync_kserver_link_client_nfc_action">Vyhledávání NFC hostitele. Držte se blízko zařízení, které nabízí sdílení přístupu k účtu.</string>
 </resources>

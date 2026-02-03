@@ -14,12 +14,8 @@
     <string name="sync_kserver_link_code_label">Összekapcsolási kód</string>
     <string name="sync_kserver_link_host_option_direct">Hozz létre egy szöveges kódot, amit más alkalmazásokon keresztül küldhetsz el</string>
     <string name="sync_kserver_link_host_option_qrcode">QR kód megjelenítése</string>
-    <string name="sync_kserver_link_host_option_nfc">Eszköz összekapcsolása NFC-vel</string>
     <string name="sync_kserver_link_host_device_linked_message">Új eszköz lett kapcsolva a fiókodhoz.</string>
-    <string name="sync_kserver_link_host_nfc_action">NFC kliens keresése. Tartsd ezt az eszközt közel ahhoz, amit hozzá akarsz kapcsolni a fiókodhoz.</string>
     <string name="sync_kserver_link_client_option_qrcode">QR kód leolvasása másik eszközről</string>
-    <string name="sync_kserver_link_client_option_nfc">Két eszköz használata NFC-vel</string>
     <string name="sync_kserver_link_client_startcamera_action">Kamera indítása</string>
     <string name="sync_kserver_link_client_link_action">Eszköz összekapcsolása</string>
-    <string name="sync_kserver_link_client_nfc_action">NFC szerver keresése. Tartsd közel ahhoz az eszközhöz, ami hozzáférést kínál a fiókhoz.</string>
 </resources>

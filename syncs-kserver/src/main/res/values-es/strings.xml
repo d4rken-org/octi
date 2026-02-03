@@ -14,12 +14,8 @@
     <string name="sync_kserver_link_code_label">Código de vinculación</string>
     <string name="sync_kserver_link_host_option_direct">Crear un código de texto que puedes enviar a través de otras aplicaciones</string>
     <string name="sync_kserver_link_host_option_qrcode">Mostrar un código QR</string>
-    <string name="sync_kserver_link_host_option_nfc">Vincular dispositivo vía NFC</string>
     <string name="sync_kserver_link_host_device_linked_message">Un nuevo dispositivo ha sido vinculado a tu cuenta.</string>
-    <string name="sync_kserver_link_host_nfc_action">Buscando cliente NFC. Mantén este dispositivo cerca del dispositivo que quieres vincular a tu cuenta.</string>
     <string name="sync_kserver_link_client_option_qrcode">Escanear un código QR desde otro dispositivo</string>
-    <string name="sync_kserver_link_client_option_nfc">Usar dos dispositivos con NFC</string>
     <string name="sync_kserver_link_client_startcamera_action">Iniciar cámara</string>
     <string name="sync_kserver_link_client_link_action">Vincular dispositivo</string>
-    <string name="sync_kserver_link_client_nfc_action">Buscando host NFC. Mantenlo cerca del dispositivo que ofrece compartir acceso a la cuenta.</string>
 </resources>

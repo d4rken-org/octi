@@ -14,12 +14,8 @@
     <string name="sync_kserver_link_code_label">연결 코드</string>
     <string name="sync_kserver_link_host_option_direct">다른 앱을 통해 보낼 수 있는 텍스트 코드를 생성하기</string>
     <string name="sync_kserver_link_host_option_qrcode">QR코드 표시</string>
-    <string name="sync_kserver_link_host_option_nfc">NFC로 기기 연결</string>
     <string name="sync_kserver_link_host_device_linked_message">새 기기가 계정에 연결되었습니다.</string>
-    <string name="sync_kserver_link_host_nfc_action">NFC 클라이언트 검색 중. 이 기기를 계정에 연결할 기기 근처에 두세요.</string>
     <string name="sync_kserver_link_client_option_qrcode">다른 기기의 QR 코드 스캔하기</string>
-    <string name="sync_kserver_link_client_option_nfc">NFC로 두 기기 사용</string>
     <string name="sync_kserver_link_client_startcamera_action">카메라 시작</string>
     <string name="sync_kserver_link_client_link_action">기기 연결</string>
-    <string name="sync_kserver_link_client_nfc_action">NFC 호스트 검색 중. 계정 접근 공유를 제공하는 기기 근처에 두세요.</string>
 </resources>
