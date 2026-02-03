@@ -37,12 +37,6 @@ import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/*
-    TODO
-    Trigger worker and update for these events
-    <action android:name="android.intent.action.BATTERY_LOW"/>
-    <action android:name="android.intent.action.BATTERY_OKAY"/>
- */
 @Singleton
 class PowerInfoSource @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
@@ -94,6 +88,8 @@ class PowerInfoSource @Inject constructor(
         log(TAG) { "batteryState receiver: $receiver" }
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_BATTERY_CHANGED)
+            addAction(Intent.ACTION_BATTERY_LOW)
+            addAction(Intent.ACTION_BATTERY_OKAY)
         }
         context.registerReceiver(receiver, filter)
         isRegistered = true
