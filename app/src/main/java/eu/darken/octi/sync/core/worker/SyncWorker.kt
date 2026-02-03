@@ -7,10 +7,13 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import eu.darken.octi.common.debug.Bugs
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.module.core.ModuleManager
+import eu.darken.octi.modules.power.core.alert.PowerAlertManager
 import eu.darken.octi.modules.power.ui.widget.BatteryWidgetManager
 import eu.darken.octi.sync.core.SyncManager
 import kotlinx.coroutines.CancellationException
@@ -26,6 +29,7 @@ class SyncWorker @AssistedInject constructor(
     private val syncManager: SyncManager,
     private val moduleManager: ModuleManager,
     private val batteryWidgetManager: BatteryWidgetManager,
+    private val powerAlertManager: PowerAlertManager,
 ) : CoroutineWorker(context, params) {
 
     private val workerScope = SyncWorkerCoroutineScope()
@@ -67,10 +71,31 @@ class SyncWorker @AssistedInject constructor(
     }
 
     private suspend fun doDoWork() {
-        moduleManager.refresh()
+        try {
+            moduleManager.refresh()
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "Failed to refresh modules: ${e.asLog()}" }
+        }
+
         delay(3000)
-        syncManager.sync()
-        batteryWidgetManager.refreshWidgets()
+
+        try {
+            syncManager.sync()
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "Failed to sync: ${e.asLog()}" }
+        }
+
+        try {
+            batteryWidgetManager.refreshWidgets()
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "Failed to refresh widgets: ${e.asLog()}" }
+        }
+
+        try {
+            powerAlertManager.checkAlerts()
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "Failed to check alerts: ${e.asLog()}" }
+        }
     }
 
     companion object {
