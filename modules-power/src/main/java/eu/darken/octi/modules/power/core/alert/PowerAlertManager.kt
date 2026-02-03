@@ -11,8 +11,10 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.throttleLatest
+import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.module.core.device
 import eu.darken.octi.modules.meta.core.MetaRepo
+import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerRepo
 import eu.darken.octi.modules.power.core.PowerSettings
 import eu.darken.octi.sync.core.DeviceId
@@ -56,97 +58,108 @@ class PowerAlertManager @Inject constructor(
             powerRepo.state.throttleLatest(1000),
             powerSettings.alertRules.flow,
         ) { powerStates, alertRules ->
-            mutex.withLock {
-                log(TAG, VERBOSE) {
-                    "Checking ${alertRules.size} alert rules against ${powerStates.all.size} power states"
+            processAlerts(powerStates, alertRules)
+        }
+            .catch { log(TAG, ERROR) { "Failed to monitor power state:\n${it.asLog()}" } }
+            .launchIn(appScope)
+    }
+
+    suspend fun checkAlerts() {
+        log(TAG) { "checkAlerts()" }
+        val powerStates = powerRepo.state.first()
+        val alertRules = powerSettings.alertRules.value()
+        processAlerts(powerStates, alertRules)
+    }
+
+    private suspend fun processAlerts(powerStates: ModuleRepo.State<PowerInfo>, alertRules: Set<PowerAlertRule>) {
+        mutex.withLock {
+            log(TAG, VERBOSE) {
+                "Checking ${alertRules.size} alert rules against ${powerStates.all.size} power states"
+            }
+
+            val alertEvents = powerSettings.alertEvents.value()
+            log(TAG) { "Current alert events: $alertEvents" }
+
+            alertRules.forEach { rule ->
+                val powerState = powerStates.all.find { it.deviceId == rule.deviceId }
+                log(TAG, VERBOSE) { "Checking rule $rule against $powerState" }
+                if (powerState == null) {
+                    log(TAG, WARN) { "No PowerInfo available for $rule" }
+                    return@forEach
                 }
 
-                val alertEvents = powerSettings.alertEvents.value()
-                log(TAG) { "Current alert events: $alertEvents" }
+                val metaState = metaRepo.device(rule.deviceId)
+                if (metaState == null) {
+                    log(TAG, WARN) { "No MetaInfo available for $rule" }
+                    return@forEach
+                }
 
-                alertRules.forEach { rule ->
-                    val powerState = powerStates.all.find { it.deviceId == rule.deviceId }
-                    log(TAG, VERBOSE) { "Checking rule $rule against $powerState" }
-                    if (powerState == null) {
-                        log(TAG, WARN) { "No PowerInfo available for $rule" }
-                        return@forEach
-                    }
+                val event = alertEvents.find { it.id == rule.id }
+                log(TAG) { "Found $event for $rule" }
 
-                    val metaState = metaRepo.device(rule.deviceId)
-                    if (metaState == null) {
-                        log(TAG, WARN) { "No MetaInfo available for $rule" }
-                        return@forEach
-                    }
+                when (rule) {
+                    is BatteryLowAlertRule -> {
+                        val isTriggered = !powerState.data.isCharging &&
+                                powerState.data.battery.percent < rule.threshold
+                        val isRecovered = powerState.data.isCharging ||
+                                powerState.data.battery.percent > (rule.threshold + 0.05f).coerceAtMost(0.95f)
+                        when {
+                            event == null && isTriggered && !isRecovered -> {
+                                log(TAG, INFO) { "Rule has triggered" }
+                                val newEvent = PowerAlertRule.Event(rule.id)
+                                powerSettings.alertEvents.update { it + newEvent }
+                                notifications.show(rule, powerState.data, metaState.data)
+                            }
 
-                    val event = alertEvents.find { it.id == rule.id }
-                    log(TAG) { "Found $event for $rule" }
+                            event != null && !isTriggered && isRecovered -> {
+                                log(TAG, INFO) { "Rule is no longer triggered" }
+                                powerSettings.alertEvents.update { it - event }
+                                notifications.dismiss(rule)
+                            }
 
-                    when (rule) {
-                        is BatteryLowAlertRule -> {
-                            val isTriggered = !powerState.data.isCharging &&
-                                    powerState.data.battery.percent < rule.threshold
-                            val isRecovered = powerState.data.isCharging ||
-                                    powerState.data.battery.percent > (rule.threshold + 0.05f).coerceAtMost(0.95f)
-                            when {
-                                event == null && isTriggered && !isRecovered -> {
-                                    log(TAG, INFO) { "Rule has triggered" }
-                                    val newEvent = PowerAlertRule.Event(rule.id)
-                                    powerSettings.alertEvents.update { it + newEvent }
-                                    notifications.show(rule, powerState.data, metaState.data)
-                                }
+                            event == null && !isTriggered -> {
+                                log(TAG, VERBOSE) { "Rule is not triggered" }
+                            }
 
-                                event != null && !isTriggered && isRecovered -> {
-                                    log(TAG, INFO) { "Rule is no longer triggered" }
-                                    powerSettings.alertEvents.update { it - event }
-                                    notifications.dismiss(rule)
-                                }
-
-                                event == null && !isTriggered -> {
-                                    log(TAG, VERBOSE) { "Rule is not triggered" }
-                                }
-
-                                event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
-                                    log(TAG, VERBOSE) { "Rule is triggered (not dismissed), updating notification" }
-                                    notifications.show(rule, powerState.data, metaState.data)
-                                }
+                            event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
+                                log(TAG, VERBOSE) { "Rule is triggered (not dismissed), updating notification" }
+                                notifications.show(rule, powerState.data, metaState.data)
                             }
                         }
+                    }
 
-                        is BatteryHighAlertRule -> {
-                            val isTriggered = powerState.data.isCharging &&
-                                    powerState.data.battery.percent >= rule.threshold
-                            val isRecovered = !powerState.data.isCharging ||
-                                    powerState.data.battery.percent < (rule.threshold - 0.05f).coerceAtLeast(0.05f)
-                            when {
-                                event == null && isTriggered && !isRecovered -> {
-                                    log(TAG, INFO) { "Rule has triggered" }
-                                    val newEvent = PowerAlertRule.Event(rule.id)
-                                    powerSettings.alertEvents.update { it + newEvent }
-                                    notifications.show(rule, powerState.data, metaState.data)
-                                }
+                    is BatteryHighAlertRule -> {
+                        val isTriggered = powerState.data.isCharging &&
+                                powerState.data.battery.percent >= rule.threshold
+                        val isRecovered = !powerState.data.isCharging ||
+                                powerState.data.battery.percent < (rule.threshold - 0.05f).coerceAtLeast(0.05f)
+                        when {
+                            event == null && isTriggered && !isRecovered -> {
+                                log(TAG, INFO) { "Rule has triggered" }
+                                val newEvent = PowerAlertRule.Event(rule.id)
+                                powerSettings.alertEvents.update { it + newEvent }
+                                notifications.show(rule, powerState.data, metaState.data)
+                            }
 
-                                event != null && !isTriggered && isRecovered -> {
-                                    log(TAG, INFO) { "Rule is no longer triggered" }
-                                    powerSettings.alertEvents.update { it - event }
-                                    notifications.dismiss(rule)
-                                }
+                            event != null && !isTriggered && isRecovered -> {
+                                log(TAG, INFO) { "Rule is no longer triggered" }
+                                powerSettings.alertEvents.update { it - event }
+                                notifications.dismiss(rule)
+                            }
 
-                                event == null && !isTriggered -> {
-                                    log(TAG, VERBOSE) { "Rule is not triggered" }
-                                }
+                            event == null && !isTriggered -> {
+                                log(TAG, VERBOSE) { "Rule is not triggered" }
+                            }
 
-                                event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
-                                    log(TAG, VERBOSE) { "Rule is triggered (not dismissed), updating notification" }
-                                    notifications.show(rule, powerState.data, metaState.data)
-                                }
+                            event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
+                                log(TAG, VERBOSE) { "Rule is triggered (not dismissed), updating notification" }
+                                notifications.show(rule, powerState.data, metaState.data)
                             }
                         }
                     }
                 }
             }
         }
-            .catch { log(TAG, ERROR) { "Failed to monitor power state:\n${it.asLog()}" } }
-            .launchIn(appScope)
     }
 
     suspend fun setBatteryLowAlert(deviceId: DeviceId, threshold: Float?): Unit = mutex.withLock {
