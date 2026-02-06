@@ -26,8 +26,8 @@ class UpgradeFragment : Fragment3(R.layout.upgrade_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         EdgeToEdgeHelper(requireActivity()).apply {
-            insetsPadding(ui.root, left = true, right = true, bottom = true)
-            insetsPadding(ui.toolbar, top = true)
+            insetsPadding(ui.root, bottom = true)
+            insetsPadding(ui.toolbar, top = true, left = true, right = true)
         }
         ui.toolbar.setupWithNavController(findNavController())
 

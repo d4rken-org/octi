@@ -66,10 +66,9 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         EdgeToEdgeHelper(requireActivity()).apply {
-            insetsPadding(ui.root, left = true, right = true)
-            insetsPadding(ui.toolbar, top = true)
-            insetsPadding(ui.refreshSwipe, bottom = true)
-            insetsPadding(ui.refreshActionContainer, bottom = true)
+            insetsPadding(ui.toolbar, top = true, left = true, right = true)
+            insetsPadding(ui.refreshSwipe, left = true, right = true, bottom = true)
+            insetsPadding(ui.refreshActionContainer, right = true, bottom = true)
         }
 
         ui.toolbar.apply {
