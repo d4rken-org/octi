@@ -69,8 +69,6 @@
     <style name="AppTheme" parent="BaseAppTheme">
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
-        <item name="android:statusBarColor">?colorSurface</item>
-        <item name="android:navigationBarColor">?colorSurface</item>
     </style>
 
     <style name="AppThemeFloating" parent="BaseAppTheme">

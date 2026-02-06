@@ -13,7 +13,6 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
-import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.main.core.GeneralSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
@@ -122,7 +121,6 @@ class Theming @Inject constructor(
                 log(TAG) { "Applying MATERIAL_YOU to $activity" }
 
                 DynamicColors.applyToActivityIfAvailable(activity)
-                activity.window.statusBarColor = activity.getColorForAttr(android.R.attr.colorPrimaryDark)
             }
         }
     }

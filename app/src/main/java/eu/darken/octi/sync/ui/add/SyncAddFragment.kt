@@ -27,9 +27,8 @@ class SyncAddFragment : Fragment3(R.layout.sync_add_new_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         EdgeToEdgeHelper(requireActivity()).apply {
-            insetsPadding(ui.root, left = true, right = true)
-            insetsPadding(ui.toolbar, top = true)
-            insetsPadding(ui.list, bottom = true)
+            insetsPadding(ui.toolbar, top = true, left = true, right = true)
+            insetsPadding(ui.list, left = true, right = true, bottom = true)
         }
 
         ui.toolbar.apply {
