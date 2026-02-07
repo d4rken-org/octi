@@ -35,4 +35,3 @@ exclude:
   - syncs-gdrive
   - syncs-kserver
   - CONTRIBUTING.md
-  - CLAUDE.md
