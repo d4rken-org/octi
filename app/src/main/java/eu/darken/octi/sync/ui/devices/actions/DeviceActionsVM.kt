@@ -8,6 +8,7 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
@@ -88,14 +89,19 @@ class DeviceActionsVM @Inject constructor(
     fun deleteDevice() = launch {
         log(TAG, INFO) { "Deleting device ${navArgs.deviceId}" }
         appScope.launch {
-            if (syncSettings.deviceId == navArgs.deviceId) {
-                log(TAG, WARN) { "We are deleting US, doing disconnect instead of delete" }
-                syncManager.disconnect(navArgs.connectorId)
-            } else {
-                connectorFlow.first().apply {
-                    deleteDevice(navArgs.deviceId)
-                    sync(SyncOptions(writeData = false))
+            try {
+                if (syncSettings.deviceId == navArgs.deviceId) {
+                    log(TAG, WARN) { "We are deleting US, doing disconnect instead of delete" }
+                    syncManager.disconnect(navArgs.connectorId)
+                } else {
+                    connectorFlow.first().apply {
+                        deleteDevice(navArgs.deviceId)
+                        sync(SyncOptions(writeData = false))
+                    }
                 }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to delete device ${navArgs.deviceId}: ${e.asLog()}" }
+                errorEvents.postValue(e)
             }
         }
         popNavStack()
