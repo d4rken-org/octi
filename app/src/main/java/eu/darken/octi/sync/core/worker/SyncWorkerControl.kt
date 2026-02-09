@@ -56,7 +56,7 @@ class SyncWorkerControl @Inject constructor(
             if (isEnabled) {
                 val operation = workerManager.enqueueUniquePeriodicWork(
                     WORKER_NAME,
-                    ExistingPeriodicWorkPolicy.REPLACE,
+                    ExistingPeriodicWorkPolicy.UPDATE,
                     workRequest,
                 )
                 val result = operation.result.get()

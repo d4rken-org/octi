@@ -79,7 +79,7 @@ open class App : Application(), Configuration.Provider {
         log(TAG) { "onCreate() done! ${Exception().asLog()}" }
     }
 
-    override fun getWorkManagerConfiguration(): Configuration = Configuration.Builder()
+    override val workManagerConfiguration: Configuration get() = Configuration.Builder()
         .setMinimumLoggingLevel(
             when {
                 BuildConfigWrap.DEBUG -> android.util.Log.VERBOSE
