@@ -8,7 +8,10 @@ import eu.darken.octi.modules.apps.R
 @get:DrawableRes
 val AppsInfo.Pkg?.installerIconRes: Int
     get() = when (this?.installerPkg) {
-        "org.fdroid.fdroid" -> R.drawable.ic_f_droid_24
+        "org.fdroid.fdroid",
+        "org.fdroid.basic",
+        "com.looker.droidify",
+        -> R.drawable.ic_f_droid_24
         "com.amazon.venezia" -> R.drawable.ic_amazon_24
         "com.sec.android.app.samsungapps" -> R.drawable.ic_galaxy_store_24
         null -> R.drawable.ic_human_dolly_24
@@ -16,10 +19,13 @@ val AppsInfo.Pkg?.installerIconRes: Int
     }
 
 fun AppsInfo.Pkg.getInstallerIntent(): Pair<Intent, Intent> = when (installerPkg) {
-    "org.fdroid.fdroid" -> {
+    "org.fdroid.fdroid",
+    "org.fdroid.basic",
+    "com.looker.droidify",
+    -> {
         val main = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse("fdroid://details?id=${packageName}")
-            setPackage("org.fdroid.fdroid")
+            setPackage(installerPkg)
         }
         val fallback = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse("https://f-droid.org/packages/${packageName}/")
