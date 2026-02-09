@@ -12,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.EdgeToEdgeHelper
+import eu.darken.octi.syncs.gdrive.R as GDriveR
 import eu.darken.octi.common.uix.Fragment3
 import eu.darken.octi.common.viewbinding.viewBinding
 import eu.darken.octi.databinding.SyncAddNewGdriveFragmentBinding
@@ -45,7 +46,7 @@ class AddGDriveFragment : Fragment3(R.layout.sync_add_new_gdrive_fragment) {
                 is AddGDriveEvents.NoGoogleAccount -> {
                     Toast.makeText(
                         requireContext(),
-                        R.string.sync_gdrive_error_no_account_on_device,
+                        GDriveR.string.sync_gdrive_error_no_account_on_device,
                         Toast.LENGTH_LONG
                     ).show()
                 }

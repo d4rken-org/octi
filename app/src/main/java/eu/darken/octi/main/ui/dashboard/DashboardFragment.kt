@@ -18,6 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.colorString
@@ -104,14 +105,14 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
 
             val baseTitle = when {
                 state.isPro -> getString(R.string.app_name_upgraded)
-                else -> getString(R.string.app_name)
+                else -> getString(CommonR.string.app_name)
             }.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
             toolbar.title = if (baseTitle.size == 2) {
                 val builder = SpannableStringBuilder(baseTitle[0] + " ")
                 builder.append(colorString(requireContext().getColor(R.color.colorUpgraded), baseTitle[1]))
             } else {
-                getString(R.string.app_name)
+                getString(CommonR.string.app_name)
             }
         }
 
@@ -193,7 +194,7 @@ class DashboardFragment : Fragment3(R.layout.dashboard_fragment) {
             } else if (offlineSnackbar == null && state.isOffline) {
                 offlineSnackbar = Snackbar.make(
                     ui.coordinator,
-                    getString(R.string.general_internal_not_available_msg),
+                    getString(CommonR.string.general_internal_not_available_msg),
                     Snackbar.LENGTH_INDEFINITE
                 )
                 offlineSnackbar?.show()

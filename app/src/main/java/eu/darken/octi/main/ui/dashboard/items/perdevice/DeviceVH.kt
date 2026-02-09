@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import eu.darken.octi.R
+import eu.darken.octi.modules.meta.R as MetaR
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.DividerItemDecoration2
 import eu.darken.octi.common.lists.binding
@@ -57,7 +58,7 @@ class DeviceVH(parent: ViewGroup) :
         if (BuildConfigWrap.DEBUG) deviceLabel.append(" (#${adapterPosition + 1})")
 
         deviceSubtitle.apply {
-            val osName = getString(R.string.module_meta_android_name_x_label, meta.androidVersionName)
+            val osName = getString(MetaR.string.module_meta_android_name_x_label, meta.androidVersionName)
             text = "$osName (API ${meta.androidApiLevel})"
         }
 

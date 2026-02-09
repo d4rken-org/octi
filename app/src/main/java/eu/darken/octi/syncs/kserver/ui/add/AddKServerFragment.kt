@@ -9,7 +9,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.syncs.kserver.R as KServerR
 import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.uix.Fragment3
@@ -97,12 +99,12 @@ class AddKServerFragment : Fragment3(R.layout.sync_add_new_kserver_fragment) {
     }
 
     private fun showAbout() = MaterialAlertDialogBuilder(requireContext()).apply {
-        setTitle(R.string.sync_kserver_about_title)
-        setMessage(R.string.sync_kserver_about_desc)
-        setPositiveButton(R.string.general_gotit_action) { _, _ ->
+        setTitle(KServerR.string.sync_kserver_about_title)
+        setMessage(KServerR.string.sync_kserver_about_desc)
+        setPositiveButton(CommonR.string.general_gotit_action) { _, _ ->
 
         }
-        setNeutralButton(R.string.sync_kserver_about_source_action) { _, _ ->
+        setNeutralButton(KServerR.string.sync_kserver_about_source_action) { _, _ ->
             webpageTool.open("https://github.com/d4rken/octi-sync-server-kotlin")
         }
     }.show()

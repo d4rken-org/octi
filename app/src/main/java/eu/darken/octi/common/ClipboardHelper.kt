@@ -6,7 +6,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import java.util.concurrent.locks.ReentrantLock
@@ -41,7 +41,7 @@ class ClipboardHelper @Inject constructor(
     }
 
     fun copyToClipboard(text: String) {
-        val clip = ClipData.newPlainText(context.getString(R.string.app_name), text)
+        val clip = ClipData.newPlainText(context.getString(CommonR.string.app_name), text)
         clipboard.setPrimaryClip(clip)
     }
 

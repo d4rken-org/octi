@@ -2,7 +2,7 @@ package eu.darken.octi.common.error
 
 import android.app.Activity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 
 fun Throwable.asErrorDialogBuilder(
     activity: Activity
@@ -21,7 +21,7 @@ fun Throwable.asErrorDialogBuilder(
             ) { _, _ ->
                 localizedError.fixAction!!.invoke(activity)
             }
-            setNegativeButton(R.string.general_cancel_action) { _, _ ->
+            setNegativeButton(CommonR.string.general_cancel_action) { _, _ ->
             }
         } else {
             setPositiveButton(android.R.string.ok) { _, _ ->
@@ -30,7 +30,7 @@ fun Throwable.asErrorDialogBuilder(
 
         when {
             localizedError.infoAction != null -> {
-                setNeutralButton(R.string.general_show_details_action) { _, _ ->
+                setNeutralButton(CommonR.string.general_show_details_action) { _, _ ->
                     localizedError.infoAction!!.invoke(activity)
                 }
             }

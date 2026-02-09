@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
     id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -19,10 +20,6 @@ android {
         viewBinding = true
     }
 
-    setupCompileOptions()
-
-    setupKotlinOptions()
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -32,6 +29,8 @@ android {
         }
     }
 }
+
+setupModule()
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.Desugar.core}")

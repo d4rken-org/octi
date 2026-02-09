@@ -9,6 +9,7 @@ import com.google.android.material.slider.Slider
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.EdgeToEdgeHelper
+import eu.darken.octi.modules.power.R as PowerR
 import eu.darken.octi.common.isBold
 import eu.darken.octi.common.observe2
 import eu.darken.octi.common.uix.Fragment3
@@ -39,9 +40,9 @@ class PowerAlertsFragment : Fragment3(R.layout.module_power_alerts_fragment) {
         ui.lowbatteryThresholdSlider.apply {
             addOnChangeListener { _, value, _ ->
                 ui.lowbatteryThresholdSliderCaption.text = when (value) {
-                    0f -> getString(R.string.module_power_alerts_lowbattery_disabled_caption)
+                    0f -> getString(PowerR.string.module_power_alerts_lowbattery_disabled_caption)
                     else -> getString(
-                        R.string.module_power_alerts_lowbattery_slider_value_caption,
+                        PowerR.string.module_power_alerts_lowbattery_slider_value_caption,
                         "${(value * 100).toInt()}%"
                     )
                 }
@@ -61,9 +62,9 @@ class PowerAlertsFragment : Fragment3(R.layout.module_power_alerts_fragment) {
         ui.highbatteryThresholdSlider.apply {
             addOnChangeListener { _, value, _ ->
                 ui.highbatteryThresholdSliderCaption.text = when (value) {
-                    0f -> getString(R.string.module_power_alerts_highbattery_disabled_caption)
+                    0f -> getString(PowerR.string.module_power_alerts_highbattery_disabled_caption)
                     else -> getString(
-                        R.string.module_power_alerts_highbattery_slider_value_caption,
+                        PowerR.string.module_power_alerts_highbattery_slider_value_caption,
                         "${(value * 100).toInt()}%"
                     )
                 }

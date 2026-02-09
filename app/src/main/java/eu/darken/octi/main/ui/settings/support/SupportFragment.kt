@@ -8,6 +8,7 @@ import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.ClipboardHelper
 import eu.darken.octi.common.PrivacyPolicy
 import eu.darken.octi.common.WebpageTool
@@ -60,8 +61,8 @@ class SupportFragment : PreferenceFragment2() {
                 SupportEvent.DebugLogInfo -> MaterialAlertDialogBuilder(requireContext()).apply {
                     setTitle(R.string.support_debuglog_label)
                     setMessage(R.string.settings_debuglog_explanation)
-                    setPositiveButton(R.string.general_continue) { _, _ -> vm.toggleDebugLog(consent = true) }
-                    setNegativeButton(R.string.general_cancel_action) { _, _ -> }
+                    setPositiveButton(CommonR.string.general_continue) { _, _ -> vm.toggleDebugLog(consent = true) }
+                    setNegativeButton(CommonR.string.general_cancel_action) { _, _ -> }
                     setNeutralButton(R.string.settings_privacy_policy_label) { _, _ -> webpageTool.open(PrivacyPolicy.URL) }
                 }.show()
             }

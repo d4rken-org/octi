@@ -8,6 +8,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.lists.differ.update
@@ -55,7 +56,7 @@ class SyncAddFragment : Fragment3(R.layout.sync_add_new_fragment) {
 
     private fun showHelpDialog() = MaterialAlertDialogBuilder(requireContext()).apply {
         setMessage(R.string.sync_add_help_desc)
-        setPositiveButton(R.string.general_gotit_action) { _, _ ->
+        setPositiveButton(CommonR.string.general_gotit_action) { _, _ ->
 
         }
         setNeutralButton(R.string.documentation_label) { _, _ ->

@@ -1,10 +1,10 @@
 object Versions {
     object Gradle {
-        const val buildTools = "8.4.0"
+        const val buildTools = "9.0.0"
     }
 
     object Kotlin {
-        const val core = "2.0.0"
+        const val core = "2.1.0"
         const val coroutines = "1.8.1"
     }
 
