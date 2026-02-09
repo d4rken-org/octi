@@ -16,118 +16,110 @@
         app:subtitle="@string/sync_kserver_link_device_action"
         app:title="@string/sync_kserver_type_label" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/link_options_card"
-        style="@style/Widget.Material3.CardView.Elevated"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-        <RadioGroup
-            android:id="@+id/link_options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp">
-
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/link_option_qrcode"
-                style="@style/Widget.Material3.CompoundButton.RadioButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sync_kserver_link_host_option_qrcode" />
-
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/link_option_direct"
-                style="@style/Widget.Material3.CompoundButton.RadioButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sync_kserver_link_host_option_direct" />
-
-        </RadioGroup>
-    </com.google.android.material.card.MaterialCardView>
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/link_container_qrcode"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/link_options_card"
-        tools:visibility="visible">
-
-        <androidx.constraintlayout.utils.widget.ImageFilterView
-            android:id="@+id/qrcode_image"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_margin="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:background="@color/seed" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <ScrollView
-        android:id="@+id/link_container_direct"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/link_options_card"
-        tools:visibility="visible">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/sharecode_label"
-                style="@style/TextAppearance.Material3.LabelLarge"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/link_options_card"
+                style="@style/Widget.Material3.CardView.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="32dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/sync_kserver_link_code_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbar" />
+                android:layout_margin="16dp">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/link_code_actual"
-                style="@style/TextAppearance.Material3.BodyLarge"
+                <RadioGroup
+                    android:id="@+id/link_options"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/link_option_qrcode"
+                        style="@style/Widget.Material3.CompoundButton.RadioButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sync_kserver_link_host_option_qrcode" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/link_option_direct"
+                        style="@style/Widget.Material3.CompoundButton.RadioButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sync_kserver_link_host_option_direct" />
+
+                </RadioGroup>
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/link_container_qrcode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="32dp"
-                android:layout_marginTop="8dp"
-                android:textIsSelectable="true"
-                android:textStyle="italic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sharecode_label"
-                tools:text="@tools:sample/lorem/random" />
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/link_code_input_action"
+                <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:id="@+id/qrcode_image"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="8dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@color/seed" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/link_container_direct"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="32dp"
-                android:layout_marginBottom="32dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/general_share_action"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/link_code_actual" />
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/sharecode_label"
+                    style="@style/TextAppearance.Material3.LabelLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/sync_kserver_link_code_label" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/link_code_actual"
+                    style="@style/TextAppearance.Material3.BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginTop="8dp"
+                    android:textIsSelectable="true"
+                    android:textStyle="italic"
+                    tools:text="@tools:sample/lorem/random" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/link_code_input_action"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="32dp"
+                    android:text="@string/general_share_action" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
