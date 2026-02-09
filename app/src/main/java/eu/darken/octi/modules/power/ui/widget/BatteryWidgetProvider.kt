@@ -5,8 +5,12 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.format.DateUtils
+import android.text.style.StyleSpan
 import android.widget.RemoteViews
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
@@ -27,7 +31,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import java.time.Duration
-import java.time.Instant
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -92,17 +95,24 @@ class BatteryWidgetProvider : AppWidgetProvider() {
     ) {
         log(TAG) { "updateWidget(widgetId=$widgetId, options=$options)" }
 
+        val widgetOptions = options ?: widgetManager.getAppWidgetOptions(widgetId)
+        val maxHeightDp = widgetOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
+        // Each row: 30dp bar + 2dp vertical padding = 32dp, container: 8dp padding top + bottom = 16dp
+        val maxRows = if (maxHeightDp > 0) maxOf(1, (maxHeightDp - 16) / 32) else Int.MAX_VALUE
+        log(TAG, VERBOSE) { "updateWidget: maxHeightDp=$maxHeightDp, maxRows=$maxRows" }
+
         val metaState = metaRepo.state.first()
         val powerState = powerRepo.state.first()
 
-        val layout = createLayout(context, metaState, powerState)
+        val layout = createLayout(context, metaState, powerState, maxRows)
         widgetManager.updateAppWidget(widgetId, layout)
     }
 
     private fun createLayout(
         context: Context,
         metaStates: BaseModuleRepo.State<MetaInfo>,
-        powerStates: BaseModuleRepo.State<PowerInfo>
+        powerStates: BaseModuleRepo.State<PowerInfo>,
+        maxRows: Int,
     ): RemoteViews {
         log(TAG, VERBOSE) { "createLayout(context=$context, metaStates=$metaStates, powerStates=$powerStates)" }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
@@ -118,15 +128,23 @@ class BatteryWidgetProvider : AppWidgetProvider() {
                 metaInfo?.let { powerInfo to it }
             }
             .sortedBy { (_, metaInfo) -> metaInfo.data.labelOrFallback.lowercase() }
+            .take(maxRows)
             .map { (powerInfo, metaInfo) ->
                 log(TAG) { "Generating info row for ${metaInfo.data.labelOrFallback}" }
+                val percent = (powerInfo.data.battery.percent * 100).toInt()
+                val lastSeen = DateUtils.getRelativeTimeSpanString(
+                    metaInfo.modifiedAt.toEpochMilli(),
+                    System.currentTimeMillis(),
+                    DateUtils.MINUTE_IN_MILLIS,
+                    DateUtils.FORMAT_ABBREV_RELATIVE,
+                )
+                val deviceName = metaInfo.data.labelOrFallback
+                val labelText = SpannableStringBuilder().apply {
+                    append(deviceName)
+                    setSpan(StyleSpan(Typeface.BOLD), 0, deviceName.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    append(" · $lastSeen")
+                }
                 RemoteViews(context.packageName, R.layout.module_power_widget_row).apply {
-                    val lastSeen = DateUtils.getRelativeTimeSpanString(metaInfo.modifiedAt.toEpochMilli())
-                    val labelText = if (Duration.between(metaInfo.modifiedAt, Instant.now()).toHours() > 1) {
-                        "${metaInfo.data.labelOrFallback} ($lastSeen)"
-                    } else {
-                        metaInfo.data.labelOrFallback
-                    }
                     setTextViewText(R.id.device_label, labelText)
 
                     setImageViewResource(
@@ -135,12 +153,12 @@ class BatteryWidgetProvider : AppWidgetProvider() {
                         else R.drawable.widget_battery_full_24
                     )
 
-                    setTextViewText(R.id.charge_percent, "${(powerInfo.data.battery.percent * 100).toInt()}%")
+                    setTextViewText(R.id.charge_percent, "$percent%")
 
                     setProgressBar(
                         R.id.battery_progressbar,
                         100,
-                        (powerInfo.data.battery.percent * 100).toInt(),
+                        percent,
                         false,
                     )
                 }

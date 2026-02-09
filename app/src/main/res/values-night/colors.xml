@@ -147,4 +147,9 @@
     <color name="widgetOnBackground">@color/md_theme_onBackground</color>
     <color name="widgetPrimary">@color/md_theme_primary</color>
     <color name="widgetOnPrimary">@color/md_theme_onPrimary</color>
+    <color name="widgetContainerBackground">@color/md_theme_primaryContainer</color>
+    <color name="widgetBarFill">@color/md_theme_onPrimaryContainer</color>
+    <color name="widgetBarTrack">#33FFFFFF</color>
+    <color name="widgetBarIcon">@color/md_theme_primaryContainer</color>
+    <color name="widgetOnContainer">@color/md_theme_onPrimaryContainer</color>
 </resources>

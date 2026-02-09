@@ -12,4 +12,5 @@
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:widgetFeatures="reconfigurable|configuration_optional"
+    android:radius="16dp"
     tools:targetApi="s" />
