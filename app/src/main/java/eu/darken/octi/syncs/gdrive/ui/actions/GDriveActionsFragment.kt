@@ -8,7 +8,9 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.setChecked2
+import eu.darken.octi.syncs.gdrive.R as GDriveR
 import eu.darken.octi.common.uix.BottomSheetDialogFragment2
 import eu.darken.octi.databinding.SyncActionsGdriveFragmentBinding
 
@@ -32,26 +34,26 @@ class GDriveActionsFragment : BottomSheetDialogFragment2() {
         }
         ui.disconnectAction.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext()).apply {
-                setMessage(R.string.sync_gdrive_disconnect_confirmation_desc)
+                setMessage(GDriveR.string.sync_gdrive_disconnect_confirmation_desc)
                 setPositiveButton(R.string.general_disconnect_action) { _, _ ->
                     vm.disconnct()
                 }
-                setNegativeButton(R.string.general_cancel_action) { _, _ -> }
+                setNegativeButton(CommonR.string.general_cancel_action) { _, _ -> }
             }.show()
         }
         ui.resetAction.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext()).apply {
-                setMessage(R.string.sync_gdrive_reset_confirmation_desc)
+                setMessage(GDriveR.string.sync_gdrive_reset_confirmation_desc)
                 setPositiveButton(R.string.general_reset_action) { _, _ ->
                     vm.reset()
                 }
-                setNegativeButton(R.string.general_cancel_action) { _, _ -> }
+                setNegativeButton(CommonR.string.general_cancel_action) { _, _ -> }
             }.show()
         }
         vm.state.observe2(ui) {
             title.apply {
-                text = getString(R.string.sync_gdrive_type_label)
-                if (it.account.isAppDataScope) append(" (${getString(R.string.sync_gdrive_appdata_label)})")
+                text = getString(GDriveR.string.sync_gdrive_type_label)
+                if (it.account.isAppDataScope) append(" (${getString(GDriveR.string.sync_gdrive_appdata_label)})")
             }
             subtitle.text = it.account.email
             pausedToggle.setChecked2(it.isPaused, false)

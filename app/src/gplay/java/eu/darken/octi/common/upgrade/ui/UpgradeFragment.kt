@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.EdgeToEdgeHelper
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -99,7 +100,7 @@ class UpgradeFragment : Fragment3(R.layout.upgrade_fragment) {
                         ${getString(R.string.upgrade_screen_restore_multiaccount_hint)}
                         """.trimIndent()
                     )
-                    setPositiveButton(R.string.general_dismiss_action) { _, _ ->
+                    setPositiveButton(CommonR.string.general_dismiss_action) { _, _ ->
 
                     }
                 }.show()

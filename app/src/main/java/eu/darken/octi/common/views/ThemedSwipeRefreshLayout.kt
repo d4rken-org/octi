@@ -3,7 +3,7 @@ package eu.darken.octi.common.views
 import android.content.Context
 import android.util.AttributeSet
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import eu.darken.octi.R
+import com.google.android.material.R as MaterialR
 import eu.darken.octi.common.getColorForAttr
 
 class ThemedSwipeRefreshLayout @JvmOverloads constructor(
@@ -12,10 +12,10 @@ class ThemedSwipeRefreshLayout @JvmOverloads constructor(
 ) : SwipeRefreshLayout(context, attrs) {
 
     override fun onFinishInflate() {
-        setProgressBackgroundColorSchemeColor(context.getColorForAttr(R.attr.colorSurface))
+        setProgressBackgroundColorSchemeColor(context.getColorForAttr(MaterialR.attr.colorSurface))
         setColorSchemeColors(
-            context.getColorForAttr(R.attr.colorPrimary),
-            context.getColorForAttr(R.attr.colorPrimaryDark)
+            context.getColorForAttr(MaterialR.attr.colorPrimary),
+            context.getColorForAttr(MaterialR.attr.colorPrimaryDark)
         )
         super.onFinishInflate()
     }

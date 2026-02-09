@@ -3,6 +3,7 @@ package eu.darken.octi.modules.apps.ui.dashboard
 import android.view.ViewGroup
 import eu.darken.octi.R
 import eu.darken.octi.databinding.DashboardDeviceAppsItemBinding
+import eu.darken.octi.modules.apps.R as AppsR
 import eu.darken.octi.main.ui.dashboard.items.perdevice.PerDeviceModuleAdapter
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.apps.core.AppsInfo
@@ -25,14 +26,14 @@ class DeviceAppsVH(parent: ViewGroup) :
 
         appsPrimary.apply {
             text = resources.getQuantityString(
-                R.plurals.module_apps_x_installed,
+                AppsR.plurals.module_apps_x_installed,
                 apps.installedPackages.size,
                 apps.installedPackages.size
             )
         }
         val last = apps.installedPackages.maxByOrNull { it.installedAt }
         appsSecondary.text =
-            last?.let { getString(R.string.module_apps_last_installed_x, "${it.label} (${it.versionName})") }
+            last?.let { getString(AppsR.string.module_apps_last_installed_x, "${it.label} (${it.versionName})") }
 
         itemView.setOnClickListener { item.onAppsInfoClicked() }
 

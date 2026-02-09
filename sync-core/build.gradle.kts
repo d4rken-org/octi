@@ -4,6 +4,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
@@ -19,10 +20,6 @@ android {
 
     setupModuleBuildTypes()
 
-    setupCompileOptions()
-
-    setupKotlinOptions()
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -32,6 +29,8 @@ android {
         }
     }
 }
+
+setupModule()
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.Desugar.core}")

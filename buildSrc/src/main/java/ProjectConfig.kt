@@ -1,9 +1,5 @@
-import com.android.build.api.dsl.Packaging
 import com.android.build.gradle.LibraryExtension
-import org.gradle.api.Action
-import org.gradle.api.JavaVersion
 import java.io.File
-import java.io.FileInputStream
 import java.util.Properties
 
 object ProjectConfig {
@@ -14,7 +10,7 @@ object ProjectConfig {
 
     object Version {
         val versionProperties = Properties().apply {
-            load(FileInputStream(File("version.properties")))
+            File("version.properties").inputStream().use { load(it) }
         }
         val major = versionProperties.getProperty("project.versioning.major").toInt()
         val minor = versionProperties.getProperty("project.versioning.minor").toInt()
@@ -26,58 +22,7 @@ object ProjectConfig {
     }
 }
 
-/**
- * Configures the [kotlinOptions][org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions] extension.
- */
-private fun LibraryExtension.kotlinOptions(configure: Action<org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions>): Unit =
-    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("kotlinOptions", configure)
-
-fun LibraryExtension.setupLibraryDefaults() {
-    compileSdk = ProjectConfig.compileSdk
-
-    defaultConfig {
-        minSdk = ProjectConfig.minSdk
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-    }
-
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = freeCompilerArgs + listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=kotlinx.coroutines.FlowPreview",
-            "-opt-in=kotlin.time.ExperimentalTime",
-            "-opt-in=kotlin.RequiresOptIn"
-        )
-    }
-
-    fun Packaging.() {
-        resources.excludes += "DebugProbesKt.bin"
-    }
-}
-
-fun com.android.build.api.dsl.CommonExtension<
-        com.android.build.api.dsl.LibraryBuildFeatures,
-        com.android.build.api.dsl.LibraryBuildType,
-        com.android.build.api.dsl.LibraryDefaultConfig,
-        com.android.build.api.dsl.LibraryProductFlavor,
-        *,
-        *
-        >.setupModuleBuildTypes() {
+fun LibraryExtension.setupModuleBuildTypes() {
     buildTypes {
         debug {
             consumerProguardFiles("proguard-rules.pro")
@@ -99,14 +44,23 @@ fun com.android.build.api.dsl.SigningConfig.setupCredentials(
 
     if (keyStoreFromEnv?.exists() == true) {
         println("Using signing data from environment variables.")
+
+        val missingVars = listOf("STORE_PASSWORD", "KEY_ALIAS", "KEY_PASSWORD")
+            .filter { System.getenv(it).isNullOrBlank() }
+        if (missingVars.isNotEmpty()) {
+            println("WARNING: STORE_PATH is set but missing env vars: ${missingVars.joinToString()}")
+        }
+
         storeFile = keyStoreFromEnv
         storePassword = System.getenv("STORE_PASSWORD")
         keyAlias = System.getenv("KEY_ALIAS")
         keyPassword = System.getenv("KEY_PASSWORD")
     } else {
-        println("Using signing data from properties file.")
+        println("Using signing data from properties file: $signingPropsPath")
         val props = Properties().apply {
-            signingPropsPath?.takeIf { it.canRead() }?.let { load(FileInputStream(it)) }
+            signingPropsPath?.takeIf { it.canRead() }?.let { file ->
+                file.inputStream().use { stream -> load(stream) }
+            }
         }
 
         val keyStorePath = props.getProperty("release.storePath")?.let { File(it) }
@@ -116,6 +70,8 @@ fun com.android.build.api.dsl.SigningConfig.setupCredentials(
             storePassword = props.getProperty("release.storePassword")
             keyAlias = props.getProperty("release.keyAlias")
             keyPassword = props.getProperty("release.keyPassword")
+        } else {
+            println("WARNING: No valid signing configuration found")
         }
     }
 }

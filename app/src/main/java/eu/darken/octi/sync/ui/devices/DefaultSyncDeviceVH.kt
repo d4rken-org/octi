@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import eu.darken.octi.R
 import eu.darken.octi.common.debug.logging.asLog
+import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.databinding.SyncDevicesItemDefaultBinding
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.DeviceId
@@ -39,7 +40,7 @@ class DefaultSyncDeviceVH(parent: ViewGroup) :
             val isStale = StalenessUtil.isStale(item.lastSeen)
             text = if (isStale && item.lastSeen != null) {
                 val stalePeriod = StalenessUtil.formatStalePeriod(context, item.lastSeen)
-                getString(R.string.sync_device_stale_warning_text, stalePeriod)
+                getString(SyncR.string.sync_device_stale_warning_text, stalePeriod)
             } else ""
             isGone = text.isEmpty()
         }

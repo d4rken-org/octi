@@ -4,8 +4,12 @@ import android.text.format.DateUtils
 import android.text.format.Formatter
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import com.google.android.material.R as MaterialR
 import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.getColorForAttr
+import eu.darken.octi.sync.R as SyncR
+import eu.darken.octi.syncs.gdrive.R as GDriveR
 import eu.darken.octi.databinding.SyncListItemGdriveBinding
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.ui.list.SyncListAdapter
@@ -22,8 +26,8 @@ class GDriveStateVH(parent: ViewGroup) :
         payloads: List<Any>
     ) -> Unit = { item, _ ->
         title.apply {
-            text = getString(R.string.sync_gdrive_type_label)
-            if (item.account.isAppDataScope) append(" (${getString(R.string.sync_gdrive_appdata_label)})")
+            text = getString(GDriveR.string.sync_gdrive_type_label)
+            if (item.account.isAppDataScope) append(" (${getString(GDriveR.string.sync_gdrive_appdata_label)})")
         }
 
         accountText.text = item.account.email
@@ -34,7 +38,7 @@ class GDriveStateVH(parent: ViewGroup) :
                 ?: getString(R.string.sync_last_never_label)
 
             if (item.ourState.lastError != null) {
-                setTextColor(context.getColorForAttr(R.attr.colorError))
+                setTextColor(context.getColorForAttr(MaterialR.attr.colorError))
             } else {
                 setTextColor(context.getColorForAttr(android.R.attr.textColorPrimary))
             }
@@ -54,7 +58,7 @@ class GDriveStateVH(parent: ViewGroup) :
                 val free = Formatter.formatShortFileSize(context, stats.storageFree)
                 getString(R.string.sync_quota_storage_msg, free, used, total)
             }
-            ?: getString(R.string.general_na_label)
+            ?: getString(CommonR.string.general_na_label)
 
         devicesText.text = item.ourState.devices?.let { ourDevices ->
             var deviceString = getQuantityString(R.plurals.general_devices_count_label, ourDevices.size)
@@ -67,12 +71,12 @@ class GDriveStateVH(parent: ViewGroup) :
             }
 
             deviceString
-        } ?: getString(R.string.general_na_label)
+        } ?: getString(CommonR.string.general_na_label)
 
         staleDevicesWarning.apply {
             isGone = item.staleDevicesCount == 0
             text = getQuantityString(
-                R.plurals.sync_stale_devices_info_message,
+                SyncR.plurals.sync_stale_devices_info_message,
                 item.staleDevicesCount,
                 item.staleDevicesCount
             )

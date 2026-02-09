@@ -1,10 +1,12 @@
 import com.android.build.gradle.BaseExtension
-import org.gradle.api.Action
 import org.gradle.api.JavaVersion
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.DependencyHandlerScope
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
 private fun DependencyHandler.implementation(dependencyNotation: Any): Dependency? =
     add("implementation", dependencyNotation)
@@ -30,27 +32,28 @@ private fun DependencyHandler.`testRuntimeOnly`(dependencyNotation: Any): Depend
 private fun DependencyHandler.`debugImplementation`(dependencyNotation: Any): Dependency? =
     add("debugImplementation", dependencyNotation)
 
-private fun BaseExtension.kotlinOptions(configure: Action<KotlinJvmOptions>): Unit =
-    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("kotlinOptions", configure)
+private fun DependencyHandler.ksp(dependencyNotation: Any): Dependency? =
+    add("ksp", dependencyNotation)
 
-fun BaseExtension.setupKotlinOptions() {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = freeCompilerArgs + listOf(
-            "-opt-in=kotlin.ExperimentalStdlibApi",
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=kotlinx.coroutines.FlowPreview",
-            "-opt-in=kotlin.time.ExperimentalTime",
-            "-opt-in=kotlin.RequiresOptIn"
-        )
+fun Project.setupModule() {
+    extensions.configure<BaseExtension> {
+        compileOptions {
+            isCoreLibraryDesugaringEnabled = true
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
     }
-}
-
-fun BaseExtension.setupCompileOptions() {
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+    extensions.configure<KotlinAndroidProjectExtension> {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+            freeCompilerArgs.addAll(
+                "-opt-in=kotlin.ExperimentalStdlibApi",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.coroutines.FlowPreview",
+                "-opt-in=kotlin.time.ExperimentalTime",
+                "-opt-in=kotlin.RequiresOptIn",
+            )
+        }
     }
 }
 
@@ -88,7 +91,7 @@ fun DependencyHandlerScope.addCoroutines() {
 fun DependencyHandlerScope.addSerialization() {
     implementation("com.squareup.moshi:moshi:${Versions.Moshi.core}")
     implementation("com.squareup.moshi:moshi-adapters:${Versions.Moshi.core}")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:${Versions.Moshi.core}")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:${Versions.Moshi.core}")
 }
 
 fun DependencyHandlerScope.addIO() {

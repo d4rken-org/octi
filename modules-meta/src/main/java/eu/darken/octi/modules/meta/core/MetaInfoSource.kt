@@ -11,7 +11,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.module.core.ModuleInfoSource
-import eu.darken.octi.modules.meta.R
+import eu.darken.octi.common.R
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow

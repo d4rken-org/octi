@@ -2,6 +2,7 @@ package eu.darken.octi.main.ui.dashboard.items.perdevice
 
 import android.view.ViewGroup
 import eu.darken.octi.R
+import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.databinding.DashboardDeviceStaleItemBinding
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.StalenessUtil
@@ -21,7 +22,7 @@ class StaleDeviceVH(parent: ViewGroup) :
         payloads: List<Any>
     ) -> Unit = { item, _ ->
         val stalePeriod = StalenessUtil.formatStalePeriod(context, item.lastSyncTime)
-        staleWarningText.text = getString(R.string.sync_device_stale_warning_text, stalePeriod)
+        staleWarningText.text = getString(SyncR.string.sync_device_stale_warning_text, stalePeriod)
         manageDeviceAction.setOnClickListener { item.onManageDevice() }
     }
 

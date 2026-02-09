@@ -4,8 +4,12 @@ import android.text.format.DateUtils
 import android.text.format.Formatter
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import com.google.android.material.R as MaterialR
 import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.getColorForAttr
+import eu.darken.octi.sync.R as SyncR
+import eu.darken.octi.syncs.kserver.R as KServerR
 import eu.darken.octi.databinding.SyncListItemKserverBinding
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.ui.list.SyncListAdapter
@@ -23,11 +27,11 @@ class KServerStateVH(parent: ViewGroup) :
     ) -> Unit = { item, _ ->
         title.text = when {
             item.credentials.serverAdress.domain.endsWith(".darken.eu") -> {
-                "${getString(R.string.sync_kserver_type_label)} (${item.credentials.serverAdress.domain})"
+                "${getString(KServerR.string.sync_kserver_type_label)} (${item.credentials.serverAdress.domain})"
             }
 
             else -> {
-                "${getString(R.string.sync_kserver_type_label)} (${item.credentials.serverAdress.address})"
+                "${getString(KServerR.string.sync_kserver_type_label)} (${item.credentials.serverAdress.address})"
             }
         }
         accountText.text = item.credentials.accountId.id
@@ -38,7 +42,7 @@ class KServerStateVH(parent: ViewGroup) :
                 ?: getString(R.string.sync_last_never_label)
 
             if (item.ourState.lastError != null) {
-                setTextColor(context.getColorForAttr(R.attr.colorError))
+                setTextColor(context.getColorForAttr(MaterialR.attr.colorError))
             } else {
                 setTextColor(context.getColorForAttr(android.R.attr.textColorPrimary))
             }
@@ -58,7 +62,7 @@ class KServerStateVH(parent: ViewGroup) :
                 val free = Formatter.formatShortFileSize(context, stats.storageFree)
                 getString(R.string.sync_quota_storage_msg, free, used, total)
             }
-            ?: getString(R.string.general_na_label)
+            ?: getString(CommonR.string.general_na_label)
 
         devicesText.text = item.ourState.devices?.let { ourDevices ->
             var deviceString = getQuantityString(R.plurals.general_devices_count_label, ourDevices.size)
@@ -71,12 +75,12 @@ class KServerStateVH(parent: ViewGroup) :
             }
 
             deviceString
-        } ?: getString(R.string.general_na_label)
+        } ?: getString(CommonR.string.general_na_label)
 
         staleDevicesWarning.apply {
             isGone = item.staleDevicesCount == 0
             text = getQuantityString(
-                R.plurals.sync_stale_devices_info_message,
+                SyncR.plurals.sync_stale_devices_info_message,
                 item.staleDevicesCount,
                 item.staleDevicesCount
             )

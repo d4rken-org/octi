@@ -8,7 +8,9 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.setChecked2
+import eu.darken.octi.syncs.kserver.R as KServerR
 import eu.darken.octi.common.uix.BottomSheetDialogFragment2
 import eu.darken.octi.databinding.SyncActionsKserverFragmentBinding
 
@@ -33,29 +35,29 @@ class KServerActionsFragment : BottomSheetDialogFragment2() {
         ui.linkAction.setOnClickListener { vm.linkNewDevice() }
         ui.disconnectAction.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext()).apply {
-                setMessage(R.string.sync_kserver_disconnect_confirmation_desc)
+                setMessage(KServerR.string.sync_kserver_disconnect_confirmation_desc)
                 setPositiveButton(R.string.general_disconnect_action) { _, _ ->
                     vm.disconnct()
                 }
-                setNegativeButton(R.string.general_cancel_action) { _, _ ->
+                setNegativeButton(CommonR.string.general_cancel_action) { _, _ ->
 
                 }
             }.show()
         }
         ui.resetAction.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext()).apply {
-                setMessage(R.string.sync_kserver_reset_confirmation_desc)
+                setMessage(KServerR.string.sync_kserver_reset_confirmation_desc)
                 setPositiveButton(R.string.general_reset_action) { _, _ ->
                     vm.reset()
                 }
-                setNegativeButton(R.string.general_cancel_action) { _, _ ->
+                setNegativeButton(CommonR.string.general_cancel_action) { _, _ ->
 
                 }
             }.show()
         }
 
         vm.state.observe2(ui) {
-            title.text = "${getString(R.string.sync_kserver_type_label)} (${it.credentials.serverAdress.domain})"
+            title.text = "${getString(KServerR.string.sync_kserver_type_label)} (${it.credentials.serverAdress.domain})"
             subtitle.text = it.credentials.accountId.id
             pausedToggle.setChecked2(it.isPaused, false)
             devicesAction.isEnabled = !it.isPaused

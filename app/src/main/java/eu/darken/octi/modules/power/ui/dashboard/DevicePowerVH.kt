@@ -5,8 +5,10 @@ import android.text.format.DateUtils
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.widget.ImageViewCompat
+import com.google.android.material.R as MaterialR
 import eu.darken.octi.R
 import eu.darken.octi.common.TemperatureFormatter
+import eu.darken.octi.modules.power.R as PowerR
 import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.common.isBold
 import eu.darken.octi.databinding.DashboardDevicePowerItemBinding
@@ -48,7 +50,7 @@ class DevicePowerVH(parent: ViewGroup) :
             } else {
                 ImageViewCompat.setImageTintList(
                     this,
-                    ColorStateList.valueOf(context.getColorForAttr(R.attr.colorControlNormal))
+                    ColorStateList.valueOf(context.getColorForAttr(MaterialR.attr.colorControlNormal))
                 )
             }
         }
@@ -57,22 +59,22 @@ class DevicePowerVH(parent: ViewGroup) :
             val percentTxt = (powerInfo.battery.percent * 100).toInt()
             val stateTxt = when (powerInfo.status) {
                 Status.FULL -> {
-                    getString(R.string.module_power_battery_status_full)
+                    getString(PowerR.string.module_power_battery_status_full)
                 }
 
                 Status.CHARGING -> when (powerInfo.chargeIO.speed) {
-                    ChargeIO.Speed.SLOW -> getString(R.string.module_power_battery_status_charging_slow)
-                    ChargeIO.Speed.FAST -> getString(R.string.module_power_battery_status_charging_fast)
-                    else -> getString(R.string.module_power_battery_status_charging)
+                    ChargeIO.Speed.SLOW -> getString(PowerR.string.module_power_battery_status_charging_slow)
+                    ChargeIO.Speed.FAST -> getString(PowerR.string.module_power_battery_status_charging_fast)
+                    else -> getString(PowerR.string.module_power_battery_status_charging)
                 }
 
                 Status.DISCHARGING -> when (powerInfo.chargeIO.speed) {
-                    ChargeIO.Speed.SLOW -> getString(R.string.module_power_battery_status_discharging_slow)
-                    ChargeIO.Speed.FAST -> getString(R.string.module_power_battery_status_discharging_fast)
-                    else -> getString(R.string.module_power_battery_status_discharging)
+                    ChargeIO.Speed.SLOW -> getString(PowerR.string.module_power_battery_status_discharging_slow)
+                    ChargeIO.Speed.FAST -> getString(PowerR.string.module_power_battery_status_discharging_fast)
+                    else -> getString(PowerR.string.module_power_battery_status_discharging)
                 }
 
-                else -> getString(R.string.module_power_battery_status_unknown)
+                else -> getString(PowerR.string.module_power_battery_status_unknown)
             }
             text = "$percentTxt% • $stateTxt"
 
@@ -81,7 +83,7 @@ class DevicePowerVH(parent: ViewGroup) :
                 setTextColor(context.getColor(R.color.error))
                 isBold = true
             } else {
-                setTextColor(context.getColorForAttr(R.attr.colorOnSurface))
+                setTextColor(context.getColorForAttr(MaterialR.attr.colorOnSurface))
                 isBold = false
             }
         }
@@ -90,7 +92,7 @@ class DevicePowerVH(parent: ViewGroup) :
             val estimationText = when {
                 powerInfo.status == Status.FULL && powerInfo.chargeIO.fullSince != null -> {
                     getString(
-                        R.string.module_power_battery_full_since_x,
+                        PowerR.string.module_power_battery_full_since_x,
                         DateUtils.getRelativeTimeSpanString(powerInfo.chargeIO.fullSince!!.toEpochMilli())
                     )
                 }
@@ -99,14 +101,14 @@ class DevicePowerVH(parent: ViewGroup) :
                         && powerInfo.chargeIO.fullAt != null
                         && Duration.between(Instant.now(), powerInfo.chargeIO.fullAt).isNegative -> {
                     getString(
-                        R.string.module_power_battery_full_since_x,
+                        PowerR.string.module_power_battery_full_since_x,
                         DateUtils.getRelativeTimeSpanString(powerInfo.chargeIO.fullAt!!.toEpochMilli())
                     )
                 }
 
                 powerInfo.status == Status.CHARGING && powerInfo.chargeIO.fullAt != null -> {
                     getString(
-                        R.string.module_power_battery_full_in_x,
+                        PowerR.string.module_power_battery_full_in_x,
                         DateUtils.getRelativeTimeSpanString(
                             powerInfo.chargeIO.fullAt!!.toEpochMilli(),
                             Instant.now().toEpochMilli(),
@@ -117,7 +119,7 @@ class DevicePowerVH(parent: ViewGroup) :
 
                 powerInfo.status == Status.DISCHARGING && powerInfo.chargeIO.emptyAt != null -> {
                     getString(
-                        R.string.module_power_battery_empty_in_x,
+                        PowerR.string.module_power_battery_empty_in_x,
                         DateUtils.getRelativeTimeSpanString(
                             powerInfo.chargeIO.emptyAt!!.toEpochMilli(),
                             Instant.now().toEpochMilli(),
@@ -126,7 +128,7 @@ class DevicePowerVH(parent: ViewGroup) :
                     )
                 }
 
-                else -> getString(R.string.module_power_battery_estimation_na)
+                else -> getString(PowerR.string.module_power_battery_estimation_na)
             }
 
             val temperatureText = powerInfo.battery.temp?.let {

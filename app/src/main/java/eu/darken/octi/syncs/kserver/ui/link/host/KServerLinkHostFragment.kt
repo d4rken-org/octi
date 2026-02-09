@@ -12,6 +12,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.EdgeToEdgeHelper
+import eu.darken.octi.syncs.kserver.R as KServerR
 import eu.darken.octi.common.error.asErrorDialogBuilder
 import eu.darken.octi.common.navigation.popBackStack
 import eu.darken.octi.common.uix.Fragment3
@@ -73,7 +74,7 @@ class KServerLinkHostFragment : Fragment3(R.layout.sync_kserver_link_host_fragme
         vm.autoNavOnNewDevice.observe2(ui) {
             Toast.makeText(
                 requireActivity(),
-                R.string.sync_kserver_link_host_device_linked_message,
+                KServerR.string.sync_kserver_link_host_device_linked_message,
                 Toast.LENGTH_LONG
             ).show()
             popBackStack()
