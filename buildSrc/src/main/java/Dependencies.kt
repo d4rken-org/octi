@@ -117,10 +117,11 @@ fun DependencyHandlerScope.addAndroidCore() {
 fun DependencyHandlerScope.addWorkerManager() {
     implementation("androidx.work:work-runtime:${Versions.AndroidX.WorkManager.core}")
     testImplementation("androidx.work:work-testing:${Versions.AndroidX.WorkManager.core}")
-    implementation("androidx.work:work-runtime-ktx:${Versions.AndroidX.WorkManager.core}")
 
-    implementation("androidx.hilt:hilt-work:1.0.0")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    // Override room-compiler-processing pulled by hilt-compiler 1.2.0 (2.6.0) to support Kotlin 2.1 metadata
+    kapt("androidx.room:room-compiler-processing:2.7.2")
 }
 
 fun DependencyHandlerScope.addAndroidUI() {
