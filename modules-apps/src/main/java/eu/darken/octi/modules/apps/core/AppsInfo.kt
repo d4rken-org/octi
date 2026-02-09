@@ -17,6 +17,7 @@ data class AppsInfo(
         @Json(name = "versionName") val versionName: String?,
         @Json(name = "installedAt") val installedAt: Instant,
         @Json(name = "installerPkg") val installerPkg: String?,
+        @Json(name = "updatedAt") val updatedAt: Instant? = null,
     )
 
     override fun toString(): String = "AppsInfo(size=${installedPackages.size})"

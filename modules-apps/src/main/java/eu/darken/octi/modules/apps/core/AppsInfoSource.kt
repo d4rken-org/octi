@@ -44,6 +44,7 @@ class AppsInfoSource @Inject constructor(
                 AppsInfo.Pkg(
                     packageName = pkgInfo.packageName,
                     installedAt = Instant.ofEpochMilli(pkgInfo.firstInstallTime),
+                    updatedAt = Instant.ofEpochMilli(pkgInfo.lastUpdateTime),
                     versionCode = PackageInfoCompat.getLongVersionCode(pkgInfo),
                     versionName = pkgInfo.versionName,
                     label = pkgInfo.applicationInfo?.loadLabel(pm)?.toString(),

@@ -12,6 +12,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/menu_apps_list"
         app:title="@string/module_apps_list_title" />
 
     <androidx.recyclerview.widget.RecyclerView

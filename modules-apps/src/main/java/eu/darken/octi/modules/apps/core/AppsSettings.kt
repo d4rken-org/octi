@@ -29,9 +29,12 @@ class AppsSettings @Inject constructor(
 
     val includeInstaller = dataStore.createValue("module.apps.include.installer", false)
 
+    val sortMode = dataStore.createValue("module.apps.sort.mode", AppsSortMode.NAME, moshi)
+
     override val mapper: PreferenceStoreMapper = PreferenceStoreMapper(
         isEnabled,
         includeInstaller,
+        sortMode,
     )
 
     companion object {
