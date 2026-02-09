@@ -10,6 +10,11 @@
     <string name="module_apps_last_installed_x">Last installed app: %s</string>
     <string name="module_apps_list_title">Installed apps</string>
 
+    <string name="module_apps_sort_label">Sort</string>
+    <string name="module_apps_sort_name_label">Name</string>
+    <string name="module_apps_sort_install_date_label">Install date</string>
+    <string name="module_apps_sort_update_date_label">Update date</string>
+
     <string name="module_apps_installer_label">App installation source</string>
     <string name="module_apps_installer_desc">Sync and include information about each app’s installation source.</string>
 </resources>

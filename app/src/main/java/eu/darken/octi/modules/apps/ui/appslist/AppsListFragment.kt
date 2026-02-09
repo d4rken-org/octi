@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.EdgeToEdgeHelper
@@ -15,6 +16,8 @@ import eu.darken.octi.common.observe2
 import eu.darken.octi.common.uix.Fragment3
 import eu.darken.octi.common.viewbinding.viewBinding
 import eu.darken.octi.databinding.ModuleAppsListFragmentBinding
+import eu.darken.octi.modules.apps.R as AppsR
+import eu.darken.octi.modules.apps.core.AppsSortMode
 import javax.inject.Inject
 
 
@@ -36,6 +39,11 @@ class AppsListFragment : Fragment3(R.layout.module_apps_list_fragment) {
             setupWithNavController(findNavController())
             setOnMenuItemClickListener {
                 when (it.itemId) {
+                    R.id.action_sort -> {
+                        showSortDialog()
+                        true
+                    }
+
                     else -> super.onOptionsItemSelected(it)
                 }
             }
@@ -65,5 +73,19 @@ class AppsListFragment : Fragment3(R.layout.module_apps_list_fragment) {
         }
 
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun showSortDialog() {
+        val modes = AppsSortMode.entries
+        val labels = modes.map { it.label.get(requireContext()) as CharSequence }.toTypedArray()
+        val currentIndex = modes.indexOf(vm.listItems.value?.sortMode ?: AppsSortMode.NAME)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(AppsR.string.module_apps_sort_label)
+            .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
+                vm.updateSortMode(modes[which])
+                dialog.dismiss()
+            }
+            .show()
     }
 }
