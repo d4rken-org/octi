@@ -1,3 +1,9 @@
 <resources>
     <bool name="isTablet">false</bool>
+
+    <declare-styleable name="SliderInputPreference">
+        <attr name="minValue" format="integer" />
+        <attr name="maxValue" format="integer" />
+        <attr name="stepSize" format="integer" />
+    </declare-styleable>
 </resources>
