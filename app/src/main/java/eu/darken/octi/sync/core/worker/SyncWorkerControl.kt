@@ -3,8 +3,11 @@ package eu.darken.octi.sync.core.worker
 import androidx.work.*
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
+import eu.darken.octi.common.debug.Bugs
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.combine
@@ -53,18 +56,22 @@ class SyncWorkerControl @Inject constructor(
 
             log(TAG, VERBOSE) { "Worker request: $workRequest" }
 
-            if (isEnabled) {
-                val operation = workerManager.enqueueUniquePeriodicWork(
-                    WORKER_NAME,
-                    ExistingPeriodicWorkPolicy.UPDATE,
-                    workRequest,
-                )
-                val result = operation.result.get()
-
-                log(TAG, INFO) { "Worker scheduled: $result" }
-            } else {
-                workerManager.cancelUniqueWork(WORKER_NAME)
-                log(TAG, INFO) { "Worker canceled." }
+            try {
+                if (isEnabled) {
+                    val operation = workerManager.enqueueUniquePeriodicWork(
+                        WORKER_NAME,
+                        ExistingPeriodicWorkPolicy.UPDATE,
+                        workRequest,
+                    )
+                    val result = operation.result.get()
+                    log(TAG, INFO) { "Worker scheduled: $result" }
+                } else {
+                    workerManager.cancelUniqueWork(WORKER_NAME)
+                    log(TAG, INFO) { "Worker canceled." }
+                }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Worker operation failed: ${e.asLog()}" }
+                Bugs.report(e)
             }
         }
             .setupCommonEventHandlers(TAG) { "scheduler" }
