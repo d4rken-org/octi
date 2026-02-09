@@ -16,15 +16,14 @@
             android:summary="@string/sync_setting_background_enable_desc"
             android:title="@string/sync_setting_background_enable_title" />
 
-        <SeekBarPreference
+        <eu.darken.octi.common.preferences.SliderInputPreference
             android:defaultValue="60"
             android:icon="@drawable/ic_baseline_av_timer_24"
             android:key="sync.background.interval.minutes"
-            android:max="1440"
-            android:summary="@string/sync_setting_interval_desc"
             android:title="@string/sync_setting_interval_label"
-            app:min="15"
-            app:showSeekBarValue="true" />
+            app:minValue="15"
+            app:maxValue="1440"
+            app:stepSize="15" />
 
         <CheckBoxPreference
             android:defaultValue="true"
