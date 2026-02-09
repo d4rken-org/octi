@@ -29,8 +29,8 @@ class KServerLinkHostFragment : Fragment3(R.layout.sync_kserver_link_host_fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         EdgeToEdgeHelper(requireActivity()).apply {
-            insetsPadding(ui.root, bottom = true)
             insetsPadding(ui.toolbar, top = true, left = true, right = true)
+            insetsPadding(ui.scrollView, left = true, right = true, bottom = true)
         }
 
         ui.toolbar.apply {

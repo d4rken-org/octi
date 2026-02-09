@@ -16,131 +16,127 @@
         app:menu="@menu/menu_kserver_add"
         app:title="@string/sync_kserver_type_label" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/server_group_label"
-        style="@style/TextAppearance.Material3.BodyMedium"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="32dp"
-        android:text="@string/general_select_server_label"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-    <RadioGroup
-        android:id="@+id/server_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:checkedButton="@id/server_kserver_prod_item"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/server_group_label">
-
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/server_kserver_prod_item"
-            style="@style/Widget.Material3.CompoundButton.RadioButton"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="prod.kserver.octi.darken.eu (Production)"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/server_kserver_beta_item"
-            style="@style/Widget.Material3.CompoundButton.RadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="beta.kserver.octi.darken.eu (Beta)"
-            tools:ignore="HardcodedText" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/server_group_label"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/general_select_server_label" />
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/server_kserver_local_item"
-            style="@style/Widget.Material3.CompoundButton.RadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="localhost (Local)"
-            tools:ignore="HardcodedText" />
+            <RadioGroup
+                android:id="@+id/server_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:checkedButton="@id/server_kserver_prod_item">
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/server_kserver_custom_item"
-            style="@style/Widget.Material3.CompoundButton.RadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sync_custom_server_label"
-            tools:ignore="HardcodedText" />
-    </RadioGroup>
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/server_kserver_prod_item"
+                    style="@style/Widget.Material3.CompoundButton.RadioButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="prod.kserver.octi.darken.eu (Production)"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/custom_server_input_layout"
-        style="@style/Widget.Material3.TextInputEditText.FilledBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/create_new_account"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/server_group"
-        tools:visibility="visible">
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/server_kserver_beta_item"
+                    style="@style/Widget.Material3.CompoundButton.RadioButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="beta.kserver.octi.darken.eu (Beta)"
+                    tools:ignore="HardcodedText" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/custom_server_input"
-            style="@style/Widget.Material3.TextInputEditText.FilledBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="protocol://server:port"
-            android:imeOptions="actionGo"
-            android:inputType="text"
-            tools:ignore="HardcodedText" />
-    </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/server_kserver_local_item"
+                    style="@style/Widget.Material3.CompoundButton.RadioButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="localhost (Local)"
+                    tools:ignore="HardcodedText" />
 
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/server_kserver_custom_item"
+                    style="@style/Widget.Material3.CompoundButton.RadioButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sync_custom_server_label"
+                    tools:ignore="HardcodedText" />
+            </RadioGroup>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/create_new_account"
-        style="@style/Widget.Material3.Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/general_create_account_action"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/custom_server_input_layout" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/custom_server_input_layout"
+                style="@style/Widget.Material3.TextInputEditText.FilledBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/create_new_account_hint"
-        style="@style/TextAppearance.Material3.LabelSmall"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:gravity="center"
-        android:text="@string/sync_kserver_add_create_action_hint"
-        app:layout_constraintEnd_toEndOf="@id/create_new_account"
-        app:layout_constraintStart_toStartOf="@id/create_new_account"
-        app:layout_constraintTop_toBottomOf="@id/create_new_account" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/custom_server_input"
+                    style="@style/Widget.Material3.TextInputEditText.FilledBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="protocol://server:port"
+                    android:imeOptions="actionGo"
+                    android:inputType="text"
+                    tools:ignore="HardcodedText" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/link_existing_account"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/general_link_existing_action"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/create_new_account_hint" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/create_new_account"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/general_create_account_action" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/link_existing_account_hint"
-        style="@style/TextAppearance.Material3.LabelSmall"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:gravity="center"
-        android:text="@string/sync_kserver_add_link_action_hint"
-        app:layout_constraintEnd_toEndOf="@id/link_existing_account"
-        app:layout_constraintStart_toStartOf="@id/link_existing_account"
-        app:layout_constraintTop_toBottomOf="@id/link_existing_account" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/create_new_account_hint"
+                style="@style/TextAppearance.Material3.LabelSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:gravity="center"
+                android:text="@string/sync_kserver_add_create_action_hint" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/link_existing_account"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/general_link_existing_action" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/link_existing_account_hint"
+                style="@style/TextAppearance.Material3.LabelSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:gravity="center"
+                android:text="@string/sync_kserver_add_link_action_hint" />
+
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
