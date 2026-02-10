@@ -53,7 +53,10 @@ class ConnectivityDetailFragment : BottomSheetDialogFragment2() {
             localIpv6Copy.setOnClickListener { copyToClipboard(info?.localAddressIpv6) }
 
             gatewayValue.text = info?.gatewayIp ?: unknownLocal
-            dnsValue.text = info?.dnsServers?.joinToString(", ") ?: unknownLocal
+            dnsValue.text = info?.dnsServers
+                ?.takeIf { it.isNotEmpty() }
+                ?.joinToString(", ")
+                ?: unknownLocal
         }
         super.onViewCreated(view, savedInstanceState)
     }

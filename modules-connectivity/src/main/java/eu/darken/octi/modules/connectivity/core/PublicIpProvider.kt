@@ -17,9 +17,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -53,7 +53,7 @@ class PublicIpProvider @Inject constructor(
         delay(SETTLE_DELAY_MS)
 
         for (url in endpointUrls) {
-            val result = withTimeoutOrNull(TIMEOUT_MS) { fetchPublicIp(url) }
+            val result = fetchPublicIp(url)
             if (result != null) return@mapLatest result
         }
 
@@ -67,14 +67,19 @@ class PublicIpProvider @Inject constructor(
                 .get()
                 .build()
 
-            val response = httpClient.newCall(request).execute()
-            if (!response.isSuccessful) {
-                log(TAG, WARN) { "Public IP fetch failed: ${response.code}" }
-                return@withContext null
+            val call = httpClient.newCall(request).also {
+                it.timeout().timeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
             }
 
-            val body = response.body?.string() ?: return@withContext null
-            ipAdapter.fromJson(body)?.ip
+            call.execute().use { response ->
+                if (!response.isSuccessful) {
+                    log(TAG, WARN) { "Public IP fetch failed: ${response.code}" }
+                    return@withContext null
+                }
+
+                val body = response.body?.string() ?: return@withContext null
+                ipAdapter.fromJson(body)?.ip
+            }
         } catch (e: Exception) {
             log(TAG, ERROR) { "Failed to fetch public IP: ${e.asLog()}" }
             null

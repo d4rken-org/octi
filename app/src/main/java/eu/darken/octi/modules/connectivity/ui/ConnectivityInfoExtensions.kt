@@ -7,8 +7,8 @@ import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 @get:DrawableRes
 val ConnectivityInfo.ConnectionType?.iconRes: Int
     get() = when (this) {
-        ConnectivityInfo.ConnectionType.WIFI,
-        ConnectivityInfo.ConnectionType.CELLULAR,
-        ConnectivityInfo.ConnectionType.ETHERNET -> R.drawable.ic_baseline_public_24
+        ConnectivityInfo.ConnectionType.WIFI -> R.drawable.ic_wifi_24
+        ConnectivityInfo.ConnectionType.CELLULAR -> R.drawable.ic_baseline_cell_tower_24
+        ConnectivityInfo.ConnectionType.ETHERNET -> R.drawable.ic_baseline_lan_24
         ConnectivityInfo.ConnectionType.NONE, null -> R.drawable.ic_baseline_link_off_24
     }
