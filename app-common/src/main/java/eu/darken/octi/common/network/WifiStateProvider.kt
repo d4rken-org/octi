@@ -26,8 +26,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.net.Inet4Address
-import java.net.Inet6Address
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -123,7 +121,6 @@ class WifiStateProvider @Inject constructor(
         .map { network ->
             if (network == null) return@map null
             val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return@map null
-            val linkProperties = connectivityManager.getLinkProperties(network) ?: return@map null
 
             val ssid = if (hasApiLevel(29) && context.hasPermission(Permission.ACCESS_FINE_LOCATION)) {
                 wifiManager.connectionInfo.ssid
@@ -148,8 +145,6 @@ class WifiStateProvider @Inject constructor(
                     }
                 }.takeIf { it.isFinite() } ?: -1f,
                 ssid = ssid,
-                addressIpv4 = linkProperties.linkAddresses.firstOrNull { it.address is Inet4Address }?.address as Inet4Address?,
-                addressIpv6 = linkProperties.linkAddresses.firstOrNull { it.address is Inet6Address }?.address as Inet6Address?,
                 frequency = wifiManager.connectionInfo?.frequency,
             )
         }
@@ -160,8 +155,6 @@ class WifiStateProvider @Inject constructor(
     data class Wifi(
         val signalStrength: Float,
         val ssid: String?,
-        val addressIpv4: Inet4Address?,
-        val addressIpv6: Inet6Address?,
         val frequency: Int?,
     )
 

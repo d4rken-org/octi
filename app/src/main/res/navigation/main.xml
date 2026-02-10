@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_dashFragment_to_powerAlertsFragment"
             app:destination="@id/powerAlertsFragment" />
+        <action
+            android:id="@+id/action_dashFragment_to_connectivityDetailFragment"
+            app:destination="@id/connectivityDetailFragment" />
     </fragment>
 
     <fragment
@@ -185,5 +188,14 @@
             android:name="deviceId"
             app:argType="eu.darken.octi.sync.core.DeviceId" />
     </fragment>
+
+    <dialog
+        android:id="@+id/connectivityDetailFragment"
+        android:name="eu.darken.octi.modules.connectivity.ui.detail.ConnectivityDetailFragment"
+        tools:layout="@layout/connectivity_detail_sheet">
+        <argument
+            android:name="deviceId"
+            app:argType="eu.darken.octi.sync.core.DeviceId" />
+    </dialog>
 
 </navigation>

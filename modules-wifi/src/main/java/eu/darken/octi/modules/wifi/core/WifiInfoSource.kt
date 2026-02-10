@@ -29,8 +29,6 @@ class WifiInfoSource @Inject constructor(
             currentWifi = WifiInfo.Wifi(
                 reception = wifiState?.signalStrength,
                 ssid = wifiState?.ssid,
-                addressIpv4 = wifiState?.addressIpv4?.hostAddress,
-                addressIpv6 = wifiState?.addressIpv6?.hostAddress,
                 freqType = wifiState?.frequency?.let {
                     when (it) {
                         in 2401..2499 -> WifiInfo.Wifi.Type.TWO_POINT_FOUR_GHZ

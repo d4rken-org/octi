@@ -159,6 +159,7 @@ dependencies {
     implementation(project(":modules-meta"))
     implementation(project(":modules-power"))
     implementation(project(":modules-wifi"))
+    implementation(project(":modules-connectivity"))
     implementation(project(":modules-apps"))
     implementation(project(":modules-clipboard"))
 

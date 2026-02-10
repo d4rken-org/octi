@@ -40,6 +40,8 @@ import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
 import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.core.alert.PowerAlertManager
 import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
+import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
+import eu.darken.octi.modules.connectivity.ui.dashboard.DeviceConnectivityVH
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
 import eu.darken.octi.sync.core.SyncManager
@@ -276,6 +278,7 @@ class DashboardVM @Inject constructor(
                     .mapNotNull { moduleData ->
                         when (moduleData.data) {
                             is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem(powerAlerts)
+                            is ConnectivityInfo -> (moduleData as ModuleData<ConnectivityInfo>).createVHItem()
                             is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
                             is AppsInfo -> (moduleData as ModuleData<AppsInfo>).createVHItem()
                             is ClipboardInfo -> (moduleData as ModuleData<ClipboardInfo>).createVHItem()
@@ -359,6 +362,13 @@ class DashboardVM @Inject constructor(
         }
     )
 
+    private fun ModuleData<ConnectivityInfo>.createVHItem() = DeviceConnectivityVH.Item(
+        data = this,
+        onDetailClicked = {
+            DashboardFragmentDirections.actionDashFragmentToConnectivityDetailFragment(deviceId).navigate()
+        },
+    )
+
     private fun ModuleData<ClipboardInfo>.createVHItem() = ClipboardVH.Item(
         data = this,
         isOurDevice = deviceId == syncSettings.deviceId,
@@ -372,6 +382,7 @@ class DashboardVM @Inject constructor(
     companion object {
         private val INFO_ORDER = listOf(
             PowerInfo::class,
+            ConnectivityInfo::class,
             WifiInfo::class,
             ClipboardInfo::class,
             AppsInfo::class,
