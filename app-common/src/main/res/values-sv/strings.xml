@@ -24,4 +24,6 @@
     <string name="general_refresh_action">Uppdatera</string>
     <string name="general_continue">Fortsätt</string>
     <string name="general_show_details_action">Visa detaljer</string>
+    <string name="general_minutes_label">Minuter</string>
+    <string name="preference_slider_input_summary">%1$d minuter</string>
 </resources>

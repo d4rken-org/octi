@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">Szöveg másolása és beillesztése eszközök között.</string>
     <string name="module_clipboard_copied_octi_to_os">Az Octiból a rendszer vágólapjára másolva</string>
     <string name="module_clipboard_copied_os_to_octi">A rendszerből az Octi vágólapjára másolva</string>
+
+    <string name="module_clipboard_detail_type_label">Típus</string>
+    <string name="module_clipboard_detail_content_label">Tartalom</string>
+    <string name="module_clipboard_detail_type_empty">Üres</string>
+    <string name="module_clipboard_detail_type_text">Szöveg</string>
+    <string name="module_clipboard_copy_action">Másolás a vágólapra</string>
 </resources>

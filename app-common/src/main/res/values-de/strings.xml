@@ -24,4 +24,6 @@
     <string name="general_refresh_action">Aktualisieren</string>
     <string name="general_continue">Weiter</string>
     <string name="general_show_details_action">Details anzeigen</string>
+    <string name="general_minutes_label">Minuten</string>
+    <string name="preference_slider_input_summary">%1$d Minuten</string>
 </resources>

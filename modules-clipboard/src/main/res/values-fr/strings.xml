@@ -3,5 +3,11 @@
     <string name="module_clipboard_label">Module presse-papiers</string>
     <string name="module_clipboard_desc">Copier et coller du texte entre appareils.</string>
     <string name="module_clipboard_copied_octi_to_os">Le presse-papiers d’Octi a été copié dans le presse-papiers du système</string>
-    <string name="module_clipboard_copied_os_to_octi">Le presse-papiers du système a été copié dans le presse-papiers d’Octi</string>
+    <string name="module_clipboard_copied_os_to_octi">Le presse-papiers du système a été copié dans le presse-papiers d'Octi</string>
+
+    <string name="module_clipboard_detail_type_label">Type</string>
+    <string name="module_clipboard_detail_content_label">Contenu</string>
+    <string name="module_clipboard_detail_type_empty">Vide</string>
+    <string name="module_clipboard_detail_type_text">Texte</string>
+    <string name="module_clipboard_copy_action">Copier dans le presse-papiers</string>
 </resources>

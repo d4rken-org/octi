@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">在设备之间复制和粘贴文本。</string>
     <string name="module_clipboard_copied_octi_to_os">将Octi复制到系统剪贴板</string>
     <string name="module_clipboard_copied_os_to_octi">将系统复制到Octi剪贴板</string>
+
+    <string name="module_clipboard_detail_type_label">类型</string>
+    <string name="module_clipboard_detail_content_label">内容</string>
+    <string name="module_clipboard_detail_type_empty">空</string>
+    <string name="module_clipboard_detail_type_text">文本</string>
+    <string name="module_clipboard_copy_action">复制到剪贴板</string>
 </resources>

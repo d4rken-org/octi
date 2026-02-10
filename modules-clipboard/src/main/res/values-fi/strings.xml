@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">Kopioi ja liitä tekstiä laitteiden välillä.</string>
     <string name="module_clipboard_copied_octi_to_os">Kopioitu Octista järjestelmän leikepöydälle</string>
     <string name="module_clipboard_copied_os_to_octi">Kopioitu järjestelmästä Octin leikepöydälle</string>
+
+    <string name="module_clipboard_detail_type_label">Tyyppi</string>
+    <string name="module_clipboard_detail_content_label">Sisältö</string>
+    <string name="module_clipboard_detail_type_empty">Tyhjä</string>
+    <string name="module_clipboard_detail_type_text">Teksti</string>
+    <string name="module_clipboard_copy_action">Kopioi leikepöydälle</string>
 </resources>

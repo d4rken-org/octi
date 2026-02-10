@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">Kopiuj i wklejaj tekst między urządzeniami.</string>
     <string name="module_clipboard_copied_octi_to_os">Skopiowano z Octi do schowka systemu</string>
     <string name="module_clipboard_copied_os_to_octi">Skopiowano z systemu do schowka Octi</string>
+
+    <string name="module_clipboard_detail_type_label">Typ</string>
+    <string name="module_clipboard_detail_content_label">Zawartość</string>
+    <string name="module_clipboard_detail_type_empty">Pusty</string>
+    <string name="module_clipboard_detail_type_text">Tekst</string>
+    <string name="module_clipboard_copy_action">Kopiuj do schowka</string>
 </resources>

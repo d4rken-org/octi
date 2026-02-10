@@ -29,4 +29,17 @@
     <string name="module_power_alerts_highbattery_disabled_caption">Neupozorňovat při vysokém stavu baterie</string>
     <string name="module_power_alerts_notification_battery_high_title">Vysoký stav baterie: %s</string>
     <string name="module_power_alerts_notification_battery_high_body">%1$s je na %3$d%% baterie (&gt;%2$d%%) a nenabíjí se.</string>
+
+    <string name="module_power_detail_level_label">Úroveň baterie</string>
+    <string name="module_power_detail_status_label">Stav</string>
+    <string name="module_power_detail_speed_label">Rychlost nabíjení</string>
+    <string name="module_power_detail_temperature_label">Teplota</string>
+    <string name="module_power_detail_estimation_label">Odhad</string>
+    <string name="module_power_detail_health_label">Zdraví</string>
+    <string name="module_power_detail_health_good">Dobrý</string>
+    <string name="module_power_detail_health_overheat">Přehřátí</string>
+    <string name="module_power_detail_health_dead">Vybitá</string>
+    <string name="module_power_detail_health_over_voltage">Přepětí</string>
+    <string name="module_power_detail_health_cold">Studená</string>
+    <string name="module_power_detail_health_unknown">Neznámý</string>
 </resources>

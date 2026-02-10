@@ -24,4 +24,6 @@
     <string name="general_refresh_action">Obnovit</string>
     <string name="general_continue">Pokračovat</string>
     <string name="general_show_details_action">Zobrazit podrobnosti</string>
+    <string name="general_minutes_label">Minuty</string>
+    <string name="preference_slider_input_summary">%1$d minut</string>
 </resources>

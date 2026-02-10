@@ -7,4 +7,10 @@
     <string name="module_wifi_reception_good_label">إشارة جيدة</string>
     <string name="module_wifi_reception_okay_label">إشارة موافق</string>
     <string name="module_wifi_reception_bad_label">إشارة سيئة</string>
+
+    <string name="module_wifi_detail_ssid_label">SSID</string>
+    <string name="module_wifi_detail_frequency_label">التردد</string>
+    <string name="module_wifi_detail_signal_label">الإشارة</string>
+    <string name="module_wifi_freq_5ghz">5 GHz</string>
+    <string name="module_wifi_freq_2_4ghz">2.4 GHz</string>
 </resources>

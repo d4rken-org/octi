@@ -10,6 +10,10 @@
     </plurals>
     <string name="module_apps_last_installed_x">Naposledy nainstalovaná aplikace: %s</string>
     <string name="module_apps_list_title">Nainstalované aplikace</string>
+    <string name="module_apps_sort_label">Řazení</string>
+    <string name="module_apps_sort_name_label">Název</string>
+    <string name="module_apps_sort_install_date_label">Datum instalace</string>
+    <string name="module_apps_sort_update_date_label">Datum aktualizace</string>
     <string name="module_apps_installer_label">Zdroj instalace aplikace</string>
     <string name="module_apps_installer_desc">Synchronizujte a uveďte informace o zdroji instalace každé aplikace.</string>
 </resources>

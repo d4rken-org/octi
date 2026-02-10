@@ -24,4 +24,6 @@
     <string name="general_refresh_action">Yenile</string>
     <string name="general_continue">Devam</string>
     <string name="general_show_details_action">Detayları göster</string>
+    <string name="general_minutes_label">Dakika</string>
+    <string name="preference_slider_input_summary">%1$d dakika</string>
 </resources>
