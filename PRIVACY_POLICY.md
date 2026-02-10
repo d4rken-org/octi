@@ -54,6 +54,8 @@ Some meta data like access times and IP addresses are temporarily stored to allo
 Any stored data can be deleted from within the app by deleting your account. If your account is not accessed at least
 once within 30 days, your data is also deleted.
 
+The connectivity module determines your device's public IP address by sending a request to a K-Server. If you have configured a custom K-Server, that server is used first. Otherwise, the app falls back to the default K-Server provided by me. The server inherently sees your device's IP address as part of processing the request. No additional data is collected or stored through this process.
+
 ### J-Server
 
 *Removed in 0.10.0-rc0*
