@@ -31,103 +31,118 @@
         tools:text="WiFi" />
 
     <!-- Public IP -->
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/public_ip_label"
-        style="@style/TextAppearance.Material3.LabelMedium"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/module_connectivity_detail_public_ip_label" />
+        android:layout_marginBottom="12dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/public_ip_value"
-            style="@style/TextAppearance.Material3.BodyMedium"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:text="203.0.113.42" />
+            android:layout_marginEnd="36dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/public_ip_label"
+                style="@style/TextAppearance.Material3.LabelMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/module_connectivity_detail_public_ip_label" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/public_ip_value"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="203.0.113.42" />
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/public_ip_copy"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_gravity="end|center_vertical"
             android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/general_copy_action"
             android:src="@drawable/ic_baseline_content_copy_24"
             app:tint="?attr/colorControlNormal" />
-    </LinearLayout>
+    </FrameLayout>
 
     <!-- Local IPv4 -->
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/local_ipv4_label"
-        style="@style/TextAppearance.Material3.LabelMedium"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/module_connectivity_detail_local_ipv4_label" />
+        android:layout_marginBottom="12dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/local_ipv4_value"
-            style="@style/TextAppearance.Material3.BodyMedium"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:text="192.168.1.100" />
+            android:layout_marginEnd="36dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/local_ipv4_label"
+                style="@style/TextAppearance.Material3.LabelMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/module_connectivity_detail_local_ipv4_label" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/local_ipv4_value"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="192.168.1.100" />
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/local_ipv4_copy"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_gravity="end|center_vertical"
             android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/general_copy_action"
             android:src="@drawable/ic_baseline_content_copy_24"
             app:tint="?attr/colorControlNormal" />
-    </LinearLayout>
+    </FrameLayout>
 
     <!-- Local IPv6 -->
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/local_ipv6_label"
-        style="@style/TextAppearance.Material3.LabelMedium"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/module_connectivity_detail_local_ipv6_label" />
+        android:layout_marginBottom="12dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/local_ipv6_value"
-            style="@style/TextAppearance.Material3.BodyMedium"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:text="fe80::1" />
+            android:layout_marginEnd="36dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/local_ipv6_label"
+                style="@style/TextAppearance.Material3.LabelMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/module_connectivity_detail_local_ipv6_label" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/local_ipv6_value"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="fe80::1" />
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/local_ipv6_copy"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_gravity="end|center_vertical"
             android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/general_copy_action"
             android:src="@drawable/ic_baseline_content_copy_24"
             app:tint="?attr/colorControlNormal" />
-    </LinearLayout>
+    </FrameLayout>
 
     <!-- Gateway -->
     <com.google.android.material.textview.MaterialTextView
