@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.Material3.TitleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/module_connectivity_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/connection_type_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_connectivity_detail_connection_type_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/connection_type_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="WiFi" />
+
+    <!-- Public IP -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/public_ip_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_connectivity_detail_public_ip_label" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/public_ip_value"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:text="203.0.113.42" />
+
+        <ImageButton
+            android:id="@+id/public_ip_copy"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/general_copy_action"
+            android:src="@drawable/ic_baseline_content_copy_24"
+            app:tint="?attr/colorControlNormal" />
+    </LinearLayout>
+
+    <!-- Local IPv4 -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/local_ipv4_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_connectivity_detail_local_ipv4_label" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/local_ipv4_value"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:text="192.168.1.100" />
+
+        <ImageButton
+            android:id="@+id/local_ipv4_copy"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/general_copy_action"
+            android:src="@drawable/ic_baseline_content_copy_24"
+            app:tint="?attr/colorControlNormal" />
+    </LinearLayout>
+
+    <!-- Local IPv6 -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/local_ipv6_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_connectivity_detail_local_ipv6_label" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/local_ipv6_value"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:text="fe80::1" />
+
+        <ImageButton
+            android:id="@+id/local_ipv6_copy"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/general_copy_action"
+            android:src="@drawable/ic_baseline_content_copy_24"
+            app:tint="?attr/colorControlNormal" />
+    </LinearLayout>
+
+    <!-- Gateway -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/gateway_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_connectivity_detail_gateway_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/gateway_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="192.168.1.1" />
+
+    <!-- DNS -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/dns_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_connectivity_detail_dns_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/dns_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="8.8.8.8, 8.8.4.4" />
+
+</LinearLayout>

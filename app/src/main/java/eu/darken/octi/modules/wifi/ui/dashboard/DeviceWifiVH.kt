@@ -46,9 +46,7 @@ class DeviceWifiVH(parent: ViewGroup) :
         }
 
         wifiSecondary.apply {
-            val ipText = wifi.currentWifi?.addressIpv4 ?: getString(WifiR.string.module_wifi_unknown_ip_label)
-            val ssidText = wifi.currentWifi?.ssid ?: getString(WifiR.string.module_wifi_unknown_ssid_label)
-            text = "$ssidText - $ipText"
+            text = wifi.currentWifi?.ssid ?: getString(WifiR.string.module_wifi_unknown_ssid_label)
         }
 
         permAction.apply {

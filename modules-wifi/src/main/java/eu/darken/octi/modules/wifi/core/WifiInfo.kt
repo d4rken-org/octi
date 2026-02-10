@@ -11,8 +11,6 @@ data class WifiInfo(
     @JsonClass(generateAdapter = true)
     data class Wifi(
         @Json(name = "ssid") val ssid: String?,
-        @Json(name = "addressIpv4") val addressIpv4: String?,
-        @Json(name = "addressIpv6") val addressIpv6: String?,
         @Json(name = "reception") val reception: Float?,
         @Json(name = "freqType") val freqType: Type?,
     ) {

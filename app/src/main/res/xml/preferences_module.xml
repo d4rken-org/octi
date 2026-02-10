@@ -9,6 +9,11 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/modules_category_connectivity_label">
         <CheckBoxPreference
+            android:icon="@drawable/ic_baseline_public_24"
+            android:key="module.connectivity.enabled"
+            android:summary="@string/module_connectivity_desc"
+            android:title="@string/module_connectivity_label" />
+        <CheckBoxPreference
             android:icon="@drawable/ic_baseline_network_wifi_5_bar_24"
             android:key="module.wifi.enabled"
             android:summary="@string/module_wifi_desc"
