@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.Material3.TitleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/module_power_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/level_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_power_detail_level_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/level_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="68%" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/status_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_power_detail_status_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/status_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="Discharging" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/speed_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_power_detail_speed_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/speed_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="Normal" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/temperature_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_power_detail_temperature_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/temperature_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="32°C" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/estimation_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_power_detail_estimation_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/estimation_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="2 hr, 1 min remaining" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/health_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_power_detail_health_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/health_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Good" />
+
+</LinearLayout>

@@ -32,4 +32,17 @@
     <string name="module_power_alerts_highbattery_disabled_caption">Don\'t notify when battery is high</string>
     <string name="module_power_alerts_notification_battery_high_title">High battery: %s</string>
     <string name="module_power_alerts_notification_battery_high_body">%1$s is at %3$d%% battery (>%2$d%%) and still charging.</string>
+
+    <string name="module_power_detail_level_label">Battery level</string>
+    <string name="module_power_detail_status_label">Status</string>
+    <string name="module_power_detail_speed_label">Charge speed</string>
+    <string name="module_power_detail_temperature_label">Temperature</string>
+    <string name="module_power_detail_estimation_label">Estimation</string>
+    <string name="module_power_detail_health_label">Health</string>
+    <string name="module_power_detail_health_good">Good</string>
+    <string name="module_power_detail_health_overheat">Overheat</string>
+    <string name="module_power_detail_health_dead">Dead</string>
+    <string name="module_power_detail_health_over_voltage">Over voltage</string>
+    <string name="module_power_detail_health_cold">Cold</string>
+    <string name="module_power_detail_health_unknown">Unknown</string>
 </resources>
