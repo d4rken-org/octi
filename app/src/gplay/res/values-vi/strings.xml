@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play không khả dụng</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi không thể kết nối với Google Play. Google Play đã được cài đặt và cập nhật chưa? Bạn đã đăng nhập tài khoản Google chưa? Hãy thử xóa bộ nhớ cache của ứng dụng Google Play và khởi động lại thiết bị.</string>
     <string name="upgrades_no_purchases_found_check_account">Không tìm thấy giao dịch mua nào. Bạn có dùng đúng tài khoản không?</string>
@@ -8,6 +9,7 @@
     <string name="upgrades_dashcard_upgrade_action">Nâng cấp</string>
     <string name="upgrade_screen_title">Nhận Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi không có quảng cáo và không bán dữ liệu người dùng. Công việc của tôi được tài trợ bởi bạn ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Lợi ích</string>
     <string name="upgrade_screen_benefits_body">• Hơn 3 thiết bị 💯\n• Chủ đề khác nhau 🎨\n• Nhiều tùy chọn hơn ⚙️\n• Máy chủ đồng bộ hóa bổ sung 🖥️️\n• Tiếp tục phát triển ☕\n• Nhà phát triển đầy nhiệt huyết 🧙</string>
     <string name="upgrade_screen_how_title">Tùy chọn</string>
     <string name="upgrade_screen_how_body">Bạn có thể chọn giữa mua một lần và đăng ký hàng năm rẻ hơn.\nĐăng ký bắt đầu với 14 ngày dùng thử miễn phí, sau đó bạn sẽ bị tính phí một lần mỗi năm. Có thể hủy dùng thử và đăng ký bất cứ lúc nào.\nCùng các chức năng, chỉ khác mô hình giá.</string>

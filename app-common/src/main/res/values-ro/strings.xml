@@ -22,4 +22,7 @@
     <string name="general_refresh_action">Reîmprospătează</string>
     <string name="general_continue">Continuă</string>
     <string name="general_show_details_action">Afișează detalii</string>
+    <string name="general_na_label">N/A</string>
+    <string name="general_minutes_label">Minute</string>
+    <string name="preference_slider_input_summary">%1$d minute</string>
 </resources>

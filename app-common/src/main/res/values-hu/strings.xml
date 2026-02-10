@@ -22,4 +22,7 @@
     <string name="general_refresh_action">Frissítés</string>
     <string name="general_continue">Folytatás</string>
     <string name="general_show_details_action">Részletek megjelenítése</string>
+    <string name="general_na_label">N/A</string>
+    <string name="general_minutes_label">Percek</string>
+    <string name="preference_slider_input_summary">%1$d perc</string>
 </resources>

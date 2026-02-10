@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_connectivity_label">Module de connectivité</string>
+    <string name="module_connectivity_desc">Type de connexion, IP publique, détails du réseau</string>
+    <string name="module_connectivity_type_wifi_label">WiFi</string>
+    <string name="module_connectivity_type_cellular_label">Données mobiles</string>
+    <string name="module_connectivity_type_ethernet_label">Ethernet</string>
+    <string name="module_connectivity_type_none_label">Aucune connexion</string>
+    <string name="module_connectivity_unknown_public_ip_label">IP publique inconnue</string>
+    <string name="module_connectivity_unknown_local_ip_label">IP locale inconnue</string>
+    <string name="module_connectivity_detail_local_ipv4_label">IPv4 locale</string>
+    <string name="module_connectivity_detail_local_ipv6_label">IPv6 locale</string>
+    <string name="module_connectivity_detail_gateway_label">Gateway</string>
+    <string name="module_connectivity_detail_dns_label">Serveurs DNS</string>
+    <string name="module_connectivity_detail_public_ip_label">IP publique</string>
+    <string name="module_connectivity_detail_connection_type_label">Type de connexion</string>
+</resources>

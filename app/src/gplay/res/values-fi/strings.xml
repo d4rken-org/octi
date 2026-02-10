@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play ei ole käytettävissä</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi ei voi yhdistää Google Playhin. Onko Google Play asennettu ja ajan tasalla? Onko Google-tilisi kirjautuneena? Kokeile tyhjentää Google Play -sovelluksen välimuisti ja käynnistää laite uudelleen.</string>
     <string name="upgrades_no_purchases_found_check_account">Ostoja ei löytynyt. Käytätkö oikeaa tiliä?</string>
@@ -8,6 +9,7 @@
     <string name="upgrades_dashcard_upgrade_action">Päivitä</string>
     <string name="upgrade_screen_title">Hanki Octi Pro</string>
     <string name="upgrade_screen_preamble">Octissa ei ole mainoksia eikä se myy käyttäjätietoja. Työni rahoitetaan sinun avullasi ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Hyödyt</string>
     <string name="upgrade_screen_benefits_body">• Yli 3 laitetta 💯\n• Erilaiset teemat 🎨\n• Lisää vaihtoehtoja ⚙️\n• Lisäsynkronointipalvelimet🖥️️\n• Jatkuva kehitys ☕\n• Motivoitunut kehittäjä 🧙</string>
     <string name="upgrade_screen_how_title">Vaihtoehdot</string>
     <string name="upgrade_screen_how_body">Voit valita kertamaksun ja halvemman vuositilauksen välillä.\nTilaus alkaa ilmaisella 14 päivän kokeilulla, jonka jälkeen maksu veloitetaan vuosittain. Kokeilu ja tilaus ovat peruttavissa milloin tahansa.\nSamat ominaisuudet, vain eri hinnoittelumallit.</string>

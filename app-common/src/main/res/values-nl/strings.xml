@@ -22,4 +22,7 @@
     <string name="general_refresh_action">Vernieuwen</string>
     <string name="general_continue">Doorgaan</string>
     <string name="general_show_details_action">Details tonen</string>
+    <string name="general_quota_label">Quotum</string>
+    <string name="general_minutes_label">Minuten</string>
+    <string name="preference_slider_input_summary">%1$d minuten</string>
 </resources>
