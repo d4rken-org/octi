@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="module_wifi_label">Wi-Fi-module</string>
     <string name="module_wifi_desc">Name, ontvangs, IP\'s, ens.</string>
     <string name="module_wifi_unknown_ssid_label">Onbekende SSID</string>
     <string name="module_wifi_unknown_ip_label">Onbekende IP</string>
     <string name="module_wifi_reception_good_label">Goeie sein</string>
     <string name="module_wifi_reception_okay_label">OK sein</string>
     <string name="module_wifi_reception_bad_label">Swak sein</string>
+
+    <string name="module_wifi_detail_ssid_label">SSID</string>
+    <string name="module_wifi_detail_frequency_label">Frekwensie</string>
+    <string name="module_wifi_detail_signal_label">Sein</string>
+    <string name="module_wifi_freq_5ghz">5 GHz</string>
+    <string name="module_wifi_freq_2_4ghz">2.4 GHz</string>
 </resources>

@@ -4,9 +4,11 @@
     <string name="gdrive_account_scope_error_description">Octi није добио неопходан опсег приступа. Покушајте поново и проверите да ли су дозволе додељене.</string>
     <string name="gdrive_account_lockout_error_label">Грешка при закључавању</string>
     <string name="gdrive_account_lockout_error_description">Овај уређај је закључан и више не може да приступи Google Drive-у. Његов приступ вашем Google налогу је опозван. Поново дозволите приступ и покушајте поново.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">Опсег података апликације</string>
     <string name="sync_gdrive_type_appdata_description">Подаци се чувају на Google Drive-у. Ова варијанта користи „app-data“ опсег. Приступ је дозвољен само новом директорију који је само за ову апликацију. Директоријум није видљив на вашем drive-у. Ово је слично начину рада WhatsApp резервних копија.</string>
     <string name="sync_gdrive_add_label">Додај нови Google Drive</string>
+    <string name="sync_gdrive_add_description">Кликните на дугме за пријаву испод да бисте подесили приступ Google Drive-у.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Ресетуј све Octi податке сачуване на Google Drive-у. Ваш уређај остаје пријављен на Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Одјавите се са Google Drive-а и обришите податке који се односе на овај уређај.</string>
     <string name="sync_gdrive_error_no_account_on_device">Овај уређај није пријављен ни на један Google налог.</string>

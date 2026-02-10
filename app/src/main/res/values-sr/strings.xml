@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Креирај налог</string>
     <string name="general_link_existing_action">Повежи са постојећим налогом</string>
     <string name="general_sync_action">Синхронизуј</string>
+    <string name="general_manage_devices_action">Управљај уређајима</string>
     <string name="general_select_server_label">Изабери сервер</string>
     <string name="onboarding_welcome_subtitle">Партнер уређаја</string>
     <string name="onboarding_welcome_body1">Octi је алат за људе са више Android уређаја.</string>
     <string name="onboarding_welcome_body2">Држи вас у току са свим вашим уређајима. Без обзира да ли је то ваш телефон, таблет или било који други уређај са инсталираним Octi-јем, добијате кључне детаље на први поглед.</string>
+    <string name="onboarding_welcome_body3">Надогради на Octi Pro за додатне функције и подршку развоју.</string>
     <string name="onboarding_welcome_beta_hint">Ово је бета верзија, хвала на стрпљењу док настављам да унапређујем апликацију!</string>
     <string name="onboarding_privacy_subtitle">Политика приватности</string>
     <string name="onboarding_privacy_body1">Octi нема рекламе и не продаје податке корисника.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Обавештења за отклањање грешака</string>
     <string name="debug_debuglog_file_label">Снимљена лог датотека</string>
     <string name="debug_debuglog_record_action">Сними лог отклањање</string>
+    <string name="onboarding_setupsync_title">Подеси синхронизацију</string>
+    <string name="onboarding_setupsync_message">Тренутно видите само овај уређај. Да повежете своје Octi инсталације, подесите заједничку услугу синхронизације.</string>
     <string name="settings_privacy_policy_label">Политика приватности</string>
     <string name="settings_privacy_policy_desc">Одговорно руковање подацима.</string>
     <string name="settings_licenses_label">Лиценце</string>
@@ -32,14 +36,17 @@
     <string name="help_translate_label">Превод</string>
     <string name="help_translate_description">Помози у превођењу ове апликације на свој омиљени језик.</string>
     <string name="ui_theme_mode_setting_label">Режим теме</string>
+    <string name="ui_theme_mode_setting_explanation">Режим који се користи за тему апликације (нпр. тамна или светла).</string>
     <string name="ui_theme_mode_dark_label">Тамна</string>
     <string name="ui_theme_mode_light_label">Светла</string>
     <string name="ui_theme_mode_system_label">Систем</string>
     <string name="ui_theme_style_setting_label">Стил теме</string>
     <string name="ui_theme_style_setting_explanation">Боје које се користе за тему апликације.</string>
     <string name="ui_theme_style_default_label">Подразумевано</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Праћење проблема</string>
     <string name="issue_tracker_description">Јавни трагач проблема за пријаве грешака и захтеве за нове функције.</string>
+    <string name="discord_label">Discord</string>
     <string name="discord_description">Место за дружење и питања.</string>
     <string name="support_debuglog_label">Сними лог отклањање</string>
     <string name="support_debuglog_inprogress_label">Заустави лог отклањање</string>
@@ -103,6 +110,16 @@
     <string name="module_apps_category_label">Апликације</string>
     <string name="device_x_label">Уређај: %s</string>
     <string name="pro_device_limit_reached_title">Достигнут лимит уређаја</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Тренутно имате %1$d синхронизован уређај.</item>
+        <item quantity="few">Тренутно имате %1$d синхронизована уређаја.</item>
+        <item quantity="other">Тренутно имате %1$d синхронизованих уређаја.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">Да видите више од %1$d уређаја, надоградите на Octi Pro или уклоните уређаје.</item>
+        <item quantity="few">Да видите више од %1$d уређаја, надоградите на Octi Pro или уклоните уређаје.</item>
+        <item quantity="other">Да видите више од %1$d уређаја, надоградите на Octi Pro или уклоните уређаје.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Уклањањем овог уређаја ће се обрисати његови подаци, али приступ ће остати. Да укинеш приступ, одјави Octi на овом уређају.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Брисањем овог уређаја ће се обрисати његови подаци и потпуно укинути приступ.</string>
 </resources>

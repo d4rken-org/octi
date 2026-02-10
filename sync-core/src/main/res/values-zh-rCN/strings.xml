@@ -1,2 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_device_stale_warning_text">设备已 %s 未同步</string>
+
+    <plurals name="sync_stale_devices_info_message">
+        <item quantity="other">%d 台设备最近未同步</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_days">
+        <item quantity="other">%d 天</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_months">
+        <item quantity="other">%d 个月</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_years">
+        <item quantity="other">%d 年</item>
+    </plurals>
+</resources>

@@ -23,4 +23,6 @@
     <string name="general_refresh_action">Odśwież</string>
     <string name="general_continue">Kontynuuj</string>
     <string name="general_show_details_action">Pokaż szczegóły</string>
+    <string name="general_minutes_label">Minuty</string>
+    <string name="preference_slider_input_summary">%1$d minut</string>
 </resources>

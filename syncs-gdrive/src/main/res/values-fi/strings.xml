@@ -4,9 +4,11 @@
     <string name="gdrive_account_scope_error_description">Octille ei ole myönnetty vaadittua käyttöoikeutta. Yritä uudelleen ja varmista, että oikeudet on myönnetty.</string>
     <string name="gdrive_account_lockout_error_label">Lukitsemisvirhe</string>
     <string name="gdrive_account_lockout_error_description">Tämä laite on estetty eikä pääse enää Google Driveen. Käyttöoikeus Google-tiliisi on peruttu. Myönnä käyttöoikeus uudelleen ja yritä uudelleen.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">Sovellustietojen laajuus</string>
     <string name="sync_gdrive_type_appdata_description">Tiedot tallennetaan Google Driveen. Tämä versio käyttää \"app-data\"-laajuutta. Käyttöoikeus myönnetään vain uuteen kansioon, joka on tarkoitettu vain tälle sovellukselle. Kansiota ei näy omassa Drivessasi. Se on samanlainen kuin WhatsApp-varmuuskopiot.</string>
     <string name="sync_gdrive_add_label">Lisää uusi Google Drive</string>
+    <string name="sync_gdrive_add_description">Napsauta alla olevaa kirjautumispainiketta määrittääksesi Google Drive -yhteyden.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Nollaa kaikki Googlen Drivelle tallennetut Octin tiedot. Laite pysyy kirjautuneena Google Driveen.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Kirjaudu ulos Google Drivesta ja poista tähän laitteeseen liittyvät tiedot.</string>
     <string name="sync_gdrive_error_no_account_on_device">Tämä laite ei ole kirjautuneena mihinkään Google-tiliin.</string>

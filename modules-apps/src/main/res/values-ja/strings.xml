@@ -5,4 +5,14 @@
     <string name="module_apps_last_installed_x">最後にインストールしたアプリ: %s</string>
     <string name="module_apps_list_title">インストール済みのアプリ</string>
     <string name="module_apps_installer_label">アプリのインストールソース</string>
+    <string name="module_apps_installer_desc">各アプリのインストールソースに関する情報を同期して含めます。</string>
+
+    <plurals name="module_apps_x_installed">
+        <item quantity="other">%d 個のアプリがインストール済み</item>
+    </plurals>
+
+    <string name="module_apps_sort_label">並べ替え</string>
+    <string name="module_apps_sort_name_label">名前</string>
+    <string name="module_apps_sort_install_date_label">インストール日</string>
+    <string name="module_apps_sort_update_date_label">更新日</string>
 </resources>

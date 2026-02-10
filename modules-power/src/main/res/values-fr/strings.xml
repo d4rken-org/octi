@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Alertes de la batterie</string>
     <string name="module_power_alerts_notification_battery_low_title">Le niveau de la batterie est faible : %s</string>
     <string name="module_power_alerts_notification_battery_low_body">Le niveau de la batterie de %1$s est à %3$d% % (&lt;%2$d% %) et elle n’est pas en charge.</string>
+    <string name="module_power_alerts_highbattery_title">Niveau de batterie élevé</string>
+    <string name="module_power_alerts_highbattery_description">Signalez un niveau de batterie de cet appareil atteignant le seuil que vous avez indiqué pendant la charge. Utile pour préserver la santé de la batterie.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Signaler un niveau de batterie supérieur à %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Ne pas signaler un niveau de batterie élevé</string>
+    <string name="module_power_alerts_notification_battery_high_title">Niveau de batterie élevé : %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">Le niveau de la batterie de %1$s est à %3$d%% (>%2$d%%) et est toujours en charge.</string>
+    <string name="module_power_detail_level_label">Niveau de batterie</string>
+    <string name="module_power_detail_status_label">État</string>
+    <string name="module_power_detail_speed_label">Vitesse de charge</string>
+    <string name="module_power_detail_temperature_label">Température</string>
+    <string name="module_power_detail_estimation_label">Estimation</string>
+    <string name="module_power_detail_health_label">Santé</string>
+    <string name="module_power_detail_health_good">Bonne</string>
+    <string name="module_power_detail_health_overheat">Surchauffe</string>
+    <string name="module_power_detail_health_dead">Morte</string>
+    <string name="module_power_detail_health_over_voltage">Surtension</string>
+    <string name="module_power_detail_health_cold">Froide</string>
+    <string name="module_power_detail_health_unknown">Inconnue</string>
 </resources>

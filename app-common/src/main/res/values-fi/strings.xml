@@ -23,4 +23,6 @@
     <string name="general_refresh_action">Päivitä</string>
     <string name="general_continue">Jatka</string>
     <string name="general_show_details_action">Näytä tiedot</string>
+    <string name="general_minutes_label">Minuutit</string>
+    <string name="preference_slider_input_summary">%1$d minuuttia</string>
 </resources>

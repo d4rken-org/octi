@@ -1,2 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_device_stale_warning_text">Urządzenie nie synchronizowało się od %s</string>
+
+    <plurals name="sync_stale_devices_info_message">
+        <item quantity="one">%d urządzenie nie synchronizowało się ostatnio</item>
+        <item quantity="few">%d urządzenia nie synchronizowały się ostatnio</item>
+        <item quantity="many">%d urządzeń nie synchronizowało się ostatnio</item>
+        <item quantity="other">%d urządzeń nie synchronizowało się ostatnio</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_days">
+        <item quantity="one">%d dzień</item>
+        <item quantity="few">%d dni</item>
+        <item quantity="many">%d dni</item>
+        <item quantity="other">%d dni</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_months">
+        <item quantity="one">%d miesiąc</item>
+        <item quantity="few">%d miesiące</item>
+        <item quantity="many">%d miesięcy</item>
+        <item quantity="other">%d miesięcy</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_years">
+        <item quantity="one">%d rok</item>
+        <item quantity="few">%d lata</item>
+        <item quantity="many">%d lat</item>
+        <item quantity="other">%d lat</item>
+    </plurals>
+</resources>

@@ -9,4 +9,9 @@
     <string name="module_apps_last_installed_x">Senast installerad app: %s</string>
     <string name="module_apps_list_title">Installerade appar</string>
     <string name="module_apps_installer_label">Appens installationskälla</string>
+    <string name="module_apps_installer_desc">Synkronisera och inkludera information om varje apps installationskälla.</string>
+    <string name="module_apps_sort_label">Sortera</string>
+    <string name="module_apps_sort_name_label">Namn</string>
+    <string name="module_apps_sort_install_date_label">Installationsdatum</string>
+    <string name="module_apps_sort_update_date_label">Uppdateringsdatum</string>
 </resources>

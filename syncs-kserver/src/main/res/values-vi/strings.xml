@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Máy chủ đồng bộ hóa mã nguồn mở cho Octi do nhà phát triển ứng dụng này tạo ra. Dữ liệu được mã hóa phía máy khách, chỉ thiết bị của bạn mới có thể giải mã.\\n\\nVì cả ứng dụng và máy chủ vẫn đang được cải thiện, nó có thể kém ổn định hơn các tùy chọn đồng bộ hóa khác.</string>
     <string name="sync_kserver_add_create_action_hint">Các tài khoản không hoạt động sẽ bị xóa sau vài tuần.</string>
     <string name="sync_kserver_add_subtitle">Thêm Google Drive mới</string>
@@ -15,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Tạo mã văn bản mà bạn có thể gửi qua các ứng dụng khác</string>
     <string name="sync_kserver_link_host_option_qrcode">Hiển thị mã QR</string>
     <string name="sync_kserver_link_host_device_linked_message">Một thiết bị mới đã được liên kết với tài khoản của bạn.</string>
+    <string name="sync_kserver_link_client_option_direct">Sao chép và dán thủ công mã liên kết</string>
     <string name="sync_kserver_link_client_option_qrcode">Quét mã QR từ thiết bị khác</string>
     <string name="sync_kserver_link_client_startcamera_action">Khởi động máy ảnh</string>
     <string name="sync_kserver_link_client_link_action">Liên kết thiết bị</string>

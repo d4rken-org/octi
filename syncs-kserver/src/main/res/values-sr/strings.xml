@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Отворени сервер за синхронизацију за Octi који је направио програмер ове апликације. Подаци се шифрују на клијентској страни, само ваши уређаји могу да их дешифрују.\n\nПошто се и апликација и сервер и даље унапређују, може бити мање стабилан од других опција синхронизације.</string>
     <string name="sync_kserver_add_create_action_hint">Неактивни налози се бришу након неколико недеља.</string>
     <string name="sync_kserver_add_subtitle">Додај нови Google Drive</string>
@@ -15,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Креирај текстуални код који можете послати преко других апликација</string>
     <string name="sync_kserver_link_host_option_qrcode">Прикажи QR код</string>
     <string name="sync_kserver_link_host_device_linked_message">Нови уређај је повезан са вашим налогом.</string>
+    <string name="sync_kserver_link_client_option_direct">Ручно копирајте и налепите код за повезивање</string>
     <string name="sync_kserver_link_client_option_qrcode">Скенирај QR код са другог уређаја</string>
     <string name="sync_kserver_link_client_startcamera_action">Покрени камеру</string>
     <string name="sync_kserver_link_client_link_action">Повежи уређај</string>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Un server de sincronizare open source pentru Octi realizat de dezvoltatorul acestei aplicații. Datele sunt criptate pe partea clientului, doar dispozitivele tale le pot decripta.\n\nDeoarece atât aplicația, cât și serverul sunt încă îmbunătățite, poate fi mai puțin stabil decât alte opțiuni de sincronizare.</string>
     <string name="sync_kserver_add_create_action_hint">Conturile inactive sunt șterse după câteva săptămâni.</string>
     <string name="sync_kserver_add_subtitle">Adaugă un Google Drive nou</string>
@@ -15,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Creează un cod text pe care îl poți trimite prin alte aplicații</string>
     <string name="sync_kserver_link_host_option_qrcode">Afișează un cod QR</string>
     <string name="sync_kserver_link_host_device_linked_message">Un dispozitiv nou a fost conectat la contul tău.</string>
+    <string name="sync_kserver_link_client_option_direct">Copiază și lipește manual un cod de conectare</string>
     <string name="sync_kserver_link_client_option_qrcode">Scanează un cod QR de pe alt dispozitiv</string>
     <string name="sync_kserver_link_client_startcamera_action">Pornește camera</string>
     <string name="sync_kserver_link_client_link_action">Conectează dispozitiv</string>

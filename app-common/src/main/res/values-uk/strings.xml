@@ -23,4 +23,6 @@
     <string name="general_refresh_action">Оновити</string>
     <string name="general_continue">Продовжити</string>
     <string name="general_show_details_action">Показати деталі</string>
+    <string name="general_minutes_label">Хвилини</string>
+    <string name="preference_slider_input_summary">%1$d хвилин</string>
 </resources>

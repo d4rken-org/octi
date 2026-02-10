@@ -5,4 +5,15 @@
     <string name="module_apps_last_installed_x">Τελευταία εγκατεστημένη εφαρμογή: %s</string>
     <string name="module_apps_list_title">Εγκατεστημένες εφαρμογές</string>
     <string name="module_apps_installer_label">Πηγή εγκατάστασης εφαρμογής</string>
+    <string name="module_apps_installer_desc">Συγχρονισμός και συμπερίληψη πληροφοριών σχετικά με την πηγή εγκατάστασης κάθε εφαρμογής.</string>
+
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d εφαρμογή εγκατεστημένη</item>
+        <item quantity="other">%d εφαρμογές εγκατεστημένες</item>
+    </plurals>
+
+    <string name="module_apps_sort_label">Ταξινόμηση</string>
+    <string name="module_apps_sort_name_label">Όνομα</string>
+    <string name="module_apps_sort_install_date_label">Ημερομηνία εγκατάστασης</string>
+    <string name="module_apps_sort_update_date_label">Ημερομηνία ενημέρωσης</string>
 </resources>

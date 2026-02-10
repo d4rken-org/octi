@@ -5,10 +5,12 @@
     <string name="general_create_account_action">创建账户</string>
     <string name="general_link_existing_action">链接到现有帐户</string>
     <string name="general_sync_action">同步</string>
+    <string name="general_manage_devices_action">管理设备</string>
     <string name="general_select_server_label">选择服务器</string>
     <string name="onboarding_welcome_subtitle">你的设备助手</string>
     <string name="onboarding_welcome_body1">Octi 是一款为拥有多台 Android 设备的用户提供的工具。</string>
     <string name="onboarding_welcome_body2">它让您随时掌握所有设备的最新动态。无论是手机、平板电脑还是其他安装了 Octi 的设备，您都可以一目了然地了解关键详细信息。</string>
+    <string name="onboarding_welcome_body3">升级到 Octi Pro 以获取额外功能并支持开发。</string>
     <string name="onboarding_welcome_beta_hint">请注意，这是一个测试版本，所以感谢您的耐心，我会继续改进应用程序！</string>
     <string name="onboarding_privacy_subtitle">隐私政策</string>
     <string name="onboarding_privacy_body1">Octi 没有广告，也不出售用户数据。</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">调试通知</string>
     <string name="debug_debuglog_file_label">记录日志文件</string>
     <string name="debug_debuglog_record_action">记录调试文件</string>
+    <string name="onboarding_setupsync_title">设置同步</string>
+    <string name="onboarding_setupsync_message">目前您只能看到此设备。要连接您的 Octi 安装，请设置一个公共同步服务。</string>
     <string name="settings_privacy_policy_label">隐私政策</string>
     <string name="settings_privacy_policy_desc">负责任地处理数据。</string>
     <string name="settings_licenses_label">许可证</string>
@@ -29,7 +33,10 @@
     <string name="changelog_label">更改日志</string>
     <string name="settings_acknowledgements_label">致谢</string>
     <string name="documentation_label">文档</string>
+    <string name="help_translate_label">翻译</string>
+    <string name="help_translate_description">帮助将此应用翻译成您喜欢的语言。</string>
     <string name="ui_theme_mode_setting_label">主题模式</string>
+    <string name="ui_theme_mode_setting_explanation">应用主题使用的模式（例如深色或浅色）。</string>
     <string name="ui_theme_mode_dark_label">黑</string>
     <string name="ui_theme_mode_light_label">白</string>
     <string name="ui_theme_mode_system_label">系统</string>
@@ -99,6 +106,12 @@
     <string name="module_apps_category_label">应用</string>
     <string name="device_x_label">设备: %s</string>
     <string name="pro_device_limit_reached_title">设备达到极限</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="other">您当前有 %1$d 台已同步设备。</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="other">要查看超过 %1$d 台设备，请升级到 Octi Pro 或移除设备。</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">删除此设备将删除其数据，但不会撤销访问权限。要撤销访问权限，请断开设备上的Octi连接。</string>
     <string name="sync_delete_device_revokeaccess_caveat">删除此设备将删除其数据并撤销其访问权限。</string>
 </resources>

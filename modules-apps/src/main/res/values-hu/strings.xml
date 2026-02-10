@@ -5,4 +5,15 @@
     <string name="module_apps_last_installed_x">Utoljára telepített alkalmazás: %s</string>
     <string name="module_apps_list_title">Telepített alkalmazások</string>
     <string name="module_apps_installer_label">Alkalmazás telepítési forrása</string>
+    <string name="module_apps_installer_desc">Az egyes alkalmazások telepítési forrásának szinkronizálása és megjelenítése.</string>
+
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d alkalmazás telepítve</item>
+        <item quantity="other">%d alkalmazás telepítve</item>
+    </plurals>
+
+    <string name="module_apps_sort_label">Rendezés</string>
+    <string name="module_apps_sort_name_label">Név</string>
+    <string name="module_apps_sort_install_date_label">Telepítés dátuma</string>
+    <string name="module_apps_sort_update_date_label">Frissítés dátuma</string>
 </resources>

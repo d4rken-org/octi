@@ -1,2 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_device_stale_warning_text">Η συσκευή δεν έχει συγχρονιστεί εδώ και %s</string>
+
+    <plurals name="sync_stale_devices_info_message">
+        <item quantity="one">%d συσκευή δεν έχει συγχρονιστεί πρόσφατα</item>
+        <item quantity="other">%d συσκευές δεν έχουν συγχρονιστεί πρόσφατα</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_days">
+        <item quantity="one">%d ημέρα</item>
+        <item quantity="other">%d ημέρες</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_months">
+        <item quantity="one">%d μήνα</item>
+        <item quantity="other">%d μήνες</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_years">
+        <item quantity="one">%d έτος</item>
+        <item quantity="other">%d έτη</item>
+    </plurals>
+</resources>

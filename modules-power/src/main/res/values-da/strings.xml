@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Batteriadvarsler</string>
     <string name="module_power_alerts_notification_battery_low_title">Lavt batteri: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s har %3$d%% batteri (&lt;%2$d%%) og oplader ikke.</string>
+    <string name="module_power_alerts_highbattery_title">Højt batteri</string>
+    <string name="module_power_alerts_highbattery_description">Få besked, når denne enheds batteri når din angivne tærskel under opladning. Nyttigt for at bevare batteriets levetid.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Besked når batteri er over %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Giv ikke besked når batteri er højt</string>
+    <string name="module_power_alerts_notification_battery_high_title">Højt batteri: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s har %3$d%% batteri (>%2$d%%) og oplader stadig.</string>
+    <string name="module_power_detail_level_label">Batteriniveau</string>
+    <string name="module_power_detail_status_label">Status</string>
+    <string name="module_power_detail_speed_label">Opladningshastighed</string>
+    <string name="module_power_detail_temperature_label">Temperatur</string>
+    <string name="module_power_detail_estimation_label">Estimat</string>
+    <string name="module_power_detail_health_label">Tilstand</string>
+    <string name="module_power_detail_health_good">God</string>
+    <string name="module_power_detail_health_overheat">Overophedet</string>
+    <string name="module_power_detail_health_dead">Død</string>
+    <string name="module_power_detail_health_over_voltage">Overspænding</string>
+    <string name="module_power_detail_health_cold">Kold</string>
+    <string name="module_power_detail_health_unknown">Ukendt</string>
 </resources>

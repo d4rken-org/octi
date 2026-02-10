@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Utwórz konto</string>
     <string name="general_link_existing_action">Połącz z istniejącym kontem</string>
     <string name="general_sync_action">Synchronizuj</string>
+    <string name="general_manage_devices_action">Zarządzaj urządzeniami</string>
     <string name="general_select_server_label">Wybierz serwer</string>
     <string name="onboarding_welcome_subtitle">Twój kompan urządzeń</string>
     <string name="onboarding_welcome_body1">Octi to narzędzie dla osób z wieloma urządzeniami Android.</string>
     <string name="onboarding_welcome_body2">Utrzymuje Cię w pętli ze wszystkimi Twoimi urządzeniami. Czy to Twój telefon, tablet czy jakikolwiek inny gadżet z zainstalowanym Octi, otrzymasz kluczowe szczegóły na pierwszy rzut oka.</string>
+    <string name="onboarding_welcome_body3">Przejdź na Octi Pro, aby uzyskać dodatkowe funkcje i wesprzeć rozwój.</string>
     <string name="onboarding_welcome_beta_hint">Tylko żeby wiedzieć, to jest wersja beta, więc dzięki za cierpliwość, podczas gdy nadal ulepszam aplikację!</string>
     <string name="onboarding_privacy_subtitle">Polityka prywatności</string>
     <string name="onboarding_privacy_body1">Octi nie ma reklam i nie sprzedaje danych użytkowników.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Powiadomienia debugowania</string>
     <string name="debug_debuglog_file_label">Zapisany plik dziennika</string>
     <string name="debug_debuglog_record_action">Nagraj dziennik debugowania</string>
+    <string name="onboarding_setupsync_title">Skonfiguruj synchronizację</string>
+    <string name="onboarding_setupsync_message">Obecnie widzisz tylko to urządzenie. Aby połączyć instalacje Octi, skonfiguruj wspólną usługę synchronizacji.</string>
     <string name="settings_privacy_policy_label">Polityka prywatności</string>
     <string name="settings_privacy_policy_desc">Odpowiedzialne przetwarzanie danych.</string>
     <string name="settings_licenses_label">Licencje</string>
@@ -32,14 +36,17 @@
     <string name="help_translate_label">Tłumaczenie</string>
     <string name="help_translate_description">Pomóż przetłumaczyć tę aplikację na swój ulubiony język.</string>
     <string name="ui_theme_mode_setting_label">Tryb motywu</string>
+    <string name="ui_theme_mode_setting_explanation">Tryb używany przy stylizowaniu aplikacji (np. ciemny lub jasny).</string>
     <string name="ui_theme_mode_dark_label">Ciemny</string>
     <string name="ui_theme_mode_light_label">Jasny</string>
     <string name="ui_theme_mode_system_label">Systemowy</string>
     <string name="ui_theme_style_setting_label">Styl motywu</string>
     <string name="ui_theme_style_setting_explanation">Styl kolorów używany przy stylizowaniu aplikacji.</string>
     <string name="ui_theme_style_default_label">Domyślny</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Tracker problemów</string>
     <string name="issue_tracker_description">Publiczny tracker problemów dla raportów błędów i próśb o funkcje.</string>
+    <string name="discord_label">Discord</string>
     <string name="discord_description">Miejsce do spędzania czasu i zadawania pytań.</string>
     <string name="support_debuglog_label">Nagraj dziennik debugowania</string>
     <string name="support_debuglog_inprogress_label">Zatrzymaj dziennik debugowania</string>
@@ -51,6 +58,7 @@
     <string name="sync_last_never_label">Nigdy</string>
     <string name="sync_quota_storage_msg">%1$s wolne (%2$s / %3$s)</string>
     <string name="general_disconnect_action">Rozłącz</string>
+    <string name="generic_info_action">Info</string>
     <string name="general_reset_action">Resetuj</string>
     <string name="sync_account_label">Konto</string>
     <string name="sync_services_label">Usługi synchronizacji</string>
@@ -104,6 +112,18 @@
     <string name="module_apps_category_label">Aplikacje</string>
     <string name="device_x_label">Urządzenie: %s</string>
     <string name="pro_device_limit_reached_title">Osiągnięto limit urządzeń</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Masz obecnie %1$d zsynchronizowane urządzenie.</item>
+        <item quantity="few">Masz obecnie %1$d zsynchronizowane urządzenia.</item>
+        <item quantity="many">Masz obecnie %1$d zsynchronizowanych urządzeń.</item>
+        <item quantity="other">Masz obecnie %1$d zsynchronizowanych urządzeń.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">Aby wyświetlić więcej niż %1$d urządzenie, przejdź na Octi Pro lub usuń urządzenia.</item>
+        <item quantity="few">Aby wyświetlić więcej niż %1$d urządzenia, przejdź na Octi Pro lub usuń urządzenia.</item>
+        <item quantity="many">Aby wyświetlić więcej niż %1$d urządzeń, przejdź na Octi Pro lub usuń urządzenia.</item>
+        <item quantity="other">Aby wyświetlić więcej niż %1$d urządzeń, przejdź na Octi Pro lub usuń urządzenia.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Usunięcie tego urządzenia usunie jego dane, ale nie cofnie dostępu. Aby cofnąć dostęp, rozłącz Octi na urządzeniu.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Usunięcie tego urządzenia usunie jego dane i cofnie jego dostęp.</string>
 </resources>

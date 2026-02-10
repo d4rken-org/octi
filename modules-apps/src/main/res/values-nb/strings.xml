@@ -5,4 +5,13 @@
     <string name="module_apps_last_installed_x">Sist installerte app: %s</string>
     <string name="module_apps_list_title">Installerte apper</string>
     <string name="module_apps_installer_label">Appens installasjonskilde</string>
+    <string name="module_apps_installer_desc">Synkroniser og inkluder informasjon om hver apps installasjonskilde.</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d app installert</item>
+        <item quantity="other">%d apper installert</item>
+    </plurals>
+    <string name="module_apps_sort_label">Sorter</string>
+    <string name="module_apps_sort_name_label">Navn</string>
+    <string name="module_apps_sort_install_date_label">Installasjonsdato</string>
+    <string name="module_apps_sort_update_date_label">Oppdateringsdato</string>
 </resources>

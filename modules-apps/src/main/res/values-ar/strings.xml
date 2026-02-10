@@ -5,4 +5,19 @@
     <string name="module_apps_last_installed_x">آخر تطبيق مثبت: %s</string>
     <string name="module_apps_list_title">التطبيقات المثبتة</string>
     <string name="module_apps_installer_label">مصدر تثبيت التطبيق</string>
+    <string name="module_apps_installer_desc">مزامنة وتضمين معلومات حول مصدر تثبيت كل تطبيق.</string>
+
+    <plurals name="module_apps_x_installed">
+        <item quantity="zero">%d تطبيق مثبت</item>
+        <item quantity="one">%d تطبيق مثبت</item>
+        <item quantity="two">%d تطبيقان مثبتان</item>
+        <item quantity="few">%d تطبيقات مثبتة</item>
+        <item quantity="many">%d تطبيقًا مثبتًا</item>
+        <item quantity="other">%d تطبيق مثبت</item>
+    </plurals>
+
+    <string name="module_apps_sort_label">ترتيب</string>
+    <string name="module_apps_sort_name_label">الاسم</string>
+    <string name="module_apps_sort_install_date_label">تاريخ التثبيت</string>
+    <string name="module_apps_sort_update_date_label">تاريخ التحديث</string>
 </resources>

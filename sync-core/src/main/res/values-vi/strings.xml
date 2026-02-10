@@ -1,2 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_device_stale_warning_text">Thiết bị chưa đồng bộ trong %s</string>
+
+    <plurals name="sync_stale_devices_info_message">
+        <item quantity="other">%d thiết bị chưa đồng bộ gần đây</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_days">
+        <item quantity="other">%d ngày</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_months">
+        <item quantity="other">%d tháng</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_years">
+        <item quantity="other">%d năm</item>
+    </plurals>
+</resources>

@@ -2,7 +2,18 @@
 <resources>
     <string name="module_apps_label">Модуль додатків</string>
     <string name="module_apps_desc">Інформація про встановлені додатки.</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d додаток встановлено</item>
+        <item quantity="few">%d додатки встановлено</item>
+        <item quantity="many">%d додатків встановлено</item>
+        <item quantity="other">%d додатків встановлено</item>
+    </plurals>
     <string name="module_apps_last_installed_x">Останній встановлений додаток: %s</string>
     <string name="module_apps_list_title">Встановлені додатки</string>
+    <string name="module_apps_sort_label">Сортування</string>
+    <string name="module_apps_sort_name_label">Назва</string>
+    <string name="module_apps_sort_install_date_label">Дата встановлення</string>
+    <string name="module_apps_sort_update_date_label">Дата оновлення</string>
     <string name="module_apps_installer_label">Джерело встановлення додатка</string>
+    <string name="module_apps_installer_desc">Синхронізувати та включати інформацію про джерело встановлення кожного додатка.</string>
 </resources>

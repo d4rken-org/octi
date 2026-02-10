@@ -5,10 +5,12 @@
     <string name="general_create_account_action">アカウントを作成</string>
     <string name="general_link_existing_action">既存のアカウントへリンク</string>
     <string name="general_sync_action">同期</string>
+    <string name="general_manage_devices_action">デバイスを管理</string>
     <string name="general_select_server_label">サーバーを選択</string>
     <string name="onboarding_welcome_subtitle">あなたのデバイスの相棒</string>
     <string name="onboarding_welcome_body1">Octi は複数の Android デバイスを持っている人のためのツールです。</string>
     <string name="onboarding_welcome_body2">Octi は、あなたのすべてのデバイスを常に最新の状態に保ちます。Octi がインストールされたスマートフォン、タブレット、その他ガジェットを問わずに主要な情報を一目で把握することができます。</string>
+    <string name="onboarding_welcome_body3">Octi Pro にアップグレードして、追加機能を利用し開発を支援しましょう。</string>
     <string name="onboarding_welcome_beta_hint">念のためのお知らせですが、これはベータ版です。アプリの改善に努めますので、ご理解のほどよろしくお願いします！</string>
     <string name="onboarding_privacy_subtitle">プライバシーポリシー</string>
     <string name="onboarding_privacy_body1">Octi は無広告で、ユーザーデータの販売もしません。</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">デバッグ通知</string>
     <string name="debug_debuglog_file_label">記録したログファイル</string>
     <string name="debug_debuglog_record_action">デバッグログを記録</string>
+    <string name="onboarding_setupsync_title">同期の設定</string>
+    <string name="onboarding_setupsync_message">現在、このデバイスのみ表示されています。Octi のインストール間を接続するには、共通の同期サービスを設定してください。</string>
     <string name="settings_privacy_policy_label">プライバシーポリシー</string>
     <string name="settings_privacy_policy_desc">責任を持ってデータを取り扱います。</string>
     <string name="settings_licenses_label">ライセンス</string>
@@ -32,6 +36,7 @@
     <string name="help_translate_label">翻訳</string>
     <string name="help_translate_description">このアプリの翻訳を手伝ってください。</string>
     <string name="ui_theme_mode_setting_label">テーマモード</string>
+    <string name="ui_theme_mode_setting_explanation">アプリのテーマ設定に使用されるモード (例: ダークまたはライト) です。</string>
     <string name="ui_theme_mode_dark_label">ダーク</string>
     <string name="ui_theme_mode_light_label">ライト</string>
     <string name="ui_theme_mode_system_label">システム</string>
@@ -101,6 +106,12 @@
     <string name="module_apps_category_label">アプリ</string>
     <string name="device_x_label">デバイス: %s</string>
     <string name="pro_device_limit_reached_title">デバイスの上限に達しました</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="other">現在 %1$d 台の同期済みデバイスがあります。</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="other">%1$d 台以上のデバイスを表示するには、Octi Pro にアップグレードするか、デバイスを削除してください。</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">このデバイスを削除するとデータは削除されますが、アクセスは取り消されません。アクセスを取り消すにはデバイス上の Octi を切断してください。</string>
     <string name="sync_delete_device_revokeaccess_caveat">このデバイスを削除するとデータが削除され、アクセスが取り消されます。</string>
 </resources>

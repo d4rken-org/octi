@@ -24,4 +24,6 @@
     <string name="general_refresh_action">Actualitza</string>
     <string name="general_continue">Continua</string>
     <string name="general_show_details_action">Mostra els detalls</string>
+    <string name="general_minutes_label">Minuts</string>
+    <string name="preference_slider_input_summary">%1$d minuts</string>
 </resources>

@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Batterywaarskuwings</string>
     <string name="module_power_alerts_notification_battery_low_title">Lae battery: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s is op %3$d%% battery (&lt;%2$d%%) en laai nie.</string>
+    <string name="module_power_alerts_highbattery_title">Hoë battery</string>
+    <string name="module_power_alerts_highbattery_description">Kry \'n kennisgewing wanneer hierdie toestel se battery jou gespesifiseerde drumpel bereik terwyl dit laai. Nuttig om batterylewe te bewaar.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Stel kennis wanneer battery bo %s is</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Moet nie kennis gee wanneer battery hoog is nie</string>
+    <string name="module_power_alerts_notification_battery_high_title">Hoë battery: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s is op %3$d%% battery (>%2$d%%) en laai steeds.</string>
+    <string name="module_power_detail_level_label">Batteryvlak</string>
+    <string name="module_power_detail_status_label">Status</string>
+    <string name="module_power_detail_speed_label">Laaispoed</string>
+    <string name="module_power_detail_temperature_label">Temperatuur</string>
+    <string name="module_power_detail_estimation_label">Skatting</string>
+    <string name="module_power_detail_health_label">Gesondheid</string>
+    <string name="module_power_detail_health_good">Goed</string>
+    <string name="module_power_detail_health_overheat">Oorverhit</string>
+    <string name="module_power_detail_health_dead">Dood</string>
+    <string name="module_power_detail_health_over_voltage">Oorspanning</string>
+    <string name="module_power_detail_health_cold">Koud</string>
+    <string name="module_power_detail_health_unknown">Onbekend</string>
 </resources>

@@ -4,9 +4,11 @@
     <string name="gdrive_account_scope_error_description">Octi har ikke blitt gitt nødvendig tilgang. Prøv igjen og sjekk at tillatelser er gitt.</string>
     <string name="gdrive_account_lockout_error_label">Utelukkelsesfeil</string>
     <string name="gdrive_account_lockout_error_description">Denne enheten er utelukket og kan ikke lenger få tilgang til Google Drive. Tilgangen til Google-kontoen din har blitt trukket tilbake. Gi tilgang på nytt og prøv igjen.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">App-data-omfang</string>
     <string name="sync_gdrive_type_appdata_description">Data plasseres i Google Drive. Denne varianten bruker \"app-data\"-omfanget. Tilgang gis kun til en ny mappe bare for denne appen. Mappen er ikke synlig på din Drive. Det ligner på hvordan WhatsApp-sikkerhetskopier fungerer.</string>
     <string name="sync_gdrive_add_label">Legg til ny Google Drive</string>
+    <string name="sync_gdrive_add_description">Klikk på logg inn-knappen nedenfor for å sette opp Google Drive-tilgang.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Tilbakestill all Octi-data lagret på Google Drive. Enheten din forblir innlogget på Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Logg ut fra Google Drive og slett data relatert til denne enheten.</string>
     <string name="sync_gdrive_error_no_account_on_device">Denne enheten har ikke logget inn på noen Google-konto.</string>

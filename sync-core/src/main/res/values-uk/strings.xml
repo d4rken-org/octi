@@ -1,2 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_device_stale_warning_text">Пристрій не синхронізувався %s</string>
+
+    <plurals name="sync_stale_devices_info_message">
+        <item quantity="one">%d пристрій не синхронізувався останнім часом</item>
+        <item quantity="few">%d пристрої не синхронізувалися останнім часом</item>
+        <item quantity="many">%d пристроїв не синхронізувалися останнім часом</item>
+        <item quantity="other">%d пристроїв не синхронізувалися останнім часом</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_days">
+        <item quantity="one">%d день</item>
+        <item quantity="few">%d дні</item>
+        <item quantity="many">%d днів</item>
+        <item quantity="other">%d днів</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_months">
+        <item quantity="one">%d місяць</item>
+        <item quantity="few">%d місяці</item>
+        <item quantity="many">%d місяців</item>
+        <item quantity="other">%d місяців</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_years">
+        <item quantity="one">%d рік</item>
+        <item quantity="few">%d роки</item>
+        <item quantity="many">%d років</item>
+        <item quantity="other">%d років</item>
+    </plurals>
+</resources>

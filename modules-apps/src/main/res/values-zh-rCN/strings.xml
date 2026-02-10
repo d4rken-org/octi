@@ -2,7 +2,15 @@
 <resources>
     <string name="module_apps_label">应用程序模块</string>
     <string name="module_apps_desc">已安装的应用程序信息。</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="other">已安装 %d 个应用程序</item>
+    </plurals>
     <string name="module_apps_last_installed_x">最后安装的应用程序：%s</string>
     <string name="module_apps_list_title">安装应用程序</string>
+    <string name="module_apps_sort_label">排序</string>
+    <string name="module_apps_sort_name_label">名称</string>
+    <string name="module_apps_sort_install_date_label">安装日期</string>
+    <string name="module_apps_sort_update_date_label">更新日期</string>
     <string name="module_apps_installer_label">App安装源</string>
+    <string name="module_apps_installer_desc">同步并包含每个应用程序的安装来源信息。</string>
 </resources>

@@ -1,2 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_device_stale_warning_text">Laitetta ei ole synkronoitu %s aikana</string>
+
+    <plurals name="sync_stale_devices_info_message">
+        <item quantity="one">%d laitetta ei ole synkronoitu äskettäin</item>
+        <item quantity="other">%d laitetta ei ole synkronoitu äskettäin</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_days">
+        <item quantity="one">%d päivä</item>
+        <item quantity="other">%d päivää</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_months">
+        <item quantity="one">%d kuukausi</item>
+        <item quantity="other">%d kuukautta</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_years">
+        <item quantity="one">%d vuosi</item>
+        <item quantity="other">%d vuotta</item>
+    </plurals>
+</resources>

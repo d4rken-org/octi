@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Fiók létrehozása</string>
     <string name="general_link_existing_action">Kapcsolódás meglévő fiókhoz</string>
     <string name="general_sync_action">Szinkronizálás</string>
+    <string name="general_manage_devices_action">Eszközök kezelése</string>
     <string name="general_select_server_label">Szerver kiválasztása</string>
     <string name="onboarding_welcome_subtitle">Készülék-segéded</string>
     <string name="onboarding_welcome_body1">Az Octi több Android-eszközzel rendelkező felhasználóknak készült.</string>
     <string name="onboarding_welcome_body2">Minden eszközödről tájékoztat. Legyen telefon, tablet vagy bármilyen Octival ellátott eszközöd, egy pillantással látod a főbb információkat.</string>
+    <string name="onboarding_welcome_body3">Frissíts Octi Próra, hogy extra funkciókat kapj és támogasd a fejlesztést.</string>
     <string name="onboarding_welcome_beta_hint">Ez egy béta verzió, köszönöm a türelmed, miközben folyamatosan fejlesztem az alkalmazást!</string>
     <string name="onboarding_privacy_subtitle">Adatvédelmi irányelvek</string>
     <string name="onboarding_privacy_body1">Az Octi nem tartalmaz reklámokat és nem értékesíti a felhasználói adatokat.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Hibakeresési értesítések</string>
     <string name="debug_debuglog_file_label">Felvett naplófájl</string>
     <string name="debug_debuglog_record_action">Naplózás rögzítése</string>
+    <string name="onboarding_setupsync_title">Szinkronizáció beállítása</string>
+    <string name="onboarding_setupsync_message">Jelenleg csak ezt az eszközt látod. Az Octi telepítések összekapcsolásához állíts be egy közös szinkronizálási szolgáltatást.</string>
     <string name="settings_privacy_policy_label">Adatvédelmi irányelvek</string>
     <string name="settings_privacy_policy_desc">Felelős adatkezelés.</string>
     <string name="settings_licenses_label">Licencek</string>
@@ -32,14 +36,17 @@
     <string name="help_translate_label">Fordítás</string>
     <string name="help_translate_description">Segítsd az alkalmazás lefordítását a kedvenc nyelvedre.</string>
     <string name="ui_theme_mode_setting_label">Témamód</string>
+    <string name="ui_theme_mode_setting_explanation">Az alkalmazás témázásánál használt mód (pl. sötét vagy világos).</string>
     <string name="ui_theme_mode_dark_label">Sötét</string>
     <string name="ui_theme_mode_light_label">Világos</string>
     <string name="ui_theme_mode_system_label">Rendszer</string>
     <string name="ui_theme_style_setting_label">Téma stílus</string>
     <string name="ui_theme_style_setting_explanation">A témázásnál alkalmazott színstílus.</string>
     <string name="ui_theme_style_default_label">Alapértelmezett</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Hibajelentő</string>
     <string name="issue_tracker_description">Nyilvános hibakövető a hibajelentésekhez és funkciókérésekhez.</string>
+    <string name="discord_label">Discord</string>
     <string name="discord_description">Közösségi tér és kérdések helye.</string>
     <string name="support_debuglog_label">Naplózás rögzítése</string>
     <string name="support_debuglog_inprogress_label">Naplózás leállítása</string>
@@ -101,6 +108,14 @@
     <string name="module_apps_category_label">Alkalmazások</string>
     <string name="device_x_label">Eszköz: %s</string>
     <string name="pro_device_limit_reached_title">Elérted az eszköz limitet</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Jelenleg %1$d szinkronizált eszközöd van.</item>
+        <item quantity="other">Jelenleg %1$d szinkronizált eszközöd van.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">Több mint %1$d eszköz megtekintéséhez frissíts Octi Próra, vagy távolíts el eszközöket.</item>
+        <item quantity="other">Több mint %1$d eszköz megtekintéséhez frissíts Octi Próra, vagy távolíts el eszközöket.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Az eszköz eltávolításakor annak adatai törlődnek, de a hozzáférést nem vonja vissza. A hozzáférés visszavonásához válaszd le az Octit az eszközön.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Ez az eszköz törlésekor az adatait és a hozzáférését is törlöd.</string>
 </resources>

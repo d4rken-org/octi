@@ -5,4 +5,13 @@
     <string name="module_apps_last_installed_x">Последња инсталирана апликација: %s</string>
     <string name="module_apps_list_title">Инсталиране апликације</string>
     <string name="module_apps_installer_label">Извор инсталације апликације</string>
+    <string name="module_apps_installer_desc">Синхронизујте и укључите информације о извору инсталације сваке апликације.</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d апликација инсталирана</item>
+        <item quantity="other">%d апликација инсталирано</item>
+    </plurals>
+    <string name="module_apps_sort_label">Сортирај</string>
+    <string name="module_apps_sort_name_label">Назив</string>
+    <string name="module_apps_sort_install_date_label">Датум инсталације</string>
+    <string name="module_apps_sort_update_date_label">Датум ажурирања</string>
 </resources>

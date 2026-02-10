@@ -23,4 +23,6 @@
     <string name="general_refresh_action">Обновить</string>
     <string name="general_continue">Продолжить</string>
     <string name="general_show_details_action">Показать детали</string>
+    <string name="general_minutes_label">Минуты</string>
+    <string name="preference_slider_input_summary">%1$d минут</string>
 </resources>

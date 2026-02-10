@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Alertas de batería</string>
     <string name="module_power_alerts_notification_battery_low_title">Batería baja: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s está al %3$d%% de batería (&lt;%2$d%%) y no se está cargando.</string>
+    <string name="module_power_alerts_highbattery_title">Batería alta</string>
+    <string name="module_power_alerts_highbattery_description">Recibe notificaciones cuando la batería de este dispositivo alcance el umbral especificado mientras se carga. Útil para preservar la salud de la batería.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Notificar cuando la batería esté por encima de %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">No notificar cuando la batería esté alta</string>
+    <string name="module_power_alerts_notification_battery_high_title">Batería alta: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s está al %3$d%% de batería (>%2$d%%) y aún se está cargando.</string>
+    <string name="module_power_detail_level_label">Nivel de batería</string>
+    <string name="module_power_detail_status_label">Estado</string>
+    <string name="module_power_detail_speed_label">Velocidad de carga</string>
+    <string name="module_power_detail_temperature_label">Temperatura</string>
+    <string name="module_power_detail_estimation_label">Estimación</string>
+    <string name="module_power_detail_health_label">Salud</string>
+    <string name="module_power_detail_health_good">Buena</string>
+    <string name="module_power_detail_health_overheat">Sobrecalentamiento</string>
+    <string name="module_power_detail_health_dead">Muerta</string>
+    <string name="module_power_detail_health_over_voltage">Sobretensión</string>
+    <string name="module_power_detail_health_cold">Fría</string>
+    <string name="module_power_detail_health_unknown">Desconocido</string>
 </resources>

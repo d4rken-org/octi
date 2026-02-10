@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Δημιουργία λογαριασμού</string>
     <string name="general_link_existing_action">Σύνδεση με υπάρχοντα λογαριασμό</string>
     <string name="general_sync_action">Συγχρονισμός</string>
+    <string name="general_manage_devices_action">Διαχείριση συσκευών</string>
     <string name="general_select_server_label">Επιλογή διακομιστή</string>
     <string name="onboarding_welcome_subtitle">Ο Συνοδός της Συσκευής σας</string>
     <string name="onboarding_welcome_body1">Το Octi είναι ένα εργαλείο για άτομα με πολλαπλές συσκευές Android.</string>
     <string name="onboarding_welcome_body2">Σας κρατά ενήμερους για όλες τις συσκευές σας. Είτε είναι το τηλέφωνό σας, το tablet σας ή οποιαδήποτε άλλη συσκευή με εγκατεστημένο το Octi, βλέπετε βασικές πληροφορίες με μια ματιά.</string>
+    <string name="onboarding_welcome_body3">Αναβαθμίστε στο Octi Pro για επιπλέον λειτουργίες και υποστήριξη της ανάπτυξης.</string>
     <string name="onboarding_welcome_beta_hint">Ενημερωτικά: αυτή είναι έκδοση beta, ευχαριστώ για την υπομονή σας καθώς συνεχίζω να βελτιώνω την εφαρμογή!</string>
     <string name="onboarding_privacy_subtitle">Πολιτική απορρήτου</string>
     <string name="onboarding_privacy_body1">Το Octi δεν έχει διαφημίσεις και δεν πουλάει δεδομένα χρηστών.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Ειδοποιήσεις αποσφαλμάτωσης</string>
     <string name="debug_debuglog_file_label">Καταγεγραμμένο αρχείο log</string>
     <string name="debug_debuglog_record_action">Καταγραφή αρχείου αποσφαλμάτωσης</string>
+    <string name="onboarding_setupsync_title">Ρύθμιση συγχρονισμού</string>
+    <string name="onboarding_setupsync_message">Αυτή τη στιγμή βλέπετε μόνο αυτή τη συσκευή. Για να συνδέσετε τις εγκαταστάσεις Octi, ρυθμίστε μια κοινή υπηρεσία συγχρονισμού.</string>
     <string name="settings_privacy_policy_label">Πολιτική απορρήτου</string>
     <string name="settings_privacy_policy_desc">Υπεύθυνος χειρισμός δεδομένων.</string>
     <string name="settings_licenses_label">Άδειες</string>
@@ -32,6 +36,7 @@
     <string name="help_translate_label">Μετάφραση</string>
     <string name="help_translate_description">Βοηθήστε στη μετάφραση αυτής της εφαρμογής στη γλώσσα σας.</string>
     <string name="ui_theme_mode_setting_label">Λειτουργία θέματος</string>
+    <string name="ui_theme_mode_setting_explanation">Η λειτουργία που χρησιμοποιείται κατά τη διαμόρφωση της εφαρμογής (π.χ. σκοτεινή ή φωτεινή).</string>
     <string name="ui_theme_mode_dark_label">Σκοτεινό</string>
     <string name="ui_theme_mode_light_label">Φωτεινό</string>
     <string name="ui_theme_mode_system_label">Σύστημα</string>
@@ -103,6 +108,14 @@
     <string name="module_apps_category_label">Εφαρμογές</string>
     <string name="device_x_label">Συσκευή: %s</string>
     <string name="pro_device_limit_reached_title">Συμπληρώθηκε το όριο συσκευών</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Αυτή τη στιγμή έχετε %1$d συγχρονισμένη συσκευή.</item>
+        <item quantity="other">Αυτή τη στιγμή έχετε %1$d συγχρονισμένες συσκευές.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">Για να δείτε περισσότερες από %1$d συσκευή, αναβαθμίστε στο Octi Pro ή αφαιρέστε συσκευές.</item>
+        <item quantity="other">Για να δείτε περισσότερες από %1$d συσκευές, αναβαθμίστε στο Octi Pro ή αφαιρέστε συσκευές.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Η κατάργηση αυτής της συσκευής διαγράφει τα δεδομένα της αλλά δεν αφαιρεί την πρόσβαση. Για να αφαιρέσετε την πρόσβαση, αποσυνδέστε το Octi στη συσκευή.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Διαγράφοντας αυτή τη συσκευή διαγράφονται τα δεδομένα και ακυρώνεται η πρόσβαση.</string>
 </resources>

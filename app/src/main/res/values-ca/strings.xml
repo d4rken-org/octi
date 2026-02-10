@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Crea un compte</string>
     <string name="general_link_existing_action">Enllaça a un compte ja existent</string>
     <string name="general_sync_action">Sincronitza</string>
+    <string name="general_manage_devices_action">Gestionar dispositius</string>
     <string name="general_select_server_label">Seleccioneu un servidor</string>
     <string name="onboarding_welcome_subtitle">El teu company del dispositiu</string>
     <string name="onboarding_welcome_body1">L\'Octi és una eina per a persones amb diversos dispositius Android.</string>
     <string name="onboarding_welcome_body2">Us manté al corrent de tots els vostres dispositius. Tant si es tracta del vostre telèfon, tauleta o qualsevol altre giny amb l\'Octi instal·lat, obtindreu els detalls clau d\'un cop d\'ull.</string>
+    <string name="onboarding_welcome_body3">Actualitzeu a Octi Pro per obtenir funcions addicionals i donar suport al desenvolupament.</string>
     <string name="onboarding_welcome_beta_hint">Només un avís: aquesta és una versió beta, així que gràcies per la vostra paciència mentre continuo millorant l\'aplicació!</string>
     <string name="onboarding_privacy_subtitle">Política de privadesa</string>
     <string name="onboarding_privacy_body1">L\'Octi no té anuncis i no ven dades d\'usuari.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Notificacions de depuració</string>
     <string name="debug_debuglog_file_label">Fitxer de registre gravat</string>
     <string name="debug_debuglog_record_action">Grava el registre de depuració</string>
+    <string name="onboarding_setupsync_title">Configureu la sincronització</string>
+    <string name="onboarding_setupsync_message">Actualment només veieu aquest dispositiu. Per connectar les vostres instal·lacions d\'Octi, configureu un servei de sincronització comú.</string>
     <string name="settings_privacy_policy_label">Política de privadesa</string>
     <string name="settings_privacy_policy_desc">Tractament responsable de les dades.</string>
     <string name="settings_licenses_label">Llicencies</string>
@@ -29,7 +33,10 @@
     <string name="changelog_label">Registre de canvis</string>
     <string name="settings_acknowledgements_label">Agraïments</string>
     <string name="documentation_label">Documentació</string>
+    <string name="help_translate_label">Traducció</string>
+    <string name="help_translate_description">Ajudeu a traduir aquesta aplicació al vostre idioma preferit.</string>
     <string name="ui_theme_mode_setting_label">Mode del tema</string>
+    <string name="ui_theme_mode_setting_explanation">El mode utilitzat en la temàtica de l\'aplicació (p. ex. fosc o clar).</string>
     <string name="ui_theme_mode_dark_label">Fosc</string>
     <string name="ui_theme_mode_light_label">Clar</string>
     <string name="ui_theme_mode_system_label">Sistema</string>
@@ -101,6 +108,14 @@
     <string name="module_apps_category_label">Aplicacions</string>
     <string name="device_x_label">Dispositiu: %s</string>
     <string name="pro_device_limit_reached_title">S\'ha assolit el límit de dispositius</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Actualment teniu %1$d dispositiu sincronitzat.</item>
+        <item quantity="other">Actualment teniu %1$d dispositius sincronitzats.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">Per veure més de %1$d dispositiu, actualitzeu a Octi Pro o elimineu dispositius.</item>
+        <item quantity="other">Per veure més de %1$d dispositius, actualitzeu a Octi Pro o elimineu dispositius.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">En suprimir aquest dispositiu, se suprimiran les seves dades, però no se\'n revocarà l\'accés. Per revocar l\'accés, desconnecteu l\'Octi al dispositiu.</string>
     <string name="sync_delete_device_revokeaccess_caveat">En suprimir aquest dispositiu, se n\'eliminaran les dades i se\'n revocarà l\'accés.</string>
 </resources>

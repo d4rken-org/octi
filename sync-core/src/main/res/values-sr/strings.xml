@@ -1,2 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_device_stale_warning_text">Уређај се није синхронизовао %s</string>
+
+    <plurals name="sync_stale_devices_info_message">
+        <item quantity="one">%d уређај се није скоро синхронизовао</item>
+        <item quantity="few">%d уређаја се нису скоро синхронизовала</item>
+        <item quantity="other">%d уређаја се није скоро синхронизовало</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_days">
+        <item quantity="one">%d дан</item>
+        <item quantity="few">%d дана</item>
+        <item quantity="other">%d дана</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_months">
+        <item quantity="one">%d месец</item>
+        <item quantity="few">%d месеца</item>
+        <item quantity="other">%d месеци</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_years">
+        <item quantity="one">%d година</item>
+        <item quantity="few">%d године</item>
+        <item quantity="other">%d година</item>
+    </plurals>
+</resources>

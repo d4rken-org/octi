@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">이 앱 개발자가 만든 Octi용 오픈소스 동기화 서버입니다. 데이터는 클라이언트 측에서 암호화되며, 오직 사용자의 기기만 해독할 수 있습니다.\n\n앱과 서버 모두 여전히 개선 중이므로, 다른 동기화 옵션보다 안정성이 낮을 수 있습니다.</string>
     <string name="sync_kserver_add_create_action_hint">비활성 계정은 몇 주 후 삭제됩니다.</string>
     <string name="sync_kserver_add_subtitle">새 Google Drive 추가</string>
@@ -15,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">다른 앱을 통해 보낼 수 있는 텍스트 코드를 생성하기</string>
     <string name="sync_kserver_link_host_option_qrcode">QR코드 표시</string>
     <string name="sync_kserver_link_host_device_linked_message">새 기기가 계정에 연결되었습니다.</string>
+    <string name="sync_kserver_link_client_option_direct">연결 코드를 수동으로 복사하여 붙여넣기</string>
     <string name="sync_kserver_link_client_option_qrcode">다른 기기의 QR 코드 스캔하기</string>
     <string name="sync_kserver_link_client_startcamera_action">카메라 시작</string>
     <string name="sync_kserver_link_client_link_action">기기 연결</string>

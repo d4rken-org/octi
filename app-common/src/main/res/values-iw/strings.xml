@@ -24,4 +24,6 @@
     <string name="general_refresh_action">רענון</string>
     <string name="general_continue">המשך</string>
     <string name="general_show_details_action">הצג פרטים</string>
+    <string name="general_minutes_label">דקות</string>
+    <string name="preference_slider_input_summary">%1$d דקות</string>
 </resources>

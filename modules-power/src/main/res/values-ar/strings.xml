@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">تنبيهات البطارية</string>
     <string name="module_power_alerts_notification_battery_low_title">بطارية منخفضة: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">بطارية %1$s عند %3$d%% (&lt;%2$d%%) ولا يتم شحنها.</string>
+    <string name="module_power_alerts_highbattery_title">بطارية مرتفعة</string>
+    <string name="module_power_alerts_highbattery_description">تلقي إشعار عندما تصل بطارية هذا الجهاز إلى الحد الذي حددته أثناء الشحن. مفيد للحفاظ على صحة البطارية.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">إشعار عندما تكون البطارية أعلى من %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">عدم الإشعار عندما تكون البطارية مرتفعة</string>
+    <string name="module_power_alerts_notification_battery_high_title">بطارية مرتفعة: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">بطارية %1$s عند %3$d%% (>%2$d%%) ولا يزال يتم شحنها.</string>
+    <string name="module_power_detail_level_label">مستوى البطارية</string>
+    <string name="module_power_detail_status_label">الحالة</string>
+    <string name="module_power_detail_speed_label">سرعة الشحن</string>
+    <string name="module_power_detail_temperature_label">درجة الحرارة</string>
+    <string name="module_power_detail_estimation_label">التقدير</string>
+    <string name="module_power_detail_health_label">الصحة</string>
+    <string name="module_power_detail_health_good">جيدة</string>
+    <string name="module_power_detail_health_overheat">سخونة زائدة</string>
+    <string name="module_power_detail_health_dead">ميتة</string>
+    <string name="module_power_detail_health_over_voltage">جهد زائد</string>
+    <string name="module_power_detail_health_cold">باردة</string>
+    <string name="module_power_detail_health_unknown">غير معروفة</string>
 </resources>

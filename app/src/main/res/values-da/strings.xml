@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Opret konto</string>
     <string name="general_link_existing_action">Link til eksisterende konto</string>
     <string name="general_sync_action">Synkronisér</string>
+    <string name="general_manage_devices_action">Administrer enheder</string>
     <string name="general_select_server_label">Vælg server</string>
     <string name="onboarding_welcome_subtitle">Din Enhedsgenbo</string>
     <string name="onboarding_welcome_body1">Octi er et værktøj til folk med flere Android-enheder.</string>
     <string name="onboarding_welcome_body2">Den holder dig opdateret med alle dine enheder. Uanset om det er din telefon, tablet eller en anden Octi-enhed, får du det vigtigste samlet ét sted.</string>
+    <string name="onboarding_welcome_body3">Opgrader til Octi Pro for at få ekstra funktioner og støtte udviklingen.</string>
     <string name="onboarding_welcome_beta_hint">Bare en lille note: Dette er en betaversion, så tak for din tålmodighed, mens jeg fortsætter med at forbedre appen!</string>
     <string name="onboarding_privacy_subtitle">Privatlivspolitik</string>
     <string name="onboarding_privacy_body1">Octi har ingen reklamer og sælger ikke brugerdata.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Fejlfindingsnotifikationer</string>
     <string name="debug_debuglog_file_label">Optaget logfil</string>
     <string name="debug_debuglog_record_action">Optag fejlfindingslog</string>
+    <string name="onboarding_setupsync_title">Opsæt synkronisering</string>
+    <string name="onboarding_setupsync_message">I øjeblikket ser du kun denne enhed. For at forbinde dine Octi-installationer, opsæt en fælles synkroniseringstjeneste.</string>
     <string name="settings_privacy_policy_label">Privatlivspolitik</string>
     <string name="settings_privacy_policy_desc">Ansvarlig håndtering af data.</string>
     <string name="settings_licenses_label">Licenser</string>
@@ -29,24 +33,32 @@
     <string name="changelog_label">Ændringslog</string>
     <string name="settings_acknowledgements_label">Anerkendelser</string>
     <string name="documentation_label">Dokumentation</string>
+    <string name="help_translate_label">Oversættelse</string>
+    <string name="help_translate_description">Hjælp med at oversætte denne app til dit foretrukne sprog.</string>
     <string name="ui_theme_mode_setting_label">Tema-tilstand</string>
+    <string name="ui_theme_mode_setting_explanation">Tilstanden der bruges ved tematisering af appen (f.eks. mørk eller lys).</string>
     <string name="ui_theme_mode_dark_label">Mørk</string>
     <string name="ui_theme_mode_light_label">Lys</string>
+    <string name="ui_theme_mode_system_label">System</string>
     <string name="ui_theme_style_setting_label">Temastil</string>
     <string name="ui_theme_style_setting_explanation">Farvestilen der bruges ved tematisering af appen.</string>
     <string name="ui_theme_style_default_label">Standard</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Fejlrapporter</string>
     <string name="issue_tracker_description">Offentligt fejlrapporteringssystem for fejl og funktionsønsker.</string>
+    <string name="discord_label">Discord</string>
     <string name="discord_description">Et sted at hænge ud og stille spørgsmål.</string>
     <string name="support_debuglog_label">Optag fejlfindingslog</string>
     <string name="support_debuglog_inprogress_label">Stop fejlfindingslog</string>
     <string name="support_debuglog_desc">Optag alt appen gør i en tekstfil du kan dele.</string>
+    <string name="settings_support_label">Support</string>
     <string name="debug_debuglog_sensitive_information_message">Denne fil indeholder følsomme oplysninger (fx dine installerede apps). Del kun med betroede.</string>
     <string name="settings_debuglog_explanation">Denne funktion optager alt hvad appen gør i en delbar fil. Den genererede fil kan indeholde følsomme oplysninger (fx dine installerede apps). Del kun med betroede personer (fx udvikleren hvis du fejlretter sammen).</string>
     <string name="sync_last_action_label">Seneste handling</string>
     <string name="sync_last_never_label">Aldrig</string>
     <string name="sync_quota_storage_msg">%1$s ledig (%2$s / %3$s)</string>
     <string name="general_disconnect_action">Afbryd</string>
+    <string name="generic_info_action">Info</string>
     <string name="general_reset_action">Nulstil</string>
     <string name="sync_account_label">Konto</string>
     <string name="sync_services_label">Synktjenester</string>
@@ -91,9 +103,19 @@
     <string name="modules_settings_desc">Slå forskellige moduler til og fra og tilpas deres indstillinger.</string>
     <string name="modules_category_connectivity_label">Forbindelse</string>
     <string name="modules_category_energy_label">Batteri</string>
+    <string name="modules_category_apps_label">Apps</string>
     <string name="modules_category_misc_label">Diverse</string>
+    <string name="module_apps_category_label">Apps</string>
     <string name="device_x_label">Enhed: %s</string>
     <string name="pro_device_limit_reached_title">Enhedsgrænse nået</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Du har i øjeblikket %1$d synkroniseret enhed.</item>
+        <item quantity="other">Du har i øjeblikket %1$d synkroniserede enheder.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">For at se mere end %1$d enhed, opgrader til Octi Pro eller fjern enheder.</item>
+        <item quantity="other">For at se mere end %1$d enheder, opgrader til Octi Pro eller fjern enheder.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Fjernelse af denne enhed sletter data, men fjerner ikke adgang. For at fjerne adgang, afbryd Octi på enheden.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Sletning af enheden fjerner både data og adgang.</string>
 </resources>

@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Akkuilmoitukset</string>
     <string name="module_power_alerts_notification_battery_low_title">Alhainen akun varaus: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s on %3$d%% akkua (&lt;%2$d%%) eikä lataudu.</string>
+    <string name="module_power_alerts_highbattery_title">Korkea akun varaus</string>
+    <string name="module_power_alerts_highbattery_description">Saat ilmoituksen, kun tämän laitteen akku saavuttaa määrittämäsi raja-arvon latauksen aikana. Hyödyllinen akun kunnon säilyttämiseksi.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Ilmoita, kun akun varaus on yli %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Älä ilmoita, kun akun varaus on korkea</string>
+    <string name="module_power_alerts_notification_battery_high_title">Korkea akun varaus: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s on %3$d%% akkua (>%2$d%%) ja latautuu edelleen.</string>
+    <string name="module_power_detail_level_label">Akun varaustaso</string>
+    <string name="module_power_detail_status_label">Tila</string>
+    <string name="module_power_detail_speed_label">Latausnopeus</string>
+    <string name="module_power_detail_temperature_label">Lämpötila</string>
+    <string name="module_power_detail_estimation_label">Arvio</string>
+    <string name="module_power_detail_health_label">Kunto</string>
+    <string name="module_power_detail_health_good">Hyvä</string>
+    <string name="module_power_detail_health_overheat">Ylikuumentunut</string>
+    <string name="module_power_detail_health_dead">Kuollut</string>
+    <string name="module_power_detail_health_over_voltage">Ylijännite</string>
+    <string name="module_power_detail_health_cold">Kylmä</string>
+    <string name="module_power_detail_health_unknown">Tuntematon</string>
 </resources>

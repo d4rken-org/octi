@@ -23,4 +23,6 @@
     <string name="general_refresh_action">Освежи</string>
     <string name="general_continue">Настави</string>
     <string name="general_show_details_action">Прикажи детаље</string>
+    <string name="general_minutes_label">Минути</string>
+    <string name="preference_slider_input_summary">%1$d минута</string>
 </resources>

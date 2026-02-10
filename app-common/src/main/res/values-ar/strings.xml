@@ -24,4 +24,6 @@
     <string name="general_refresh_action">تحديث</string>
     <string name="general_continue">استمرار</string>
     <string name="general_show_details_action">إظهار التفاصيل</string>
+    <string name="general_minutes_label">دقائق</string>
+    <string name="preference_slider_input_summary">%1$d دقائق</string>
 </resources>

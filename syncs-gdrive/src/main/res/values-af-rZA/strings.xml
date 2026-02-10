@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="gdrive_account_scope_error_label">Toestemmingsfout</string>
+    <string name="gdrive_account_scope_error_description">Octi het nie die vereiste toegangsomvang ontvang nie. Probeer weer en maak seker dat toestemmings toegestaan word.</string>
+    <string name="gdrive_account_lockout_error_label">Uitsluitfout</string>
+    <string name="gdrive_account_lockout_error_description">Hierdie toestel is uitgesluit en kan nie meer toegang tot Google Drive kry nie. Toegang tot jou Google-rekening is herroep. Verleen weer toegang en probeer weer.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
+    <string name="sync_gdrive_appdata_label">Programdata-omvang</string>
+    <string name="sync_gdrive_type_appdata_description">Data word in Google Drive geplaas. Hierdie spesifieke variant gebruik die \"programdata\"-omvang. Toegang word slegs verleen tot \'n nuwe vouer net vir hierdie program. Die vouer is nie sigbaar in jou aandrywer nie. Dit is soortgelyk aan hoe WhatsApp-rugsteune werk.</string>
+    <string name="sync_gdrive_add_label">Voeg nuwe Google Drive by</string>
+    <string name="sync_gdrive_add_description">Klik die aanmeldknoppie hieronder om Google Drive-toegang op te stel.</string>
+    <string name="sync_gdrive_reset_confirmation_desc">Herstel alle Octi-data wat op Google Drive gestoor is. Jou toestel bly aangemeld by Google Drive.</string>
+    <string name="sync_gdrive_disconnect_confirmation_desc">Meld af van Google Drive en verwyder data wat met hierdie toestel verband hou.</string>
+    <string name="sync_gdrive_error_no_account_on_device">Hierdie toestel is nie by enige Google-rekening aangemeld nie.</string>
+</resources>

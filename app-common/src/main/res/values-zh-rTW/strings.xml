@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Octi</string>
     <string name="general_error_label">錯誤</string>
     <string name="general_error_no_compatible_app_found_msg">找不到可處理此請求的相容應用程式。</string>
     <string name="general_share_action">分享</string>
@@ -23,4 +24,6 @@
     <string name="general_refresh_action">重新整理</string>
     <string name="general_continue">繼續</string>
     <string name="general_show_details_action">顯示詳細資訊</string>
+    <string name="general_minutes_label">分鐘</string>
+    <string name="preference_slider_input_summary">%1$d 分鐘</string>
 </resources>

@@ -16,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Einen Textcode erstellen, den Sie über andere Apps senden können</string>
     <string name="sync_kserver_link_host_option_qrcode">Zeige einen QR-Code</string>
     <string name="sync_kserver_link_host_device_linked_message">Ein neues Gerät wurde mit deinem Konto verbunden.</string>
+    <string name="sync_kserver_link_client_option_direct">Einen Verbindungscode manuell kopieren und einfügen</string>
     <string name="sync_kserver_link_client_option_qrcode">Einen QR-Code von einem anderen Gerät scannen</string>
     <string name="sync_kserver_link_client_startcamera_action">Starte Kamera</string>
     <string name="sync_kserver_link_client_link_action">Gerät verbinden</string>

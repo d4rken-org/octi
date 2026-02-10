@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Alerte baterie</string>
     <string name="module_power_alerts_notification_battery_low_title">Baterie scăzută: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s este la %3$d%% baterie (&lt;%2$d%%) și nu se încarcă.</string>
+    <string name="module_power_alerts_highbattery_title">Baterie ridicată</string>
+    <string name="module_power_alerts_highbattery_description">Primește o notificare când bateria acestui dispozitiv atinge pragul specificat în timp ce se încarcă. Util pentru păstrarea sănătății bateriei.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Notifică când bateria este peste %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Nu notifica când bateria este ridicată</string>
+    <string name="module_power_alerts_notification_battery_high_title">Baterie ridicată: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s este la %3$d%% baterie (>%2$d%%) și încă se încarcă.</string>
+    <string name="module_power_detail_level_label">Nivel baterie</string>
+    <string name="module_power_detail_status_label">Stare</string>
+    <string name="module_power_detail_speed_label">Viteză de încărcare</string>
+    <string name="module_power_detail_temperature_label">Temperatură</string>
+    <string name="module_power_detail_estimation_label">Estimare</string>
+    <string name="module_power_detail_health_label">Sănătate</string>
+    <string name="module_power_detail_health_good">Bună</string>
+    <string name="module_power_detail_health_overheat">Supraîncălzire</string>
+    <string name="module_power_detail_health_dead">Defectă</string>
+    <string name="module_power_detail_health_over_voltage">Supratensiune</string>
+    <string name="module_power_detail_health_cold">Rece</string>
+    <string name="module_power_detail_health_unknown">Necunoscut</string>
 </resources>

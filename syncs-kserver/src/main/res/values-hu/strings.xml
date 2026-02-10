@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Egy nyílt forráskódú szinkronizáló szerver Octi-hoz, amit az alkalmazás fejlesztője készített. Az adatok kliens oldalon titkosítva vannak, csak a saját eszközeid tudják visszafejteni.\n\nMivel az alkalmazás és a szerver is folyamatosan fejlődik, kevésbé stabil lehet, mint más szinkronizálási lehetőségek.</string>
     <string name="sync_kserver_add_create_action_hint">Az inaktív fiókok néhány hét után törlődnek.</string>
     <string name="sync_kserver_add_subtitle">Új Google Drive hozzáadása</string>
@@ -15,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Hozz létre egy szöveges kódot, amit más alkalmazásokon keresztül küldhetsz el</string>
     <string name="sync_kserver_link_host_option_qrcode">QR kód megjelenítése</string>
     <string name="sync_kserver_link_host_device_linked_message">Új eszköz lett kapcsolva a fiókodhoz.</string>
+    <string name="sync_kserver_link_client_option_direct">Összekapcsolási kód manuális másolása és beillesztése</string>
     <string name="sync_kserver_link_client_option_qrcode">QR kód leolvasása másik eszközről</string>
     <string name="sync_kserver_link_client_startcamera_action">Kamera indítása</string>
     <string name="sync_kserver_link_client_link_action">Eszköz összekapcsolása</string>
