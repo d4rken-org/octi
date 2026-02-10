@@ -22,6 +22,6 @@
     <string name="upgrade_screen_restore_purchase_action">Zahlungen wiederherstellen</string>
     <string name="upgrade_screen_restore_purchase_message">Ihr Upgrade ist für alle Geräte auf demselben Google-Konto gültig.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Tipps zur Fehlerbehebung für unbekannte Upgrades:</string>
-    <string name="upgrade_screen_restore_sync_patience_hint">Play Store synchronization may take time. Try rebooting, clearing Google Play cache or simply wait.</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Die Synchronisierung des Play Store kann etwas dauern. Versuche das Gerät neu zu starten, den Google Play-Cache zu leeren oder warte einfach ab.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Mehrere Konten können Google Play verwirren. Melden Sie sich aus anderen Konten ab, oder installieren Sie über die Google Play-Website, was Verbindungen mit einem bestimmten Konto erzwingt.</string>
 </resources>

@@ -23,4 +23,6 @@
     <string name="general_refresh_action">Verfris</string>
     <string name="general_continue">Gaan voort</string>
     <string name="general_show_details_action">Wys besonderhede</string>
+    <string name="general_minutes_label">Minute</string>
+    <string name="preference_slider_input_summary">%1$d minute</string>
 </resources>

@@ -16,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">إنشاء رمز نصي يمكنك إرساله عبر تطبيقات أخرى</string>
     <string name="sync_kserver_link_host_option_qrcode">عرض رمز استجابة سريعة (QR)</string>
     <string name="sync_kserver_link_host_device_linked_message">تم ربط جهاز جديد بحسابك.</string>
+    <string name="sync_kserver_link_client_option_direct">انسخ والصق رمز الربط يدويًا</string>
     <string name="sync_kserver_link_client_option_qrcode">مسح رمز استجابة سريعة (QR) من جهاز آخر</string>
     <string name="sync_kserver_link_client_startcamera_action">تشغيل الكاميرا</string>
     <string name="sync_kserver_link_client_link_action">ربط الجهاز</string>

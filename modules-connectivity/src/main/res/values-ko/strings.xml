@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_connectivity_label">연결 모듈</string>
+    <string name="module_connectivity_desc">연결 유형, 공용 IP, 네트워크 세부 정보</string>
+    <string name="module_connectivity_type_wifi_label">WiFi</string>
+    <string name="module_connectivity_type_cellular_label">모바일 데이터</string>
+    <string name="module_connectivity_type_ethernet_label">Ethernet</string>
+    <string name="module_connectivity_type_none_label">연결 없음</string>
+    <string name="module_connectivity_unknown_public_ip_label">알 수 없는 공용 IP</string>
+    <string name="module_connectivity_unknown_local_ip_label">알 수 없는 로컬 IP</string>
+    <string name="module_connectivity_detail_local_ipv4_label">로컬 IPv4</string>
+    <string name="module_connectivity_detail_local_ipv6_label">로컬 IPv6</string>
+    <string name="module_connectivity_detail_gateway_label">Gateway</string>
+    <string name="module_connectivity_detail_dns_label">DNS 서버</string>
+    <string name="module_connectivity_detail_public_ip_label">공용 IP</string>
+    <string name="module_connectivity_detail_connection_type_label">연결 유형</string>
+</resources>

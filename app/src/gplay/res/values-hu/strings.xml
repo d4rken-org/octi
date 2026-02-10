@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">A Google Play nem elérhető</string>
     <string name="upgrades_gplay_unavailable_error_description">Az Octi nem tud csatlakozni a Google Playhez. Telepítve és naprakész a Google Play? Be vagy jelentkezve Google-fiókkal? Próbáld meg törölni a Google Play alkalmazás gyorsítótárát és indítsd újra az eszközt.</string>
     <string name="upgrades_no_purchases_found_check_account">Nem találhatók vásárlások. Biztosan a megfelelő fiókot használod?</string>
@@ -8,6 +9,7 @@
     <string name="upgrades_dashcard_upgrade_action">Frissítés</string>
     <string name="upgrade_screen_title">Szerezze be az Octi Pro-t</string>
     <string name="upgrade_screen_preamble">Az Octi nem tartalmaz hirdetéseket és nem árul felhasználói adatokat. A munkámat te finanszírozod ❤️.</string>
+    <string name="upgrade_screen_benefits_title">Előnyök</string>
     <string name="upgrade_screen_benefits_body">• Több mint 3 eszköz 💯\n• Különböző témák 🎨\n• Több lehetőség ⚙️\n• Extra szinkronizáló szerverek🖥️️\n• Folyamatos fejlesztés ☕\n• Elkötelezett fejlesztő 🧙</string>
     <string name="upgrade_screen_how_title">Lehetőségek</string>
     <string name="upgrade_screen_how_body">Választhatsz egyszeri vásárlás és olcsóbb éves előfizetés között.\nAz előfizetés 14 napos ingyenes próbaidőszakkal indul, utána évente egyszer kerül számlázásra. A próbaidő és az előfizetés bármikor lemondható.\nUgyanazok a funkciók, csak eltérő árazási modellek.</string>

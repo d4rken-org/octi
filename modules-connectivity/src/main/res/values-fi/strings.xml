@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_connectivity_label">Yhteysmoduuli</string>
+    <string name="module_connectivity_desc">Yhteystyyppi, julkinen IP, verkon tiedot</string>
+    <string name="module_connectivity_type_wifi_label">WiFi</string>
+    <string name="module_connectivity_type_cellular_label">Mobiilidata</string>
+    <string name="module_connectivity_type_ethernet_label">Ethernet</string>
+    <string name="module_connectivity_type_none_label">Ei yhteyttä</string>
+    <string name="module_connectivity_unknown_public_ip_label">Tuntematon julkinen IP</string>
+    <string name="module_connectivity_unknown_local_ip_label">Tuntematon paikallinen IP</string>
+    <string name="module_connectivity_detail_local_ipv4_label">Paikallinen IPv4</string>
+    <string name="module_connectivity_detail_local_ipv6_label">Paikallinen IPv6</string>
+    <string name="module_connectivity_detail_gateway_label">Gateway</string>
+    <string name="module_connectivity_detail_dns_label">DNS-palvelimet</string>
+    <string name="module_connectivity_detail_public_ip_label">Julkinen IP</string>
+    <string name="module_connectivity_detail_connection_type_label">Yhteystyyppi</string>
+</resources>

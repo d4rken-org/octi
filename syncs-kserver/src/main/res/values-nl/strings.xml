@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Een open-source synchronisatieserver voor Octi gemaakt door de ontwikkelaar van deze app. Gegevens worden aan de clientzijde versleuteld, alleen je apparaten kunnen deze ontsleutelen.\n\nOmdat zowel de app als de server nog worden verbeterd, kan deze minder stabiel zijn dan andere synchronisatieopties.</string>
     <string name="sync_kserver_add_create_action_hint">Inactieve accounts worden na een paar weken verwijderd.</string>
     <string name="sync_kserver_add_subtitle">Nieuwe Google Drive toevoegen</string>
@@ -15,6 +16,8 @@
     <string name="sync_kserver_link_host_option_direct">Maak een tekstcode die je via andere apps kunt versturen</string>
     <string name="sync_kserver_link_host_option_qrcode">Toon een QR-code</string>
     <string name="sync_kserver_link_host_device_linked_message">Er is een nieuw apparaat gekoppeld aan je account.</string>
+    <string name="sync_kserver_link_client_option_direct">Handmatig een koppelcode kopiëren en plakken</string>
     <string name="sync_kserver_link_client_option_qrcode">Scan een QR-code van een ander apparaat</string>
+    <string name="sync_kserver_link_client_startcamera_action">Camera starten</string>
     <string name="sync_kserver_link_client_link_action">Koppel apparaat</string>
 </resources>

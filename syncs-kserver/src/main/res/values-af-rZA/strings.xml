@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">\'n Oopbron-sinkroniseerbediener vir Octi wat deur hierdie toepassing se ontwikkelaar gemaak is. Data word aan die kliëntkant geïnkripteer, net jou toestelle kan dit dekripteer.\n\nAangesien beide die toepassing en die bediener steeds verbeter word, kan dit minder stabiel wees as ander sinkroniseringsopsies.</string>
     <string name="sync_kserver_add_create_action_hint">Onaktiewe rekeninge word na \'n paar weke uitgevee.</string>
     <string name="sync_kserver_add_subtitle">Voeg nuwe Google Drive by</string>
@@ -15,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Skep \'n tekskode wat jy via ander programme kan stuur</string>
     <string name="sync_kserver_link_host_option_qrcode">Wys \'n QR-kode</string>
     <string name="sync_kserver_link_host_device_linked_message">\'n Nuwe toestel is aan jou rekening gekoppel.</string>
+    <string name="sync_kserver_link_client_option_direct">Plak \'n koppelkode handmatig</string>
     <string name="sync_kserver_link_client_option_qrcode">Skandeer \'n QR-kode van \'n ander toestel</string>
     <string name="sync_kserver_link_client_startcamera_action">Begin kamera</string>
     <string name="sync_kserver_link_client_link_action">Koppel toestel</string>

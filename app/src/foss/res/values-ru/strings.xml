@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Georgia</string>
-    <string name="upgrade_screen_how_title">Ქართული</string>
+    <string name="app_name_upgraded">Octi FOSS</string>
+    <string name="upgrade_feature_requires_pro">Требуется Octi Pro</string>
+    <string name="upgrades_dashcard_title">Получить Octi Pro</string>
+    <string name="upgrades_dashcard_body">Разблокируйте дополнительные функции и станьте спонсором для поддержки дальнейшей разработки!</string>
+    <string name="upgrades_dashcard_upgrade_action">Обновить</string>
+    <string name="upgrade_screen_title">Обновить до Octi Pro</string>
+    <string name="upgrade_screen_preamble">В Octi нет рекламы, и он не продаёт данные пользователей. Моя работа финансируется вами ❤️</string>
+    <string name="upgrade_screen_how_title">Что нужно сделать</string>
+    <string name="upgrade_screen_how_body">Станьте спонсором и поддержите разработку! Нажмите кнопку ниже, чтобы активировать все дополнительные функции и открыть мой профиль GitHub Sponsors.</string>
+    <string name="upgrade_screen_why_title">Преимущества 🪄</string>
+    <string name="upgrade_screen_benefits_body">• Более 3 устройств 💯\n• Различные темы 🎨\n• Больше настроек ⚙️\n• Дополнительные серверы синхронизации🖥️\n• Продолжение разработки с открытым кодом 🧙</string>
+    <string name="upgrade_screen_sponsor_action">Спонсировать разработку</string>
+    <string name="upgrade_screen_sponsor_action_hint">Альтернатива — реклама, аналитика и Google Play 🙁</string>
+    <string name="upgrade_screen_thanks_toast">Спасибо за поддержку разработки с открытым исходным кодом ❤️</string>
 </resources>

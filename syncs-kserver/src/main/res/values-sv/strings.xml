@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">En synkroniseringsserver med öppen källkod för Octi skapad av utvecklaren av denna app. Data krypteras på klientsidan, endast dina enheter kan dekryptera den.\\n\\nEftersom både appen och servern fortfarande förbättras kan den vara mindre stabil än andra synkroniseringsalternativ.</string>
     <string name="sync_kserver_add_create_action_hint">Inaktiva konton raderas efter några veckor.</string>
     <string name="sync_kserver_add_subtitle">Lägg till ny Google Drive</string>
@@ -15,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Skapa en textkod som du kan skicka via andra appar</string>
     <string name="sync_kserver_link_host_option_qrcode">Visa en QR-kod</string>
     <string name="sync_kserver_link_host_device_linked_message">En ny enhet har länkats till ditt konto.</string>
+    <string name="sync_kserver_link_client_option_direct">Kopiera och klistra in en länkkod manuellt</string>
     <string name="sync_kserver_link_client_option_qrcode">Skanna en QR-kod från en annan enhet</string>
     <string name="sync_kserver_link_client_startcamera_action">Starta kamera</string>
     <string name="sync_kserver_link_client_link_action">Länka enhet</string>

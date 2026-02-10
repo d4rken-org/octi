@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play 無法使用</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi 無法連接到 Google Play。Google Play 是否已安裝且為最新版本？您的 Google 帳戶是否已登入？請嘗試清除 Google Play 應用程式的快取並重新啟動您的裝置。</string>
     <string name="upgrades_no_purchases_found_check_account">找不到任何購買記錄。您是否使用了正確的帳戶？</string>
@@ -8,6 +9,7 @@
     <string name="upgrades_dashcard_upgrade_action">升級</string>
     <string name="upgrade_screen_title">取得 Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi 沒有廣告，也不販售使用者資料。我的工作由你贊助 ❤️。</string>
+    <string name="upgrade_screen_benefits_title">優勢</string>
     <string name="upgrade_screen_benefits_body">• 超過 3 台裝置 💯\n• 不同主題 🎨\n• 更多選項 ⚙️\n• 額外同步伺服器🖥️️\n• 持續開發 ☕\n• 積極進取的開發者 🧙</string>
     <string name="upgrade_screen_how_title">選項</string>
     <string name="upgrade_screen_how_body">您可以選擇一次性購買或更便宜的年度訂閱。\n訂閱從 14 天免費試用開始，之後每年收費一次。試用與訂閱可隨時取消。\n功能相同，只是價格模式不同。</string>
