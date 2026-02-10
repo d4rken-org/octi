@@ -124,6 +124,6 @@
         <item quantity="many">Щоб переглядати більше ніж %1$d пристроїв, оновіться до Octi Pro або видаліть пристрої.</item>
         <item quantity="other">Щоб переглядати більше ніж %1$d пристроїв, оновіться до Octi Pro або видаліть пристрої.</item>
     </plurals>
-    <string name="sync_delete_device_keepaccess_caveat">Видалення пристрою видалить його дані, але не скасує доступ. Щоб скасувати доступ, від'єднайте Octi на пристрої.</string>
+    <string name="sync_delete_device_keepaccess_caveat">Видалення пристрою видалить його дані, але не скасує доступ. Щоб скасувати доступ, від\'єднайте Octi на пристрої.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Видалення пристрою також видалить дані та скасує доступ.</string>
 </resources>
