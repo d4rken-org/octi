@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Octi</string>
     <string name="general_error_label">Помилка</string>
     <string name="general_error_no_compatible_app_found_msg">Не знайдено сумісного додатку для обробки цього запиту.</string>
     <string name="general_share_action">Поділитися</string>

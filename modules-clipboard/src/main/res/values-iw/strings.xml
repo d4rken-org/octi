@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">העתק והדבק טקסט בין מכשירים.</string>
     <string name="module_clipboard_copied_octi_to_os">הועתק Octi ללוח המערכת</string>
     <string name="module_clipboard_copied_os_to_octi">המערכת הועתקה ללוח Octi</string>
+
+    <string name="module_clipboard_detail_type_label">סוג</string>
+    <string name="module_clipboard_detail_content_label">תוכן</string>
+    <string name="module_clipboard_detail_type_empty">ריק</string>
+    <string name="module_clipboard_detail_type_text">טקסט</string>
+    <string name="module_clipboard_copy_action">העתק ללוח</string>
 </resources>

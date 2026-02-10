@@ -29,4 +29,17 @@
     <string name="module_power_alerts_highbattery_disabled_caption">אל תודיע כאשר הסוללה גבוהה</string>
     <string name="module_power_alerts_notification_battery_high_title">סוללה גבוהה: %s</string>
     <string name="module_power_alerts_notification_battery_high_body">%1$s נמצא במצב סוללה של %3$d%% (&gt;%2$d%%) ועדיין נטען.</string>
+
+    <string name="module_power_detail_level_label">רמת סוללה</string>
+    <string name="module_power_detail_status_label">מצב</string>
+    <string name="module_power_detail_speed_label">מהירות טעינה</string>
+    <string name="module_power_detail_temperature_label">טמפרטורה</string>
+    <string name="module_power_detail_estimation_label">הערכה</string>
+    <string name="module_power_detail_health_label">תקינות</string>
+    <string name="module_power_detail_health_good">טוב</string>
+    <string name="module_power_detail_health_overheat">התחממות יתר</string>
+    <string name="module_power_detail_health_dead">מת</string>
+    <string name="module_power_detail_health_over_voltage">מתח יתר</string>
+    <string name="module_power_detail_health_cold">קר</string>
+    <string name="module_power_detail_health_unknown">לא ידוע</string>
 </resources>

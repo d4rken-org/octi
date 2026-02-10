@@ -7,4 +7,10 @@
     <string name="module_wifi_reception_good_label">良好訊號</string>
     <string name="module_wifi_reception_okay_label">普通訊號</string>
     <string name="module_wifi_reception_bad_label">不良訊號</string>
+
+    <string name="module_wifi_detail_ssid_label">SSID</string>
+    <string name="module_wifi_detail_frequency_label">頻率</string>
+    <string name="module_wifi_detail_signal_label">訊號</string>
+    <string name="module_wifi_freq_5ghz">5 GHz</string>
+    <string name="module_wifi_freq_2_4ghz">2.4 GHz</string>
 </resources>

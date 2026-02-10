@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">Copie e cole texto entre dispositivos.</string>
     <string name="module_clipboard_copied_octi_to_os">Copiado do Octi para a área de transferência do sistema</string>
     <string name="module_clipboard_copied_os_to_octi">Copiado do sistema para a área de transferência do Octi</string>
+
+    <string name="module_clipboard_detail_type_label">Tipo</string>
+    <string name="module_clipboard_detail_content_label">Conteúdo</string>
+    <string name="module_clipboard_detail_type_empty">Vazio</string>
+    <string name="module_clipboard_detail_type_text">Texto</string>
+    <string name="module_clipboard_copy_action">Copiar para a área de transferência</string>
 </resources>

@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">Kopiera och klistra in text mellan enheter.</string>
     <string name="module_clipboard_copied_octi_to_os">Kopierat från Octi till systemets urklipp</string>
     <string name="module_clipboard_copied_os_to_octi">Kopierat från systemet till Octis urklipp</string>
+
+    <string name="module_clipboard_detail_type_label">Typ</string>
+    <string name="module_clipboard_detail_content_label">Innehåll</string>
+    <string name="module_clipboard_detail_type_empty">Tom</string>
+    <string name="module_clipboard_detail_type_text">Text</string>
+    <string name="module_clipboard_copy_action">Kopiera till urklipp</string>
 </resources>

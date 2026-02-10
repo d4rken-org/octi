@@ -29,4 +29,17 @@
     <string name="module_power_alerts_highbattery_disabled_caption">Pil seviyesi yüksekken bildirim gönderme</string>
     <string name="module_power_alerts_notification_battery_high_title">Yüksek pil seviyesi: %s</string>
     <string name="module_power_alerts_notification_battery_high_body">%1$s\'nin pil seviyesi %3$d%% (&gt;%2$d%%) ve hala şarj oluyor.</string>
+
+    <string name="module_power_detail_level_label">Pil seviyesi</string>
+    <string name="module_power_detail_status_label">Durum</string>
+    <string name="module_power_detail_speed_label">Şarj hızı</string>
+    <string name="module_power_detail_temperature_label">Sıcaklık</string>
+    <string name="module_power_detail_estimation_label">Tahmin</string>
+    <string name="module_power_detail_health_label">Sağlık</string>
+    <string name="module_power_detail_health_good">İyi</string>
+    <string name="module_power_detail_health_overheat">Aşırı ısınma</string>
+    <string name="module_power_detail_health_dead">Ölü</string>
+    <string name="module_power_detail_health_over_voltage">Aşırı voltaj</string>
+    <string name="module_power_detail_health_cold">Soğuk</string>
+    <string name="module_power_detail_health_unknown">Bilinmiyor</string>
 </resources>

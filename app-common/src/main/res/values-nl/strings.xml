@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Octi</string>
     <string name="general_error_label">Fout</string>
     <string name="general_error_no_compatible_app_found_msg">Er is geen compatibele app gevonden om dit verzoek te verwerken.</string>
     <string name="general_share_action">Delen</string>

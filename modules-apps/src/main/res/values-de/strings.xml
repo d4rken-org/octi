@@ -8,6 +8,10 @@
     </plurals>
     <string name="module_apps_last_installed_x">Zuletzt installierte App: %s</string>
     <string name="module_apps_list_title">Installierte Apps</string>
+    <string name="module_apps_sort_label">Sortieren</string>
+    <string name="module_apps_sort_name_label">Name</string>
+    <string name="module_apps_sort_install_date_label">Installationsdatum</string>
+    <string name="module_apps_sort_update_date_label">Aktualisierungsdatum</string>
     <string name="module_apps_installer_label">App-Installationsquelle</string>
     <string name="module_apps_installer_desc">Synchronisieren und fügen Sie Informationen über die Installationsquelle jeder App hinzu.</string>
 </resources>

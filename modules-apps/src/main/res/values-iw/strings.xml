@@ -10,6 +10,10 @@
     </plurals>
     <string name="module_apps_last_installed_x">יישום אחרון שהותקן: %s</string>
     <string name="module_apps_list_title">יישומים מותקנים</string>
+    <string name="module_apps_sort_label">מיון</string>
+    <string name="module_apps_sort_name_label">שם</string>
+    <string name="module_apps_sort_install_date_label">תאריך התקנה</string>
+    <string name="module_apps_sort_update_date_label">תאריך עדכון</string>
     <string name="module_apps_installer_label">מקור התקנת היישום</string>
     <string name="module_apps_installer_desc">סנכרן וכלול מידע על מקור ההתקנה של כל אפליקציה.</string>
 </resources>

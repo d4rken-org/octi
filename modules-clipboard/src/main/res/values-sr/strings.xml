@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">Копирај и налепи текст између уређаја.</string>
     <string name="module_clipboard_copied_octi_to_os">Окти копиран у системски клипборд</string>
     <string name="module_clipboard_copied_os_to_octi">Систем копиран у Окти-јев клипборд</string>
+
+    <string name="module_clipboard_detail_type_label">Тип</string>
+    <string name="module_clipboard_detail_content_label">Садржај</string>
+    <string name="module_clipboard_detail_type_empty">Празно</string>
+    <string name="module_clipboard_detail_type_text">Текст</string>
+    <string name="module_clipboard_copy_action">Копирај у клипборд</string>
 </resources>

@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">Копирование и вставка текста между устройствами.</string>
     <string name="module_clipboard_copied_octi_to_os">Скопировано из Octi в системный буфер обмена</string>
     <string name="module_clipboard_copied_os_to_octi">Скопировано из системы в буфер обмена Octi</string>
+
+    <string name="module_clipboard_detail_type_label">Тип</string>
+    <string name="module_clipboard_detail_content_label">Содержимое</string>
+    <string name="module_clipboard_detail_type_empty">Пусто</string>
+    <string name="module_clipboard_detail_type_text">Текст</string>
+    <string name="module_clipboard_copy_action">Копировать в буфер обмена</string>
 </resources>

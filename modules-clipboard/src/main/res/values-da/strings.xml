@@ -4,4 +4,10 @@
     <string name="module_clipboard_desc">Kopier og indsæt tekst mellem enheder.</string>
     <string name="module_clipboard_copied_octi_to_os">Kopieret fra Octi til systemets udklipsholder</string>
     <string name="module_clipboard_copied_os_to_octi">Kopieret fra systemet til Octi\'s udklipsholder</string>
+
+    <string name="module_clipboard_detail_type_label">Type</string>
+    <string name="module_clipboard_detail_content_label">Indhold</string>
+    <string name="module_clipboard_detail_type_empty">Tom</string>
+    <string name="module_clipboard_detail_type_text">Tekst</string>
+    <string name="module_clipboard_copy_action">Kopier til udklipsholder</string>
 </resources>

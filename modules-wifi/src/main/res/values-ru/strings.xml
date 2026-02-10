@@ -7,4 +7,10 @@
     <string name="module_wifi_reception_good_label">Хороший сигнал</string>
     <string name="module_wifi_reception_okay_label">Нормальный сигнал</string>
     <string name="module_wifi_reception_bad_label">Плохой сигнал</string>
+
+    <string name="module_wifi_detail_ssid_label">SSID</string>
+    <string name="module_wifi_detail_frequency_label">Частота</string>
+    <string name="module_wifi_detail_signal_label">Сигнал</string>
+    <string name="module_wifi_freq_5ghz">5 GHz</string>
+    <string name="module_wifi_freq_2_4ghz">2.4 GHz</string>
 </resources>

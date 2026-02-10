@@ -8,6 +8,10 @@
     </plurals>
     <string name="module_apps_last_installed_x">Son yüklenen uygulama: %s</string>
     <string name="module_apps_list_title">Yüklü uygulamalar</string>
+    <string name="module_apps_sort_label">Sırala</string>
+    <string name="module_apps_sort_name_label">Ad</string>
+    <string name="module_apps_sort_install_date_label">Yükleme tarihi</string>
+    <string name="module_apps_sort_update_date_label">Güncelleme tarihi</string>
     <string name="module_apps_installer_label">Uygulama yükleme kaynağı</string>
     <string name="module_apps_installer_desc">Her uygulamanın yükleme kaynağı hakkındaki bilgileri senkronize edin ve ekleyin.</string>
 </resources>
