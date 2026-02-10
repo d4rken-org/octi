@@ -22,7 +22,7 @@
     <string name="module_power_alerts_lowbattery_disabled_caption">バッテリー残量が少なくなっても通知しない</string>
     <string name="module_power_alerts_notification_channel_label">バッテリーアラート</string>
     <string name="module_power_alerts_notification_battery_low_title">バッテリー低残量: %s</string>
-    <string name="module_power_alerts_notification_battery_low_body">%1$s のバッテリー残量は %3$d % (&lt;%2$d%%) 、充電されていません。</string>
+    <string name="module_power_alerts_notification_battery_low_body">%1$s のバッテリー残量は %3$d%% (&lt;%2$d%%)、充電されていません。</string>
     <string name="module_power_alerts_highbattery_title">バッテリー高残量</string>
     <string name="module_power_alerts_highbattery_description">充電中にこのデバイスのバッテリー残量が指定したしきい値に達したときに通知を送信します。バッテリーの健康を維持するのに役立ちます。</string>
     <string name="module_power_alerts_highbattery_slider_value_caption">バッテリー残量が %s を超えたときに通知する</string>

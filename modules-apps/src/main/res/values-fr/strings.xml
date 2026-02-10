@@ -10,8 +10,8 @@
     <string name="module_apps_list_title">Applis installées</string>
     <string name="module_apps_sort_label">Trier</string>
     <string name="module_apps_sort_name_label">Nom</string>
-    <string name="module_apps_sort_install_date_label">Date d'installation</string>
+    <string name="module_apps_sort_install_date_label">Date d\'installation</string>
     <string name="module_apps_sort_update_date_label">Date de mise à jour</string>
-    <string name="module_apps_installer_label">Source d'installation des applis</string>
-    <string name="module_apps_installer_desc">Synchroniser et inclure des renseignements sur la source d’installation de chaque appli.</string>
+    <string name="module_apps_installer_label">Source d\'installation des applis</string>
+    <string name="module_apps_installer_desc">Synchroniser et inclure des renseignements sur la source d\'installation de chaque appli.</string>
 </resources>
