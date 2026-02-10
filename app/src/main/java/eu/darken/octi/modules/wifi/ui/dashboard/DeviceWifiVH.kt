@@ -53,11 +53,14 @@ class DeviceWifiVH(parent: ViewGroup) :
             isGone = item.onGrantPermission == null
             setOnClickListener { item.onGrantPermission?.invoke() }
         }
+
+        itemView.setOnClickListener { item.onDetailClicked() }
     }
 
     data class Item(
         val data: ModuleData<WifiInfo>,
         val onGrantPermission: (() -> Unit)?,
+        val onDetailClicked: () -> Unit,
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
     }

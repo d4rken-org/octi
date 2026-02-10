@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.Material3.TitleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/module_wifi_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ssid_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_wifi_detail_ssid_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ssid_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="MyWifiSSID" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/frequency_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_wifi_detail_frequency_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/frequency_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="5 GHz" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/signal_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_wifi_detail_signal_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/signal_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Good signal" />
+
+</LinearLayout>

@@ -31,6 +31,15 @@
         <action
             android:id="@+id/action_dashFragment_to_connectivityDetailFragment"
             app:destination="@id/connectivityDetailFragment" />
+        <action
+            android:id="@+id/action_dashFragment_to_powerDetailFragment"
+            app:destination="@id/powerDetailFragment" />
+        <action
+            android:id="@+id/action_dashFragment_to_wifiDetailFragment"
+            app:destination="@id/wifiDetailFragment" />
+        <action
+            android:id="@+id/action_dashFragment_to_clipboardDetailFragment"
+            app:destination="@id/clipboardDetailFragment" />
     </fragment>
 
     <fragment
@@ -193,6 +202,30 @@
         android:id="@+id/connectivityDetailFragment"
         android:name="eu.darken.octi.modules.connectivity.ui.detail.ConnectivityDetailFragment"
         tools:layout="@layout/connectivity_detail_sheet">
+        <argument
+            android:name="deviceId"
+            app:argType="eu.darken.octi.sync.core.DeviceId" />
+    </dialog>
+    <dialog
+        android:id="@+id/powerDetailFragment"
+        android:name="eu.darken.octi.modules.power.ui.detail.PowerDetailFragment"
+        tools:layout="@layout/power_detail_sheet">
+        <argument
+            android:name="deviceId"
+            app:argType="eu.darken.octi.sync.core.DeviceId" />
+    </dialog>
+    <dialog
+        android:id="@+id/wifiDetailFragment"
+        android:name="eu.darken.octi.modules.wifi.ui.detail.WifiDetailFragment"
+        tools:layout="@layout/wifi_detail_sheet">
+        <argument
+            android:name="deviceId"
+            app:argType="eu.darken.octi.sync.core.DeviceId" />
+    </dialog>
+    <dialog
+        android:id="@+id/clipboardDetailFragment"
+        android:name="eu.darken.octi.modules.clipboard.ui.detail.ClipboardDetailFragment"
+        tools:layout="@layout/clipboard_detail_sheet">
         <argument
             android:name="deviceId"
             app:argType="eu.darken.octi.sync.core.DeviceId" />

@@ -323,6 +323,9 @@ class DashboardVM @Inject constructor(
         onSettingsAction = {
             DashboardFragmentDirections.actionDashFragmentToPowerAlertsFragment(deviceId).navigate()
         }.takeIf { deviceId != syncSettings.deviceId },
+        onDetailClicked = {
+            DashboardFragmentDirections.actionDashFragmentToPowerDetailFragment(deviceId).navigate()
+        },
     )
 
     private fun ModuleData<WifiInfo>.createVHItem(
@@ -346,7 +349,10 @@ class DashboardVM @Inject constructor(
                         }
                     ).run { dashboardEvents.postValue(this) }
                 }
-            }
+            },
+        onDetailClicked = {
+            DashboardFragmentDirections.actionDashFragmentToWifiDetailFragment(deviceId).navigate()
+        },
     )
 
     private fun ModuleData<AppsInfo>.createVHItem() = DeviceAppsVH.Item(
@@ -375,7 +381,10 @@ class DashboardVM @Inject constructor(
         onClearClicked = { launch { clipboardHandler.setSharedClipboard(ClipboardInfo()) } },
         onPasteClicked = { launch { clipboardHandler.shareCurrentOSClipboard() } }
             .takeIf { deviceId == syncSettings.deviceId },
-        onCopyClicked = { launch { clipboardHandler.setOSClipboard(data) } }
+        onCopyClicked = { launch { clipboardHandler.setOSClipboard(data) } },
+        onDetailClicked = {
+            DashboardFragmentDirections.actionDashFragmentToClipboardDetailFragment(deviceId).navigate()
+        },
     )
 
 

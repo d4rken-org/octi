@@ -48,6 +48,8 @@ class ClipboardVH(parent: ViewGroup) :
             item.onCopyClicked(clip)
             Toast.makeText(context, ClipboardR.string.module_clipboard_copied_octi_to_os, Toast.LENGTH_SHORT).show()
         }
+
+        itemView.setOnClickListener { item.onDetailClicked() }
     }
 
     data class Item(
@@ -56,6 +58,7 @@ class ClipboardVH(parent: ViewGroup) :
         val onClearClicked: (() -> Unit),
         val onPasteClicked: (() -> Unit)?,
         val onCopyClicked: ((ClipboardInfo) -> Unit),
+        val onDetailClicked: () -> Unit,
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
     }

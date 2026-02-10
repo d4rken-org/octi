@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.Material3.TitleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/module_clipboard_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/type_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_clipboard_detail_type_label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/type_value"
+        style="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        tools:text="Text" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/content_label"
+        style="@style/TextAppearance.Material3.LabelMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_clipboard_detail_content_label" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:maxHeight="200dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/content_value"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            tools:text="Clipboard content goes here..." />
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/copy_action"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/module_clipboard_copy_action"
+        app:icon="@drawable/ic_baseline_content_copy_24"
+        app:iconGravity="textStart"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+</LinearLayout>

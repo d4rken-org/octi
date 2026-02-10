@@ -5,18 +5,7 @@
     style="@style/DashboardDeviceInfoRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?selectableItemBackground"
-    android:paddingStart="0dp"
-    android:paddingEnd="16dp">
-
-    <ImageView
-        android:id="@+id/tap_indicator"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:src="@drawable/ic_gesture_tap_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:background="?selectableItemBackground">
 
     <ImageView
         android:id="@+id/connectivity_icon"

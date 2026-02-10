@@ -1,7 +1,6 @@
 package eu.darken.octi.modules.power.ui.dashboard
 
 import android.content.res.ColorStateList
-import android.text.format.DateUtils
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.widget.ImageViewCompat
@@ -19,9 +18,8 @@ import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
 import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
 import eu.darken.octi.modules.power.core.alert.PowerAlert
+import eu.darken.octi.modules.power.ui.PowerEstimationFormatter
 import eu.darken.octi.modules.power.ui.batteryIconRes
-import java.time.Duration
-import java.time.Instant
 
 
 class DevicePowerVH(parent: ViewGroup) :
@@ -31,6 +29,7 @@ class DevicePowerVH(parent: ViewGroup) :
     ) {
 
     private val temperatureFormatter = TemperatureFormatter(itemView.context)
+    private val estimationFormatter = PowerEstimationFormatter(itemView.context)
 
     override val viewBinding = lazy { DashboardDevicePowerItemBinding.bind(itemView) }
 
@@ -89,47 +88,7 @@ class DevicePowerVH(parent: ViewGroup) :
         }
 
         powerSecondary.apply {
-            val estimationText = when {
-                powerInfo.status == Status.FULL && powerInfo.chargeIO.fullSince != null -> {
-                    getString(
-                        PowerR.string.module_power_battery_full_since_x,
-                        DateUtils.getRelativeTimeSpanString(powerInfo.chargeIO.fullSince!!.toEpochMilli())
-                    )
-                }
-
-                powerInfo.status == Status.CHARGING
-                        && powerInfo.chargeIO.fullAt != null
-                        && Duration.between(Instant.now(), powerInfo.chargeIO.fullAt).isNegative -> {
-                    getString(
-                        PowerR.string.module_power_battery_full_since_x,
-                        DateUtils.getRelativeTimeSpanString(powerInfo.chargeIO.fullAt!!.toEpochMilli())
-                    )
-                }
-
-                powerInfo.status == Status.CHARGING && powerInfo.chargeIO.fullAt != null -> {
-                    getString(
-                        PowerR.string.module_power_battery_full_in_x,
-                        DateUtils.getRelativeTimeSpanString(
-                            powerInfo.chargeIO.fullAt!!.toEpochMilli(),
-                            Instant.now().toEpochMilli(),
-                            DateUtils.MINUTE_IN_MILLIS,
-                        )
-                    )
-                }
-
-                powerInfo.status == Status.DISCHARGING && powerInfo.chargeIO.emptyAt != null -> {
-                    getString(
-                        PowerR.string.module_power_battery_empty_in_x,
-                        DateUtils.getRelativeTimeSpanString(
-                            powerInfo.chargeIO.emptyAt!!.toEpochMilli(),
-                            Instant.now().toEpochMilli(),
-                            DateUtils.MINUTE_IN_MILLIS,
-                        )
-                    )
-                }
-
-                else -> getString(PowerR.string.module_power_battery_estimation_na)
-            }
+            val estimationText = estimationFormatter.format(powerInfo)
 
             val temperatureText = powerInfo.battery.temp?.let {
                 temperatureFormatter.formatTemperature(it)
@@ -147,12 +106,15 @@ class DevicePowerVH(parent: ViewGroup) :
             setOnClickListener { item.onSettingsAction?.invoke() }
             isGone = item.onSettingsAction == null
         }
+
+        itemView.setOnClickListener { item.onDetailClicked() }
     }
 
     data class Item(
         val data: ModuleData<PowerInfo>,
         val batteryLowAlert: PowerAlert<BatteryLowAlertRule>?,
         val onSettingsAction: (() -> Unit)?,
+        val onDetailClicked: () -> Unit,
     ) : PerDeviceModuleAdapter.Item {
         override val stableId: Long = data.moduleId.hashCode().toLong()
     }
