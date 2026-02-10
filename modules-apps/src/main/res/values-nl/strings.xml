@@ -5,4 +5,13 @@
     <string name="module_apps_last_installed_x">Laatst geïnstalleerde app: %s</string>
     <string name="module_apps_list_title">Geïnstalleerde apps</string>
     <string name="module_apps_installer_label">Installatiebron van de app</string>
+    <string name="module_apps_installer_desc">Synchroniseer en voeg informatie toe over de installatiebron van elke app.</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d app geïnstalleerd</item>
+        <item quantity="other">%d apps geïnstalleerd</item>
+    </plurals>
+    <string name="module_apps_sort_label">Sorteren</string>
+    <string name="module_apps_sort_name_label">Naam</string>
+    <string name="module_apps_sort_install_date_label">Installatiedatum</string>
+    <string name="module_apps_sort_update_date_label">Updatedatum</string>
 </resources>

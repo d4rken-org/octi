@@ -23,4 +23,6 @@
     <string name="general_refresh_action">새로고침</string>
     <string name="general_continue">계속</string>
     <string name="general_show_details_action">자세히 보기</string>
+    <string name="general_minutes_label">분</string>
+    <string name="preference_slider_input_summary">%1$d분</string>
 </resources>

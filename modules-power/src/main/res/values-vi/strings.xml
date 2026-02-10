@@ -23,4 +23,24 @@
     <string name="module_power_alerts_notification_channel_label">Cảnh báo pin</string>
     <string name="module_power_alerts_notification_battery_low_title">Pin yếu: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s còn %3$d%% pin (&lt;%2$d%%) và không sạc.</string>
+
+    <string name="module_power_alerts_highbattery_title">Pin cao</string>
+    <string name="module_power_alerts_highbattery_description">Nhận thông báo khi pin của thiết bị này đạt đến ngưỡng bạn đã đặt trong khi đang sạc. Hữu ích để bảo vệ tuổi thọ pin.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Thông báo khi pin trên %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Không thông báo khi pin cao</string>
+    <string name="module_power_alerts_notification_battery_high_title">Pin cao: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s đang ở %3$d%% pin (>%2$d%%) và vẫn đang sạc.</string>
+
+    <string name="module_power_detail_level_label">Mức pin</string>
+    <string name="module_power_detail_status_label">Trạng thái</string>
+    <string name="module_power_detail_speed_label">Tốc độ sạc</string>
+    <string name="module_power_detail_temperature_label">Nhiệt độ</string>
+    <string name="module_power_detail_estimation_label">Ước tính</string>
+    <string name="module_power_detail_health_label">Tình trạng</string>
+    <string name="module_power_detail_health_good">Tốt</string>
+    <string name="module_power_detail_health_overheat">Quá nóng</string>
+    <string name="module_power_detail_health_dead">Hỏng</string>
+    <string name="module_power_detail_health_over_voltage">Quá áp</string>
+    <string name="module_power_detail_health_cold">Lạnh</string>
+    <string name="module_power_detail_health_unknown">Không xác định</string>
 </resources>

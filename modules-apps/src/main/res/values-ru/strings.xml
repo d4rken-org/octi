@@ -5,4 +5,13 @@
     <string name="module_apps_last_installed_x">Последнее установленное приложение: %s</string>
     <string name="module_apps_list_title">Установленные приложения</string>
     <string name="module_apps_installer_label">Источник установки приложения</string>
+    <string name="module_apps_installer_desc">Синхронизировать и включать информацию об источнике установки каждого приложения.</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d приложение установлено</item>
+        <item quantity="other">%d приложений установлено</item>
+    </plurals>
+    <string name="module_apps_sort_label">Сортировка</string>
+    <string name="module_apps_sort_name_label">Название</string>
+    <string name="module_apps_sort_install_date_label">Дата установки</string>
+    <string name="module_apps_sort_update_date_label">Дата обновления</string>
 </resources>

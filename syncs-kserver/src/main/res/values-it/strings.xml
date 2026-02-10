@@ -18,6 +18,7 @@ Poiché sia l\'app che il server sono ancora in fase di miglioramento, potrebber
     <string name="sync_kserver_link_host_option_direct">Crea un codice da inviare alle diverse app</string>
     <string name="sync_kserver_link_host_option_qrcode">Mostra QRCode</string>
     <string name="sync_kserver_link_host_device_linked_message">Un nuovo dispositivo è stato collegato al tuo account.</string>
+    <string name="sync_kserver_link_client_option_direct">Copia e incolla manualmente un codice di collegamento</string>
     <string name="sync_kserver_link_client_option_qrcode">Scansiona il QRCode con un altro dispositivo</string>
     <string name="sync_kserver_link_client_startcamera_action">Apri fotocamera</string>
     <string name="sync_kserver_link_client_link_action">Collega dispositivo</string>

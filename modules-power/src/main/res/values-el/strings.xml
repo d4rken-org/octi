@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Ειδοποιήσεις μπαταρίας</string>
     <string name="module_power_alerts_notification_battery_low_title">Χαμηλή μπαταρία: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s είναι στο %3$d%% μπαταρίας (&lt;%2$d%%) και δεν φορτίζει.</string>
+    <string name="module_power_alerts_highbattery_title">Υψηλή μπαταρία</string>
+    <string name="module_power_alerts_highbattery_description">Λάβετε ειδοποίηση όταν η μπαταρία αυτής της συσκευής φτάσει το όριο που έχετε ορίσει κατά τη φόρτιση. Χρήσιμο για τη διατήρηση της υγείας της μπαταρίας.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Ειδοποίηση όταν η μπαταρία είναι πάνω από %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Να μην ειδοποιείται όταν η μπαταρία είναι υψηλή</string>
+    <string name="module_power_alerts_notification_battery_high_title">Υψηλή μπαταρία: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s είναι στο %3$d%% μπαταρίας (>%2$d%%) και συνεχίζει να φορτίζει.</string>
+    <string name="module_power_detail_level_label">Επίπεδο μπαταρίας</string>
+    <string name="module_power_detail_status_label">Κατάσταση</string>
+    <string name="module_power_detail_speed_label">Ταχύτητα φόρτισης</string>
+    <string name="module_power_detail_temperature_label">Θερμοκρασία</string>
+    <string name="module_power_detail_estimation_label">Εκτίμηση</string>
+    <string name="module_power_detail_health_label">Υγεία</string>
+    <string name="module_power_detail_health_good">Καλή</string>
+    <string name="module_power_detail_health_overheat">Υπερθέρμανση</string>
+    <string name="module_power_detail_health_dead">Νεκρή</string>
+    <string name="module_power_detail_health_over_voltage">Υπέρταση</string>
+    <string name="module_power_detail_health_cold">Κρύα</string>
+    <string name="module_power_detail_health_unknown">Άγνωστη</string>
 </resources>

@@ -10,6 +10,7 @@
     <string name="onboarding_welcome_subtitle">Din enhetskompis</string>
     <string name="onboarding_welcome_body1">Octi är ett verktyg för personer med flera Android-enheter.</string>
     <string name="onboarding_welcome_body2">Håller dig uppdaterad med alla dina enheter. Det gäller din telefon, surfplatta eller vilken annan Octi-enhet som helst – du får viktiga detaljer direkt.</string>
+    <string name="onboarding_welcome_body3">Uppgradera till Octi Pro för extra funktioner och stöd utvecklingen.</string>
     <string name="onboarding_welcome_beta_hint">Bara så du vet, detta är en betaversion – tack för ditt tålamod medan jag fortsätter förbättra appen!</string>
     <string name="onboarding_privacy_subtitle">Integritetspolicy</string>
     <string name="onboarding_privacy_body1">Octi har inga annonser och säljer inte användardata.</string>
@@ -21,6 +22,7 @@
     <string name="debug_debuglog_file_label">Sparad loggfil</string>
     <string name="debug_debuglog_record_action">Spela in debuglogg</string>
     <string name="onboarding_setupsync_title">Ställ in synkronisering</string>
+    <string name="onboarding_setupsync_message">Just nu ser du bara den här enheten. För att ansluta dina Octi-installationer, ställ in en gemensam synkroniseringstjänst.</string>
     <string name="settings_privacy_policy_label">Integritetspolicy</string>
     <string name="settings_privacy_policy_desc">Hantera data ansvarsfullt.</string>
     <string name="settings_licenses_label">Licenser</string>
@@ -34,6 +36,7 @@
     <string name="help_translate_label">Översättning</string>
     <string name="help_translate_description">Hjälp till att översätta den här appen till ditt favoritspråk.</string>
     <string name="ui_theme_mode_setting_label">Temaläge</string>
+    <string name="ui_theme_mode_setting_explanation">Läget som används vid temaläggning av appen (t.ex. mörkt eller ljust).</string>
     <string name="ui_theme_mode_dark_label">Mörkt</string>
     <string name="ui_theme_mode_light_label">Ljust</string>
     <string name="ui_theme_mode_system_label">System</string>

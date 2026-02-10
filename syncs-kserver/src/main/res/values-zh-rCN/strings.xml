@@ -16,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">创建可通过其他应用发送的文本代码</string>
     <string name="sync_kserver_link_host_option_qrcode">显示二维码</string>
     <string name="sync_kserver_link_host_device_linked_message">一个新设备被链接到你的账户。</string>
+    <string name="sync_kserver_link_client_option_direct">手动复制并粘贴链接代码</string>
     <string name="sync_kserver_link_client_option_qrcode">从另一台设备扫描QR码</string>
     <string name="sync_kserver_link_client_startcamera_action">启动摄像机</string>
     <string name="sync_kserver_link_client_link_action">链接设备</string>

@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Alertes de bateria</string>
     <string name="module_power_alerts_notification_battery_low_title">Bateria baixa: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s està al %3$d%% de bateria (&lt;%2$d%%) i no s\'està carregant.</string>
+    <string name="module_power_alerts_highbattery_title">Bateria alta</string>
+    <string name="module_power_alerts_highbattery_description">Rebeu una notificació quan la bateria d\'aquest dispositiu arribi al llindar especificat durant la càrrega. Útil per preservar la salut de la bateria.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Notifica quan la bateria estigui per sobre del %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">No notifiquis quan la bateria estigui alta</string>
+    <string name="module_power_alerts_notification_battery_high_title">Bateria alta: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s està al %3$d%% de bateria (>%2$d%%) i encara s\'està carregant.</string>
+    <string name="module_power_detail_level_label">Nivell de bateria</string>
+    <string name="module_power_detail_status_label">Estat</string>
+    <string name="module_power_detail_speed_label">Velocitat de càrrega</string>
+    <string name="module_power_detail_temperature_label">Temperatura</string>
+    <string name="module_power_detail_estimation_label">Estimació</string>
+    <string name="module_power_detail_health_label">Salut</string>
+    <string name="module_power_detail_health_good">Bona</string>
+    <string name="module_power_detail_health_overheat">Sobreescalfament</string>
+    <string name="module_power_detail_health_dead">Morta</string>
+    <string name="module_power_detail_health_over_voltage">Sobretensió</string>
+    <string name="module_power_detail_health_cold">Freda</string>
+    <string name="module_power_detail_health_unknown">Desconegut</string>
 </resources>

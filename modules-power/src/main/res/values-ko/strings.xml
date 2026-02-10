@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">배터리 알림</string>
     <string name="module_power_alerts_notification_battery_low_title">배터리 부족: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s의 배터리가 %3$d%% (&lt;%2$d%%)이며 충전 중이 아닙니다.</string>
+    <string name="module_power_alerts_highbattery_title">배터리 과충전</string>
+    <string name="module_power_alerts_highbattery_description">충전 중 이 기기의 배터리가 지정된 임계값에 도달하면 알림을 받습니다. 배터리 수명 보호에 유용합니다.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">배터리가 %s 이상일 때 알림 표시</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">배터리가 높을 때 알림을 표시하지 않음</string>
+    <string name="module_power_alerts_notification_battery_high_title">배터리 과충전: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s의 배터리가 %3$d%% (>%2$d%%)이며 아직 충전 중입니다.</string>
+    <string name="module_power_detail_level_label">배터리 잔량</string>
+    <string name="module_power_detail_status_label">상태</string>
+    <string name="module_power_detail_speed_label">충전 속도</string>
+    <string name="module_power_detail_temperature_label">온도</string>
+    <string name="module_power_detail_estimation_label">예상</string>
+    <string name="module_power_detail_health_label">건강 상태</string>
+    <string name="module_power_detail_health_good">양호</string>
+    <string name="module_power_detail_health_overheat">과열</string>
+    <string name="module_power_detail_health_dead">수명 종료</string>
+    <string name="module_power_detail_health_over_voltage">과전압</string>
+    <string name="module_power_detail_health_cold">저온</string>
+    <string name="module_power_detail_health_unknown">알 수 없음</string>
 </resources>

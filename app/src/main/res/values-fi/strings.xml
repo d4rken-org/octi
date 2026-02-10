@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Luo tili</string>
     <string name="general_link_existing_action">Linkitä olemassa olevaan tiliin</string>
     <string name="general_sync_action">Synkronoi</string>
+    <string name="general_manage_devices_action">Hallitse laitteita</string>
     <string name="general_select_server_label">Valitse palvelin</string>
     <string name="onboarding_welcome_subtitle">Laitetoverisi</string>
     <string name="onboarding_welcome_body1">Octi on työkalu ihmisille, joilla on useita Android-laitteita.</string>
     <string name="onboarding_welcome_body2">Se pitää sinut ajan tasalla kaikista laitteistasi. Olipa kyse puhelimesta, tabletista tai muusta laitteesta, jossa Octi on asennettuna, näet tärkeimmät tiedot yhdellä silmäyksellä.</string>
+    <string name="onboarding_welcome_body3">Päivitä Octi Prohon saadaksesi lisäominaisuuksia ja tukeaksesi kehitystä.</string>
     <string name="onboarding_welcome_beta_hint">Huom! Tämä on beta-versio, joten kiitos kärsivällisyydestäsi kun parannan sovellusta jatkuvasti!</string>
     <string name="onboarding_privacy_subtitle">Tietosuojakäytäntö</string>
     <string name="onboarding_privacy_body1">Octissa ei ole mainoksia eikä myy käyttäjätietoja.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Vianetsintäilmoitukset</string>
     <string name="debug_debuglog_file_label">Tallennettu lokitiedosto</string>
     <string name="debug_debuglog_record_action">Tallenna vianetsintäloki</string>
+    <string name="onboarding_setupsync_title">Synkronoinnin määritys</string>
+    <string name="onboarding_setupsync_message">Tällä hetkellä näet vain tämän laitteen. Yhdistääksesi Octi-asennuksesi, määritä yhteinen synkronointipalvelu.</string>
     <string name="settings_privacy_policy_label">Tietosuojakäytäntö</string>
     <string name="settings_privacy_policy_desc">Vastuullinen tietojen käsittely.</string>
     <string name="settings_licenses_label">Lisenssit</string>
@@ -32,14 +36,17 @@
     <string name="help_translate_label">Käännös</string>
     <string name="help_translate_description">Auta kääntämään tämä sovellus suosikkikielellesi.</string>
     <string name="ui_theme_mode_setting_label">Teematila</string>
+    <string name="ui_theme_mode_setting_explanation">Sovelluksen teemoituksessa käytetty tila (esim. tumma tai vaalea).</string>
     <string name="ui_theme_mode_dark_label">Tumma</string>
     <string name="ui_theme_mode_light_label">Vaalea</string>
     <string name="ui_theme_mode_system_label">Järjestelmä</string>
     <string name="ui_theme_style_setting_label">Teemaväri</string>
     <string name="ui_theme_style_setting_explanation">Käytetty teemaväri, kun sovelluksessa on teema.</string>
     <string name="ui_theme_style_default_label">Oletus</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Virhetikettiseuranta</string>
     <string name="issue_tracker_description">Julkinen virheiden ja ominaisuuksien seuranta.</string>
+    <string name="discord_label">Discord</string>
     <string name="discord_description">Paikka keskustelulle ja kysymyksille.</string>
     <string name="support_debuglog_label">Tallenna vianetsintäloki</string>
     <string name="support_debuglog_inprogress_label">Pysäytä vianetsintäloki</string>
@@ -101,6 +108,14 @@
     <string name="module_apps_category_label">Sovellukset</string>
     <string name="device_x_label">Laite: %s</string>
     <string name="pro_device_limit_reached_title">Laitekatto saavutettu</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Sinulla on tällä hetkellä %1$d synkronoitu laite.</item>
+        <item quantity="other">Sinulla on tällä hetkellä %1$d synkronoitua laitetta.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">Nähdäksesi enemmän kuin %1$d laitteen, päivitä Octi Prohon tai poista laitteita.</item>
+        <item quantity="other">Nähdäksesi enemmän kuin %1$d laitetta, päivitä Octi Prohon tai poista laitteita.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Tämän laitteen poistaminen poistaa sen tiedot, mutta ei poista käyttöoikeutta. Poistaaksesi käyttöoikeuden, irrota Octi laitteessa.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Tämän laitteen poistaminen poistaa sen tiedot ja käyttöoikeudet.</string>
 </resources>

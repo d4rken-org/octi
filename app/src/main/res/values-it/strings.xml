@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Crea account</string>
     <string name="general_link_existing_action">Collega un account esistente</string>
     <string name="general_sync_action">Sincronizza</string>
+    <string name="general_manage_devices_action">Gestisci dispositivi</string>
     <string name="general_select_server_label">Seleziona server</string>
     <string name="onboarding_welcome_subtitle">Il tuo dispositivo</string>
     <string name="onboarding_welcome_body1">Octi è uno strumento per possessori di più dispositivi Android.</string>
     <string name="onboarding_welcome_body2">Ti mantiene aggiornato su tutti i tuoi dispositivi. Che sia un telefono, tablet o qualsiasi altro gadget con Octi installato, potrai avere sott\'occhio le info importanti.</string>
+    <string name="onboarding_welcome_body3">Passa a Octi Pro per ottenere funzionalità extra e supportare lo sviluppo.</string>
     <string name="onboarding_welcome_beta_hint">Avviso. Questa è una versione beta, grazie per la pazienza mentre continuerò a migliorare l\'app!</string>
     <string name="onboarding_privacy_subtitle">Informativa sulla privacy</string>
     <string name="onboarding_privacy_body1">Octi è senza pubblicità e non vende i dati dell\'utente.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Notifiche di debug</string>
     <string name="debug_debuglog_file_label">File di log</string>
     <string name="debug_debuglog_record_action">Registra log di debug</string>
+    <string name="onboarding_setupsync_title">Configura la sincronizzazione</string>
+    <string name="onboarding_setupsync_message">Al momento stai vedendo solo questo dispositivo. Per collegare le tue installazioni di Octi, configura un servizio di sincronizzazione comune.</string>
     <string name="settings_privacy_policy_label">Informativa sulla privacy</string>
     <string name="settings_privacy_policy_desc">I dati sono gestiti responsabilmente.</string>
     <string name="settings_licenses_label">Licenze</string>
@@ -29,7 +33,10 @@
     <string name="changelog_label">Registro modifiche</string>
     <string name="settings_acknowledgements_label">Riconoscimenti</string>
     <string name="documentation_label">Documentazione</string>
+    <string name="help_translate_label">Traduzione</string>
+    <string name="help_translate_description">Aiuta a tradurre questa app nella tua lingua preferita.</string>
     <string name="ui_theme_mode_setting_label">Tema</string>
+    <string name="ui_theme_mode_setting_explanation">La modalità utilizzata per il tema dell\'app (es. scuro o chiaro).</string>
     <string name="ui_theme_mode_dark_label">Notte</string>
     <string name="ui_theme_mode_light_label">Giorno</string>
     <string name="ui_theme_mode_system_label">Sistema</string>
@@ -103,6 +110,14 @@ I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comu
     <string name="module_apps_category_label">Applicazioni</string>
     <string name="device_x_label">Dispositivo: %s</string>
     <string name="pro_device_limit_reached_title">Limite dispositivi raggiunto</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Hai attualmente %1$d dispositivo sincronizzato.</item>
+        <item quantity="other">Hai attualmente %1$d dispositivi sincronizzati.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">Per visualizzare più di %1$d dispositivo, passa a Octi Pro o rimuovi dispositivi.</item>
+        <item quantity="other">Per visualizzare più di %1$d dispositivi, passa a Octi Pro o rimuovi dispositivi.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Rimuovere questo dispositivo cancellerà i suoi dati, ma non revoca l\'accesso. Per revocare l\'accesso, disconnetti Octi dal dispositivo.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Eliminare questo dispositivo rimuoverà i suoi dati e revocerà il suo accesso.</string>
 </resources>

@@ -1,2 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sync_device_stale_warning_text">기기가 %s 동안 동기화되지 않았습니다</string>
+
+    <plurals name="sync_stale_devices_info_message">
+        <item quantity="other">%d개의 기기가 최근에 동기화되지 않았습니다</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_days">
+        <item quantity="other">%d일</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_months">
+        <item quantity="other">%d개월</item>
+    </plurals>
+
+    <plurals name="sync_stale_period_years">
+        <item quantity="other">%d년</item>
+    </plurals>
+</resources>

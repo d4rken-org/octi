@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="label_settings">Instellingen</string>
+    <string name="label_help">Help</string>
     <string name="general_create_account_action">Account aanmaken</string>
     <string name="general_link_existing_action">Koppelen aan bestaand account</string>
     <string name="general_sync_action">Synchroniseren</string>
+    <string name="general_manage_devices_action">Apparaten beheren</string>
     <string name="general_select_server_label">Server selecteren</string>
     <string name="onboarding_welcome_subtitle">Uw apparaat-buddy</string>
     <string name="onboarding_welcome_body1">Octi is een hulpmiddel voor mensen met meerdere Android-apparaten.</string>
     <string name="onboarding_welcome_body2">Het houdt u op de hoogte van al uw apparaten. Of het nu uw telefoon, tablet of een ander apparaat is met Octi geïnstalleerd, u krijgt belangrijke details in één oogopslag.</string>
+    <string name="onboarding_welcome_body3">Upgrade naar Octi Pro voor extra functies en om de ontwikkeling te ondersteunen.</string>
     <string name="onboarding_welcome_beta_hint">Ter info, dit is een bètaversie, dus bedankt voor uw geduld terwijl ik de app blijf verbeteren!</string>
     <string name="onboarding_privacy_subtitle">Privacybeleid</string>
     <string name="onboarding_privacy_body1">Octi heeft geen advertenties en verkoopt geen gebruikersgegevens.</string>
@@ -18,6 +21,8 @@
     <string name="debug_notification_channel_label">Debug-meldingen</string>
     <string name="debug_debuglog_file_label">Opgenomen logbestand</string>
     <string name="debug_debuglog_record_action">Debug-log opnemen</string>
+    <string name="onboarding_setupsync_title">Synchronisatie instellen</string>
+    <string name="onboarding_setupsync_message">Momenteel ziet u alleen dit apparaat. Om uw Octi-installaties te verbinden, stelt u een gemeenschappelijke synchronisatieservice in.</string>
     <string name="settings_privacy_policy_label">Privacybeleid</string>
     <string name="settings_privacy_policy_desc">Verantwoord omgaan met gegevens.</string>
     <string name="settings_licenses_label">Licenties</string>
@@ -31,13 +36,17 @@
     <string name="help_translate_label">Vertaling</string>
     <string name="help_translate_description">Help deze app te vertalen naar uw favoriete taal.</string>
     <string name="ui_theme_mode_setting_label">Thema-modus</string>
+    <string name="ui_theme_mode_setting_explanation">De modus die wordt gebruikt bij het thematiseren van de app (bijv. donker of licht).</string>
     <string name="ui_theme_mode_dark_label">Donker</string>
     <string name="ui_theme_mode_light_label">Licht</string>
     <string name="ui_theme_mode_system_label">Systeem</string>
     <string name="ui_theme_style_setting_label">Thema-stijl</string>
     <string name="ui_theme_style_setting_explanation">De kleurstijl die wordt gebruikt bij het thematiseren van de app.</string>
     <string name="ui_theme_style_default_label">Standaard</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="issue_tracker_label">Issue tracker</string>
     <string name="issue_tracker_description">Een openbare issue tracker voor bugrapporten en functieverzoeken.</string>
+    <string name="discord_label">Discord</string>
     <string name="discord_description">Een plek om rond te hangen en vragen te stellen.</string>
     <string name="support_debuglog_label">Debug-log opnemen</string>
     <string name="support_debuglog_inprogress_label">Debug-log stoppen</string>
@@ -49,7 +58,9 @@
     <string name="sync_last_never_label">Nooit</string>
     <string name="sync_quota_storage_msg">%1$s vrij (%2$s / %3$s)</string>
     <string name="general_disconnect_action">Verbinding verbreken</string>
+    <string name="generic_info_action">Info</string>
     <string name="general_reset_action">Resetten</string>
+    <string name="sync_account_label">Account</string>
     <string name="sync_services_label">Synchronisatieservices</string>
     <string name="sync_add_label">Synchronisatieservice toevoegen</string>
     <string name="sync_add_help_desc">Een synchronisatieservice is vereist voor informatie-uitwisseling tussen Octi-installaties.\n\nApparaten kunnen elkaar alleen zien als ze een gemeenschappelijke synchronisatieservice hebben!</string>
@@ -88,12 +99,23 @@
     <string name="sync_setting_background_enable_desc">Gegevens synchroniseren wanneer de app niet open is.</string>
     <string name="sync_setting_background_mobile_label">Mobiel netwerk</string>
     <string name="sync_setting_background_mobile_desc">Sta achtergrondsynchronisatie toe via uw mobiele netwerkverbinding als Wi-Fi niet beschikbaar is.</string>
+    <string name="modules_settings_label">Modules</string>
     <string name="modules_settings_desc">Schakel verschillende modules in/uit en pas hun instellingen aan.</string>
     <string name="modules_category_connectivity_label">Connectiviteit</string>
+    <string name="modules_category_apps_label">Apps</string>
     <string name="modules_category_energy_label">Batterij</string>
     <string name="modules_category_misc_label">Diversen</string>
+    <string name="module_apps_category_label">Apps</string>
     <string name="device_x_label">Apparaat: %s</string>
     <string name="pro_device_limit_reached_title">Apparaatlimiet bereikt</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">U heeft momenteel %1$d gesynchroniseerd apparaat.</item>
+        <item quantity="other">U heeft momenteel %1$d gesynchroniseerde apparaten.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">Om meer dan %1$d apparaat te bekijken, upgrade naar Octi Pro of verwijder apparaten.</item>
+        <item quantity="other">Om meer dan %1$d apparaten te bekijken, upgrade naar Octi Pro of verwijder apparaten.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Dit apparaat verwijderen zal de gegevens wissen maar toegang niet intrekken. Om toegang in te trekken, koppel Octi los op het apparaat.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Dit apparaat verwijderen zal de gegevens verwijderen en toegang intrekken.</string>
 </resources>

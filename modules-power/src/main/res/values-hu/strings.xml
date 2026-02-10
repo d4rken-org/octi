@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Akkumulátor értesítések</string>
     <string name="module_power_alerts_notification_battery_low_title">Alacsony akkumulátor: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s akkumulátor töltöttsége %3$d%% (&lt;%2$d%%), és nem tölt.</string>
+    <string name="module_power_alerts_highbattery_title">Magas akkumulátor</string>
+    <string name="module_power_alerts_highbattery_description">Értesítést kapsz, ha ennek az eszköznek az akkumulátora eléri a beállított küszöbértéket töltés közben. Hasznos az akkumulátor élettartamának megőrzéséhez.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Értesítés ha az akkumulátor %s fölé emelkedik</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Ne értesítsen, ha magas az akkumulátor</string>
+    <string name="module_power_alerts_notification_battery_high_title">Magas akkumulátor: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s akkumulátor töltöttsége %3$d%% (>%2$d%%), és még tölt.</string>
+    <string name="module_power_detail_level_label">Akkumulátor szint</string>
+    <string name="module_power_detail_status_label">Állapot</string>
+    <string name="module_power_detail_speed_label">Töltési sebesség</string>
+    <string name="module_power_detail_temperature_label">Hőmérséklet</string>
+    <string name="module_power_detail_estimation_label">Becslés</string>
+    <string name="module_power_detail_health_label">Egészség</string>
+    <string name="module_power_detail_health_good">Jó</string>
+    <string name="module_power_detail_health_overheat">Túlmelegedés</string>
+    <string name="module_power_detail_health_dead">Halott</string>
+    <string name="module_power_detail_health_over_voltage">Túlfeszültség</string>
+    <string name="module_power_detail_health_cold">Hideg</string>
+    <string name="module_power_detail_health_unknown">Ismeretlen</string>
 </resources>

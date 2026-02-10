@@ -8,6 +8,7 @@
     <string name="sync_gdrive_appdata_label">Ambito dei dati dell\'app</string>
     <string name="sync_gdrive_type_appdata_description">I dati sono archiviati su Google Drive. Questa specifica variante utilizza l\'ambito \"app-data\". L\'accesso è concesso solo a una nuova cartella dedicata a questa app. La cartella non è visibile nel tuo drive. Funziona in modo simile ai backup di WhatsApp.</string>
     <string name="sync_gdrive_add_label">Aggiungi un nuovo account Google Drive</string>
+    <string name="sync_gdrive_add_description">Clicca il pulsante di accesso qui sotto per configurare l\'accesso a Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Reimposta tutti i dati di Octi archiviati su Google Drive. Il tuo dispositivo rimarrà connesso a Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Disconnetti da google drive e cancella i dati relativi a questo dispositivo.</string>
     <string name="sync_gdrive_error_no_account_on_device">Il dispositivo non ha accesso a nessun account google.</string>

@@ -10,6 +10,7 @@
     <string name="onboarding_welcome_subtitle">رفيق جهازك</string>
     <string name="onboarding_welcome_body1">أوكتي هو أداة للأشخاص الذين يمتلكون أجهزة أندرويد متعددة.</string>
     <string name="onboarding_welcome_body2">يبقيك على اطلاع دائم بجميع أجهزتك. سواء كان هاتفك أو جهازك اللوحي أو أي جهاز آخر مثبت عليه أوكتي، ستحصل على التفاصيل الأساسية بلمحة واحدة.</string>
+    <string name="onboarding_welcome_body3">قم بالترقية إلى Octi Pro للحصول على ميزات إضافية ودعم التطوير.</string>
     <string name="onboarding_welcome_beta_hint">تنبيه: هذه نسخة تجريبية، لذا شكرًا لصبركم بينما أواصل تحسين التطبيق!</string>
     <string name="onboarding_privacy_subtitle">سياسة الخصوصية</string>
     <string name="onboarding_privacy_body1">أوكتي خالٍ من الإعلانات ولا يبيع بيانات المستخدمين.</string>
@@ -21,6 +22,7 @@
     <string name="debug_debuglog_file_label">ملف السجل المسجل</string>
     <string name="debug_debuglog_record_action">تسجيل سجل التصحيح</string>
     <string name="onboarding_setupsync_title">إعداد المزامنة</string>
+    <string name="onboarding_setupsync_message">حاليًا أنت ترى هذا الجهاز فقط. لربط تثبيتات أوكتي الخاصة بك، قم بإعداد خدمة مزامنة مشتركة.</string>
     <string name="settings_privacy_policy_label">سياسة الخصوصية</string>
     <string name="settings_privacy_policy_desc">التعامل مع البيانات بمسؤولية.</string>
     <string name="settings_licenses_label">التراخيص</string>
@@ -31,7 +33,10 @@
     <string name="changelog_label">سجل التغييرات</string>
     <string name="settings_acknowledgements_label">شكر وتقدير</string>
     <string name="documentation_label">التوثيق</string>
+    <string name="help_translate_label">الترجمة</string>
+    <string name="help_translate_description">ساعد في ترجمة هذا التطبيق إلى لغتك المفضلة.</string>
     <string name="ui_theme_mode_setting_label">وضع السمة</string>
+    <string name="ui_theme_mode_setting_explanation">الوضع المستخدم عند تطبيق سمة التطبيق (مثل الداكن أو الفاتح).</string>
     <string name="ui_theme_mode_dark_label">داكن</string>
     <string name="ui_theme_mode_light_label">فاتح</string>
     <string name="ui_theme_mode_system_label">النظام</string>
@@ -111,6 +116,22 @@
     <string name="module_apps_category_label">التطبيقات</string>
     <string name="device_x_label">الجهاز: %s</string>
     <string name="pro_device_limit_reached_title">تم الوصول إلى حد الأجهزة</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="zero">لديك حاليًا %1$d أجهزة متزامنة.</item>
+        <item quantity="one">لديك حاليًا جهاز %1$d متزامن.</item>
+        <item quantity="two">لديك حاليًا جهازان (%1$d) متزامنان.</item>
+        <item quantity="few">لديك حاليًا %1$d أجهزة متزامنة.</item>
+        <item quantity="many">لديك حاليًا %1$d جهازًا متزامنًا.</item>
+        <item quantity="other">لديك حاليًا %1$d جهازًا متزامنًا.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="zero">لعرض أكثر من %1$d أجهزة، قم بالترقية إلى Octi Pro أو أزل أجهزة.</item>
+        <item quantity="one">لعرض أكثر من جهاز %1$d، قم بالترقية إلى Octi Pro أو أزل أجهزة.</item>
+        <item quantity="two">لعرض أكثر من جهازين (%1$d)، قم بالترقية إلى Octi Pro أو أزل أجهزة.</item>
+        <item quantity="few">لعرض أكثر من %1$d أجهزة، قم بالترقية إلى Octi Pro أو أزل أجهزة.</item>
+        <item quantity="many">لعرض أكثر من %1$d جهازًا، قم بالترقية إلى Octi Pro أو أزل أجهزة.</item>
+        <item quantity="other">لعرض أكثر من %1$d جهازًا، قم بالترقية إلى Octi Pro أو أزل أجهزة.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">إزالة هذا الجهاز ستحذف بياناته ولكن لن تلغي الوصول. لإلغاء الوصول، افصل أوكتي على الجهاز.</string>
     <string name="sync_delete_device_revokeaccess_caveat">حذف هذا الجهاز سيزيل بياناته ويلغي وصوله.</string>
 </resources>

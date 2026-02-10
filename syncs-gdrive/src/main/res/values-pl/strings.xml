@@ -4,9 +4,11 @@
     <string name="gdrive_account_scope_error_description">Octi nie otrzymał wymaganego zakresu dostępu. Spróbuj ponownie i upewnij się, że nadano odpowiednie uprawnienia.</string>
     <string name="gdrive_account_lockout_error_label">Błąd blokady</string>
     <string name="gdrive_account_lockout_error_description">To urządzenie zostało zablokowane i nie może już uzyskać dostępu do Google Drive. Jego dostęp do Twojego konta Google został cofnięty. Nadaj dostęp ponownie i spróbuj jeszcze raz.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">Zakres danych aplikacji</string>
     <string name="sync_gdrive_type_appdata_description">Dane są umieszczane na Google Drive. Ta konkretna wersja używa zakresu „app-data”. Dostęp jest przyznawany tylko do nowego folderu przeznaczonego tylko dla tej aplikacji. Folder nie jest widoczny na Twoim Dysku. To podobne do tego, jak działają kopie zapasowe WhatsApp.</string>
     <string name="sync_gdrive_add_label">Dodaj nowe Google Drive</string>
+    <string name="sync_gdrive_add_description">Kliknij przycisk logowania poniżej, aby skonfigurować dostęp do Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Zresetuj wszystkie dane Octi przechowywane na Google Drive. Twoje urządzenie pozostaje zalogowane do Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Wyloguj się z Google Drive i usuń dane związane z tym urządzeniem.</string>
     <string name="sync_gdrive_error_no_account_on_device">To urządzenie nie jest zalogowane na żadne konto Google.</string>

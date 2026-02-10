@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Створити акаунт</string>
     <string name="general_link_existing_action">Додати існуючий акаунт</string>
     <string name="general_sync_action">Синхронізувати</string>
+    <string name="general_manage_devices_action">Керувати пристроями</string>
     <string name="general_select_server_label">Вибрати сервер</string>
     <string name="onboarding_welcome_subtitle">Ваш напарник по пристроях</string>
     <string name="onboarding_welcome_body1">Octi — це інструмент для людей із багатьма Android-пристроями.</string>
     <string name="onboarding_welcome_body2">Він допомагає стежити за всіма вашими пристроями. Будь то телефон, планшет чи інший пристрій із Octi — ви бачите важливі деталі з першого погляду.</string>
+    <string name="onboarding_welcome_body3">Оновіться до Octi Pro, щоб отримати додаткові функції та підтримати розробку.</string>
     <string name="onboarding_welcome_beta_hint">До відома: це бета-версія. Дякую за терпіння, доки я покращую застосунок!</string>
     <string name="onboarding_privacy_subtitle">Політика конфіденційності</string>
     <string name="onboarding_privacy_body1">Octi не містить реклами та не продає дані користувачів.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Сповіщення налагодження</string>
     <string name="debug_debuglog_file_label">Записаний log-файл</string>
     <string name="debug_debuglog_record_action">Записати log налагодження</string>
+    <string name="onboarding_setupsync_title">Налаштувати синхронізацію</string>
+    <string name="onboarding_setupsync_message">Наразі ви бачите лише цей пристрій. Щоб з\'єднати ваші установки Octi, налаштуйте спільну службу синхронізації.</string>
     <string name="settings_privacy_policy_label">Політика конфіденційності</string>
     <string name="settings_privacy_policy_desc">Відповідальне поводження з даними.</string>
     <string name="settings_licenses_label">Ліцензії</string>
@@ -32,14 +36,17 @@
     <string name="help_translate_label">Переклад</string>
     <string name="help_translate_description">Допоможіть перекласти застосунок вашою улюбленою мовою.</string>
     <string name="ui_theme_mode_setting_label">Режим теми</string>
+    <string name="ui_theme_mode_setting_explanation">Режим, який використовується для оформлення застосунку (наприклад, темний або світлий).</string>
     <string name="ui_theme_mode_dark_label">Темний</string>
     <string name="ui_theme_mode_light_label">Світлий</string>
     <string name="ui_theme_mode_system_label">Системний</string>
     <string name="ui_theme_style_setting_label">Стиль теми</string>
     <string name="ui_theme_style_setting_explanation">Стиль кольорів для теми застосунку.</string>
     <string name="ui_theme_style_default_label">За замовчуванням</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Відстежувач проблем</string>
     <string name="issue_tracker_description">Публічний трекер для повідомлень про помилки та запитів.</string>
+    <string name="discord_label">Discord</string>
     <string name="discord_description">Місце для спілкування і питань.</string>
     <string name="support_debuglog_label">Записати log налагодження</string>
     <string name="support_debuglog_inprogress_label">Зупинити log налагодження</string>
@@ -105,6 +112,18 @@
     <string name="module_apps_category_label">Додатки</string>
     <string name="device_x_label">Пристрій: %s</string>
     <string name="pro_device_limit_reached_title">Досягнуто ліміту пристроїв</string>
-    <string name="sync_delete_device_keepaccess_caveat">Видалення пристрою видалить його дані, але не скасує доступ. Щоб скасувати доступ, від’єднайте Octi на пристрої.</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="one">Наразі у вас %1$d синхронізований пристрій.</item>
+        <item quantity="few">Наразі у вас %1$d синхронізованих пристроїв.</item>
+        <item quantity="many">Наразі у вас %1$d синхронізованих пристроїв.</item>
+        <item quantity="other">Наразі у вас %1$d синхронізованих пристроїв.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="one">Щоб переглядати більше ніж %1$d пристрій, оновіться до Octi Pro або видаліть пристрої.</item>
+        <item quantity="few">Щоб переглядати більше ніж %1$d пристроїв, оновіться до Octi Pro або видаліть пристрої.</item>
+        <item quantity="many">Щоб переглядати більше ніж %1$d пристроїв, оновіться до Octi Pro або видаліть пристрої.</item>
+        <item quantity="other">Щоб переглядати більше ніж %1$d пристроїв, оновіться до Octi Pro або видаліть пристрої.</item>
+    </plurals>
+    <string name="sync_delete_device_keepaccess_caveat">Видалення пристрою видалить його дані, але не скасує доступ. Щоб скасувати доступ, від'єднайте Octi на пристрої.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Видалення пристрою також видалить дані та скасує доступ.</string>
 </resources>

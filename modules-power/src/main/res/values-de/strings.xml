@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Akku Warnung</string>
     <string name="module_power_alerts_notification_battery_low_title">Akkustand niedrig: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s hat %3$d%% Akku (&lt;%2$d%%) und lädt nicht.</string>
+    <string name="module_power_alerts_highbattery_title">Akkustand hoch</string>
+    <string name="module_power_alerts_highbattery_description">Erhalten Sie eine Benachrichtigung, wenn der Akku dieses Geräts Ihren festgelegten Schwellenwert beim Laden erreicht. Nützlich zum Schutz der Akkugesundheit.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Benachrichtigung sobald der Akku über %s ist</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Keine Benachrichtigung wenn der Akku hoch ist</string>
+    <string name="module_power_alerts_notification_battery_high_title">Akkustand hoch: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s hat %3$d%% Akku (>%2$d%%) und lädt noch.</string>
+    <string name="module_power_detail_level_label">Akkustand</string>
+    <string name="module_power_detail_status_label">Status</string>
+    <string name="module_power_detail_speed_label">Ladegeschwindigkeit</string>
+    <string name="module_power_detail_temperature_label">Temperatur</string>
+    <string name="module_power_detail_estimation_label">Schätzung</string>
+    <string name="module_power_detail_health_label">Zustand</string>
+    <string name="module_power_detail_health_good">Gut</string>
+    <string name="module_power_detail_health_overheat">Überhitzt</string>
+    <string name="module_power_detail_health_dead">Defekt</string>
+    <string name="module_power_detail_health_over_voltage">Überspannung</string>
+    <string name="module_power_detail_health_cold">Kalt</string>
+    <string name="module_power_detail_health_unknown">Unbekannt</string>
 </resources>

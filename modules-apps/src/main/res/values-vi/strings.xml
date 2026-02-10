@@ -2,7 +2,15 @@
 <resources>
     <string name="module_apps_label">Mô-đun ứng dụng</string>
     <string name="module_apps_desc">Thông tin về các ứng dụng đã cài đặt.</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="other">%d ứng dụng đã cài đặt</item>
+    </plurals>
     <string name="module_apps_last_installed_x">Ứng dụng cài đặt gần đây: %s</string>
     <string name="module_apps_list_title">Các ứng dụng đã cài đặt</string>
+    <string name="module_apps_sort_label">Sắp xếp</string>
+    <string name="module_apps_sort_name_label">Tên</string>
+    <string name="module_apps_sort_install_date_label">Ngày cài đặt</string>
+    <string name="module_apps_sort_update_date_label">Ngày cập nhật</string>
     <string name="module_apps_installer_label">Nguồn cài đặt ứng dụng</string>
+    <string name="module_apps_installer_desc">Đồng bộ và bao gồm thông tin về nguồn cài đặt của mỗi ứng dụng.</string>
 </resources>

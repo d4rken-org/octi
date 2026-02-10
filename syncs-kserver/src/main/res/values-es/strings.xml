@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Un servidor de sincronización de código abierto para Octi creado por el desarrollador de esta aplicación. Los datos se cifran en el lado del cliente, solo tus dispositivos pueden descifrarlos.\n\nComo tanto la aplicación como el servidor aún están siendo mejorados, puede ser menos estable que otras opciones de sincronización.</string>
     <string name="sync_kserver_add_create_action_hint">Las cuentas inactivas se eliminan después de algunas semanas.</string>
     <string name="sync_kserver_add_subtitle">Agregar nuevo Google Drive</string>
@@ -15,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Crear un código de texto que puedes enviar a través de otras aplicaciones</string>
     <string name="sync_kserver_link_host_option_qrcode">Mostrar un código QR</string>
     <string name="sync_kserver_link_host_device_linked_message">Un nuevo dispositivo ha sido vinculado a tu cuenta.</string>
+    <string name="sync_kserver_link_client_option_direct">Copiar y pegar manualmente un código de vinculación</string>
     <string name="sync_kserver_link_client_option_qrcode">Escanear un código QR desde otro dispositivo</string>
     <string name="sync_kserver_link_client_startcamera_action">Iniciar cámara</string>
     <string name="sync_kserver_link_client_link_action">Vincular dispositivo</string>

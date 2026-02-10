@@ -5,4 +5,15 @@
     <string name="module_apps_last_installed_x">Viimeisin asennettu sovellus: %s</string>
     <string name="module_apps_list_title">Asennetut sovellukset</string>
     <string name="module_apps_installer_label">Sovelluksen asennuslähde</string>
+    <string name="module_apps_installer_desc">Synkronoi ja sisällytä tiedot kunkin sovelluksen asennuslähteestä.</string>
+
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d sovellus asennettu</item>
+        <item quantity="other">%d sovellusta asennettu</item>
+    </plurals>
+
+    <string name="module_apps_sort_label">Lajittele</string>
+    <string name="module_apps_sort_name_label">Nimi</string>
+    <string name="module_apps_sort_install_date_label">Asennuspäivä</string>
+    <string name="module_apps_sort_update_date_label">Päivityspäivä</string>
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_kserver_type_label">K-Server</string>
     <string name="sync_kserver_type_description">Avoimen lähdekoodin synkronointipalvelin Octille, jonka on tehnyt tämän sovelluksen kehittäjä. Data salataan asiakaspäässä, vain laitteesi voivat purkaa sen.\n\nKoska sekä sovellusta että palvelinta kehitetään yhä, tämä vaihtoehto voi olla vähemmän vakaa kuin muut synkronointitavat.</string>
     <string name="sync_kserver_add_create_action_hint">Passiiviset tilit poistetaan muutaman viikon kuluttua.</string>
     <string name="sync_kserver_add_subtitle">Lisää uusi Google Drive</string>
@@ -15,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Luo tekstikoodi, jonka voi lähettää muiden sovellusten kautta</string>
     <string name="sync_kserver_link_host_option_qrcode">Näytä QR-koodi</string>
     <string name="sync_kserver_link_host_device_linked_message">Uusi laite yhdistetty tilillesi.</string>
+    <string name="sync_kserver_link_client_option_direct">Kopioi ja liitä yhdistämiskoodi manuaalisesti</string>
     <string name="sync_kserver_link_client_option_qrcode">Skannaa QR-koodi toisesta laitteesta</string>
     <string name="sync_kserver_link_client_startcamera_action">Käynnistä kamera</string>
     <string name="sync_kserver_link_client_link_action">Yhdistä laite</string>

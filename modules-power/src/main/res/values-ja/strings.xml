@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">バッテリーアラート</string>
     <string name="module_power_alerts_notification_battery_low_title">バッテリー低残量: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s のバッテリー残量は %3$d % (&lt;%2$d%%) 、充電されていません。</string>
+    <string name="module_power_alerts_highbattery_title">バッテリー高残量</string>
+    <string name="module_power_alerts_highbattery_description">充電中にこのデバイスのバッテリー残量が指定したしきい値に達したときに通知を送信します。バッテリーの健康を維持するのに役立ちます。</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">バッテリー残量が %s を超えたときに通知する</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">バッテリー残量が多くても通知しない</string>
+    <string name="module_power_alerts_notification_battery_high_title">バッテリー高残量: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s のバッテリー残量は %3$d%% (>%2$d%%) で、まだ充電中です。</string>
+    <string name="module_power_detail_level_label">バッテリー残量</string>
+    <string name="module_power_detail_status_label">ステータス</string>
+    <string name="module_power_detail_speed_label">充電速度</string>
+    <string name="module_power_detail_temperature_label">温度</string>
+    <string name="module_power_detail_estimation_label">推定</string>
+    <string name="module_power_detail_health_label">健康状態</string>
+    <string name="module_power_detail_health_good">良好</string>
+    <string name="module_power_detail_health_overheat">過熱</string>
+    <string name="module_power_detail_health_dead">故障</string>
+    <string name="module_power_detail_health_over_voltage">過電圧</string>
+    <string name="module_power_detail_health_cold">低温</string>
+    <string name="module_power_detail_health_unknown">不明</string>
 </resources>

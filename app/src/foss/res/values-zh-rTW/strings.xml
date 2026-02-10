@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name_upgraded">Octi FOSS</string>
     <string name="upgrade_feature_requires_pro">需要 Octi Pro</string>
     <string name="upgrades_dashcard_title">取得 Octi Pro</string>
     <string name="upgrades_dashcard_body">解鎖額外功能並成為支持者，協助持續開發！</string>

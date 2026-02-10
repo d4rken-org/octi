@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Batterijwaarschuwingen</string>
     <string name="module_power_alerts_notification_battery_low_title">Batterij bijna leeg: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s heeft %3$d%% batterij (&lt;%2$d%%) en wordt niet opgeladen.</string>
+    <string name="module_power_alerts_highbattery_title">Batterij bijna vol</string>
+    <string name="module_power_alerts_highbattery_description">Ontvang een melding wanneer de batterij van dit apparaat je opgegeven drempelwaarde bereikt tijdens het opladen. Handig om de batterijgezondheid te bewaren.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Waarschuw wanneer batterij boven %s is</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Waarschuw niet wanneer batterij bijna vol is</string>
+    <string name="module_power_alerts_notification_battery_high_title">Batterij bijna vol: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s heeft %3$d%% batterij (>%2$d%%) en wordt nog steeds opgeladen.</string>
+    <string name="module_power_detail_level_label">Batterijniveau</string>
+    <string name="module_power_detail_status_label">Status</string>
+    <string name="module_power_detail_speed_label">Laadsnelheid</string>
+    <string name="module_power_detail_temperature_label">Temperatuur</string>
+    <string name="module_power_detail_estimation_label">Schatting</string>
+    <string name="module_power_detail_health_label">Gezondheid</string>
+    <string name="module_power_detail_health_good">Goed</string>
+    <string name="module_power_detail_health_overheat">Oververhitting</string>
+    <string name="module_power_detail_health_dead">Defect</string>
+    <string name="module_power_detail_health_over_voltage">Overspanning</string>
+    <string name="module_power_detail_health_cold">Koud</string>
+    <string name="module_power_detail_health_unknown">Onbekend</string>
 </resources>

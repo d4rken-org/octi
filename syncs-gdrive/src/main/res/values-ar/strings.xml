@@ -8,6 +8,7 @@
     <string name="sync_gdrive_appdata_label">نطاق بيانات التطبيق</string>
     <string name="sync_gdrive_type_appdata_description">يتم وضع البيانات في جوجل درايف. يستخدم هذا النوع تحديدًا نطاق \"بيانات التطبيق\". يتم منح الوصول فقط إلى مجلد جديد خاص بهذا التطبيق فقط. المجلد غير مرئي في درايف الخاص بك. الأمر مشابه لكيفية عمل نسخ واتساب الاحتياطية.</string>
     <string name="sync_gdrive_add_label">إضافة جوجل درايف جديد</string>
+    <string name="sync_gdrive_add_description">انقر على زر تسجيل الدخول أدناه لإعداد الوصول إلى جوجل درايف.</string>
     <string name="sync_gdrive_reset_confirmation_desc">إعادة تعيين جميع بيانات أوكتي المخزنة على جوجل درايف. يظل جهازك مسجلاً الدخول إلى جوجل درايف.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">تسجيل الخروج من جوجل درايف وحذف البيانات المتعلقة بهذا الجهاز.</string>
     <string name="sync_gdrive_error_no_account_on_device">هذا الجهاز لم يسجل الدخول إلى أي حساب جوجل.</string>

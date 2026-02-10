@@ -23,4 +23,24 @@
     <string name="module_power_alerts_notification_channel_label">电池警报</string>
     <string name="module_power_alerts_notification_battery_low_title">电池电量不足：%s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s在%3$d%%电池（&lt;%2$d%%）未充电。</string>
+
+    <string name="module_power_alerts_highbattery_title">电池电量过高</string>
+    <string name="module_power_alerts_highbattery_description">当此设备的电池在充电时达到指定的阈值时获得通知。有助于保护电池健康。</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">当电池电量高于%s时通知</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">电池电量高时不要通知</string>
+    <string name="module_power_alerts_notification_battery_high_title">电池电量过高：%s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s的电池为%3$d%%（>%2$d%%），仍在充电。</string>
+
+    <string name="module_power_detail_level_label">电池电量</string>
+    <string name="module_power_detail_status_label">状态</string>
+    <string name="module_power_detail_speed_label">充电速度</string>
+    <string name="module_power_detail_temperature_label">温度</string>
+    <string name="module_power_detail_estimation_label">估算</string>
+    <string name="module_power_detail_health_label">健康状况</string>
+    <string name="module_power_detail_health_good">良好</string>
+    <string name="module_power_detail_health_overheat">过热</string>
+    <string name="module_power_detail_health_dead">损坏</string>
+    <string name="module_power_detail_health_over_voltage">过压</string>
+    <string name="module_power_detail_health_cold">过冷</string>
+    <string name="module_power_detail_health_unknown">未知</string>
 </resources>

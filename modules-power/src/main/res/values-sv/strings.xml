@@ -23,4 +23,24 @@
     <string name="module_power_alerts_notification_channel_label">Batterivarningar</string>
     <string name="module_power_alerts_notification_battery_low_title">Lågt batteri: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s har %3$d%% batteri (&lt;%2$d%%) och laddar inte.</string>
+
+    <string name="module_power_alerts_highbattery_title">Högt batteri</string>
+    <string name="module_power_alerts_highbattery_description">Få en avisering när den här enhetens batteri når din angivna tröskel under laddning. Användbart för att bevara batterihälsan.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Avisera när batteriet är över %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Avisera inte när batteriet är högt</string>
+    <string name="module_power_alerts_notification_battery_high_title">Högt batteri: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s har %3$d%% batteri (>%2$d%%) och laddar fortfarande.</string>
+
+    <string name="module_power_detail_level_label">Batterinivå</string>
+    <string name="module_power_detail_status_label">Status</string>
+    <string name="module_power_detail_speed_label">Laddningshastighet</string>
+    <string name="module_power_detail_temperature_label">Temperatur</string>
+    <string name="module_power_detail_estimation_label">Uppskattning</string>
+    <string name="module_power_detail_health_label">Hälsa</string>
+    <string name="module_power_detail_health_good">Bra</string>
+    <string name="module_power_detail_health_overheat">Överhettning</string>
+    <string name="module_power_detail_health_dead">Dött</string>
+    <string name="module_power_detail_health_over_voltage">Överspänning</string>
+    <string name="module_power_detail_health_cold">Kallt</string>
+    <string name="module_power_detail_health_unknown">Okänt</string>
 </resources>

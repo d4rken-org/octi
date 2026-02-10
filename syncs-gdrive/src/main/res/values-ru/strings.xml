@@ -4,9 +4,11 @@
     <string name="gdrive_account_scope_error_description">Octi не получил необходимый объем доступа. Попробуйте снова и убедитесь, что разрешения предоставлены.</string>
     <string name="gdrive_account_lockout_error_label">Ошибка блокировки</string>
     <string name="gdrive_account_lockout_error_description">Это устройство заблокировано и больше не может получить доступ к Google Drive. Его доступ к вашему аккаунту Google был отозван. Предоставьте доступ заново и попробуйте снова.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">Область данных приложения</string>
     <string name="sync_gdrive_type_appdata_description">Данные размещаются в Google Drive. Этот конкретный вариант использует область \"данные приложения\". Доступ предоставляется только к новой папке специально для этого приложения. Папка не видна в вашем диске. Это похоже на то, как работают резервные копии WhatsApp.</string>
     <string name="sync_gdrive_add_label">Добавить новый Google Drive</string>
+    <string name="sync_gdrive_add_description">Нажмите кнопку входа ниже, чтобы настроить доступ к Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Сбросить все данные Octi, хранящиеся на Google Drive. Ваше устройство останется подключенным к Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Выйти из Google Drive и удалить данные, связанные с этим устройством.</string>
     <string name="sync_gdrive_error_no_account_on_device">Это устройство не подключено ни к одному аккаунту Google.</string>

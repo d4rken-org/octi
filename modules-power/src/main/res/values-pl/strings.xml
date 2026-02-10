@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Alerty baterii</string>
     <string name="module_power_alerts_notification_battery_low_title">Niski poziom baterii: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s ma %3$d%% baterii (&lt;%2$d%%) i nie ładuje się.</string>
+    <string name="module_power_alerts_highbattery_title">Wysoki poziom baterii</string>
+    <string name="module_power_alerts_highbattery_description">Otrzymuj powiadomienie, gdy bateria tego urządzenia osiągnie określony próg podczas ładowania. Przydatne do zachowania zdrowia baterii.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Powiadom, gdy bateria jest powyżej %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Nie powiadamiaj, gdy bateria jest wysoka</string>
+    <string name="module_power_alerts_notification_battery_high_title">Wysoki poziom baterii: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s ma %3$d%% baterii (>%2$d%%) i nadal się ładuje.</string>
+    <string name="module_power_detail_level_label">Poziom baterii</string>
+    <string name="module_power_detail_status_label">Status</string>
+    <string name="module_power_detail_speed_label">Prędkość ładowania</string>
+    <string name="module_power_detail_temperature_label">Temperatura</string>
+    <string name="module_power_detail_estimation_label">Szacunek</string>
+    <string name="module_power_detail_health_label">Zdrowie</string>
+    <string name="module_power_detail_health_good">Dobry</string>
+    <string name="module_power_detail_health_overheat">Przegrzanie</string>
+    <string name="module_power_detail_health_dead">Martwa</string>
+    <string name="module_power_detail_health_over_voltage">Przepięcie</string>
+    <string name="module_power_detail_health_cold">Zimna</string>
+    <string name="module_power_detail_health_unknown">Nieznany</string>
 </resources>

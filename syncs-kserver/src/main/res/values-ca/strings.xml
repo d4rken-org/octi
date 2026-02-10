@@ -16,6 +16,7 @@
     <string name="sync_kserver_link_host_option_direct">Crea un codi de text que podeu enviar mitjançant altres aplicacions</string>
     <string name="sync_kserver_link_host_option_qrcode">Mostra un codi QR</string>
     <string name="sync_kserver_link_host_device_linked_message">S\'ha enllaçat un dispositiu nou al vostre compte.</string>
+    <string name="sync_kserver_link_client_option_direct">Copieu i enganxeu manualment un codi d\'enllaç</string>
     <string name="sync_kserver_link_client_option_qrcode">Escaneja un codi QR des d\'un altre dispositiu</string>
     <string name="sync_kserver_link_client_startcamera_action">Inicieu la càmera</string>
     <string name="sync_kserver_link_client_link_action">Enllaça el dispositiu</string>

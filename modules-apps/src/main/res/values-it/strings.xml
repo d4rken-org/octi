@@ -5,4 +5,15 @@
     <string name="module_apps_last_installed_x">Ultima applicazione installata: %s</string>
     <string name="module_apps_list_title">Applicazioni installate</string>
     <string name="module_apps_installer_label">Origine app installata</string>
+    <string name="module_apps_installer_desc">Sincronizza e includi informazioni sull\'origine di installazione di ogni app.</string>
+
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d app installata</item>
+        <item quantity="other">%d app installate</item>
+    </plurals>
+
+    <string name="module_apps_sort_label">Ordina</string>
+    <string name="module_apps_sort_name_label">Nome</string>
+    <string name="module_apps_sort_install_date_label">Data di installazione</string>
+    <string name="module_apps_sort_update_date_label">Data di aggiornamento</string>
 </resources>

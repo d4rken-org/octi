@@ -23,4 +23,24 @@
     <string name="module_power_alerts_notification_channel_label">Сповіщення про батарею</string>
     <string name="module_power_alerts_notification_battery_low_title">Низький заряд батареї: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s має %3$d%% батареї (&lt;%2$d%%) і не заряджається.</string>
+
+    <string name="module_power_alerts_highbattery_title">Високий заряд батареї</string>
+    <string name="module_power_alerts_highbattery_description">Отримуйте сповіщення, коли батарея цього пристрою досягає заданого порогу під час зарядки. Корисно для збереження здоров\'я батареї.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Повідомляти, коли батарея вище %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Не повідомляти при високому заряді батареї</string>
+    <string name="module_power_alerts_notification_battery_high_title">Високий заряд батареї: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s має %3$d%% батареї (>%2$d%%) і все ще заряджається.</string>
+
+    <string name="module_power_detail_level_label">Рівень батареї</string>
+    <string name="module_power_detail_status_label">Статус</string>
+    <string name="module_power_detail_speed_label">Швидкість зарядки</string>
+    <string name="module_power_detail_temperature_label">Температура</string>
+    <string name="module_power_detail_estimation_label">Оцінка</string>
+    <string name="module_power_detail_health_label">Здоров\'я</string>
+    <string name="module_power_detail_health_good">Добре</string>
+    <string name="module_power_detail_health_overheat">Перегрів</string>
+    <string name="module_power_detail_health_dead">Вичерпана</string>
+    <string name="module_power_detail_health_over_voltage">Перевищення напруги</string>
+    <string name="module_power_detail_health_cold">Холодно</string>
+    <string name="module_power_detail_health_unknown">Невідомо</string>
 </resources>

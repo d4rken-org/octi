@@ -4,9 +4,11 @@
     <string name="gdrive_account_scope_error_description">Octi nu a primit domeniul de acces necesar. Încearcă din nou și verifică dacă permisiunile sunt acordate.</string>
     <string name="gdrive_account_lockout_error_label">Eroare de blocare</string>
     <string name="gdrive_account_lockout_error_description">Acest dispozitiv este blocat și nu mai poate accesa Google Drive. Accesul la contul tău Google a fost revocat. Reacordă accesul și încearcă din nou.</string>
+    <string name="sync_gdrive_type_label">Google Drive</string>
     <string name="sync_gdrive_appdata_label">Domeniu date aplicație</string>
     <string name="sync_gdrive_type_appdata_description">Datele sunt plasate în Google Drive. Această variantă folosește domeniul „app-data”. Accesul este acordat doar unui nou dosar special pentru această aplicație. Dosarul nu este vizibil pe drive-ul tău. Este similar cu modul în care funcționează backup-urile WhatsApp.</string>
     <string name="sync_gdrive_add_label">Adaugă un Google Drive nou</string>
+    <string name="sync_gdrive_add_description">Apasă butonul de autentificare de mai jos pentru a configura accesul la Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Resetează toate datele Octi stocate pe Google Drive. Dispozitivul tău rămâne conectat la Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Deconectează-te de la Google Drive și șterge datele legate de acest dispozitiv.</string>
     <string name="sync_gdrive_error_no_account_on_device">Acest dispozitiv nu este conectat la niciun cont Google.</string>

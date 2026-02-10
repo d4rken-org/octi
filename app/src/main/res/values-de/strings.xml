@@ -5,6 +5,7 @@
     <string name="general_create_account_action">Erstelle ein Konto</string>
     <string name="general_link_existing_action">Verbinde zu vorhandenem Konto</string>
     <string name="general_sync_action">Synchronisieren</string>
+    <string name="general_manage_devices_action">Geräte verwalten</string>
     <string name="general_select_server_label">Server auswählen</string>
     <string name="onboarding_welcome_subtitle">Dein Geräte Partner</string>
     <string name="onboarding_welcome_body1">Octi ist eine App für Menschen mit mehreren Androidgeräten.</string>
@@ -42,6 +43,7 @@
     <string name="ui_theme_style_setting_label">Design-Stil</string>
     <string name="ui_theme_style_setting_explanation">Der Farbstil, der beim Gestalten der App verwendet wird.</string>
     <string name="ui_theme_style_default_label">Standard</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Issue-Tracker</string>
     <string name="issue_tracker_description">Ein öffentlicher Issue-Tracker für Fehlerberichte und Feature-Anfragen.</string>
     <string name="discord_label">Discord</string>

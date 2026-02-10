@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Notifiche batteria</string>
     <string name="module_power_alerts_notification_battery_low_title">Batteria scarica: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s è al %3$d%% di batteria (&lt;%2$d%%) e non in carica.</string>
+    <string name="module_power_alerts_highbattery_title">Batteria alta</string>
+    <string name="module_power_alerts_highbattery_description">Ricevi una notifica quando la batteria del dispositivo raggiunge la soglia specificata durante la ricarica. Utile per preservare la salute della batteria.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Notificami quando la batteria è superiore a %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Non notificare quando la batteria è alta</string>
+    <string name="module_power_alerts_notification_battery_high_title">Batteria alta: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s è al %3$d%% di batteria (>%2$d%%) ed è ancora in carica.</string>
+    <string name="module_power_detail_level_label">Livello batteria</string>
+    <string name="module_power_detail_status_label">Stato</string>
+    <string name="module_power_detail_speed_label">Velocità di ricarica</string>
+    <string name="module_power_detail_temperature_label">Temperatura</string>
+    <string name="module_power_detail_estimation_label">Stima</string>
+    <string name="module_power_detail_health_label">Salute</string>
+    <string name="module_power_detail_health_good">Buono</string>
+    <string name="module_power_detail_health_overheat">Surriscaldamento</string>
+    <string name="module_power_detail_health_dead">Esaurita</string>
+    <string name="module_power_detail_health_over_voltage">Sovratensione</string>
+    <string name="module_power_detail_health_cold">Fredda</string>
+    <string name="module_power_detail_health_unknown">Sconosciuto</string>
 </resources>

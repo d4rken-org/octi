@@ -5,4 +5,13 @@
     <string name="module_apps_last_installed_x">Ultima aplicație instalată: %s</string>
     <string name="module_apps_list_title">Aplicații instalate</string>
     <string name="module_apps_installer_label">Sursa de instalare a aplicației</string>
+    <string name="module_apps_installer_desc">Sincronizează și include informații despre sursa de instalare a fiecărei aplicații.</string>
+    <plurals name="module_apps_x_installed">
+        <item quantity="one">%d aplicație instalată</item>
+        <item quantity="other">%d aplicații instalate</item>
+    </plurals>
+    <string name="module_apps_sort_label">Sortare</string>
+    <string name="module_apps_sort_name_label">Nume</string>
+    <string name="module_apps_sort_install_date_label">Data instalării</string>
+    <string name="module_apps_sort_update_date_label">Data actualizării</string>
 </resources>

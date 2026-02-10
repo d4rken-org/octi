@@ -24,4 +24,6 @@
     <string name="general_refresh_action">更新</string>
     <string name="general_continue">続行</string>
     <string name="general_show_details_action">詳細を表示</string>
+    <string name="general_minutes_label">分</string>
+    <string name="preference_slider_input_summary">%1$d 分</string>
 </resources>

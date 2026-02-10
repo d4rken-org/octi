@@ -23,4 +23,22 @@
     <string name="module_power_alerts_notification_channel_label">Alertas de bateria</string>
     <string name="module_power_alerts_notification_battery_low_title">Bateria fraca: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s está com %3$d%% de bateria (&lt;%2$d%%) e não está carregando.</string>
+    <string name="module_power_alerts_highbattery_title">Bateria elevada</string>
+    <string name="module_power_alerts_highbattery_description">Receba uma notificação quando a bateria deste dispositivo atingir o limite especificado durante o carregamento. Útil para preservar a saúde da bateria.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Notificar quando a bateria estiver acima de %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Não notificar quando a bateria estiver elevada</string>
+    <string name="module_power_alerts_notification_battery_high_title">Bateria elevada: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s está com %3$d%% de bateria (>%2$d%%) e ainda está a carregar.</string>
+    <string name="module_power_detail_level_label">Nível da bateria</string>
+    <string name="module_power_detail_status_label">Estado</string>
+    <string name="module_power_detail_speed_label">Velocidade de carregamento</string>
+    <string name="module_power_detail_temperature_label">Temperatura</string>
+    <string name="module_power_detail_estimation_label">Estimativa</string>
+    <string name="module_power_detail_health_label">Saúde</string>
+    <string name="module_power_detail_health_good">Boa</string>
+    <string name="module_power_detail_health_overheat">Sobreaquecimento</string>
+    <string name="module_power_detail_health_dead">Inoperante</string>
+    <string name="module_power_detail_health_over_voltage">Sobretensão</string>
+    <string name="module_power_detail_health_cold">Fria</string>
+    <string name="module_power_detail_health_unknown">Desconhecido</string>
 </resources>

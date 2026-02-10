@@ -8,6 +8,7 @@
     <string name="sync_gdrive_appdata_label">App-dataintervall</string>
     <string name="sync_gdrive_type_appdata_description">Data placeras i Google Drive. Den här varianten använder intervallet \"app-data\". Åtkomst ges endast till en ny mapp bara för den här appen. Mappen är inte synlig på din drive. Det fungerar som WhatsApp-säkerhetskopior.</string>
     <string name="sync_gdrive_add_label">Lägg till ny Google Drive</string>
+    <string name="sync_gdrive_add_description">Klicka på inloggningsknappen nedan för att konfigurera åtkomst till Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Återställ all Octi-data som lagrats på Google Drive. Din enhet förblir inloggad på Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Logga ut från Google Drive och ta bort data relaterat till den här enheten.</string>
     <string name="sync_gdrive_error_no_account_on_device">Den här enheten är inte inloggad på något Google-konto.</string>

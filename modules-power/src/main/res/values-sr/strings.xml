@@ -23,4 +23,24 @@
     <string name="module_power_alerts_notification_channel_label">Упозорења о батерији</string>
     <string name="module_power_alerts_notification_battery_low_title">Слаба батерија: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s је на %3$d%% батерије (&lt;%2$d%%) и не пуни се.</string>
+
+    <string name="module_power_alerts_highbattery_title">Висок ниво батерије</string>
+    <string name="module_power_alerts_highbattery_description">Добићете обавештење када батерија овог уређаја достигне задати праг током пуњења. Корисно за очување здравља батерије.</string>
+    <string name="module_power_alerts_highbattery_slider_value_caption">Обавести када батерија буде изнад %s</string>
+    <string name="module_power_alerts_highbattery_disabled_caption">Не обавештавај када је батерија висока</string>
+    <string name="module_power_alerts_notification_battery_high_title">Висок ниво батерије: %s</string>
+    <string name="module_power_alerts_notification_battery_high_body">%1$s је на %3$d%% батерије (>%2$d%%) и још увек се пуни.</string>
+
+    <string name="module_power_detail_level_label">Ниво батерије</string>
+    <string name="module_power_detail_status_label">Статус</string>
+    <string name="module_power_detail_speed_label">Брзина пуњења</string>
+    <string name="module_power_detail_temperature_label">Температура</string>
+    <string name="module_power_detail_estimation_label">Процена</string>
+    <string name="module_power_detail_health_label">Здравље</string>
+    <string name="module_power_detail_health_good">Добро</string>
+    <string name="module_power_detail_health_overheat">Прегревање</string>
+    <string name="module_power_detail_health_dead">Мртва</string>
+    <string name="module_power_detail_health_over_voltage">Превисок напон</string>
+    <string name="module_power_detail_health_cold">Хладно</string>
+    <string name="module_power_detail_health_unknown">Непознато</string>
 </resources>

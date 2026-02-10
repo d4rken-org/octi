@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Octi</string>
     <string name="general_error_label">Lỗi</string>
     <string name="general_error_no_compatible_app_found_msg">Không tìm thấy ứng dụng tương thích để xử lý yêu cầu này.</string>
     <string name="general_share_action">Chia sẻ</string>
@@ -23,4 +24,6 @@
     <string name="general_refresh_action">Làm mới</string>
     <string name="general_continue">Tiếp tục</string>
     <string name="general_show_details_action">Hiển thị chi tiết</string>
+    <string name="general_minutes_label">Phút</string>
+    <string name="preference_slider_input_summary">%1$d phút</string>
 </resources>

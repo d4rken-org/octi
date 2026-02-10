@@ -5,10 +5,12 @@
     <string name="general_create_account_action">Tạo tài khoản</string>
     <string name="general_link_existing_action">Liên kết tài khoản hiện có</string>
     <string name="general_sync_action">Đồng bộ hóa</string>
+    <string name="general_manage_devices_action">Quản lý thiết bị</string>
     <string name="general_select_server_label">Chọn máy chủ</string>
     <string name="onboarding_welcome_subtitle">Người bạn thiết bị của bạn</string>
     <string name="onboarding_welcome_body1">Octi là công cụ dành cho người dùng sở hữu nhiều thiết bị Android.</string>
     <string name="onboarding_welcome_body2">Giúp bạn cập nhật thông tin với tất cả thiết bị của mình. Dù là điện thoại, máy tính bảng hay bất kỳ thiết bị nào có cài Octi, bạn sẽ xem ngay được thông tin quan trọng.</string>
+    <string name="onboarding_welcome_body3">Nâng cấp lên Octi Pro để có thêm tính năng và hỗ trợ phát triển.</string>
     <string name="onboarding_welcome_beta_hint">Thông báo: Đây là phiên bản beta, cảm ơn bạn đã kiên nhẫn khi tôi tiếp tục hoàn thiện ứng dụng!</string>
     <string name="onboarding_privacy_subtitle">Chính sách quyền riêng tư</string>
     <string name="onboarding_privacy_body1">Octi không có quảng cáo và không bán dữ liệu người dùng.</string>
@@ -19,6 +21,8 @@
     <string name="debug_notification_channel_label">Thông báo debug</string>
     <string name="debug_debuglog_file_label">File log đã ghi</string>
     <string name="debug_debuglog_record_action">Ghi nhật ký debug</string>
+    <string name="onboarding_setupsync_title">Thiết lập đồng bộ hóa</string>
+    <string name="onboarding_setupsync_message">Hiện tại bạn chỉ thấy thiết bị này. Để kết nối các bản cài Octi, hãy thiết lập một dịch vụ đồng bộ hóa chung.</string>
     <string name="settings_privacy_policy_label">Chính sách quyền riêng tư</string>
     <string name="settings_privacy_policy_desc">Quản lý dữ liệu một cách có trách nhiệm.</string>
     <string name="settings_licenses_label">Giấy phép</string>
@@ -32,14 +36,17 @@
     <string name="help_translate_label">Dịch thuật</string>
     <string name="help_translate_description">Hãy giúp dịch ứng dụng này sang ngôn ngữ bạn yêu thích.</string>
     <string name="ui_theme_mode_setting_label">Chế độ giao diện</string>
+    <string name="ui_theme_mode_setting_explanation">Chế độ được sử dụng khi áp dụng giao diện cho ứng dụng (ví dụ: tối hoặc sáng).</string>
     <string name="ui_theme_mode_dark_label">Tối</string>
     <string name="ui_theme_mode_light_label">Sáng</string>
     <string name="ui_theme_mode_system_label">Hệ thống</string>
     <string name="ui_theme_style_setting_label">Kiểu giao diện</string>
     <string name="ui_theme_style_setting_explanation">Kiểu màu được dùng khi hiển thị giao diện ứng dụng.</string>
     <string name="ui_theme_style_default_label">Mặc định</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Theo dõi vấn đề</string>
     <string name="issue_tracker_description">Một hệ thống theo dõi vấn đề công khai cho báo cáo lỗi &amp; yêu cầu tính năng.</string>
+    <string name="discord_label">Discord</string>
     <string name="discord_description">Một nơi để trao đổi và hỏi đáp.</string>
     <string name="support_debuglog_label">Ghi nhật ký debug</string>
     <string name="support_debuglog_inprogress_label">Dừng ghi debug</string>
@@ -99,6 +106,12 @@
     <string name="module_apps_category_label">Ứng dụng</string>
     <string name="device_x_label">Thiết bị: %s</string>
     <string name="pro_device_limit_reached_title">Đã đạt giới hạn thiết bị</string>
+    <plurals name="pro_device_limit_current_description">
+        <item quantity="other">Bạn hiện có %1$d thiết bị đã đồng bộ.</item>
+    </plurals>
+    <plurals name="pro_device_limit_maximum_description">
+        <item quantity="other">Để xem nhiều hơn %1$d thiết bị, hãy nâng cấp lên Octi Pro hoặc xóa bớt thiết bị.</item>
+    </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Xóa thiết bị này sẽ xóa dữ liệu nhưng không thu hồi quyền truy cập. Để thu hồi quyền, hãy ngắt Octi trên thiết bị.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Xóa thiết bị này sẽ xóa dữ liệu và thu hồi cả quyền truy cập.</string>
 </resources>
