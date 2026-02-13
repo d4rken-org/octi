@@ -99,8 +99,17 @@ class KServerConnector @AssistedInject constructor(
     init {
         writeQueue
             .onEach { toWrite ->
-                runServerAction("write-queue") {
-                    writeServer(toWrite)
+                try {
+                    runServerAction("write-queue") {
+                        writeServer(toWrite)
+                    }
+                } catch (e: KServerHttpException) {
+                    if (e.isDeviceUnknown) {
+                        log(TAG, WARN) { "Write failed: device no longer registered, pausing" }
+                        pauseConnector()
+                    } else {
+                        throw e
+                    }
                 }
             }
             .retry {
@@ -153,21 +162,13 @@ class KServerConnector @AssistedInject constructor(
 
         if (options.stats) {
             try {
-
                 val knownDeviceIds = runServerAction("read-devicelist") {
                     endpoint.listDevices()
                 }
                 _state.updateBlocking { copy(devices = knownDeviceIds) }
             } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to list of known devices: ${e.asLog()}" }
-            }
-            try {
-//                val knownDeviceIds = runServerAction("read-stats") {
-//                    endpoint.listDevices()
-//                }
-//                _state.updateBlocking { copy(devices = knownDeviceIds) }
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to read stats: ${e.asLog()}" }
+                if (handleDeviceUnknown(e, "list known devices")) return
+                log(TAG, ERROR) { "Failed to list known devices: ${e.asLog()}" }
             }
         }
 
@@ -182,6 +183,7 @@ class KServerConnector @AssistedInject constructor(
                     _data.value = readServer()
                 }
             } catch (e: Exception) {
+                if (handleDeviceUnknown(e, "read")) return
                 log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
             }
         }
@@ -255,6 +257,21 @@ class KServerConnector @AssistedInject constructor(
             )
         }
         log(TAG, VERBOSE) { "writeServer(): Done" }
+    }
+
+    private suspend fun handleDeviceUnknown(e: Exception, operation: String): Boolean {
+        if ((e as? KServerHttpException)?.isDeviceUnknown != true) return false
+        log(TAG, WARN) { "$operation: device no longer registered, pausing connector" }
+        pauseConnector()
+        return true
+    }
+
+    private suspend fun pauseConnector() {
+        runCatching {
+            syncSettings.pausedConnectors.update { it + identifier }
+        }.onFailure {
+            log(TAG, ERROR) { "Failed to pause connector: ${it.asLog()}" }
+        }
     }
 
     private suspend fun <R> runServerAction(

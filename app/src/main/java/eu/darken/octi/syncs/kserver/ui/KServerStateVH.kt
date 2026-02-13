@@ -7,6 +7,7 @@ import androidx.core.view.isGone
 import com.google.android.material.R as MaterialR
 import eu.darken.octi.R
 import eu.darken.octi.common.R as CommonR
+import eu.darken.octi.common.error.localized
 import eu.darken.octi.common.getColorForAttr
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.syncs.kserver.R as KServerR
@@ -49,7 +50,7 @@ class KServerStateVH(parent: ViewGroup) :
         }
         lastSyncError.apply {
             isGone = item.ourState.lastError == null
-            text = item.ourState.lastError?.toString()
+            text = item.ourState.lastError?.localized(context)?.asText()?.get(context)
         }
 
         syncProgressIndicator.isGone = !item.ourState.isBusy

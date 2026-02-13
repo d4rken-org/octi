@@ -160,7 +160,7 @@ class KServerEndpoint @AssistedInject constructor(
             throw KServerHttpException(e)
         }
 
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw KServerHttpException(HttpException(response))
 
         val lastModifiedAt = response.headers()["X-Modified-At"]
             ?.let { ZonedDateTime.parse(it, DateTimeFormatter.RFC_1123_DATE_TIME) }?.toInstant()
