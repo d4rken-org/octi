@@ -24,5 +24,8 @@
     <string name="general_continue">Continue</string>
     <string name="general_show_details_action">Show details</string>
     <string name="general_minutes_label">Minutes</string>
-    <string name="preference_slider_input_summary">%1$d minutes</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
 </resources>

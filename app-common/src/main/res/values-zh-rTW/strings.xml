@@ -25,5 +25,4 @@
     <string name="general_continue">繼續</string>
     <string name="general_show_details_action">顯示詳細資訊</string>
     <string name="general_minutes_label">分鐘</string>
-    <string name="preference_slider_input_summary">%1$d 分鐘</string>
 </resources>

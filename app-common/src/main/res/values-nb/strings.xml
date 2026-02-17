@@ -25,5 +25,4 @@
     <string name="general_continue">Fortsett</string>
     <string name="general_show_details_action">Vis detaljer</string>
     <string name="general_minutes_label">Minutter</string>
-    <string name="preference_slider_input_summary">%1$d minutter</string>
 </resources>
