@@ -101,6 +101,6 @@ class SliderInputPreference @JvmOverloads constructor(
     }
 
     private fun updateSummary(value: Int) {
-        summary = context.getString(R.string.preference_slider_input_summary, value)
+        summary = context.resources.getQuantityString(R.plurals.general_minutes_quantity_label, value, value)
     }
 }
