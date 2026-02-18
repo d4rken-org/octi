@@ -6,7 +6,7 @@
         app:iconSpaceReserved="false">
         <eu.darken.octi.common.preferences.IntentPreference
             android:key="thanks.jakob"
-            android:summary="Thanks for Octi\'s open-source sync server."
+            android:summary="@string/acks_thanks_jakob_desc"
             android:title="Jakob Möller"
             app:iconSpaceReserved="false">
             <intent
@@ -15,7 +15,7 @@
         </eu.darken.octi.common.preferences.IntentPreference>
         <eu.darken.octi.common.preferences.IntentPreference
             android:key="thanks.maxpatchs"
-            android:summary="Thanks for the lovely icons."
+            android:summary="@string/acks_thanks_maxpatchs_desc"
             android:title="Max Patchs"
             app:iconSpaceReserved="false">
             <intent
@@ -24,7 +24,7 @@
         </eu.darken.octi.common.preferences.IntentPreference>
         <eu.darken.octi.common.preferences.IntentPreference
             android:key="thanks.crowdin"
-            android:summary="For supporting translation of open-source projects"
+            android:summary="@string/acks_thanks_crowdin_desc"
             android:title="crowdin.com"
             app:iconSpaceReserved="false">
             <intent

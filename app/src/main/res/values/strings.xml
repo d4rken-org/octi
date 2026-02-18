@@ -33,6 +33,9 @@
     <string name="settings_privacy_policy_desc">Handling data responsibly.</string>
     <string name="settings_licenses_label">Licenses</string>
     <string name="general_thank_you_label">Thank you</string>
+    <string name="acks_thanks_jakob_desc">Thanks for Octi\'s open-source sync server.</string>
+    <string name="acks_thanks_maxpatchs_desc">Thanks for the lovely icons.</string>
+    <string name="acks_thanks_crowdin_desc">For supporting translation of open-source projects</string>
     <string name="settings_category_other_label">Other</string>
 
     <string name="general_settings_label">General</string>
