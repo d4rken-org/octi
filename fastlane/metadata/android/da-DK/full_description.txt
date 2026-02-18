@@ -2,21 +2,21 @@
 
 Tilgængelige informationsmoduler:
 
-* Enhed og Android OS detaljer
+* Enheds- og Android OS-detaljer
 * Batteristatus
 * WiFi-forbindelse
 * Installerede applikationer
-* Udklipsholder deling
-* og mere... hvis du har en god idé, så lad mig vide det!
+* Udklipsholderdeling
+* og mere… Hvis du har en god idé, så lad mig vide det!
 
 Du kan vælge forskellige måder at synkronisere informationen på:
 
 * Dit Google Drive
 * En gratis server hostet af mig
 * Host din egen server
-* Mere snart...
+* Mere snart…
 
-Synkroniseringsindstillinger kan blandes og matches.
+Synkroniseringsmuligheder kan blandes og kombineres.
 
-Octi er open-source, har ingen reklamer og sporer dig ikke.
-Du kan købe et in-app køb for at få nogle ekstra funktioner og støtte app-udvikling.
+Octi er open source, har ingen reklamer og sporer dig ikke.
+Du kan købe et in-app-køb for at få et par ekstra funktioner og støtte appudviklingen.

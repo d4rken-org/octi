@@ -1,1 +1,1 @@
-Több Android eszköz közötti információk figyelése és szinkronizálása
+Figyeld és szinkronizáld az információkat több Android-eszköz között
