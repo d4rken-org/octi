@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Traitement responsable des données.</string>
     <string name="settings_licenses_label">Licences</string>
     <string name="general_thank_you_label">Merci</string>
+    <string name="acks_thanks_jakob_desc">Merci pour le serveur de synchronisation open-source d\'Octi.</string>
+    <string name="acks_thanks_maxpatchs_desc">Merci pour les jolies icônes.</string>
+    <string name="acks_thanks_crowdin_desc">Pour soutenir la traduction de projets open-source</string>
     <string name="settings_category_other_label">Autre</string>
     <string name="general_settings_label">Général</string>
     <string name="general_settings_desc">Peaufinages généraux qui affectent toute l’appli.</string>
@@ -44,10 +47,10 @@
     <string name="ui_theme_style_setting_explanation">Le style chromatique utilisé par le thème de l’appli.</string>
     <string name="ui_theme_style_default_label">Par défaut</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
-    <string name="issue_tracker_label">Gestionnaire de suivi des problèmes</string>
-    <string name="issue_tracker_description">Un gestionnaire public de suivi des problèmes pour les relevés de bogues et les demandes de fonction.</string>
+    <string name="issue_tracker_label">Suivi des problèmes</string>
+    <string name="issue_tracker_description">Un système public de suivi des problèmes et des demandes de fonctions.</string>
     <string name="discord_label">Discord</string>
-    <string name="discord_description">Un endroit où se retrouver et poser des questions.</string>
+    <string name="discord_description">Un endroit à fréquenter, où poser des questions.</string>
     <string name="support_debuglog_label">Enregistrer le journal de débogage</string>
     <string name="support_debuglog_inprogress_label">Arrêter le journal de débogage</string>
     <string name="support_debuglog_desc">Enregistrer les actions de l’appli dans un fichier texte partageable.</string>

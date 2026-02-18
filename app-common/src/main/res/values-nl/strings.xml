@@ -15,6 +15,7 @@
     <string name="general_dismiss_action">Sluiten</string>
     <string name="general_maybe_later_action">Misschien later</string>
     <string name="general_manage_action">Beheren</string>
+    <string name="general_quota_label">Quotum</string>
     <string name="general_upgrade_action">Upgraden</string>
     <string name="general_update_action">Bijwerken</string>
     <string name="general_donate_action">Doneren</string>
@@ -23,6 +24,9 @@
     <string name="general_refresh_action">Vernieuwen</string>
     <string name="general_continue">Doorgaan</string>
     <string name="general_show_details_action">Details tonen</string>
-    <string name="general_quota_label">Quotum</string>
     <string name="general_minutes_label">Minuten</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d minuut</item>
+        <item quantity="other">%1$d minuten</item>
+    </plurals>
 </resources>

@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Ansvarlig håndtering av data.</string>
     <string name="settings_licenses_label">Lisenser</string>
     <string name="general_thank_you_label">Takk</string>
+    <string name="acks_thanks_jakob_desc">Takk for Octis åpen kildekode-synkserver.</string>
+    <string name="acks_thanks_maxpatchs_desc">Takk for de fine ikonene.</string>
+    <string name="acks_thanks_crowdin_desc">For å støtte oversettelse av åpen kildekode-prosjekter</string>
     <string name="settings_category_other_label">Annet</string>
     <string name="general_settings_label">Generelt</string>
     <string name="general_settings_desc">Generelle innstillinger som påvirker hele appen.</string>

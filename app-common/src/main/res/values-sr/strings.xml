@@ -25,4 +25,9 @@
     <string name="general_continue">Настави</string>
     <string name="general_show_details_action">Прикажи детаље</string>
     <string name="general_minutes_label">Минути</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d minut</item>
+        <item quantity="few">%1$d minuta</item>
+        <item quantity="other">%1$d minuta</item>
+    </plurals>
 </resources>

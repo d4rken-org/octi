@@ -15,6 +15,20 @@
     <string name="module_power_battery_empty_in_x">用尽果汁：%s</string>
     <string name="module_power_battery_estimation_na">估算不可用</string>
     <string name="module_power_widget_description">显示同步设备的电池状态。</string>
+    <string name="module_power_widget_config_title">自定义小部件</string>
+    <string name="module_power_widget_config_apply_action">应用</string>
+    <string name="module_power_widget_config_presets_label">预设</string>
+    <string name="module_power_widget_config_background_label">背景颜色</string>
+    <string name="module_power_widget_config_accent_label">强调色</string>
+    <string name="module_power_widget_config_hex_hint">RRGGBB</string>
+    <string name="module_power_widget_config_preview_label">预览</string>
+    <string name="module_power_widget_config_custom_label">自定义</string>
+    <string name="module_power_widget_theme_material_you">Material You</string>
+    <string name="module_power_widget_theme_classic_green">经典绿色</string>
+    <string name="module_power_widget_theme_blue">蓝色</string>
+    <string name="module_power_widget_theme_orange">橙色</string>
+    <string name="module_power_widget_theme_red">红色</string>
+    <string name="module_power_widget_theme_dark">深色</string>
     <string name="module_power_alerts_title">电池警报</string>
     <string name="module_power_alerts_lowbattery_title">电池电量过低</string>
     <string name="module_power_alerts_lowbattery_description">当此设备的电池下降到指定的阈值以下时获得通知。设置您喜欢的警报百分比。</string>
@@ -23,14 +37,12 @@
     <string name="module_power_alerts_notification_channel_label">电池警报</string>
     <string name="module_power_alerts_notification_battery_low_title">电池电量不足：%s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s在%3$d%%电池（&lt;%2$d%%）未充电。</string>
-
     <string name="module_power_alerts_highbattery_title">电池电量过高</string>
     <string name="module_power_alerts_highbattery_description">当此设备的电池在充电时达到指定的阈值时获得通知。有助于保护电池健康。</string>
     <string name="module_power_alerts_highbattery_slider_value_caption">当电池电量高于%s时通知</string>
     <string name="module_power_alerts_highbattery_disabled_caption">电池电量高时不要通知</string>
     <string name="module_power_alerts_notification_battery_high_title">电池电量过高：%s</string>
-    <string name="module_power_alerts_notification_battery_high_body">%1$s的电池为%3$d%%（>%2$d%%），仍在充电。</string>
-
+    <string name="module_power_alerts_notification_battery_high_body">%1$s的电池为%3$d%%（&gt;%2$d%%），仍在充电。</string>
     <string name="module_power_detail_level_label">电池电量</string>
     <string name="module_power_detail_status_label">状态</string>
     <string name="module_power_detail_speed_label">充电速度</string>

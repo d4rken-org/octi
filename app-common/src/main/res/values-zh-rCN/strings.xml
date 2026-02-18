@@ -25,4 +25,7 @@
     <string name="general_continue">继续</string>
     <string name="general_show_details_action">详细信息</string>
     <string name="general_minutes_label">分钟</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="other">%1$d 分钟</item>
+    </plurals>
 </resources>

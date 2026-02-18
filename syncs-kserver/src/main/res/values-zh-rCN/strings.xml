@@ -20,4 +20,5 @@
     <string name="sync_kserver_link_client_option_qrcode">从另一台设备扫描QR码</string>
     <string name="sync_kserver_link_client_startcamera_action">启动摄像机</string>
     <string name="sync_kserver_link_client_link_action">链接设备</string>
+    <string name="sync_kserver_error_device_not_registered">此设备已不再在服务器上注册。请从另一台设备断开连接并重新关联，或创建新账户。</string>
 </resources>

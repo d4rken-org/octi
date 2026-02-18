@@ -20,4 +20,5 @@
     <string name="sync_kserver_link_client_option_qrcode">Σάρωση QR κωδικού από άλλη συσκευή</string>
     <string name="sync_kserver_link_client_startcamera_action">Έναρξη κάμερας</string>
     <string name="sync_kserver_link_client_link_action">Σύνδεση συσκευής</string>
+    <string name="sync_kserver_error_device_not_registered">Αυτή η συσκευή δεν είναι πλέον καταχωρημένη στον διακομιστή. Αποσυνδεθείτε και επανασυνδεθείτε από άλλη συσκευή ή δημιουργήστε νέο λογαριασμό.</string>
 </resources>

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_wifi_label">Module Wi-Fi</string>
-    <string name="module_wifi_desc">Noms, réception, IP, etc.</string>
+    <string name="module_wifi_desc">SSID, qualité du signal, réception, fréquence</string>
     <string name="module_wifi_unknown_ssid_label">Le SSID est inconnu</string>
     <string name="module_wifi_unknown_ip_label">L’IP est inconnue</string>
     <string name="module_wifi_reception_good_label">Le signal est bon</string>
     <string name="module_wifi_reception_okay_label">Le signal est correct</string>
     <string name="module_wifi_reception_bad_label">Le signal est mauvais</string>
-
     <string name="module_wifi_detail_ssid_label">SSID</string>
     <string name="module_wifi_detail_frequency_label">Fréquence</string>
     <string name="module_wifi_detail_signal_label">Signal</string>
-    <string name="module_wifi_freq_5ghz">5 GHz</string>
-    <string name="module_wifi_freq_2_4ghz">2.4 GHz</string>
+    <string name="module_wifi_freq_5ghz">5 GHz</string>
+    <string name="module_wifi_freq_2_4ghz">2,4 GHz</string>
 </resources>

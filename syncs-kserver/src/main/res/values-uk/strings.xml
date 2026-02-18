@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_kserver_type_label">K-Server</string>
-    <string name="sync_kserver_type_description">Сервер синхронізації з відкритим вихідним кодом для Octi, створений розробником цього додатка. Дані шифруються на стороні клієнта, розшифрувати їх можуть лише ваші пристрої.\\n\\nОскільки і додаток, і сервер все ще вдосконалюються, він може бути менш стабільним, ніж інші варіанти синхронізації.</string>
+    <string name="sync_kserver_type_description">Сервер синхронізації з відкритим вихідним кодом для Octi, створений розробником цього додатка. Дані шифруються на стороні клієнта, розшифрувати їх можуть лише ваші пристрої.\n\nОскільки і додаток, і сервер все ще вдосконалюються, він може бути менш стабільним, ніж інші варіанти синхронізації.</string>
     <string name="sync_kserver_add_create_action_hint">Неактивні облікові записи видаляються через кілька тижнів.</string>
     <string name="sync_kserver_add_subtitle">Додати новий Google Drive</string>
     <string name="sync_kserver_add_link_action_hint">Вам знадобиться доступ до іншого пристрою, який уже підключено.</string>
@@ -20,4 +20,5 @@
     <string name="sync_kserver_link_client_option_qrcode">Сканувати QR-код з іншого пристрою</string>
     <string name="sync_kserver_link_client_startcamera_action">Запустити камеру</string>
     <string name="sync_kserver_link_client_link_action">Зв\'язати пристрій</string>
+    <string name="sync_kserver_error_device_not_registered">Цей пристрій більше не зареєстровано на сервері. Від\'єднайтесь і повторно підключіть з іншого пристрою або створіть новий обліковий запис.</string>
 </resources>

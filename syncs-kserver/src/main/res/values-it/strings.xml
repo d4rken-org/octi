@@ -22,4 +22,5 @@ Poiché sia l\'app che il server sono ancora in fase di miglioramento, potrebber
     <string name="sync_kserver_link_client_option_qrcode">Scansiona il QRCode con un altro dispositivo</string>
     <string name="sync_kserver_link_client_startcamera_action">Apri fotocamera</string>
     <string name="sync_kserver_link_client_link_action">Collega dispositivo</string>
+    <string name="sync_kserver_error_device_not_registered">Questo dispositivo non è più registrato sul server. Disconnetti e ricollega da un altro dispositivo, oppure crea un nuovo account.</string>
 </resources>

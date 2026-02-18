@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">טיפול בנתונים בצורה אחראית.</string>
     <string name="settings_licenses_label">רשיונות</string>
     <string name="general_thank_you_label">תודה לך</string>
+    <string name="acks_thanks_jakob_desc">תודה על שרת הסינכרון הקוד פתוח של Octi.</string>
+    <string name="acks_thanks_maxpatchs_desc">תודה על הסמלים היפים.</string>
+    <string name="acks_thanks_crowdin_desc">על תמיכה בתרגום של פרויקטי קוד פתוח</string>
     <string name="settings_category_other_label">אחר</string>
     <string name="general_settings_label">כללי</string>
     <string name="general_settings_desc">שינויים כלליים שמשפיעים על האפליקציה כולה.</string>

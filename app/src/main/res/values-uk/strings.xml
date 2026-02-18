@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Відповідальне поводження з даними.</string>
     <string name="settings_licenses_label">Ліцензії</string>
     <string name="general_thank_you_label">Дякуємо</string>
+    <string name="acks_thanks_jakob_desc">Дякуємо за відкритий синхронізаційний сервер Octi.</string>
+    <string name="acks_thanks_maxpatchs_desc">Дякуємо за чудові значки.</string>
+    <string name="acks_thanks_crowdin_desc">За підтримку перекладу відкритих проектів</string>
     <string name="settings_category_other_label">Інше</string>
     <string name="general_settings_label">Загальне</string>
     <string name="general_settings_desc">Загальні налаштування що впливають на застосунок.</string>

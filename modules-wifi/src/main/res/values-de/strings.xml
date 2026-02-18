@@ -7,7 +7,6 @@
     <string name="module_wifi_reception_good_label">Signal Gut</string>
     <string name="module_wifi_reception_okay_label">Signal Ok</string>
     <string name="module_wifi_reception_bad_label">Signal schlecht</string>
-
     <string name="module_wifi_detail_ssid_label">SSID</string>
     <string name="module_wifi_detail_frequency_label">Frequenz</string>
     <string name="module_wifi_detail_signal_label">Signal</string>

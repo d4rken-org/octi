@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Υπεύθυνος χειρισμός δεδομένων.</string>
     <string name="settings_licenses_label">Άδειες</string>
     <string name="general_thank_you_label">Ευχαριστώ</string>
+    <string name="acks_thanks_jakob_desc">Ευχαριστούμε για τον διακομιστή συγχρονισμού ανοικτού κώδικα του Octi.</string>
+    <string name="acks_thanks_maxpatchs_desc">Ευχαριστούμε για τα όμορφα εικονίδια.</string>
+    <string name="acks_thanks_crowdin_desc">Για την υποστήριξη της μετάφρασης έργων ανοικτού κώδικα</string>
     <string name="settings_category_other_label">Άλλα</string>
     <string name="general_settings_label">Γενικές Ρυθμίσεις</string>
     <string name="general_settings_desc">Γενικές ρυθμίσεις που επηρεάζουν ολόκληρη την εφαρμογή.</string>

@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Gestionarea responsabilă a datelor.</string>
     <string name="settings_licenses_label">Licențe</string>
     <string name="general_thank_you_label">Mulțumesc</string>
+    <string name="acks_thanks_jakob_desc">Mulțumiri pentru serverul de sincronizare open-source al Octi.</string>
+    <string name="acks_thanks_maxpatchs_desc">Mulțumiri pentru iconițele frumoase.</string>
+    <string name="acks_thanks_crowdin_desc">Pentru sprijinirea traducerii proiectelor open-source</string>
     <string name="settings_category_other_label">Altele</string>
     <string name="general_settings_label">General</string>
     <string name="general_settings_desc">Setări generale care afectează toată aplicația.</string>

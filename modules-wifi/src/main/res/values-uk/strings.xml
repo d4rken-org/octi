@@ -7,7 +7,6 @@
     <string name="module_wifi_reception_good_label">Гарний сигнал</string>
     <string name="module_wifi_reception_okay_label">Нормальний сигнал</string>
     <string name="module_wifi_reception_bad_label">Поганий сигнал</string>
-
     <string name="module_wifi_detail_ssid_label">SSID</string>
     <string name="module_wifi_detail_frequency_label">Частота</string>
     <string name="module_wifi_detail_signal_label">Сигнал</string>

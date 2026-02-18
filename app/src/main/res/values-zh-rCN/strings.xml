@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">负责任地处理数据。</string>
     <string name="settings_licenses_label">许可证</string>
     <string name="general_thank_you_label">感谢</string>
+    <string name="acks_thanks_jakob_desc">感谢 Octi 的开源同步服务器。</string>
+    <string name="acks_thanks_maxpatchs_desc">感谢漂亮的图标。</string>
+    <string name="acks_thanks_crowdin_desc">感谢支持开源项目的翻译</string>
     <string name="settings_category_other_label">其他</string>
     <string name="general_settings_label">普通</string>
     <string name="general_settings_desc">影响整个应用程序的常规调整。</string>

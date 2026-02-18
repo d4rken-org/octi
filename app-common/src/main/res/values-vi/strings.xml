@@ -10,7 +10,7 @@
     <string name="general_cancel_action">Hủy</string>
     <string name="general_thanks_action">Cảm ơn</string>
     <string name="general_gotit_action">Đã hiểu</string>
-    <string name="general_na_label">Không áp dụng</string>
+    <string name="general_na_label">N/A</string>
     <string name="general_empty_label">Trống</string>
     <string name="general_dismiss_action">Đóng</string>
     <string name="general_maybe_later_action">Có thể sau</string>
@@ -25,4 +25,7 @@
     <string name="general_continue">Tiếp tục</string>
     <string name="general_show_details_action">Hiển thị chi tiết</string>
     <string name="general_minutes_label">Phút</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="other">%1$d phút</item>
+    </plurals>
 </resources>

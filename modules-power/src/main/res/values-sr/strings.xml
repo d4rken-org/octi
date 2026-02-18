@@ -15,6 +15,20 @@
     <string name="module_power_battery_empty_in_x">Пражњење: %s</string>
     <string name="module_power_battery_estimation_na">Процена није доступна</string>
     <string name="module_power_widget_description">Прикажи статус батерије синхронизованих уређаја.</string>
+    <string name="module_power_widget_config_title">Prilagodi widget</string>
+    <string name="module_power_widget_config_apply_action">Primeni</string>
+    <string name="module_power_widget_config_presets_label">Unapred postavljeni temes</string>
+    <string name="module_power_widget_config_background_label">Boja pozadine</string>
+    <string name="module_power_widget_config_accent_label">Boja akcenta</string>
+    <string name="module_power_widget_config_hex_hint">RRGGBB</string>
+    <string name="module_power_widget_config_preview_label">Pregled</string>
+    <string name="module_power_widget_config_custom_label">Prilagođeno</string>
+    <string name="module_power_widget_theme_material_you">Material You</string>
+    <string name="module_power_widget_theme_classic_green">Klasična zelena</string>
+    <string name="module_power_widget_theme_blue">Plava</string>
+    <string name="module_power_widget_theme_orange">Narandžasta</string>
+    <string name="module_power_widget_theme_red">Crvena</string>
+    <string name="module_power_widget_theme_dark">Tamna</string>
     <string name="module_power_alerts_title">Упозорења о батерији</string>
     <string name="module_power_alerts_lowbattery_title">Слаба батерија</string>
     <string name="module_power_alerts_lowbattery_description">Добићете обавештење када батерија овог уређаја падне испод наведеног прага. Подесите жељени проценат за упозорења.</string>
@@ -23,14 +37,12 @@
     <string name="module_power_alerts_notification_channel_label">Упозорења о батерији</string>
     <string name="module_power_alerts_notification_battery_low_title">Слаба батерија: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s је на %3$d%% батерије (&lt;%2$d%%) и не пуни се.</string>
-
     <string name="module_power_alerts_highbattery_title">Висок ниво батерије</string>
     <string name="module_power_alerts_highbattery_description">Добићете обавештење када батерија овог уређаја достигне задати праг током пуњења. Корисно за очување здравља батерије.</string>
     <string name="module_power_alerts_highbattery_slider_value_caption">Обавести када батерија буде изнад %s</string>
     <string name="module_power_alerts_highbattery_disabled_caption">Не обавештавај када је батерија висока</string>
     <string name="module_power_alerts_notification_battery_high_title">Висок ниво батерије: %s</string>
-    <string name="module_power_alerts_notification_battery_high_body">%1$s је на %3$d%% батерије (>%2$d%%) и још увек се пуни.</string>
-
+    <string name="module_power_alerts_notification_battery_high_body">%1$s је на %3$d%% батерије (&gt;%2$d%%) и још увек се пуни.</string>
     <string name="module_power_detail_level_label">Ниво батерије</string>
     <string name="module_power_detail_status_label">Статус</string>
     <string name="module_power_detail_speed_label">Брзина пуњења</string>

@@ -25,4 +25,8 @@
     <string name="general_continue">Fortsett</string>
     <string name="general_show_details_action">Vis detaljer</string>
     <string name="general_minutes_label">Minutter</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d minutt</item>
+        <item quantity="other">%1$d minutter</item>
+    </plurals>
 </resources>

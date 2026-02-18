@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <string name="upgrades_gplay_unavailable_error_title">Google Play jest niedostępny</string>
-    <string name="upgrades_gplay_unavailable_error_description">Octi nie może połączyć się z Google Play. Czy Google Play jest zainstalowany i aktualny? Czy jesteś zalogowany na swoim Koncie Google? Spróbuj wyczyścić pamięć podręczną aplikacji Google Play i zrestartować urządzenie.</string>
+    <string name="upgrades_gplay_unavailable_error_title">Google Play jest niedostępne</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi nie może połączyć się z Google Play. Czy Google Play jest zainstalowane i aktualne? Czy jesteś zalogowany na swoim koncie Google? Spróbuj wyczyścić pamięć podręczną aplikacji Google Play i zrestartować urządzenie.</string>
     <string name="upgrades_no_purchases_found_check_account">Nie znaleziono zakupów. Czy używasz właściwego konta?</string>
     <string name="upgrades_dashcard_title">Uzyskaj Octi Pro</string>
-    <string name="upgrades_dashcard_body">Uaktualnij, aby uzyskać dodatkowe funkcje i wspierać rozwój!</string>
-    <string name="upgrades_dashcard_upgrade_action">Aktualizuj</string>
+    <string name="upgrades_dashcard_body">Uaktualnij, aby odblokować dodatkowe funkcje i wesprzeć rozwój!</string>
+    <string name="upgrades_dashcard_upgrade_action">Uaktualnij</string>
     <string name="upgrade_screen_title">Uzyskaj Octi Pro</string>
-    <string name="upgrade_screen_preamble">Octi nie wyświetla reklam i nie sprzedaje danych użytkowników. Moja praca jest finansowana przez Ciebie ❤️.</string>
-    <string name="upgrade_screen_benefits_body">• Ponad 3 urządzenia 💯\n• Różne motywy 🎨\n• Więcej opcji ⚙️\n• Dodatkowe serwery synchronizacji🖥️️\n• Ciągły rozwój ☕\n• Zmotywowany deweloper 🧙</string>
+    <string name="upgrade_screen_preamble">Octi nie wyświetla reklam i nie sprzedaje danych użytkowników. Moja praca jest finansowana przez ciebie ❤️.</string>
     <string name="upgrade_screen_benefits_title">Korzyści</string>
+    <string name="upgrade_screen_benefits_body">• Ponad 3 urządzenia 💯\n• Różne motywy 🎨\n• Więcej opcji ⚙️\n• Dodatkowe serwery synchronizacji🖥️️\n• Ciągły rozwój ☕\n• Motywacja programisty 🧙</string>
     <string name="upgrade_screen_how_title">Opcje</string>
     <string name="upgrade_screen_how_body">Możesz wybrać pomiędzy jednorazowym zakupem a tańszą roczną subskrypcją.\nSubskrypcja zaczyna się od 14-dniowego bezpłatnego okresu próbnego, po którym opłata jest pobierana raz w roku. Okres próbny oraz subskrypcja mogą zostać anulowane w każdej chwili.\nTe same funkcje, tylko inne modele cenowe.</string>
-    <string name="upgrade_screen_subscription_trial_action">Rozpocznij bezpłatny okres próbny 14 dni</string>
+    <string name="upgrade_screen_subscription_trial_action">Rozpocznij bezpłatny 14-dniowy okres próbny</string>
     <string name="upgrade_screen_subscription_action">Subskrybuj</string>
     <string name="upgrade_screen_subscription_action_hint">Subskrypcja kosztuje %s rocznie.</string>
     <string name="upgrade_screen_iap_action">Jednorazowy zakup</string>
     <string name="upgrade_screen_iap_action_hint">Jednorazowy zakup kosztuje %s.</string>
     <string name="upgrade_screen_thanks_toast">Jesteś najlepszy! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Przywróć zakup</string>
-    <string name="upgrade_screen_restore_purchase_message">Twoje ulepszenie obowiązuje na wszystkich urządzeniach używających tego samego konta Google.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Wskazówki dotyczące rozwiązywania problemów z nieznanymi ulepszeniami:</string>
-    <string name="upgrade_screen_restore_sync_patience_hint">Synchronizacja z Play Store może zająć trochę czasu. Spróbuj ponownie uruchomić, wyczyścić pamięć podręczną Google Play lub po prostu odczekać.</string>
-    <string name="upgrade_screen_restore_multiaccount_hint">Wiele kont może zmylić Google Play. Wyloguj się z innych kont lub zainstaluj przez stronę internetową Google Play, co wymusi powiązanie z określonym kontem.</string>
+    <string name="upgrade_screen_restore_purchase_message">Twoje uaktualnienie jest ważne na wszystkich urządzeniach korzystających z tego samego konta Google.</string>
+    <string name="upgrade_screen_restore_troubleshooting_msg">Wskazówki dotyczące rozwiązywania problemów w przypadku nierozpoznanych uaktualnień:</string>
+    <string name="upgrade_screen_restore_sync_patience_hint">Synchronizacja Sklepu Play może zająć trochę czasu. Spróbuj uruchomić ponownie, wyczyścić pamięć podręczną Google Play lub po prostu poczekać.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Wiele kont może powodować problemy z Google Play. Wyloguj się z innych kont lub zainstaluj aplikację przez stronę Google Play, co wymusi powiązanie z konkretnym kontem.</string>
 </resources>

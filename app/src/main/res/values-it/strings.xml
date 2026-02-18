@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">I dati sono gestiti responsabilmente.</string>
     <string name="settings_licenses_label">Licenze</string>
     <string name="general_thank_you_label">Grazie</string>
+    <string name="acks_thanks_jakob_desc">Grazie per il server di sincronizzazione open-source di Octi.</string>
+    <string name="acks_thanks_maxpatchs_desc">Grazie per le belle icone.</string>
+    <string name="acks_thanks_crowdin_desc">Per il supporto alla traduzione di progetti open-source</string>
     <string name="settings_category_other_label">Altro</string>
     <string name="general_settings_label">Generale</string>
     <string name="general_settings_desc">Modifiche generali che interessano l\'intera app.</string>

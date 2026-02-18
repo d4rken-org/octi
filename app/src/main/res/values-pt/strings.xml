@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Tratamento responsável de dados.</string>
     <string name="settings_licenses_label">Licenças</string>
     <string name="general_thank_you_label">Obrigado</string>
+    <string name="acks_thanks_jakob_desc">Obrigado pelo servidor de sincronização open-source da Octi.</string>
+    <string name="acks_thanks_maxpatchs_desc">Obrigado pelos ícones bonitos.</string>
+    <string name="acks_thanks_crowdin_desc">Por apoiar a tradução de projetos open-source</string>
     <string name="settings_category_other_label">Outros</string>
     <string name="general_settings_label">Geral</string>
     <string name="general_settings_desc">Ajustes gerais que afetam todo o aplicativo.</string>
@@ -58,7 +61,7 @@
     <string name="sync_last_never_label">Nunca</string>
     <string name="sync_quota_storage_msg">%1$s livre (%2$s / %3$s)</string>
     <string name="general_disconnect_action">Desconectar</string>
-    <string name="generic_info_action">Info</string>
+    <string name="generic_info_action">Informações</string>
     <string name="general_reset_action">Redefinir</string>
     <string name="sync_account_label">Conta</string>
     <string name="sync_services_label">Serviços de sincronização</string>

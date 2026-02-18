@@ -10,6 +10,7 @@
     <string name="general_cancel_action">Anulează</string>
     <string name="general_thanks_action">Mulțumesc</string>
     <string name="general_gotit_action">Am înțeles</string>
+    <string name="general_na_label">N/A</string>
     <string name="general_empty_label">Gol</string>
     <string name="general_dismiss_action">Închide</string>
     <string name="general_maybe_later_action">Poate mai târziu</string>
@@ -23,6 +24,10 @@
     <string name="general_refresh_action">Reîmprospătează</string>
     <string name="general_continue">Continuă</string>
     <string name="general_show_details_action">Afișează detalii</string>
-    <string name="general_na_label">N/A</string>
     <string name="general_minutes_label">Minute</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d minut</item>
+        <item quantity="few">%1$d minute</item>
+        <item quantity="other">%1$d de minute</item>
+    </plurals>
 </resources>

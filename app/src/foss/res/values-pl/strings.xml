@@ -4,14 +4,14 @@
     <string name="upgrade_feature_requires_pro">Wymaga Octi Pro</string>
     <string name="upgrades_dashcard_title">Uzyskaj Octi Pro</string>
     <string name="upgrades_dashcard_body">Odblokuj dodatkowe funkcje i zostań patronem, aby wesprzeć dalszy rozwój!</string>
-    <string name="upgrades_dashcard_upgrade_action">Aktualizuj</string>
-    <string name="upgrade_screen_title">Aktualizuj do Octi Pro</string>
-    <string name="upgrade_screen_preamble">Octi nie ma reklam i nie sprzedaje danych użytkowników. Moja praca jest finansowana przez Ciebie ❤️</string>
+    <string name="upgrades_dashcard_upgrade_action">Uaktualnij</string>
+    <string name="upgrade_screen_title">Uaktualnij do Octi Pro</string>
+    <string name="upgrade_screen_preamble">Octi nie wyświetla reklam i nie sprzedaje danych użytkowników. Moja praca jest finansowana przez ciebie ❤️</string>
     <string name="upgrade_screen_how_title">Co zrobić</string>
     <string name="upgrade_screen_how_body">Zostań patronem i wspieraj rozwój! Dotknij przycisku poniżej, aby aktywować wszystkie dodatkowe funkcje i otworzyć mój profil GitHub Sponsors.</string>
     <string name="upgrade_screen_why_title">Korzyści 🪄</string>
-    <string name="upgrade_screen_benefits_body">• Ponad 3 urządzenia 💯\n• Różne motywy 🎨\n• Więcej opcji ⚙️\n• Dodatkowe serwery synchronizacji🖥️\n• Kontynuowany rozwój open source 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Ponad 3 urządzenia 💯\n• Różne motywy 🎨\n• Więcej opcji ⚙️\n• Dodatkowe serwery synchronizacji🖥️\n• Kontynuacja rozwoju otwartego źródła 🧙</string>
     <string name="upgrade_screen_sponsor_action">Sponsoruj rozwój</string>
     <string name="upgrade_screen_sponsor_action_hint">Alternatywą są reklamy, analityka i Google Play 🙁</string>
-    <string name="upgrade_screen_thanks_toast">Dziękujemy za wsparcie rozwoju open source ❤️</string>
+    <string name="upgrade_screen_thanks_toast">Dziękuję za wsparcie dla rozwoju oprogramowania otwarto źródłowego❤️</string>
 </resources>

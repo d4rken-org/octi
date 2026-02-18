@@ -25,4 +25,10 @@
     <string name="general_continue">המשך</string>
     <string name="general_show_details_action">הצג פרטים</string>
     <string name="general_minutes_label">דקות</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d דקה</item>
+        <item quantity="two">%1$d דקות</item>
+        <item quantity="many">%1$d דקות</item>
+        <item quantity="other">%1$d דקות</item>
+    </plurals>
 </resources>
