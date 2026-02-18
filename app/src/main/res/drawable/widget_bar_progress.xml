@@ -7,11 +7,13 @@
         </shape>
     </item>
     <item android:id="@android:id/progress">
-        <clip>
+        <scale
+            android:scaleWidth="100%"
+            android:scaleGravity="start">
             <shape android:shape="rectangle">
                 <solid android:color="@color/widgetBarFill" />
                 <corners android:radius="12dp" />
             </shape>
-        </clip>
+        </scale>
     </item>
 </layer-list>
