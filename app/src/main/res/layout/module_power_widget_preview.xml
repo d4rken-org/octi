@@ -8,6 +8,4 @@
     <include layout="@layout/module_power_widget_row" />
 
     <include layout="@layout/module_power_widget_row" />
-
-    <include layout="@layout/module_power_widget_row" />
 </LinearLayout>
