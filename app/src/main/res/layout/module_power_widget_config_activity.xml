@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:navigationIcon="@drawable/ic_baseline_close_24"
+        app:title="@string/module_power_widget_config_title" />
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Preview -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="@string/module_power_widget_config_preview_label"
+                android:textAppearance="?attr/textAppearanceLabelMedium" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/preview_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp">
+
+                <LinearLayout
+                    android:id="@+id/preview_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    tools:background="#FF2D6A44" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Presets -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="@string/module_power_widget_config_presets_label"
+                android:textAppearance="?attr/textAppearanceLabelMedium" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/presets_chip_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:chipSpacingVertical="4dp"
+                app:selectionRequired="false"
+                app:singleSelection="true"
+                app:singleLine="false" />
+
+            <!-- Custom color cards (visible only when Custom chip is selected) -->
+            <LinearLayout
+                android:id="@+id/custom_colors_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Background color -->
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/BatteryWidget.ConfigSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/background_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:text="@string/module_power_widget_config_background_label"
+                            android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+                        <GridLayout
+                            android:id="@+id/background_grid"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:columnCount="6" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/background_hex_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/module_power_widget_config_hex_hint"
+                            app:endIconMode="clear_text"
+                            app:prefixText="#">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/background_hex_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:inputType="text"
+                                android:maxLength="6"
+                                tools:text="2D6A44" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Accent color -->
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/BatteryWidget.ConfigSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/accent_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:text="@string/module_power_widget_config_accent_label"
+                            android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+                        <GridLayout
+                            android:id="@+id/accent_grid"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:columnCount="6" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/accent_hex_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/module_power_widget_config_hex_hint"
+                            app:endIconMode="clear_text"
+                            app:prefixText="#">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/accent_hex_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:inputType="text"
+                                android:maxLength="6"
+                                tools:text="B1F1C2" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Apply container -->
+    <LinearLayout
+        android:id="@+id/apply_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apply_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:enabled="false"
+            android:text="@string/module_power_widget_config_apply_action" />
+
+    </LinearLayout>
+
+</LinearLayout>
