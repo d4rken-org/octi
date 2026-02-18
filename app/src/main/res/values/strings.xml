@@ -147,4 +147,6 @@
 
     <string name="sync_delete_device_keepaccess_caveat">Removing this device will delete its data but won\'t revoke access. To revoke access, disconnect Octi on the device.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Deleting this device will remove its data and revoke its access.</string>
+
+
 </resources>

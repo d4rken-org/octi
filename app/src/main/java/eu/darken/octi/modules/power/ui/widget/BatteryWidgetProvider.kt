@@ -5,7 +5,9 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -17,6 +19,7 @@ import eu.darken.octi.R
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -70,7 +73,7 @@ class BatteryWidgetProvider : AppWidgetProvider() {
         log(TAG) { "onUpdate(appWidgetIds=${appWidgetIds.toList()})" }
         executeAsync("onUpdate") {
             appWidgetIds.forEach { appWidgetId ->
-                updateWidget(context, appWidgetManager, appWidgetId, null)
+                updateWidget(context, appWidgetManager, appWidgetId)
             }
         }
     }
@@ -83,7 +86,7 @@ class BatteryWidgetProvider : AppWidgetProvider() {
     ) {
         log(TAG) { "onAppWidgetOptionsChanged(appWidgetId=$appWidgetId, newOptions=$newOptions)" }
         executeAsync("onAppWidgetOptionsChanged") {
-            updateWidget(context, appWidgetManager, appWidgetId, newOptions)
+            updateWidget(context, appWidgetManager, appWidgetId)
         }
     }
 
@@ -91,21 +94,39 @@ class BatteryWidgetProvider : AppWidgetProvider() {
         context: Context,
         widgetManager: AppWidgetManager,
         widgetId: Int,
-        options: Bundle?
     ) {
-        log(TAG) { "updateWidget(widgetId=$widgetId, options=$options)" }
+        log(TAG) { "updateWidget(widgetId=$widgetId)" }
 
-        val widgetOptions = options ?: widgetManager.getAppWidgetOptions(widgetId)
+        val widgetOptions = widgetManager.getAppWidgetOptions(widgetId)
         val maxHeightDp = widgetOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
         // Each row: 30dp bar + 2dp vertical padding = 32dp, container: 8dp padding top + bottom = 16dp
         val maxRows = if (maxHeightDp > 0) maxOf(1, (maxHeightDp - 16) / 32) else Int.MAX_VALUE
         log(TAG, VERBOSE) { "updateWidget: maxHeightDp=$maxHeightDp, maxRows=$maxRows" }
 
+        val themeColors = parseThemeColors(widgetOptions)
+        log(TAG, VERBOSE) { "updateWidget: themeColors=$themeColors" }
+
         val metaState = metaRepo.state.first()
         val powerState = powerRepo.state.first()
 
-        val layout = createLayout(context, metaState, powerState, maxRows)
+        val layout = createLayout(context, metaState, powerState, maxRows, themeColors)
         widgetManager.updateAppWidget(widgetId, layout)
+    }
+
+    private fun parseThemeColors(options: Bundle): WidgetTheme.Colors? = try {
+        val mode = options.getString(WidgetTheme.KEY_THEME_MODE)
+        when (mode) {
+            WidgetTheme.MODE_CUSTOM -> {
+                val bg = options.getInt(WidgetTheme.KEY_CUSTOM_BG)
+                val accent = options.getInt(WidgetTheme.KEY_CUSTOM_ACCENT)
+                WidgetTheme.deriveColors(bg, accent)
+            }
+
+            else -> null // Material You or unset — use default resource colors
+        }
+    } catch (e: Exception) {
+        log(TAG, WARN) { "Failed to parse theme colors: ${e.asLog()}" }
+        null
     }
 
     private fun createLayout(
@@ -113,6 +134,7 @@ class BatteryWidgetProvider : AppWidgetProvider() {
         metaStates: BaseModuleRepo.State<MetaInfo>,
         powerStates: BaseModuleRepo.State<PowerInfo>,
         maxRows: Int,
+        themeColors: WidgetTheme.Colors?,
     ): RemoteViews {
         log(TAG, VERBOSE) { "createLayout(context=$context, metaStates=$metaStates, powerStates=$powerStates)" }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
@@ -161,6 +183,8 @@ class BatteryWidgetProvider : AppWidgetProvider() {
                         percent,
                         false,
                     )
+
+                    applyRowColors(themeColors)
                 }
             }
 
@@ -168,7 +192,41 @@ class BatteryWidgetProvider : AppWidgetProvider() {
             setOnClickPendingIntent(R.id.widget_root, pendingIntent)
             removeAllViews(R.id.widget_root)
             rows.forEach { addView(R.id.widget_root, it) }
+            if (themeColors != null) {
+                setInt(R.id.widget_root, "setBackgroundColor", themeColors.containerBg)
+            }
         }
+    }
+
+    private fun RemoteViews.applyRowColors(colors: WidgetTheme.Colors?) {
+        if (colors == null) return
+
+        // Percent text works on all API levels
+        setTextColor(R.id.charge_percent, colors.onContainer)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Progress bar tinting (API 31+)
+            setColorStateList(
+                R.id.battery_progressbar,
+                "setProgressTintList",
+                ColorStateList.valueOf(colors.barFill),
+            )
+            setColorStateList(
+                R.id.battery_progressbar,
+                "setProgressBackgroundTintList",
+                ColorStateList.valueOf(colors.barTrack),
+            )
+
+            // In-bar icon and label
+            setColorStateList(
+                R.id.battery_icon,
+                "setImageTintList",
+                ColorStateList.valueOf(colors.icon),
+            )
+            setTextColor(R.id.device_label, colors.icon)
+        }
+        // On API 23-30: in-bar elements (icon, device_label) keep default colors
+        // since the progress bar can't be custom-tinted
     }
 
     companion object {

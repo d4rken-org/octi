@@ -27,4 +27,10 @@
         <item name="android:textSize">13sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="BatteryWidget.ConfigSection" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="cardCornerRadius">16dp</item>
+    </style>
 </resources>

@@ -17,6 +17,22 @@
 
     <string name="module_power_widget_description">Display the battery status of your synced devices.</string>
 
+    <string name="module_power_widget_config_title">Customize Widget</string>
+    <string name="module_power_widget_config_apply_action">Apply</string>
+    <string name="module_power_widget_config_presets_label">Presets</string>
+    <string name="module_power_widget_config_background_label">Background color</string>
+    <string name="module_power_widget_config_accent_label">Accent color</string>
+    <string name="module_power_widget_config_hex_hint">RRGGBB</string>
+    <string name="module_power_widget_config_preview_label">Preview</string>
+    <string name="module_power_widget_config_custom_label">Custom</string>
+
+    <string name="module_power_widget_theme_material_you">Material You</string>
+    <string name="module_power_widget_theme_classic_green">Classic Green</string>
+    <string name="module_power_widget_theme_blue">Blue</string>
+    <string name="module_power_widget_theme_purple">Purple</string>
+    <string name="module_power_widget_theme_red">Red</string>
+    <string name="module_power_widget_theme_dark">Dark</string>
+
     <string name="module_power_alerts_title">Battery alerts</string>
     <string name="module_power_alerts_lowbattery_title">Low battery</string>
     <string name="module_power_alerts_lowbattery_description">Get notified when this device\'s battery drops below your specified threshold. Set your preferred percentage for alerts.</string>
