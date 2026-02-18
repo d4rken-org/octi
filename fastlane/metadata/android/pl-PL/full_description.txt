@@ -18,5 +18,5 @@ Możesz wybrać różne sposoby synchronizacji informacji:
 
 Opcje synchronizacji można mieszać i dopasowywać.
 
-Octi jest open-source, nie ma reklam i nie śledzi Cię.
+Octi jest otwarto-źródłowy, nie ma reklam i nie śledzi cię.
 Możesz dokonać zakupu w aplikacji, aby uzyskać kilka dodatkowych funkcji i wesprzeć rozwój aplikacji.

@@ -1,22 +1,22 @@
-<i>Octi</i> szinkronizálja az információkat több Android eszköz között.
+<i>Octi</i> szinkronizálja az információkat több Android-eszköz között.
 
 Elérhető információs modulok:
 
-* Eszköz és Android operációs rendszer részletek
-* Akkumulátor állapot
-* WiFi kapcsolat
+* Eszköz- és Android OS-adatok
+* Akkumulátor állapota
+* WiFi-kapcsolat
 * Telepített alkalmazások
-* Vágólap megosztás
+* Vágólap megosztása
 * és még több... ha van egy jó ötleted, szólj!
 
-Különböző módokat választhatsz az információk szinkronizálásához:
+Többféle szinkronizálási módszer közül választhatsz:
 
 * A Google Drive-od
-* Egy ingyenes szerver, amit én üzemeltetek
+* Egy általam üzemeltetett ingyenes szerver
 * Saját szerver üzemeltetése
-* Hamarosan több...
+* Hamarosan még több...
 
-A szinkronizálási lehetőségek keverhetők és kombinálhatók.
+A szinkronizálási lehetőségek tetszőlegesen kombinálhatók.
 
-Az Octi nyílt forráskódú, nincs benne reklám és nem követ téged.
-Vásárolhatsz egy alkalmazáson belüli vásárlást, hogy néhány extra funkciót kapj és támogasd az alkalmazás fejlesztését.
+Az Octi nyílt forráskódú, nincs benne hirdetés, és nem követ téged.
+Vásárolhatsz alkalmazáson belüli kiegészítőt, hogy néhány extra funkciót kapj, és támogasd az alkalmazás fejlesztését.

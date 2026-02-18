@@ -6,7 +6,7 @@ Módulos de informação disponíveis:
 * Estado da bateria
 * Conectividade WiFi
 * Aplicações instaladas
-* Partilha da área de transferência
+* Partilha de área de transferência
 * e mais... se tiver uma boa ideia, informe-me!
 
 Pode escolher diferentes formas de sincronizar as informações:

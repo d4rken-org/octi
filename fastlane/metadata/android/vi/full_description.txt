@@ -1,22 +1,22 @@
-<i>Octi</i> đồng bộ hóa thông tin giữa nhiều thiết bị Android.
+<i>Octi</i> đồng bộ thông tin giữa nhiều thiết bị Android.
 
-Các mô-đun thông tin có sẵn:
+Các mô-đun thông tin khả dụng:
 
-* Chi tiết thiết bị và hệ điều hành Android
+* Chi tiết thiết bị & hệ điều hành Android
 * Trạng thái pin
 * Kết nối WiFi
 * Ứng dụng đã cài đặt
-* Chia sẻ clipboard
+* Chia sẻ bộ nhớ tạm
 * và nhiều hơn nữa... nếu bạn có ý tưởng hay, hãy cho tôi biết!
 
-Bạn có thể chọn nhiều cách khác nhau để đồng bộ hóa thông tin:
+Bạn có thể chọn nhiều cách khác nhau để đồng bộ thông tin:
 
 * Google Drive của bạn
 * Máy chủ miễn phí do tôi lưu trữ
-* Tự lưu trữ máy chủ của riêng bạn
+* Tự lưu trữ máy chủ riêng
 * Sắp có thêm...
 
-Các tùy chọn đồng bộ hóa có thể được kết hợp và phối hợp.
+Các tùy chọn đồng bộ có thể kết hợp linh hoạt.
 
 Octi là mã nguồn mở, không có quảng cáo và không theo dõi bạn.
-Bạn có thể mua trong ứng dụng để có thêm một số tính năng và hỗ trợ phát triển ứng dụng.
+Bạn có thể mua tính năng trong ứng dụng để có thêm một số tính năng và hỗ trợ phát triển ứng dụng.

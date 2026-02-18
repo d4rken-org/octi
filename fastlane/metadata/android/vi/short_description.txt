@@ -1,1 +1,1 @@
-Giám sát và đồng bộ hóa thông tin giữa nhiều thiết bị Android
+Theo dõi và đồng bộ thông tin giữa nhiều thiết bị Android
