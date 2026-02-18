@@ -1,6 +1,7 @@
 package eu.darken.octi.modules.power.ui.widget
 
 import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.PorterDuff
@@ -492,6 +493,11 @@ class BatteryWidgetConfigActivity : AppCompatActivity() {
         }
 
         widgetManager.updateAppWidgetOptions(appWidgetId, options)
+
+        sendBroadcast(Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).apply {
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
+            component = ComponentName(this@BatteryWidgetConfigActivity, BatteryWidgetProvider::class.java)
+        })
 
         setResult(
             RESULT_OK,
