@@ -20,4 +20,5 @@
     <string name="sync_kserver_link_client_option_qrcode">Skannaa QR-koodi toisesta laitteesta</string>
     <string name="sync_kserver_link_client_startcamera_action">Käynnistä kamera</string>
     <string name="sync_kserver_link_client_link_action">Yhdistä laite</string>
+    <string name="sync_kserver_error_device_not_registered">Tätä laitetta ei ole enää rekisteröity palvelimelle. Katkaise yhteys ja yhdistä uudelleen toiselta laitteelta tai luo uusi tili.</string>
 </resources>

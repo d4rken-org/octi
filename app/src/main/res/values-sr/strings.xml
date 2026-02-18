@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Одговорно руковање подацима.</string>
     <string name="settings_licenses_label">Лиценце</string>
     <string name="general_thank_you_label">Хвала</string>
+    <string name="acks_thanks_jakob_desc">Hvala što ste koristili Octi-jev open-source sync server.</string>
+    <string name="acks_thanks_maxpatchs_desc">Hvala na predivnim ikonama.</string>
+    <string name="acks_thanks_crowdin_desc">Za podršku pri prevođenju open-source projekata</string>
     <string name="settings_category_other_label">Друго</string>
     <string name="general_settings_label">Опште</string>
     <string name="general_settings_desc">Општа подешавања која утичу на целу апликацију.</string>

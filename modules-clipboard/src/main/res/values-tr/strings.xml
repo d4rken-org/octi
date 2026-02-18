@@ -4,7 +4,6 @@
     <string name="module_clipboard_desc">Cihazlar arasında metin kopyalayın ve yapıştırın.</string>
     <string name="module_clipboard_copied_octi_to_os">Octi\'yi sistem panosuna kopyalama</string>
     <string name="module_clipboard_copied_os_to_octi">Sistemi Octi panosuna kopyalama</string>
-
     <string name="module_clipboard_detail_type_label">Tür</string>
     <string name="module_clipboard_detail_content_label">İçerik</string>
     <string name="module_clipboard_detail_type_empty">Boş</string>

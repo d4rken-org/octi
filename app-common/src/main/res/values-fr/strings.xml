@@ -9,7 +9,7 @@
     <string name="general_remove_action">Supprimer</string>
     <string name="general_cancel_action">Annuler</string>
     <string name="general_thanks_action">Merci</string>
-    <string name="general_gotit_action">Compris</string>
+    <string name="general_gotit_action">J’ai compris</string>
     <string name="general_na_label">ND</string>
     <string name="general_empty_label">Vide</string>
     <string name="general_dismiss_action">Fermer</string>
@@ -24,5 +24,9 @@
     <string name="general_refresh_action">Actualiser</string>
     <string name="general_continue">Poursuivre</string>
     <string name="general_show_details_action">Afficher les détails</string>
-    <string name="general_minutes_label">Minutes</string>
+    <string name="general_minutes_label">minutes</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
 </resources>

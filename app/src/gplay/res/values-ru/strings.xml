@@ -2,15 +2,15 @@
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play недоступен</string>
-    <string name="upgrades_gplay_unavailable_error_description">Octi не может подключиться к Google Play. Установлен и обновлен ли Google Play? Вошли ли вы в аккаунт Google? Попробуйте очистить кэш приложения Google Play и перезагрузить устройство.</string>
-    <string name="upgrades_no_purchases_found_check_account">Покупки не найдены. Используете ли вы правильный аккаунт?</string>
+    <string name="upgrades_gplay_unavailable_error_description">Octi не может подключиться к Google Play. Установлен и обновлен ли Google Play? Вошли ли Вы в аккаунт Google? Попробуйте очистить кэш приложения Google Play и перезагрузить устройство.</string>
+    <string name="upgrades_no_purchases_found_check_account">Покупки не найдены. Используете ли Вы правильный аккаунт?</string>
     <string name="upgrades_dashcard_title">Получить Octi Pro</string>
     <string name="upgrades_dashcard_body">Обновитесь, чтобы разблокировать дополнительные функции и поддержать развитие!</string>
     <string name="upgrades_dashcard_upgrade_action">Обновить</string>
     <string name="upgrade_screen_title">Получить Octi Pro</string>
-    <string name="upgrade_screen_preamble">В Octi нет рекламы и ваши пользовательские данные не продаются. Моя работа финансируется вами ❤️.</string>
+    <string name="upgrade_screen_preamble">В Octi нет рекламы и Ваши пользовательские данные не продаются. Моя работа финансируется Вами ❤️.</string>
     <string name="upgrade_screen_benefits_title">Преимущества</string>
-    <string name="upgrade_screen_benefits_body">• Более 3 устройств 💯\n• Различные темы оформления 🎨\n• Больше опций ⚙️\n• Дополнительные серверы синхронизации🖥️️\n• Продолжение разработки ☕\n• Мотивированный разработчик 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Более 3 устройств 💯\n• Различные темы оформления 🎨\n• Больше опций ⚙️\n• Дополнительные серверы синхронизации🖥️️\n• Поддержка разработки ☕\n• Мотивированный разработчик 🧙</string>
     <string name="upgrade_screen_how_title">Варианты</string>
     <string name="upgrade_screen_how_body">Вы можете выбрать между разовой покупкой или более выгодной годовой подпиской.\nПодписка начинается с бесплатного 14-дневного пробного периода, после чего списание происходит раз в год. Пробный период и подписку можно отменить в любой момент.\nТе же функции, просто разные модели оплаты.</string>
     <string name="upgrade_screen_subscription_trial_action">Начать 14-дневный бесплатный период</string>

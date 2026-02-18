@@ -7,7 +7,6 @@
     <string name="module_wifi_reception_good_label">Jó jel</string>
     <string name="module_wifi_reception_okay_label">OK jel</string>
     <string name="module_wifi_reception_bad_label">Gyenge jel</string>
-
     <string name="module_wifi_detail_ssid_label">SSID</string>
     <string name="module_wifi_detail_frequency_label">Frekvencia</string>
     <string name="module_wifi_detail_signal_label">Jel</string>

@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Hanteer data verantwoordelik.</string>
     <string name="settings_licenses_label">Lisensies</string>
     <string name="general_thank_you_label">Dankie</string>
+    <string name="acks_thanks_jakob_desc">Dankie vir Octi se oopbronsinchroniseerverdiener.</string>
+    <string name="acks_thanks_maxpatchs_desc">Dankie vir die pragtige ikone.</string>
+    <string name="acks_thanks_crowdin_desc">Vir ondersteuning van vertaling van oopbronprojekte</string>
     <string name="settings_category_other_label">Ander</string>
     <string name="general_settings_label">Algemeen</string>
     <string name="general_settings_desc">Algemene aanpassings wat die hele app beïnvloed.</string>

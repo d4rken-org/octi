@@ -25,4 +25,8 @@
     <string name="general_continue">Continua</string>
     <string name="general_show_details_action">Mostra els detalls</string>
     <string name="general_minutes_label">Minuts</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d minut</item>
+        <item quantity="other">%1$d minuts</item>
+    </plurals>
 </resources>

@@ -25,4 +25,8 @@
     <string name="general_continue">Devam</string>
     <string name="general_show_details_action">Detayları göster</string>
     <string name="general_minutes_label">Dakika</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d dakika</item>
+        <item quantity="other">%1$d dakika</item>
+    </plurals>
 </resources>

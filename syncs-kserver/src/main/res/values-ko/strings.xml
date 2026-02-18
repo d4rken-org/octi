@@ -20,4 +20,5 @@
     <string name="sync_kserver_link_client_option_qrcode">다른 기기의 QR 코드 스캔하기</string>
     <string name="sync_kserver_link_client_startcamera_action">카메라 시작</string>
     <string name="sync_kserver_link_client_link_action">기기 연결</string>
+    <string name="sync_kserver_error_device_not_registered">이 기기는 더 이상 서버에 등록되어 있지 않습니다. 다른 기기에서 연결을 해제하고 다시 연결하거나, 새 계정을 만드세요.</string>
 </resources>

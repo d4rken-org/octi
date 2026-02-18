@@ -20,4 +20,5 @@
     <string name="sync_kserver_link_client_option_qrcode">Lire le code QR d’un autre appareil</string>
     <string name="sync_kserver_link_client_startcamera_action">Démarrer l’appareil photo</string>
     <string name="sync_kserver_link_client_link_action">Relier l’appareil</string>
+    <string name="sync_kserver_error_device_not_registered">Cet appareil n\'est plus enregistré sur le serveur. Déconnectez-vous et reconnectez-le depuis un autre appareil, ou créez un nouveau compte.</string>
 </resources>

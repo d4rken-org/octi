@@ -25,4 +25,7 @@
     <string name="general_continue">続行</string>
     <string name="general_show_details_action">詳細を表示</string>
     <string name="general_minutes_label">分</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="other">%1$d 分</item>
+    </plurals>
 </resources>

@@ -2,18 +2,16 @@
 <resources>
     <string name="module_apps_label">Toepassingsmodule</string>
     <string name="module_apps_desc">Inligting oor geïnstalleerde toepassings.</string>
-    <string name="module_apps_last_installed_x">Laaste geïnstalleerde toepassing: %s</string>
-    <string name="module_apps_list_title">Geïnstalleerde toepassings</string>
-    <string name="module_apps_installer_label">Toepassingsinstallasiebron</string>
-    <string name="module_apps_installer_desc">Sinkroniseer en sluit inligting oor elke toepassing se installasiebron in.</string>
-
     <plurals name="module_apps_x_installed">
         <item quantity="one">%d toepassing geïnstalleer</item>
         <item quantity="other">%d toepassings geïnstalleer</item>
     </plurals>
-
+    <string name="module_apps_last_installed_x">Laaste geïnstalleerde toepassing: %s</string>
+    <string name="module_apps_list_title">Geïnstalleerde toepassings</string>
     <string name="module_apps_sort_label">Sorteer</string>
     <string name="module_apps_sort_name_label">Naam</string>
     <string name="module_apps_sort_install_date_label">Installasiedatum</string>
     <string name="module_apps_sort_update_date_label">Opdateringsdatum</string>
+    <string name="module_apps_installer_label">Toepassingsinstallasiebron</string>
+    <string name="module_apps_installer_desc">Sinkroniseer en sluit inligting oor elke toepassing se installasiebron in.</string>
 </resources>

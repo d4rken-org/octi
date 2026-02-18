@@ -25,4 +25,8 @@
     <string name="general_continue">Gaan voort</string>
     <string name="general_show_details_action">Wys besonderhede</string>
     <string name="general_minutes_label">Minute</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d minuut</item>
+        <item quantity="other">%1$d minute</item>
+    </plurals>
 </resources>

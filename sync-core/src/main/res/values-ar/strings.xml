@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_device_stale_warning_text">لم تتم مزامنة الجهاز منذ %s</string>
-
     <plurals name="sync_stale_devices_info_message">
         <item quantity="zero">%d أجهزة لم تتم مزامنتها مؤخرًا</item>
         <item quantity="one">جهاز %d لم تتم مزامنته مؤخرًا</item>
@@ -10,7 +9,6 @@
         <item quantity="many">%d جهازًا لم تتم مزامنته مؤخرًا</item>
         <item quantity="other">%d جهاز لم تتم مزامنته مؤخرًا</item>
     </plurals>
-
     <plurals name="sync_stale_period_days">
         <item quantity="zero">%d يوم</item>
         <item quantity="one">يوم %d</item>
@@ -19,7 +17,6 @@
         <item quantity="many">%d يومًا</item>
         <item quantity="other">%d يوم</item>
     </plurals>
-
     <plurals name="sync_stale_period_months">
         <item quantity="zero">%d شهر</item>
         <item quantity="one">شهر %d</item>
@@ -28,7 +25,6 @@
         <item quantity="many">%d شهرًا</item>
         <item quantity="other">%d شهر</item>
     </plurals>
-
     <plurals name="sync_stale_period_years">
         <item quantity="zero">%d سنة</item>
         <item quantity="one">سنة %d</item>

@@ -7,7 +7,6 @@
     <string name="module_wifi_reception_good_label">Goede verbinding</string>
     <string name="module_wifi_reception_okay_label">Redelijke verbinding</string>
     <string name="module_wifi_reception_bad_label">Slechte verbinding</string>
-
     <string name="module_wifi_detail_ssid_label">SSID</string>
     <string name="module_wifi_detail_frequency_label">Frequentie</string>
     <string name="module_wifi_detail_signal_label">Signaal</string>

@@ -15,6 +15,20 @@
     <string name="module_power_battery_empty_in_x">Cạn pin: %s</string>
     <string name="module_power_battery_estimation_na">Không có ước tính</string>
     <string name="module_power_widget_description">Hiển thị trạng thái pin của các thiết bị đã đồng bộ hóa của bạn.</string>
+    <string name="module_power_widget_config_title">Tùy chỉnh Widget</string>
+    <string name="module_power_widget_config_apply_action">Áp dụng</string>
+    <string name="module_power_widget_config_presets_label">Cài đặt sẵn</string>
+    <string name="module_power_widget_config_background_label">Màu nền</string>
+    <string name="module_power_widget_config_accent_label">Màu nhấn</string>
+    <string name="module_power_widget_config_hex_hint">RRGGBB</string>
+    <string name="module_power_widget_config_preview_label">Xem trước</string>
+    <string name="module_power_widget_config_custom_label">Tùy chỉnh</string>
+    <string name="module_power_widget_theme_material_you">Material You</string>
+    <string name="module_power_widget_theme_classic_green">Xanh lá cổ điển</string>
+    <string name="module_power_widget_theme_blue">Xanh dương</string>
+    <string name="module_power_widget_theme_orange">Cam</string>
+    <string name="module_power_widget_theme_red">Đỏ</string>
+    <string name="module_power_widget_theme_dark">Tối</string>
     <string name="module_power_alerts_title">Cảnh báo pin</string>
     <string name="module_power_alerts_lowbattery_title">Pin yếu</string>
     <string name="module_power_alerts_lowbattery_description">Nhận thông báo khi pin của thiết bị này giảm xuống dưới ngưỡng bạn đã đặt. Đặt tỷ lệ phần trăm mong muốn cho các cảnh báo.</string>
@@ -23,14 +37,12 @@
     <string name="module_power_alerts_notification_channel_label">Cảnh báo pin</string>
     <string name="module_power_alerts_notification_battery_low_title">Pin yếu: %s</string>
     <string name="module_power_alerts_notification_battery_low_body">%1$s còn %3$d%% pin (&lt;%2$d%%) và không sạc.</string>
-
     <string name="module_power_alerts_highbattery_title">Pin cao</string>
     <string name="module_power_alerts_highbattery_description">Nhận thông báo khi pin của thiết bị này đạt đến ngưỡng bạn đã đặt trong khi đang sạc. Hữu ích để bảo vệ tuổi thọ pin.</string>
     <string name="module_power_alerts_highbattery_slider_value_caption">Thông báo khi pin trên %s</string>
     <string name="module_power_alerts_highbattery_disabled_caption">Không thông báo khi pin cao</string>
     <string name="module_power_alerts_notification_battery_high_title">Pin cao: %s</string>
-    <string name="module_power_alerts_notification_battery_high_body">%1$s đang ở %3$d%% pin (>%2$d%%) và vẫn đang sạc.</string>
-
+    <string name="module_power_alerts_notification_battery_high_body">%1$s đang ở %3$d%% pin (&gt;%2$d%%) và vẫn đang sạc.</string>
     <string name="module_power_detail_level_label">Mức pin</string>
     <string name="module_power_detail_status_label">Trạng thái</string>
     <string name="module_power_detail_speed_label">Tốc độ sạc</string>

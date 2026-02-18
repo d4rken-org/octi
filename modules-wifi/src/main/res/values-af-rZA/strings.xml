@@ -7,7 +7,6 @@
     <string name="module_wifi_reception_good_label">Goeie sein</string>
     <string name="module_wifi_reception_okay_label">OK sein</string>
     <string name="module_wifi_reception_bad_label">Swak sein</string>
-
     <string name="module_wifi_detail_ssid_label">SSID</string>
     <string name="module_wifi_detail_frequency_label">Frekwensie</string>
     <string name="module_wifi_detail_signal_label">Sein</string>

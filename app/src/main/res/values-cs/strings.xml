@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Zodpovědné nakládání s daty.</string>
     <string name="settings_licenses_label">Licence</string>
     <string name="general_thank_you_label">Děkuji</string>
+    <string name="acks_thanks_jakob_desc">Děkujeme za open-source sync server Octi.</string>
+    <string name="acks_thanks_maxpatchs_desc">Děkujeme za krásné ikony.</string>
+    <string name="acks_thanks_crowdin_desc">Za podporu překladu open-source projektů</string>
     <string name="settings_category_other_label">Další</string>
     <string name="general_settings_label">Obecné</string>
     <string name="general_settings_desc">Obecná vylepšení, která ovlivňují celou aplikaci.</string>

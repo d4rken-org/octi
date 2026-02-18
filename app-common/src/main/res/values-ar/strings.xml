@@ -25,4 +25,12 @@
     <string name="general_continue">استمرار</string>
     <string name="general_show_details_action">إظهار التفاصيل</string>
     <string name="general_minutes_label">دقائق</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="zero">لا دقائق</item>
+        <item quantity="one">%1$d دقيقة</item>
+        <item quantity="two">%1$d دقيقتان</item>
+        <item quantity="few">%1$d دقائق</item>
+        <item quantity="many">%1$d دقيقة</item>
+        <item quantity="other">%1$d دقيقة</item>
+    </plurals>
 </resources>

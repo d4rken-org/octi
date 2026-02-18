@@ -20,4 +20,5 @@
     <string name="sync_kserver_link_client_option_qrcode">Einen QR-Code von einem anderen Gerät scannen</string>
     <string name="sync_kserver_link_client_startcamera_action">Starte Kamera</string>
     <string name="sync_kserver_link_client_link_action">Gerät verbinden</string>
+    <string name="sync_kserver_error_device_not_registered">Dieses Gerät ist nicht mehr auf dem Server registriert. Trennen Sie die Verbindung und verknüpfen Sie es erneut von einem anderen Gerät, oder erstellen Sie ein neues Konto.</string>
 </resources>

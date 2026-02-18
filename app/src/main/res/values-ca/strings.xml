@@ -27,6 +27,9 @@
     <string name="settings_privacy_policy_desc">Tractament responsable de les dades.</string>
     <string name="settings_licenses_label">Llicencies</string>
     <string name="general_thank_you_label">Gràcies</string>
+    <string name="acks_thanks_jakob_desc">Gràcies per al servidor de sincronització de codi obert d\'Octi.</string>
+    <string name="acks_thanks_maxpatchs_desc">Gràcies pels bonica icones.</string>
+    <string name="acks_thanks_crowdin_desc">Per donar suport a la traducció de projectes de codi obert</string>
     <string name="settings_category_other_label">Altres</string>
     <string name="general_settings_label">General</string>
     <string name="general_settings_desc">Ajustos generals que afecten tota l\'aplicació.</string>

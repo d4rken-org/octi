@@ -10,6 +10,7 @@
     <string name="general_cancel_action">Mégse</string>
     <string name="general_thanks_action">Köszönöm</string>
     <string name="general_gotit_action">Értettem</string>
+    <string name="general_na_label">N/A</string>
     <string name="general_empty_label">Üres</string>
     <string name="general_dismiss_action">Bezárás</string>
     <string name="general_maybe_later_action">Talán később</string>
@@ -23,6 +24,9 @@
     <string name="general_refresh_action">Frissítés</string>
     <string name="general_continue">Folytatás</string>
     <string name="general_show_details_action">Részletek megjelenítése</string>
-    <string name="general_na_label">N/A</string>
     <string name="general_minutes_label">Percek</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d perc</item>
+        <item quantity="other">%1$d perc</item>
+    </plurals>
 </resources>

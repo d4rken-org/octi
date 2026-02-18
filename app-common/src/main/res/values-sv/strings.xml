@@ -25,4 +25,8 @@
     <string name="general_continue">Fortsätt</string>
     <string name="general_show_details_action">Visa detaljer</string>
     <string name="general_minutes_label">Minuter</string>
+    <plurals name="general_minutes_quantity_label">
+        <item quantity="one">%1$d minut</item>
+        <item quantity="other">%1$d minuter</item>
+    </plurals>
 </resources>

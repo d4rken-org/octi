@@ -20,4 +20,5 @@
     <string name="sync_kserver_link_client_option_qrcode">Naskenovat QR kód z jiného zařízení</string>
     <string name="sync_kserver_link_client_startcamera_action">Spustit fotoaparát</string>
     <string name="sync_kserver_link_client_link_action">Propojit zařížení</string>
+    <string name="sync_kserver_error_device_not_registered">Toto zařízení již není registrováno na serveru. Odpojte se a znovu se připojte z jiného zařízení nebo si vytvořte nový účet.</string>
 </resources>
