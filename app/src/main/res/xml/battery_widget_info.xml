@@ -12,6 +12,6 @@
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:configure="eu.darken.octi.modules.power.ui.widget.BatteryWidgetConfigActivity"
-    android:widgetFeatures="reconfigurable|configuration_optional"
+    android:widgetFeatures="reconfigurable"
     android:radius="16dp"
     tools:targetApi="s" />
