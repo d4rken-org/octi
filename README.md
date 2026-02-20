@@ -3,6 +3,7 @@
 # Octi
 
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/d4rken-org/octi?include_prereleases)](https://github.com/d4rken-org/octi/releases/latest)
+[![RB Status](https://shields.rbtlog.dev/simple/eu.darken.octi)](https://shields.rbtlog.dev/eu.darken.octi)
 [![Code tests & eval](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml/badge.svg)](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml)
 [![Crowdin](https://badges.crowdin.net/octi/localized.svg)](https://crowdin.com/project/octi)
 [![Github Downloads](https://img.shields.io/github/downloads/d4rken-org/octi/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/d4rken-org/octi/main/README.md#download)
