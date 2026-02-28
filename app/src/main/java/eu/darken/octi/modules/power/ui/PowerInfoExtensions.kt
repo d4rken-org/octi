@@ -1,20 +1,29 @@
 package eu.darken.octi.modules.power.ui
 
-import androidx.annotation.DrawableRes
-import eu.darken.octi.modules.power.R
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Battery0Bar
+import androidx.compose.material.icons.twotone.Battery1Bar
+import androidx.compose.material.icons.twotone.Battery2Bar
+import androidx.compose.material.icons.twotone.Battery3Bar
+import androidx.compose.material.icons.twotone.Battery4Bar
+import androidx.compose.material.icons.twotone.Battery5Bar
+import androidx.compose.material.icons.twotone.Battery6Bar
+import androidx.compose.material.icons.twotone.BatteryChargingFull
+import androidx.compose.material.icons.twotone.BatteryFull
+import androidx.compose.material.icons.twotone.BatteryUnknown
+import androidx.compose.ui.graphics.vector.ImageVector
 import eu.darken.octi.modules.power.core.PowerInfo
 
-@get:DrawableRes
-val PowerInfo.batteryIconRes: Int
+val PowerInfo.batteryIcon: ImageVector
     get() = when {
-        isCharging -> R.drawable.ic_baseline_battery_charging_full_24
-        status == PowerInfo.Status.FULL -> R.drawable.ic_baseline_battery_full_24
-        battery.percent > 0.85f -> R.drawable.ic_baseline_battery_6_bar_24
-        battery.percent > 0.71f -> R.drawable.ic_baseline_battery_5_bar_24
-        battery.percent > 0.57f -> R.drawable.ic_baseline_battery_4_bar_24
-        battery.percent > 0.42f -> R.drawable.ic_baseline_battery_3_bar_24
-        battery.percent > 0.28f -> R.drawable.ic_baseline_battery_2_bar_24
-        battery.percent > 0.14f -> R.drawable.ic_baseline_battery_1_bar_24
-        battery.percent >= 0.0f -> R.drawable.ic_baseline_battery_0_bar_24
-        else -> R.drawable.ic_baseline_battery_unknown_24
+        isCharging -> Icons.TwoTone.BatteryChargingFull
+        status == PowerInfo.Status.FULL -> Icons.TwoTone.BatteryFull
+        battery.percent > 0.85f -> Icons.TwoTone.Battery6Bar
+        battery.percent > 0.71f -> Icons.TwoTone.Battery5Bar
+        battery.percent > 0.57f -> Icons.TwoTone.Battery4Bar
+        battery.percent > 0.42f -> Icons.TwoTone.Battery3Bar
+        battery.percent > 0.28f -> Icons.TwoTone.Battery2Bar
+        battery.percent > 0.14f -> Icons.TwoTone.Battery1Bar
+        battery.percent >= 0.0f -> Icons.TwoTone.Battery0Bar
+        else -> Icons.TwoTone.BatteryUnknown
     }

@@ -15,6 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.twotone.DeleteSweep
+import androidx.compose.material.icons.twotone.PhoneAndroid
+import androidx.compose.material.icons.twotone.QuestionMark
+import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -131,13 +134,11 @@ private fun DeviceRow(
             .padding(16.dp),
     ) {
         Icon(
-            painter = painterResource(
-                when (item.metaInfo?.deviceType) {
-                    MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
-                    MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
-                    else -> R.drawable.ic_baseline_question_mark_24
-                }
-            ),
+            imageVector = when (item.metaInfo?.deviceType) {
+                MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
+                MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
+                else -> Icons.TwoTone.QuestionMark
+            },
             contentDescription = null,
             modifier = Modifier.size(24.dp),
         )
@@ -233,7 +234,7 @@ private fun DeviceActionsDialog(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_baseline_delete_sweep_24),
+                        imageVector = Icons.TwoTone.DeleteSweep,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp),
                     )

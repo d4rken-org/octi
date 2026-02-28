@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.twotone.PauseCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -355,7 +356,7 @@ private fun ConnectorStatusIndicators(isBusy: Boolean, isPaused: Boolean) {
     }
     if (isPaused) {
         Icon(
-            painter = painterResource(R.drawable.ic_pause_octagon_24),
+            imageVector = Icons.TwoTone.PauseCircle,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
         )

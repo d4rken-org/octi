@@ -13,6 +13,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
+import androidx.compose.material.icons.twotone.Battery1Bar
+import androidx.compose.material.icons.twotone.BatteryFull
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -140,7 +141,7 @@ private fun LowBatteryCard(
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    painter = painterResource(PowerR.drawable.ic_baseline_battery_1_bar_24),
+                    imageVector = Icons.TwoTone.Battery1Bar,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
                 )
@@ -200,7 +201,7 @@ private fun HighBatteryCard(
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    painter = painterResource(PowerR.drawable.ic_baseline_battery_full_24),
+                    imageVector = Icons.TwoTone.BatteryFull,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
                 )
