@@ -2,18 +2,26 @@ package eu.darken.octi.sync.ui.list
 
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.sync.core.StalenessUtil.countStaleDevices
+import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.navigation.Nav
+import eu.darken.octi.common.uix.ViewModel4
+import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.isPro
+import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.StalenessUtil.countStaleDevices
 import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
-import eu.darken.octi.syncs.gdrive.ui.GDriveStateVH
+import eu.darken.octi.syncs.gdrive.core.GoogleAccount
+import eu.darken.octi.syncs.kserver.core.KServer
 import eu.darken.octi.syncs.kserver.core.KServerConnector
-import eu.darken.octi.syncs.kserver.ui.KServerStateVH
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.first
@@ -26,13 +34,37 @@ import javax.inject.Inject
 class SyncListVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
-    syncManager: SyncManager,
+    @AppScope private val appScope: CoroutineScope,
+    private val syncManager: SyncManager,
     private val syncSettings: SyncSettings,
-) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+    private val upgradeRepo: UpgradeRepo,
+) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     data class State(
-        val connectors: List<SyncListAdapter.Item> = emptyList()
+        val connectors: List<ConnectorItem> = emptyList(),
     )
+
+    sealed interface ConnectorItem {
+        val connectorId: ConnectorId
+
+        data class GDrive(
+            override val connectorId: ConnectorId,
+            val account: GoogleAccount,
+            val ourState: SyncConnectorState,
+            val otherStates: Collection<SyncConnectorState>,
+            val isPaused: Boolean,
+            val staleDevicesCount: Int,
+        ) : ConnectorItem
+
+        data class KServer(
+            override val connectorId: ConnectorId,
+            val credentials: KServer.Credentials,
+            val ourState: SyncConnectorState,
+            val otherStates: Collection<SyncConnectorState>,
+            val isPaused: Boolean,
+            val staleDevicesCount: Int,
+        ) : ConnectorItem
+    }
 
     init {
         launch {
@@ -49,30 +81,22 @@ class SyncListVM @Inject constructor(
             val withStates = connectors.map { connector ->
                 combineTransform(connector.state, connector.data) { state, data ->
                     val item = when (connector) {
-                        is GDriveAppDataConnector -> GDriveStateVH.Item(
+                        is GDriveAppDataConnector -> ConnectorItem.GDrive(
+                            connectorId = connector.identifier,
                             account = connector.account,
                             ourState = state,
                             otherStates = (connectors - connector).map { it.state.first() },
                             isPaused = paused.contains(connector.identifier),
                             staleDevicesCount = data.countStaleDevices(),
-                            onManage = {
-                                SyncListFragmentDirections.actionSyncListFragmentToGDriveActionsFragment(
-                                    connector.identifier
-                                ).navigate()
-                            }
                         )
 
-                        is KServerConnector -> KServerStateVH.Item(
+                        is KServerConnector -> ConnectorItem.KServer(
+                            connectorId = connector.identifier,
                             credentials = connector.credentials,
                             ourState = state,
                             otherStates = (connectors - connector).map { it.state.first() },
                             isPaused = paused.contains(connector.identifier),
                             staleDevicesCount = data.countStaleDevices(),
-                            onManage = {
-                                SyncListFragmentDirections.actionSyncListFragmentToKServerActionsFragment(
-                                    connector.identifier
-                                ).navigate()
-                            }
                         )
 
                         else -> {
@@ -86,19 +110,49 @@ class SyncListVM @Inject constructor(
 
             combine(withStates) { it.toList() }
         }
-        .map {
-            State(
-                connectors = it
-            )
-        }
-        .asLiveData2()
+        .map { State(connectors = it) }
+        .shareLatest(scope = vmScope)
 
     fun addConnector() {
         log(TAG) { "addConnector()" }
-        SyncListFragmentDirections.actionSyncListFragmentToSyncAddFragment().navigate()
+        navTo(Nav.Sync.Add)
+    }
+
+    fun togglePause(connectorId: ConnectorId) = launch {
+        log(TAG) { "togglePause($connectorId)" }
+        if (!upgradeRepo.isPro()) {
+            navTo(Nav.Main.Upgrade())
+            return@launch
+        }
+        syncManager.togglePause(connectorId)
+    }
+
+    fun forceSync(connectorId: ConnectorId) = launch(appScope) {
+        log(TAG) { "forceSync($connectorId)" }
+        syncManager.sync(connectorId)
+    }
+
+    fun disconnect(connectorId: ConnectorId) = launch(appScope) {
+        log(TAG) { "disconnect($connectorId)" }
+        syncManager.disconnect(connectorId)
+    }
+
+    fun resetData(connectorId: ConnectorId) = launch(appScope) {
+        log(TAG) { "resetData($connectorId)" }
+        syncManager.resetData(connectorId)
+    }
+
+    fun viewDevices(connectorId: ConnectorId) {
+        log(TAG) { "viewDevices($connectorId)" }
+        navTo(Nav.Sync.Devices(connectorId.idString))
+    }
+
+    fun linkNewDevice(connectorId: ConnectorId) {
+        log(TAG) { "linkNewDevice($connectorId)" }
+        navTo(Nav.Sync.KServerLinkHost(connectorId.idString))
     }
 
     companion object {
-        private val TAG = logTag("Sync", "List", "Fragment", "VM")
+        private val TAG = logTag("Sync", "List", "VM")
     }
 }

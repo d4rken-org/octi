@@ -1,12 +1,13 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-kapt")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 apply(plugin = "dagger.hilt.android.plugin")
-apply(plugin = "androidx.navigation.safeargs.kotlin")
+
 
 val commitHashProvider = providers.of(CommitHashValueSource::class) {}
 
@@ -90,8 +91,9 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
+        viewBinding = false
         buildConfig = true
+        compose = true
     }
 
     testOptions {
@@ -173,28 +175,29 @@ dependencies {
     addAndroidUI()
     addWorkerManager()
 
+    addCompose()
+    addNavigation3()
+    addKotlinxSerialization()
+
     addTesting()
 
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("io.coil-kt:coil:2.0.0-rc02")
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("com.google.android.material:material:1.12.0")
 
     implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation("com.google.api-client:google-api-client-android:+") {
         exclude("org.apache.httpcomponents")
     }
 
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
-
     implementation("androidx.core:core-splashscreen:1.0.0")
 
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
+    implementation("androidx.glance:glance-appwidget:1.1.1")
+    implementation("androidx.glance:glance-material3:1.1.1")
+
     "gplayImplementation"("com.android.billingclient:billing:8.0.0")
     "gplayImplementation"("com.android.billingclient:billing-ktx:8.0.0")
-
-    implementation("io.coil-kt:coil:2.0.0-rc02")
 
     implementation("io.github.z4kn4fein:semver:1.4.2")
 }

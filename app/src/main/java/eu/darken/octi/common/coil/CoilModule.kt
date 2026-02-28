@@ -1,10 +1,9 @@
 package eu.darken.octi.common.coil
 
 import android.content.Context
-import android.util.Log
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.util.Logger
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.util.Logger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,26 +31,33 @@ class CoilModule {
     ): ImageLoader = ImageLoader.Builder(context).apply {
 
         if (BuildConfigWrap.DEBUG) {
-            val logger = object : Logger {
-                override var level: Int = Log.VERBOSE
-                override fun log(tag: String, priority: Int, message: String?, throwable: Throwable?) {
-                    log("Coil:$tag", Logging.Priority.fromAndroid(priority)) { "$message ${throwable?.asLog()}" }
+            val coilLogger = object : Logger {
+                override var minLevel = Logger.Level.Verbose
+                override fun log(tag: String, level: Logger.Level, message: String?, throwable: Throwable?) {
+                    val priority = when (level) {
+                        Logger.Level.Verbose -> Logging.Priority.VERBOSE
+                        Logger.Level.Debug -> Logging.Priority.DEBUG
+                        Logger.Level.Info -> Logging.Priority.INFO
+                        Logger.Level.Warn -> Logging.Priority.WARN
+                        Logger.Level.Error -> Logging.Priority.ERROR
+                    }
+                    log("Coil:$tag", priority) { "$message ${throwable?.asLog()}" }
                 }
             }
-            logger(logger)
+            logger(coilLogger)
         }
         components {
             add(appIconFetcherFactory)
         }
-        dispatcher(dispatcherProvider.Default)
     }.build()
 
     @Singleton
     @Provides
-    fun imageLoaderFactory(imageLoaderSource: Provider<ImageLoader>): ImageLoaderFactory = ImageLoaderFactory {
-        log(TAG) { "Preparing imageloader factory" }
-        imageLoaderSource.get()
-    }
+    fun imageLoaderFactory(imageLoaderSource: Provider<ImageLoader>): SingletonImageLoader.Factory =
+        SingletonImageLoader.Factory {
+            log(TAG) { "Preparing imageloader factory" }
+            imageLoaderSource.get()
+        }
 
     companion object {
         private val TAG = logTag("Coil", "Module")

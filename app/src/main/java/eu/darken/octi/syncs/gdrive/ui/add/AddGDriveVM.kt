@@ -10,8 +10,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.livedata.SingleLiveEvent
-import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.flow.SingleEventFlow
+import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.syncs.gdrive.core.GoogleAccount
 import javax.inject.Inject
 
@@ -20,12 +20,13 @@ class AddGDriveVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     private val accRepo: eu.darken.octi.syncs.gdrive.core.GoogleAccountRepo,
-) : ViewModel3(dispatcherProvider = dispatcherProvider) {
-    val events = SingleLiveEvent<AddGDriveEvents>()
+) : ViewModel4(dispatcherProvider = dispatcherProvider) {
+
+    val events = SingleEventFlow<AddGDriveEvents>()
 
     fun startSignIn() {
         log(TAG) { "startSignIn()" }
-        events.postValue(AddGDriveEvents.SignInStart(accRepo.startNewAuth()))
+        events.tryEmit(AddGDriveEvents.SignInStart(accRepo.startNewAuth()))
     }
 
     fun onGoogleSignIn(result: ActivityResult) = launch {
@@ -36,16 +37,16 @@ class AddGDriveVM @Inject constructor(
         try {
             val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
             accRepo.add(GoogleAccount(account))
-            navEvents.postValue(null)
+            navUp()
         } catch (e: ApiException) {
             when (e.statusCode) {
-                12500 -> events.postValue(AddGDriveEvents.NoGoogleAccount(e))
+                12500 -> events.tryEmit(AddGDriveEvents.NoGoogleAccount(e))
                 else -> throw e
             }
         }
     }
 
     companion object {
-        private val TAG = logTag("Sync", "Add", "Fragment", "VM")
+        private val TAG = logTag("Sync", "Add", "GDrive", "VM")
     }
 }

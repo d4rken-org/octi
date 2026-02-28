@@ -28,4 +28,13 @@
         <item quantity="one">%1$d minute</item>
         <item quantity="other">%1$d minutes</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Theme mode</string>
+    <string name="ui_theme_mode_setting_explanation">The mode used when theming the app (e.g. dark or light).</string>
+    <string name="ui_theme_mode_dark_label">Dark</string>
+    <string name="ui_theme_mode_light_label">Light</string>
+    <string name="ui_theme_mode_system_label">System</string>
+    <string name="ui_theme_style_setting_label">Theme style</string>
+    <string name="ui_theme_style_setting_explanation">The color style used when theming the app.</string>
+    <string name="ui_theme_style_default_label">Default</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

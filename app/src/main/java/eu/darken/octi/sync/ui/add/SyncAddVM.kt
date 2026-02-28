@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.uix.ViewModel3
-import eu.darken.octi.syncs.gdrive.ui.add.AddGDriveVH
-import eu.darken.octi.syncs.kserver.ui.add.AddKServerDataVH
+import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.navigation.Nav
+import eu.darken.octi.common.uix.ViewModel4
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -14,24 +14,28 @@ import javax.inject.Inject
 class SyncAddVM @Inject constructor(
     @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
-) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
+    data class State(
+        val items: List<SyncAddItem> = emptyList(),
+    )
 
-    val addItems = flow {
-        val items = mutableListOf<SyncAddAdapter.Item>()
+    data class SyncAddItem(
+        val type: SyncType,
+        val onClick: () -> Unit,
+    )
 
-        AddGDriveVH.Item {
-            SyncAddFragmentDirections.actionSyncAddFragmentToGDriveAddFragment().navigate()
-        }.run { items.add(this) }
-        AddKServerDataVH.Item {
-            SyncAddFragmentDirections.actionSyncAddFragmentToAddKServerFragment().navigate()
-        }.run { items.add(this) }
+    enum class SyncType { GDRIVE, KSERVER }
 
-        emit(items)
-    }.asLiveData2()
-
+    val state = flow {
+        val items = listOf(
+            SyncAddItem(SyncType.GDRIVE) { navTo(Nav.Sync.AddGDrive) },
+            SyncAddItem(SyncType.KSERVER) { navTo(Nav.Sync.AddKServer) },
+        )
+        emit(State(items = items))
+    }.shareLatest(scope = vmScope)
 
     companion object {
-        private val TAG = logTag("Sync", "Add", "Fragment", "VM")
+        private val TAG = logTag("Sync", "Add", "VM")
     }
 }

@@ -6,8 +6,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.octi.common.datastore.PreferenceScreenData
-import eu.darken.octi.common.datastore.PreferenceStoreMapper
 import eu.darken.octi.common.datastore.createValue
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.module.core.ModuleSettings
@@ -18,18 +16,14 @@ import javax.inject.Singleton
 class ClipboardSettings @Inject constructor(
     @ApplicationContext private val context: Context,
     private val moshi: Moshi,
-) : PreferenceScreenData, ModuleSettings {
+) : ModuleSettings {
 
     private val Context.dataStore by preferencesDataStore(name = "module_clipboard_settings")
 
-    override val dataStore: DataStore<Preferences>
+    val dataStore: DataStore<Preferences>
         get() = context.dataStore
 
     override val isEnabled = dataStore.createValue("module.clipboard.enabled", true)
-
-    override val mapper: PreferenceStoreMapper = PreferenceStoreMapper(
-        isEnabled
-    )
 
     val lastClipboard = dataStore.createValue("module.clipboard.last", null as String?)
 

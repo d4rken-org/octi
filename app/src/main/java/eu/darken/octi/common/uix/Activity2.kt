@@ -1,14 +1,12 @@
 package eu.darken.octi.common.uix
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
+import androidx.activity.ComponentActivity
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 
-abstract class Activity2 : AppCompatActivity() {
+abstract class Activity2 : ComponentActivity() {
     internal val tag: String =
         logTag("Activity", this.javaClass.simpleName + "(" + Integer.toHexString(hashCode()) + ")")
 
@@ -31,14 +29,4 @@ abstract class Activity2 : AppCompatActivity() {
         log(tag, VERBOSE) { "onDestroy()" }
         super.onDestroy()
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        log(tag, VERBOSE) { "onActivityResult(requestCode=$requestCode, resultCode=$resultCode, data=$data)" }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    fun <T> LiveData<T>.observe2(callback: (T) -> Unit) {
-        observe(this@Activity2) { callback.invoke(it) }
-    }
-
 }

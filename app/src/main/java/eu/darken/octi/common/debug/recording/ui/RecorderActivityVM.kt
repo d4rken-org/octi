@@ -15,10 +15,11 @@ import eu.darken.octi.common.compression.Zipper
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
+import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.onError
 import eu.darken.octi.common.flow.replayingShare
-import eu.darken.octi.common.livedata.SingleLiveEvent
-import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.uix.ViewModel4
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -33,7 +34,7 @@ class RecorderActivityVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
     private val webpageTool: WebpageTool,
-) : ViewModel3(dispatcherProvider) {
+) : ViewModel4(dispatcherProvider) {
 
     private val recordedPath = handle.get<String>(RecorderActivity.RECORD_PATH)!!
     private val pathCache = MutableStateFlow(recordedPath)
@@ -50,9 +51,9 @@ class RecorderActivityVM @Inject constructor(
         .replayingShare(vmScope + dispatcherProvider.IO)
 
     private val stater = DynamicStateFlow(TAG, vmScope) { State() }
-    val state = stater.asLiveData2()
+    val state = stater.flow.shareLatest(scope = vmScope)
 
-    val shareEvent = SingleLiveEvent<Intent>()
+    val shareEvent = SingleEventFlow<Intent>()
 
     init {
         resultCacheObs
@@ -67,23 +68,22 @@ class RecorderActivityVM @Inject constructor(
                     copy(
                         compressedPath = path,
                         compressedSize = size,
-                        loading = false
+                        loading = false,
                     )
                 }
             }
-            .onError { errorEvents.postValue(it) }
+            .onError { errorEvents2.tryEmit(it) }
             .launchInViewModel()
-
     }
 
     fun share() = launch {
-        val (path, size) = resultCacheCompressedObs.first()
+        val (path, _) = resultCacheCompressedObs.first()
 
         val intent = Intent(Intent.ACTION_SEND).apply {
             val uri = FileProvider.getUriForFile(
                 context,
                 BuildConfigWrap.APPLICATION_ID + ".provider",
-                File(path)
+                File(path),
             )
 
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -94,15 +94,14 @@ class RecorderActivityVM @Inject constructor(
             addCategory(Intent.CATEGORY_DEFAULT)
             putExtra(
                 Intent.EXTRA_SUBJECT,
-                "${BuildConfigWrap.APPLICATION_ID} DebugLog - ${BuildConfigWrap.VERSION_DESCRIPTION})"
+                "${BuildConfigWrap.APPLICATION_ID} DebugLog - ${BuildConfigWrap.VERSION_DESCRIPTION})",
             )
             putExtra(Intent.EXTRA_TEXT, "Your text here.")
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
-
         val chooserIntent = Intent.createChooser(intent, context.getString(R.string.debug_debuglog_file_label))
-        shareEvent.postValue(chooserIntent)
+        shareEvent.tryEmit(chooserIntent)
     }
 
     fun goPrivacyPolicy() {
@@ -114,10 +113,10 @@ class RecorderActivityVM @Inject constructor(
         val normalSize: Long = -1L,
         val compressedPath: String? = null,
         val compressedSize: Long = -1L,
-        val loading: Boolean = true
+        val loading: Boolean = true,
     )
 
     companion object {
-        private val TAG = logTag("Debug", "eu.darken.octi.common.debug.recording.core.Recorder", "VM")
+        private val TAG = logTag("Debug", "Recorder", "VM")
     }
 }
