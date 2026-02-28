@@ -57,7 +57,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             Image(
-                painter = painterResource(R.mipmap.ic_launcher_round),
+                painter = painterResource(R.drawable.ic_splash_octi),
                 contentDescription = null,
                 modifier = Modifier.size(96.dp),
             )
