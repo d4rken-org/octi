@@ -42,6 +42,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -67,6 +68,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -452,30 +454,30 @@ fun DashboardScreen(
         }
     }
 
-    // Detail dialogs
+    // Detail sheets
     showPowerDetail?.let { item ->
-        PowerDetailDialog(
+        PowerDetailSheet(
             power = item,
             onDismiss = { showPowerDetail = null },
         )
     }
 
     showWifiDetail?.let { item ->
-        WifiDetailDialog(
+        WifiDetailSheet(
             wifi = item,
             onDismiss = { showWifiDetail = null },
         )
     }
 
     showConnectivityDetail?.let { item ->
-        ConnectivityDetailDialog(
+        ConnectivityDetailSheet(
             connectivity = item,
             onDismiss = { showConnectivityDetail = null },
         )
     }
 
     showClipboardDetail?.let { item ->
-        ClipboardDetailDialog(
+        ClipboardDetailSheet(
             clipboard = item,
             onDismiss = { showClipboardDetail = null },
             onCopy = onCopyClipboard,
@@ -1242,8 +1244,9 @@ private fun ClipboardModuleItem(
 
 // region Detail Dialogs
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PowerDetailDialog(
+private fun PowerDetailSheet(
     power: DashboardVM.ModuleItem.Power,
     onDismiss: () -> Unit,
 ) {
@@ -1252,225 +1255,217 @@ private fun PowerDetailDialog(
     val temperatureFormatter = remember { TemperatureFormatter(context) }
     val estimationFormatter = remember { PowerEstimationFormatter(context) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(PowerR.string.module_power_label)) },
-        text = {
-            Column {
-                DetailRow(
-                    label = stringResource(PowerR.string.module_power_detail_level_label),
-                    value = "${(powerInfo.battery.percent * 100).toInt()}%",
-                )
-                DetailRow(
-                    label = stringResource(PowerR.string.module_power_detail_status_label),
-                    value = when (powerInfo.status) {
-                        Status.FULL -> stringResource(PowerR.string.module_power_battery_status_full)
-                        Status.CHARGING -> stringResource(PowerR.string.module_power_battery_status_charging)
-                        Status.DISCHARGING -> stringResource(PowerR.string.module_power_battery_status_discharging)
-                        Status.UNKNOWN -> stringResource(PowerR.string.module_power_battery_status_unknown)
-                    },
-                )
-                DetailRow(
-                    label = stringResource(PowerR.string.module_power_detail_speed_label),
-                    value = when (powerInfo.status) {
-                        Status.CHARGING -> when (powerInfo.chargeIO.speed) {
-                            ChargeIO.Speed.SLOW -> stringResource(PowerR.string.module_power_battery_status_charging_slow)
-                            ChargeIO.Speed.FAST -> stringResource(PowerR.string.module_power_battery_status_charging_fast)
-                            ChargeIO.Speed.NORMAL -> stringResource(PowerR.string.module_power_battery_status_charging)
-                        }
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+            Text(
+                text = stringResource(PowerR.string.module_power_label),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            DetailRow(
+                label = stringResource(PowerR.string.module_power_detail_level_label),
+                value = "${(powerInfo.battery.percent * 100).toInt()}%",
+            )
+            DetailRow(
+                label = stringResource(PowerR.string.module_power_detail_status_label),
+                value = when (powerInfo.status) {
+                    Status.FULL -> stringResource(PowerR.string.module_power_battery_status_full)
+                    Status.CHARGING -> stringResource(PowerR.string.module_power_battery_status_charging)
+                    Status.DISCHARGING -> stringResource(PowerR.string.module_power_battery_status_discharging)
+                    Status.UNKNOWN -> stringResource(PowerR.string.module_power_battery_status_unknown)
+                },
+            )
+            DetailRow(
+                label = stringResource(PowerR.string.module_power_detail_speed_label),
+                value = when (powerInfo.status) {
+                    Status.CHARGING -> when (powerInfo.chargeIO.speed) {
+                        ChargeIO.Speed.SLOW -> stringResource(PowerR.string.module_power_battery_status_charging_slow)
+                        ChargeIO.Speed.FAST -> stringResource(PowerR.string.module_power_battery_status_charging_fast)
+                        ChargeIO.Speed.NORMAL -> stringResource(PowerR.string.module_power_battery_status_charging)
+                    }
 
-                        Status.DISCHARGING -> when (powerInfo.chargeIO.speed) {
-                            ChargeIO.Speed.SLOW -> stringResource(PowerR.string.module_power_battery_status_discharging_slow)
-                            ChargeIO.Speed.FAST -> stringResource(PowerR.string.module_power_battery_status_discharging_fast)
-                            ChargeIO.Speed.NORMAL -> stringResource(PowerR.string.module_power_battery_status_discharging)
-                        }
+                    Status.DISCHARGING -> when (powerInfo.chargeIO.speed) {
+                        ChargeIO.Speed.SLOW -> stringResource(PowerR.string.module_power_battery_status_discharging_slow)
+                        ChargeIO.Speed.FAST -> stringResource(PowerR.string.module_power_battery_status_discharging_fast)
+                        ChargeIO.Speed.NORMAL -> stringResource(PowerR.string.module_power_battery_status_discharging)
+                    }
 
-                        else -> stringResource(CommonR.string.general_na_label)
-                    },
-                )
-                DetailRow(
-                    label = stringResource(PowerR.string.module_power_detail_temperature_label),
-                    value = powerInfo.battery.temp?.let { temperatureFormatter.formatTemperature(it) }
-                        ?: stringResource(CommonR.string.general_na_label),
-                )
-                DetailRow(
-                    label = stringResource(PowerR.string.module_power_detail_estimation_label),
-                    value = estimationFormatter.format(powerInfo),
-                )
-                DetailRow(
-                    label = stringResource(PowerR.string.module_power_detail_health_label),
-                    value = when (powerInfo.battery.health) {
-                        BatteryManager.BATTERY_HEALTH_GOOD -> stringResource(PowerR.string.module_power_detail_health_good)
-                        BatteryManager.BATTERY_HEALTH_OVERHEAT -> stringResource(PowerR.string.module_power_detail_health_overheat)
-                        BatteryManager.BATTERY_HEALTH_DEAD -> stringResource(PowerR.string.module_power_detail_health_dead)
-                        BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> stringResource(PowerR.string.module_power_detail_health_over_voltage)
-                        BatteryManager.BATTERY_HEALTH_COLD -> stringResource(PowerR.string.module_power_detail_health_cold)
-                        else -> stringResource(PowerR.string.module_power_detail_health_unknown)
-                    },
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.ok))
-            }
-        },
-    )
+                    else -> stringResource(CommonR.string.general_na_label)
+                },
+            )
+            DetailRow(
+                label = stringResource(PowerR.string.module_power_detail_temperature_label),
+                value = powerInfo.battery.temp?.let { temperatureFormatter.formatTemperature(it) }
+                    ?: stringResource(CommonR.string.general_na_label),
+            )
+            DetailRow(
+                label = stringResource(PowerR.string.module_power_detail_estimation_label),
+                value = estimationFormatter.format(powerInfo),
+            )
+            DetailRow(
+                label = stringResource(PowerR.string.module_power_detail_health_label),
+                value = when (powerInfo.battery.health) {
+                    BatteryManager.BATTERY_HEALTH_GOOD -> stringResource(PowerR.string.module_power_detail_health_good)
+                    BatteryManager.BATTERY_HEALTH_OVERHEAT -> stringResource(PowerR.string.module_power_detail_health_overheat)
+                    BatteryManager.BATTERY_HEALTH_DEAD -> stringResource(PowerR.string.module_power_detail_health_dead)
+                    BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> stringResource(PowerR.string.module_power_detail_health_over_voltage)
+                    BatteryManager.BATTERY_HEALTH_COLD -> stringResource(PowerR.string.module_power_detail_health_cold)
+                    else -> stringResource(PowerR.string.module_power_detail_health_unknown)
+                },
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun WifiDetailDialog(
+private fun WifiDetailSheet(
     wifi: DashboardVM.ModuleItem.Wifi,
     onDismiss: () -> Unit,
 ) {
     val wifiInfo = wifi.data.data
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(WifiR.string.module_wifi_label)) },
-        text = {
-            Column {
-                DetailRow(
-                    label = stringResource(WifiR.string.module_wifi_detail_ssid_label),
-                    value = wifiInfo.currentWifi?.ssid
-                        ?: stringResource(WifiR.string.module_wifi_unknown_ssid_label),
-                )
-                DetailRow(
-                    label = stringResource(WifiR.string.module_wifi_detail_frequency_label),
-                    value = when (wifiInfo.currentWifi?.freqType) {
-                        WifiInfo.Wifi.Type.FIVE_GHZ -> stringResource(WifiR.string.module_wifi_freq_5ghz)
-                        WifiInfo.Wifi.Type.TWO_POINT_FOUR_GHZ -> stringResource(WifiR.string.module_wifi_freq_2_4ghz)
-                        else -> stringResource(CommonR.string.general_na_label)
-                    },
-                )
-                val sig = wifiInfo.currentWifi?.reception ?: 0f
-                DetailRow(
-                    label = stringResource(WifiR.string.module_wifi_detail_signal_label),
-                    value = when {
-                        sig > 0.65f -> stringResource(WifiR.string.module_wifi_reception_good_label)
-                        sig > 0.3f -> stringResource(WifiR.string.module_wifi_reception_okay_label)
-                        sig > 0.0f -> stringResource(WifiR.string.module_wifi_reception_bad_label)
-                        else -> stringResource(CommonR.string.general_na_label)
-                    },
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.ok))
-            }
-        },
-    )
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+            Text(
+                text = stringResource(WifiR.string.module_wifi_label),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            DetailRow(
+                label = stringResource(WifiR.string.module_wifi_detail_ssid_label),
+                value = wifiInfo.currentWifi?.ssid
+                    ?: stringResource(WifiR.string.module_wifi_unknown_ssid_label),
+            )
+            DetailRow(
+                label = stringResource(WifiR.string.module_wifi_detail_frequency_label),
+                value = when (wifiInfo.currentWifi?.freqType) {
+                    WifiInfo.Wifi.Type.FIVE_GHZ -> stringResource(WifiR.string.module_wifi_freq_5ghz)
+                    WifiInfo.Wifi.Type.TWO_POINT_FOUR_GHZ -> stringResource(WifiR.string.module_wifi_freq_2_4ghz)
+                    else -> stringResource(CommonR.string.general_na_label)
+                },
+            )
+            val sig = wifiInfo.currentWifi?.reception ?: 0f
+            DetailRow(
+                label = stringResource(WifiR.string.module_wifi_detail_signal_label),
+                value = when {
+                    sig > 0.65f -> stringResource(WifiR.string.module_wifi_reception_good_label)
+                    sig > 0.3f -> stringResource(WifiR.string.module_wifi_reception_okay_label)
+                    sig > 0.0f -> stringResource(WifiR.string.module_wifi_reception_bad_label)
+                    else -> stringResource(CommonR.string.general_na_label)
+                },
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ConnectivityDetailDialog(
+private fun ConnectivityDetailSheet(
     connectivity: DashboardVM.ModuleItem.Connectivity,
     onDismiss: () -> Unit,
 ) {
     val info = connectivity.data.data
-    val context = LocalContext.current
     val unknownLocal = stringResource(ConnectivityR.string.module_connectivity_unknown_local_ip_label)
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(ConnectivityR.string.module_connectivity_label)) },
-        text = {
-            Column {
-                DetailRow(
-                    label = stringResource(ConnectivityR.string.module_connectivity_detail_connection_type_label),
-                    value = when (info.connectionType) {
-                        ConnectivityInfo.ConnectionType.WIFI -> stringResource(ConnectivityR.string.module_connectivity_type_wifi_label)
-                        ConnectivityInfo.ConnectionType.CELLULAR -> stringResource(ConnectivityR.string.module_connectivity_type_cellular_label)
-                        ConnectivityInfo.ConnectionType.ETHERNET -> stringResource(ConnectivityR.string.module_connectivity_type_ethernet_label)
-                        ConnectivityInfo.ConnectionType.NONE, null -> stringResource(ConnectivityR.string.module_connectivity_type_none_label)
-                    },
-                )
-                CopyableDetailRow(
-                    label = stringResource(ConnectivityR.string.module_connectivity_detail_public_ip_label),
-                    value = info.publicIp ?: stringResource(ConnectivityR.string.module_connectivity_unknown_public_ip_label),
-                    copyable = info.publicIp != null,
-                )
-                CopyableDetailRow(
-                    label = stringResource(ConnectivityR.string.module_connectivity_detail_local_ipv4_label),
-                    value = info.localAddressIpv4 ?: unknownLocal,
-                    copyable = info.localAddressIpv4 != null,
-                )
-                CopyableDetailRow(
-                    label = stringResource(ConnectivityR.string.module_connectivity_detail_local_ipv6_label),
-                    value = info.localAddressIpv6 ?: unknownLocal,
-                    copyable = info.localAddressIpv6 != null,
-                )
-                DetailRow(
-                    label = stringResource(ConnectivityR.string.module_connectivity_detail_gateway_label),
-                    value = info.gatewayIp ?: unknownLocal,
-                )
-                DetailRow(
-                    label = stringResource(ConnectivityR.string.module_connectivity_detail_dns_label),
-                    value = info.dnsServers?.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: unknownLocal,
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.ok))
-            }
-        },
-    )
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+            Text(
+                text = stringResource(ConnectivityR.string.module_connectivity_label),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            DetailRow(
+                label = stringResource(ConnectivityR.string.module_connectivity_detail_connection_type_label),
+                value = when (info.connectionType) {
+                    ConnectivityInfo.ConnectionType.WIFI -> stringResource(ConnectivityR.string.module_connectivity_type_wifi_label)
+                    ConnectivityInfo.ConnectionType.CELLULAR -> stringResource(ConnectivityR.string.module_connectivity_type_cellular_label)
+                    ConnectivityInfo.ConnectionType.ETHERNET -> stringResource(ConnectivityR.string.module_connectivity_type_ethernet_label)
+                    ConnectivityInfo.ConnectionType.NONE, null -> stringResource(ConnectivityR.string.module_connectivity_type_none_label)
+                },
+            )
+            CopyableDetailRow(
+                label = stringResource(ConnectivityR.string.module_connectivity_detail_public_ip_label),
+                value = info.publicIp ?: stringResource(ConnectivityR.string.module_connectivity_unknown_public_ip_label),
+                copyable = info.publicIp != null,
+            )
+            CopyableDetailRow(
+                label = stringResource(ConnectivityR.string.module_connectivity_detail_local_ipv4_label),
+                value = info.localAddressIpv4 ?: unknownLocal,
+                copyable = info.localAddressIpv4 != null,
+            )
+            CopyableDetailRow(
+                label = stringResource(ConnectivityR.string.module_connectivity_detail_local_ipv6_label),
+                value = info.localAddressIpv6 ?: unknownLocal,
+                copyable = info.localAddressIpv6 != null,
+            )
+            DetailRow(
+                label = stringResource(ConnectivityR.string.module_connectivity_detail_gateway_label),
+                value = info.gatewayIp ?: unknownLocal,
+            )
+            DetailRow(
+                label = stringResource(ConnectivityR.string.module_connectivity_detail_dns_label),
+                value = info.dnsServers?.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: unknownLocal,
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ClipboardDetailDialog(
+private fun ClipboardDetailSheet(
     clipboard: DashboardVM.ModuleItem.Clipboard,
     onDismiss: () -> Unit,
     onCopy: (ClipboardInfo) -> Unit,
 ) {
     val clip = clipboard.data.data
     val context = LocalContext.current
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(ClipboardR.string.module_clipboard_label)) },
-        text = {
-            Column {
-                DetailRow(
-                    label = stringResource(ClipboardR.string.module_clipboard_detail_type_label),
-                    value = when (clip.type) {
-                        ClipboardInfo.Type.EMPTY -> stringResource(ClipboardR.string.module_clipboard_detail_type_empty)
-                        ClipboardInfo.Type.SIMPLE_TEXT -> stringResource(ClipboardR.string.module_clipboard_detail_type_text)
-                    },
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(ClipboardR.string.module_clipboard_detail_content_label),
-                    style = MaterialTheme.typography.labelMedium,
-                )
-                val content = when (clip.type) {
-                    ClipboardInfo.Type.EMPTY -> ""
-                    ClipboardInfo.Type.SIMPLE_TEXT -> clip.data.utf8()
-                }
-                Text(
-                    text = content,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp)
-                        .verticalScroll(rememberScrollState()),
-                )
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+            Text(
+                text = stringResource(ClipboardR.string.module_clipboard_label),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            DetailRow(
+                label = stringResource(ClipboardR.string.module_clipboard_detail_type_label),
+                value = when (clip.type) {
+                    ClipboardInfo.Type.EMPTY -> stringResource(ClipboardR.string.module_clipboard_detail_type_empty)
+                    ClipboardInfo.Type.SIMPLE_TEXT -> stringResource(ClipboardR.string.module_clipboard_detail_type_text)
+                },
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(ClipboardR.string.module_clipboard_detail_content_label),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            val content = when (clip.type) {
+                ClipboardInfo.Type.EMPTY -> ""
+                ClipboardInfo.Type.SIMPLE_TEXT -> clip.data.utf8()
             }
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                onCopy(clip)
-                Toast.makeText(context, ClipboardR.string.module_clipboard_copied_octi_to_os, Toast.LENGTH_SHORT).show()
-            }) {
+            Text(
+                text = content,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .verticalScroll(rememberScrollState()),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            TextButton(
+                onClick = {
+                    onCopy(clip)
+                    Toast.makeText(context, ClipboardR.string.module_clipboard_copied_octi_to_os, Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier.align(Alignment.End),
+            ) {
                 Text(stringResource(ClipboardR.string.module_clipboard_copy_action))
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.ok))
-            }
-        },
-    )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
 }
 
 @Composable
@@ -1482,12 +1477,15 @@ private fun DetailRow(label: String, value: String) {
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(0.4f),
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(0.6f),
+            textAlign = TextAlign.End,
         )
     }
 }
@@ -1503,12 +1501,15 @@ private fun CopyableDetailRow(label: String, value: String, copyable: Boolean) {
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(0.4f),
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(0.6f),
+            textAlign = TextAlign.End,
         )
         if (copyable) {
             IconButton(
