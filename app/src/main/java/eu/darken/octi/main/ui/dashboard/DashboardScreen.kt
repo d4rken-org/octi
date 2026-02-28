@@ -29,11 +29,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Apps
 import androidx.compose.material.icons.twotone.ChevronRight
 import androidx.compose.material.icons.twotone.ContentCopy
 import androidx.compose.material.icons.twotone.ContentPaste
+import androidx.compose.material.icons.twotone.Home
+import androidx.compose.material.icons.twotone.NotificationsNone
+import androidx.compose.material.icons.twotone.PhoneAndroid
+import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.Stars
+import androidx.compose.material.icons.twotone.Sync
+import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ElevatedCard
@@ -94,7 +101,7 @@ import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.clipboard.R as ClipboardR
 import eu.darken.octi.modules.connectivity.R as ConnectivityR
 import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
-import eu.darken.octi.modules.connectivity.ui.iconRes
+import eu.darken.octi.modules.connectivity.ui.icon
 import eu.darken.octi.modules.meta.R as MetaR
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.R as PowerR
@@ -102,10 +109,10 @@ import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
 import eu.darken.octi.modules.power.ui.PowerEstimationFormatter
-import eu.darken.octi.modules.power.ui.batteryIconRes
+import eu.darken.octi.modules.power.ui.batteryIcon
 import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.modules.wifi.core.WifiInfo
-import eu.darken.octi.modules.wifi.ui.receptIconRes
+import eu.darken.octi.modules.wifi.ui.receptIcon
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.StalenessUtil
@@ -288,7 +295,7 @@ fun DashboardScreen(
                 actions = {
                     IconButton(onClick = onSyncServices) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_baseline_cloud_sync_24),
+                            imageVector = Icons.TwoTone.Sync,
                             contentDescription = stringResource(R.string.sync_services_label),
                         )
                     }
@@ -787,17 +794,15 @@ private fun DashboardDeviceCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                painter = painterResource(
-                    when {
-                        device.isLimited -> R.drawable.ic_baseline_stars_24
-                        device.isCurrentDevice -> R.drawable.ic_baseline_home_24
-                        else -> when (meta.deviceType) {
-                            MetaInfo.DeviceType.PHONE -> R.drawable.ic_baseline_phone_android_24
-                            MetaInfo.DeviceType.TABLET -> R.drawable.ic_baseline_tablet_android_24
-                            MetaInfo.DeviceType.UNKNOWN -> R.drawable.ic_baseline_question_mark_24
-                        }
+                imageVector = when {
+                    device.isLimited -> Icons.TwoTone.Stars
+                    device.isCurrentDevice -> Icons.TwoTone.Home
+                    else -> when (meta.deviceType) {
+                        MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
+                        MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
+                        MetaInfo.DeviceType.UNKNOWN -> Icons.TwoTone.QuestionMark
                     }
-                ),
+                },
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
             )
@@ -945,7 +950,7 @@ private fun PowerModuleItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(power.batteryIconRes),
+            imageVector = power.batteryIcon,
             contentDescription = null,
             tint = if (power.battery.percent < 0.1f && !power.isCharging) {
                 colorResource(R.color.error)
@@ -970,7 +975,7 @@ private fun PowerModuleItem(
         }
         if (item.batteryLowAlert != null) {
             Icon(
-                painter = painterResource(PowerR.drawable.ic_bell_outline_24),
+                imageVector = Icons.TwoTone.NotificationsNone,
                 contentDescription = null,
                 modifier = Modifier.size(16.dp),
             )
@@ -1033,7 +1038,7 @@ private fun WifiModuleItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(wifi.receptIconRes),
+            imageVector = wifi.receptIcon,
             contentDescription = null,
             modifier = Modifier.size(20.dp),
         )
@@ -1089,7 +1094,7 @@ private fun ConnectivityModuleItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(connectivity.connectionType.iconRes),
+            imageVector = connectivity.connectionType.icon,
             contentDescription = null,
             modifier = Modifier.size(20.dp),
         )
@@ -1132,7 +1137,7 @@ private fun AppsModuleItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_baseline_apps_24),
+            imageVector = Icons.TwoTone.Apps,
             contentDescription = null,
             modifier = Modifier.size(20.dp),
         )
@@ -1191,7 +1196,7 @@ private fun ClipboardModuleItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_baseline_content_paste_24),
+            imageVector = Icons.TwoTone.ContentPaste,
             contentDescription = null,
             modifier = Modifier.size(20.dp),
         )
