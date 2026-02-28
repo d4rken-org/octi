@@ -8,8 +8,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.octi.common.datastore.PreferenceScreenData
-import eu.darken.octi.common.datastore.PreferenceStoreMapper
 import eu.darken.octi.common.datastore.createSetValue
 import eu.darken.octi.common.datastore.createValue
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
@@ -24,11 +22,11 @@ import javax.inject.Singleton
 class SyncSettings @Inject constructor(
     @ApplicationContext private val context: Context,
     moshi: Moshi,
-) : PreferenceScreenData {
+) {
 
     private val Context.dataStore by preferencesDataStore(name = "sync_settings")
 
-    override val dataStore: DataStore<Preferences>
+    val dataStore: DataStore<Preferences>
         get() = context.dataStore
 
     val deviceLabel = dataStore.createValue("sync.device.self.label", null as String?)
@@ -40,13 +38,6 @@ class SyncSettings @Inject constructor(
     val backgroundSyncOnMobile = dataStore.createValue("sync.background.mobile.enabled", true)
 
     val pausedConnectors = dataStore.createSetValue<ConnectorId>("sync.connectors.paused", emptySet(), moshi)
-
-    override val mapper: PreferenceStoreMapper = PreferenceStoreMapper(
-        deviceLabel,
-        backgroundSyncEnabled,
-        backgroundSyncInterval,
-        backgroundSyncOnMobile,
-    )
 
     val deviceId by lazy {
         val key = stringPreferencesKey("sync.identifier.device")

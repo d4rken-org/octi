@@ -9,13 +9,13 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.livedata.SingleLiveEvent
-import eu.darken.octi.common.navigation.navArgs
-import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.flow.SingleEventFlow
+import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.core.OurSku
 import eu.darken.octi.common.upgrade.core.UpgradeRepoGplay
 import eu.darken.octi.common.upgrade.core.billing.GplayServiceUnavailableException
 import eu.darken.octi.common.upgrade.core.billing.SkuDetails
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -30,29 +30,33 @@ class UpgradeViewModel @Inject constructor(
     @Suppress("unused") private val handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     private val upgradeRepo: UpgradeRepoGplay,
-) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
-    private val navArgs by handle.navArgs<UpgradeFragmentArgs>()
+    private var initialized = false
 
-    val events = SingleLiveEvent<UpgradeEvents>()
+    val events = SingleEventFlow<UpgradeEvents>()
+    val billingEvents = SingleEventFlow<BillingEvent>()
 
-    init {
-        if (!navArgs.forced) {
+    fun initialize(forced: Boolean) {
+        if (initialized) return
+        initialized = true
+
+        if (!forced) {
             upgradeRepo.upgradeInfo
                 .filter { it.isPro }
                 .take(1)
-                .onEach { popNavStack() }
+                .onEach { navUp() }
                 .launchInViewModel()
         }
     }
 
-    val state = combine(
+    val state: Flow<Pricing> = combine(
         flow {
             val data = withTimeoutOrNull(5000) {
                 try {
                     upgradeRepo.querySkus(OurSku.Iap.PRO_UPGRADE)
                 } catch (e: Exception) {
-                    errorEvents.postValue(e)
+                    errorEvents2.emitBlocking(e)
                     null
                 }
             }
@@ -63,7 +67,7 @@ class UpgradeViewModel @Inject constructor(
                 try {
                     upgradeRepo.querySkus(OurSku.Sub.PRO_UPGRADE)
                 } catch (e: Exception) {
-                    errorEvents.postValue(e)
+                    errorEvents2.emitBlocking(e)
                     null
                 }
             }
@@ -80,7 +84,7 @@ class UpgradeViewModel @Inject constructor(
             hasIap = current.upgrades.any { it.sku == OurSku.Iap.PRO_UPGRADE },
             hasSub = current.upgrades.any { it.sku == OurSku.Sub.PRO_UPGRADE },
         )
-    }.asLiveData2()
+    }
 
     data class Pricing(
         val iap: SkuDetails?,
@@ -89,18 +93,36 @@ class UpgradeViewModel @Inject constructor(
         val hasIap: Boolean,
     )
 
-    fun onGoIap(activity: Activity) {
-        log(TAG) { "onGoIap($activity)" }
+    sealed class BillingEvent {
+        data object LaunchIap : BillingEvent()
+        data object LaunchSubscription : BillingEvent()
+        data object LaunchSubscriptionTrial : BillingEvent()
+    }
+
+    fun onGoIap() {
+        log(TAG) { "onGoIap()" }
+        billingEvents.tryEmit(BillingEvent.LaunchIap)
+    }
+
+    fun onGoSubscription() {
+        log(TAG) { "onGoSubscription()" }
+        billingEvents.tryEmit(BillingEvent.LaunchSubscription)
+    }
+
+    fun onGoSubscriptionTrial() {
+        log(TAG) { "onGoSubscriptionTrial()" }
+        billingEvents.tryEmit(BillingEvent.LaunchSubscriptionTrial)
+    }
+
+    fun launchBillingIap(activity: Activity) {
         upgradeRepo.launchBillingFlow(activity, OurSku.Iap.PRO_UPGRADE, null)
     }
 
-    fun onGoSubscription(activity: Activity) {
-        log(TAG) { "onGoSubscription($activity)" }
+    fun launchBillingSubscription(activity: Activity) {
         upgradeRepo.launchBillingFlow(activity, OurSku.Sub.PRO_UPGRADE, OurSku.Sub.PRO_UPGRADE.BASE_OFFER)
     }
 
-    fun onGoSubscriptionTrial(activity: Activity) {
-        log(TAG) { "onGoSubscription($activity)" }
+    fun launchBillingSubscriptionTrial(activity: Activity) {
         upgradeRepo.launchBillingFlow(activity, OurSku.Sub.PRO_UPGRADE, OurSku.Sub.PRO_UPGRADE.TRIAL_OFFER)
     }
 
@@ -117,7 +139,7 @@ class UpgradeViewModel @Inject constructor(
             log(TAG, INFO) { "Restored purchase :))" }
         } else {
             log(TAG, WARN) { "Restore purchase failed" }
-            events.postValue(UpgradeEvents.RestoreFailed)
+            events.emit(UpgradeEvents.RestoreFailed)
         }
     }
 

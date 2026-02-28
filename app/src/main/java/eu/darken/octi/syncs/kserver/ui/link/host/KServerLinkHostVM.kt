@@ -2,23 +2,26 @@ package eu.darken.octi.syncs.kserver.ui.link.host
 
 import android.app.Activity
 import android.content.Intent
-import androidx.lifecycle.SavedStateHandle
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.flow.SingleEventFlow
+import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.flow.withPrevious
-import eu.darken.octi.common.navigation.navArgs
-import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOptions
-import eu.darken.octi.sync.core.getConnectorById
 import eu.darken.octi.syncs.kserver.core.KServerConnector
 import eu.darken.octi.syncs.kserver.ui.link.KServerLinkOption
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -26,13 +29,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class KServerLinkHostVM @Inject constructor(
-    @Suppress("UNUSED_PARAMETER") handle: SavedStateHandle,
-    private val dispatcherProvider: DispatcherProvider,
+    dispatcherProvider: DispatcherProvider,
     private val syncManager: SyncManager,
-    private val moshi: Moshi
-) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+    private val moshi: Moshi,
+) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
-    private val navArgs: KServerLinkHostFragmentArgs by handle.navArgs()
+    private val connectorIdFlow = MutableStateFlow<String?>(null)
     private val stateLock = Mutex()
 
     data class State(
@@ -41,35 +43,49 @@ class KServerLinkHostVM @Inject constructor(
     )
 
     private val _state = MutableStateFlow(State())
-    val state = _state.asLiveData2()
+    val state = _state.shareLatest(scope = vmScope)
 
-    val autoNavOnNewDevice = syncManager
-        .getConnectorById<KServerConnector>(navArgs.identifier)
-        .flatMapLatest { it.state }
-        .map { it.devices }
-        .withPrevious()
-        .map { (old, new) ->
-            if (old == null) return@map null
-            if (new == null) return@map null
-            if (new.size <= old.size) return@map null
-            Unit
-        }
+    private val connectorFlow = connectorIdFlow
         .filterNotNull()
-        .asLiveData2()
+        .flatMapLatest { idStr ->
+            syncManager.connectors.map { connectors ->
+                connectors.single { it.identifier.idString == idStr } as KServerConnector
+            }
+        }
 
-    init {
+    val deviceLinkedEvents = SingleEventFlow<Unit>()
+
+    fun initialize(connectorId: String) {
+        if (connectorIdFlow.value != null) return
+        connectorIdFlow.value = connectorId
+
         launch {
-            val connector = syncManager.getConnectorById<KServerConnector>(navArgs.identifier).first()
+            connectorFlow
+                .flatMapLatest { it.state }
+                .map { it.devices }
+                .withPrevious()
+                .map { (old, new) ->
+                    if (old == null) return@map null
+                    if (new == null) return@map null
+                    if (new.size <= old.size) return@map null
+                    Unit
+                }
+                .filterNotNull()
+                .first()
+            deviceLinkedEvents.tryEmit(Unit)
+        }
+
+        launch {
+            val connector = connectorFlow.first()
             val container = connector.createLinkCode()
             log(TAG) { "New magic link code generated." }
-            handle["code"] = container
 
             stateLock.withLock {
                 _state.value = _state.value.copy(encodedLinkCode = container.toEncodedString(moshi))
             }
         }
         launch {
-            val connector = syncManager.getConnectorById<KServerConnector>(navArgs.identifier).first()
+            val connector = connectorFlow.first()
             while (currentCoroutineContext().isActive) {
                 connector.sync(SyncOptions())
                 delay(3000)
@@ -98,6 +114,6 @@ class KServerLinkHostVM @Inject constructor(
     }
 
     companion object {
-        private val TAG = logTag("Sync", "KServer", "Link", "Host", "Fragment", "VM")
+        private val TAG = logTag("Sync", "KServer", "Link", "Host", "VM")
     }
 }

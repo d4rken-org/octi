@@ -6,7 +6,9 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.navigation.Nav
+import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.syncs.kserver.core.KServer
 import eu.darken.octi.syncs.kserver.core.KServerAccountRepo
 import eu.darken.octi.syncs.kserver.core.KServerEndpoint
@@ -21,15 +23,15 @@ class AddKServerVM @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val kServerAccountRepo: KServerAccountRepo,
     private val kServerEndpointFactory: KServerEndpoint.Factory,
-) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     data class State(
         val serverType: KServer.Official? = KServer.Official.PROD,
-        val isBusy: Boolean = false
+        val isBusy: Boolean = false,
     )
 
     private val _state = MutableStateFlow(State())
-    val state = _state.asLiveData2()
+    val state = _state.shareLatest(scope = vmScope)
 
     fun selectType(type: KServer.Official?) {
         log(TAG) { "selectType(type=$type)" }
@@ -62,8 +64,7 @@ class AddKServerVM @Inject constructor(
                 log(TAG, INFO) { "New account created: $newCredentials" }
                 kServerAccountRepo.add(newCredentials)
             }
-            navEvents.postValue(null)
-
+            navUp()
         } finally {
             _state.value = _state.value.copy(isBusy = false)
         }
@@ -73,13 +74,13 @@ class AddKServerVM @Inject constructor(
         log(TAG) { "linkAccount()" }
         _state.value = _state.value.copy(isBusy = true)
         try {
-            AddKServerFragmentDirections.actionAddKServerFragmentToKServerLinkClientFragment().navigate()
+            navTo(Nav.Sync.KServerLinkClient)
         } finally {
             _state.value = _state.value.copy(isBusy = false)
         }
     }
 
     companion object {
-        private val TAG = logTag("Sync", "Add", "KServer", "Fragment", "VM")
+        private val TAG = logTag("Sync", "Add", "KServer", "VM")
     }
 }

@@ -3,8 +3,7 @@ package eu.darken.octi
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import coil.Coil
-import coil.ImageLoaderFactory
+import coil3.SingletonImageLoader
 import dagger.hilt.android.HiltAndroidApp
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
@@ -42,7 +41,7 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var syncWorkerControl: SyncWorkerControl
     @Inject lateinit var generalSettings: GeneralSettings
     @Inject lateinit var recorderModule: RecorderModule
-    @Inject lateinit var imageLoaderFactory: ImageLoaderFactory
+    @Inject lateinit var imageLoaderFactory: SingletonImageLoader.Factory
     @Inject lateinit var theming: Theming
     @Inject lateinit var curriculumVitae: CurriculumVitae
     @Inject lateinit var releaseManager: ReleaseManager
@@ -74,7 +73,7 @@ open class App : Application(), Configuration.Provider {
 
         theming.setup()
 
-        Coil.setImageLoader(imageLoaderFactory)
+        SingletonImageLoader.setSafe(imageLoaderFactory)
 
         log(TAG) { "onCreate() done! ${Exception().asLog()}" }
     }

@@ -10,7 +10,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.PluralsRes
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 
 
 @ColorInt
@@ -25,15 +24,9 @@ fun Context.getColorForAttr(@AttrRes attrId: Int): Int {
 }
 
 @ColorInt
-fun Fragment.getColorForAttr(@AttrRes attrId: Int): Int = requireContext().getColorForAttr(attrId)
-
-@ColorInt
 fun Context.getCompatColor(@ColorRes attrId: Int): Int {
     return ContextCompat.getColor(this, attrId)
 }
-
-@ColorInt
-fun Fragment.getCompatColor(@ColorRes attrId: Int): Int = requireContext().getCompatColor(attrId)
 
 @SuppressLint("NewApi")
 fun Context.startServiceCompat(intent: Intent) {

@@ -2,9 +2,10 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
-    id("kotlin-kapt")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
@@ -20,7 +21,8 @@ android {
     setupModuleBuildTypes()
 
     buildFeatures {
-        viewBinding = true
+        viewBinding = false
+        compose = true
     }
 
     testOptions {
@@ -44,5 +46,8 @@ dependencies {
     addCoroutines()
     addSerialization()
     addIO()
+    addCompose()
+    addNavigation3()
+    addKotlinxSerialization()
     addTesting()
 }

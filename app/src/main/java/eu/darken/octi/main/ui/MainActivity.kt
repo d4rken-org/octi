@@ -1,50 +1,87 @@
 package eu.darken.octi.main.ui
 
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import dagger.hilt.android.AndroidEntryPoint
-import eu.darken.octi.R
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.debug.recording.core.RecorderModule
-import eu.darken.octi.common.navigation.findNavController
-import eu.darken.octi.common.theming.Theming
+import eu.darken.octi.common.navigation.LocalNavigationController
+import eu.darken.octi.common.navigation.NavigationController
+import eu.darken.octi.common.navigation.NavigationEntry
+import eu.darken.octi.common.theming.OctiTheme
+import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.common.uix.Activity2
-import eu.darken.octi.databinding.MainActivityBinding
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : Activity2() {
 
     private val vm: MainActivityVM by viewModels()
-    private lateinit var ui: MainActivityBinding
-    private val navController by lazy { supportFragmentManager.findNavController(R.id.nav_host) }
 
-    var showSplashScreen = true
-
+    @Inject lateinit var navCtrl: NavigationController
+    @Inject lateinit var navigationEntries: Set<@JvmSuppressWildcards NavigationEntry>
     @Inject lateinit var recorderModule: RecorderModule
-    @Inject lateinit var theming: Theming
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val splashScreen = installSplashScreen()
+        installSplashScreen()
         enableEdgeToEdge()
-        theming.notifySplashScreenDone(this)
-        splashScreen.setKeepOnScreenCondition { showSplashScreen && savedInstanceState == null }
 
-        ui = MainActivityBinding.inflate(layoutInflater)
-        setContentView(ui.root)
+        setContent {
+            val themeState by vm.themeState.collectAsState(initial = ThemeState())
 
-        vm.readyState.observe2 { showSplashScreen = false }
-    }
+            val backStack = rememberNavBackStack(vm.startDestination)
+            navCtrl.setup(backStack)
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(B_KEY_SPLASH, showSplashScreen)
-        super.onSaveInstanceState(outState)
+            OctiTheme(state = themeState) {
+                val backgroundColor = MaterialTheme.colorScheme.background
+                val useDarkIcons = backgroundColor.luminance() > 0.5f
+                SideEffect {
+                    window.decorView.setBackgroundColor(backgroundColor.toArgb())
+                    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+                    insetsController.isAppearanceLightStatusBars = useDarkIcons
+                    insetsController.isAppearanceLightNavigationBars = useDarkIcons
+                }
+
+                CompositionLocalProvider(LocalNavigationController provides navCtrl) {
+                    NavDisplay(
+                        backStack = backStack,
+                        onBack = {
+                            if (!navCtrl.up()) {
+                                finish()
+                            }
+                        },
+                        entryProvider = entryProvider {
+                            navigationEntries.forEach { entry ->
+                                entry.apply {
+                                    log(TAG) { "Set up navigation entry: $this" }
+                                    setup()
+                                }
+                            }
+                        },
+                    )
+                }
+            }
+        }
     }
 
     companion object {
-        private const val B_KEY_SPLASH = "showSplashScreen"
+        private val TAG = logTag("MainActivity")
     }
 }

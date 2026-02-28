@@ -3,14 +3,15 @@ package eu.darken.octi.common.coil
 import android.view.View
 import android.widget.ImageView
 import androidx.core.view.isInvisible
-import coil.imageLoader
-import coil.request.Disposable
-import coil.request.ImageRequest
+import coil3.imageLoader
+import coil3.request.Disposable
+import coil3.request.ImageRequest
+import coil3.target.ImageViewTarget
 import eu.darken.octi.modules.apps.core.AppsInfo
 
 fun ImageRequest.Builder.loadingView(
     imageView: View,
-    loadingView: View
+    loadingView: View,
 ) {
     listener(
         onStart = {
@@ -20,7 +21,7 @@ fun ImageRequest.Builder.loadingView(
         onSuccess = { _, _ ->
             loadingView.isInvisible = true
             imageView.isInvisible = false
-        }
+        },
     )
 }
 
@@ -31,7 +32,7 @@ fun ImageView.loadAppIcon(pkg: AppsInfo.Pkg): Disposable? {
 
     val request = ImageRequest.Builder(context).apply {
         data(pkg)
-        target(this@loadAppIcon)
+        target(ImageViewTarget(this@loadAppIcon))
     }.build()
 
     return context.imageLoader.enqueue(request)

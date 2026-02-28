@@ -5,10 +5,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.navigation.navArgs
-import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.core.UpgradeRepoFoss
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,16 +17,19 @@ class UpgradeViewModel @Inject constructor(
     @Suppress("unused") private val handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     private val upgradeRepo: UpgradeRepoFoss,
-) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
-    private val navArgs by handle.navArgs<UpgradeFragmentArgs>()
+    private var initialized = false
 
-    init {
-        if (!navArgs.forced) {
+    fun initialize(forced: Boolean) {
+        if (initialized) return
+        initialized = true
+
+        if (!forced) {
             upgradeRepo.upgradeInfo
                 .filter { it.isPro }
                 .take(1)
-                .onEach { popNavStack() }
+                .onEach { navUp() }
                 .launchInViewModel()
         }
     }
@@ -33,7 +37,7 @@ class UpgradeViewModel @Inject constructor(
     fun goGithubSponsors() {
         log(TAG) { "goGithubSponsors()" }
         upgradeRepo.launchGithubSponsorsUpgrade()
-        popNavStack()
+        navUp()
     }
 
     companion object {

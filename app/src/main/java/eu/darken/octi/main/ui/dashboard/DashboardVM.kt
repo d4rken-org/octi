@@ -1,7 +1,6 @@
 package eu.darken.octi.main.ui.dashboard
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.WebpageTool
@@ -12,38 +11,32 @@ import eu.darken.octi.common.datastore.valueBlocking
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.combine
-import eu.darken.octi.common.livedata.SingleLiveEvent
+import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.permissions.Permission
-import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.main.core.GeneralSettings
+import eu.darken.octi.main.core.updater.UpdateChecker
 import eu.darken.octi.main.core.updater.UpdateService
-import eu.darken.octi.main.ui.dashboard.items.DeviceLimitVH
-import eu.darken.octi.main.ui.dashboard.items.PermissionVH
-import eu.darken.octi.main.ui.dashboard.items.SyncSetupVH
-import eu.darken.octi.main.ui.dashboard.items.UpdateCardVH
-import eu.darken.octi.main.ui.dashboard.items.UpgradeCardVH
-import eu.darken.octi.main.ui.dashboard.items.perdevice.DeviceVH
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.core.getInstallerIntent
-import eu.darken.octi.modules.apps.ui.dashboard.DeviceAppsVH
 import eu.darken.octi.modules.clipboard.ClipboardHandler
 import eu.darken.octi.modules.clipboard.ClipboardInfo
-import eu.darken.octi.modules.clipboard.ClipboardVH
+import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
 import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.core.alert.PowerAlertManager
-import eu.darken.octi.modules.power.ui.dashboard.DevicePowerVH
-import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
-import eu.darken.octi.modules.connectivity.ui.dashboard.DeviceConnectivityVH
 import eu.darken.octi.modules.wifi.core.WifiInfo
-import eu.darken.octi.modules.wifi.ui.dashboard.DeviceWifiVH
+import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
@@ -79,17 +72,15 @@ class DashboardVM @Inject constructor(
     private val clipboardHandler: ClipboardHandler,
     private val updateService: UpdateService,
     private val alertManager: PowerAlertManager,
-) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     init {
         if (!generalSettings.isOnboardingDone.valueBlocking) {
-            DashboardFragmentDirections.actionDashFragmentToWelcomeFragment().navigate()
+            navTo(Nav.Main.Welcome)
         }
     }
 
-    val dashboardEvents = SingleLiveEvent<DashboardEvent>()
-
-    var onStartDragListener: ((androidx.recyclerview.widget.RecyclerView.ViewHolder) -> Unit)? = null
+    val dashboardEvents = SingleEventFlow<DashboardEvent>()
 
     private val isManuallyRefreshing = MutableStateFlow(false)
 
@@ -100,17 +91,49 @@ class DashboardVM @Inject constructor(
         }
     }
 
-    val upgradeStatus = upgradeRepo.upgradeInfo.asLiveData2()
-
     data class State(
-        val items: List<DashboardAdapter.Item>,
+        val devices: List<DeviceItem>,
         val deviceCount: Int,
         val lastSyncAt: Instant?,
         val isRefreshing: Boolean,
         val isOffline: Boolean,
+        val showSyncSetup: Boolean,
+        val missingPermissions: List<Permission>,
+        val update: UpdateChecker.Update?,
+        val upgradeInfo: UpgradeRepo.Info,
+        val deviceLimitReached: Boolean,
     )
 
-    val state: LiveData<State> = combine(
+    data class DeviceItem(
+        val now: Instant,
+        val meta: ModuleData<MetaInfo>,
+        val moduleItems: List<ModuleItem>,
+        val isCollapsed: Boolean,
+        val isLimited: Boolean,
+        val isCurrentDevice: Boolean,
+    )
+
+    sealed interface ModuleItem {
+        data class Power(
+            val data: ModuleData<PowerInfo>,
+            val batteryLowAlert: PowerAlert<BatteryLowAlertRule>?,
+            val showSettings: Boolean,
+        ) : ModuleItem
+
+        data class Wifi(
+            val data: ModuleData<WifiInfo>,
+            val showPermissionAction: Boolean,
+        ) : ModuleItem
+
+        data class Connectivity(val data: ModuleData<ConnectivityInfo>) : ModuleItem
+        data class Apps(val data: ModuleData<AppsInfo>) : ModuleItem
+        data class Clipboard(
+            val data: ModuleData<ClipboardInfo>,
+            val isOurDevice: Boolean,
+        ) : ModuleItem
+    }
+
+    val state: Flow<State> = combine(
         tickerUiRefresh,
         networkStateProvider.networkState,
         generalSettings.isSyncSetupDismissed.flow,
@@ -121,114 +144,77 @@ class DashboardVM @Inject constructor(
         updateService.availableUpdate.onStart { emit(null) },
         generalSettings.dashboardConfig.flow,
     ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, isRefreshing, upgradeInfo, update, uiConfig ->
-        val items = mutableListOf<DashboardAdapter.Item>()
 
         val connectorCount = syncManager.connectors.first().size
-        if (!isSyncSetupDismissed && connectorCount == 0) {
-            SyncSetupVH.Item(
-                onDismiss = { launch { generalSettings.isSyncSetupDismissed.value(true) } },
-                onSetup = { DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate() }
-            ).run { items.add(this) }
-        }
+        val showSyncSetup = !isSyncSetupDismissed && connectorCount == 0
 
-        missingPermissions
-            .filterNot { WIFI_PERMISSIONS.contains(it) } // Inline handling by wifi row
-            .map { perm ->
-                PermissionVH.Item(
-                    permission = perm,
-                    onGrant = {
-                        dashboardEvents.postValue(DashboardEvent.RequestPermissionEvent(it))
-                    },
-                    onDismiss = {
-                        runBlocking { generalSettings.addDismissedPermission(it) }
-                        dashboardEvents.postValue(DashboardEvent.ShowPermissionDismissHint(it))
-                    }
-                )
-            }.run { items.addAll(this) }
-
-        if (update != null) {
-            UpdateCardVH.Item(
-                update = update,
-                onDismiss = {
-                    launch {
-                        updateService.dismissUpdate(update)
-                        updateService.refresh()
-                    }
-                },
-                onViewUpdate = {
-                    launch { updateService.viewUpdate(update) }
-                },
-                onUpdate = {
-                    launch { updateService.startUpdate(update) }
-                }
-            ).run { items.add(this) }
-        }
+        val filteredPermissions = missingPermissions
+            .filterNot { WIFI_PERMISSIONS.contains(it) }
+            .toList()
 
         // Clean config to remove stale device data, then apply custom ordering
         val currentDeviceIds = deviceItems.map { it.meta.deviceId.id }.toSet()
         val cleanedConfig = uiConfig.toCleaned(currentDeviceIds)
-        
+
         // Persist cleaned config if it changed (remove stale data from storage)
         if (cleanedConfig != uiConfig) {
             launch { generalSettings.dashboardConfig.value(cleanedConfig) }
         }
-        
+
         val deviceItemsWithOrder = cleanedConfig.applyCustomOrdering(deviceItems.map { it.meta.deviceId.id })
             .mapNotNull { deviceId -> deviceItems.find { it.meta.deviceId.id == deviceId } }
             .let { ordered ->
                 // Add any devices not in the ordered list (shouldn't happen, but safety)
-                ordered + deviceItems.filter { device -> 
-                    ordered.none { it.meta.deviceId.id == device.meta.deviceId.id } 
+                ordered + deviceItems.filter { device ->
+                    ordered.none { it.meta.deviceId.id == device.meta.deviceId.id }
                 }
             }
-        
+
         // Apply device limit status dynamically based on position after reordering
         val orderedDeviceItems = deviceItemsWithOrder.mapIndexed { index, item ->
             item.copy(
                 isCollapsed = cleanedConfig.isCollapsed(item.meta.deviceId.id),
                 isLimited = !upgradeInfo.isPro && index >= DEVICE_LIMIT,
-                isCurrentDevice = item.isCurrentDevice, // Preserve current device flag
-                onToggleCollapse = { deviceId: String ->
-                    launch { generalSettings.toggleDeviceCollapsed(deviceId) }
-                },
-                onStartDrag = onStartDragListener
             )
-        }
-
-        if (orderedDeviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro) {
-            log(TAG, WARN) { "Exceeding device limit: $orderedDeviceItems" }
-            items.addAll(orderedDeviceItems.take(DEVICE_LIMIT))
-            DeviceLimitVH.Item(
-                current = orderedDeviceItems.size,
-                maximum = DEVICE_LIMIT,
-                onManageDevices = { DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate() },
-                onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() },
-            ).run { items.add(this) }
-            items.addAll(orderedDeviceItems.drop(DEVICE_LIMIT))
-        } else {
-            items.addAll(orderedDeviceItems)
-        }
-
-        if (!upgradeInfo.isPro) {
-            UpgradeCardVH.Item(
-                onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() }
-            ).run { items.add(this) }
         }
 
         val lastConnectorActivity = syncManager.states.first().mapNotNull { it.lastSyncAt }.maxByOrNull { it }
 
         State(
-            items = items,
+            devices = orderedDeviceItems,
             deviceCount = orderedDeviceItems.size,
             lastSyncAt = lastConnectorActivity,
             isRefreshing = isRefreshing,
             isOffline = !networkState.isInternetAvailable,
+            showSyncSetup = showSyncSetup,
+            missingPermissions = filteredPermissions,
+            update = update,
+            upgradeInfo = upgradeInfo,
+            deviceLimitReached = orderedDeviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro,
         )
-    }.asLiveData2()
+    }
+        .setupCommonEventHandlers(TAG) { "state" }
+        .shareLatest(scope = vmScope)
 
     fun goToSyncServices() = launch {
         log(TAG) { "goToSyncServices()" }
-        DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate()
+        navTo(Nav.Sync.List)
+    }
+
+    fun goToUpgrade() {
+        navTo(Nav.Main.Upgrade())
+    }
+
+    fun goToSettings() {
+        navTo(Nav.Settings.Index)
+    }
+
+    fun dismissSyncSetup() = launch {
+        generalSettings.isSyncSetupDismissed.value(true)
+    }
+
+    fun setupSync() {
+        navTo(Nav.Sync.List)
     }
 
     private val refreshLock = Mutex()
@@ -246,9 +232,32 @@ class DashboardVM @Inject constructor(
         }
     }
 
-
     fun onPermissionResult(granted: Boolean) {
         if (granted) permissionTool.recheck()
+    }
+
+    fun requestPermission(permission: Permission) {
+        dashboardEvents.tryEmit(DashboardEvent.RequestPermissionEvent(permission))
+    }
+
+    fun dismissPermission(permission: Permission) {
+        runBlocking { generalSettings.addDismissedPermission(permission) }
+        dashboardEvents.tryEmit(DashboardEvent.ShowPermissionDismissHint(permission))
+    }
+
+    fun showPermissionPopup(permission: Permission) {
+        dashboardEvents.tryEmit(
+            DashboardEvent.ShowPermissionPopup(
+                permission = permission,
+                onGrant = {
+                    dashboardEvents.tryEmit(DashboardEvent.RequestPermissionEvent(it))
+                },
+                onDismiss = {
+                    runBlocking { generalSettings.addDismissedPermission(it) }
+                    dashboardEvents.tryEmit(DashboardEvent.ShowPermissionDismissHint(it))
+                }
+            )
+        )
     }
 
     fun updateDeviceOrder(newOrder: List<String>) = launch {
@@ -256,14 +265,60 @@ class DashboardVM @Inject constructor(
         generalSettings.updateDeviceOrder(newOrder)
     }
 
-    private fun deviceItems(): Flow<List<DeviceVH.Item>> = combine(
+    fun toggleDeviceCollapsed(deviceId: String) = launch {
+        generalSettings.toggleDeviceCollapsed(deviceId)
+    }
+
+    fun goToPowerAlerts(deviceId: DeviceId) {
+        navTo(Nav.Main.PowerAlerts(deviceId.id))
+    }
+
+    fun goToAppsList(deviceId: DeviceId) {
+        navTo(Nav.Main.AppsList(deviceId.id))
+    }
+
+    fun onInstallLatestApp(appsInfo: AppsInfo) = launch {
+        appsInfo.installedPackages.maxByOrNull { it.installedAt }?.let {
+            val (main, fallback) = it.getInstallerIntent()
+            dashboardEvents.tryEmit(DashboardEvent.OpenAppOrStore(main, fallback))
+        }
+    }
+
+    fun clearClipboard() = launch {
+        clipboardHandler.setSharedClipboard(ClipboardInfo())
+    }
+
+    fun shareCurrentClipboard() = launch {
+        clipboardHandler.shareCurrentOSClipboard()
+    }
+
+    fun setOsClipboard(info: ClipboardInfo) = launch {
+        clipboardHandler.setOSClipboard(info)
+    }
+
+    fun dismissUpdate() = launch {
+        state.first().update?.let {
+            updateService.dismissUpdate(it)
+            updateService.refresh()
+        }
+    }
+
+    fun viewUpdate() = launch {
+        state.first().update?.let { updateService.viewUpdate(it) }
+    }
+
+    fun startUpdate() = launch {
+        state.first().update?.let { updateService.startUpdate(it) }
+    }
+
+    private fun deviceItems(): Flow<List<DeviceItem>> = combine(
         tickerUiRefresh,
         moduleManager.byDevice,
         permissionTool.missingPermissions,
         syncManager.connectors,
         alertManager.alerts,
         upgradeRepo.upgradeInfo,
-    ) { now, byDevice, missingPermissions, connectors, alerts, upgradeInfo ->
+    ) { now, byDevice, missingPermissions, _, alerts, _ ->
         byDevice.devices
             .mapNotNull { (deviceId, moduleDatas) ->
                 val metaModule = moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
@@ -276,12 +331,33 @@ class DashboardVM @Inject constructor(
                 val moduleItems = (moduleDatas.toList() - metaModule)
                     .sortedBy { it.orderPrio }
                     .mapNotNull { moduleData ->
+                        @Suppress("UNCHECKED_CAST")
                         when (moduleData.data) {
-                            is PowerInfo -> (moduleData as ModuleData<PowerInfo>).createVHItem(powerAlerts)
-                            is ConnectivityInfo -> (moduleData as ModuleData<ConnectivityInfo>).createVHItem()
-                            is WifiInfo -> (moduleData as ModuleData<WifiInfo>).createVHItem(missingPermissions)
-                            is AppsInfo -> (moduleData as ModuleData<AppsInfo>).createVHItem()
-                            is ClipboardInfo -> (moduleData as ModuleData<ClipboardInfo>).createVHItem()
+                            is PowerInfo -> ModuleItem.Power(
+                                data = moduleData as ModuleData<PowerInfo>,
+                                batteryLowAlert = powerAlerts.firstOrNull { it.rule is BatteryLowAlertRule } as? PowerAlert<BatteryLowAlertRule>,
+                                showSettings = deviceId != syncSettings.deviceId,
+                            )
+
+                            is ConnectivityInfo -> ModuleItem.Connectivity(
+                                data = moduleData as ModuleData<ConnectivityInfo>,
+                            )
+
+                            is WifiInfo -> ModuleItem.Wifi(
+                                data = moduleData as ModuleData<WifiInfo>,
+                                showPermissionAction = missingPermissions
+                                    .any { WIFI_PERMISSIONS.contains(it) } && deviceId == syncSettings.deviceId,
+                            )
+
+                            is AppsInfo -> ModuleItem.Apps(
+                                data = moduleData as ModuleData<AppsInfo>,
+                            )
+
+                            is ClipboardInfo -> ModuleItem.Clipboard(
+                                data = moduleData as ModuleData<ClipboardInfo>,
+                                isOurDevice = deviceId == syncSettings.deviceId,
+                            )
+
                             else -> {
                                 log(TAG, WARN) { "Unsupported module data: ${moduleData.data}" }
                                 null
@@ -289,19 +365,13 @@ class DashboardVM @Inject constructor(
                         }
                     }
 
-                DeviceVH.Item(
+                DeviceItem(
                     now = now,
                     meta = metaModule,
                     moduleItems = moduleItems,
                     isCollapsed = false, // Will be updated when applying preferences
                     isLimited = false, // Will be updated when applying preferences based on position
                     isCurrentDevice = metaModule.deviceId == syncSettings.deviceId,
-                    onUpgrade = { DashboardFragmentDirections.goToUpgradeFragment().navigate() },
-                    onManageStaleDevice = {
-                        DashboardFragmentDirections.actionDashFragmentToSyncListFragment().navigate()
-                    },
-                    onToggleCollapse = { _ -> }, // Will be updated when applying preferences
-                    onStartDrag = null // Will be updated when applying preferences
                 )
             }
             .sortedBy { it.meta.data.deviceLabel ?: it.meta.data.deviceName }
@@ -310,82 +380,6 @@ class DashboardVM @Inject constructor(
 
     private val ModuleData<out Any>.orderPrio: Int
         get() = INFO_ORDER.indexOfFirst { it.isInstance(this.data) }
-
-
-    private fun ModuleData<PowerInfo>.createVHItem(
-        powerAlertRules: Collection<PowerAlert<*>>
-    ): DevicePowerVH.Item = DevicePowerVH.Item(
-        data = this,
-        batteryLowAlert = run {
-            @Suppress("UNCHECKED_CAST")
-            powerAlertRules.firstOrNull { it.rule is BatteryLowAlertRule } as PowerAlert<BatteryLowAlertRule>?
-        },
-        onSettingsAction = {
-            DashboardFragmentDirections.actionDashFragmentToPowerAlertsFragment(deviceId).navigate()
-        }.takeIf { deviceId != syncSettings.deviceId },
-        onDetailClicked = {
-            DashboardFragmentDirections.actionDashFragmentToPowerDetailFragment(deviceId).navigate()
-        },
-    )
-
-    private fun ModuleData<WifiInfo>.createVHItem(
-        missingPermissions: Collection<Permission>,
-    ) = DeviceWifiVH.Item(
-        data = this,
-        onGrantPermission = missingPermissions
-            .firstOrNull { WIFI_PERMISSIONS.contains(it) }
-            ?.takeIf { deviceId == syncSettings.deviceId }
-            ?.let {
-                // Click listener for row
-                {
-                    DashboardEvent.ShowPermissionPopup(
-                        permission = it,
-                        onGrant = {
-                            dashboardEvents.postValue(DashboardEvent.RequestPermissionEvent(it))
-                        },
-                        onDismiss = {
-                            runBlocking { generalSettings.addDismissedPermission(it) }
-                            dashboardEvents.postValue(DashboardEvent.ShowPermissionDismissHint(it))
-                        }
-                    ).run { dashboardEvents.postValue(this) }
-                }
-            },
-        onDetailClicked = {
-            DashboardFragmentDirections.actionDashFragmentToWifiDetailFragment(deviceId).navigate()
-        },
-    )
-
-    private fun ModuleData<AppsInfo>.createVHItem() = DeviceAppsVH.Item(
-        data = this,
-        onAppsInfoClicked = {
-            DashboardFragmentDirections.actionDashFragmentToAppsListFragment(deviceId).navigate()
-        },
-        onInstallClicked = {
-            this.data.installedPackages.maxByOrNull { it.installedAt }?.let {
-                val (main, fallback) = it.getInstallerIntent()
-                dashboardEvents.postValue(DashboardEvent.OpenAppOrStore(main, fallback))
-            }
-        }
-    )
-
-    private fun ModuleData<ConnectivityInfo>.createVHItem() = DeviceConnectivityVH.Item(
-        data = this,
-        onDetailClicked = {
-            DashboardFragmentDirections.actionDashFragmentToConnectivityDetailFragment(deviceId).navigate()
-        },
-    )
-
-    private fun ModuleData<ClipboardInfo>.createVHItem() = ClipboardVH.Item(
-        data = this,
-        isOurDevice = deviceId == syncSettings.deviceId,
-        onClearClicked = { launch { clipboardHandler.setSharedClipboard(ClipboardInfo()) } },
-        onPasteClicked = { launch { clipboardHandler.shareCurrentOSClipboard() } }
-            .takeIf { deviceId == syncSettings.deviceId },
-        onCopyClicked = { launch { clipboardHandler.setOSClipboard(data) } },
-        onDetailClicked = {
-            DashboardFragmentDirections.actionDashFragmentToClipboardDetailFragment(deviceId).navigate()
-        },
-    )
 
 
     companion object {

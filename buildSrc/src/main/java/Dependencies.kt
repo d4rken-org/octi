@@ -14,17 +14,8 @@ private fun DependencyHandler.implementation(dependencyNotation: Any): Dependenc
 private fun DependencyHandler.testImplementation(dependencyNotation: Any): Dependency? =
     add("testImplementation", dependencyNotation)
 
-private fun DependencyHandler.kapt(dependencyNotation: Any): Dependency? =
-    add("kapt", dependencyNotation)
-
-private fun DependencyHandler.kaptTest(dependencyNotation: Any): Dependency? =
-    add("kaptTest", dependencyNotation)
-
 private fun DependencyHandler.androidTestImplementation(dependencyNotation: Any): Dependency? =
     add("androidTestImplementation", dependencyNotation)
-
-private fun DependencyHandler.kaptAndroidTest(dependencyNotation: Any): Dependency? =
-    add("kaptAndroidTest", dependencyNotation)
 
 private fun DependencyHandler.`testRuntimeOnly`(dependencyNotation: Any): Dependency? =
     add("testRuntimeOnly", dependencyNotation)
@@ -35,17 +26,23 @@ private fun DependencyHandler.`debugImplementation`(dependencyNotation: Any): De
 private fun DependencyHandler.ksp(dependencyNotation: Any): Dependency? =
     add("ksp", dependencyNotation)
 
+private fun DependencyHandler.kspTest(dependencyNotation: Any): Dependency? =
+    add("kspTest", dependencyNotation)
+
+private fun DependencyHandler.kspAndroidTest(dependencyNotation: Any): Dependency? =
+    add("kspAndroidTest", dependencyNotation)
+
 fun Project.setupModule() {
     extensions.configure<BaseExtension> {
         compileOptions {
             isCoreLibraryDesugaringEnabled = true
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
     }
     extensions.configure<KotlinAndroidProjectExtension> {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmTarget.set(JvmTarget.JVM_17)
             freeCompilerArgs.addAll(
                 "-Xannotation-default-target=param-property",
                 "-opt-in=kotlin.ExperimentalStdlibApi",
@@ -62,17 +59,17 @@ fun DependencyHandlerScope.addDI() {
     implementation("com.google.dagger:dagger:${Versions.Dagger.core}")
     implementation("com.google.dagger:dagger-android:${Versions.Dagger.core}")
 
-    kapt("com.google.dagger:dagger-compiler:${Versions.Dagger.core}")
-    kapt("com.google.dagger:dagger-android-processor:${Versions.Dagger.core}")
+    ksp("com.google.dagger:dagger-compiler:${Versions.Dagger.core}")
+    ksp("com.google.dagger:dagger-android-processor:${Versions.Dagger.core}")
 
     implementation("com.google.dagger:hilt-android:${Versions.Dagger.core}")
-    kapt("com.google.dagger:hilt-android-compiler:${Versions.Dagger.core}")
+    ksp("com.google.dagger:hilt-android-compiler:${Versions.Dagger.core}")
 
     testImplementation("com.google.dagger:hilt-android-testing:${Versions.Dagger.core}")
-    kaptTest("com.google.dagger:hilt-android-compiler:${Versions.Dagger.core}")
+    kspTest("com.google.dagger:hilt-android-compiler:${Versions.Dagger.core}")
 
     androidTestImplementation("com.google.dagger:hilt-android-testing:${Versions.Dagger.core}")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:${Versions.Dagger.core}")
+    kspAndroidTest("com.google.dagger:hilt-android-compiler:${Versions.Dagger.core}")
 }
 
 fun DependencyHandlerScope.addCoroutines() {
@@ -83,10 +80,6 @@ fun DependencyHandlerScope.addCoroutines() {
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:${Versions.Kotlin.core}")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.Kotlin.coroutines}")
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.Kotlin.coroutines}")
-//    {
-//        // conflicts with mockito due to direct inclusion of byte buddy
-//        exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-debug")
-//    }
 }
 
 fun DependencyHandlerScope.addSerialization() {
@@ -111,7 +104,6 @@ fun DependencyHandlerScope.addAndroidCore() {
     implementation("androidx.appcompat:appcompat:1.4.2")
     implementation("androidx.annotation:annotation:1.4.0")
 
-    implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 }
 
@@ -120,23 +112,47 @@ fun DependencyHandlerScope.addWorkerManager() {
     testImplementation("androidx.work:work-testing:${Versions.AndroidX.WorkManager.core}")
 
     implementation("androidx.hilt:hilt-work:1.2.0")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
-    // Override room-compiler-processing pulled by hilt-compiler 1.2.0 (2.6.0) to support Kotlin 2.1 metadata
-    kapt("androidx.room:room-compiler-processing:2.7.2")
+    ksp("androidx.hilt:hilt-compiler:1.2.0")
 }
 
 fun DependencyHandlerScope.addAndroidUI() {
     implementation("androidx.activity:activity-ktx:1.9.1")
-    implementation("androidx.fragment:fragment-ktx:1.8.2")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.4")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.8.4")
     implementation("androidx.lifecycle:lifecycle-process:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+}
 
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.android.material:material:1.12.0")
+fun DependencyHandlerScope.addCompose() {
+    val composeBom = add("implementation", platform("androidx.compose:compose-bom:${Versions.Compose.bom}"))
+    add("androidTestImplementation", platform("androidx.compose:compose-bom:${Versions.Compose.bom}"))
+
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    implementation("androidx.activity:activity-compose:1.12.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
+
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0-alpha01")
+}
+
+fun DependencyHandlerScope.addNavigation3() {
+    implementation("androidx.navigation3:navigation3-runtime:${Versions.Navigation3.core}")
+    implementation("androidx.navigation3:navigation3-ui:${Versions.Navigation3.core}")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:2.10.0")
+
+    implementation("androidx.compose.material3.adaptive:adaptive-navigation3:1.3.0-alpha06")
+}
+
+fun DependencyHandlerScope.addKotlinxSerialization() {
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Serialization.core}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Serialization.core}")
 }
 
 fun DependencyHandlerScope.addTesting() {

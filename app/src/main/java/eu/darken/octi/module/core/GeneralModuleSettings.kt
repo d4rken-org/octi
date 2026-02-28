@@ -5,8 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.octi.common.datastore.PreferenceScreenData
-import eu.darken.octi.common.datastore.PreferenceStoreMapper
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.modules.apps.core.AppsSettings
 import eu.darken.octi.modules.clipboard.ClipboardSettings
@@ -24,20 +22,11 @@ class GeneralModuleSettings @Inject constructor(
     private val appsSettings: AppsSettings,
     private val clipboardSettings: ClipboardSettings,
     private val connectivitySettings: ConnectivitySettings,
-) : PreferenceScreenData {
+) {
     private val Context.dataStore by preferencesDataStore(name = "module_settings")
 
-    override val dataStore: DataStore<Preferences>
+    val dataStore: DataStore<Preferences>
         get() = context.dataStore
-
-    override val mapper = PreferenceStoreMapper(
-        powerSettings.isEnabled,
-        connectivitySettings.isEnabled,
-        wifiSettings.isEnabled,
-        appsSettings.isEnabled,
-        appsSettings.includeInstaller,
-        clipboardSettings.isEnabled,
-    )
 
     companion object {
         internal val TAG = logTag("Module", "Settings")

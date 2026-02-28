@@ -6,7 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.uix.ViewModel3
+import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.syncs.kserver.core.KServerHub
 import eu.darken.octi.syncs.kserver.core.LinkingData
 import eu.darken.octi.syncs.kserver.ui.link.KServerLinkOption
@@ -21,7 +22,7 @@ class KServerLinkClientVM @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val moshi: Moshi,
     private val kServerHub: KServerHub,
-) : ViewModel3(dispatcherProvider = dispatcherProvider) {
+) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     private val stateLock = Mutex()
 
@@ -32,7 +33,7 @@ class KServerLinkClientVM @Inject constructor(
     )
 
     private val _state = MutableStateFlow(State())
-    val state = _state.asLiveData2()
+    val state = _state.shareLatest(scope = vmScope)
 
     fun onLinkOptionSelected(option: KServerLinkOption) = launch {
         log(TAG) { "onLinkOptionSelected(option=$option)" }
@@ -51,13 +52,13 @@ class KServerLinkClientVM @Inject constructor(
 
             kServerHub.linkAcount(linkContainer)
 
-            popNavStack()
+            navUp()
         } finally {
             _state.value = _state.value.copy(isBusy = false)
         }
     }
 
     companion object {
-        private val TAG = logTag("Sync", "KServer", "Link", "Client", "Fragment", "VM")
+        private val TAG = logTag("Sync", "KServer", "Link", "Client", "VM")
     }
 }
