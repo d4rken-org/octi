@@ -14,7 +14,7 @@ class PowerEstimationFormatter(private val context: Context) {
         power.status == Status.FULL && power.chargeIO.fullSince != null -> {
             context.getString(
                 R.string.module_power_battery_full_since_x,
-                DateUtils.getRelativeTimeSpanString(power.chargeIO.fullSince!!.toEpochMilli())
+                DateUtils.getRelativeTimeSpanString(power.chargeIO.fullSince.toEpochMilli())
             )
         }
 
@@ -23,7 +23,7 @@ class PowerEstimationFormatter(private val context: Context) {
                 && Duration.between(Instant.now(), power.chargeIO.fullAt).isNegative -> {
             context.getString(
                 R.string.module_power_battery_full_since_x,
-                DateUtils.getRelativeTimeSpanString(power.chargeIO.fullAt!!.toEpochMilli())
+                DateUtils.getRelativeTimeSpanString(power.chargeIO.fullAt.toEpochMilli())
             )
         }
 
@@ -31,7 +31,7 @@ class PowerEstimationFormatter(private val context: Context) {
             context.getString(
                 R.string.module_power_battery_full_in_x,
                 DateUtils.getRelativeTimeSpanString(
-                    power.chargeIO.fullAt!!.toEpochMilli(),
+                    power.chargeIO.fullAt.toEpochMilli(),
                     Instant.now().toEpochMilli(),
                     DateUtils.MINUTE_IN_MILLIS,
                 )
@@ -42,7 +42,7 @@ class PowerEstimationFormatter(private val context: Context) {
             context.getString(
                 R.string.module_power_battery_empty_in_x,
                 DateUtils.getRelativeTimeSpanString(
-                    power.chargeIO.emptyAt!!.toEpochMilli(),
+                    power.chargeIO.emptyAt.toEpochMilli(),
                     Instant.now().toEpochMilli(),
                     DateUtils.MINUTE_IN_MILLIS,
                 )

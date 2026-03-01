@@ -45,7 +45,7 @@ private fun ComposeErrorDialog(
         confirmButton = {
             if (localizedError.fixAction != null && activity != null) {
                 TextButton(onClick = {
-                    localizedError.fixAction!!.invoke(activity)
+                    localizedError.fixAction.invoke(activity)
                     onDismiss()
                 }) {
                     Text(
@@ -70,7 +70,7 @@ private fun ComposeErrorDialog(
             localizedError.infoAction != null && activity != null -> {
                 {
                     TextButton(onClick = {
-                        localizedError.infoAction!!.invoke(activity)
+                        localizedError.infoAction.invoke(activity)
                         onDismiss()
                     }) {
                         Text(text = stringResource(R.string.general_show_details_action))

@@ -1,11 +1,13 @@
 package eu.darken.octi.common.network
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import androidx.annotation.RequiresPermission
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
@@ -40,6 +42,8 @@ class WifiStateProvider @Inject constructor(
     private val wifiManager: WifiManager,
 ) {
 
+
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     val wifiState: Flow<Wifi?> = callbackFlow<Network?> {
         var registeredCallback: ConnectivityManager.NetworkCallback? = null
 
@@ -105,6 +109,7 @@ class WifiStateProvider @Inject constructor(
              *  at android.os.Parcel.createExceptionOrNull (Parcel.java:2385)
              *  at android.net.ConnectivityManager.registerNetworkCallback (ConnectivityManager.java:4564)
              */
+            @SuppressLint("MissingPermission")
             connectivityManager.registerNetworkCallback(request, callback)
             registeredCallback = callback
         } catch (e: SecurityException) {
@@ -120,8 +125,10 @@ class WifiStateProvider @Inject constructor(
     }
         .map { network ->
             if (network == null) return@map null
+            @SuppressLint("MissingPermission")
             val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return@map null
 
+            @Suppress("DEPRECATION") // TODO Migrate to ConnectivityManager.NetworkCallback for API 29+
             val ssid = if (hasApiLevel(29) && context.hasPermission(Permission.ACCESS_FINE_LOCATION)) {
                 wifiManager.connectionInfo.ssid
             } else if (hasApiLevel(27) && context.hasPermission(Permission.ACCESS_COARSE_LOCATION)) {
@@ -130,22 +137,29 @@ class WifiStateProvider @Inject constructor(
                 wifiManager.connectionInfo.ssid
             }
 
+            @Suppress("DEPRECATION") // TODO Migrate to ConnectivityManager.NetworkCallback for API 29+
+            val wifiInfo = wifiManager.connectionInfo
+
             Wifi(
                 signalStrength = when {
                     hasApiLevel(30) -> {
+                        @SuppressLint("NewApi")
                         wifiManager.calculateSignalLevel(capabilities.signalStrength) / wifiManager.maxSignalLevel.toFloat()
                     }
 
                     hasApiLevel(29) -> {
+                        @Suppress("DEPRECATION")
+                        @SuppressLint("NewApi")
                         WifiManager.calculateSignalLevel(capabilities.signalStrength, 6) / 6f
                     }
 
                     else -> {
-                        WifiManager.calculateSignalLevel(wifiManager.connectionInfo.rssi, 6) / 6f
+                        @Suppress("DEPRECATION")
+                        WifiManager.calculateSignalLevel(wifiInfo.rssi, 6) / 6f
                     }
                 }.takeIf { it.isFinite() } ?: -1f,
                 ssid = ssid,
-                frequency = wifiManager.connectionInfo?.frequency,
+                frequency = wifiInfo.frequency,
             )
         }
         .distinctUntilChanged()

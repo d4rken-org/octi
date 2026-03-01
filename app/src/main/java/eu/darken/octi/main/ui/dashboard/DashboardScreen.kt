@@ -1210,7 +1210,6 @@ private fun ClipboardModuleItem(
             val clipText = when (clip.type) {
                 ClipboardInfo.Type.EMPTY -> stringResource(CommonR.string.general_empty_label)
                 ClipboardInfo.Type.SIMPLE_TEXT -> clip.data.utf8()
-                else -> clip.data.toString()
             }
             Text(
                 text = "\"$clipText\"",

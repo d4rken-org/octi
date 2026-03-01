@@ -73,6 +73,7 @@ private fun PackageInfo.getInstallerInfoApi30(packageManager: PackageManager): I
 
 private fun PackageInfo.getInstallerInfoLegacy(packageManager: PackageManager): InstallerInfo {
     val installingPkg = try {
+        @Suppress("DEPRECATION") // TODO Remove when minSdk >= 30
         packageManager.getInstallerPackageName(packageName)
     } catch (e: IllegalArgumentException) {
         log(WARN) { "OS race condition, package ($packageName) was uninstalled?: ${e.asLog()}" }

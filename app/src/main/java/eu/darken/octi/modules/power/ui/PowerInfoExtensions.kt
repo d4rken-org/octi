@@ -10,7 +10,7 @@ import androidx.compose.material.icons.twotone.Battery5Bar
 import androidx.compose.material.icons.twotone.Battery6Bar
 import androidx.compose.material.icons.twotone.BatteryChargingFull
 import androidx.compose.material.icons.twotone.BatteryFull
-import androidx.compose.material.icons.twotone.BatteryUnknown
+import androidx.compose.material.icons.automirrored.twotone.BatteryUnknown
 import androidx.compose.ui.graphics.vector.ImageVector
 import eu.darken.octi.modules.power.core.PowerInfo
 
@@ -25,5 +25,5 @@ val PowerInfo.batteryIcon: ImageVector
         battery.percent > 0.28f -> Icons.TwoTone.Battery2Bar
         battery.percent > 0.14f -> Icons.TwoTone.Battery1Bar
         battery.percent >= 0.0f -> Icons.TwoTone.Battery0Bar
-        else -> Icons.TwoTone.BatteryUnknown
+        else -> Icons.AutoMirrored.TwoTone.BatteryUnknown
     }
