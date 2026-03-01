@@ -36,6 +36,7 @@ fun SettingsBaseItem(
     iconSize: Dp = 24.dp,
     subtitle: String? = null,
     enabled: Boolean = true,
+    onDisabledClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
@@ -43,8 +44,8 @@ fun SettingsBaseItem(
         modifier = modifier
             .fillMaxWidth()
             .combinedClickable(
-                enabled = enabled,
-                onClick = onClick,
+                enabled = enabled || onDisabledClick != null,
+                onClick = if (enabled) onClick else onDisabledClick ?: onClick,
                 onLongClick = onLongClick,
             )
             .padding(horizontal = 16.dp, vertical = 16.dp),
