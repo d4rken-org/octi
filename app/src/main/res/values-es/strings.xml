@@ -38,15 +38,6 @@
     <string name="documentation_label">Documentación</string>
     <string name="help_translate_label">Traducción</string>
     <string name="help_translate_description">Ayuda a traducir esta aplicación a tu idioma favorito.</string>
-    <string name="ui_theme_mode_setting_label">Modo de tema</string>
-    <string name="ui_theme_mode_setting_explanation">El modo utilizado al tematizar la aplicación (ej. oscuro o claro).</string>
-    <string name="ui_theme_mode_dark_label">Oscuro</string>
-    <string name="ui_theme_mode_light_label">Claro</string>
-    <string name="ui_theme_mode_system_label">Sistema</string>
-    <string name="ui_theme_style_setting_label">Estilo de tema</string>
-    <string name="ui_theme_style_setting_explanation">El estilo de color usado al tematizar la aplicación.</string>
-    <string name="ui_theme_style_default_label">Por defecto</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Rastreador de problemas</string>
     <string name="issue_tracker_description">Un rastreador público de problemas para informes de errores y solicitudes de funciones.</string>
     <string name="discord_label">Discord</string>

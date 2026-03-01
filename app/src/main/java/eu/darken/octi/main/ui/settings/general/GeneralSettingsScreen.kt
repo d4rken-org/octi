@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.twotone.Contrast
 import androidx.compose.material.icons.twotone.DarkMode
 import androidx.compose.material.icons.twotone.NewReleases
+import androidx.compose.material.icons.twotone.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +29,8 @@ import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.common.settings.SettingsCategoryHeader
 import eu.darken.octi.common.settings.SettingsListPreferenceItem
 import eu.darken.octi.common.settings.SettingsSwitchItem
+import android.os.Build
+import eu.darken.octi.common.theming.ThemeColor
 import eu.darken.octi.common.theming.ThemeMode
 import eu.darken.octi.common.theming.ThemeStyle
 import eu.darken.octi.common.R as CommonR
@@ -44,6 +47,7 @@ fun GeneralSettingsScreenHost(vm: GeneralSettingsVM = hiltViewModel()) {
             onNavigateUp = { vm.navUp() },
             onThemeModeSelected = { mode -> vm.setThemeMode(mode) },
             onThemeStyleSelected = { style -> vm.setThemeStyle(style) },
+            onThemeColorSelected = { color -> vm.setThemeColor(color) },
             onUpdateCheckChanged = { enabled -> vm.setUpdateCheckEnabled(enabled) },
         )
     }
@@ -56,6 +60,7 @@ fun GeneralSettingsScreen(
     onNavigateUp: () -> Unit,
     onThemeModeSelected: (ThemeMode) -> Unit,
     onThemeStyleSelected: (ThemeStyle) -> Unit,
+    onThemeColorSelected: (ThemeColor) -> Unit,
     onUpdateCheckChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -114,6 +119,19 @@ fun GeneralSettingsScreen(
                     enabled = state.isPro,
                 )
             }
+            item {
+                val isColorPickerEnabled = state.isPro &&
+                    !(state.themeStyle == ThemeStyle.MATERIAL_YOU && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                SettingsListPreferenceItem(
+                    icon = Icons.TwoTone.Palette,
+                    title = stringResource(CommonR.string.ui_theme_color_setting_label),
+                    entries = ThemeColor.entries,
+                    selectedEntry = state.themeColor,
+                    onEntrySelected = onThemeColorSelected,
+                    entryLabel = { it.label.get(context) },
+                    enabled = isColorPickerEnabled,
+                )
+            }
         }
     }
 }
@@ -128,10 +146,12 @@ private fun GeneralSettingsScreenPreview() = PreviewWrapper {
             isUpdateCheckEnabled = true,
             themeMode = ThemeMode.SYSTEM,
             themeStyle = ThemeStyle.DEFAULT,
+            themeColor = ThemeColor.GREEN,
         ),
         onNavigateUp = {},
         onThemeModeSelected = {},
         onThemeStyleSelected = {},
+        onThemeColorSelected = {},
         onUpdateCheckChanged = {},
     )
 }

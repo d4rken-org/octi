@@ -38,15 +38,6 @@
     <string name="documentation_label">Tài liệu</string>
     <string name="help_translate_label">Dịch thuật</string>
     <string name="help_translate_description">Hãy giúp dịch ứng dụng này sang ngôn ngữ bạn yêu thích.</string>
-    <string name="ui_theme_mode_setting_label">Chế độ giao diện</string>
-    <string name="ui_theme_mode_setting_explanation">Chế độ được sử dụng khi áp dụng giao diện cho ứng dụng (ví dụ: tối hoặc sáng).</string>
-    <string name="ui_theme_mode_dark_label">Tối</string>
-    <string name="ui_theme_mode_light_label">Sáng</string>
-    <string name="ui_theme_mode_system_label">Hệ thống</string>
-    <string name="ui_theme_style_setting_label">Kiểu giao diện</string>
-    <string name="ui_theme_style_setting_explanation">Kiểu màu được dùng khi hiển thị giao diện ứng dụng.</string>
-    <string name="ui_theme_style_default_label">Mặc định</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Theo dõi vấn đề</string>
     <string name="issue_tracker_description">Một hệ thống theo dõi vấn đề công khai cho báo cáo lỗi &amp; yêu cầu tính năng.</string>
     <string name="discord_label">Discord</string>

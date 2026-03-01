@@ -28,4 +28,13 @@
     <plurals name="general_minutes_quantity_label">
         <item quantity="other">%1$d분</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">테마 모드</string>
+    <string name="ui_theme_mode_setting_explanation">앱 테마 적용 시 사용되는 모드 (예: 다크 또는 라이트).</string>
+    <string name="ui_theme_mode_dark_label">다크</string>
+    <string name="ui_theme_mode_light_label">라이트</string>
+    <string name="ui_theme_mode_system_label">시스템</string>
+    <string name="ui_theme_style_setting_label">테마 스타일</string>
+    <string name="ui_theme_style_setting_explanation">앱 테마 적용 시 사용되는 색상 스타일</string>
+    <string name="ui_theme_style_default_label">기본값</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

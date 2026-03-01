@@ -24,6 +24,7 @@
     <string name="debug_debuglog_size_compressed_label">Compressed size</string>
     <string name="debug_notification_channel_label">Debug notifications</string>
     <string name="debug_debuglog_file_label">Recorded log file</string>
+    <string name="debug_debuglog_recorded_file_label">Recorded file</string>
     <string name="debug_debuglog_record_action">Record debug log</string>
 
     <string name="onboarding_setupsync_title">Set up synchronization</string>

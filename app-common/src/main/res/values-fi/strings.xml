@@ -29,4 +29,13 @@
         <item quantity="one">%1$d minuutti</item>
         <item quantity="other">%1$d minuuttia</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Teematila</string>
+    <string name="ui_theme_mode_setting_explanation">Sovelluksen teemoituksessa käytetty tila (esim. tumma tai vaalea).</string>
+    <string name="ui_theme_mode_dark_label">Tumma</string>
+    <string name="ui_theme_mode_light_label">Vaalea</string>
+    <string name="ui_theme_mode_system_label">Järjestelmä</string>
+    <string name="ui_theme_style_setting_label">Teemaväri</string>
+    <string name="ui_theme_style_setting_explanation">Käytetty teemaväri, kun sovelluksessa on teema.</string>
+    <string name="ui_theme_style_default_label">Oletus</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

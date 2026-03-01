@@ -29,4 +29,13 @@
         <item quantity="one">%1$d perc</item>
         <item quantity="other">%1$d perc</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Témamód</string>
+    <string name="ui_theme_mode_setting_explanation">Az alkalmazás témázásánál használt mód (pl. sötét vagy világos).</string>
+    <string name="ui_theme_mode_dark_label">Sötét</string>
+    <string name="ui_theme_mode_light_label">Világos</string>
+    <string name="ui_theme_mode_system_label">Rendszer</string>
+    <string name="ui_theme_style_setting_label">Téma stílus</string>
+    <string name="ui_theme_style_setting_explanation">A témázásnál alkalmazott színstílus.</string>
+    <string name="ui_theme_style_default_label">Alapértelmezett</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

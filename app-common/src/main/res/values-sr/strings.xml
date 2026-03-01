@@ -30,4 +30,13 @@
         <item quantity="few">%1$d minuta</item>
         <item quantity="other">%1$d minuta</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Режим теме</string>
+    <string name="ui_theme_mode_setting_explanation">Режим који се користи за тему апликације (нпр. тамна или светла).</string>
+    <string name="ui_theme_mode_dark_label">Тамна</string>
+    <string name="ui_theme_mode_light_label">Светла</string>
+    <string name="ui_theme_mode_system_label">Систем</string>
+    <string name="ui_theme_style_setting_label">Стил теме</string>
+    <string name="ui_theme_style_setting_explanation">Боје које се користе за тему апликације.</string>
+    <string name="ui_theme_style_default_label">Подразумевано</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

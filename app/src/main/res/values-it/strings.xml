@@ -38,15 +38,6 @@
     <string name="documentation_label">Documentazione</string>
     <string name="help_translate_label">Traduzione</string>
     <string name="help_translate_description">Aiuta a tradurre questa app nella tua lingua preferita.</string>
-    <string name="ui_theme_mode_setting_label">Tema</string>
-    <string name="ui_theme_mode_setting_explanation">La modalità utilizzata per il tema dell\'app (es. scuro o chiaro).</string>
-    <string name="ui_theme_mode_dark_label">Notte</string>
-    <string name="ui_theme_mode_light_label">Giorno</string>
-    <string name="ui_theme_mode_system_label">Sistema</string>
-    <string name="ui_theme_style_setting_label">Stile del tema</string>
-    <string name="ui_theme_style_setting_explanation">Lo stile usato per il tema dell\'app.</string>
-    <string name="ui_theme_style_default_label">Predefinito</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Sistema di gestione dei problemi</string>
     <string name="issue_tracker_description">Un tracciatore pubblico di problemi per segnalazioni di bug e richieste di funzionalità.</string>
     <string name="discord_label">Discord</string>

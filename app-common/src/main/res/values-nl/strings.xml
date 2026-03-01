@@ -29,4 +29,13 @@
         <item quantity="one">%1$d minuut</item>
         <item quantity="other">%1$d minuten</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Thema-modus</string>
+    <string name="ui_theme_mode_setting_explanation">De modus die wordt gebruikt bij het thematiseren van de app (bijv. donker of licht).</string>
+    <string name="ui_theme_mode_dark_label">Donker</string>
+    <string name="ui_theme_mode_light_label">Licht</string>
+    <string name="ui_theme_mode_system_label">Systeem</string>
+    <string name="ui_theme_style_setting_label">Thema-stijl</string>
+    <string name="ui_theme_style_setting_explanation">De kleurstijl die wordt gebruikt bij het thematiseren van de app.</string>
+    <string name="ui_theme_style_default_label">Standaard</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

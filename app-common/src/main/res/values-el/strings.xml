@@ -29,4 +29,13 @@
         <item quantity="one">%1$d λεπτό</item>
         <item quantity="other">%1$d λεπτά</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Λειτουργία θέματος</string>
+    <string name="ui_theme_mode_setting_explanation">Η λειτουργία που χρησιμοποιείται κατά τη διαμόρφωση της εφαρμογής (π.χ. σκοτεινή ή φωτεινή).</string>
+    <string name="ui_theme_mode_dark_label">Σκοτεινό</string>
+    <string name="ui_theme_mode_light_label">Φωτεινό</string>
+    <string name="ui_theme_mode_system_label">Σύστημα</string>
+    <string name="ui_theme_style_setting_label">Στυλ θέματος</string>
+    <string name="ui_theme_style_setting_explanation">Το χρώμα που χρησιμοποιείται στη διαμόρφωση.</string>
+    <string name="ui_theme_style_default_label">Προκαθορισμένο</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

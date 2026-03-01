@@ -31,4 +31,13 @@
         <item quantity="many">%1$d minut</item>
         <item quantity="other">%1$d minut</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Tryb motywu</string>
+    <string name="ui_theme_mode_setting_explanation">Tryb używany podczas ustawiania motywu aplikacji (np. ciemny lub jasny).</string>
+    <string name="ui_theme_mode_dark_label">Ciemny</string>
+    <string name="ui_theme_mode_light_label">Jasny</string>
+    <string name="ui_theme_mode_system_label">Systemowy</string>
+    <string name="ui_theme_style_setting_label">Styl motywu</string>
+    <string name="ui_theme_style_setting_explanation">Styl kolorów używany podczas działania motywów aplikacji.</string>
+    <string name="ui_theme_style_default_label">Domyślny</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

@@ -7,13 +7,22 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.datastore.DataStoreValue
 import eu.darken.octi.common.datastore.createValue
+import eu.darken.octi.common.datastore.valueBlocking
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.permissions.Permission
+import eu.darken.octi.common.theming.ThemeColor
 import eu.darken.octi.common.theming.ThemeMode
+import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.common.theming.ThemeStyle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import eu.darken.octi.main.core.updater.UpdateChecker
 import eu.darken.octi.main.ui.dashboard.DashboardConfig
 import javax.inject.Inject
@@ -22,6 +31,7 @@ import javax.inject.Singleton
 @Singleton
 class GeneralSettings @Inject constructor(
     @ApplicationContext private val context: Context,
+    @AppScope private val appScope: CoroutineScope,
     moshi: Moshi,
     updateChecker: UpdateChecker,
 ) {
@@ -39,6 +49,17 @@ class GeneralSettings @Inject constructor(
 
     val themeMode = dataStore.createValue("core.ui.theme.mode", ThemeMode.SYSTEM, moshi)
     val themeStyle = dataStore.createValue("core.ui.theme.style", ThemeStyle.DEFAULT, moshi)
+    val themeColor = dataStore.createValue("core.ui.theme.color", ThemeColor.GREEN, moshi)
+
+    val themeState: StateFlow<ThemeState> = combine(
+        themeMode.flow, themeStyle.flow, themeColor.flow,
+    ) { mode, style, color ->
+        ThemeState(mode, style, color)
+    }.stateIn(
+        appScope,
+        SharingStarted.Eagerly,
+        ThemeState(themeMode.valueBlocking, themeStyle.valueBlocking, themeColor.valueBlocking),
+    )
 
     val dismissedPermissions: DataStoreValue<Set<Permission>> = dataStore.createValue(
         stringPreferencesKey("core.permission.dismissed"),

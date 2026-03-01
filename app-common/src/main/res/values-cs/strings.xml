@@ -31,4 +31,13 @@
         <item quantity="many">%1$d minut</item>
         <item quantity="other">%1$d minut</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Režim motivu</string>
+    <string name="ui_theme_mode_setting_explanation">Režim použitý v motivu aplikace (např. tmavý nebo světlý).</string>
+    <string name="ui_theme_mode_dark_label">Tmavý</string>
+    <string name="ui_theme_mode_light_label">Světlý</string>
+    <string name="ui_theme_mode_system_label">Systémový</string>
+    <string name="ui_theme_style_setting_label">Styl motivu</string>
+    <string name="ui_theme_style_setting_explanation">Barevný styl použitý při motivu aplikace.</string>
+    <string name="ui_theme_style_default_label">Výchozí</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

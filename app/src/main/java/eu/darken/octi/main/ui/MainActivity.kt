@@ -4,16 +4,10 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -25,7 +19,6 @@ import eu.darken.octi.common.navigation.LocalNavigationController
 import eu.darken.octi.common.navigation.NavigationController
 import eu.darken.octi.common.navigation.NavigationEntry
 import eu.darken.octi.common.theming.OctiTheme
-import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.common.uix.Activity2
 import javax.inject.Inject
 
@@ -44,21 +37,12 @@ class MainActivity : Activity2() {
         enableEdgeToEdge()
 
         setContent {
-            val themeState by vm.themeState.collectAsState(initial = ThemeState())
+            val themeState by vm.themeState.collectAsState()
 
             val backStack = rememberNavBackStack(vm.startDestination)
             navCtrl.setup(backStack)
 
             OctiTheme(state = themeState) {
-                val backgroundColor = MaterialTheme.colorScheme.background
-                val useDarkIcons = backgroundColor.luminance() > 0.5f
-                SideEffect {
-                    window.decorView.setBackgroundColor(backgroundColor.toArgb())
-                    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-                    insetsController.isAppearanceLightStatusBars = useDarkIcons
-                    insetsController.isAppearanceLightNavigationBars = useDarkIcons
-                }
-
                 CompositionLocalProvider(LocalNavigationController provides navCtrl) {
                     NavDisplay(
                         backStack = backStack,

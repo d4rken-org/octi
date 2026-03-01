@@ -28,4 +28,13 @@
     <plurals name="general_minutes_quantity_label">
         <item quantity="other">%1$d 分</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">テーマモード</string>
+    <string name="ui_theme_mode_setting_explanation">アプリのテーマ設定に使用されるモード (例: ダークまたはライト) です。</string>
+    <string name="ui_theme_mode_dark_label">ダーク</string>
+    <string name="ui_theme_mode_light_label">ライト</string>
+    <string name="ui_theme_mode_system_label">システム</string>
+    <string name="ui_theme_style_setting_label">テーマスタイル</string>
+    <string name="ui_theme_style_setting_explanation">アプリのテーマ設定時に使用されるカラースタイルです。</string>
+    <string name="ui_theme_style_default_label">デフォルト</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

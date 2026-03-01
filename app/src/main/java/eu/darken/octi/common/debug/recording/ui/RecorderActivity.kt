@@ -23,6 +23,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +37,6 @@ import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.theming.OctiTheme
-import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.common.uix.Activity2
 
 @AndroidEntryPoint
@@ -48,7 +48,8 @@ class RecorderActivity : Activity2() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            OctiTheme(state = ThemeState()) {
+            val themeState by vm.themeState.collectAsState()
+            OctiTheme(state = themeState) {
                 LaunchedEffect(Unit) {
                     vm.shareEvent.collect { startActivity(it) }
                 }
@@ -96,7 +97,7 @@ fun RecorderScreen(
                 .padding(16.dp),
         ) {
             Text(
-                text = "Recorded file",
+                text = stringResource(R.string.debug_debuglog_recorded_file_label),
                 style = MaterialTheme.typography.labelMedium,
             )
 

@@ -38,15 +38,6 @@
     <string name="documentation_label">Документация</string>
     <string name="help_translate_label">Перевод</string>
     <string name="help_translate_description">Помогите перевести это приложение на ваш любимый язык.</string>
-    <string name="ui_theme_mode_setting_label">Режим темы</string>
-    <string name="ui_theme_mode_setting_explanation">Режим, используемый при оформлении приложения (например, тёмный или светлый).</string>
-    <string name="ui_theme_mode_dark_label">Темная</string>
-    <string name="ui_theme_mode_light_label">Светлая</string>
-    <string name="ui_theme_mode_system_label">Системная</string>
-    <string name="ui_theme_style_setting_label">Стиль темы</string>
-    <string name="ui_theme_style_setting_explanation">Цветовой стиль, используемый при оформлении приложения.</string>
-    <string name="ui_theme_style_default_label">По умолчанию</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Трекер проблем</string>
     <string name="issue_tracker_description">Публичный трекер проблем для отчетов об ошибках и запросов функций.</string>
     <string name="discord_label">Discord</string>

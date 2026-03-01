@@ -5,6 +5,7 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.theming.ThemeColor
 import eu.darken.octi.common.theming.ThemeMode
 import eu.darken.octi.common.theming.ThemeStyle
 import eu.darken.octi.common.uix.ViewModel4
@@ -29,6 +30,7 @@ class GeneralSettingsVM @Inject constructor(
         val isUpdateCheckEnabled: Boolean,
         val themeMode: ThemeMode,
         val themeStyle: ThemeStyle,
+        val themeColor: ThemeColor,
     )
 
     val state = combine(
@@ -36,14 +38,18 @@ class GeneralSettingsVM @Inject constructor(
         flow { emit(updateChecker.isCheckSupported()) },
         generalSettings.isUpdateCheckEnabled.flow,
         generalSettings.themeMode.flow,
-        generalSettings.themeStyle.flow,
-    ) { upgrade, isUpdateCheckSupported, isUpdateCheckEnabled, themeMode, themeStyle ->
+        combine(
+            generalSettings.themeStyle.flow,
+            generalSettings.themeColor.flow,
+        ) { style, color -> style to color },
+    ) { upgrade, isUpdateCheckSupported, isUpdateCheckEnabled, themeMode, (themeStyle, themeColor) ->
         State(
             isPro = upgrade.isPro,
             isUpdateCheckSupported = isUpdateCheckSupported,
             isUpdateCheckEnabled = isUpdateCheckEnabled,
             themeMode = themeMode,
             themeStyle = themeStyle,
+            themeColor = themeColor,
         )
     }.shareLatest(scope = vmScope)
 
@@ -53,6 +59,10 @@ class GeneralSettingsVM @Inject constructor(
 
     fun setThemeStyle(style: ThemeStyle) = launch {
         generalSettings.themeStyle.value(style)
+    }
+
+    fun setThemeColor(color: ThemeColor) = launch {
+        generalSettings.themeColor.value(color)
     }
 
     fun setUpdateCheckEnabled(enabled: Boolean) = launch {
