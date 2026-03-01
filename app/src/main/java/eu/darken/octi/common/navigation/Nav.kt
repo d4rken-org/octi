@@ -65,5 +65,8 @@ object Nav {
 
         @Serializable
         data object Sync : Settings
+
+        @Serializable
+        data object ContactSupport : Settings
     }
 }

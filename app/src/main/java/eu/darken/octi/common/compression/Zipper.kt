@@ -1,8 +1,11 @@
 package eu.darken.octi.common.compression
 
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import java.io.File
+import java.io.IOException
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.FileInputStream
@@ -31,6 +34,20 @@ class Zipper {
 
         out.finish()
         out.close()
+    }
+
+    fun zipDirectory(sourceDir: File, outputZip: File) {
+        val files = sourceDir.listFiles()
+            ?.filter { it.isFile }
+            ?.map { it.absolutePath }
+            ?.toTypedArray() ?: return
+        val tmpZip = File(outputZip.parentFile, "${outputZip.name}.tmp")
+        zip(files, tmpZip.absolutePath)
+        if (!tmpZip.renameTo(outputZip)) {
+            log(TAG, ERROR) { "Failed to rename $tmpZip to $outputZip" }
+            tmpZip.delete()
+            throw IOException("Failed to finalize zip file: $outputZip")
+        }
     }
 
     companion object {
