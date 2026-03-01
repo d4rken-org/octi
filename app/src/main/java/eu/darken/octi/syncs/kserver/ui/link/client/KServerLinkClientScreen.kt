@@ -48,6 +48,8 @@ import com.journeyapps.barcodescanner.ScanOptions
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.syncs.kserver.R as KServerR
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
@@ -240,3 +242,39 @@ fun KServerLinkClientScreen(
 }
 
 private val TAG = logTag("Sync", "KServer", "Link", "Client", "Screen")
+
+@Preview2
+@Composable
+private fun KServerLinkClientScreenQRPreview() = PreviewWrapper {
+    KServerLinkClientScreen(
+        state = KServerLinkClientVM.State(linkOption = KServerLinkOption.QRCODE),
+        onNavigateUp = {},
+        onLinkOptionSelected = {},
+        onCodeEntered = {},
+        onStartCamera = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun KServerLinkClientScreenDirectPreview() = PreviewWrapper {
+    KServerLinkClientScreen(
+        state = KServerLinkClientVM.State(linkOption = KServerLinkOption.DIRECT),
+        onNavigateUp = {},
+        onLinkOptionSelected = {},
+        onCodeEntered = {},
+        onStartCamera = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun KServerLinkClientScreenBusyPreview() = PreviewWrapper {
+    KServerLinkClientScreen(
+        state = KServerLinkClientVM.State(isBusy = true),
+        onNavigateUp = {},
+        onLinkOptionSelected = {},
+        onCodeEntered = {},
+        onStartCamera = {},
+    )
+}

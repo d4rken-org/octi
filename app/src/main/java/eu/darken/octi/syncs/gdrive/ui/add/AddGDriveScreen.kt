@@ -29,6 +29,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.syncs.gdrive.R as GDriveR
@@ -117,4 +119,13 @@ fun AddGDriveScreen(
             }
         }
     }
+}
+
+@Preview2
+@Composable
+private fun AddGDriveScreenPreview() = PreviewWrapper {
+    AddGDriveScreen(
+        onNavigateUp = {},
+        onSignIn = {},
+    )
 }

@@ -52,11 +52,19 @@ import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.syncs.gdrive.R as GDriveR
 import eu.darken.octi.syncs.kserver.R as KServerR
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncConnectorState
+import eu.darken.octi.sync.core.encryption.PayloadEncryption
+import eu.darken.octi.syncs.kserver.core.KServer
+import eu.darken.octi.syncs.kserver.core.KServerConnector
+import okio.ByteString.Companion.encodeUtf8
+import java.time.Instant
 
 @Composable
 fun SyncListScreenHost(vm: SyncListVM = hiltViewModel()) {
@@ -692,4 +700,59 @@ private fun KServerActionsDialog(
             },
         )
     }
+}
+
+@Preview2
+@Composable
+private fun SyncListScreenPreview() = PreviewWrapper {
+    SyncListScreen(
+        state = SyncListVM.State(
+            connectors = listOf(
+                SyncListVM.ConnectorItem.KServer(
+                    connectorId = ConnectorId(type = "kserver", subtype = "default", account = "preview-account"),
+                    credentials = KServer.Credentials(
+                        serverAdress = KServer.Address("prod.kserver.octi.darken.eu"),
+                        accountId = KServer.Credentials.AccountId("preview-account-id"),
+                        devicePassword = KServer.Credentials.DevicePassword("preview-password"),
+                        encryptionKeyset = PayloadEncryption.KeySet(
+                            type = "AES256_GCM",
+                            key = "preview-key-data".encodeUtf8(),
+                        ),
+                    ),
+                    ourState = KServerConnector.State(
+                        activeActions = 0,
+                        lastActionAt = Instant.now().minusSeconds(300),
+                        devices = setOf(DeviceId("device-1"), DeviceId("device-2")),
+                    ),
+                    otherStates = emptyList(),
+                    isPaused = false,
+                    staleDevicesCount = 0,
+                ),
+            ),
+        ),
+        onNavigateUp = {},
+        onAddConnector = {},
+        onTogglePause = {},
+        onForceSync = {},
+        onViewDevices = {},
+        onLinkNewDevice = {},
+        onReset = {},
+        onDisconnect = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun SyncListScreenEmptyPreview() = PreviewWrapper {
+    SyncListScreen(
+        state = SyncListVM.State(),
+        onNavigateUp = {},
+        onAddConnector = {},
+        onTogglePause = {},
+        onForceSync = {},
+        onViewDevices = {},
+        onLinkNewDevice = {},
+        onReset = {},
+        onDisconnect = {},
+    )
 }

@@ -45,12 +45,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.sync.R as SyncR
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.StalenessUtil
+import java.time.Instant
 
 @Composable
 fun SyncDevicesScreenHost(
@@ -262,5 +265,67 @@ private fun DeviceActionsDialog(
                 Text(text = stringResource(CommonR.string.general_cancel_action))
             }
         },
+    )
+}
+
+@Preview2
+@Composable
+private fun SyncDevicesScreenPreview() = PreviewWrapper {
+    val deviceId1 = DeviceId("device-abc-123")
+    val deviceId2 = DeviceId("device-def-456")
+    SyncDevicesScreen(
+        state = SyncDevicesVM.State(
+            connectorType = "kserver",
+            items = listOf(
+                SyncDevicesVM.DeviceItem(
+                    deviceId = deviceId1,
+                    metaInfo = MetaInfo(
+                        deviceLabel = "Pixel 8",
+                        deviceId = deviceId1,
+                        octiVersionName = "0.14.0",
+                        octiGitSha = "abc1234",
+                        deviceManufacturer = "Google",
+                        deviceName = "Pixel 8",
+                        deviceType = MetaInfo.DeviceType.PHONE,
+                        deviceBootedAt = Instant.now(),
+                        androidVersionName = "14",
+                        androidApiLevel = 34,
+                        androidSecurityPatch = "2024-01-05",
+                    ),
+                    lastSeen = Instant.now(),
+                    error = null,
+                ),
+                SyncDevicesVM.DeviceItem(
+                    deviceId = deviceId2,
+                    metaInfo = MetaInfo(
+                        deviceLabel = "Galaxy Tab S9",
+                        deviceId = deviceId2,
+                        octiVersionName = "0.13.0",
+                        octiGitSha = "def5678",
+                        deviceManufacturer = "Samsung",
+                        deviceName = "Galaxy Tab S9",
+                        deviceType = MetaInfo.DeviceType.TABLET,
+                        deviceBootedAt = Instant.now(),
+                        androidVersionName = "14",
+                        androidApiLevel = 34,
+                        androidSecurityPatch = "2024-01-01",
+                    ),
+                    lastSeen = Instant.now().minusSeconds(86400 * 60),
+                    error = RuntimeException("Connection timed out"),
+                ),
+            ),
+        ),
+        onNavigateUp = {},
+        onDeleteDevice = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun SyncDevicesScreenEmptyPreview() = PreviewWrapper {
+    SyncDevicesScreen(
+        state = SyncDevicesVM.State(connectorType = "kserver"),
+        onNavigateUp = {},
+        onDeleteDevice = {},
     )
 }

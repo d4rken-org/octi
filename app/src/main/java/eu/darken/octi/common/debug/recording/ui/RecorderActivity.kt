@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.R as CommonR
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.theming.OctiTheme
@@ -177,4 +179,31 @@ fun RecorderScreen(
             }
         }
     }
+}
+
+@Preview2
+@Composable
+private fun RecorderScreenLoadingPreview() = PreviewWrapper {
+    RecorderScreen(
+        state = RecorderActivityVM.State(),
+        onShare = {},
+        onPrivacyPolicy = {},
+        onCancel = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun RecorderScreenPreview() = PreviewWrapper {
+    RecorderScreen(
+        state = RecorderActivityVM.State(
+            normalPath = "/storage/emulated/0/octi/debug-log.txt",
+            normalSize = 524288L,
+            compressedSize = 131072L,
+            loading = false,
+        ),
+        onShare = {},
+        onPrivacyPolicy = {},
+        onCancel = {},
+    )
 }

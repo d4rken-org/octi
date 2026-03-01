@@ -66,8 +66,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.viewinterop.AndroidView
 import dagger.hilt.android.AndroidEntryPoint
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.R
 import eu.darken.octi.common.theming.OctiTheme
 import eu.darken.octi.common.theming.ThemeState
@@ -505,37 +508,86 @@ private fun WidgetPreview(
 
     // Use RemoteViews for accurate preview — matches actual widget rendering
     Card(shape = RoundedCornerShape(16.dp)) {
-        AndroidView(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(previewBg))
-                .padding(8.dp),
-            factory = { ctx ->
-                val row = RemoteViews(ctx.packageName, R.layout.module_power_widget_row)
-                row.apply {
-                    val name = "Pixel 8"
-                    val label = SpannableStringBuilder().apply {
-                        append(name)
-                        setSpan(StyleSpan(Typeface.BOLD), 0, name.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        append(" \u00b7 5 min ago")
+        if (LocalInspectionMode.current) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(previewBg))
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "Widget Preview",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (colors != null) Color(colors.onContainer) else MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        } else {
+            AndroidView(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(previewBg))
+                    .padding(8.dp),
+                factory = { ctx ->
+                    val row = RemoteViews(ctx.packageName, R.layout.module_power_widget_row)
+                    row.apply {
+                        val name = "Pixel 8"
+                        val label = SpannableStringBuilder().apply {
+                            append(name)
+                            setSpan(
+                                StyleSpan(Typeface.BOLD),
+                                0,
+                                name.length,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+                            )
+                            append(" \u00b7 5 min ago")
+                        }
+                        setTextViewText(R.id.device_label, label)
+                        setTextViewText(R.id.charge_percent, "75%")
+                        setProgressBar(R.id.battery_progressbar, 100, 75, false)
                     }
-                    setTextViewText(R.id.device_label, label)
-                    setTextViewText(R.id.charge_percent, "75%")
-                    setProgressBar(R.id.battery_progressbar, 100, 75, false)
-                }
-                row.apply(ctx, android.widget.FrameLayout(ctx))
-            },
-            update = { view ->
-                if (colors != null) {
-                    view.findViewById<TextView>(R.id.device_label)?.setTextColor(colors.icon)
-                    view.findViewById<ImageView>(R.id.battery_icon)?.setColorFilter(colors.icon)
-                    view.findViewById<TextView>(R.id.charge_percent)?.setTextColor(colors.onContainer)
-                    view.findViewById<ProgressBar>(R.id.battery_progressbar)?.apply {
-                        progressTintList = android.content.res.ColorStateList.valueOf(colors.barFill)
-                        progressBackgroundTintList = android.content.res.ColorStateList.valueOf(colors.barTrack)
+                    row.apply(ctx, android.widget.FrameLayout(ctx))
+                },
+                update = { view ->
+                    if (colors != null) {
+                        view.findViewById<TextView>(R.id.device_label)?.setTextColor(colors.icon)
+                        view.findViewById<ImageView>(R.id.battery_icon)?.setColorFilter(colors.icon)
+                        view.findViewById<TextView>(R.id.charge_percent)?.setTextColor(colors.onContainer)
+                        view.findViewById<ProgressBar>(R.id.battery_progressbar)?.apply {
+                            progressTintList =
+                                android.content.res.ColorStateList.valueOf(colors.barFill)
+                            progressBackgroundTintList =
+                                android.content.res.ColorStateList.valueOf(colors.barTrack)
+                        }
                     }
-                }
-            },
-        )
+                },
+            )
+        }
     }
+}
+
+@Preview2
+@Composable
+private fun WidgetConfigScreenPreview() = PreviewWrapper {
+    WidgetConfigScreen(
+        initialMode = null,
+        initialPresetName = null,
+        initialBgColor = null,
+        initialAccentColor = null,
+        onClose = {},
+        onApply = { _, _, _, _ -> },
+    )
+}
+
+@Preview2
+@Composable
+private fun WidgetConfigScreenCustomPreview() = PreviewWrapper {
+    WidgetConfigScreen(
+        initialMode = WidgetTheme.MODE_CUSTOM,
+        initialPresetName = WidgetTheme.BLUE.name,
+        initialBgColor = WidgetTheme.BLUE.presetBg,
+        initialAccentColor = WidgetTheme.BLUE.presetAccent,
+        onClose = {},
+        onApply = { _, _, _, _ -> },
+    )
 }

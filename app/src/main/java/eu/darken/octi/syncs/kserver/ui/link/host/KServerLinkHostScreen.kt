@@ -47,6 +47,8 @@ import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.syncs.kserver.R as KServerR
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
@@ -234,4 +236,32 @@ fun KServerLinkHostScreen(
             }
         }
     }
+}
+
+@Preview2
+@Composable
+private fun KServerLinkHostScreenQRPreview() = PreviewWrapper {
+    KServerLinkHostScreen(
+        state = KServerLinkHostVM.State(
+            linkOption = KServerLinkOption.QRCODE,
+            encodedLinkCode = "octi://link/abc123def456",
+        ),
+        onNavigateUp = {},
+        onLinkOptionSelected = {},
+        onShareLinkCode = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun KServerLinkHostScreenDirectPreview() = PreviewWrapper {
+    KServerLinkHostScreen(
+        state = KServerLinkHostVM.State(
+            linkOption = KServerLinkOption.DIRECT,
+            encodedLinkCode = "octi://link/abc123def456",
+        ),
+        onNavigateUp = {},
+        onLinkOptionSelected = {},
+        onShareLinkCode = {},
+    )
 }

@@ -39,12 +39,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import eu.darken.octi.R
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.apps.R as AppsR
+import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.core.AppsSortMode
 import eu.darken.octi.modules.apps.core.installerIconRes
+import java.time.Instant
 
 @Composable
 fun AppsListScreenHost(
@@ -222,5 +226,63 @@ private fun SortDialog(
                 Text(stringResource(android.R.string.cancel))
             }
         },
+    )
+}
+
+@Preview2
+@Composable
+private fun AppsListScreenPreview() = PreviewWrapper {
+    AppsListScreen(
+        state = AppsListVM.State(
+            deviceLabel = "Pixel 8",
+            items = listOf(
+                AppsListVM.PkgItem(
+                    pkg = AppsInfo.Pkg(
+                        packageName = "com.google.android.apps.maps",
+                        label = "Google Maps",
+                        versionCode = 123456,
+                        versionName = "11.98.0",
+                        installedAt = Instant.now(),
+                        installerPkg = "com.android.vending",
+                    ),
+                    onClick = {},
+                ),
+                AppsListVM.PkgItem(
+                    pkg = AppsInfo.Pkg(
+                        packageName = "org.mozilla.firefox",
+                        label = "Firefox",
+                        versionCode = 2024010,
+                        versionName = "122.0",
+                        installedAt = Instant.now(),
+                        installerPkg = "com.android.vending",
+                    ),
+                    onClick = {},
+                ),
+                AppsListVM.PkgItem(
+                    pkg = AppsInfo.Pkg(
+                        packageName = "org.fdroid.fdroid",
+                        label = "F-Droid",
+                        versionCode = 1019,
+                        versionName = "1.19.0",
+                        installedAt = Instant.now(),
+                        installerPkg = null,
+                    ),
+                    onClick = {},
+                ),
+            ),
+            sortMode = AppsSortMode.NAME,
+        ),
+        onNavigateUp = {},
+        onSort = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun AppsListScreenEmptyPreview() = PreviewWrapper {
+    AppsListScreen(
+        state = AppsListVM.State(deviceLabel = "Pixel 8"),
+        onNavigateUp = {},
+        onSort = {},
     )
 }
