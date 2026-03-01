@@ -2,26 +2,25 @@ package eu.darken.octi.common.datastore
 
 import androidx.datastore.preferences.core.*
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import testhelpers.BaseTest
 import java.io.File
 
 class DataStoreExtensionsTest : BaseTest() {
 
-    private val testFile = File(IO_TEST_BASEDIR, DataStoreExtensionsTest::class.java.simpleName + ".preferences_pb")
+    @TempDir
+    lateinit var tempDir: File
+
     private fun createDataStore(scope: TestScope) = PreferenceDataStoreFactory.create(
         scope = scope,
-        produceFile = { testFile },
+        produceFile = { File(tempDir, "test.preferences_pb") },
     )
-
-    @AfterEach
-    fun tearDown() {
-        testFile.delete()
-    }
 
     @Test
     fun `reading and writing strings`() = runTest {
@@ -204,6 +203,100 @@ class DataStoreExtensionsTest : BaseTest() {
             flow.first() shouldBe 3.6f
             testStore.data.first()[floatPreferencesKey(keyName)] shouldBe null
         }
+    }
+
+    @Test
+    fun `concurrent updates are atomic`() = runTest {
+        val testStore = createDataStore(this)
+
+        val dsv = testStore.createValue(
+            key = "counter",
+            defaultValue = 0
+        )
+
+        val iterations = 100
+        coroutineScope {
+            val jobs = (1..iterations).map {
+                async {
+                    dsv.update { current -> current + 1 }
+                }
+            }
+            jobs.forEach { it.await() }
+        }
+
+        dsv.value() shouldBe iterations
+    }
+
+    @Test
+    fun `empty string vs null are distinct`() = runTest {
+        val testStore = createDataStore(this)
+
+        val dsv = testStore.createValue<String?>(
+            key = "testKey",
+            defaultValue = null
+        )
+
+        dsv.value() shouldBe null
+
+        dsv.value("")
+        dsv.value() shouldBe ""
+        testStore.data.first()[stringPreferencesKey("testKey")] shouldBe ""
+
+        dsv.value(null)
+        dsv.value() shouldBe null
+        testStore.data.first()[stringPreferencesKey("testKey")] shouldBe null
+    }
+
+    @Test
+    fun `multiple DataStoreValue instances for same key are consistent`() = runTest {
+        val testStore = createDataStore(this)
+
+        val dsv1 = testStore.createValue<String?>(
+            key = "sharedKey",
+            defaultValue = "default"
+        )
+        val dsv2 = testStore.createValue<String?>(
+            key = "sharedKey",
+            defaultValue = "default"
+        )
+
+        dsv1.update { "written-by-1" }
+        dsv2.value() shouldBe "written-by-1"
+
+        dsv2.update { "written-by-2" }
+        dsv1.value() shouldBe "written-by-2"
+    }
+
+    @Test
+    fun `update returning null on non-nullable type falls back to default`() = runTest {
+        val testStore = createDataStore(this)
+
+        val dsv = testStore.createValue(
+            key = "testKey",
+            defaultValue = true
+        )
+
+        dsv.value() shouldBe true
+
+        @Suppress("UNCHECKED_CAST")
+        val result = dsv.update { null }
+        result.new shouldBe true
+    }
+
+    @Test
+    fun `rapid sequential updates preserve final state`() = runTest {
+        val testStore = createDataStore(this)
+
+        val dsv = testStore.createValue(
+            key = "testKey",
+            defaultValue = 0
+        )
+
+        for (i in 1..50) {
+            dsv.update { i }
+        }
+
+        dsv.value() shouldBe 50
     }
 
 }

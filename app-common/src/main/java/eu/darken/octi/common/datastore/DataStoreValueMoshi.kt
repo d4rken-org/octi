@@ -3,17 +3,40 @@ package eu.darken.octi.common.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.JsonEncodingException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
+
+@PublishedApi
+internal val TAG = logTag("DataStore", "Moshi")
 
 inline fun <reified T> moshiReader(
     moshi: Moshi,
     defaultValue: T,
+    onErrorFallbackToDefault: Boolean = false,
 ): (Any?) -> T {
     val adapter = moshi.adapter(T::class.java)
     return { rawValue ->
         rawValue as String?
-        rawValue?.let { adapter.fromJson(it) } ?: defaultValue
+        if (rawValue == null) {
+            defaultValue
+        } else if (onErrorFallbackToDefault) {
+            try {
+                adapter.fromJson(rawValue) ?: defaultValue
+            } catch (e: JsonDataException) {
+                log(TAG, WARN) { "Failed to deserialize ${T::class.simpleName}, falling back to default: ${e.message}" }
+                defaultValue
+            } catch (e: JsonEncodingException) {
+                log(TAG, WARN) { "Malformed JSON for ${T::class.simpleName}, falling back to default: ${e.message}" }
+                defaultValue
+            }
+        } else {
+            adapter.fromJson(rawValue) ?: defaultValue
+        }
     }
 }
 
@@ -30,10 +53,11 @@ inline fun <reified T : Any?> DataStore<Preferences>.createValue(
     key: String,
     defaultValue: T = null as T,
     moshi: Moshi,
+    onErrorFallbackToDefault: Boolean = false,
 ) = DataStoreValue(
     dataStore = this,
     key = stringPreferencesKey(key),
-    reader = moshiReader(moshi, defaultValue),
+    reader = moshiReader(moshi, defaultValue, onErrorFallbackToDefault),
     writer = moshiWriter(moshi),
 )
 
