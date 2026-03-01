@@ -321,6 +321,7 @@ class DashboardVM @Inject constructor(
     ) { now, byDevice, missingPermissions, _, alerts, _ ->
         byDevice.devices
             .mapNotNull { (deviceId, moduleDatas) ->
+                @Suppress("UNCHECKED_CAST")
                 val metaModule = moduleDatas.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
                 if (metaModule == null) {
                     log(TAG, WARN) { "Missing meta module for $deviceId" }

@@ -37,7 +37,7 @@ object StalenessUtil {
             }
 
             daysSinceLastSync < 365 -> {
-                val months = (daysSinceLastSync / 30).toInt()
+                val months = daysSinceLastSync / 30
                 context.resources.getQuantityString(
                     R.plurals.sync_stale_period_months,
                     months,
@@ -46,7 +46,7 @@ object StalenessUtil {
             }
 
             else -> {
-                val years = (daysSinceLastSync / 365).toInt()
+                val years = daysSinceLastSync / 365
                 context.resources.getQuantityString(
                     R.plurals.sync_stale_period_years,
                     years,

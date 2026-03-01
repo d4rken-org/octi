@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION") // TODO Migrate to Credential Manager
+
 package eu.darken.octi.syncs.gdrive.ui.add
 
 import androidx.activity.result.ActivityResult

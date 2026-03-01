@@ -213,8 +213,8 @@ private fun WidgetConfigScreen(
     // Initialize preset colors if coming from a preset (runs once)
     LaunchedEffect(Unit) {
         if (isInitiallyPreset && bgColor == null) {
-            bgColor = initialTheme?.presetBg
-            accentColor = initialTheme?.presetAccent
+            bgColor = initialTheme.presetBg
+            accentColor = initialTheme.presetAccent
         }
     }
 

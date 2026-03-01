@@ -1,4 +1,4 @@
-import com.android.build.gradle.BaseExtension
+import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
@@ -33,13 +33,10 @@ private fun DependencyHandler.kspAndroidTest(dependencyNotation: Any): Dependenc
     add("kspAndroidTest", dependencyNotation)
 
 fun Project.setupModule() {
-    extensions.configure<BaseExtension> {
-        compileOptions {
-            isCoreLibraryDesugaringEnabled = true
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
-        }
-    }
+    val android = extensions.getByName("android") as CommonExtension
+    android.compileOptions.isCoreLibraryDesugaringEnabled = true
+    android.compileOptions.sourceCompatibility = JavaVersion.VERSION_17
+    android.compileOptions.targetCompatibility = JavaVersion.VERSION_17
     extensions.configure<KotlinAndroidProjectExtension> {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)

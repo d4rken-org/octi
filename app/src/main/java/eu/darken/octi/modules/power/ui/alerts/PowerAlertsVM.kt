@@ -60,10 +60,15 @@ class PowerAlertsVM @Inject constructor(
                     return@combine State()
                 }
 
+                @Suppress("UNCHECKED_CAST")
+                val lowAlert = alerts.find { it.rule is BatteryLowAlertRule } as PowerAlert<BatteryLowAlertRule>?
+                @Suppress("UNCHECKED_CAST")
+                val highAlert = alerts.find { it.rule is BatteryHighAlertRule } as PowerAlert<BatteryHighAlertRule>?
+
                 State(
                     deviceLabel = metaData.data.deviceLabel ?: metaData.data.deviceName,
-                    batteryLowAlert = alerts.find { it.rule is BatteryLowAlertRule } as PowerAlert<BatteryLowAlertRule>?,
-                    batteryHighAlert = alerts.find { it.rule is BatteryHighAlertRule } as PowerAlert<BatteryHighAlertRule>?,
+                    batteryLowAlert = lowAlert,
+                    batteryHighAlert = highAlert,
                 )
             }
         }
