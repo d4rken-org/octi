@@ -20,6 +20,7 @@ import eu.darken.octi.common.flow.onError
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.uix.ViewModel4
+import eu.darken.octi.main.core.GeneralSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -34,7 +35,10 @@ class RecorderActivityVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
     private val webpageTool: WebpageTool,
+    generalSettings: GeneralSettings,
 ) : ViewModel4(dispatcherProvider) {
+
+    val themeState = generalSettings.themeState
 
     private val recordedPath = handle.get<String>(RecorderActivity.RECORD_PATH)!!
     private val pathCache = MutableStateFlow(recordedPath)

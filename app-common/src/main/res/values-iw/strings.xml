@@ -31,4 +31,13 @@
         <item quantity="many">%1$d דקות</item>
         <item quantity="other">%1$d דקות</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">עיצוב</string>
+    <string name="ui_theme_mode_setting_explanation">המצב המשמש בעת עיצוב האפליקציה (למשל, כהה או בהיר).</string>
+    <string name="ui_theme_mode_dark_label">כהה</string>
+    <string name="ui_theme_mode_light_label">בהיר</string>
+    <string name="ui_theme_mode_system_label">מערכת</string>
+    <string name="ui_theme_style_setting_label">סגנון עיצוב</string>
+    <string name="ui_theme_style_setting_explanation">הסגנון המשמש לעיצוב האפליקציה.</string>
+    <string name="ui_theme_style_default_label">ברירת מחדל</string>
+    <string name="ui_theme_style_materialyou_label">Material you</string>
 </resources>

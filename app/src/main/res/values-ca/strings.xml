@@ -38,15 +38,6 @@
     <string name="documentation_label">Documentació</string>
     <string name="help_translate_label">Traducció</string>
     <string name="help_translate_description">Ajudeu a traduir aquesta aplicació al vostre idioma preferit.</string>
-    <string name="ui_theme_mode_setting_label">Mode del tema</string>
-    <string name="ui_theme_mode_setting_explanation">El mode utilitzat en la temàtica de l\'aplicació (p. ex. fosc o clar).</string>
-    <string name="ui_theme_mode_dark_label">Fosc</string>
-    <string name="ui_theme_mode_light_label">Clar</string>
-    <string name="ui_theme_mode_system_label">Sistema</string>
-    <string name="ui_theme_style_setting_label">Estil del tema</string>
-    <string name="ui_theme_style_setting_explanation">L\'estil de color utilitzat en la temàtica de l\'aplicació.</string>
-    <string name="ui_theme_style_default_label">Per defecte</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Rastrejador d\'incidències</string>
     <string name="issue_tracker_description">Un rastrejador públic d\'incidències per als informes d\'errors i les sol·licituds de funcions.</string>
     <string name="discord_label">Discord</string>

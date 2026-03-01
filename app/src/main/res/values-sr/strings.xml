@@ -38,15 +38,6 @@
     <string name="documentation_label">Документација</string>
     <string name="help_translate_label">Превод</string>
     <string name="help_translate_description">Помози у превођењу ове апликације на свој омиљени језик.</string>
-    <string name="ui_theme_mode_setting_label">Режим теме</string>
-    <string name="ui_theme_mode_setting_explanation">Режим који се користи за тему апликације (нпр. тамна или светла).</string>
-    <string name="ui_theme_mode_dark_label">Тамна</string>
-    <string name="ui_theme_mode_light_label">Светла</string>
-    <string name="ui_theme_mode_system_label">Систем</string>
-    <string name="ui_theme_style_setting_label">Стил теме</string>
-    <string name="ui_theme_style_setting_explanation">Боје које се користе за тему апликације.</string>
-    <string name="ui_theme_style_default_label">Подразумевано</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Праћење проблема</string>
     <string name="issue_tracker_description">Јавни трагач проблема за пријаве грешака и захтеве за нове функције.</string>
     <string name="discord_label">Discord</string>

@@ -38,15 +38,6 @@
     <string name="documentation_label">תיעוד</string>
     <string name="help_translate_label">תרגום</string>
     <string name="help_translate_description">עזור לתרגם את האפליקציה הזו לשפה המועדפת עליך.</string>
-    <string name="ui_theme_mode_setting_label">עיצוב</string>
-    <string name="ui_theme_mode_setting_explanation">המצב המשמש בעת עיצוב האפליקציה (למשל, כהה או בהיר).</string>
-    <string name="ui_theme_mode_dark_label">כהה</string>
-    <string name="ui_theme_mode_light_label">בהיר</string>
-    <string name="ui_theme_mode_system_label">מערכת</string>
-    <string name="ui_theme_style_setting_label">סגנון עיצוב</string>
-    <string name="ui_theme_style_setting_explanation">הסגנון המשמש לעיצוב האפליקציה.</string>
-    <string name="ui_theme_style_default_label">ברירת מחדל</string>
-    <string name="ui_theme_style_materialyou_label">Material you</string>
     <string name="issue_tracker_label">מעקב תקלות</string>
     <string name="issue_tracker_description">מעקב אחר בעיות ציבוריות לדיווחי באגים ובקשות לתכונות.</string>
     <string name="discord_label">דיסקורד</string>

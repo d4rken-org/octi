@@ -31,4 +31,13 @@
         <item quantity="many">%1$d мин.</item>
         <item quantity="other">%1$d мин.</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Режим темы</string>
+    <string name="ui_theme_mode_setting_explanation">Режим, используемый при оформлении приложения (например, тёмный или светлый).</string>
+    <string name="ui_theme_mode_dark_label">Темная</string>
+    <string name="ui_theme_mode_light_label">Светлая</string>
+    <string name="ui_theme_mode_system_label">Системная</string>
+    <string name="ui_theme_style_setting_label">Стиль темы</string>
+    <string name="ui_theme_style_setting_explanation">Цветовой стиль, используемый при оформлении приложения.</string>
+    <string name="ui_theme_style_default_label">По умолчанию</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

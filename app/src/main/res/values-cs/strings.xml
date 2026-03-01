@@ -38,15 +38,6 @@
     <string name="documentation_label">Dokumentace</string>
     <string name="help_translate_label">Překlad</string>
     <string name="help_translate_description">Pomozte přeložit tuto aplikaci do svého oblíbeného jazyka.</string>
-    <string name="ui_theme_mode_setting_label">Režim motivu</string>
-    <string name="ui_theme_mode_setting_explanation">Režim použitý v motivu aplikace (např. tmavý nebo světlý).</string>
-    <string name="ui_theme_mode_dark_label">Tmavý</string>
-    <string name="ui_theme_mode_light_label">Světlý</string>
-    <string name="ui_theme_mode_system_label">Systémový</string>
-    <string name="ui_theme_style_setting_label">Styl motivu</string>
-    <string name="ui_theme_style_setting_explanation">Barevný styl použitý při motivu aplikace.</string>
-    <string name="ui_theme_style_default_label">Výchozí</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Sledování problémů</string>
     <string name="issue_tracker_description">Veřejný systém pro sledování chyb a požadavků na funkce.</string>
     <string name="discord_label">Discord</string>

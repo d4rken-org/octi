@@ -38,15 +38,6 @@
     <string name="documentation_label">التوثيق</string>
     <string name="help_translate_label">الترجمة</string>
     <string name="help_translate_description">ساعد في ترجمة هذا التطبيق إلى لغتك المفضلة.</string>
-    <string name="ui_theme_mode_setting_label">وضع السمة</string>
-    <string name="ui_theme_mode_setting_explanation">الوضع المستخدم عند تطبيق سمة التطبيق (مثل الداكن أو الفاتح).</string>
-    <string name="ui_theme_mode_dark_label">داكن</string>
-    <string name="ui_theme_mode_light_label">فاتح</string>
-    <string name="ui_theme_mode_system_label">النظام</string>
-    <string name="ui_theme_style_setting_label">نمط السمة</string>
-    <string name="ui_theme_style_setting_explanation">نمط الألوان المستخدم عند تطبيق سمة التطبيق.</string>
-    <string name="ui_theme_style_default_label">الافتراضي</string>
-    <string name="ui_theme_style_materialyou_label">ماتيريال يو</string>
     <string name="issue_tracker_label">متتبع المشكلات</string>
     <string name="issue_tracker_description">متتبع مشكلات عام لتقارير الأخطاء وطلبات الميزات.</string>
     <string name="discord_label">ديسكورد</string>

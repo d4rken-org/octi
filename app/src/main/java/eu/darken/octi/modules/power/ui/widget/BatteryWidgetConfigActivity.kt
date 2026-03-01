@@ -14,7 +14,6 @@ import android.widget.RemoteViews
 import android.widget.TextView
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.view.WindowCompat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -51,7 +50,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -60,7 +60,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -68,18 +67,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.theming.OctiTheme
-import eu.darken.octi.common.theming.ThemeState
+import eu.darken.octi.main.core.GeneralSettings
+import javax.inject.Inject
 import eu.darken.octi.modules.power.R as PowerR
 
+@AndroidEntryPoint
 class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
+
+    @Inject lateinit var generalSettings: GeneralSettings
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setResult(RESULT_CANCELED)
 
         appWidgetId = intent?.extras?.getInt(
@@ -103,16 +107,8 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
         } else null
 
         setContent {
-            OctiTheme(state = ThemeState()) {
-                val backgroundColor = MaterialTheme.colorScheme.background
-                val useDarkIcons = backgroundColor.luminance() > 0.5f
-                SideEffect {
-                    window.decorView.setBackgroundColor(backgroundColor.toArgb())
-                    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-                    insetsController.isAppearanceLightStatusBars = useDarkIcons
-                    insetsController.isAppearanceLightNavigationBars = useDarkIcons
-                }
-
+            val themeState by generalSettings.themeState.collectAsState()
+            OctiTheme(state = themeState) {
                 WidgetConfigScreen(
                     initialMode = initialMode,
                     initialPresetName = initialPreset,
@@ -144,8 +140,8 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
         } else {
             options.putString(WidgetTheme.KEY_THEME_MODE, WidgetTheme.MODE_CUSTOM)
             options.putString(WidgetTheme.KEY_THEME_PRESET, presetName ?: "")
-            val bg = bgColor ?: return
-            val accent = accentColor ?: return
+            val bg = bgColor ?: run { finish(); return }
+            val accent = accentColor ?: run { finish(); return }
             options.putInt(WidgetTheme.KEY_CUSTOM_BG, bg)
             options.putInt(WidgetTheme.KEY_CUSTOM_ACCENT, accent)
         }
@@ -209,10 +205,12 @@ private fun WidgetConfigScreen(
     var bgHex by rememberSaveable { mutableStateOf(initialBgColor?.let { String.format("%06X", it and 0xFFFFFF) } ?: "") }
     var accentHex by rememberSaveable { mutableStateOf(initialAccentColor?.let { String.format("%06X", it and 0xFFFFFF) } ?: "") }
 
-    // Initialize preset colors if coming from a preset
-    if (isInitiallyPreset && bgColor == null) {
-        bgColor = initialTheme?.presetBg
-        accentColor = initialTheme?.presetAccent
+    // Initialize preset colors if coming from a preset (runs once)
+    LaunchedEffect(Unit) {
+        if (isInitiallyPreset && bgColor == null) {
+            bgColor = initialTheme?.presetBg
+            accentColor = initialTheme?.presetAccent
+        }
     }
 
     val isMaterialYou = !isCustomMode && selectedPreset == WidgetTheme.MATERIAL_YOU
@@ -491,9 +489,17 @@ private fun WidgetPreview(
         else -> return
     }
 
-    val colors = if (!isMaterialYou && bgColor != null && accentColor != null) {
-        WidgetTheme.deriveColors(bgColor, accentColor)
-    } else null
+    val colors = when {
+        isMaterialYou -> WidgetTheme.Colors(
+            containerBg = previewBg,
+            barFill = colorResource(R.color.widgetBarFill).toArgb(),
+            barTrack = colorResource(R.color.widgetBarTrack).toArgb(),
+            icon = colorResource(R.color.widgetBarIcon).toArgb(),
+            onContainer = colorResource(R.color.widgetOnContainer).toArgb(),
+        )
+        bgColor != null && accentColor != null -> WidgetTheme.deriveColors(bgColor, accentColor)
+        else -> null
+    }
 
     // Use RemoteViews for accurate preview — matches actual widget rendering
     Card(shape = RoundedCornerShape(16.dp)) {

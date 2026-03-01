@@ -29,4 +29,13 @@
         <item quantity="one">%1$d minuto</item>
         <item quantity="other">%1$d minutos</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Modo do tema</string>
+    <string name="ui_theme_mode_setting_explanation">O modo usado ao aplicar temas no app (ex.: escuro ou claro).</string>
+    <string name="ui_theme_mode_dark_label">Escuro</string>
+    <string name="ui_theme_mode_light_label">Claro</string>
+    <string name="ui_theme_mode_system_label">Sistema</string>
+    <string name="ui_theme_style_setting_label">Estilo do tema</string>
+    <string name="ui_theme_style_setting_explanation">O estilo de cor usado ao aplicar temas no app.</string>
+    <string name="ui_theme_style_default_label">Padrão</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

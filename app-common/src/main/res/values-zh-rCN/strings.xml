@@ -28,4 +28,13 @@
     <plurals name="general_minutes_quantity_label">
         <item quantity="other">%1$d 分钟</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">主题模式</string>
+    <string name="ui_theme_mode_setting_explanation">应用主题使用的模式（例如深色或浅色）。</string>
+    <string name="ui_theme_mode_dark_label">黑</string>
+    <string name="ui_theme_mode_light_label">白</string>
+    <string name="ui_theme_mode_system_label">系统</string>
+    <string name="ui_theme_style_setting_label">主题样式</string>
+    <string name="ui_theme_style_setting_explanation">应用程序主题化时使用的颜色样式。</string>
+    <string name="ui_theme_style_default_label">默认</string>
+    <string name="ui_theme_style_materialyou_label">动态取色</string>
 </resources>

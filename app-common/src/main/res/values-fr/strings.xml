@@ -29,4 +29,13 @@
         <item quantity="one">%1$d minute</item>
         <item quantity="other">%1$d minutes</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Mode du thème</string>
+    <string name="ui_theme_mode_setting_explanation">Le mode de thème utilisé par l’appli (p. ex. sombre ou clair).</string>
+    <string name="ui_theme_mode_dark_label">Sombre</string>
+    <string name="ui_theme_mode_light_label">Clair</string>
+    <string name="ui_theme_mode_system_label">Système</string>
+    <string name="ui_theme_style_setting_label">Style du thème</string>
+    <string name="ui_theme_style_setting_explanation">Le style chromatique utilisé par le thème de l’appli.</string>
+    <string name="ui_theme_style_default_label">Par défaut</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>

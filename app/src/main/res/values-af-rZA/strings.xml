@@ -38,15 +38,6 @@
     <string name="documentation_label">Dokumentasie</string>
     <string name="help_translate_label">Vertaling</string>
     <string name="help_translate_description">Help om hierdie app in jou gunsteling taal te vertaal.</string>
-    <string name="ui_theme_mode_setting_label">Temamodus</string>
-    <string name="ui_theme_mode_setting_explanation">Die modus wat gebruik word tydens teming van die app (bv. donker of lig).</string>
-    <string name="ui_theme_mode_dark_label">Donker</string>
-    <string name="ui_theme_mode_light_label">Lig</string>
-    <string name="ui_theme_mode_system_label">Stelsel</string>
-    <string name="ui_theme_style_setting_label">Temastyl</string>
-    <string name="ui_theme_style_setting_explanation">Die kleurstyl wat gebruik word tydens teming van die app.</string>
-    <string name="ui_theme_style_default_label">Verstek</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Kwestracker</string>
     <string name="issue_tracker_description">Publieke kwestracker vir foutsverslae en funksieversoeke.</string>
     <string name="discord_label">Discord</string>

@@ -38,15 +38,6 @@
     <string name="documentation_label">文档</string>
     <string name="help_translate_label">翻译</string>
     <string name="help_translate_description">帮助将此应用翻译成您喜欢的语言。</string>
-    <string name="ui_theme_mode_setting_label">主题模式</string>
-    <string name="ui_theme_mode_setting_explanation">应用主题使用的模式（例如深色或浅色）。</string>
-    <string name="ui_theme_mode_dark_label">黑</string>
-    <string name="ui_theme_mode_light_label">白</string>
-    <string name="ui_theme_mode_system_label">系统</string>
-    <string name="ui_theme_style_setting_label">主题样式</string>
-    <string name="ui_theme_style_setting_explanation">应用程序主题化时使用的颜色样式。</string>
-    <string name="ui_theme_style_default_label">默认</string>
-    <string name="ui_theme_style_materialyou_label">动态取色</string>
     <string name="issue_tracker_label">问题跟踪器</string>
     <string name="issue_tracker_description">为Bug报告和特性请求准备的公共问题跟踪器。</string>
     <string name="discord_label">Discord</string>

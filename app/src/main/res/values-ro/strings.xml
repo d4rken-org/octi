@@ -38,15 +38,6 @@
     <string name="documentation_label">Documentație</string>
     <string name="help_translate_label">Traducere</string>
     <string name="help_translate_description">Ajută la traducerea aplicației în limba ta preferată.</string>
-    <string name="ui_theme_mode_setting_label">Mod temă</string>
-    <string name="ui_theme_mode_setting_explanation">Modul folosit pentru tema aplicației (ex. întunecat sau luminos).</string>
-    <string name="ui_theme_mode_dark_label">Întunecat</string>
-    <string name="ui_theme_mode_light_label">Luminos</string>
-    <string name="ui_theme_mode_system_label">Sistem</string>
-    <string name="ui_theme_style_setting_label">Stilul temei</string>
-    <string name="ui_theme_style_setting_explanation">Stilul de culoare folosit pentru tema aplicației.</string>
-    <string name="ui_theme_style_default_label">Implicit</string>
-    <string name="ui_theme_style_materialyou_label">Material You</string>
     <string name="issue_tracker_label">Urmărire probleme</string>
     <string name="issue_tracker_description">Sistem public pentru raportarea erorilor și cereri de funcții.</string>
     <string name="discord_label">Discord</string>

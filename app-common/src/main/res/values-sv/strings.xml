@@ -29,4 +29,13 @@
         <item quantity="one">%1$d minut</item>
         <item quantity="other">%1$d minuter</item>
     </plurals>
+    <string name="ui_theme_mode_setting_label">Temaläge</string>
+    <string name="ui_theme_mode_setting_explanation">Läget som används vid temaläggning av appen (t.ex. mörkt eller ljust).</string>
+    <string name="ui_theme_mode_dark_label">Mörkt</string>
+    <string name="ui_theme_mode_light_label">Ljust</string>
+    <string name="ui_theme_mode_system_label">System</string>
+    <string name="ui_theme_style_setting_label">Temastil</string>
+    <string name="ui_theme_style_setting_explanation">Färgstilen som används när appen får tema.</string>
+    <string name="ui_theme_style_default_label">Standard</string>
+    <string name="ui_theme_style_materialyou_label">Material You</string>
 </resources>
