@@ -21,7 +21,11 @@ import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.main.core.GeneralSettings
+import eu.darken.octi.main.core.themeState
+import eu.darken.octi.main.core.themeStateBlocking
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -35,10 +39,14 @@ class RecorderActivityVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
     private val webpageTool: WebpageTool,
-    generalSettings: GeneralSettings,
+    private val generalSettings: GeneralSettings,
 ) : ViewModel4(dispatcherProvider) {
 
-    val themeState = generalSettings.themeState
+    val themeState = generalSettings.themeState.stateIn(
+        vmScope,
+        SharingStarted.Eagerly,
+        generalSettings.themeStateBlocking,
+    )
 
     private val recordedPath = handle.get<String>(RecorderActivity.RECORD_PATH)!!
     private val pathCache = MutableStateFlow(recordedPath)

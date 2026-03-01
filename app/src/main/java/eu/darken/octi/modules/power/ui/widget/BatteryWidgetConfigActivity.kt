@@ -70,7 +70,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
 import eu.darken.octi.common.theming.OctiTheme
+import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.main.core.GeneralSettings
+import eu.darken.octi.main.core.themeState
 import javax.inject.Inject
 import eu.darken.octi.modules.power.R as PowerR
 
@@ -107,7 +109,7 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
         } else null
 
         setContent {
-            val themeState by generalSettings.themeState.collectAsState()
+            val themeState by generalSettings.themeState.collectAsState(ThemeState())
             OctiTheme(state = themeState) {
                 WidgetConfigScreen(
                     initialMode = initialMode,

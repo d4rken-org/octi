@@ -8,6 +8,10 @@ import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.main.core.GeneralSettings
+import eu.darken.octi.main.core.themeState
+import eu.darken.octi.main.core.themeStateBlocking
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 
@@ -17,7 +21,11 @@ class MainActivityVM @Inject constructor(
     private val generalSettings: GeneralSettings,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
-    val themeState = generalSettings.themeState
+    val themeState = generalSettings.themeState.stateIn(
+        vmScope,
+        SharingStarted.Eagerly,
+        generalSettings.themeStateBlocking,
+    )
 
     val startDestination: NavigationDestination
         get() = if (generalSettings.isOnboardingDone.valueBlocking) {
