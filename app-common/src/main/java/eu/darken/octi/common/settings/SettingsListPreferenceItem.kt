@@ -38,6 +38,7 @@ fun <T> SettingsListPreferenceItem(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     enabled: Boolean = true,
+    onDisabledClick: (() -> Unit)? = null,
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -48,6 +49,7 @@ fun <T> SettingsListPreferenceItem(
         onClick = { if (enabled) showDialog = true },
         modifier = modifier,
         enabled = enabled,
+        onDisabledClick = onDisabledClick,
     )
 
     if (showDialog) {

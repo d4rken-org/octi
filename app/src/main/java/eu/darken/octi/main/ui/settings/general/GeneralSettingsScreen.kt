@@ -49,6 +49,7 @@ fun GeneralSettingsScreenHost(vm: GeneralSettingsVM = hiltViewModel()) {
             onThemeStyleSelected = { style -> vm.setThemeStyle(style) },
             onThemeColorSelected = { color -> vm.setThemeColor(color) },
             onUpdateCheckChanged = { enabled -> vm.setUpdateCheckEnabled(enabled) },
+            onUpgrade = { vm.goUpgrade() },
         )
     }
 }
@@ -62,6 +63,7 @@ fun GeneralSettingsScreen(
     onThemeStyleSelected: (ThemeStyle) -> Unit,
     onThemeColorSelected: (ThemeColor) -> Unit,
     onUpdateCheckChanged: (Boolean) -> Unit,
+    onUpgrade: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -106,6 +108,7 @@ fun GeneralSettingsScreen(
                     onEntrySelected = onThemeModeSelected,
                     entryLabel = { it.label.get(context) },
                     enabled = state.isPro,
+                    onDisabledClick = onUpgrade,
                 )
             }
             item {
@@ -117,6 +120,7 @@ fun GeneralSettingsScreen(
                     onEntrySelected = onThemeStyleSelected,
                     entryLabel = { it.label.get(context) },
                     enabled = state.isPro,
+                    onDisabledClick = onUpgrade,
                 )
             }
             item {
@@ -130,6 +134,7 @@ fun GeneralSettingsScreen(
                     onEntrySelected = onThemeColorSelected,
                     entryLabel = { it.label.get(context) },
                     enabled = isColorPickerEnabled,
+                    onDisabledClick = onUpgrade,
                 )
             }
         }
@@ -153,5 +158,6 @@ private fun GeneralSettingsScreenPreview() = PreviewWrapper {
         onThemeStyleSelected = {},
         onThemeColorSelected = {},
         onUpdateCheckChanged = {},
+        onUpgrade = {},
     )
 }

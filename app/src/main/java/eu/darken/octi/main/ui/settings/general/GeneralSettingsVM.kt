@@ -8,6 +8,7 @@ import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.theming.ThemeColor
 import eu.darken.octi.common.theming.ThemeMode
 import eu.darken.octi.common.theming.ThemeStyle
+import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.main.core.GeneralSettings
@@ -64,6 +65,8 @@ class GeneralSettingsVM @Inject constructor(
     fun setThemeColor(color: ThemeColor) = launch {
         generalSettings.themeColor.value(color)
     }
+
+    fun goUpgrade() = navTo(Nav.Main.Upgrade())
 
     fun setUpdateCheckEnabled(enabled: Boolean) = launch {
         generalSettings.isUpdateCheckEnabled.value(enabled)
