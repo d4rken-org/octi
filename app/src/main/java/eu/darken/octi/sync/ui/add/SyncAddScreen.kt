@@ -40,6 +40,8 @@ import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.syncs.gdrive.R as GDriveR
 import eu.darken.octi.syncs.kserver.R as KServerR
 import eu.darken.octi.common.WebpageTool
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
@@ -158,4 +160,18 @@ private fun SyncAddItemRow(item: SyncAddVM.SyncAddItem) {
             )
         }
     }
+}
+
+@Preview2
+@Composable
+private fun SyncAddScreenPreview() = PreviewWrapper {
+    SyncAddScreen(
+        state = SyncAddVM.State(
+            items = listOf(
+                SyncAddVM.SyncAddItem(type = SyncAddVM.SyncType.GDRIVE, onClick = {}),
+                SyncAddVM.SyncAddItem(type = SyncAddVM.SyncType.KSERVER, onClick = {}),
+            ),
+        ),
+        onNavigateUp = {},
+    )
 }

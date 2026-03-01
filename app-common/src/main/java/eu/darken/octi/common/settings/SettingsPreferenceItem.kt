@@ -1,12 +1,16 @@
 package eu.darken.octi.common.settings
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Language
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 
 @Composable
 fun SettingsPreferenceItem(
@@ -37,5 +41,40 @@ fun SettingsPreferenceItem(
                 )
             }
         } else null,
+    )
+}
+
+@Preview2
+@Composable
+private fun SettingsPreferenceItemPreview() = PreviewWrapper {
+    SettingsPreferenceItem(
+        icon = Icons.TwoTone.Language,
+        title = "Language",
+        subtitle = "Select your preferred language",
+        value = "English",
+        onClick = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun SettingsPreferenceItemMinimalPreview() = PreviewWrapper {
+    SettingsPreferenceItem(
+        icon = Icons.TwoTone.Language,
+        title = "Language",
+        onClick = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun SettingsPreferenceItemDisabledPreview() = PreviewWrapper {
+    SettingsPreferenceItem(
+        icon = Icons.TwoTone.Language,
+        title = "Language",
+        subtitle = "Select your preferred language",
+        value = "English",
+        onClick = {},
+        enabled = false,
     )
 }

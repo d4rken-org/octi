@@ -37,10 +37,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
+import eu.darken.octi.modules.power.core.alert.BatteryHighAlertRule
+import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
+import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.R as PowerR
+import eu.darken.octi.sync.core.DeviceId
 
 @Composable
 fun PowerAlertsScreenHost(
@@ -236,4 +242,37 @@ private fun HighBatteryCard(
             )
         }
     }
+}
+
+@Preview2
+@Composable
+private fun PowerAlertsScreenActivePreview() = PreviewWrapper {
+    val deviceId = DeviceId("preview-device")
+    PowerAlertsScreen(
+        state = PowerAlertsVM.State(
+            deviceLabel = "Pixel 8",
+            batteryLowAlert = PowerAlert(
+                rule = BatteryLowAlertRule(deviceId = deviceId, threshold = 0.2f),
+                event = null,
+            ),
+            batteryHighAlert = PowerAlert(
+                rule = BatteryHighAlertRule(deviceId = deviceId, threshold = 0.9f),
+                event = null,
+            ),
+        ),
+        onNavigateUp = {},
+        onLowBatteryThreshold = {},
+        onHighBatteryThreshold = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun PowerAlertsScreenDisabledPreview() = PreviewWrapper {
+    PowerAlertsScreen(
+        state = PowerAlertsVM.State(deviceLabel = "Pixel 8"),
+        onNavigateUp = {},
+        onLowBatteryThreshold = {},
+        onHighBatteryThreshold = {},
+    )
 }

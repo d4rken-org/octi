@@ -87,9 +87,14 @@ import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.TemperatureFormatter
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
+import eu.darken.octi.module.core.ModuleData
+import eu.darken.octi.module.core.ModuleId
+import java.time.Instant
 import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.descriptionRes
 import eu.darken.octi.common.permissions.labelRes
@@ -1537,6 +1542,239 @@ private fun CopyableDetailRow(label: String, value: String, copyable: Boolean) {
             }
         }
     }
+}
+
+// endregion
+
+// region Previews
+
+private data class PreviewUpgradeInfo(
+    override val type: UpgradeRepo.Type = UpgradeRepo.Type.FOSS,
+    override val isPro: Boolean = false,
+    override val upgradedAt: Instant? = null,
+) : UpgradeRepo.Info
+
+@Preview2
+@Composable
+private fun DashboardScreenEmptyPreview() = PreviewWrapper {
+    DashboardScreen(
+        state = DashboardVM.State(
+            devices = emptyList(),
+            deviceCount = 0,
+            lastSyncAt = null,
+            isRefreshing = false,
+            isOffline = false,
+            showSyncSetup = true,
+            missingPermissions = emptyList(),
+            update = null,
+            upgradeInfo = PreviewUpgradeInfo(),
+            deviceLimitReached = false,
+        ),
+        onRefresh = {},
+        onSyncServices = {},
+        onUpgrade = {},
+        onSettings = {},
+        onDismissSyncSetup = {},
+        onSetupSync = {},
+        onGrantPermission = {},
+        onDismissPermission = {},
+        onDismissUpdate = {},
+        onViewUpdate = {},
+        onStartUpdate = {},
+        onToggleDeviceCollapsed = {},
+        onPowerAlerts = {},
+        onAppsList = {},
+        onInstallLatestApp = {},
+        onClearClipboard = {},
+        onShareClipboard = {},
+        onCopyClipboard = {},
+        onWifiPermissionGrant = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun DashboardScreenPreview() = PreviewWrapper {
+    val now = Instant.now()
+    val deviceId = DeviceId("preview-device-1")
+
+    DashboardScreen(
+        state = DashboardVM.State(
+            devices = listOf(
+                DashboardVM.DeviceItem(
+                    now = now,
+                    meta = ModuleData(
+                        modifiedAt = now.minusSeconds(300),
+                        deviceId = deviceId,
+                        moduleId = ModuleId("meta"),
+                        data = MetaInfo(
+                            deviceLabel = "Pixel 8",
+                            deviceId = deviceId,
+                            octiVersionName = "0.14.0",
+                            octiGitSha = "abc1234",
+                            deviceManufacturer = "Google",
+                            deviceName = "Pixel 8",
+                            deviceType = MetaInfo.DeviceType.PHONE,
+                            deviceBootedAt = now.minusSeconds(86400),
+                            androidVersionName = "14",
+                            androidApiLevel = 34,
+                            androidSecurityPatch = "2024-01-05",
+                        ),
+                    ),
+                    moduleItems = listOf(
+                        DashboardVM.ModuleItem.Power(
+                            data = ModuleData(
+                                modifiedAt = now.minusSeconds(60),
+                                deviceId = deviceId,
+                                moduleId = ModuleId("power"),
+                                data = PowerInfo(
+                                    status = Status.DISCHARGING,
+                                    battery = PowerInfo.Battery(
+                                        level = 75,
+                                        scale = 100,
+                                        health = 2,
+                                        temp = 28.5f,
+                                    ),
+                                    chargeIO = ChargeIO(
+                                        currentNow = null,
+                                        currenAvg = null,
+                                        fullSince = null,
+                                        fullAt = null,
+                                        emptyAt = null,
+                                    ),
+                                ),
+                            ),
+                            batteryLowAlert = null,
+                            showSettings = true,
+                        ),
+                    ),
+                    isCollapsed = false,
+                    isLimited = false,
+                    isCurrentDevice = false,
+                ),
+            ),
+            deviceCount = 1,
+            lastSyncAt = now.minusSeconds(300),
+            isRefreshing = false,
+            isOffline = false,
+            showSyncSetup = false,
+            missingPermissions = emptyList(),
+            update = null,
+            upgradeInfo = PreviewUpgradeInfo(isPro = true),
+            deviceLimitReached = false,
+        ),
+        onRefresh = {},
+        onSyncServices = {},
+        onUpgrade = {},
+        onSettings = {},
+        onDismissSyncSetup = {},
+        onSetupSync = {},
+        onGrantPermission = {},
+        onDismissPermission = {},
+        onDismissUpdate = {},
+        onViewUpdate = {},
+        onStartUpdate = {},
+        onToggleDeviceCollapsed = {},
+        onPowerAlerts = {},
+        onAppsList = {},
+        onInstallLatestApp = {},
+        onClearClipboard = {},
+        onShareClipboard = {},
+        onCopyClipboard = {},
+        onWifiPermissionGrant = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
+    val now = Instant.now()
+    val deviceId1 = DeviceId("preview-device-1")
+    val deviceId2 = DeviceId("preview-device-2")
+
+    fun previewDevice(
+        deviceId: DeviceId,
+        label: String,
+        type: MetaInfo.DeviceType,
+        batteryLevel: Int,
+        isCollapsed: Boolean,
+    ) = DashboardVM.DeviceItem(
+        now = now,
+        meta = ModuleData(
+            modifiedAt = now.minusSeconds(300),
+            deviceId = deviceId,
+            moduleId = ModuleId("meta"),
+            data = MetaInfo(
+                deviceLabel = label,
+                deviceId = deviceId,
+                octiVersionName = "0.14.0",
+                octiGitSha = "abc1234",
+                deviceManufacturer = "Google",
+                deviceName = label,
+                deviceType = type,
+                deviceBootedAt = now.minusSeconds(86400),
+                androidVersionName = "14",
+                androidApiLevel = 34,
+                androidSecurityPatch = "2024-01-05",
+            ),
+        ),
+        moduleItems = listOf(
+            DashboardVM.ModuleItem.Power(
+                data = ModuleData(
+                    modifiedAt = now.minusSeconds(60),
+                    deviceId = deviceId,
+                    moduleId = ModuleId("power"),
+                    data = PowerInfo(
+                        status = Status.DISCHARGING,
+                        battery = PowerInfo.Battery(level = batteryLevel, scale = 100, health = 2, temp = 28f),
+                        chargeIO = ChargeIO(null, null, null, null, null),
+                    ),
+                ),
+                batteryLowAlert = null,
+                showSettings = true,
+            ),
+        ),
+        isCollapsed = isCollapsed,
+        isLimited = false,
+        isCurrentDevice = false,
+    )
+
+    DashboardScreen(
+        state = DashboardVM.State(
+            devices = listOf(
+                previewDevice(deviceId1, "Pixel 8", MetaInfo.DeviceType.PHONE, 75, false),
+                previewDevice(deviceId2, "Galaxy Tab S9", MetaInfo.DeviceType.TABLET, 42, true),
+            ),
+            deviceCount = 2,
+            lastSyncAt = now.minusSeconds(300),
+            isRefreshing = false,
+            isOffline = false,
+            showSyncSetup = false,
+            missingPermissions = emptyList(),
+            update = null,
+            upgradeInfo = PreviewUpgradeInfo(),
+            deviceLimitReached = false,
+        ),
+        onRefresh = {},
+        onSyncServices = {},
+        onUpgrade = {},
+        onSettings = {},
+        onDismissSyncSetup = {},
+        onSetupSync = {},
+        onGrantPermission = {},
+        onDismissPermission = {},
+        onDismissUpdate = {},
+        onViewUpdate = {},
+        onStartUpdate = {},
+        onToggleDeviceCollapsed = {},
+        onPowerAlerts = {},
+        onAppsList = {},
+        onInstallLatestApp = {},
+        onClearClipboard = {},
+        onShareClipboard = {},
+        onCopyClipboard = {},
+        onWifiPermissionGrant = {},
+    )
 }
 
 // endregion

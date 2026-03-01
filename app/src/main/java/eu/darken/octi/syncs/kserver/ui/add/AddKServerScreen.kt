@@ -46,6 +46,8 @@ import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.syncs.kserver.R as KServerR
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.WebpageTool
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
@@ -246,4 +248,40 @@ private fun ServerRadioOption(
             modifier = Modifier.padding(start = 8.dp),
         )
     }
+}
+
+@Preview2
+@Composable
+private fun AddKServerScreenPreview() = PreviewWrapper {
+    AddKServerScreen(
+        state = AddKServerVM.State(serverType = KServer.Official.PROD),
+        onNavigateUp = {},
+        onSelectType = {},
+        onCreateAccount = {},
+        onLinkAccount = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun AddKServerScreenCustomPreview() = PreviewWrapper {
+    AddKServerScreen(
+        state = AddKServerVM.State(serverType = null),
+        onNavigateUp = {},
+        onSelectType = {},
+        onCreateAccount = {},
+        onLinkAccount = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun AddKServerScreenBusyPreview() = PreviewWrapper {
+    AddKServerScreen(
+        state = AddKServerVM.State(serverType = KServer.Official.PROD, isBusy = true),
+        onNavigateUp = {},
+        onSelectType = {},
+        onCreateAccount = {},
+        onLinkAccount = {},
+    )
 }
