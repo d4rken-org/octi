@@ -7,9 +7,14 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 
 
@@ -24,7 +29,10 @@ class DataStoreValue<T : Any?>(
         get() = key.name
 
     val flow: Flow<T> = dataStore.data
-        .map { prefs -> reader(prefs[this.key]) }
+        .map { prefs -> prefs[this.key] }
+        .distinctUntilChanged()
+        .map { raw -> reader(raw) }
+        .onEach { log(TAG, VERBOSE) { "read $keyName -> $it" } }
 
     data class Updated<T>(
         val old: T,
@@ -49,9 +57,14 @@ class DataStoreValue<T : Any?>(
             }.toPreferences()
         }
 
-        return Updated(old = (values[0] as T), new = (values[1] as T))
+        return Updated(old = (values[0] as T), new = (values[1] as T)).also {
+            log(TAG, VERBOSE) { "update $keyName: ${it.old} -> ${it.new}" }
+        }
     }
 
+    companion object {
+        private val TAG = logTag("DataStore")
+    }
 }
 
 inline fun <reified T : Any?> DataStore<Preferences>.createValue(
