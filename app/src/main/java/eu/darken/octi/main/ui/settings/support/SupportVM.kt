@@ -4,14 +4,18 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.octi.common.PrivacyPolicy
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.debug.recording.core.RecorderModule
+import eu.darken.octi.common.debug.recording.core.DebugSession
+import eu.darken.octi.common.debug.recording.core.DebugSessionManager
+import eu.darken.octi.common.debug.recording.core.LogSession
 import eu.darken.octi.common.debug.recording.ui.RecorderActivity
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.SingleEventFlow
+import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
@@ -23,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SupportVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
-    private val recorderModule: RecorderModule,
+    private val sessionManager: DebugSessionManager,
     private val webpageTool: WebpageTool,
     @ApplicationContext private val context: Context,
 ) : ViewModel4(dispatcherProvider) {
@@ -33,6 +37,7 @@ class SupportVM @Inject constructor(
         val currentLogPath: File? = null,
         val totalLogSize: Long = 0L,
         val sessionCount: Int = 0,
+        val debugSessions: List<DebugSession> = emptyList(),
         val showShortRecordingWarning: Boolean = false,
     )
 
@@ -42,42 +47,40 @@ class SupportVM @Inject constructor(
     val launchRecorderEvent = SingleEventFlow<Intent>()
 
     init {
-        recorderModule.state
-            .onEach { recState ->
+        sessionManager.state
+            .setupCommonEventHandlers(TAG) { "sessionManagerState" }
+            .onEach { managerState ->
                 stater.updateBlocking {
                     copy(
-                        isRecording = recState.isRecording,
-                        currentLogPath = recState.currentLogPath,
+                        isRecording = managerState.isRecording,
+                        currentLogPath = managerState.currentLogPath,
+                        totalLogSize = managerState.totalSessionSize,
+                        sessionCount = managerState.sessionCount,
+                        debugSessions = managerState.debugSessions,
                     )
                 }
             }
             .launchInViewModel()
-
-        launch { refreshSessionInfo() }
-    }
-
-    private suspend fun refreshSessionInfo() {
-        val sessions = recorderModule.listSessions()
-        val totalSize = recorderModule.totalSessionSize()
-        stater.updateBlocking {
-            copy(totalLogSize = totalSize, sessionCount = sessions.size)
-        }
     }
 
     fun openUrl(url: String) {
         webpageTool.open(url)
     }
 
+    fun openPrivacyPolicy() {
+        webpageTool.open(PrivacyPolicy.URL)
+    }
+
     fun startDebugLog() = launch {
         log(TAG) { "startDebugLog()" }
-        recorderModule.startRecorder()
+        sessionManager.startRecording()
     }
 
     fun stopDebugLog() = launch {
         log(TAG) { "stopDebugLog()" }
-        val recState = recorderModule.state.first()
-        val startedAt = recState.recordingStartedAt
-        if (startedAt != null && System.currentTimeMillis() - startedAt < SHORT_RECORDING_THRESHOLD) {
+        val managerState = sessionManager.state.first()
+        val startedAt = managerState.recordingStartedAt
+        if (startedAt != null && System.currentTimeMillis() - startedAt < DebugSessionManager.SHORT_RECORDING_THRESHOLD) {
             stater.updateBlocking { copy(showShortRecordingWarning = true) }
             return@launch
         }
@@ -94,8 +97,20 @@ class SupportVM @Inject constructor(
     }
 
     private suspend fun doStopAndShowRecorder() {
-        val session = recorderModule.stopRecorder() ?: return
-        refreshSessionInfo()
+        val session = sessionManager.stopRecording() ?: return
+        val intent = RecorderActivity.getLaunchIntent(context, session.sessionDir.absolutePath).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        launchRecorderEvent.tryEmit(intent)
+    }
+
+    fun deleteSession(session: LogSession) = launch {
+        log(TAG) { "deleteSession(${session.name})" }
+        sessionManager.deleteSession(session)
+    }
+
+    fun openSession(session: LogSession) {
+        log(TAG) { "openSession(${session.name})" }
         val intent = RecorderActivity.getLaunchIntent(context, session.sessionDir.absolutePath).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
@@ -104,8 +119,7 @@ class SupportVM @Inject constructor(
 
     fun deleteAllLogs() = launch {
         log(TAG) { "deleteAllLogs()" }
-        recorderModule.deleteAllSessions()
-        refreshSessionInfo()
+        sessionManager.deleteAllSessions()
     }
 
     fun navigateToContactSupport() {
@@ -114,6 +128,5 @@ class SupportVM @Inject constructor(
 
     companion object {
         private val TAG = logTag("Settings", "Support", "VM")
-        private const val SHORT_RECORDING_THRESHOLD = 5_000L
     }
 }
