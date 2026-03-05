@@ -73,7 +73,7 @@
         <!-- Debug stuff-->
         <activity
             android:name="eu.darken.octi.common.debug.recording.ui.RecorderActivity"
-            android:theme="@style/AppThemeFloating" />
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

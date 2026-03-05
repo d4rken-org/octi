@@ -14,7 +14,7 @@ import androidx.navigation3.ui.NavDisplay
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.debug.recording.core.RecorderModule
+import eu.darken.octi.common.debug.recording.core.DebugSessionManager
 import eu.darken.octi.common.navigation.LocalNavigationController
 import eu.darken.octi.common.navigation.NavigationController
 import eu.darken.octi.common.navigation.NavigationEntry
@@ -29,7 +29,7 @@ class MainActivity : Activity2() {
 
     @Inject lateinit var navCtrl: NavigationController
     @Inject lateinit var navigationEntries: Set<@JvmSuppressWildcards NavigationEntry>
-    @Inject lateinit var recorderModule: RecorderModule
+    @Inject lateinit var debugSessionManager: DebugSessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

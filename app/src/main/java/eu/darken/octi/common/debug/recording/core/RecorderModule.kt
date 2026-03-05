@@ -1,30 +1,24 @@
 package eu.darken.octi.common.debug.recording.core
 
 import android.content.Context
-import android.os.Build
 import android.os.Environment
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
-import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.flow.DynamicStateFlow
-import eu.darken.octi.main.core.GeneralSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,7 +28,6 @@ class RecorderModule @Inject constructor(
     @ApplicationContext private val context: Context,
     @AppScope private val appScope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
-    private val generalSettings: GeneralSettings,
 ) {
 
     private val triggerFile = try {
@@ -53,10 +46,6 @@ class RecorderModule @Inject constructor(
     val state: Flow<State> = internalState.flow
 
     init {
-        appScope.launch(dispatcherProvider.IO) {
-            performLegacyCleanup()
-        }
-
         internalState.flow
             .onEach {
                 log(TAG) { "New Recorder state: $internalState" }
@@ -67,14 +56,15 @@ class RecorderModule @Inject constructor(
                         val newRecorder = Recorder()
                         newRecorder.start(sessionDir)
                         triggerFile.createNewFile()
-                        writeDeviceInfo(sessionDir)
 
                         copy(
                             recorder = newRecorder,
                             recordingStartedAt = System.currentTimeMillis(),
                         )
                     } else if (!shouldRecord && isRecording) {
-                        val session = LogSession(recorder!!.sessionDir!!)
+                        val recorderSessionDir = recorder?.sessionDir
+                            ?: return@updateBlocking this
+                        val session = LogSession(recorderSessionDir)
                         recorder.stop()
 
                         if (triggerFile.exists() && !triggerFile.delete()) {
@@ -133,21 +123,7 @@ class RecorderModule @Inject constructor(
         return sessionDir
     }
 
-    private fun writeDeviceInfo(sessionDir: File) {
-        try {
-            val infoFile = File(sessionDir, "device_info.txt")
-            val info = buildString {
-                appendLine("App: ${BuildConfigWrap.VERSION_DESCRIPTION}")
-                appendLine("Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
-                appendLine("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
-            }
-            infoFile.writeText(info)
-        } catch (e: Exception) {
-            log(TAG, ERROR) { "Failed to write device info: ${e.asLog()}" }
-        }
-    }
-
-    fun getLogDirectories(): List<File> {
+    internal fun getLogDirectories(): List<File> {
         val dirs = mutableListOf<File>()
 
         try {
@@ -163,80 +139,13 @@ class RecorderModule @Inject constructor(
         return dirs
     }
 
-    suspend fun listSessions(): List<LogSession> {
-        return withContext(dispatcherProvider.IO) {
-            val activeSessionDir = internalState.value().recorder?.sessionDir
-            val sessions = mutableMapOf<String, LogSession>()
-
-            for (logDir in getLogDirectories()) {
-                if (!logDir.isDirectory) continue
-
-                // Clean up temp zips
-                logDir.listFiles()?.filter { it.name.endsWith(".zip.tmp") }?.forEach {
-                    it.delete()
-                    log(TAG) { "Cleaned up temp zip: ${it.name}" }
-                }
-
-                // Find session directories
-                logDir.listFiles()?.filter { it.isDirectory }?.forEach { dir ->
-                    if (dir.absolutePath == activeSessionDir?.absolutePath) return@forEach
-
-                    val key = dir.name
-                    if (!sessions.containsKey(key)) {
-                        sessions[key] = LogSession(dir)
-                    }
-                }
-
-                // Find orphan zips (no corresponding directory)
-                logDir.listFiles()
-                    ?.filter { it.isFile && it.name.endsWith(".zip") && !it.name.endsWith(".zip.tmp") }
-                    ?.forEach { zipFile ->
-                        val key = zipFile.nameWithoutExtension
-                        if (!sessions.containsKey(key)) {
-                            val virtualDir = File(logDir, key)
-                            sessions[key] = LogSession(virtualDir)
-                        }
-                    }
-            }
-
-            sessions.values.toList()
-        }
-    }
-
-    suspend fun totalSessionSize(): Long {
-        return listSessions().sumOf { session ->
-            val dirSize = session.files.sumOf { it.length() }
-            val zipSize = if (session.hasZip) session.zipFile.length() else 0L
-            dirSize + zipSize
-        }
-    }
-
-    suspend fun deleteSession(session: LogSession) {
-        withContext(dispatcherProvider.IO) {
-            log(TAG) { "deleteSession(${session.name})" }
-            if (session.sessionDir.isDirectory) {
-                session.sessionDir.deleteRecursively()
-            }
-            if (session.hasZip) {
-                session.zipFile.delete()
-            }
-        }
-    }
-
-    suspend fun deleteAllSessions() {
-        withContext(dispatcherProvider.IO) {
-            log(TAG) { "deleteAllSessions()" }
-            val sessions = listSessions()
-            sessions.forEach { deleteSession(it) }
-        }
-    }
-
     suspend fun startRecorder(): LogSession {
         internalState.updateBlocking {
             copy(shouldRecord = true)
         }
         val recordingState = internalState.flow.filter { it.isRecording }.first()
-        return LogSession(recordingState.recorder!!.sessionDir!!)
+        val sessionDir = checkNotNull(recordingState.recorder?.sessionDir) { "Recorder started but sessionDir is null" }
+        return LogSession(sessionDir)
     }
 
     suspend fun stopRecorder(): LogSession? {
@@ -248,27 +157,6 @@ class RecorderModule @Inject constructor(
         }
         internalState.flow.filter { !it.isRecording }.first()
         return LogSession(sessionDir)
-    }
-
-    private suspend fun performLegacyCleanup() {
-        if (generalSettings.isLegacyLogCleanupDone.value()) {
-            log(TAG) { "Legacy log cleanup already done" }
-            return
-        }
-
-        log(TAG, INFO) { "Performing one-time legacy log cleanup" }
-        val pattern = Regex("${Regex.escape(BuildConfigWrap.APPLICATION_ID)}_logfile_\\d+\\.log(\\.zip)?")
-
-        for (logDir in getLogDirectories()) {
-            if (!logDir.isDirectory) continue
-            logDir.listFiles()?.filter { it.isFile && pattern.matches(it.name) }?.forEach { file ->
-                log(TAG) { "Deleting legacy log file: ${file.name}" }
-                file.delete()
-            }
-        }
-
-        generalSettings.isLegacyLogCleanupDone.value(true)
-        log(TAG, INFO) { "Legacy log cleanup complete" }
     }
 
     data class State(

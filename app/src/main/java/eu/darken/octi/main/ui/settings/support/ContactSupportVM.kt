@@ -14,12 +14,13 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.debug.recording.core.DebugLogZipper
+import eu.darken.octi.common.debug.recording.core.DebugSessionManager
 import eu.darken.octi.common.debug.recording.core.LogSession
-import eu.darken.octi.common.debug.recording.core.RecorderModule
 import eu.darken.octi.common.flow.DynamicStateFlow
+import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.uix.ViewModel4
+import eu.darken.octi.common.upgrade.UpgradeRepo
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -27,18 +28,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactSupportVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
-    private val recorderModule: RecorderModule,
-    private val debugLogZipper: DebugLogZipper,
+    private val sessionManager: DebugSessionManager,
+    private val upgradeRepo: UpgradeRepo,
     @ApplicationContext private val context: Context,
 ) : ViewModel4(dispatcherProvider) {
 
     enum class Category { QUESTION, FEATURE_REQUEST, BUG_REPORT }
-
-    data class SessionInfo(
-        val session: LogSession,
-        val size: Long,
-        val lastModified: Long,
-    )
 
     data class State(
         val category: Category = Category.QUESTION,
@@ -46,7 +41,7 @@ class ContactSupportVM @Inject constructor(
         val expectedBehavior: String = "",
         val isRecording: Boolean = false,
         val isSending: Boolean = false,
-        val sessions: List<SessionInfo> = emptyList(),
+        val sessions: List<DebugSessionManager.SessionInfo> = emptyList(),
         val selectedSession: LogSession? = null,
         val showShortRecordingWarning: Boolean = false,
         val showRecordingConsent: Boolean = false,
@@ -67,31 +62,21 @@ class ContactSupportVM @Inject constructor(
     val state = stater.flow.shareLatest(scope = vmScope)
 
     init {
-        recorderModule.state
-            .onEach { recState ->
-                stater.updateBlocking { copy(isRecording = recState.isRecording) }
+        sessionManager.state
+            .setupCommonEventHandlers(TAG) { "sessionManagerState" }
+            .onEach { managerState ->
+                stater.updateBlocking {
+                    val selectedStillExists = managerState.sessions.any {
+                        it.session.sessionDir == selectedSession?.sessionDir
+                    }
+                    copy(
+                        isRecording = managerState.isRecording,
+                        sessions = managerState.sessions,
+                        selectedSession = if (selectedStillExists) selectedSession else null,
+                    )
+                }
             }
             .launchInViewModel()
-
-        launch { refreshSessions() }
-    }
-
-    private suspend fun refreshSessions() {
-        val sessions = recorderModule.listSessions().map { session ->
-            val size = session.files.sumOf { it.length() } +
-                if (session.hasZip) session.zipFile.length() else 0L
-            val lastModified = session.sessionDir.lastModified().takeIf { it > 0 }
-                ?: session.files.maxOfOrNull { it.lastModified() } ?: 0L
-            SessionInfo(session = session, size = size, lastModified = lastModified)
-        }.sortedByDescending { it.lastModified }
-
-        stater.updateBlocking {
-            val selectedStillExists = sessions.any { it.session.sessionDir == selectedSession?.sessionDir }
-            copy(
-                sessions = sessions,
-                selectedSession = if (selectedStillExists) selectedSession else null,
-            )
-        }
     }
 
     fun setCategory(category: Category) = launch {
@@ -120,13 +105,13 @@ class ContactSupportVM @Inject constructor(
 
     fun startRecording() = launch {
         stater.updateBlocking { copy(showRecordingConsent = false) }
-        recorderModule.startRecorder()
+        sessionManager.startRecording()
     }
 
     fun stopRecording() = launch {
-        val recState = recorderModule.state.first()
-        val startedAt = recState.recordingStartedAt
-        if (startedAt != null && System.currentTimeMillis() - startedAt < SHORT_RECORDING_THRESHOLD) {
+        val managerState = sessionManager.state.first()
+        val startedAt = managerState.recordingStartedAt
+        if (startedAt != null && System.currentTimeMillis() - startedAt < DebugSessionManager.SHORT_RECORDING_THRESHOLD) {
             stater.updateBlocking { copy(showShortRecordingWarning = true) }
             return@launch
         }
@@ -143,8 +128,7 @@ class ContactSupportVM @Inject constructor(
     }
 
     private suspend fun doStopRecording() {
-        recorderModule.stopRecorder()
-        refreshSessions()
+        sessionManager.stopRecording()
     }
 
     fun selectSession(session: LogSession) = launch {
@@ -155,8 +139,7 @@ class ContactSupportVM @Inject constructor(
     }
 
     fun deleteSession(session: LogSession) = launch {
-        recorderModule.deleteSession(session)
-        refreshSessions()
+        sessionManager.deleteSession(session)
     }
 
     fun sendEmail() = launch {
@@ -166,11 +149,7 @@ class ContactSupportVM @Inject constructor(
 
             val zipUri = currentState.selectedSession?.let { session ->
                 try {
-                    if (session.hasZip) {
-                        debugLogZipper.getUriForZip(session)
-                    } else if (session.sessionDir.isDirectory) {
-                        debugLogZipper.zipAndGetUri(session)
-                    } else null
+                    sessionManager.compressSession(session)
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "Failed to zip session: ${e.asLog()}" }
                     errorEvents2.tryEmit(
@@ -180,8 +159,14 @@ class ContactSupportVM @Inject constructor(
                 }
             }
 
+            val isPro = try {
+                upgradeRepo.upgradeInfo.first().isPro
+            } catch (_: Exception) {
+                false
+            }
+
             val subject = buildSubject(currentState)
-            val body = buildBody(currentState)
+            val body = buildBody(currentState, isPro)
 
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = if (zipUri != null) "application/zip" else "message/rfc822"
@@ -222,7 +207,7 @@ class ContactSupportVM @Inject constructor(
         return raw.replace("\n", " ").replace("\\s+".toRegex(), " ").take(120)
     }
 
-    private fun buildBody(state: State): String = buildString {
+    private fun buildBody(state: State, isPro: Boolean): String = buildString {
         appendLine(state.description.trim())
 
         if (state.category == Category.BUG_REPORT && state.expectedBehavior.isNotBlank()) {
@@ -231,16 +216,16 @@ class ContactSupportVM @Inject constructor(
             appendLine(state.expectedBehavior.trim())
         }
 
+        val proIndicator = if (isPro) "★" else "☆"
         appendLine()
         appendLine("--- Device Info ---")
-        appendLine("App: ${BuildConfigWrap.VERSION_DESCRIPTION}")
+        appendLine("App: $proIndicator ${BuildConfigWrap.VERSION_DESCRIPTION}")
         appendLine("Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
         appendLine("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
     }
 
     companion object {
         private val TAG = logTag("Settings", "Support", "Contact", "VM")
-        private const val SHORT_RECORDING_THRESHOLD = 5_000L
 
         fun wordCount(text: String): Int {
             return text.trim().split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
