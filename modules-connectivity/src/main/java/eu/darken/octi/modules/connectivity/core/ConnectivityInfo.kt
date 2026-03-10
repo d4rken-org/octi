@@ -1,24 +1,24 @@
 package eu.darken.octi.modules.connectivity.core
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class ConnectivityInfo(
-    @Json(name = "connectionType") val connectionType: ConnectionType?,
-    @Json(name = "publicIp") val publicIp: String?,
-    @Json(name = "localAddressIpv4") val localAddressIpv4: String?,
-    @Json(name = "localAddressIpv6") val localAddressIpv6: String?,
-    @Json(name = "gatewayIp") val gatewayIp: String?,
-    @Json(name = "dnsServers") val dnsServers: List<String>?,
+    @SerialName("connectionType") val connectionType: ConnectionType?,
+    @SerialName("publicIp") val publicIp: String?,
+    @SerialName("localAddressIpv4") val localAddressIpv4: String?,
+    @SerialName("localAddressIpv6") val localAddressIpv6: String?,
+    @SerialName("gatewayIp") val gatewayIp: String?,
+    @SerialName("dnsServers") val dnsServers: List<String>?,
 ) {
 
-    @JsonClass(generateAdapter = false)
+    @Serializable
     enum class ConnectionType {
-        @Json(name = "WIFI") WIFI,
-        @Json(name = "CELLULAR") CELLULAR,
-        @Json(name = "ETHERNET") ETHERNET,
-        @Json(name = "NONE") NONE,
+        @SerialName("WIFI") WIFI,
+        @SerialName("CELLULAR") CELLULAR,
+        @SerialName("ETHERNET") ETHERNET,
+        @SerialName("NONE") NONE,
         ;
     }
 }

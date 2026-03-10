@@ -1,23 +1,27 @@
+@file:UseSerializers(InstantSerializer::class)
+
 package eu.darken.octi.modules.apps.core
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import eu.darken.octi.common.serialization.serializer.InstantSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import java.time.Instant
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class AppsInfo(
-    @Json(name = "installedPackages") val installedPackages: Collection<Pkg>
+    @SerialName("installedPackages") val installedPackages: Collection<Pkg>,
 ) {
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class Pkg(
-        @Json(name = "packageName") val packageName: String,
-        @Json(name = "label") val label: String?,
-        @Json(name = "versionCode") val versionCode: Long,
-        @Json(name = "versionName") val versionName: String?,
-        @Json(name = "installedAt") val installedAt: Instant,
-        @Json(name = "installerPkg") val installerPkg: String?,
-        @Json(name = "updatedAt") val updatedAt: Instant? = null,
+        @SerialName("packageName") val packageName: String,
+        @SerialName("label") val label: String?,
+        @SerialName("versionCode") val versionCode: Long,
+        @SerialName("versionName") val versionName: String?,
+        @SerialName("installedAt") val installedAt: Instant,
+        @SerialName("installerPkg") val installerPkg: String?,
+        @SerialName("updatedAt") val updatedAt: Instant? = null,
     )
 
     override fun toString(): String = "AppsInfo(size=${installedPackages.size})"

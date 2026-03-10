@@ -1,25 +1,25 @@
 package eu.darken.octi.modules.wifi.core
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class WifiInfo(
-    @Json(name = "currentWifi") val currentWifi: Wifi?
+    @SerialName("currentWifi") val currentWifi: Wifi?,
 ) {
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class Wifi(
-        @Json(name = "ssid") val ssid: String?,
-        @Json(name = "reception") val reception: Float?,
-        @Json(name = "freqType") val freqType: Type?,
+        @SerialName("ssid") val ssid: String?,
+        @SerialName("reception") val reception: Float?,
+        @SerialName("freqType") val freqType: Type?,
     ) {
 
-        @JsonClass(generateAdapter = false)
+        @Serializable
         enum class Type {
-            @Json(name = "UNKNOWN") UNKNOWN,
-            @Json(name = "5GHZ") FIVE_GHZ,
-            @Json(name = "2.4GHZ") TWO_POINT_FOUR_GHZ,
+            @SerialName("UNKNOWN") UNKNOWN,
+            @SerialName("5GHZ") FIVE_GHZ,
+            @SerialName("2.4GHZ") TWO_POINT_FOUR_GHZ,
             ;
         }
     }

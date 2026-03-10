@@ -1,26 +1,30 @@
+@file:UseSerializers(InstantSerializer::class)
+
 package eu.darken.octi.modules.power.core
 
 import android.os.BatteryManager
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import eu.darken.octi.common.serialization.serializer.InstantSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import java.time.Instant
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class PowerInfo(
-    @Json(name = "status") val status: Status,
-    @Json(name = "battery") val battery: Battery,
-    @Json(name = "chargeIO") val chargeIO: ChargeIO,
+    @SerialName("status") val status: Status,
+    @SerialName("battery") val battery: Battery,
+    @SerialName("chargeIO") val chargeIO: ChargeIO,
 ) {
     val isCharging: Boolean
         get() = setOf(Status.FULL, Status.CHARGING).contains(status)
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class ChargeIO(
-        @Json(name = "currentNow") val currentNow: Int?,
-        @Json(name = "currentAvg") val currenAvg: Int?,
-        @Json(name = "fullSince") val fullSince: Instant?,
-        @Json(name = "fullAt") val fullAt: Instant?,
-        @Json(name = "emptyAt") val emptyAt: Instant?,
+        @SerialName("currentNow") val currentNow: Int?,
+        @SerialName("currentAvg") val currenAvg: Int?,
+        @SerialName("fullSince") val fullSince: Instant?,
+        @SerialName("fullAt") val fullAt: Instant?,
+        @SerialName("emptyAt") val emptyAt: Instant?,
     ) {
         val speed: Speed
             get() = when {
@@ -35,33 +39,33 @@ data class PowerInfo(
                 else -> Speed.NORMAL
             }
 
-        @JsonClass(generateAdapter = false)
+        @Serializable
         enum class Speed {
-            @Json(name = "SLOW") SLOW,
-            @Json(name = "NORMAL") NORMAL,
-            @Json(name = "FAST") FAST,
+            @SerialName("SLOW") SLOW,
+            @SerialName("NORMAL") NORMAL,
+            @SerialName("FAST") FAST,
             ;
         }
     }
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class Battery(
-        @Json(name = "level") val level: Int,
-        @Json(name = "scale") val scale: Int,
-        @Json(name = "health") val health: Int?,
-        @Json(name = "temp") val temp: Float?,
+        @SerialName("level") val level: Int,
+        @SerialName("scale") val scale: Int,
+        @SerialName("health") val health: Int?,
+        @SerialName("temp") val temp: Float?,
     ) {
 
         val percent: Float
             get() = level / scale.toFloat()
     }
 
-    @JsonClass(generateAdapter = false)
+    @Serializable
     enum class Status(val value: Int) {
-        @Json(name = "FULL") FULL(BatteryManager.BATTERY_STATUS_FULL),
-        @Json(name = "CHARGING") CHARGING(BatteryManager.BATTERY_STATUS_CHARGING),
-        @Json(name = "DISCHARGING") DISCHARGING(BatteryManager.BATTERY_STATUS_DISCHARGING),
-        @Json(name = "UNKNOWN") UNKNOWN(BatteryManager.BATTERY_STATUS_UNKNOWN),
+        @SerialName("FULL") FULL(BatteryManager.BATTERY_STATUS_FULL),
+        @SerialName("CHARGING") CHARGING(BatteryManager.BATTERY_STATUS_CHARGING),
+        @SerialName("DISCHARGING") DISCHARGING(BatteryManager.BATTERY_STATUS_DISCHARGING),
+        @SerialName("UNKNOWN") UNKNOWN(BatteryManager.BATTERY_STATUS_UNKNOWN),
     }
 
     sealed class PowerEvent {

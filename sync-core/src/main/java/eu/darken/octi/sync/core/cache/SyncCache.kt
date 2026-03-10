@@ -1,8 +1,6 @@
 package eu.darken.octi.sync.core.cache
 
 import android.content.Context
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.Bugs
@@ -17,17 +15,17 @@ import eu.darken.octi.sync.core.SyncRead
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SyncCache @Inject constructor(
-    private val moshi: Moshi,
+    private val json: Json,
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
 ) {
-    private val adapter by lazy { moshi.adapter<CachedSyncRead>() }
     private val cacheLock = Mutex()
     private val cacheDir by lazy { File(context.cacheDir, "sync_caches").also { it.mkdirs() } }
 
@@ -45,7 +43,7 @@ class SyncCache @Inject constructor(
         try {
             if (!cacheFile.exists()) return@guard null
 
-            adapter.fromJson(cacheFile.readText())!!.also {
+            json.decodeFromString<CachedSyncRead>(cacheFile.readText()).also {
                 log(TAG, VERBOSE) { "load(id=$id): $it" }
             }
         } catch (e: Exception) {
@@ -68,7 +66,7 @@ class SyncCache @Inject constructor(
             val cacheFile = id.toCacheFile()
 
             if (!cacheFile.exists()) cacheFile.createNewFile()
-            cacheFile.writeText(adapter.toJson(cachedRead))
+            cacheFile.writeText(json.encodeToString(cachedRead))
         } catch (e: Exception) {
             log(TAG, ERROR) { "Failed to cache sync data: ${e.asLog()}" }
             Bugs.report(e)

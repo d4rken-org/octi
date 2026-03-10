@@ -1,6 +1,6 @@
 package eu.darken.octi.syncs.kserver.core
 
-import com.squareup.moshi.Moshi
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -8,17 +8,19 @@ import eu.darken.octi.common.collections.toByteString
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.serialization.RetrofitJson
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.ByteString
 import retrofit2.HttpException
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -28,7 +30,7 @@ class KServerEndpoint @AssistedInject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val syncSettings: SyncSettings,
     private val baseHttpClient: OkHttpClient,
-    private val baseMoshi: Moshi,
+    @RetrofitJson private val retrofitJson: Json,
     private val basicAuthInterceptor: BasicAuthInterceptor,
 ) {
 
@@ -42,7 +44,7 @@ class KServerEndpoint @AssistedInject constructor(
         Retrofit.Builder().apply {
             baseUrl("${serverAdress.address}/v1/")
             client(httpClient)
-            addConverterFactory(MoshiConverterFactory.create(baseMoshi).asLenient())
+            addConverterFactory(retrofitJson.asConverterFactory("application/json".toMediaType()))
         }.build().create(KServerApi::class.java)
     }
 
@@ -198,4 +200,3 @@ class KServerEndpoint @AssistedInject constructor(
         private val TAG = logTag("Sync", "KServer", "Connector", "Endpoint")
     }
 }
-

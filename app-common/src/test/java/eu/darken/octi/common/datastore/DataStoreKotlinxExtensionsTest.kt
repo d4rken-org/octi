@@ -3,33 +3,39 @@ package eu.darken.octi.common.datastore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.Moshi
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import testhelpers.BaseTest
 import testhelpers.json.toComparableJson
 import java.io.File
 
-class DataStoreMoshiExtensionsTest : BaseTest() {
+class DataStoreKotlinxExtensionsTest : BaseTest() {
 
     @TempDir
     lateinit var tempDir: File
+
+    private val json = Json {
+        ignoreUnknownKeys = true
+        explicitNulls = false
+        encodeDefaults = true
+    }
 
     private fun createDataStore(scope: TestScope) = PreferenceDataStoreFactory.create(
         scope = scope,
         produceFile = { File(tempDir, "test.preferences_pb") },
     )
 
-    @JsonClass(generateAdapter = true)
-    data class TestGson(
+    @Serializable
+    data class TestData(
         val string: String = "",
         val boolean: Boolean = true,
         val float: Float = 1.0f,
@@ -41,14 +47,13 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
     fun `reading and writing using manual reader and writer`() = runTest {
         val testStore = createDataStore(this)
 
-        val testData1 = TestGson(string = "teststring")
-        val testData2 = TestGson(string = "update")
-        val moshi = Moshi.Builder().build()
+        val testData1 = TestData(string = "teststring")
+        val testData2 = TestData(string = "update")
 
-        testStore.createValue<TestGson?>(
+        testStore.createValue<TestData?>(
             key = stringPreferencesKey("testKey"),
-            reader = moshiReader(moshi, testData1),
-            writer = moshiWriter(moshi)
+            reader = kotlinxReader(json, testData1),
+            writer = kotlinxWriter(json),
         ).apply {
 
             flow.first() shouldBe testData1
@@ -84,18 +89,18 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
     fun `reading and writing sets`() = runTest {
         val testStore = createDataStore(this)
 
-        val testData = TestGson(string = "teststring")
+        val testData = TestData(string = "teststring")
 
-        testStore.createSetValue<TestGson>(
+        testStore.createSetValue<TestData>(
             key = "testKey",
             defaultValue = emptySet(),
-            moshi = Moshi.Builder().build()
+            json = json,
         ).apply {
             flow.first() shouldBe emptySet()
             testStore.data.first()[stringPreferencesKey(keyName)] shouldBe null
 
             update {
-                setOf<TestGson>() + testData + testData
+                setOf<TestData>() + testData + testData
             }
             testStore.data.first()[stringPreferencesKey(keyName)]!!.toComparableJson() shouldBe """
                 [
@@ -118,18 +123,18 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
     fun `reading and writing lists`() = runTest {
         val testStore = createDataStore(this)
 
-        val testData = TestGson(string = "teststring")
+        val testData = TestData(string = "teststring")
 
-        testStore.createListValue<TestGson>(
+        testStore.createListValue<TestData>(
             key = "testKey",
             defaultValue = emptyList(),
-            moshi = Moshi.Builder().build()
+            json = json,
         ).apply {
             flow.first() shouldBe emptyList()
             testStore.data.first()[stringPreferencesKey(keyName)] shouldBe null
 
             update {
-                listOf<TestGson>() + testData + testData
+                listOf<TestData>() + testData + testData
             }
             testStore.data.first()[stringPreferencesKey(keyName)]!!.toComparableJson() shouldBe """
                 [
@@ -158,14 +163,13 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
     fun `reading and writing using autocreated reader and writer`() = runTest {
         val testStore = createDataStore(this)
 
-        val testData1 = TestGson(string = "teststring")
-        val testData2 = TestGson(string = "update")
-        val moshi = Moshi.Builder().build()
+        val testData1 = TestData(string = "teststring")
+        val testData2 = TestData(string = "update")
 
-        testStore.createValue<TestGson?>(
+        testStore.createValue<TestData?>(
             key = "testKey",
             defaultValue = testData1,
-            moshi = moshi
+            json = json,
         ).apply {
 
             flow.first() shouldBe testData1
@@ -197,20 +201,20 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
         }
     }
 
+    @Serializable
     enum class Anum {
-        @Json(name = "a") A,
-        @Json(name = "b") B,
+        @SerialName("a") A,
+        @SerialName("b") B,
     }
 
     @Test
     fun `enum serialization`() = runTest {
         val testStore = createDataStore(this)
 
-        val moshi = Moshi.Builder().build()
         val monitorMode = testStore.createValue(
             "test.enum",
             Anum.A,
-            moshi
+            json,
         )
 
         monitorMode.flow.first() shouldBe Anum.A
@@ -225,10 +229,10 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
 
         testStore.edit { it[key] = "not valid json{{{" }
 
-        val dsv = testStore.createValue<TestGson?>(
+        val dsv = testStore.createValue<TestData?>(
             key = "testKey",
-            defaultValue = TestGson(),
-            moshi = Moshi.Builder().build(),
+            defaultValue = TestData(),
+            json = json,
             onErrorFallbackToDefault = false,
         )
 
@@ -239,14 +243,14 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
     fun `malformed JSON falls back to default with fallback flag`() = runTest {
         val testStore = createDataStore(this)
         val key = stringPreferencesKey("testKey")
-        val defaultValue = TestGson(string = "fallback")
+        val defaultValue = TestData(string = "fallback")
 
         testStore.edit { it[key] = "not valid json{{{" }
 
-        val dsv = testStore.createValue<TestGson?>(
+        val dsv = testStore.createValue<TestData?>(
             key = "testKey",
             defaultValue = defaultValue,
-            moshi = Moshi.Builder().build(),
+            json = json,
             onErrorFallbackToDefault = true,
         )
 
@@ -262,13 +266,13 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
             it[key] = """{"string":"hello","boolean":true,"float":1.0,"int":1,"long":1,"unknownField":"surprise"}"""
         }
 
-        val dsv = testStore.createValue<TestGson?>(
+        val dsv = testStore.createValue<TestData?>(
             key = "testKey",
-            defaultValue = TestGson(),
-            moshi = Moshi.Builder().build(),
+            defaultValue = TestData(),
+            json = json,
         )
 
-        dsv.flow.first() shouldBe TestGson(string = "hello")
+        dsv.flow.first() shouldBe TestData(string = "hello")
     }
 
     @Test
@@ -278,10 +282,10 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
 
         testStore.edit { it[key] = """{"string":"partial"}""" }
 
-        val dsv = testStore.createValue<TestGson?>(
+        val dsv = testStore.createValue<TestData?>(
             key = "testKey",
-            defaultValue = TestGson(),
-            moshi = Moshi.Builder().build(),
+            defaultValue = TestData(),
+            json = json,
         )
 
         val result = dsv.flow.first()!!
@@ -296,32 +300,30 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
     fun `enum with unknown value throws without fallback`() = runTest {
         val testStore = createDataStore(this)
         val key = stringPreferencesKey("test.enum")
-        val moshi = Moshi.Builder().build()
 
         testStore.edit { it[key] = "\"unknown_value\"" }
 
         val dsv = testStore.createValue(
             "test.enum",
             Anum.A,
-            moshi,
+            json,
             onErrorFallbackToDefault = false,
         )
 
-        shouldThrow<JsonDataException> { dsv.flow.first() }
+        shouldThrow<SerializationException> { dsv.flow.first() }
     }
 
     @Test
     fun `enum with unknown value falls back to default with fallback flag`() = runTest {
         val testStore = createDataStore(this)
         val key = stringPreferencesKey("test.enum")
-        val moshi = Moshi.Builder().build()
 
         testStore.edit { it[key] = "\"unknown_value\"" }
 
         val dsv = testStore.createValue(
             "test.enum",
             Anum.A,
-            moshi,
+            json,
             onErrorFallbackToDefault = true,
         )
 
@@ -331,14 +333,13 @@ class DataStoreMoshiExtensionsTest : BaseTest() {
     @Test
     fun `large collection round-trips correctly`() = runTest {
         val testStore = createDataStore(this)
-        val moshi = Moshi.Builder().build()
 
-        val largeSet = (1..500).map { TestGson(string = "item-$it") }.toSet()
+        val largeSet = (1..500).map { TestData(string = "item-$it") }.toSet()
 
-        val dsv = testStore.createSetValue<TestGson>(
+        val dsv = testStore.createSetValue<TestData>(
             key = "largeSet",
             defaultValue = emptySet(),
-            moshi = moshi,
+            json = json,
         )
 
         dsv.update { largeSet }

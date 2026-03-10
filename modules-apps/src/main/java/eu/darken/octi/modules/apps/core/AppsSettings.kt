@@ -4,18 +4,18 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.datastore.createValue
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.module.core.ModuleSettings
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AppsSettings @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val moshi: Moshi,
+    private val json: Json,
 ) : ModuleSettings {
 
     private val Context.dataStore by preferencesDataStore(name = "module_apps_settings")
@@ -27,7 +27,7 @@ class AppsSettings @Inject constructor(
 
     val includeInstaller = dataStore.createValue("module.apps.include.installer", false)
 
-    val sortMode = dataStore.createValue("module.apps.sort.mode", AppsSortMode.NAME, moshi)
+    val sortMode = dataStore.createValue("module.apps.sort.mode", AppsSortMode.NAME, json)
 
     companion object {
         internal val TAG = logTag("Module", "Apps", "Settings")

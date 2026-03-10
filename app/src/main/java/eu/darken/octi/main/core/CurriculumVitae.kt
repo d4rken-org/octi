@@ -5,7 +5,7 @@ import android.content.pm.PackageInfo
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.squareup.moshi.Moshi
+import kotlinx.serialization.json.Json
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
@@ -28,7 +28,7 @@ import javax.inject.Singleton
 class CurriculumVitae @Inject constructor(
     @ApplicationContext private val context: Context,
     @AppScope private val appScope: CoroutineScope,
-    moshi: Moshi,
+    json: Json,
 ) {
 
     private val Context.dataStore by preferencesDataStore(name = "curriculum_vitae")
@@ -38,9 +38,9 @@ class CurriculumVitae @Inject constructor(
 
     private val usPkgInfo: PackageInfo by lazy { context.packageManager.getPackageInfo(context.packageName, 0) }
 
-    private val _updateHistory = dataStore.createValue("stats.update.history", emptyList<String>(), moshi)
-    private val _installedFirst = dataStore.createValue<Instant?>("stats.install.first", null, moshi)
-    private val _launchedLast = dataStore.createValue<Instant?>("stats.launched.last", null, moshi)
+    private val _updateHistory = dataStore.createValue("stats.update.history", emptyList<String>(), json)
+    private val _installedFirst = dataStore.createValue<Instant?>("stats.install.first", null, json)
+    private val _launchedLast = dataStore.createValue<Instant?>("stats.launched.last", null, json)
     private val _launchedCount = dataStore.createValue("stats.launched.count", 0)
     private val _launchedCountBeta = dataStore.createValue("stats.launched.beta.count", 0)
 
@@ -108,7 +108,7 @@ class CurriculumVitae @Inject constructor(
         }
     }
 
-    private val _openedLast = dataStore.createValue<Instant?>("stats.opened.last", null, moshi)
+    private val _openedLast = dataStore.createValue<Instant?>("stats.opened.last", null, json)
     private val _openedCount = dataStore.createValue("stats.opened.count", 0)
 
     fun updateAppOpened() = appScope.launch {

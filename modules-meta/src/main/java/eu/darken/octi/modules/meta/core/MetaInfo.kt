@@ -1,36 +1,40 @@
+@file:UseSerializers(InstantSerializer::class)
+
 package eu.darken.octi.modules.meta.core
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.DeviceId
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import java.time.Instant
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class MetaInfo(
-    @Json(name = "deviceLabel") val deviceLabel: String?,
+    @SerialName("deviceLabel") val deviceLabel: String?,
 
-    @Json(name = "deviceId") val deviceId: DeviceId,
+    @SerialName("deviceId") val deviceId: DeviceId,
 
-    @Json(name = "octiVersionName") val octiVersionName: String,
-    @Json(name = "octiGitSha") val octiGitSha: String,
+    @SerialName("octiVersionName") val octiVersionName: String,
+    @SerialName("octiGitSha") val octiGitSha: String,
 
-    @Json(name = "deviceManufacturer") val deviceManufacturer: String,
-    @Json(name = "deviceName") val deviceName: String,
-    @Json(name = "deviceType") val deviceType: DeviceType,
-    @Json(name = "deviceBootedAt") val deviceBootedAt: Instant,
+    @SerialName("deviceManufacturer") val deviceManufacturer: String,
+    @SerialName("deviceName") val deviceName: String,
+    @SerialName("deviceType") val deviceType: DeviceType,
+    @SerialName("deviceBootedAt") val deviceBootedAt: Instant,
 
-    @Json(name = "androidVersionName") val androidVersionName: String,
-    @Json(name = "androidApiLevel") val androidApiLevel: Int,
-    @Json(name = "androidSecurityPatch") val androidSecurityPatch: String?,
+    @SerialName("androidVersionName") val androidVersionName: String,
+    @SerialName("androidApiLevel") val androidApiLevel: Int,
+    @SerialName("androidSecurityPatch") val androidSecurityPatch: String?,
 ) {
 
     val labelOrFallback: String
         get() = deviceLabel ?: deviceName
 
-    @JsonClass(generateAdapter = false)
+    @Serializable
     enum class DeviceType {
-        @Json(name = "PHONE") PHONE,
-        @Json(name = "TABLET") TABLET,
-        @Json(name = "UNKNOWN") UNKNOWN,
+        @SerialName("PHONE") PHONE,
+        @SerialName("TABLET") TABLET,
+        @SerialName("UNKNOWN") UNKNOWN,
     }
 }

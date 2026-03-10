@@ -2,7 +2,6 @@ package eu.darken.octi.syncs.kserver.ui.link.host
 
 import android.app.Activity
 import android.content.Intent
-import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
@@ -25,13 +24,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
 class KServerLinkHostVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val syncManager: SyncManager,
-    private val moshi: Moshi,
+    private val json: Json,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     private val connectorIdFlow = MutableStateFlow<String?>(null)
@@ -81,7 +81,7 @@ class KServerLinkHostVM @Inject constructor(
             log(TAG) { "New magic link code generated." }
 
             stateLock.withLock {
-                _state.value = _state.value.copy(encodedLinkCode = container.toEncodedString(moshi))
+                _state.value = _state.value.copy(encodedLinkCode = container.toEncodedString(json))
             }
         }
         launch {

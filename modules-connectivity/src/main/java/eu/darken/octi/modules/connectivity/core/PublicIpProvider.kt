@@ -1,9 +1,5 @@
 package eu.darken.octi.modules.connectivity.core
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
@@ -17,6 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.util.concurrent.TimeUnit
@@ -29,15 +28,13 @@ class PublicIpProvider @Inject constructor(
     private val networkStateProvider: NetworkStateProvider,
     private val dispatcherProvider: DispatcherProvider,
     private val publicIpEndpointProvider: PublicIpEndpointProvider,
-    private val moshi: Moshi,
+    private val json: Json,
 ) {
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class IpResponse(
-        @Json(name = "ip") val ip: String,
+        @SerialName("ip") val ip: String,
     )
-
-    private val ipAdapter by lazy { moshi.adapter<IpResponse>() }
 
     val publicIp: Flow<String?> = combine(
         networkStateProvider.networkState,
@@ -78,7 +75,7 @@ class PublicIpProvider @Inject constructor(
                 }
 
                 val body = response.body?.string() ?: return@withContext null
-                ipAdapter.fromJson(body)?.ip
+                json.decodeFromString<IpResponse>(body).ip
             }
         } catch (e: Exception) {
             log(TAG, ERROR) { "Failed to fetch public IP: ${e.asLog()}" }

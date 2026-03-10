@@ -5,7 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.datastore.DataStoreValue
 import eu.darken.octi.common.datastore.createValue
@@ -17,13 +16,14 @@ import eu.darken.octi.common.theming.ThemeMode
 import eu.darken.octi.common.theming.ThemeStyle
 import eu.darken.octi.main.core.updater.UpdateChecker
 import eu.darken.octi.main.ui.dashboard.DashboardConfig
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GeneralSettings @Inject constructor(
     @ApplicationContext private val context: Context,
-    moshi: Moshi,
+    json: Json,
     updateChecker: UpdateChecker,
 ) {
 
@@ -38,9 +38,9 @@ class GeneralSettings @Inject constructor(
 
     val isSyncSetupDismissed = dataStore.createValue("onboarding.syncsetup.dismissed", false)
 
-    val themeMode = dataStore.createValue("core.ui.theme.mode", ThemeMode.SYSTEM, moshi)
-    val themeStyle = dataStore.createValue("core.ui.theme.style", ThemeStyle.DEFAULT, moshi)
-    val themeColor = dataStore.createValue("core.ui.theme.color", ThemeColor.GREEN, moshi)
+    val themeMode = dataStore.createValue("core.ui.theme.mode", ThemeMode.SYSTEM, json)
+    val themeStyle = dataStore.createValue("core.ui.theme.style", ThemeStyle.DEFAULT, json)
+    val themeColor = dataStore.createValue("core.ui.theme.color", ThemeColor.GREEN, json)
 
     val dismissedPermissions: DataStoreValue<Set<Permission>> = dataStore.createValue(
         stringPreferencesKey("core.permission.dismissed"),
@@ -57,9 +57,9 @@ class GeneralSettings @Inject constructor(
     val isLegacyLogCleanupDone = dataStore.createValue("debug.legacy.cleanup.done", false)
 
     val dashboardConfig = dataStore.createValue(
-        "dashboard.ui.config", 
+        "dashboard.ui.config",
         DashboardConfig(),
-        moshi
+        json
     )
 
     suspend fun addDismissedPermission(permission: Permission) {

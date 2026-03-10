@@ -176,7 +176,6 @@ dependencies {
 
     addCompose()
     addNavigation3()
-    addKotlinxSerialization()
 
     addTesting()
 

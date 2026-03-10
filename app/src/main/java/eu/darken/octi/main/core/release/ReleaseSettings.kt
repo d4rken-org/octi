@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.squareup.moshi.Moshi
+import kotlinx.serialization.json.Json
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.datastore.createValue
 import eu.darken.octi.common.debug.logging.logTag
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class ReleaseSettings @Inject constructor(
     @ApplicationContext private val context: Context,
-    moshi: Moshi,
+    json: Json,
 ) {
 
     private val Context.dataStore by preferencesDataStore(name = "settings_release")
@@ -23,7 +23,7 @@ class ReleaseSettings @Inject constructor(
     val dataStore: DataStore<Preferences>
         get() = context.dataStore
 
-    val releasePartyAt = dataStore.createValue("release.party.date", null as Instant?, moshi)
+    val releasePartyAt = dataStore.createValue("release.party.date", null as Instant?, json)
     val wantsBeta = dataStore.createValue("release.prerelease.consent", false)
     val earlyAdopter = dataStore.createValue("release.earlyadopter", null as Boolean?)
 
