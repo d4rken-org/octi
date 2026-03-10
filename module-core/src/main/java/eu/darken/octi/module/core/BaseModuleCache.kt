@@ -1,20 +1,24 @@
+@file:UseSerializers(InstantSerializer::class, ByteStringSerializer::class)
+
 package eu.darken.octi.module.core
 
 import android.content.Context
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.Bugs
 import eu.darken.octi.common.debug.logging.Logging.Priority.*
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.serialization.serializer.ByteStringSerializer
+import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.json.Json
 import okio.ByteString
 import java.io.File
 import java.io.IOException
@@ -26,11 +30,10 @@ abstract class BaseModuleCache<T : Any> constructor(
     override val moduleId: ModuleId,
     private val tag: String,
     private val dispatcherProvider: DispatcherProvider,
-    private val moshi: Moshi,
+    private val json: Json,
     private val moduleSerializer: ModuleSerializer<T>,
 ) : ModuleCache<T> {
 
-    private val adapter by lazy { moshi.adapter<CachedModuleData>() }
     private val cacheLock = Mutex()
     private val cacheDir by lazy {
         val moduleCacheBaseDir = File(context.cacheDir, "module_cache")
@@ -43,12 +46,12 @@ abstract class BaseModuleCache<T : Any> constructor(
 
     private fun DeviceId.getCacheFile(): File = File(cacheDir, this.id)
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class CachedModuleData(
-        @Json(name = "modifiedAt") val modifiedAt: Instant,
-        @Json(name = "deviceId") val deviceId: DeviceId,
-        @Json(name = "moduleId") val moduleId: ModuleId,
-        @Json(name = "data") val data: ByteString,
+        @SerialName("modifiedAt") val modifiedAt: Instant,
+        @SerialName("deviceId") val deviceId: DeviceId,
+        @SerialName("moduleId") val moduleId: ModuleId,
+        @SerialName("data") val data: ByteString,
     )
 
     private fun ModuleData<T>.toCachedModuleData() = CachedModuleData(
@@ -80,7 +83,7 @@ abstract class BaseModuleCache<T : Any> constructor(
                 if (!it.exists()) it.createNewFile()
             }
 
-            cacheFile.writeText(adapter.toJson(data.toCachedModuleData()))
+            cacheFile.writeText(json.encodeToString(data.toCachedModuleData()))
         } catch (e: Exception) {
             log(tag, ERROR) { "Failed to cache sync data: ${e.asLog()}" }
             Bugs.report(e)
@@ -92,7 +95,7 @@ abstract class BaseModuleCache<T : Any> constructor(
         if (!cacheFile.exists()) return@guard null
 
         val uncachedData = try {
-            adapter.fromJson(cacheFile.readText())!!.also {
+            json.decodeFromString<CachedModuleData>(cacheFile.readText()).also {
                 log(tag, VERBOSE) { "get(id=$deviceId): $it" }
             }
         } catch (e: Exception) {

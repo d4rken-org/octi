@@ -1,16 +1,20 @@
+@file:UseSerializers(ByteStringSerializer::class)
+
 package eu.darken.octi.sync.core.encryption
 
 import android.os.Parcelable
 import com.google.crypto.tink.*
 import com.google.crypto.tink.daead.DeterministicAeadConfig
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.serialization.ByteStringParcelizer
+import eu.darken.octi.common.serialization.serializer.ByteStringSerializer
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import java.io.ByteArrayOutputStream
@@ -47,12 +51,12 @@ class PayloadEncryption constructor(private val keySet: KeySet? = null) {
         .also { log(TAG, VERBOSE) { "Decrypted: $data to $it" } }
 
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     @Parcelize
     @TypeParceler<ByteString, ByteStringParcelizer>
     data class KeySet(
-        @Json(name = "type") val type: String,
-        @Json(name = "key") val key: ByteString,
+        @SerialName("type") val type: String,
+        @SerialName("key") val key: ByteString,
     ) : Parcelable {
         override fun toString(): String = "ShareCode(key=${key.base64().take(4)}...)"
     }

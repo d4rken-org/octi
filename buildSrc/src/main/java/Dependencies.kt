@@ -80,9 +80,8 @@ fun DependencyHandlerScope.addCoroutines() {
 }
 
 fun DependencyHandlerScope.addSerialization() {
-    implementation("com.squareup.moshi:moshi:${Versions.Moshi.core}")
-    implementation("com.squareup.moshi:moshi-adapters:${Versions.Moshi.core}")
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:${Versions.Moshi.core}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Serialization.core}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Serialization.core}")
 }
 
 fun DependencyHandlerScope.addIO() {
@@ -91,9 +90,9 @@ fun DependencyHandlerScope.addIO() {
 
 fun DependencyHandlerScope.addRetrofit() {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 }
 
 fun DependencyHandlerScope.addAndroidCore() {
@@ -147,10 +146,6 @@ fun DependencyHandlerScope.addNavigation3() {
     implementation("androidx.compose.material3.adaptive:adaptive-navigation3:1.3.0-alpha06")
 }
 
-fun DependencyHandlerScope.addKotlinxSerialization() {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Serialization.core}")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Serialization.core}")
-}
 
 fun DependencyHandlerScope.addTesting() {
     testImplementation("junit:junit:4.13.2")

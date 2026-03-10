@@ -1,32 +1,31 @@
+@file:UseSerializers(InstantSerializer::class)
+
 package eu.darken.octi.modules.power.core.alert
 
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
+import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.DeviceId
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import java.time.Instant
 
+@Serializable
 sealed interface PowerAlertRule {
     val id: PowerAlertRuleId
     val deviceId: DeviceId
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class Event(
         val id: PowerAlertRuleId,
         val triggeredAt: Instant = Instant.now(),
         val dismissedAt: Instant? = null,
     )
-
-    companion object {
-        val moshiFactory: PolymorphicJsonAdapterFactory<PowerAlertRule>
-            get() = PolymorphicJsonAdapterFactory.of(PowerAlertRule::class.java, "type")
-                .withSubtype(BatteryLowAlertRule::class.java, "BATTERY_LOW")
-                .withSubtype(BatteryHighAlertRule::class.java, "BATTERY_HIGH")
-    }
 }
 
 typealias PowerAlertRuleId = String
 
-@JsonClass(generateAdapter = true)
+@Serializable
+@SerialName("BATTERY_LOW")
 data class BatteryLowAlertRule(
     override val deviceId: DeviceId,
     val threshold: Float,
@@ -36,7 +35,8 @@ data class BatteryLowAlertRule(
         get() = "${deviceId.id}-batterlow"
 }
 
-@JsonClass(generateAdapter = true)
+@Serializable
+@SerialName("BATTERY_HIGH")
 data class BatteryHighAlertRule(
     override val deviceId: DeviceId,
     val threshold: Float,

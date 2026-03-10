@@ -6,8 +6,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
@@ -20,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.plus
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,9 +27,8 @@ class KServerAccountRepo @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
-    moshi: Moshi,
+    private val json: Json,
 ) {
-    private val adapterCredentials by lazy { moshi.adapter<KServer.Credentials>() }
 
     private val Context.dataStore by preferencesDataStore(name = "syncs_kserver_credentials")
 
@@ -52,7 +50,7 @@ class KServerAccountRepo @Inject constructor(
                 true
             }
             .map { it.value as String }
-            .map { adapterCredentials.fromJson(it)!! }
+            .map { json.decodeFromString<KServer.Credentials>(it) }
             .toSet()
     }
 
@@ -71,7 +69,7 @@ class KServerAccountRepo @Inject constructor(
             added = true
 
             dataStore.edit {
-                it[stringPreferencesKey("$KEY_PREFIX.${acc.accountId.id}")] = adapterCredentials.toJson(acc)
+                it[stringPreferencesKey("$KEY_PREFIX.${acc.accountId.id}")] = json.encodeToString(acc)
             }
 
             this + acc

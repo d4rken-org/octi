@@ -46,6 +46,5 @@ dependencies {
     addIO()
     addCompose()
     addNavigation3()
-    addKotlinxSerialization()
     addTesting()
 }

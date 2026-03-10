@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
@@ -39,6 +40,7 @@ dependencies {
     addDI()
     addCoroutines()
     addSerialization()
+    addIO()
     addTesting()
 
     implementation("androidx.security:security-crypto-ktx:1.1.0-alpha03")

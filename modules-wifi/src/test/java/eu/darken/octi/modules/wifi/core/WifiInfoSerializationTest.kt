@@ -1,20 +1,21 @@
 package eu.darken.octi.modules.wifi.core
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
+import eu.darken.octi.common.collections.toByteString
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotContain
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
-import eu.darken.octi.common.collections.toByteString
 import testhelpers.json.toComparableJson
 
 class WifiInfoSerializationTest : BaseTest() {
 
-    private val moshi = Moshi.Builder().build()
-
-    private val adapter by lazy { moshi.adapter<WifiInfo>() }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        explicitNulls = false
+        encodeDefaults = true
+    }
 
     private val fullInfo = WifiInfo(
         currentWifi = WifiInfo.Wifi(
@@ -26,17 +27,17 @@ class WifiInfoSerializationTest : BaseTest() {
 
     @Test
     fun `round-trip serialization preserves all fields`() {
-        val json = adapter.toJson(fullInfo)
-        val deserialized = adapter.fromJson(json)
+        val encoded = json.encodeToString(fullInfo)
+        val deserialized = json.decodeFromString<WifiInfo>(encoded)
 
         deserialized shouldBe fullInfo
     }
 
     @Test
     fun `serialize full WifiInfo`() {
-        val json = adapter.toJson(fullInfo)
+        val encoded = json.encodeToString(fullInfo)
 
-        json.toComparableJson() shouldBe """
+        encoded.toComparableJson() shouldBe """
             {
                 "currentWifi": {
                     "ssid": "\"MyNetwork\"",
@@ -49,10 +50,10 @@ class WifiInfoSerializationTest : BaseTest() {
 
     @Test
     fun `current format does not contain address fields`() {
-        val json = adapter.toJson(fullInfo)
+        val encoded = json.encodeToString(fullInfo)
 
-        json shouldNotContain "addressIpv4"
-        json shouldNotContain "addressIpv6"
+        encoded shouldNotContain "addressIpv4"
+        encoded shouldNotContain "addressIpv6"
     }
 
     @Test
@@ -69,10 +70,9 @@ class WifiInfoSerializationTest : BaseTest() {
             }
         """
 
-        val result = adapter.fromJson(oldJson)
+        val result = json.decodeFromString<WifiInfo>(oldJson)
 
-        result shouldNotBe null
-        result!!.currentWifi shouldNotBe null
+        result.currentWifi shouldNotBe null
         result.currentWifi!!.ssid shouldBe "\"HomeWifi\""
         result.currentWifi!!.reception shouldBe 0.85f
         result.currentWifi!!.freqType shouldBe WifiInfo.Wifi.Type.TWO_POINT_FOUR_GHZ
@@ -91,10 +91,9 @@ class WifiInfoSerializationTest : BaseTest() {
             }
         """
 
-        val result = adapter.fromJson(oldJson)
+        val result = json.decodeFromString<WifiInfo>(oldJson)
 
-        result shouldNotBe null
-        result!!.currentWifi shouldNotBe null
+        result.currentWifi shouldNotBe null
         result.currentWifi!!.ssid shouldBe "\"Office\""
         result.currentWifi!!.reception shouldBe 0.5f
         result.currentWifi!!.freqType shouldBe WifiInfo.Wifi.Type.FIVE_GHZ
@@ -113,10 +112,9 @@ class WifiInfoSerializationTest : BaseTest() {
             }
         """
 
-        val result = adapter.fromJson(oldJson)
+        val result = json.decodeFromString<WifiInfo>(oldJson)
 
-        result shouldNotBe null
-        result!!.currentWifi shouldNotBe null
+        result.currentWifi shouldNotBe null
         result.currentWifi!!.ssid shouldBe null
         result.currentWifi!!.reception shouldBe null
         result.currentWifi!!.freqType shouldBe null
@@ -136,10 +134,9 @@ class WifiInfoSerializationTest : BaseTest() {
             }
         """
 
-        val result = adapter.fromJson(oldJson)
+        val result = json.decodeFromString<WifiInfo>(oldJson)
 
-        result shouldNotBe null
-        result!!.currentWifi shouldNotBe null
+        result.currentWifi shouldNotBe null
         result.currentWifi!!.ssid shouldBe "\"Guest\""
         result.currentWifi!!.reception shouldBe 0.3f
         result.currentWifi!!.freqType shouldBe WifiInfo.Wifi.Type.UNKNOWN
@@ -147,9 +144,8 @@ class WifiInfoSerializationTest : BaseTest() {
 
     @Test
     fun `deserialize old format full payload via WifiSerializer`() {
-        val serializer = WifiSerializer(moshi)
+        val serializer = WifiSerializer(json)
 
-        // Simulate what an older app version would have serialized
         val oldJson = """
             {
                 "currentWifi": {
@@ -165,7 +161,6 @@ class WifiInfoSerializationTest : BaseTest() {
         val bytes = oldJson.toByteString()
         val result = serializer.deserialize(bytes)
 
-        result shouldNotBe null
         result.currentWifi shouldNotBe null
         result.currentWifi!!.ssid shouldBe "\"MyNet\""
         result.currentWifi!!.reception shouldBe 0.9f
@@ -173,22 +168,43 @@ class WifiInfoSerializationTest : BaseTest() {
     }
 
     @Test
+    fun `WifiSerializer round-trip via ByteString`() {
+        val serializer = WifiSerializer(json)
+        val bytes = serializer.serialize(fullInfo)
+        val deserialized = serializer.deserialize(bytes)
+        deserialized shouldBe fullInfo
+    }
+
+    @Test
+    fun `WifiSerializer serialize output matches Moshi wire format`() {
+        val serializer = WifiSerializer(json)
+        val bytes = serializer.serialize(fullInfo)
+        bytes.utf8().toComparableJson() shouldBe """
+            {
+                "currentWifi": {
+                    "ssid": "\"MyNetwork\"",
+                    "reception": 0.75,
+                    "freqType": "5GHZ"
+                }
+            }
+        """.toComparableJson()
+    }
+
+    @Test
     fun `deserialize with null currentWifi`() {
-        val json = """{"currentWifi": null}"""
+        val nullJson = """{"currentWifi": null}"""
 
-        val result = adapter.fromJson(json)
+        val result = json.decodeFromString<WifiInfo>(nullJson)
 
-        result shouldNotBe null
-        result!!.currentWifi shouldBe null
+        result.currentWifi shouldBe null
     }
 
     @Test
     fun `deserialize empty JSON`() {
-        val json = """{}"""
+        val emptyJson = """{}"""
 
-        val result = adapter.fromJson(json)
+        val result = json.decodeFromString<WifiInfo>(emptyJson)
 
-        result shouldNotBe null
-        result!!.currentWifi shouldBe null
+        result.currentWifi shouldBe null
     }
 }

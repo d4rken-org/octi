@@ -1,20 +1,24 @@
+@file:UseSerializers(InstantSerializer::class)
+
 package eu.darken.octi.common.upgrade.core
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import eu.darken.octi.common.serialization.serializer.InstantSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import java.time.Instant
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class FossUpgrade(
-    @Json(name = "upgradedAt") val upgradedAt: Instant,
-    @Json(name = "reason") val upgradeType: Type,
+    @SerialName("upgradedAt") val upgradedAt: Instant,
+    @SerialName("reason") val upgradeType: Type,
 ) {
-    @JsonClass(generateAdapter = false)
+    @Serializable
     enum class Type {
-        @Json(name = "GITHUB_SPONSORS") GITHUB_SPONSORS,
-        @Json(name = "foss.upgrade.reason.donated") LEGACY_DONATED,
-        @Json(name = "foss.upgrade.reason.alreadydonated") LEGACY_ALREADY_DONATED,
-        @Json(name = "foss.upgrade.reason.nomoney") LEGACY_NO_MONEY,
+        @SerialName("GITHUB_SPONSORS") GITHUB_SPONSORS,
+        @SerialName("foss.upgrade.reason.donated") LEGACY_DONATED,
+        @SerialName("foss.upgrade.reason.alreadydonated") LEGACY_ALREADY_DONATED,
+        @SerialName("foss.upgrade.reason.nomoney") LEGACY_NO_MONEY,
         ;
     }
 }

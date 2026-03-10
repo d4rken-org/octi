@@ -1,10 +1,10 @@
 package eu.darken.octi.module.core
 
 import android.os.Parcelable
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 @Parcelize
-data class ModuleId(@Json(name = "id") val id: String) : Parcelable
+data class ModuleId(@SerialName("id") val id: String) : Parcelable

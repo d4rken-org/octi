@@ -1,8 +1,8 @@
 package eu.darken.octi.syncs.kserver.core
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import eu.darken.octi.sync.core.DeviceId
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -16,10 +16,10 @@ import retrofit2.http.Query
 
 interface KServerApi {
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class RegisterResponse(
-        @Json(name = "account") val accountID: String,
-        @Json(name = "password") val password: String
+        @SerialName("account") val accountID: String,
+        @SerialName("password") val password: String,
     )
 
     @POST("account")
@@ -33,9 +33,9 @@ interface KServerApi {
         @Header("X-Device-ID") deviceID: String,
     )
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class ShareCodeResponse(
-        @Json(name = "code") val shareCode: String,
+        @SerialName("code") val shareCode: String,
     )
 
     @POST("account/share")
@@ -43,14 +43,14 @@ interface KServerApi {
         @Header("X-Device-ID") deviceID: String,
     ): ShareCodeResponse
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class DevicesResponse(
-        @Json(name = "devices") val devices: List<Device>,
+        @SerialName("devices") val devices: List<Device>,
     ) {
-        @JsonClass(generateAdapter = true)
+        @Serializable
         data class Device(
-            @Json(name = "id") val id: String,
-            @Json(name = "version") val version: String?,
+            @SerialName("id") val id: String,
+            @SerialName("version") val version: String?,
         )
     }
 
@@ -59,9 +59,9 @@ interface KServerApi {
         @Header("X-Device-ID") deviceID: String,
     ): DevicesResponse
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class ResetRequest(
-        @Json(name = "targets") val targets: Set<DeviceId>,
+        @SerialName("targets") val targets: Set<DeviceId>,
     )
 
     @POST("devices/reset")

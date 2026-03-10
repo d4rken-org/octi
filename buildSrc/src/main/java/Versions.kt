@@ -12,10 +12,6 @@ object Versions {
         const val core = "2.59.2"
     }
 
-    object Moshi {
-        const val core = "1.15.2"
-    }
-
     object Compose {
         const val bom = "2026.02.00"
     }

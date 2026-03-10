@@ -1,17 +1,16 @@
 package eu.darken.octi.common.theming
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import eu.darken.octi.common.R
 import eu.darken.octi.common.ca.CaString
 import eu.darken.octi.common.ca.toCaString
 import eu.darken.octi.common.preferences.EnumPreference
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = false)
+@Serializable
 enum class ThemeMode(override val label: CaString) : EnumPreference<ThemeMode> {
-    @Json(name = "SYSTEM") SYSTEM(R.string.ui_theme_mode_system_label.toCaString()),
-    @Json(name = "DARK") DARK(R.string.ui_theme_mode_dark_label.toCaString()),
-    @Json(name = "LIGHT") LIGHT(R.string.ui_theme_mode_light_label.toCaString()),
+    @SerialName("SYSTEM") SYSTEM(R.string.ui_theme_mode_system_label.toCaString()),
+    @SerialName("DARK") DARK(R.string.ui_theme_mode_dark_label.toCaString()),
+    @SerialName("LIGHT") LIGHT(R.string.ui_theme_mode_light_label.toCaString()),
     ;
 }
-

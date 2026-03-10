@@ -1,6 +1,5 @@
 package eu.darken.octi.modules.connectivity.core
 
-import com.squareup.moshi.Moshi
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.network.PublicIpEndpointProvider
 import io.kotest.matchers.shouldBe
@@ -18,6 +17,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -40,7 +40,7 @@ class PublicIpProviderTest : BaseTest() {
     private lateinit var networkState: MutableStateFlow<NetworkStateProvider.State>
     private lateinit var endpointUrls: MutableStateFlow<List<String>>
 
-    private val moshi = Moshi.Builder().build()
+    private val json = Json { ignoreUnknownKeys = true }
 
     @BeforeEach
     fun setup() {
@@ -63,7 +63,7 @@ class PublicIpProviderTest : BaseTest() {
         networkStateProvider = networkStateProvider,
         dispatcherProvider = TestDispatcherProvider(),
         publicIpEndpointProvider = publicIpEndpointProvider,
-        moshi = moshi,
+        json = json,
     )
 
     private suspend fun TestScope.awaitFirstPublicIp(instance: PublicIpProvider): String? {

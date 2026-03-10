@@ -1,59 +1,64 @@
+@file:UseSerializers(InstantSerializer::class, ByteStringSerializer::class)
+
 package eu.darken.octi.syncs.kserver.core
 
 import android.os.Parcelable
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import eu.darken.octi.common.serialization.serializer.ByteStringSerializer
+import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import java.time.Instant
 import java.util.UUID
 
 
 interface KServer {
 
-    @JsonClass(generateAdapter = false)
+    @Serializable
     enum class Official(val address: Address) {
-        @Json(name = "PROD") PROD(Address("prod.kserver.octi.darken.eu")),
-        @Json(name = "BETA") BETA(Address("beta.kserver.octi.darken.eu")),
-        @Json(name = "LOCAL") LOCAL(Address("blasphemy", protocol = "http", port = 8080)),
+        @SerialName("PROD") PROD(Address("prod.kserver.octi.darken.eu")),
+        @SerialName("BETA") BETA(Address("beta.kserver.octi.darken.eu")),
+        @SerialName("LOCAL") LOCAL(Address("blasphemy", protocol = "http", port = 8080)),
     }
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     @Parcelize
     data class Address(
-        @Json(name = "domain") val domain: String,
-        @Json(name = "protocol") val protocol: String = "https",
-        @Json(name = "port") val port: Int = 443,
+        @SerialName("domain") val domain: String,
+        @SerialName("protocol") val protocol: String = "https",
+        @SerialName("port") val port: Int = 443,
     ) : Parcelable {
         val address: String
             get() = "$protocol://$domain:$port"
     }
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class Credentials(
-        @Json(name = "serverAdress") val serverAdress: Address,
-        @Json(name = "accountId") val accountId: AccountId,
-        @Json(name = "devicePassword") val devicePassword: DevicePassword,
-        @Json(name = "encryptionKeyset") val encryptionKeyset: PayloadEncryption.KeySet,
-        @Json(name = "createdAt") val createdAt: Instant = Instant.now(),
+        @SerialName("serverAdress") val serverAdress: Address,
+        @SerialName("accountId") val accountId: AccountId,
+        @SerialName("devicePassword") val devicePassword: DevicePassword,
+        @SerialName("encryptionKeyset") val encryptionKeyset: PayloadEncryption.KeySet,
+        @SerialName("createdAt") val createdAt: Instant = Instant.now(),
     ) {
 
         override fun toString(): String =
             "KServer.Credentials(server=$serverAdress, account=$accountId, password=$devicePassword)"
 
-        @JsonClass(generateAdapter = true)
+        @Serializable
         @Parcelize
-        data class AccountId(@Json(name = "id") val id: String = UUID.randomUUID().toString()) : Parcelable
+        data class AccountId(@SerialName("id") val id: String = UUID.randomUUID().toString()) : Parcelable
 
-        @JsonClass(generateAdapter = true)
+        @Serializable
         @Parcelize
-        data class DevicePassword(@Json(name = "password") val password: String) : Parcelable {
+        data class DevicePassword(@SerialName("password") val password: String) : Parcelable {
             override fun toString(): String = "DevicePassword(code=${password.take(4)}...)"
         }
 
-        @JsonClass(generateAdapter = true)
+        @Serializable
         @Parcelize
-        data class LinkCode(@Json(name = "code") val code: String) : Parcelable {
+        data class LinkCode(@SerialName("code") val code: String) : Parcelable {
             override fun toString(): String = "ShareCode(code=${code.take(4)}...)"
         }
     }
