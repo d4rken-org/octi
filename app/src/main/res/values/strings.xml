@@ -26,6 +26,29 @@
     <string name="debug_debuglog_file_label">Recorded log file</string>
     <string name="debug_debuglog_recorded_file_label">Recorded file</string>
     <string name="debug_debuglog_record_action">Record debug log</string>
+    <string name="debug_debuglog_stop_action">Stop recording</string>
+    <string name="debug_log_save_action">Save</string>
+    <string name="debug_log_discard_action">Discard</string>
+    <string name="debug_debuglog_screen_title">Debug Log</string>
+    <string name="debug_debuglog_screen_subtitle">Export debug information for troubleshooting</string>
+    <string name="debug_debuglog_screen_sensitive_title">Sensitive Information</string>
+    <string name="debug_debuglog_screen_session_path_label">Session Path</string>
+    <string name="debug_debuglog_screen_log_files_label">Log Files</string>
+    <plurals name="debug_debuglog_screen_log_files_ready">
+        <item quantity="one">%1$d file ready (%2$s) · %3$s</item>
+        <item quantity="other">%1$d files ready (%2$s) · %3$s</item>
+    </plurals>
+
+    <string name="debug_debuglog_duration_minutes_seconds">%1$dm %2$ds</string>
+    <string name="debug_debuglog_duration_seconds">%1$ds</string>
+
+    <string name="debug_debuglog_short_recording_title">Recording very short</string>
+    <string name="debug_debuglog_short_recording_message">This recording is only a few seconds long. For a useful debug log, reproduce the issue while recording is active.</string>
+    <string name="debug_debuglog_discard_confirmation_title">Delete debug log?</string>
+    <string name="debug_debuglog_discard_confirmation_message">This will permanently delete this debug log session.</string>
+
+    <string name="debug_debuglog_short_recording_continue_action">Continue recording</string>
+    <string name="debug_debuglog_short_recording_stop_action">Stop anyway</string>
 
     <string name="onboarding_setupsync_title">Set up synchronization</string>
     <string name="onboarding_setupsync_message">Currently you are only seeing this device. To connect your Octi installations, set up a common synchronization service.</string>
@@ -141,5 +164,49 @@
     <string name="sync_delete_device_keepaccess_caveat">Removing this device will delete its data but won\'t revoke access. To revoke access, disconnect Octi on the device.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Deleting this device will remove its data and revoke its access.</string>
 
+    <string name="support_contact_label">Contact developer</string>
+    <string name="support_contact_desc">Fill out a form to send the developer an email.</string>
+    <string name="support_contact_category_label">Category</string>
+    <string name="support_contact_category_question_label">Question</string>
+    <string name="support_contact_category_feature_label">Feature request</string>
+    <string name="support_contact_category_bug_label">Bug report</string>
+
+    <string name="support_contact_debuglog_label">Debug log</string>
+    <string name="support_contact_debuglog_picker_hint">Attach an existing debug log, or record a new one.</string>
+    <string name="support_contact_debuglog_picker_empty">No debug logs found. Record one first.</string>
+    <string name="support_contact_debuglog_zip_error">Failed to compress debug log</string>
+
+    <string name="support_contact_description_label">Description</string>
+    <string name="support_contact_description_question_hint">Describe your question in detail. Please be specific (minimum 20 words).</string>
+    <string name="support_contact_description_feature_hint">Describe the feature you would like to see. Please be specific (minimum 20 words).</string>
+    <string name="support_contact_description_bug_hint">Describe what happened and how to reproduce the issue. Please be specific (minimum 20 words).</string>
+
+    <string name="support_contact_expected_label">Expected behavior</string>
+    <string name="support_contact_expected_hint">Describe what you expected to happen (minimum 10 words).</string>
+
+    <plurals name="support_contact_word_count">
+        <item quantity="one">%1$d / %2$d word</item>
+        <item quantity="other">%1$d / %2$d words</item>
+    </plurals>
+
+    <string name="support_contact_welcome">I read every message myself and do my best to reply, but since I work on this alone, it can take a little time. Thanks for your patience.</string>
+    <string name="support_contact_footer">Your message will be sent via email. Device and setup information is attached automatically. You can attach screenshots or a video to the email. Some parts of the email will be in English so the developer can easily understand it.</string>
+    <string name="support_contact_send_action">Open email app</string>
+
+    <string name="support_contact_no_email_app">No email app found on this device.</string>
+
+    <string name="support_debuglog_folder_label">Debug log folder</string>
+    <plurals name="support_debuglog_folder_desc">
+        <item quantity="one">%1$d file using %2$s</item>
+        <item quantity="other">%1$d files using %2$s</item>
+    </plurals>
+    <string name="support_debuglog_folder_empty_desc">No debug logs stored</string>
+    <string name="support_debuglog_folder_delete_confirmation_title">Delete all debug logs?</string>
+    <string name="support_debuglog_folder_delete_confirmation_message">This will permanently delete all stored debug log sessions. This action cannot be undone.</string>
+
+    <string name="support_debuglog_sessions_title">Debug sessions</string>
+    <string name="support_debuglog_session_recording_label">Recording…</string>
+    <string name="support_debuglog_session_compressing_label">Compressing…</string>
+    <string name="support_debuglog_session_failed_label">Corrupted</string>
 
 </resources>

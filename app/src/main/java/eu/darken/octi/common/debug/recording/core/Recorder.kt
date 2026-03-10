@@ -19,13 +19,19 @@ class Recorder @Inject constructor() {
     val isRecording: Boolean
         get() = path != null
 
+    var sessionDir: File? = null
+        private set
+
     var path: File? = null
         private set
 
-    suspend fun start(path: File) = mutex.withLock {
+    suspend fun start(sessionDir: File) = mutex.withLock {
         if (fileLogger != null) return@withLock
-        this.path = path
-        fileLogger = FileLogger(path)
+        this.sessionDir = sessionDir
+        sessionDir.mkdirs()
+        val logFile = File(sessionDir, "core.log")
+        this.path = logFile
+        fileLogger = FileLogger(logFile)
         fileLogger?.let { logger ->
             if (Logging.loggers.none { it is LogCatLogger }) {
                 log(TAG, INFO) { "Adding LogCatLogger: $this" }
@@ -36,7 +42,7 @@ class Recorder @Inject constructor() {
             }
             logger.start()
             Logging.install(logger)
-            log(TAG, INFO) { "Now logging to file!" }
+            log(TAG, INFO) { "Now logging to file in $sessionDir" }
         }
     }
 
@@ -47,6 +53,7 @@ class Recorder @Inject constructor() {
             it.stop()
             fileLogger = null
             this.path = null
+            this.sessionDir = null
         }
         logcatLogger?.let {
             log(TAG, INFO) { "Stopping LogCatLogger: $it" }
@@ -56,7 +63,6 @@ class Recorder @Inject constructor() {
     }
 
     companion object {
-        internal val TAG = logTag("Debug", "Log", "eu.darken.octi.common.debug.recording.core.Recorder")
+        internal val TAG = logTag("Debug", "Log", "Recorder")
     }
-
 }

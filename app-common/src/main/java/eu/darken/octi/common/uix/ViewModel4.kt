@@ -3,7 +3,7 @@ package eu.darken.octi.common.uix
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
-import eu.darken.octi.common.error.ErrorEventSource2
+import eu.darken.octi.common.error.ErrorEventSource
 import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.navigation.NavEvent
@@ -15,15 +15,15 @@ import kotlinx.coroutines.flow.launchIn
 
 abstract class ViewModel4(
     dispatcherProvider: DispatcherProvider,
-) : ViewModel2(dispatcherProvider), NavigationEventSource, ErrorEventSource2 {
+) : ViewModel2(dispatcherProvider), NavigationEventSource, ErrorEventSource {
 
     override val navEvents = SingleEventFlow<NavEvent>()
-    override val errorEvents2 = SingleEventFlow<Throwable>()
+    override val errorEvents = SingleEventFlow<Throwable>()
 
     init {
         launchErrorHandler = CoroutineExceptionHandler { _, ex ->
             log(_tag) { "Error during launch: ${ex.asLog()}" }
-            errorEvents2.emitBlocking(ex)
+            errorEvents.emitBlocking(ex)
         }
     }
 

@@ -34,7 +34,7 @@ Register the module ID in `ModuleId` and provide Hilt bindings using `@IntoSet`.
 
 - **Don't use SharedPreferences** — use `DataStoreValue` via `DataStore<Preferences>.createValue()`
 - **Don't use `GlobalScope`** — inject `@AppScope CoroutineScope` instead
-- **Always extend `ViewModel3`** for ViewModels (not `ViewModel` or `AndroidViewModel`)
+- **Always extend `ViewModel4`** for ViewModels (not `ViewModel` or `AndroidViewModel`)
 - **Always call `setupCommonEventHandlers`** on shared flows for consistent logging
 - **Don't forget trailing commas** in multi-line parameter lists
 - **Use `logTag()`** for log tags — it adds the 🐙 prefix automatically

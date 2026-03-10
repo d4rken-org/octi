@@ -66,7 +66,7 @@ Access with `.flow` (reactive), `value()` (suspend read), `value(newVal)` (suspe
 - `e.asLog()`: Format exception with stacktrace for logging
 - `Throwable.hasCause(ExceptionClass::class)`: Check exception chain
 - `Throwable.getRootCause()`: Get the root cause of an exception chain
-- `errorEvents: SingleLiveEvent<Throwable>` in `ViewModel3` for UI error display
+- `errorEvents: SingleEventFlow<Throwable>` in `ViewModel4` for UI error display
 
 ## UI Patterns
 

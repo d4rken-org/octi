@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import eu.darken.octi.common.R
+import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.ca.CaString
 import eu.darken.octi.common.ca.caString
 
@@ -45,8 +46,12 @@ fun Throwable.localized(c: Context): LocalizedError = when {
     )
 }
 
-private fun Throwable.getStackTracePeek() = this.stackTraceToString()
-    .lines()
-    .filterIndexed { index, _ -> index > 1 }
-    .take(3)
-    .joinToString("\n")
+private fun Throwable.getStackTracePeek() = if (BuildConfigWrap.DEBUG) {
+    this.stackTraceToString()
+        .lines()
+        .filterIndexed { index, _ -> index > 1 }
+        .take(3)
+        .joinToString("\n")
+} else {
+    this::class.simpleName ?: "Unknown error"
+}

@@ -11,6 +11,7 @@
     <string name="general_gotit_action">Got it</string>
     <string name="general_na_label">N/A</string>
     <string name="general_empty_label">Empty</string>
+    <string name="general_delete_action">Delete</string>
     <string name="general_dismiss_action">Dismiss</string>
     <string name="general_maybe_later_action">Maybe later</string>
     <string name="general_manage_action">Manage</string>
@@ -21,6 +22,7 @@
     <string name="general_check_action">Check</string>
     <string name="general_internal_not_available_msg">Internet connection unavailable</string>
     <string name="general_refresh_action">Refresh</string>
+    <string name="general_close_action">Close</string>
     <string name="general_continue">Continue</string>
     <string name="general_show_details_action">Show details</string>
     <string name="general_minutes_label">Minutes</string>

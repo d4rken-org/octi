@@ -15,8 +15,8 @@ import androidx.compose.ui.res.stringResource
 import eu.darken.octi.common.R
 
 @Composable
-fun ErrorEventHandler(source: ErrorEventSource2) {
-    val errorEvents = source.errorEvents2
+fun ErrorEventHandler(source: ErrorEventSource) {
+    val errorEvents = source.errorEvents
     var currentError by remember { mutableStateOf<Throwable?>(null) }
 
     LaunchedEffect(errorEvents) { errorEvents.collect { error -> currentError = error } }

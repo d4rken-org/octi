@@ -15,7 +15,7 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.debug.recording.core.RecorderModule
+import eu.darken.octi.common.debug.recording.core.DebugSessionManager
 import eu.darken.octi.common.theming.Theming
 import eu.darken.octi.main.core.CurriculumVitae
 import eu.darken.octi.main.core.GeneralSettings
@@ -40,7 +40,7 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var moduleManager: ModuleManager
     @Inject lateinit var syncWorkerControl: SyncWorkerControl
     @Inject lateinit var generalSettings: GeneralSettings
-    @Inject lateinit var recorderModule: RecorderModule
+    @Inject lateinit var debugSessionManager: DebugSessionManager
     @Inject lateinit var imageLoaderFactory: SingletonImageLoader.Factory
     @Inject lateinit var theming: Theming
     @Inject lateinit var curriculumVitae: CurriculumVitae
@@ -54,8 +54,8 @@ open class App : Application(), Configuration.Provider {
             log(TAG) { OctiAscii.logo }
         }
 
-        recorderModule.state
-            .onEach { log(TAG) { "RecorderModule: $it" } }
+        debugSessionManager.state
+            .onEach { log(TAG) { "DebugSessionManager: $it" } }
             .launchIn(appScope)
 
         log(TAG, INFO) { BuildConfigWrap.VERSION_DESCRIPTION }
