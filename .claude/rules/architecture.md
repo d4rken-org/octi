@@ -40,9 +40,9 @@ Data flows through: `SyncConnector` → `ConnectorHub` → `SyncManager`
 
 ## MVVM with Custom ViewModel Hierarchy
 
-- `ViewModel1` → `ViewModel2` → `ViewModel3`
-- `ViewModel3` adds navigation (`NavEventSource`) and error handling (`ErrorEventSource`)
-- Uses `SingleLiveEvent` for one-shot navigation and error events
+- `ViewModel1` → `ViewModel2` → `ViewModel4`
+- `ViewModel4` adds navigation (`NavigationEventSource`) and error handling (`ErrorEventSource`)
+- Uses `SingleEventFlow` for one-shot navigation and error events
 - All ViewModels use `@HiltViewModel` with `@Inject constructor`
 
 ## Fragment Hierarchy

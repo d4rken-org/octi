@@ -54,6 +54,8 @@ class GeneralSettings @Inject constructor(
         writer = { perms -> perms.joinToString(",") { it.permissionId } }
     )
 
+    val isLegacyLogCleanupDone = dataStore.createValue("debug.legacy.cleanup.done", false)
+
     val dashboardConfig = dataStore.createValue(
         "dashboard.ui.config", 
         DashboardConfig(),

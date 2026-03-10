@@ -56,7 +56,7 @@ class UpgradeViewModel @Inject constructor(
                 try {
                     upgradeRepo.querySkus(OurSku.Iap.PRO_UPGRADE)
                 } catch (e: Exception) {
-                    errorEvents2.emitBlocking(e)
+                    errorEvents.emitBlocking(e)
                     null
                 }
             }
@@ -67,7 +67,7 @@ class UpgradeViewModel @Inject constructor(
                 try {
                     upgradeRepo.querySkus(OurSku.Sub.PRO_UPGRADE)
                 } catch (e: Exception) {
-                    errorEvents2.emitBlocking(e)
+                    errorEvents.emitBlocking(e)
                     null
                 }
             }

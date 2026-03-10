@@ -118,18 +118,18 @@ fun SettingsIndexScreen(
             }
             item {
                 SettingsBaseItem(
-                    title = stringResource(R.string.changelog_label),
-                    subtitle = BuildConfigWrap.VERSION_DESCRIPTION,
-                    iconPainter = painterResource(R.drawable.ic_changelog_onsurface),
-                    onClick = onChangelog,
-                )
-            }
-            item {
-                SettingsBaseItem(
                     title = stringResource(R.string.settings_support_label),
                     subtitle = "\u00AF\\_(ツ)_/\u00AF",
                     icon = Icons.TwoTone.SupportAgent,
                     onClick = onSupport,
+                )
+            }
+            item {
+                SettingsBaseItem(
+                    title = stringResource(R.string.changelog_label),
+                    subtitle = BuildConfigWrap.VERSION_DESCRIPTION,
+                    iconPainter = painterResource(R.drawable.ic_changelog_onsurface),
+                    onClick = onChangelog,
                 )
             }
             item {

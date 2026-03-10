@@ -3,43 +3,26 @@ package eu.darken.octi.common.debug.recording.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.format.Formatter
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
-import eu.darken.octi.common.R as CommonR
-import eu.darken.octi.common.compose.Preview2
-import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.theming.OctiTheme
 import eu.darken.octi.common.uix.Activity2
+import eu.darken.octi.common.R as CommonR
 
 @AndroidEntryPoint
 class RecorderActivity : Activity2() {
@@ -48,6 +31,7 @@ class RecorderActivity : Activity2() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         setContent {
             val themeState by vm.themeState.collectAsState()
@@ -55,14 +39,41 @@ class RecorderActivity : Activity2() {
                 LaunchedEffect(Unit) {
                     vm.shareEvent.collect { startActivity(it) }
                 }
+                LaunchedEffect(Unit) {
+                    vm.finishEvent.collect { finish() }
+                }
+
+                var showDeleteConfirm by remember { mutableStateOf(false) }
+
+                if (showDeleteConfirm) {
+                    AlertDialog(
+                        onDismissRequest = { showDeleteConfirm = false },
+                        title = { Text(stringResource(R.string.debug_debuglog_discard_confirmation_title)) },
+                        text = { Text(stringResource(R.string.debug_debuglog_discard_confirmation_message)) },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showDeleteConfirm = false
+                                vm.discard()
+                            }) {
+                                Text(stringResource(CommonR.string.general_delete_action))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDeleteConfirm = false }) {
+                                Text(stringResource(CommonR.string.general_cancel_action))
+                            }
+                        },
+                    )
+                }
 
                 val state by waitForState(vm.state)
                 state?.let {
                     RecorderScreen(
                         state = it,
                         onShare = { vm.share() },
+                        onSave = { vm.keep() },
+                        onDiscard = { showDeleteConfirm = true },
                         onPrivacyPolicy = { vm.goPrivacyPolicy() },
-                        onCancel = { finish() },
                     )
                 }
             }
@@ -71,139 +82,12 @@ class RecorderActivity : Activity2() {
 
     companion object {
         internal val TAG = logTag("Debug", "Log", "RecorderActivity")
-        const val RECORD_PATH = "logPath"
+        const val SESSION_DIR = "sessionDir"
 
-        fun getLaunchIntent(context: Context, path: String): Intent {
+        fun getLaunchIntent(context: Context, sessionDirPath: String): Intent {
             val intent = Intent(context, RecorderActivity::class.java)
-            intent.putExtra(RECORD_PATH, path)
+            intent.putExtra(SESSION_DIR, sessionDirPath)
             return intent
         }
     }
-}
-
-@Composable
-fun RecorderScreen(
-    state: RecorderActivityVM.State,
-    onShare: () -> Unit,
-    onPrivacyPolicy: () -> Unit,
-    onCancel: () -> Unit,
-) {
-    val context = LocalContext.current
-
-    OutlinedCard(
-        modifier = Modifier.padding(16.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.debug_debuglog_recorded_file_label),
-                style = MaterialTheme.typography.labelMedium,
-            )
-
-            Text(
-                text = state.normalPath ?: "",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = stringResource(R.string.debug_debuglog_sensitive_information_message),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.settings_privacy_policy_label),
-                style = MaterialTheme.typography.bodyMedium,
-                textDecoration = TextDecoration.Underline,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .clickable(onClick = onPrivacyPolicy),
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(R.string.debug_debuglog_size_label),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                    if (state.normalSize != -1L) {
-                        Text(
-                            text = Formatter.formatShortFileSize(context, state.normalSize),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(R.string.debug_debuglog_size_compressed_label),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                    if (state.compressedSize != -1L) {
-                        Text(
-                            text = Formatter.formatShortFileSize(context, state.compressedSize),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                OutlinedButton(onClick = onCancel) {
-                    Text(text = stringResource(CommonR.string.general_cancel_action))
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                if (state.loading) {
-                    CircularProgressIndicator(modifier = Modifier.size(36.dp))
-                } else {
-                    Button(onClick = onShare) {
-                        Text(text = stringResource(CommonR.string.general_share_action))
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Preview2
-@Composable
-private fun RecorderScreenLoadingPreview() = PreviewWrapper {
-    RecorderScreen(
-        state = RecorderActivityVM.State(),
-        onShare = {},
-        onPrivacyPolicy = {},
-        onCancel = {},
-    )
-}
-
-@Preview2
-@Composable
-private fun RecorderScreenPreview() = PreviewWrapper {
-    RecorderScreen(
-        state = RecorderActivityVM.State(
-            normalPath = "/storage/emulated/0/octi/debug-log.txt",
-            normalSize = 524288L,
-            compressedSize = 131072L,
-            loading = false,
-        ),
-        onShare = {},
-        onPrivacyPolicy = {},
-        onCancel = {},
-    )
 }

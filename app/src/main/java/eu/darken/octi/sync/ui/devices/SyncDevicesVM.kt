@@ -131,7 +131,7 @@ class SyncDevicesVM @Inject constructor(
                 }
             } catch (e: Exception) {
                 log(TAG, ERROR) { "Failed to delete device $deviceId: ${e.asLog()}" }
-                errorEvents2.emit(e)
+                errorEvents.tryEmit(e)
             }
         }
     }
