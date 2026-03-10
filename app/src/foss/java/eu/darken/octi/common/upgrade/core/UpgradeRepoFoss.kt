@@ -43,13 +43,17 @@ class UpgradeRepoFoss @Inject constructor(
     }
         .setupCommonEventHandlers(TAG) { "upgradeInfo" }
 
-    fun launchGithubSponsorsUpgrade() = appScope.launch {
-        log(TAG) { "launchGithubSponsorsUpgrade()" }
+    fun openSponsorsPage() {
+        log(TAG) { "openSponsorsPage()" }
+        appScope.launch { webpageTool.open(mainWebsite) }
+    }
+
+    fun unlockUpgrade() {
+        log(TAG) { "unlockUpgrade()" }
         fossCache.upgrade.valueBlocking = FossUpgrade(
             upgradedAt = Instant.now(),
-            upgradeType = FossUpgrade.Type.GITHUB_SPONSORS
+            upgradeType = FossUpgrade.Type.GITHUB_SPONSORS,
         )
-        webpageTool.open(mainWebsite)
     }
 
     override suspend fun refresh() {
