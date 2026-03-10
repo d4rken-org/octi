@@ -1,6 +1,5 @@
 package eu.darken.octi.common.upgrade.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,18 +18,23 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.Lifecycle
 import eu.darken.octi.R
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -47,28 +51,31 @@ fun UpgradeScreenHost(
     ErrorEventHandler(vm)
     NavigationEventHandler(vm)
 
-    val context = LocalContext.current
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.onResumed() }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val tooFastMsg = stringResource(R.string.upgrade_screen_sponsor_too_fast_msg)
+
+    LaunchedEffect(Unit) {
+        vm.snackbarEvents.collect { snackbarHostState.showSnackbar(tooFastMsg) }
+    }
 
     UpgradeScreen(
+        snackbarHostState = snackbarHostState,
         onNavigateUp = { vm.navUp() },
-        onSponsor = {
-            Toast.makeText(
-                context,
-                R.string.upgrade_screen_thanks_toast,
-                Toast.LENGTH_LONG,
-            ).show()
-            vm.goGithubSponsors()
-        },
+        onSponsor = { vm.goGithubSponsors() },
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpgradeScreen(
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onNavigateUp: () -> Unit,
     onSponsor: () -> Unit,
 ) {
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
