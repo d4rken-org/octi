@@ -8,7 +8,6 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.modules.apps.core.AppsInfo
@@ -89,7 +88,7 @@ class AppsListVM @Inject constructor(
                 )
             }
         }
-        .shareLatest(scope = vmScope)
+        .asStateFlow()
 
     fun initialize(deviceId: String) {
         log(TAG) { "initialize($deviceId)" }

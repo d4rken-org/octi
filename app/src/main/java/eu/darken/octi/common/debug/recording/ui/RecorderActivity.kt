@@ -18,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.R
-import eu.darken.octi.common.compose.waitForState
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.theming.OctiTheme
 import eu.darken.octi.common.uix.Activity2
@@ -66,7 +65,7 @@ class RecorderActivity : Activity2() {
                     )
                 }
 
-                val state by waitForState(vm.state)
+                val state by vm.state.collectAsState(initial = null)
                 state?.let {
                     RecorderScreen(
                         state = it,

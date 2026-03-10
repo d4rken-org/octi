@@ -21,7 +21,6 @@ import eu.darken.octi.common.debug.recording.core.LogSession
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.SingleEventFlow
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.themeState
@@ -55,7 +54,7 @@ class RecorderActivityVM @Inject constructor(
     private val session: LogSession? = sessionDirPath?.let { LogSession(File(it)) }
 
     private val stater = DynamicStateFlow(TAG, vmScope) { State() }
-    val state = stater.flow.shareLatest(scope = vmScope)
+    val state = stater.flow.asStateFlow()
 
     val shareEvent = SingleEventFlow<Intent>()
     val finishEvent = SingleEventFlow<Unit>()

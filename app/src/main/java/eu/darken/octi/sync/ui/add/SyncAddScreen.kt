@@ -42,7 +42,7 @@ import eu.darken.octi.syncs.kserver.R as KServerR
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import eu.darken.octi.common.compose.waitForState
+import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 
@@ -51,7 +51,7 @@ fun SyncAddScreenHost(vm: SyncAddVM = hiltViewModel()) {
     ErrorEventHandler(vm)
     NavigationEventHandler(vm)
 
-    val state by waitForState(vm.state)
+    val state by vm.state.collectAsState(initial = null)
     state?.let {
         SyncAddScreen(
             state = it,

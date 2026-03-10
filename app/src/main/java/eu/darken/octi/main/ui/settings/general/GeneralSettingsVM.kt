@@ -4,7 +4,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.datastore.value
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.theming.ThemeColor
 import eu.darken.octi.common.theming.ThemeMode
 import eu.darken.octi.common.theming.ThemeStyle
@@ -52,7 +51,7 @@ class GeneralSettingsVM @Inject constructor(
             themeStyle = themeStyle,
             themeColor = themeColor,
         )
-    }.shareLatest(scope = vmScope)
+    }.asStateFlow()
 
     fun setThemeMode(mode: ThemeMode) = launch {
         generalSettings.themeMode.value(mode)

@@ -50,7 +50,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.syncs.kserver.R as KServerR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import eu.darken.octi.common.compose.waitForState
+import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.syncs.kserver.ui.link.KServerLinkOption
@@ -69,7 +69,7 @@ fun KServerLinkClientScreenHost(vm: KServerLinkClientVM = hiltViewModel()) {
         }
     }
 
-    val state by waitForState(vm.state)
+    val state by vm.state.collectAsState(initial = null)
     state?.let {
         KServerLinkClientScreen(
             state = it,

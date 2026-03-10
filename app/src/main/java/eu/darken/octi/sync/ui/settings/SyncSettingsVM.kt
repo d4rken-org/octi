@@ -4,7 +4,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.datastore.value
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.flow.combine
@@ -35,7 +34,7 @@ class SyncSettingsVM @Inject constructor(
             backgroundSyncInterval = bgInterval,
             backgroundSyncOnMobile = bgMobile,
         )
-    }.shareLatest(scope = vmScope)
+    }.asStateFlow()
 
     fun setDeviceLabel(label: String?) = launch {
         syncSettings.deviceLabel.value(label?.ifBlank { null })

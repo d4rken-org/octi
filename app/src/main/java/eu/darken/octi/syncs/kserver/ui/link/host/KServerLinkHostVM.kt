@@ -8,7 +8,6 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.flow.withPrevious
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.sync.core.SyncManager
@@ -43,7 +42,7 @@ class KServerLinkHostVM @Inject constructor(
     )
 
     private val _state = MutableStateFlow(State())
-    val state = _state.shareLatest(scope = vmScope)
+    val state = _state.asStateFlow()
 
     private val connectorFlow = connectorIdFlow
         .filterNotNull()

@@ -17,7 +17,6 @@ import eu.darken.octi.common.debug.recording.ui.RecorderActivity
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import kotlinx.coroutines.flow.onEach
@@ -43,7 +42,7 @@ class SupportVM @Inject constructor(
     }
 
     private val stater = DynamicStateFlow(TAG, vmScope) { State() }
-    val state = stater.flow.shareLatest(scope = vmScope)
+    val state = stater.flow.asStateFlow()
 
     val launchRecorderEvent = SingleEventFlow<Intent>()
 
