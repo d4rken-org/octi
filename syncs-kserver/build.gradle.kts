@@ -34,6 +34,7 @@ dependencies {
 
     implementation(project(":app-common"))
     implementation(project(":sync-core"))
+    testImplementation(project(":app-common-test"))
 
     addAndroidCore()
     addAndroidUI()
