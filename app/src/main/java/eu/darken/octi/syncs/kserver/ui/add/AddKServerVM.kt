@@ -6,7 +6,6 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.syncs.kserver.core.KServer
@@ -31,7 +30,7 @@ class AddKServerVM @Inject constructor(
     )
 
     private val _state = MutableStateFlow(State())
-    val state = _state.shareLatest(scope = vmScope)
+    val state = _state.asStateFlow()
 
     fun selectType(type: KServer.Official?) {
         log(TAG) { "selectType(type=$type)" }

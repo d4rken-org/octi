@@ -7,7 +7,6 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
@@ -111,7 +110,7 @@ class SyncListVM @Inject constructor(
             combine(withStates) { it.toList() }
         }
         .map { State(connectors = it) }
-        .shareLatest(scope = vmScope)
+        .asStateFlow()
 
     fun addConnector() {
         log(TAG) { "addConnector()" }

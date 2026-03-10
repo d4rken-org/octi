@@ -7,7 +7,6 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
@@ -72,7 +71,7 @@ class PowerAlertsVM @Inject constructor(
                 )
             }
         }
-        .shareLatest(scope = vmScope)
+        .asStateFlow()
 
     fun initialize(deviceId: String) {
         log(TAG) { "initialize($deviceId)" }

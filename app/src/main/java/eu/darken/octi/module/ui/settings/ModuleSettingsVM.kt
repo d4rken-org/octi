@@ -4,7 +4,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.datastore.value
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.modules.apps.core.AppsSettings
@@ -62,7 +61,7 @@ class ModuleSettingsVM @Inject constructor(
             isAppsInstallerEnabled = installer,
             isClipboardEnabled = clipboard,
         )
-    }.shareLatest(scope = vmScope)
+    }.asStateFlow()
 
     fun setPowerEnabled(enabled: Boolean) = launch {
         powerSettings.isEnabled.value(enabled)

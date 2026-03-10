@@ -5,7 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.syncs.kserver.core.KServerHub
 import eu.darken.octi.syncs.kserver.core.LinkingData
@@ -33,7 +32,7 @@ class KServerLinkClientVM @Inject constructor(
     )
 
     private val _state = MutableStateFlow(State())
-    val state = _state.shareLatest(scope = vmScope)
+    val state = _state.asStateFlow()
 
     fun onLinkOptionSelected(option: KServerLinkOption) = launch {
         log(TAG) { "onLinkOptionSelected(option=$option)" }

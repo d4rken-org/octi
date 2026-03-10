@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import kotlinx.coroutines.flow.flow
@@ -33,7 +32,7 @@ class SyncAddVM @Inject constructor(
             SyncAddItem(SyncType.KSERVER) { navTo(Nav.Sync.AddKServer) },
         )
         emit(State(items = items))
-    }.shareLatest(scope = vmScope)
+    }.asStateFlow()
 
     companion object {
         private val TAG = logTag("Sync", "Add", "VM")

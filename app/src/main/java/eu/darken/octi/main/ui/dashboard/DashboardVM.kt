@@ -14,7 +14,6 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.combine
 import eu.darken.octi.common.flow.setupCommonEventHandlers
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.permissions.Permission
@@ -194,7 +193,7 @@ class DashboardVM @Inject constructor(
         )
     }
         .setupCommonEventHandlers(TAG) { "state" }
-        .shareLatest(scope = vmScope)
+        .asStateFlow()
 
     fun goToSyncServices() = launch {
         log(TAG) { "goToSyncServices()" }

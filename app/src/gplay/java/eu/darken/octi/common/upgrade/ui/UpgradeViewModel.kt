@@ -84,7 +84,7 @@ class UpgradeViewModel @Inject constructor(
             hasIap = current.upgrades.any { it.sku == OurSku.Iap.PRO_UPGRADE },
             hasSub = current.upgrades.any { it.sku == OurSku.Sub.PRO_UPGRADE },
         )
-    }
+    }.asStateFlow()
 
     data class Pricing(
         val iap: SkuDetails?,

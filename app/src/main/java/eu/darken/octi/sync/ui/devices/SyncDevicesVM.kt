@@ -10,7 +10,6 @@ import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
-import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
@@ -108,7 +107,7 @@ class SyncDevicesVM @Inject constructor(
                         }
                 }
         }
-        .shareLatest(scope = vmScope)
+        .asStateFlow()
 
     fun initialize(connectorId: String) {
         if (connectorIdFlow.value != null) return
