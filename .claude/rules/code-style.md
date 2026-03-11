@@ -53,12 +53,16 @@ val isOnboardingDone = dataStore.createValue("core.onboarding.done", false)
 
 Access with `.flow` (reactive), `value()` (suspend read), `value(newVal)` (suspend write), or `.valueBlocking` (blocking).
 
-## Moshi Serialization
+## Kotlinx Serialization
 
-- Use `@JsonClass(generateAdapter = true)` for data classes
-- Use `@Json(name = "fieldName")` for field mapping
+- `@Serializable` for data classes (replaces Moshi's `@JsonClass(generateAdapter = true)`)
+- `@SerialName("fieldName")` for field mapping (replaces Moshi's `@Json(name = "fieldName")`)
+- Inject the project `Json` instance from `SerializationModule` — do not create ad-hoc `Json {}` in production code
+- Custom serializers (e.g., `InstantSerializer`, `ByteStringSerializer`) via `@UseSerializers`
 - `ByteString` from okio for binary data serialization in sync payloads
-- Each module has a `ModuleSerializer<T>` for encoding/decoding module data
+- Each module has a `ModuleSerializer<T>` using `json.toByteString()` / `json.fromJson()`
+- Navigation routes also use `@Serializable` (same framework)
+- Backward-compat tests verify old Moshi wire format compatibility
 
 ## Error Handling
 
@@ -70,8 +74,11 @@ Access with `.flow` (reactive), `value()` (suspend read), `value(newVal)` (suspe
 
 ## UI Patterns
 
-- XML layouts with ViewBinding for UI components
-- Material 3 theming and design system
+- Jetpack Compose with Material 3 components (`Scaffold`, `TopAppBar`, etc.)
+- ScreenHost/Screen split: stateful host (collects Flow, injects ViewModel) + stateless screen (pure composable)
+- `collectAsState(initial = null)` for Flow → Compose State conversion in hosts
+- `hiltViewModel()` for ViewModel injection in Compose
+- `ErrorEventHandler(vm)` + `NavigationEventHandler(vm)` in host composables
+- `@Preview2` + `PreviewWrapper` for composable previews
 - Edge-to-edge display support
-- Single Activity architecture with Fragment-based navigation
-- RecyclerView with modular adapter pattern: each list item has its own `VH` (ViewHolder) class with nested `Item` data class
+- Single Activity architecture with Navigation3 (see [architecture.md](architecture.md#navigation))

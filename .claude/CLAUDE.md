@@ -3,7 +3,7 @@
 Multi-device companion app for Android. Syncs device information (battery, WiFi, apps, clipboard, metadata) across devices via Google Drive or K-Server (end-to-end encrypted).
 
 - **Package**: `eu.darken.octi`
-- **Architecture**: Modularized Android app with Kotlin, Hilt DI, Coroutines/Flow, ViewBinding
+- **Architecture**: Modularized Android app with Kotlin, Hilt DI, Coroutines/Flow, Jetpack Compose
 - **Build flavors**: `foss` (open source) / `gplay` (Google Play) × `debug` / `beta` / `release`
 
 ## Rules

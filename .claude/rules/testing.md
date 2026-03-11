@@ -17,7 +17,9 @@
 ```kotlin
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import testhelpers.BaseTest
+import testhelpers.coroutine.runTest2
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import io.mockk.every
@@ -28,11 +30,14 @@ class ExampleTest : BaseTest() {
         // Test setup
     }
 
-    @Test
-    fun `descriptive test name with backticks`() {
-        val input = "test"
-        val result = functionUnderTest(input)
-        result shouldBe "expected"
+    @Nested
+    inner class `some feature` {
+        @Test
+        fun `descriptive test name with backticks`() = runTest2 {
+            val input = "test"
+            val result = functionUnderTest(input)
+            result shouldBe "expected"
+        }
     }
 }
 ```
@@ -43,9 +48,16 @@ class ExampleTest : BaseTest() {
 - **Mocking**: MockK (`mockk<Class>()`, `every { ... } returns ...`, `coEvery`)
 - **Coroutine Testing**: `kotlinx-coroutines-test`
 
+## Coroutine Testing Helpers
+
+- `runTest2()`: Wraps `kotlinx.coroutines.test.runTest` with auto-cancellation and expected error support
+- `TestCollector<T>`: Flow testing via `flow.test(scope)` — provides `latestValue`, `await()`, `awaitFinal()`
+
 ## Test Organization
 
 - Tests mirror the main source structure (package by feature)
 - Always extend `BaseTest`
 - Use backtick syntax for readable test names
+- Use `@Nested` inner classes for logical test grouping
+- Use `@TempDir` for temporary directory support
 - Test utilities shared via `:app-common-test` module

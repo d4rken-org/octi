@@ -33,6 +33,7 @@ Each module has its own `strings.xml` managed by Crowdin:
 - `modules-wifi/src/main/res/values/strings.xml`
 - `modules-apps/src/main/res/values/strings.xml`
 - `modules-clipboard/src/main/res/values/strings.xml`
+- `modules-connectivity/src/main/res/values/strings.xml`
 - `sync-core/src/main/res/values/strings.xml`
 - `syncs-gdrive/src/main/res/values/strings.xml`
 - `syncs-kserver/src/main/res/values/strings.xml`

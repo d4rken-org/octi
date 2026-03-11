@@ -13,7 +13,7 @@
 
 1. Create the module directory (e.g., `modules-newfeature/`)
 2. Add `build.gradle.kts` based on an existing module (e.g., `modules-power`)
-3. Register the module in `settings.gradle.kts`
+3. Register the module in `settings.gradle`
 4. Create data class (e.g., `NewFeatureInfo`) implementing the module's data contract
 5. Create `NewFeatureInfoSource` implementing `ModuleInfoSource<NewFeatureInfo>`
 6. Create `NewFeatureSerializer` implementing `ModuleSerializer<NewFeatureInfo>`
@@ -30,6 +30,14 @@ Register the module ID in `ModuleId` and provide Hilt bindings using `@IntoSet`.
 3. Implement `ConnectorHub` interface — bind via `@IntoSet` as `ConnectorHub`
 4. The `SyncManager` will automatically discover it through `@IntoSet` injection
 
+## Adding a New Screen
+
+1. Create `Nav.<Group>.<Destination>` in `Nav.kt` with `@Serializable` (group = `Main`, `Sync`, or `Settings`)
+2. Create `NewScreenVM` extending `ViewModel4`
+3. Create `NewScreen.kt` with `NewScreenHost` (stateful) + `NewScreen` (stateless) composables
+4. Create `NewScreenNavigation` implementing `NavigationEntry` with `entry<Nav.X.Y> { ScreenHost() }`, bound via `@IntoSet`
+5. Add `@Preview2` preview with `PreviewWrapper`
+
 ## Common Mistakes to Avoid
 
 - **Don't use SharedPreferences** — use `DataStoreValue` via `DataStore<Preferences>.createValue()`
@@ -38,6 +46,9 @@ Register the module ID in `ModuleId` and provide Hilt bindings using `@IntoSet`.
 - **Always call `setupCommonEventHandlers`** on shared flows for consistent logging
 - **Don't forget trailing commas** in multi-line parameter lists
 - **Use `logTag()`** for log tags — it adds the 🐙 prefix automatically
+- **Don't use Fragments** — use Compose screens with `NavigationEntry`
+- **Always split ScreenHost (stateful) from Screen (stateless)** for previewability
+- **Don't create ad-hoc `Json {}` instances** — inject the project `Json` from `SerializationModule`
 
 ## Exploring vs Implementing
 
