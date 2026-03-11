@@ -63,7 +63,7 @@ class AddKServerVM @Inject constructor(
                 log(TAG, INFO) { "New account created: $newCredentials" }
                 kServerAccountRepo.add(newCredentials)
             }
-            navUp()
+            popTo(Nav.Sync.List)
         } finally {
             _state.value = _state.value.copy(isBusy = false)
         }

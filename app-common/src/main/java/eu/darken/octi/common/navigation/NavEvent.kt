@@ -7,6 +7,11 @@ sealed interface NavEvent {
         val inclusive: Boolean = false,
     ) : NavEvent
 
+    data class PopTo(
+        val destination: NavigationDestination,
+        val inclusive: Boolean = false,
+    ) : NavEvent
+
     data object Up : NavEvent
 
     data object Finish : NavEvent
