@@ -13,6 +13,7 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
+import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.syncs.gdrive.core.GoogleAccount
 import javax.inject.Inject
@@ -39,7 +40,7 @@ class AddGDriveVM @Inject constructor(
         try {
             val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
             accRepo.add(GoogleAccount(account))
-            navUp()
+            popTo(Nav.Sync.List)
         } catch (e: ApiException) {
             when (e.statusCode) {
                 12500 -> events.tryEmit(AddGDriveEvents.NoGoogleAccount(e))

@@ -44,4 +44,9 @@ abstract class ViewModel4(
         log(_tag) { "navUp()" }
         navEvents.tryEmit(NavEvent.Up)
     }
+
+    fun popTo(destination: NavigationDestination, inclusive: Boolean = false) {
+        log(_tag) { "popTo($destination, inclusive=$inclusive)" }
+        navEvents.tryEmit(NavEvent.PopTo(destination, inclusive))
+    }
 }

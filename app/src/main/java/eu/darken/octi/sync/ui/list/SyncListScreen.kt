@@ -2,6 +2,9 @@ package eu.darken.octi.sync.ui.list
 
 import android.text.format.DateUtils
 import android.text.format.Formatter
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -137,14 +140,17 @@ fun SyncListScreen(
                     }
                 },
             ) { item ->
+                val isHighlighted = state.highlightedConnectorIds.contains(item.connectorId)
                 when (item) {
                     is SyncListVM.ConnectorItem.GDrive -> GDriveConnectorCard(
                         item = item,
+                        isHighlighted = isHighlighted,
                         onClick = { showActionsFor = item },
                     )
 
                     is SyncListVM.ConnectorItem.KServer -> KServerConnectorCard(
                         item = item,
+                        isHighlighted = isHighlighted,
                         onClick = { showActionsFor = item },
                     )
                 }
@@ -212,15 +218,22 @@ fun SyncListScreen(
 @Composable
 private fun GDriveConnectorCard(
     item: SyncListVM.ConnectorItem.GDrive,
+    isHighlighted: Boolean = false,
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
+    val borderColor by animateColorAsState(
+        targetValue = if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+        animationSpec = tween(durationMillis = 500),
+        label = "highlightBorder",
+    )
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable(onClick = onClick),
+        border = if (isHighlighted) BorderStroke(2.dp, borderColor) else null,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -283,15 +296,22 @@ private fun GDriveConnectorCard(
 @Composable
 private fun KServerConnectorCard(
     item: SyncListVM.ConnectorItem.KServer,
+    isHighlighted: Boolean = false,
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
+    val borderColor by animateColorAsState(
+        targetValue = if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+        animationSpec = tween(durationMillis = 500),
+        label = "highlightBorder",
+    )
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable(onClick = onClick),
+        border = if (isHighlighted) BorderStroke(2.dp, borderColor) else null,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(

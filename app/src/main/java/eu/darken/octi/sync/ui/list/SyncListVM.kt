@@ -4,9 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.flow.withPrevious
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
@@ -21,12 +23,17 @@ import eu.darken.octi.syncs.gdrive.core.GoogleAccount
 import eu.darken.octi.syncs.kserver.core.KServer
 import eu.darken.octi.syncs.kserver.core.KServerConnector
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,6 +48,7 @@ class SyncListVM @Inject constructor(
 
     data class State(
         val connectors: List<ConnectorItem> = emptyList(),
+        val highlightedConnectorIds: Set<ConnectorId> = emptySet(),
     )
 
     sealed interface ConnectorItem {
@@ -65,11 +73,34 @@ class SyncListVM @Inject constructor(
         ) : ConnectorItem
     }
 
+    private val highlightedIds = MutableStateFlow<Set<ConnectorId>>(emptySet())
+    private val highlightJobs = mutableMapOf<ConnectorId, Job>()
+
     init {
         launch {
             val isEmpty = syncManager.connectors.first().isEmpty()
             if (isEmpty) addConnector()
         }
+
+        syncManager.connectors
+            .map { connectors -> connectors.map { it.identifier }.toSet() }
+            .withPrevious()
+            .onEach { (previous, current) ->
+                if (previous == null) return@onEach
+                val newIds = current - previous
+                if (newIds.isNotEmpty()) {
+                    log(TAG, INFO) { "New connectors detected: $newIds" }
+                    highlightedIds.value = highlightedIds.value + newIds
+                    newIds.forEach { id ->
+                        highlightJobs[id]?.cancel()
+                        highlightJobs[id] = vmScope.launch {
+                            delay(2_000)
+                            highlightedIds.value = highlightedIds.value - id
+                            highlightJobs.remove(id)
+                        }
+                    }
+                }
+            }.launchInViewModel()
     }
 
     val state = syncSettings.pausedConnectors.flow
@@ -109,7 +140,9 @@ class SyncListVM @Inject constructor(
 
             combine(withStates) { it.toList() }
         }
-        .map { State(connectors = it) }
+        .combine(highlightedIds) { connectors, highlighted ->
+            State(connectors = connectors, highlightedConnectorIds = highlighted)
+        }
         .asStateFlow()
 
     fun addConnector() {

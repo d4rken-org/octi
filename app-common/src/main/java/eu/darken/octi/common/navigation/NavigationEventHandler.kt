@@ -24,6 +24,7 @@ fun NavigationEventHandler(vararg sources: NavigationEventSource) {
                         inclusive = event.inclusive,
                     )
 
+                    is NavEvent.PopTo -> navController.popTo(event.destination, event.inclusive)
                     NavEvent.Up -> navController.up()
                     NavEvent.Finish -> {
                         log(TAG) { "Finish event received, closing activity" }

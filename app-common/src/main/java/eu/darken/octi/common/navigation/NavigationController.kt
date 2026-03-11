@@ -55,6 +55,27 @@ class NavigationController @Inject constructor() {
         backStack.add(destination)
     }
 
+    fun popTo(destination: NavigationDestination, inclusive: Boolean = false): Boolean {
+        log(TAG) { "popTo($destination, inclusive=$inclusive)" }
+
+        if (backStack.none { it == destination }) {
+            log(TAG) { "popTo: $destination not found in backstack, no-op" }
+            return false
+        }
+
+        while (backStack.size > 1 && backStack.last() != destination) {
+            val removed = backStack.removeLastOrNull()
+            log(TAG) { "popTo: popping $removed while looking for $destination" }
+        }
+
+        if (inclusive && backStack.size > 1 && backStack.last() == destination) {
+            val removed = backStack.removeLastOrNull()
+            log(TAG) { "popTo: popping $removed (inclusive)" }
+        }
+
+        return true
+    }
+
     fun replace(destination: NavigationDestination) {
         backStack.removeLastOrNull()
         backStack.add(destination)

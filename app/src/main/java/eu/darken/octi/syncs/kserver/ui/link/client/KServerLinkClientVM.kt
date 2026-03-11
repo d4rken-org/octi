@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.syncs.kserver.core.KServerHub
 import eu.darken.octi.syncs.kserver.core.LinkingData
@@ -51,7 +52,7 @@ class KServerLinkClientVM @Inject constructor(
 
             kServerHub.linkAcount(linkContainer)
 
-            navUp()
+            popTo(Nav.Sync.List)
         } finally {
             _state.value = _state.value.copy(isBusy = false)
         }
