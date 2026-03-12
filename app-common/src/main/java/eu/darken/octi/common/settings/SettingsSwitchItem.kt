@@ -20,6 +20,7 @@ fun SettingsSwitchItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    onDisabledClick: (() -> Unit)? = null,
 ) {
     SettingsBaseItem(
         icon = icon,
@@ -28,6 +29,7 @@ fun SettingsSwitchItem(
         modifier = modifier,
         subtitle = subtitle,
         enabled = enabled,
+        onDisabledClick = onDisabledClick,
         trailingContent = {
             Switch(
                 checked = checked,

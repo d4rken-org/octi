@@ -12,74 +12,127 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.combine
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.common.upgrade.UpgradeRepo
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.time.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Suppress("BlockingMethodInNonBlockingContext")
 @Singleton
 class SyncWorkerControl @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     private val workerManager: WorkManager,
     private val syncSettings: eu.darken.octi.sync.core.SyncSettings,
+    private val upgradeRepo: UpgradeRepo,
 ) {
+
+    private data class SchedulerConfig(
+        val isEnabled: Boolean,
+        val interval: Int,
+        val onMobile: Boolean,
+        val chargingEnabled: Boolean,
+        val chargingInterval: Int,
+        val isPro: Boolean,
+    )
 
     fun start() {
         log(TAG) { "start()" }
         combine(
             syncSettings.backgroundSyncEnabled.flow,
             syncSettings.backgroundSyncInterval.flow,
-            syncSettings.backgroundSyncOnMobile.flow
-        ) { isEnabled, interval, onMobile ->
-            log(TAG) { "SyncSettings: isEnabled=$isEnabled, interval=$interval, onMobile=$onMobile" }
-
-            val workerData = Data.Builder().apply {
-
-            }.build()
-
-            log(TAG, VERBOSE) { "Worker data: $workerData" }
-            val constraints = Constraints.Builder().apply {
-                if (onMobile) {
-                    setRequiredNetworkType(NetworkType.CONNECTED)
-                } else {
-                    setRequiredNetworkType(NetworkType.UNMETERED)
-
-                }
-            }.build()
-
-            val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(Duration.ofMinutes(interval.toLong())).apply {
-                setInputData(workerData)
-                setConstraints(constraints)
-            }.build()
-
-            log(TAG, VERBOSE) { "Worker request: $workRequest" }
-
-            try {
-                if (isEnabled) {
-                    val operation = workerManager.enqueueUniquePeriodicWork(
-                        WORKER_NAME,
-                        ExistingPeriodicWorkPolicy.UPDATE,
-                        workRequest,
-                    )
-                    val result = operation.result.get()
-                    log(TAG, INFO) { "Worker scheduled: $result" }
-                } else {
-                    workerManager.cancelUniqueWork(WORKER_NAME)
-                    log(TAG, INFO) { "Worker canceled." }
-                }
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Worker operation failed: ${e.asLog()}" }
-                Bugs.report(e)
-            }
+            syncSettings.backgroundSyncOnMobile.flow,
+            syncSettings.backgroundSyncChargingEnabled.flow,
+            syncSettings.backgroundSyncChargingInterval.flow,
+            upgradeRepo.upgradeInfo,
+        ) { isEnabled, interval, onMobile, chargingEnabled, chargingInterval, upgradeInfo ->
+            SchedulerConfig(
+                isEnabled = isEnabled,
+                interval = interval,
+                onMobile = onMobile,
+                chargingEnabled = chargingEnabled,
+                chargingInterval = chargingInterval,
+                isPro = upgradeInfo.isPro,
+            )
         }
+            .distinctUntilChanged()
+            .onEach { config -> applySchedulerConfig(config) }
             .setupCommonEventHandlers(TAG) { "scheduler" }
             .launchIn(scope)
     }
 
+    private fun applySchedulerConfig(config: SchedulerConfig) {
+        log(TAG) { "applySchedulerConfig: $config" }
+
+        val networkType = if (config.onMobile) NetworkType.CONNECTED else NetworkType.UNMETERED
+
+        // Default background worker
+        try {
+            if (config.isEnabled) {
+                val constraints = Constraints.Builder()
+                    .setRequiredNetworkType(networkType)
+                    .build()
+
+                val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(
+                    Duration.ofMinutes(config.interval.coerceAtLeast(15).toLong())
+                ).apply {
+                    setConstraints(constraints)
+                }.build()
+
+                log(TAG, VERBOSE) { "Default worker request: $workRequest" }
+
+                workerManager.enqueueUniquePeriodicWork(
+                    WORKER_NAME,
+                    ExistingPeriodicWorkPolicy.UPDATE,
+                    workRequest,
+                )
+                log(TAG, INFO) { "Default worker enqueued" }
+            } else {
+                workerManager.cancelUniqueWork(WORKER_NAME)
+                log(TAG, INFO) { "Default worker canceled." }
+            }
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "Default worker operation failed: ${e.asLog()}" }
+            Bugs.report(e)
+        }
+
+        // Charging worker
+        try {
+            if (config.chargingEnabled && config.isPro) {
+                val constraints = Constraints.Builder()
+                    .setRequiredNetworkType(networkType)
+                    .setRequiresCharging(true)
+                    .build()
+
+                val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(
+                    Duration.ofMinutes(config.chargingInterval.coerceAtLeast(15).toLong())
+                ).apply {
+                    setConstraints(constraints)
+                }.build()
+
+                log(TAG, VERBOSE) { "Charging worker request: $workRequest" }
+
+                workerManager.enqueueUniquePeriodicWork(
+                    WORKER_NAME_CHARGING,
+                    ExistingPeriodicWorkPolicy.UPDATE,
+                    workRequest,
+                )
+                log(TAG, INFO) { "Charging worker enqueued" }
+            } else {
+                workerManager.cancelUniqueWork(WORKER_NAME_CHARGING)
+                log(TAG, INFO) { "Charging worker canceled." }
+            }
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "Charging worker operation failed: ${e.asLog()}" }
+            Bugs.report(e)
+        }
+    }
+
     companion object {
         private val WORKER_NAME = "${BuildConfigWrap.APPLICATION_ID}.sync.worker"
+        private val WORKER_NAME_CHARGING = "${BuildConfigWrap.APPLICATION_ID}.sync.worker.charging"
         private val TAG = logTag("Sync", "Worker", "Control")
     }
 }

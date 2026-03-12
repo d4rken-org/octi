@@ -37,6 +37,14 @@ class SyncSettings @Inject constructor(
 
     val backgroundSyncOnMobile = dataStore.createValue("sync.background.mobile.enabled", true)
 
+    val backgroundSyncChargingEnabled = dataStore.createValue("sync.background.charging.enabled", false)
+
+    val backgroundSyncChargingInterval = dataStore.createValue("sync.background.charging.interval.minutes", 15)
+
+    val foregroundSyncEnabled = dataStore.createValue("sync.foreground.enabled", false)
+
+    val foregroundSyncInterval = dataStore.createValue("sync.foreground.interval.minutes", 5)
+
     val pausedConnectors = dataStore.createSetValue<ConnectorId>("sync.connectors.paused", emptySet(), json)
 
     val deviceId by lazy {

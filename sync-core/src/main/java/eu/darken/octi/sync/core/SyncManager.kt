@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,6 +38,8 @@ class SyncManager @Inject constructor(
     private val syncCache: SyncCache,
     private val connectorHubs: Set<@JvmSuppressWildcards ConnectorHub>,
 ) {
+
+    private val syncLock = Mutex()
 
     private val disabledConnectors = MutableStateFlow(emptySet<SyncConnector>())
 
@@ -94,19 +97,27 @@ class SyncManager @Inject constructor(
 
     suspend fun sync(options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(options=$options)" }
-        val syncJobs = connectors.first()
-            .filter {
-                val paused = syncSettings.pausedConnectors.value().contains(it.identifier)
-                if (paused) log(TAG, INFO) { "Connector is paused: $it" }
-                !paused
-            }
-            .map {
-                scope.launch {
-                    // TODO error handling
-                    sync(it.identifier, options = options)
+        if (!syncLock.tryLock()) {
+            log(TAG) { "Sync already in progress, skipping" }
+            return
+        }
+        try {
+            val syncJobs = connectors.first()
+                .filter {
+                    val paused = syncSettings.pausedConnectors.value().contains(it.identifier)
+                    if (paused) log(TAG, INFO) { "Connector is paused: $it" }
+                    !paused
                 }
-            }
-        syncJobs.joinAll()
+                .map {
+                    scope.launch {
+                        // TODO error handling
+                        sync(it.identifier, options = options)
+                    }
+                }
+            syncJobs.joinAll()
+        } finally {
+            syncLock.unlock()
+        }
     }
 
     suspend fun sync(connectorId: ConnectorId, options: SyncOptions = SyncOptions()) {

@@ -140,6 +140,15 @@
     <string name="sync_setting_background_enable_desc">Synchronize data when the app is not open.</string>
     <string name="sync_setting_background_mobile_label">Mobile network</string>
     <string name="sync_setting_background_mobile_desc">Allow background synchronization using your mobile network connection if Wi-Fi is unavailable.</string>
+    <string name="sync_setting_mobile_desc">Allow synchronization using your mobile network connection if Wi-Fi is unavailable.</string>
+    <string name="sync_setting_charging_enable_title">Faster when charging</string>
+    <string name="sync_setting_charging_enable_desc">Use a shorter sync interval while the device is charging.</string>
+    <string name="sync_setting_charging_interval_label">Charging interval</string>
+
+    <string name="sync_setting_category_foreground_label">Foreground synchronization</string>
+    <string name="sync_setting_foreground_enable_title">Sync when app is open</string>
+    <string name="sync_setting_foreground_enable_desc">Sync at shorter intervals while the app is visible.</string>
+    <string name="sync_setting_foreground_interval_label">Foreground interval</string>
 
     <string name="modules_settings_label">Modules</string>
     <string name="modules_settings_desc">Toggle different modules and tweak their settings.</string>

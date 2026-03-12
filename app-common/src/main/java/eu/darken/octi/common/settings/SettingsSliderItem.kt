@@ -1,5 +1,6 @@
 package eu.darken.octi.common.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,8 @@ fun SettingsSliderItem(
     steps: Int = 0,
     enabled: Boolean = true,
     valueLabel: ((Float) -> String)? = null,
+    onValueChangeFinished: (() -> Unit)? = null,
+    onValueLabelClick: (() -> Unit)? = null,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         SettingsBaseItem(
@@ -41,7 +44,13 @@ fun SettingsSliderItem(
                         text = valueLabel(value),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(start = 16.dp),
+                        modifier = if (onValueLabelClick != null) {
+                            Modifier
+                                .clickable(enabled = enabled, onClick = onValueLabelClick)
+                                .padding(start = 16.dp)
+                        } else {
+                            Modifier.padding(start = 16.dp)
+                        },
                     )
                 }
             } else {
@@ -51,6 +60,7 @@ fun SettingsSliderItem(
         Slider(
             value = value,
             onValueChange = onValueChange,
+            onValueChangeFinished = onValueChangeFinished,
             valueRange = valueRange,
             steps = steps,
             enabled = enabled,
