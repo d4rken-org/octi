@@ -14,6 +14,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,18 +32,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Apps
 import androidx.compose.material.icons.twotone.ChevronRight
+import androidx.compose.material.icons.twotone.CloudSync
 import androidx.compose.material.icons.twotone.ContentCopy
 import androidx.compose.material.icons.twotone.ContentPaste
 import androidx.compose.material.icons.twotone.Home
 import androidx.compose.material.icons.twotone.NotificationsNone
 import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material.icons.twotone.QuestionMark
+import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.Stars
-import androidx.compose.material.icons.twotone.Sync
 import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -56,7 +59,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -119,6 +121,8 @@ import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.receptIcon
 import eu.darken.octi.sync.R as SyncR
+import eu.darken.octi.syncs.gdrive.R as GDriveR
+import eu.darken.octi.syncs.kserver.R as KServerR
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.StalenessUtil
 
@@ -300,7 +304,7 @@ fun DashboardScreen(
                 actions = {
                     IconButton(onClick = onSyncServices) {
                         Icon(
-                            imageVector = Icons.TwoTone.Sync,
+                            imageVector = Icons.TwoTone.CloudSync,
                             contentDescription = stringResource(R.string.sync_services_label),
                         )
                     }
@@ -323,18 +327,23 @@ fun DashboardScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
-            onRefresh = onRefresh,
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-            ) {
-                // Sync setup card
+            // Sync status bar
+            state.syncStatus?.let { syncStatus ->
+                item(key = "sync_status") {
+                    SyncStatusBar(
+                        syncStatus = syncStatus,
+                        onRefresh = onRefresh,
+                    )
+                }
+            }
+
+            // Sync setup card
                 if (state.showSyncSetup) {
                     item(key = "sync_setup") {
                         SyncSetupCard(
@@ -463,7 +472,6 @@ fun DashboardScreen(
                     }
                 }
             }
-        }
     }
 
     // Detail sheets
@@ -511,14 +519,104 @@ private fun dashboardSubtitle(state: DashboardVM.State): String? {
         state.deviceCount,
         state.deviceCount,
     )
-    val lastSyncAt = state.lastSyncAt?.let {
-        DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString()
-    }
-    val deviceInfo = if (lastSyncAt != null) "$deviceQuantity ($lastSyncAt)" else deviceQuantity
     return if (BuildConfigWrap.DEBUG) {
-        "$deviceInfo ${BuildConfigWrap.GIT_SHA}"
+        "$deviceQuantity ${BuildConfigWrap.GIT_SHA}"
     } else {
-        deviceInfo
+        deviceQuantity
+    }
+}
+
+@Composable
+private fun connectorTypesLabel(connectorTypes: List<String>): String? {
+    if (connectorTypes.isEmpty()) return null
+    val names = connectorTypes.map { type ->
+        when (type) {
+            "gdrive" -> stringResource(GDriveR.string.sync_gdrive_type_label)
+            "kserver" -> stringResource(KServerR.string.sync_kserver_type_label)
+            else -> type
+        }
+    }
+    return stringResource(R.string.dashboard_sync_status_via, names.joinToString(", "))
+}
+
+@Composable
+private fun SyncStatusBar(
+    syncStatus: DashboardVM.SyncStatus,
+    onRefresh: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = Icons.TwoTone.CloudSync,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            when (syncStatus) {
+                is DashboardVM.SyncStatus.Syncing -> Text(
+                    text = stringResource(R.string.dashboard_sync_status_syncing),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+
+                is DashboardVM.SyncStatus.Idle -> {
+                    val primaryText = syncStatus.lastSyncAt?.let {
+                        stringResource(
+                            R.string.dashboard_sync_status_last_synced,
+                            DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString(),
+                        )
+                    } ?: stringResource(R.string.dashboard_sync_status_never)
+                    Text(
+                        text = primaryText,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+
+                is DashboardVM.SyncStatus.Error -> Text(
+                    text = stringResource(R.string.dashboard_sync_status_failed),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            val secondaryText = when (syncStatus) {
+                is DashboardVM.SyncStatus.Error -> syncStatus.message ?: connectorTypesLabel(syncStatus.connectorTypes)
+                else -> connectorTypesLabel(syncStatus.connectorTypes)
+            }
+            if (secondaryText != null) {
+                Text(
+                    text = secondaryText,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+        Box(
+            modifier = Modifier.size(48.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            when (syncStatus) {
+                is DashboardVM.SyncStatus.Syncing -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp,
+                    )
+                }
+
+                else -> {
+                    IconButton(onClick = onRefresh) {
+                        Icon(
+                            imageVector = Icons.TwoTone.Refresh,
+                            contentDescription = stringResource(R.string.general_sync_action),
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1560,8 +1658,7 @@ private fun DashboardScreenEmptyPreview() = PreviewWrapper {
         state = DashboardVM.State(
             devices = emptyList(),
             deviceCount = 0,
-            lastSyncAt = null,
-            isRefreshing = false,
+            syncStatus = null,
             isOffline = false,
             showSyncSetup = true,
             missingPermissions = emptyList(),
@@ -1653,8 +1750,10 @@ private fun DashboardScreenPreview() = PreviewWrapper {
                 ),
             ),
             deviceCount = 1,
-            lastSyncAt = now.minusSeconds(300),
-            isRefreshing = false,
+            syncStatus = DashboardVM.SyncStatus.Idle(
+                lastSyncAt = now.minusSeconds(300),
+                connectorTypes = listOf("gdrive"),
+            ),
             isOffline = false,
             showSyncSetup = false,
             missingPermissions = emptyList(),
@@ -1745,8 +1844,10 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
                 previewDevice(deviceId2, "Galaxy Tab S9", MetaInfo.DeviceType.TABLET, 42, true),
             ),
             deviceCount = 2,
-            lastSyncAt = now.minusSeconds(300),
-            isRefreshing = false,
+            syncStatus = DashboardVM.SyncStatus.Idle(
+                lastSyncAt = now.minusSeconds(300),
+                connectorTypes = listOf("gdrive", "kserver"),
+            ),
             isOffline = false,
             showSyncSetup = false,
             missingPermissions = emptyList(),

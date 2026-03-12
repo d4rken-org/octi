@@ -90,11 +90,40 @@ class DashboardVM @Inject constructor(
         }
     }
 
+    private val syncStatusFlow: Flow<SyncStatus?> = combine(
+        isManuallyRefreshing,
+        syncManager.connectors,
+        syncManager.states,
+        syncSettings.pausedConnectors.flow,
+        tickerUiRefresh,
+    ) { isRefreshing, connectors, allStates, pausedIds, _ ->
+        val activeConnectors = connectors.filter { !pausedIds.contains(it.identifier) }
+        if (activeConnectors.isEmpty()) return@combine null
+
+        val connectorTypes = activeConnectors.map { it.identifier.type }.distinct()
+        val statesList = allStates.toList()
+        val activeStates = connectors.indices
+            .filter { !pausedIds.contains(connectors[it].identifier) }
+            .mapNotNull { statesList.getOrNull(it) }
+
+        when {
+            isRefreshing || activeStates.any { it.isBusy } -> SyncStatus.Syncing(connectorTypes)
+            activeStates.any { it.lastError != null } -> {
+                val error = activeStates.first { it.lastError != null }.lastError
+                SyncStatus.Error(error?.message, connectorTypes)
+            }
+
+            else -> {
+                val lastSync = activeStates.mapNotNull { it.lastSyncAt }.maxByOrNull { it }
+                SyncStatus.Idle(lastSync, connectorTypes)
+            }
+        }
+    }.setupCommonEventHandlers(TAG) { "syncStatus" }
+
     data class State(
         val devices: List<DeviceItem>,
         val deviceCount: Int,
-        val lastSyncAt: Instant?,
-        val isRefreshing: Boolean,
+        val syncStatus: SyncStatus?,
         val isOffline: Boolean,
         val showSyncSetup: Boolean,
         val missingPermissions: List<Permission>,
@@ -132,17 +161,25 @@ class DashboardVM @Inject constructor(
         ) : ModuleItem
     }
 
+    sealed interface SyncStatus {
+        val connectorTypes: List<String>
+
+        data class Syncing(override val connectorTypes: List<String>) : SyncStatus
+        data class Idle(val lastSyncAt: Instant?, override val connectorTypes: List<String>) : SyncStatus
+        data class Error(val message: String?, override val connectorTypes: List<String>) : SyncStatus
+    }
+
     val state: Flow<State> = combine(
         tickerUiRefresh,
         networkStateProvider.networkState,
         generalSettings.isSyncSetupDismissed.flow,
         deviceItems(),
         permissionTool.missingPermissions,
-        isManuallyRefreshing,
+        syncStatusFlow,
         upgradeRepo.upgradeInfo,
         updateService.availableUpdate.onStart { emit(null) },
         generalSettings.dashboardConfig.flow,
-    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, isRefreshing, upgradeInfo, update, uiConfig ->
+    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig ->
 
         val connectorCount = syncManager.connectors.first().size
         val showSyncSetup = !isSyncSetupDismissed && connectorCount == 0
@@ -177,13 +214,10 @@ class DashboardVM @Inject constructor(
             )
         }
 
-        val lastConnectorActivity = syncManager.states.first().mapNotNull { it.lastSyncAt }.maxByOrNull { it }
-
         State(
             devices = orderedDeviceItems,
             deviceCount = orderedDeviceItems.size,
-            lastSyncAt = lastConnectorActivity,
-            isRefreshing = isRefreshing,
+            syncStatus = syncStatus,
             isOffline = !networkState.isInternetAvailable,
             showSyncSetup = showSyncSetup,
             missingPermissions = filteredPermissions,
