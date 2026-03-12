@@ -36,6 +36,7 @@ import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.core.alert.PowerAlertManager
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.SyncExecutor
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
@@ -49,8 +50,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.time.Instant
 import javax.inject.Inject
 
@@ -71,6 +70,7 @@ class DashboardVM @Inject constructor(
     private val clipboardHandler: ClipboardHandler,
     private val updateService: UpdateService,
     private val alertManager: PowerAlertManager,
+    private val syncExecutor: SyncExecutor,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -216,18 +216,13 @@ class DashboardVM @Inject constructor(
         navTo(Nav.Sync.List)
     }
 
-    private val refreshLock = Mutex()
     fun refresh() = appScope.launch {
         log(TAG) { "refresh()" }
-        if (isManuallyRefreshing.value) return@launch
-        refreshLock.withLock {
-            try {
-                isManuallyRefreshing.value = true
-                moduleManager.refresh()
-                syncManager.sync()
-            } finally {
-                isManuallyRefreshing.value = false
-            }
+        if (!isManuallyRefreshing.compareAndSet(expect = false, update = true)) return@launch
+        try {
+            syncExecutor.execute("DashboardRefresh")
+        } finally {
+            isManuallyRefreshing.value = false
         }
     }
 

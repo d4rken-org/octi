@@ -21,6 +21,7 @@ import eu.darken.octi.main.core.CurriculumVitae
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.release.ReleaseManager
 import eu.darken.octi.module.core.ModuleManager
+import eu.darken.octi.sync.core.ForegroundSyncControl
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import kotlinx.coroutines.CoroutineScope
@@ -39,6 +40,7 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var syncManager: SyncManager
     @Inject lateinit var moduleManager: ModuleManager
     @Inject lateinit var syncWorkerControl: SyncWorkerControl
+    @Inject lateinit var foregroundSyncControl: ForegroundSyncControl
     @Inject lateinit var generalSettings: GeneralSettings
     @Inject lateinit var debugSessionManager: DebugSessionManager
     @Inject lateinit var imageLoaderFactory: SingletonImageLoader.Factory
@@ -66,6 +68,7 @@ open class App : Application(), Configuration.Provider {
         moduleManager.start()
 
         syncWorkerControl.start()
+        foregroundSyncControl.start()
 
         curriculumVitae.updateAppLaunch()
 
