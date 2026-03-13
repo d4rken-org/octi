@@ -130,6 +130,7 @@ class DashboardVM @Inject constructor(
         val update: UpdateChecker.Update?,
         val upgradeInfo: UpgradeRepo.Info,
         val deviceLimitReached: Boolean,
+        val deviceLimit: Int = DEVICE_LIMIT,
     )
 
     data class DeviceItem(

@@ -468,7 +468,10 @@ fun DashboardScreen(
                 // Upgrade card at bottom
                 if (!state.upgradeInfo.isPro) {
                     item(key = "upgrade") {
-                        UpgradeCard(onUpgrade = onUpgrade)
+                        UpgradeCard(
+                            deviceLimit = state.deviceLimit,
+                            onUpgrade = onUpgrade,
+                        )
                     }
                 }
             }
@@ -829,7 +832,10 @@ private fun DeviceLimitCard(
 }
 
 @Composable
-private fun UpgradeCard(onUpgrade: () -> Unit) {
+private fun UpgradeCard(
+    deviceLimit: Int,
+    onUpgrade: () -> Unit,
+) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -837,10 +843,38 @@ private fun UpgradeCard(onUpgrade: () -> Unit) {
             .clickable(onClick = onUpgrade),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.TwoTone.Stars,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = stringResource(R.string.upgrades_dashcard_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = stringResource(CommonR.string.general_upgrade_action),
-                style = MaterialTheme.typography.titleMedium,
+                text = stringResource(R.string.upgrades_dashcard_body),
+                style = MaterialTheme.typography.bodyMedium,
             )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = pluralStringResource(R.plurals.upgrades_dashcard_device_limit_hint, deviceLimit, deviceLimit),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                TextButton(onClick = onUpgrade) {
+                    Text(stringResource(R.string.upgrades_dashcard_upgrade_action))
+                }
+            }
         }
     }
 }
