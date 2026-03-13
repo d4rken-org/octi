@@ -11,7 +11,6 @@ import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.SupportAgent
 import androidx.compose.material.icons.twotone.Sync
 import androidx.compose.material.icons.twotone.Translate
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -57,7 +56,6 @@ fun SettingsIndexScreenHost(vm: SettingsIndexVM = hiltViewModel()) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsIndexScreen(
     state: SettingsIndexVM.State,

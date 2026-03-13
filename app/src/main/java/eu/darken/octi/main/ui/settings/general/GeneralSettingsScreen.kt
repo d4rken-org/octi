@@ -8,7 +8,6 @@ import androidx.compose.material.icons.twotone.Contrast
 import androidx.compose.material.icons.twotone.DarkMode
 import androidx.compose.material.icons.twotone.NewReleases
 import androidx.compose.material.icons.twotone.Palette
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -54,7 +53,6 @@ fun GeneralSettingsScreenHost(vm: GeneralSettingsVM = hiltViewModel()) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GeneralSettingsScreen(
     state: GeneralSettingsVM.State,

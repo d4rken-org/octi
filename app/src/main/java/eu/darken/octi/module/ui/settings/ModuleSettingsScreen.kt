@@ -10,7 +10,6 @@ import androidx.compose.material.icons.twotone.ContentPaste
 import androidx.compose.material.icons.twotone.Public
 import androidx.compose.material.icons.twotone.Store
 import androidx.compose.material.icons.twotone.Wifi
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -55,7 +54,6 @@ fun ModuleSettingsScreenHost(vm: ModuleSettingsVM = hiltViewModel()) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModuleSettingsScreen(
     state: ModuleSettingsVM.State,
