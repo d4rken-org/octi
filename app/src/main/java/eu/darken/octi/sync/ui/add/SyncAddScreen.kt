@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.OutdoorGrill
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -127,25 +128,31 @@ private fun SyncAddItemRow(item: SyncAddVM.SyncAddItem) {
             .padding(16.dp),
         verticalAlignment = Alignment.Top,
     ) {
-        val (iconRes, titleRes, descRes) = when (item.type) {
-            SyncAddVM.SyncType.GDRIVE -> Triple(
-                R.drawable.ic_baseline_gdrive_24,
+        val (titleRes, descRes) = when (item.type) {
+            SyncAddVM.SyncType.GDRIVE -> Pair(
                 GDriveR.string.sync_gdrive_type_label,
                 GDriveR.string.sync_gdrive_type_appdata_description,
             )
 
-            SyncAddVM.SyncType.KSERVER -> Triple(
-                R.drawable.ic_baseline_outdoor_grill_24,
+            SyncAddVM.SyncType.KSERVER -> Pair(
                 KServerR.string.sync_kserver_type_label,
                 KServerR.string.sync_kserver_type_description,
             )
         }
 
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = null,
-            modifier = Modifier.size(20.dp),
-        )
+        when (item.type) {
+            SyncAddVM.SyncType.GDRIVE -> Icon(
+                painter = painterResource(R.drawable.ic_baseline_gdrive_24),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+
+            SyncAddVM.SyncType.KSERVER -> Icon(
+                imageVector = Icons.Default.OutdoorGrill,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+        }
 
         Spacer(modifier = Modifier.width(4.dp))
 

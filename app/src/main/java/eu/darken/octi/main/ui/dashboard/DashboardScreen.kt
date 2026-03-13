@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.BatteryManager
 import android.provider.Settings
 import android.text.format.DateUtils
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -64,6 +63,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -85,6 +85,7 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import kotlinx.coroutines.launch
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.R as CommonR
@@ -133,6 +134,8 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
 
     val context = LocalContext.current
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     var awaitingPermission by rememberSaveable { mutableStateOf(false) }
     var showPermissionPopup by remember { mutableStateOf<DashboardEvent.ShowPermissionPopup?>(null) }
 
@@ -174,11 +177,7 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
                 }
 
                 is DashboardEvent.ShowPermissionDismissHint -> {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.permission_dismiss_hint),
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    snackbarHostState.showSnackbar(context.getString(R.string.permission_dismiss_hint))
                 }
 
                 is DashboardEvent.ShowPermissionPopup -> {
@@ -223,6 +222,7 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
     val state by vm.state.collectAsState(initial = null)
     state?.let {
         DashboardScreen(
+            snackbarHostState = snackbarHostState,
             state = it,
             onRefresh = { vm.refresh() },
             onSyncServices = { vm.goToSyncServices() },
@@ -250,6 +250,7 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
+    snackbarHostState: SnackbarHostState = SnackbarHostState(),
     state: DashboardVM.State,
     onRefresh: () -> Unit,
     onSyncServices: () -> Unit,
@@ -271,7 +272,8 @@ fun DashboardScreen(
     onCopyClipboard: (ClipboardInfo) -> Unit,
     onWifiPermissionGrant: (Permission) -> Unit,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val showMessage: (String) -> Unit = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
     val offlineMessage = stringResource(CommonR.string.general_internal_not_available_msg)
 
     // Detail dialog state
@@ -404,6 +406,7 @@ fun DashboardScreen(
                             onClearClipboard = onClearClipboard,
                             onShareClipboard = onShareClipboard,
                             onCopyClipboard = onCopyClipboard,
+                            showMessage = showMessage,
                         )
                     }
 
@@ -438,6 +441,7 @@ fun DashboardScreen(
                             onClearClipboard = onClearClipboard,
                             onShareClipboard = onShareClipboard,
                             onCopyClipboard = onCopyClipboard,
+                            showMessage = showMessage,
                         )
                     }
                 } else {
@@ -461,6 +465,7 @@ fun DashboardScreen(
                             onClearClipboard = onClearClipboard,
                             onShareClipboard = onShareClipboard,
                             onCopyClipboard = onCopyClipboard,
+                            showMessage = showMessage,
                         )
                     }
                 }
@@ -493,6 +498,7 @@ fun DashboardScreen(
         ConnectivityDetailSheet(
             connectivity = item,
             onDismiss = { showConnectivityDetail = null },
+            showMessage = showMessage,
         )
     }
 
@@ -501,6 +507,7 @@ fun DashboardScreen(
             clipboard = item,
             onDismiss = { showClipboardDetail = null },
             onCopy = onCopyClipboard,
+            showMessage = showMessage,
         )
     }
 }
@@ -866,6 +873,7 @@ private fun DashboardDeviceCard(
     onClearClipboard: () -> Unit,
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
+    showMessage: (String) -> Unit,
 ) {
     val meta = device.meta.data
     val isStale = StalenessUtil.isStale(device.meta.modifiedAt)
@@ -991,6 +999,7 @@ private fun DashboardDeviceCard(
                         onClearClicked = onClearClipboard,
                         onShareClicked = onShareClipboard,
                         onCopyClicked = { onCopyClipboard(moduleItem.data.data) },
+                        showMessage = showMessage,
                     )
                 }
                 if (index < device.moduleItems.lastIndex) {
@@ -1288,9 +1297,11 @@ private fun ClipboardModuleItem(
     onClearClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onCopyClicked: () -> Unit,
+    showMessage: (String) -> Unit,
 ) {
     val clip = item.data.data
-    val context = LocalContext.current
+    val copiedToOctiMsg = stringResource(ClipboardR.string.module_clipboard_copied_os_to_octi)
+    val copiedToOsMsg = stringResource(ClipboardR.string.module_clipboard_copied_octi_to_os)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -1320,7 +1331,7 @@ private fun ClipboardModuleItem(
             IconButton(
                 onClick = {
                     onShareClicked()
-                    Toast.makeText(context, ClipboardR.string.module_clipboard_copied_os_to_octi, Toast.LENGTH_SHORT).show()
+                    showMessage(copiedToOctiMsg)
                 },
                 modifier = Modifier.size(36.dp),
             ) {
@@ -1334,7 +1345,7 @@ private fun ClipboardModuleItem(
         IconButton(
             onClick = {
                 onCopyClicked()
-                Toast.makeText(context, ClipboardR.string.module_clipboard_copied_octi_to_os, Toast.LENGTH_SHORT).show()
+                showMessage(copiedToOsMsg)
             },
             modifier = Modifier.size(36.dp),
         ) {
@@ -1472,6 +1483,7 @@ private fun WifiDetailSheet(
 private fun ConnectivityDetailSheet(
     connectivity: DashboardVM.ModuleItem.Connectivity,
     onDismiss: () -> Unit,
+    showMessage: (String) -> Unit,
 ) {
     val info = connectivity.data.data
     val unknownLocal = stringResource(ConnectivityR.string.module_connectivity_unknown_local_ip_label)
@@ -1496,16 +1508,19 @@ private fun ConnectivityDetailSheet(
                 label = stringResource(ConnectivityR.string.module_connectivity_detail_public_ip_label),
                 value = info.publicIp ?: stringResource(ConnectivityR.string.module_connectivity_unknown_public_ip_label),
                 copyable = info.publicIp != null,
+                showMessage = showMessage,
             )
             CopyableDetailRow(
                 label = stringResource(ConnectivityR.string.module_connectivity_detail_local_ipv4_label),
                 value = info.localAddressIpv4 ?: unknownLocal,
                 copyable = info.localAddressIpv4 != null,
+                showMessage = showMessage,
             )
             CopyableDetailRow(
                 label = stringResource(ConnectivityR.string.module_connectivity_detail_local_ipv6_label),
                 value = info.localAddressIpv6 ?: unknownLocal,
                 copyable = info.localAddressIpv6 != null,
+                showMessage = showMessage,
             )
             DetailRow(
                 label = stringResource(ConnectivityR.string.module_connectivity_detail_gateway_label),
@@ -1526,9 +1541,10 @@ private fun ClipboardDetailSheet(
     clipboard: DashboardVM.ModuleItem.Clipboard,
     onDismiss: () -> Unit,
     onCopy: (ClipboardInfo) -> Unit,
+    showMessage: (String) -> Unit,
 ) {
     val clip = clipboard.data.data
-    val context = LocalContext.current
+    val copiedMsg = stringResource(ClipboardR.string.module_clipboard_copied_octi_to_os)
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(modifier = Modifier.padding(horizontal = 24.dp)) {
             Text(
@@ -1564,7 +1580,7 @@ private fun ClipboardDetailSheet(
             TextButton(
                 onClick = {
                     onCopy(clip)
-                    Toast.makeText(context, ClipboardR.string.module_clipboard_copied_octi_to_os, Toast.LENGTH_SHORT).show()
+                    showMessage(copiedMsg)
                 },
                 modifier = Modifier.align(Alignment.End),
             ) {
@@ -1598,8 +1614,9 @@ private fun DetailRow(label: String, value: String) {
 }
 
 @Composable
-private fun CopyableDetailRow(label: String, value: String, copyable: Boolean) {
+private fun CopyableDetailRow(label: String, value: String, copyable: Boolean, showMessage: (String) -> Unit) {
     val context = LocalContext.current
+    val copiedMsg = stringResource(CommonR.string.general_copy_action)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -1623,11 +1640,7 @@ private fun CopyableDetailRow(label: String, value: String, copyable: Boolean) {
                 onClick = {
                     val clipboard = context.getSystemService(ClipboardManager::class.java)
                     clipboard.setPrimaryClip(ClipData.newPlainText("IP", value))
-                    Toast.makeText(
-                        context,
-                        context.getString(CommonR.string.general_copy_action),
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    showMessage(copiedMsg)
                 },
                 modifier = Modifier.size(28.dp),
             ) {

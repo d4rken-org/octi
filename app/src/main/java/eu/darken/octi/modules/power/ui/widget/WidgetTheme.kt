@@ -1,8 +1,13 @@
 package eu.darken.octi.modules.power.ui.widget
 
 import android.graphics.Color
+import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.core.graphics.ColorUtils
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
+import eu.darken.octi.common.debug.logging.asLog
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.modules.power.R as PowerR
 
 enum class WidgetTheme(
@@ -42,6 +47,28 @@ enum class WidgetTheme(
         )
 
         fun fromName(name: String?): WidgetTheme? = entries.find { it.name == name }
+
+        private val TAG = logTag("Module", "Power", "Widget", "Theme")
+
+        fun parseThemeColors(options: Bundle): Colors? = try {
+            val mode = options.getString(KEY_THEME_MODE)
+            when (mode) {
+                MODE_CUSTOM -> {
+                    if (options.containsKey(KEY_CUSTOM_BG) && options.containsKey(KEY_CUSTOM_ACCENT)) {
+                        val bg = options.getInt(KEY_CUSTOM_BG)
+                        val accent = options.getInt(KEY_CUSTOM_ACCENT)
+                        deriveColors(bg, accent)
+                    } else {
+                        null
+                    }
+                }
+
+                else -> null
+            }
+        } catch (e: Exception) {
+            log(TAG, WARN) { "Failed to parse theme colors: ${e.asLog()}" }
+            null
+        }
 
         const val KEY_THEME_MODE = "theme_mode"
         const val KEY_THEME_PRESET = "theme_preset"
