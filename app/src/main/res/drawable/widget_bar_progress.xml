@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/widgetBarTrack" />
+        <shape>
             <corners android:radius="12dp" />
+            <solid android:color="@color/widgetBarTrack" />
         </shape>
     </item>
     <item android:id="@android:id/progress">
-        <scale
-            android:scaleWidth="100%"
-            android:scaleGravity="start">
-            <shape android:shape="rectangle">
-                <solid android:color="@color/widgetBarFill" />
+        <scale android:scaleWidth="100%">
+            <shape>
                 <corners android:radius="12dp" />
+                <solid android:color="@color/widgetBarFill" />
             </shape>
         </scale>
     </item>

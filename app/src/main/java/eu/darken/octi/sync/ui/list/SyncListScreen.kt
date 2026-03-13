@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.OutdoorGrill
 import androidx.compose.material.icons.twotone.PauseCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -319,7 +320,7 @@ private fun KServerConnectorCard(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_baseline_outdoor_grill_24),
+                    imageVector = Icons.Default.OutdoorGrill,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                 )

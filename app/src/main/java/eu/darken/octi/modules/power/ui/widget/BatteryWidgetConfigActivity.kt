@@ -1,17 +1,7 @@
 package eu.darken.octi.modules.power.ui.widget
 
 import android.appwidget.AppWidgetManager
-import android.content.ComponentName
-import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.style.StyleSpan
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.RemoteViews
-import android.widget.TextView
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
@@ -23,12 +13,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,11 +36,13 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.res.painterResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -61,21 +55,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.unit.sp
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.asLog
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.R
 import eu.darken.octi.common.theming.OctiTheme
 import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.themeState
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import eu.darken.octi.modules.power.R as PowerR
 
@@ -153,19 +153,26 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
 
         widgetManager.updateAppWidgetOptions(appWidgetId, options)
 
-        sendBroadcast(Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).apply {
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
-            component = ComponentName(this@BatteryWidgetConfigActivity, BatteryWidgetProvider::class.java)
-        })
+        val appContext = applicationContext
+        lifecycleScope.launch {
+            try {
+                val glanceId = GlanceAppWidgetManager(appContext).getGlanceIdBy(appWidgetId)
+                BatteryGlanceWidget().update(appContext, glanceId)
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to update widget: ${e.asLog()}" }
+            }
+        }
 
         setResult(
             RESULT_OK,
-            Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
+            android.content.Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
         )
         finish()
     }
 
     companion object {
+        private val TAG = logTag("Module", "Power", "Widget", "Config")
+
         fun parseHexColor(input: String?): Int? {
             if (input.isNullOrBlank()) return null
             val cleaned = input.trim().removePrefix("#").uppercase()
@@ -486,8 +493,6 @@ private fun WidgetPreview(
     bgColor: Int?,
     accentColor: Int?,
 ) {
-    val context = LocalContext.current
-
     val previewBg = when {
         isMaterialYou -> colorResource(R.color.widgetContainerBackground).toArgb()
         bgColor != null -> bgColor
@@ -506,63 +511,93 @@ private fun WidgetPreview(
         else -> null
     }
 
-    // Use RemoteViews for accurate preview — matches actual widget rendering
     Card(shape = RoundedCornerShape(16.dp)) {
-        if (LocalInspectionMode.current) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(previewBg))
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "Widget Preview",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (colors != null) Color(colors.onContainer) else MaterialTheme.colorScheme.onSurface,
-                )
-            }
-        } else {
-            AndroidView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(previewBg))
-                    .padding(8.dp),
-                factory = { ctx ->
-                    val row = RemoteViews(ctx.packageName, R.layout.module_power_widget_row)
-                    row.apply {
-                        val name = "Pixel 8"
-                        val label = SpannableStringBuilder().apply {
-                            append(name)
-                            setSpan(
-                                StyleSpan(Typeface.BOLD),
-                                0,
-                                name.length,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                            )
-                            append(" \u00b7 5 min ago")
-                        }
-                        setTextViewText(R.id.device_label, label)
-                        setTextViewText(R.id.charge_percent, "75%")
-                        setProgressBar(R.id.battery_progressbar, 100, 75, false)
-                    }
-                    row.apply(ctx, android.widget.FrameLayout(ctx))
-                },
-                update = { view ->
-                    if (colors != null) {
-                        view.findViewById<TextView>(R.id.device_label)?.setTextColor(colors.icon)
-                        view.findViewById<ImageView>(R.id.battery_icon)?.setColorFilter(colors.icon)
-                        view.findViewById<TextView>(R.id.charge_percent)?.setTextColor(colors.onContainer)
-                        view.findViewById<ProgressBar>(R.id.battery_progressbar)?.apply {
-                            progressTintList =
-                                android.content.res.ColorStateList.valueOf(colors.barFill)
-                            progressBackgroundTintList =
-                                android.content.res.ColorStateList.valueOf(colors.barTrack)
-                        }
-                    }
-                },
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(previewBg))
+                .padding(8.dp),
+        ) {
+            PreviewWidgetRow(
+                name = "Pixel 8",
+                lastSeen = "5 min ago",
+                percent = 75,
+                colors = colors,
             )
         }
+    }
+}
+
+@Composable
+private fun PreviewWidgetRow(
+    name: String,
+    lastSeen: String,
+    percent: Int,
+    colors: WidgetTheme.Colors?,
+) {
+    val barFill = if (colors != null) Color(colors.barFill) else colorResource(R.color.widgetBarFill)
+    val barTrack = if (colors != null) Color(colors.barTrack) else colorResource(R.color.widgetBarTrack)
+    val iconColor = if (colors != null) Color(colors.icon) else colorResource(R.color.widgetBarIcon)
+    val onContainer = if (colors != null) Color(colors.onContainer) else colorResource(R.color.widgetOnContainer)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(30.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(barTrack),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(percent / 100f)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(barFill),
+            )
+            Row(
+                modifier = Modifier
+                    .matchParentSize()
+                    .padding(horizontal = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.widget_battery_full_24),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = iconColor,
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = name,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = iconColor,
+                    maxLines = 1,
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "· $lastSeen",
+                    fontSize = 11.sp,
+                    color = iconColor,
+                    maxLines = 1,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = "$percent%",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            color = onContainer,
+            modifier = Modifier.width(44.dp),
+            textAlign = androidx.compose.ui.text.style.TextAlign.End,
+        )
     }
 }
 
