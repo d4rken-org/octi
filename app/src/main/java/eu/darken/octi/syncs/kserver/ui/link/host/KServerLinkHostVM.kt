@@ -13,6 +13,7 @@ import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.syncs.kserver.core.KServerConnector
 import eu.darken.octi.syncs.kserver.ui.link.KServerLinkOption
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
@@ -52,13 +54,46 @@ class KServerLinkHostVM @Inject constructor(
             }
         }
 
-    val deviceLinkedEvents = SingleEventFlow<Unit>()
+    var deviceLinkedEvents = SingleEventFlow<Unit>()
+        private set
+
+    private var deviceMonitorJob: Job? = null
 
     fun initialize(connectorId: String) {
         if (connectorIdFlow.value != null) return
         connectorIdFlow.value = connectorId
 
         launch {
+            val connector = connectorFlow.first()
+            while (currentCoroutineContext().isActive) {
+                connector.sync(SyncOptions())
+                delay(3000)
+            }
+        }
+    }
+
+    fun onScreenVisible() {
+        log(TAG) { "onScreenVisible()" }
+
+        // Cancel previous monitor and discard stale events
+        deviceMonitorJob?.cancel()
+        deviceLinkedEvents = SingleEventFlow()
+
+        // Reset to loading state, then generate fresh code
+        launch {
+            stateLock.withLock {
+                _state.value = _state.value.copy(encodedLinkCode = null)
+            }
+            val connector = connectorFlow.first()
+            val container = connector.createLinkCode()
+            log(TAG) { "New magic link code generated." }
+            stateLock.withLock {
+                _state.value = _state.value.copy(encodedLinkCode = container.toEncodedString(json))
+            }
+        }
+
+        // Monitor for new device linking
+        deviceMonitorJob = vmScope.launch {
             connectorFlow
                 .flatMapLatest { it.state }
                 .map { it.devices }
@@ -73,23 +108,6 @@ class KServerLinkHostVM @Inject constructor(
                 .first()
             deviceLinkedEvents.tryEmit(Unit)
         }
-
-        launch {
-            val connector = connectorFlow.first()
-            val container = connector.createLinkCode()
-            log(TAG) { "New magic link code generated." }
-
-            stateLock.withLock {
-                _state.value = _state.value.copy(encodedLinkCode = container.toEncodedString(json))
-            }
-        }
-        launch {
-            val connector = connectorFlow.first()
-            while (currentCoroutineContext().isActive) {
-                connector.sync(SyncOptions())
-                delay(3000)
-            }
-        }
     }
 
     fun onLinkOptionSelected(option: KServerLinkOption) = launch {
@@ -101,7 +119,7 @@ class KServerLinkHostVM @Inject constructor(
 
     fun shareLinkCode(activity: Activity) = launch {
         log(TAG) { "shareLinkCode()" }
-        val encodedCode = _state.value.encodedLinkCode!!
+        val encodedCode = _state.value.encodedLinkCode ?: return@launch
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, encodedCode)

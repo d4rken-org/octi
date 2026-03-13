@@ -67,7 +67,8 @@ fun KServerLinkHostScreenHost(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    LaunchedEffect(vm.deviceLinkedEvents) {
+    LaunchedEffect(Unit) {
+        vm.onScreenVisible()
         vm.deviceLinkedEvents.collect {
             Toast.makeText(
                 context,
