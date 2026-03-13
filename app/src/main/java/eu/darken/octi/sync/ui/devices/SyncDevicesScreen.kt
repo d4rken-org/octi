@@ -15,19 +15,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.twotone.DeleteSweep
 import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.Tablet
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,11 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
-import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -109,7 +102,7 @@ fun SyncDevicesScreen(
     }
 
     selectedDevice?.let { device ->
-        DeviceActionsDialog(
+        DeviceActionsSheet(
             device = device,
             connectorType = state.connectorType,
             onDismiss = { selectedDevice = null },
@@ -196,74 +189,6 @@ private fun DeviceRow(
             }
         }
     }
-}
-
-@Composable
-private fun DeviceActionsDialog(
-    device: SyncDevicesVM.DeviceItem,
-    connectorType: String?,
-    onDismiss: () -> Unit,
-    onDelete: () -> Unit,
-) {
-    val removeIsRevoke = when (connectorType) {
-        "gdrive" -> false
-        "kserver" -> true
-        else -> null
-    }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Column {
-                Text(
-                    text = device.metaInfo?.labelOrFallback ?: "?",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = device.deviceId.id,
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
-        },
-        text = {
-            Column {
-                Button(
-                    onClick = onDelete,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Icon(
-                        imageVector = Icons.TwoTone.DeleteSweep,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = stringResource(CommonR.string.general_remove_action))
-                }
-
-                removeIsRevoke?.let { isRevoke ->
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = when (isRevoke) {
-                            true -> stringResource(R.string.sync_delete_device_revokeaccess_caveat)
-                            false -> stringResource(R.string.sync_delete_device_keepaccess_caveat)
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-            }
-        },
-        confirmButton = {},
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(CommonR.string.general_cancel_action))
-            }
-        },
-    )
 }
 
 @Preview2
