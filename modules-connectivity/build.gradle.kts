@@ -3,6 +3,7 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
@@ -13,6 +14,10 @@ android {
 
     defaultConfig {
         minSdk = ProjectConfig.minSdk
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     setupModuleBuildTypes()
@@ -42,6 +47,7 @@ dependencies {
     addCoroutines()
     addSerialization()
     addIO()
+    addCompose()
     addRetrofit()
     addTesting()
 }

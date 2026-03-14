@@ -40,4 +40,5 @@
     <string name="ui_theme_style_setting_explanation">הסגנון המשמש לעיצוב האפליקציה.</string>
     <string name="ui_theme_style_default_label">ברירת מחדל</string>
     <string name="ui_theme_style_materialyou_label">Material you</string>
+    <string name="device_x_label">מכשיר: %s</string>
 </resources>

@@ -37,4 +37,5 @@
     <string name="ui_theme_style_setting_explanation">Kiểu màu được dùng khi hiển thị giao diện ứng dụng.</string>
     <string name="ui_theme_style_default_label">Mặc định</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Thiết bị: %s</string>
 </resources>

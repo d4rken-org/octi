@@ -98,7 +98,6 @@
     <string name="modules_category_apps_label">Ứng dụng</string>
     <string name="modules_category_misc_label">Khác</string>
     <string name="module_apps_category_label">Ứng dụng</string>
-    <string name="device_x_label">Thiết bị: %s</string>
     <string name="pro_device_limit_reached_title">Đã đạt giới hạn thiết bị</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="other">Bạn hiện có %1$d thiết bị đã đồng bộ.</item>

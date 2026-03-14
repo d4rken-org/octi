@@ -98,7 +98,6 @@
     <string name="modules_category_apps_label">앱</string>
     <string name="modules_category_misc_label">기타</string>
     <string name="module_apps_category_label">앱</string>
-    <string name="device_x_label">기기: %s</string>
     <string name="pro_device_limit_reached_title">기기 제한에 도달함</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="other">현재 %1$d개의 동기화된 기기가 있습니다.</item>

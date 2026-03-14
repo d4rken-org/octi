@@ -24,7 +24,7 @@ import eu.darken.octi.modules.clipboard.R as ClipboardR
 import okio.ByteString.Companion.encodeUtf8
 
 @Composable
-internal fun ClipboardDetailSheet(
+fun ClipboardDetailSheet(
     info: ClipboardInfo,
     onDismiss: () -> Unit,
     onCopy: (ClipboardInfo) -> Unit,

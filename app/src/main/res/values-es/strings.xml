@@ -100,7 +100,6 @@
     <string name="modules_category_apps_label">Aplicaciones</string>
     <string name="modules_category_misc_label">Misceláneos</string>
     <string name="module_apps_category_label">Aplicaciones</string>
-    <string name="device_x_label">Dispositivo: %s</string>
     <string name="pro_device_limit_reached_title">Límite de dispositivo alcanzado</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Actualmente tienes %1$d dispositivo sincronizado.</item>

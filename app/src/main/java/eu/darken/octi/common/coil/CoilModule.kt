@@ -15,6 +15,7 @@ import eu.darken.octi.common.debug.logging.Logging
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.modules.apps.ui.coil.AppIconFetcher
 import javax.inject.Provider
 import javax.inject.Singleton
 

@@ -45,4 +45,5 @@
     <string name="ui_theme_color_green_label">Green</string>
     <string name="ui_theme_color_blue_label">Blue</string>
     <string name="ui_theme_color_sunset_label">Sunset</string>
+    <string name="device_x_label">Device: %s</string>
 </resources>

@@ -19,7 +19,7 @@ import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.modules.wifi.core.WifiInfo
 
 @Composable
-internal fun WifiDetailSheet(
+fun WifiDetailSheet(
     info: WifiInfo,
     onDismiss: () -> Unit,
 ) {

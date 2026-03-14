@@ -26,7 +26,7 @@ import eu.darken.octi.modules.power.core.PowerInfo.Status
 import eu.darken.octi.modules.power.ui.PowerEstimationFormatter
 
 @Composable
-internal fun PowerDetailSheet(
+fun PowerDetailSheet(
     info: PowerInfo,
     onDismiss: () -> Unit,
 ) {

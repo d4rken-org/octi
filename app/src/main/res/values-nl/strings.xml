@@ -100,7 +100,6 @@
     <string name="modules_category_apps_label">Apps</string>
     <string name="modules_category_misc_label">Diversen</string>
     <string name="module_apps_category_label">Apps</string>
-    <string name="device_x_label">Apparaat: %s</string>
     <string name="pro_device_limit_reached_title">Apparaatlimiet bereikt</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">U heeft momenteel %1$d gesynchroniseerd apparaat.</item>

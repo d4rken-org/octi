@@ -1,4 +1,4 @@
-package eu.darken.octi.common.coil
+package eu.darken.octi.modules.apps.ui.coil
 
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
@@ -9,7 +9,7 @@ import coil3.fetch.FetchResult
 import coil3.fetch.Fetcher
 import coil3.fetch.ImageFetchResult
 import coil3.request.Options
-import eu.darken.octi.R
+import eu.darken.octi.modules.apps.R
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.getIcon2
 import eu.darken.octi.modules.apps.core.AppsInfo

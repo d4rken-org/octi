@@ -38,4 +38,5 @@
     <string name="ui_theme_style_setting_explanation">O estilo de cor usado ao aplicar temas no aplicativo.</string>
     <string name="ui_theme_style_default_label">Padrão</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Dispositivo: %s</string>
 </resources>

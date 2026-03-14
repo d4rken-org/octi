@@ -34,7 +34,7 @@ data class ClipboardDashState(
 )
 
 @Composable
-internal fun ClipboardModuleItem(
+fun ClipboardModuleItem(
     state: ClipboardDashState,
     onDetailClicked: () -> Unit,
     onClearClicked: () -> Unit,

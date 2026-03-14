@@ -38,4 +38,5 @@
     <string name="ui_theme_style_setting_explanation">L\'estil de color utilitzat en la temàtica de l\'aplicació.</string>
     <string name="ui_theme_style_default_label">Per defecte</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Dispositiu: %s</string>
 </resources>

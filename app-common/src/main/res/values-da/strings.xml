@@ -38,4 +38,5 @@
     <string name="ui_theme_style_setting_explanation">Farvestilen der bruges ved tematisering af appen.</string>
     <string name="ui_theme_style_default_label">Standard</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Enhed: %s</string>
 </resources>
