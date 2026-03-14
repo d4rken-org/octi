@@ -1,20 +1,22 @@
 package eu.darken.octi.modules.power.ui.widget
 
 import android.text.format.DateUtils
+import androidx.annotation.ColorRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.action.actionStartActivity
+import androidx.glance.LocalContext
+import androidx.glance.LocalSize
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
-import androidx.annotation.ColorRes
-import androidx.glance.unit.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -29,10 +31,9 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.LocalSize
-import eu.darken.octi.R
-import eu.darken.octi.main.ui.MainActivity
+import androidx.glance.unit.ColorProvider
 import eu.darken.octi.module.core.ModuleRepo
+import eu.darken.octi.modules.power.R
 
 private data class BatteryDeviceRow(
     val deviceName: String,
@@ -50,7 +51,9 @@ fun BatteryWidgetContent(
 ) {
     val devices = buildDeviceRows(metaState, powerState, maxRows)
     val containerBg = themeColors?.containerBg
-    val openApp = actionStartActivity<MainActivity>()
+    val context = LocalContext.current
+    val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
+        ?.let { actionStartActivity(it) }
     // Widget padding: 8dp each side, spacer: 4dp, percent text: 44dp
     val barWidthDp = (LocalSize.current.width.value - 64f).coerceAtLeast(0f)
 
@@ -66,7 +69,9 @@ fun BatteryWidgetContent(
                         GlanceModifier.background(ColorProvider(R.color.widgetContainerBackground))
                     }
                 )
-                .clickable(openApp)
+                .then(
+                    if (openApp != null) GlanceModifier.clickable(openApp) else GlanceModifier
+                )
                 .padding(8.dp),
         ) {
             Column(modifier = GlanceModifier.fillMaxSize()) {
@@ -163,7 +168,7 @@ private fun BatteryDeviceRowContent(
                     ),
                     contentDescription = null,
                     modifier = GlanceModifier.size(20.dp),
-                    colorFilter = androidx.glance.ColorFilter.tint(iconColor),
+                    colorFilter = ColorFilter.tint(iconColor),
                 )
                 Spacer(modifier = GlanceModifier.width(4.dp))
                 Text(
