@@ -100,6 +100,7 @@ android {
             isIncludeAndroidResources = true
         }
     }
+    //noinspection WrongGradleMethod
     tasks.withType<Test> {
         useJUnitPlatform()
     }
@@ -108,6 +109,7 @@ android {
             excludes += "META-INF/INDEX.LIST"
         }
     }
+    setupModule()
 }
 
 androidComponents {
