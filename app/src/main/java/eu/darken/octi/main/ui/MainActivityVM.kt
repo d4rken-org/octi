@@ -8,7 +8,6 @@ import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.main.core.GeneralSettings
-import eu.darken.octi.main.core.themeState
 import eu.darken.octi.main.core.themeStateBlocking
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn

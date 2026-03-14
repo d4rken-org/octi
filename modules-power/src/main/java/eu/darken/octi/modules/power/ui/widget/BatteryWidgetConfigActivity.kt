@@ -69,19 +69,17 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.R
 import eu.darken.octi.common.theming.OctiTheme
+import eu.darken.octi.common.theming.ThemeSettings
 import eu.darken.octi.common.theming.ThemeState
-import eu.darken.octi.main.core.GeneralSettings
-import eu.darken.octi.main.core.themeState
+import eu.darken.octi.modules.power.R
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import eu.darken.octi.modules.power.R as PowerR
 
 @AndroidEntryPoint
 class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
 
-    @Inject lateinit var generalSettings: GeneralSettings
+    @Inject lateinit var themeSettings: ThemeSettings
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
@@ -111,7 +109,7 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
         } else null
 
         setContent {
-            val themeState by generalSettings.themeState.collectAsState(ThemeState())
+            val themeState by themeSettings.themeState.collectAsState(ThemeState())
             OctiTheme(state = themeState) {
                 WidgetConfigScreen(
                     initialMode = initialMode,
@@ -230,7 +228,7 @@ private fun WidgetConfigScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(PowerR.string.module_power_widget_config_title)) },
+                title = { Text(stringResource(R.string.module_power_widget_config_title)) },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
                         Icon(Icons.Filled.Close, contentDescription = null)
@@ -255,7 +253,7 @@ private fun WidgetConfigScreen(
                         .fillMaxWidth()
                         .padding(16.dp),
                 ) {
-                    Text(stringResource(PowerR.string.module_power_widget_config_apply_action))
+                    Text(stringResource(R.string.module_power_widget_config_apply_action))
                 }
             }
         },
@@ -268,7 +266,7 @@ private fun WidgetConfigScreen(
         ) {
             // Preview
             Text(
-                text = stringResource(PowerR.string.module_power_widget_config_preview_label),
+                text = stringResource(R.string.module_power_widget_config_preview_label),
                 style = MaterialTheme.typography.labelMedium,
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -282,7 +280,7 @@ private fun WidgetConfigScreen(
 
             // Presets
             Text(
-                text = stringResource(PowerR.string.module_power_widget_config_presets_label),
+                text = stringResource(R.string.module_power_widget_config_presets_label),
                 style = MaterialTheme.typography.labelMedium,
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -324,7 +322,7 @@ private fun WidgetConfigScreen(
                         isCustomMode = true
                         selectedPreset = WidgetTheme.MATERIAL_YOU // reset preset
                     },
-                    label = { Text(stringResource(PowerR.string.module_power_widget_config_custom_label)) },
+                    label = { Text(stringResource(R.string.module_power_widget_config_custom_label)) },
                 )
             }
 
@@ -341,7 +339,7 @@ private fun WidgetConfigScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = stringResource(PowerR.string.module_power_widget_config_background_label),
+                            text = stringResource(R.string.module_power_widget_config_background_label),
                             style = MaterialTheme.typography.titleSmall,
                         )
                         Spacer(modifier = Modifier.height(12.dp))
@@ -379,7 +377,7 @@ private fun WidgetConfigScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = stringResource(PowerR.string.module_power_widget_config_accent_label),
+                            text = stringResource(R.string.module_power_widget_config_accent_label),
                             style = MaterialTheme.typography.titleSmall,
                         )
                         Spacer(modifier = Modifier.height(12.dp))
@@ -471,7 +469,7 @@ private fun HexColorInput(
             val filtered = input.filter { it.isLetterOrDigit() }.take(6).uppercase()
             onValueChange(filtered)
         },
-        label = { Text(stringResource(PowerR.string.module_power_widget_config_hex_hint)) },
+        label = { Text(stringResource(R.string.module_power_widget_config_hex_hint)) },
         prefix = { Text("#") },
         textStyle = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace),
         singleLine = true,

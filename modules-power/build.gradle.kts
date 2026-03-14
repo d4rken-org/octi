@@ -52,4 +52,7 @@ dependencies {
     addAndroidUI()
     addNavigation3()
     addTesting()
+
+    implementation("androidx.glance:glance-appwidget:1.2.0-rc01")
+    implementation("androidx.glance:glance-material3:1.2.0-rc01")
 }

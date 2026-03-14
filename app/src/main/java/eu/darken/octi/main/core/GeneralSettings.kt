@@ -13,9 +13,13 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.theming.ThemeColor
 import eu.darken.octi.common.theming.ThemeMode
+import eu.darken.octi.common.theming.ThemeSettings
+import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.common.theming.ThemeStyle
 import eu.darken.octi.main.core.updater.UpdateChecker
 import eu.darken.octi.main.ui.dashboard.DashboardConfig
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,7 +29,7 @@ class GeneralSettings @Inject constructor(
     @ApplicationContext private val context: Context,
     json: Json,
     updateChecker: UpdateChecker,
-) {
+) : ThemeSettings {
 
     private val Context.dataStore by preferencesDataStore(name = "core_settings")
 
@@ -41,6 +45,11 @@ class GeneralSettings @Inject constructor(
     val themeMode = dataStore.createValue("core.ui.theme.mode", ThemeMode.SYSTEM, json)
     val themeStyle = dataStore.createValue("core.ui.theme.style", ThemeStyle.DEFAULT, json)
     val themeColor = dataStore.createValue("core.ui.theme.color", ThemeColor.GREEN, json)
+
+    override val themeState: Flow<ThemeState>
+        get() = combine(themeMode.flow, themeStyle.flow, themeColor.flow) { mode, style, color ->
+            ThemeState(mode, style, color)
+        }
 
     val dismissedPermissions: DataStoreValue<Set<Permission>> = dataStore.createValue(
         stringPreferencesKey("core.permission.dismissed"),
