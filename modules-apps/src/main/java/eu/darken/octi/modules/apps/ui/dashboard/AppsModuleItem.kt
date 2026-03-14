@@ -29,7 +29,7 @@ import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.core.installerIconRes
 
 @Composable
-internal fun AppsModuleItem(
+fun AppsModuleItem(
     info: AppsInfo,
     onAppsClicked: () -> Unit,
     onInstallClicked: () -> Unit,

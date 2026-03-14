@@ -42,4 +42,5 @@
     <string name="ui_theme_style_setting_explanation">نمط الألوان المستخدم عند تطبيق سمة التطبيق.</string>
     <string name="ui_theme_style_default_label">الافتراضي</string>
     <string name="ui_theme_style_materialyou_label">ماتيريال يو</string>
+    <string name="device_x_label">الجهاز: %s</string>
 </resources>

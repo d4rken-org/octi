@@ -37,4 +37,5 @@
     <string name="ui_theme_style_setting_explanation">应用程序主题化时使用的颜色样式。</string>
     <string name="ui_theme_style_default_label">默认</string>
     <string name="ui_theme_style_materialyou_label">动态取色</string>
+    <string name="device_x_label">设备: %s</string>
 </resources>

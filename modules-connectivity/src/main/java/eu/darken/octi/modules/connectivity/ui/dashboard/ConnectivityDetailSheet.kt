@@ -19,7 +19,7 @@ import eu.darken.octi.modules.connectivity.R as ConnectivityR
 import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 
 @Composable
-internal fun ConnectivityDetailSheet(
+fun ConnectivityDetailSheet(
     info: ConnectivityInfo,
     onDismiss: () -> Unit,
     showMessage: (String) -> Unit,

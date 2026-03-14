@@ -23,7 +23,7 @@ import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 import eu.darken.octi.modules.connectivity.ui.icon
 
 @Composable
-internal fun ConnectivityModuleItem(
+fun ConnectivityModuleItem(
     info: ConnectivityInfo,
     onDetailClicked: () -> Unit,
 ) {

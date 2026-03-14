@@ -98,7 +98,6 @@
     <string name="modules_category_apps_label">アプリ</string>
     <string name="modules_category_misc_label">その他</string>
     <string name="module_apps_category_label">アプリ</string>
-    <string name="device_x_label">デバイス: %s</string>
     <string name="pro_device_limit_reached_title">デバイスの上限に達しました</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="other">現在 %1$d 台の同期済みデバイスがあります。</item>

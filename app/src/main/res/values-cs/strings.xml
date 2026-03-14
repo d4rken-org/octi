@@ -104,7 +104,6 @@
     <string name="modules_category_apps_label">Aplikace</string>
     <string name="modules_category_misc_label">Různé</string>
     <string name="module_apps_category_label">Aplikace</string>
-    <string name="device_x_label">Zařízení: %s</string>
     <string name="pro_device_limit_reached_title">Dosažen limit počtu zařízení</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Aktuálně máte %1$d synchronizované zařízení.</item>

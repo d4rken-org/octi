@@ -40,4 +40,5 @@
     <string name="ui_theme_style_setting_explanation">Цветовой стиль, используемый при оформлении приложения.</string>
     <string name="ui_theme_style_default_label">По умолчанию</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Устройство: %s</string>
 </resources>

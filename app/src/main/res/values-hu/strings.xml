@@ -100,7 +100,6 @@
     <string name="modules_category_apps_label">Alkalmazások</string>
     <string name="modules_category_misc_label">Egyéb</string>
     <string name="module_apps_category_label">Alkalmazások</string>
-    <string name="device_x_label">Eszköz: %s</string>
     <string name="pro_device_limit_reached_title">Elérted az eszköz limitet</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Jelenleg %1$d szinkronizált eszközöd van.</item>

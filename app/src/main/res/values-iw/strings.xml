@@ -104,7 +104,6 @@
     <string name="modules_category_apps_label">יישומים</string>
     <string name="modules_category_misc_label">שונות</string>
     <string name="module_apps_category_label">יישומים</string>
-    <string name="device_x_label">מכשיר: %s</string>
     <string name="pro_device_limit_reached_title">הגעת למגבלת המכשירים</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">יש לך כרגע מכשיר %1$d מסונכרן.</item>

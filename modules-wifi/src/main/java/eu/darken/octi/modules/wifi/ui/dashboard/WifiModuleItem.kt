@@ -33,7 +33,7 @@ data class WifiDashState(
 )
 
 @Composable
-internal fun WifiModuleItem(
+fun WifiModuleItem(
     state: WifiDashState,
     onDetailClicked: () -> Unit,
     onGrantPermission: (Permission) -> Unit,

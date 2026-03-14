@@ -20,11 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import eu.darken.octi.R
 import eu.darken.octi.common.TemperatureFormatter
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -44,7 +42,7 @@ data class PowerDashState(
 )
 
 @Composable
-internal fun PowerModuleItem(
+fun PowerModuleItem(
     state: PowerDashState,
     onDetailClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
@@ -61,7 +59,7 @@ internal fun PowerModuleItem(
             imageVector = power.batteryIcon,
             contentDescription = null,
             tint = if (power.battery.percent < 0.1f && !power.isCharging) {
-                colorResource(R.color.error)
+                MaterialTheme.colorScheme.error
             } else {
                 MaterialTheme.colorScheme.onSurface
             },
@@ -77,7 +75,7 @@ internal fun PowerModuleItem(
                 text = "$percentTxt% - $stateTxt",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = if (isAlertActive) FontWeight.Bold else FontWeight.Normal,
-                color = if (isAlertActive) colorResource(R.color.error) else MaterialTheme.colorScheme.onSurface,
+                color = if (isAlertActive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
             )
             PowerSecondaryText(power)
         }
