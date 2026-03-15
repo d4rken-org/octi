@@ -87,22 +87,33 @@ import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.descriptionRes
 import eu.darken.octi.common.permissions.labelRes
 import eu.darken.octi.common.upgrade.UpgradeRepo
-import eu.darken.octi.modules.meta.R as MetaR
-import eu.darken.octi.modules.meta.core.MetaInfo
-import eu.darken.octi.modules.power.core.PowerInfo
-import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
-import eu.darken.octi.modules.power.core.PowerInfo.Status
+import eu.darken.octi.modules.apps.AppsModule
+import eu.darken.octi.modules.apps.R as AppsR
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.ui.dashboard.AppsModuleItem
+import eu.darken.octi.modules.clipboard.ClipboardModule
 import eu.darken.octi.modules.clipboard.ClipboardInfo
+import eu.darken.octi.modules.clipboard.R as ClipboardR
 import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardDashState
 import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardDetailSheet
 import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardModuleItem
+import eu.darken.octi.modules.connectivity.ConnectivityModule
+import eu.darken.octi.modules.connectivity.R as ConnectivityR
 import eu.darken.octi.modules.connectivity.ui.dashboard.ConnectivityDetailSheet
 import eu.darken.octi.modules.connectivity.ui.dashboard.ConnectivityModuleItem
+import eu.darken.octi.modules.meta.MetaModule
+import eu.darken.octi.modules.meta.R as MetaR
+import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.modules.power.PowerModule
+import eu.darken.octi.modules.power.R as PowerR
+import eu.darken.octi.modules.power.core.PowerInfo
+import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
+import eu.darken.octi.modules.power.core.PowerInfo.Status
 import eu.darken.octi.modules.power.ui.dashboard.PowerDashState
 import eu.darken.octi.modules.power.ui.dashboard.PowerDetailSheet
 import eu.darken.octi.modules.power.ui.dashboard.PowerModuleItem
+import eu.darken.octi.modules.wifi.WifiModule
+import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiDashState
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiDetailSheet
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiModuleItem
@@ -552,10 +563,23 @@ private fun SyncStatusBar(
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             when (syncStatus) {
-                is DashboardVM.SyncStatus.Syncing -> Text(
-                    text = stringResource(R.string.dashboard_sync_status_syncing),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                is DashboardVM.SyncStatus.Syncing -> {
+                    val moduleNames = syncStatus.syncingModules
+                        .sortedBy { MODULE_DISPLAY_ORDER.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE }
+                        .mapNotNull { moduleIdToStringRes(it) }
+                        .map { stringResource(it) }
+                    val text = if (moduleNames.isNotEmpty()) {
+                        stringResource(R.string.dashboard_sync_status_syncing_modules, moduleNames.joinToString(", "))
+                    } else {
+                        stringResource(R.string.dashboard_sync_status_syncing)
+                    }
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
 
                 is DashboardVM.SyncStatus.Idle -> {
                     val primaryText = syncStatus.lastSyncAt?.let {
@@ -612,6 +636,25 @@ private fun SyncStatusBar(
             }
         }
     }
+}
+
+private val MODULE_DISPLAY_ORDER = listOf(
+    PowerModule.MODULE_ID,
+    ConnectivityModule.MODULE_ID,
+    WifiModule.MODULE_ID,
+    ClipboardModule.MODULE_ID,
+    AppsModule.MODULE_ID,
+    MetaModule.MODULE_ID,
+)
+
+private fun moduleIdToStringRes(moduleId: ModuleId): Int? = when (moduleId) {
+    PowerModule.MODULE_ID -> PowerR.string.module_power_label
+    WifiModule.MODULE_ID -> WifiR.string.module_wifi_label
+    AppsModule.MODULE_ID -> AppsR.string.module_apps_label
+    ClipboardModule.MODULE_ID -> ClipboardR.string.module_clipboard_label
+    ConnectivityModule.MODULE_ID -> ConnectivityR.string.module_connectivity_label
+    MetaModule.MODULE_ID -> MetaR.string.module_meta_label
+    else -> null
 }
 
 @Composable
