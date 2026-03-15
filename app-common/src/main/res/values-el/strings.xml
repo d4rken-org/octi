@@ -38,4 +38,5 @@
     <string name="ui_theme_style_setting_explanation">Το χρώμα που χρησιμοποιείται στη διαμόρφωση.</string>
     <string name="ui_theme_style_default_label">Προκαθορισμένο</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Συσκευή: %s</string>
 </resources>

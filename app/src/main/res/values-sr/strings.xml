@@ -102,7 +102,6 @@
     <string name="modules_category_apps_label">Апликације</string>
     <string name="modules_category_misc_label">Разно</string>
     <string name="module_apps_category_label">Апликације</string>
-    <string name="device_x_label">Уређај: %s</string>
     <string name="pro_device_limit_reached_title">Достигнут лимит уређаја</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Тренутно имате %1$d синхронизован уређај.</item>

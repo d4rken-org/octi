@@ -3,6 +3,7 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
@@ -13,6 +14,10 @@ android {
 
     defaultConfig {
         minSdk = ProjectConfig.minSdk
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     setupModuleBuildTypes()
@@ -43,5 +48,11 @@ dependencies {
     addCoroutines()
     addSerialization()
     addIO()
+    addCompose()
+    addAndroidUI()
+    addNavigation3()
     addTesting()
+
+    implementation("androidx.glance:glance-appwidget:1.2.0-rc01")
+    implementation("androidx.glance:glance-material3:1.2.0-rc01")
 }

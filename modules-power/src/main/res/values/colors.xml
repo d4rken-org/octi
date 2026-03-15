@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light mode widget colors (pre-API 31) -->
+    <color name="widgetContainerBackground">#FF2D6A44</color>
+    <color name="widgetBarFill">#FFB1F1C2</color>
+    <color name="widgetBarTrack">#33FFFFFF</color>
+    <color name="widgetBarIcon">#FF00210E</color>
+    <color name="widgetOnContainer">#FFFFFFFF</color>
+</resources>

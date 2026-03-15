@@ -100,6 +100,7 @@ android {
             isIncludeAndroidResources = true
         }
     }
+    //noinspection WrongGradleMethod
     tasks.withType<Test> {
         useJUnitPlatform()
     }
@@ -108,6 +109,7 @@ android {
             excludes += "META-INF/INDEX.LIST"
         }
     }
+    setupModule()
 }
 
 androidComponents {
@@ -190,9 +192,6 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.0")
 
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-
-    implementation("androidx.glance:glance-appwidget:1.2.0-rc01")
-    implementation("androidx.glance:glance-material3:1.2.0-rc01")
 
     "gplayImplementation"("com.android.billingclient:billing:8.0.0")
     "gplayImplementation"("com.android.billingclient:billing-ktx:8.0.0")

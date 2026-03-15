@@ -22,20 +22,14 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.OutdoorGrill
 import androidx.compose.material.icons.twotone.PauseCircle
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -159,7 +153,7 @@ fun SyncListScreen(
 
     showActionsFor?.let { item ->
         when (item) {
-            is SyncListVM.ConnectorItem.GDrive -> GDriveActionsDialog(
+            is SyncListVM.ConnectorItem.GDrive -> GDriveActionsSheet(
                 item = item,
                 onDismiss = { showActionsFor = null },
                 onTogglePause = {
@@ -183,7 +177,7 @@ fun SyncListScreen(
                 },
             )
 
-            is SyncListVM.ConnectorItem.KServer -> KServerActionsDialog(
+            is SyncListVM.ConnectorItem.KServer -> KServerActionsSheet(
                 item = item,
                 onDismiss = { showActionsFor = null },
                 onTogglePause = {
@@ -454,269 +448,6 @@ private fun StaleDevicesWarning(count: Int) {
             text = pluralStringResource(SyncR.plurals.sync_stale_devices_info_message, count, count),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.error,
-        )
-    }
-}
-
-@Composable
-private fun GDriveActionsDialog(
-    item: SyncListVM.ConnectorItem.GDrive,
-    onDismiss: () -> Unit,
-    onTogglePause: () -> Unit,
-    onForceSync: () -> Unit,
-    onViewDevices: () -> Unit,
-    onReset: () -> Unit,
-    onDisconnect: () -> Unit,
-) {
-    var showDisconnectConfirmation by remember { mutableStateOf(false) }
-    var showResetConfirmation by remember { mutableStateOf(false) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Column {
-                Text(
-                    text = buildString {
-                        append(stringResource(GDriveR.string.sync_gdrive_type_label))
-                        if (item.account.isAppDataScope) {
-                            append(" (${stringResource(GDriveR.string.sync_gdrive_appdata_label)})")
-                        }
-                    },
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = item.account.email,
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
-        },
-        text = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onTogglePause)
-                        .padding(vertical = 4.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.sync_connector_paused_label),
-                        modifier = Modifier.weight(1f),
-                    )
-                    Switch(
-                        checked = item.isPaused,
-                        onCheckedChange = { onTogglePause() },
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(
-                    onClick = onForceSync,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(text = stringResource(R.string.general_sync_action))
-                }
-
-                FilledTonalButton(
-                    onClick = onViewDevices,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !item.isPaused,
-                ) {
-                    Text(text = stringResource(R.string.sync_synced_devices_label))
-                }
-
-                FilledTonalButton(
-                    onClick = { showResetConfirmation = true },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(text = stringResource(R.string.general_reset_action))
-                }
-
-                Button(
-                    onClick = { showDisconnectConfirmation = true },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                    ),
-                ) {
-                    Text(text = stringResource(R.string.general_disconnect_action))
-                }
-            }
-        },
-        confirmButton = {},
-    )
-
-    if (showDisconnectConfirmation) {
-        AlertDialog(
-            onDismissRequest = { showDisconnectConfirmation = false },
-            text = { Text(text = stringResource(GDriveR.string.sync_gdrive_disconnect_confirmation_desc)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    showDisconnectConfirmation = false
-                    onDisconnect()
-                }) {
-                    Text(text = stringResource(R.string.general_disconnect_action))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDisconnectConfirmation = false }) {
-                    Text(text = stringResource(CommonR.string.general_cancel_action))
-                }
-            },
-        )
-    }
-
-    if (showResetConfirmation) {
-        AlertDialog(
-            onDismissRequest = { showResetConfirmation = false },
-            text = { Text(text = stringResource(GDriveR.string.sync_gdrive_reset_confirmation_desc)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    showResetConfirmation = false
-                    onReset()
-                }) {
-                    Text(text = stringResource(R.string.general_reset_action))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showResetConfirmation = false }) {
-                    Text(text = stringResource(CommonR.string.general_cancel_action))
-                }
-            },
-        )
-    }
-}
-
-@Composable
-private fun KServerActionsDialog(
-    item: SyncListVM.ConnectorItem.KServer,
-    onDismiss: () -> Unit,
-    onTogglePause: () -> Unit,
-    onForceSync: () -> Unit,
-    onViewDevices: () -> Unit,
-    onLinkNewDevice: () -> Unit,
-    onReset: () -> Unit,
-    onDisconnect: () -> Unit,
-) {
-    var showDisconnectConfirmation by remember { mutableStateOf(false) }
-    var showResetConfirmation by remember { mutableStateOf(false) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Column {
-                Text(
-                    text = "${stringResource(KServerR.string.sync_kserver_type_label)} (${item.credentials.serverAdress.domain})",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = item.credentials.accountId.id,
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
-        },
-        text = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onTogglePause)
-                        .padding(vertical = 4.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.sync_connector_paused_label),
-                        modifier = Modifier.weight(1f),
-                    )
-                    Switch(
-                        checked = item.isPaused,
-                        onCheckedChange = { onTogglePause() },
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(
-                    onClick = onForceSync,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(text = stringResource(R.string.general_sync_action))
-                }
-
-                FilledTonalButton(
-                    onClick = onViewDevices,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !item.isPaused,
-                ) {
-                    Text(text = stringResource(R.string.sync_synced_devices_label))
-                }
-
-                FilledTonalButton(
-                    onClick = onLinkNewDevice,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(text = stringResource(KServerR.string.sync_kserver_link_device_action))
-                }
-
-                FilledTonalButton(
-                    onClick = { showResetConfirmation = true },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(text = stringResource(R.string.general_reset_action))
-                }
-
-                Button(
-                    onClick = { showDisconnectConfirmation = true },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                    ),
-                ) {
-                    Text(text = stringResource(R.string.general_disconnect_action))
-                }
-            }
-        },
-        confirmButton = {},
-    )
-
-    if (showDisconnectConfirmation) {
-        AlertDialog(
-            onDismissRequest = { showDisconnectConfirmation = false },
-            text = { Text(text = stringResource(KServerR.string.sync_kserver_disconnect_confirmation_desc)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    showDisconnectConfirmation = false
-                    onDisconnect()
-                }) {
-                    Text(text = stringResource(R.string.general_disconnect_action))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDisconnectConfirmation = false }) {
-                    Text(text = stringResource(CommonR.string.general_cancel_action))
-                }
-            },
-        )
-    }
-
-    if (showResetConfirmation) {
-        AlertDialog(
-            onDismissRequest = { showResetConfirmation = false },
-            text = { Text(text = stringResource(KServerR.string.sync_kserver_reset_confirmation_desc)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    showResetConfirmation = false
-                    onReset()
-                }) {
-                    Text(text = stringResource(R.string.general_reset_action))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showResetConfirmation = false }) {
-                    Text(text = stringResource(CommonR.string.general_cancel_action))
-                }
-            },
         )
     }
 }

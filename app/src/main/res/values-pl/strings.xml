@@ -104,7 +104,6 @@
     <string name="modules_category_apps_label">Aplikacje</string>
     <string name="modules_category_misc_label">Różne</string>
     <string name="module_apps_category_label">Aplikacje</string>
-    <string name="device_x_label">Urządzenie: %s</string>
     <string name="pro_device_limit_reached_title">Osiągnięto limit urządzeń</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Masz obecnie %1$d zsynchronizowane urządzenie.</item>

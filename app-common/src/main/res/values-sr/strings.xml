@@ -39,4 +39,5 @@
     <string name="ui_theme_style_setting_explanation">Боје које се користе за тему апликације.</string>
     <string name="ui_theme_style_default_label">Подразумевано</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Уређај: %s</string>
 </resources>

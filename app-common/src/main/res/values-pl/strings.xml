@@ -40,4 +40,5 @@
     <string name="ui_theme_style_setting_explanation">Styl kolorów używany podczas działania motywów aplikacji.</string>
     <string name="ui_theme_style_default_label">Domyślny</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Urządzenie: %s</string>
 </resources>

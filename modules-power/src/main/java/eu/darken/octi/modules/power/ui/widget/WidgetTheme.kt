@@ -8,19 +8,19 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.modules.power.R as PowerR
+import eu.darken.octi.modules.power.R
 
 enum class WidgetTheme(
     @StringRes val labelRes: Int,
     val presetBg: Int?,
     val presetAccent: Int?,
 ) {
-    MATERIAL_YOU(PowerR.string.module_power_widget_theme_material_you, null, null),
-    CLASSIC_GREEN(PowerR.string.module_power_widget_theme_classic_green, 0xFF2D6A44.toInt(), 0xFFB1F1C2.toInt()),
-    BLUE(PowerR.string.module_power_widget_theme_blue, 0xFF1565C0.toInt(), 0xFFBBDEFB.toInt()),
-    ORANGE(PowerR.string.module_power_widget_theme_orange, 0xFFE65100.toInt(), 0xFFFFCC80.toInt()),
-    RED(PowerR.string.module_power_widget_theme_red, 0xFFC62828.toInt(), 0xFFFFCDD2.toInt()),
-    DARK(PowerR.string.module_power_widget_theme_dark, 0xFF1E1E1E.toInt(), 0xFF4CAF50.toInt()),
+    MATERIAL_YOU(R.string.module_power_widget_theme_material_you, null, null),
+    CLASSIC_GREEN(R.string.module_power_widget_theme_classic_green, 0xFF2D6A44.toInt(), 0xFFB1F1C2.toInt()),
+    BLUE(R.string.module_power_widget_theme_blue, 0xFF1565C0.toInt(), 0xFFBBDEFB.toInt()),
+    ORANGE(R.string.module_power_widget_theme_orange, 0xFFE65100.toInt(), 0xFFFFCC80.toInt()),
+    RED(R.string.module_power_widget_theme_red, 0xFFC62828.toInt(), 0xFFFFCDD2.toInt()),
+    DARK(R.string.module_power_widget_theme_dark, 0xFF1E1E1E.toInt(), 0xFF4CAF50.toInt()),
     ;
 
     data class Colors(

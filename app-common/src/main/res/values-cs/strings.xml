@@ -40,4 +40,5 @@
     <string name="ui_theme_style_setting_explanation">Barevný styl použitý při motivu aplikace.</string>
     <string name="ui_theme_style_default_label">Výchozí</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Zařízení: %s</string>
 </resources>

@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
-import eu.darken.octi.R
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import androidx.compose.runtime.collectAsState
@@ -117,7 +117,7 @@ fun AppsListScreen(
                         Text(stringResource(AppsR.string.module_apps_list_title))
                         if (state.deviceLabel.isNotEmpty()) {
                             Text(
-                                text = stringResource(R.string.device_x_label, state.deviceLabel),
+                                text = stringResource(CommonR.string.device_x_label, state.deviceLabel),
                                 style = MaterialTheme.typography.bodySmall,
                             )
                         }

@@ -108,7 +108,6 @@
     <string name="modules_category_apps_label">التطبيقات</string>
     <string name="modules_category_misc_label">متنوع</string>
     <string name="module_apps_category_label">التطبيقات</string>
-    <string name="device_x_label">الجهاز: %s</string>
     <string name="pro_device_limit_reached_title">تم الوصول إلى حد الأجهزة</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="zero">لديك حاليًا %1$d أجهزة متزامنة.</item>

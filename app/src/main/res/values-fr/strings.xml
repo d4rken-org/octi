@@ -100,7 +100,6 @@
     <string name="modules_category_apps_label">Applis</string>
     <string name="modules_category_misc_label">Divers</string>
     <string name="module_apps_category_label">Applis</string>
-    <string name="device_x_label">Appareil : %s</string>
     <string name="pro_device_limit_reached_title">La limite du nombre d’appareils a été atteinte</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">%1$d appareil est synchronisé actuellement.</item>

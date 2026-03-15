@@ -100,7 +100,6 @@
     <string name="modules_category_apps_label">Uygulamalar</string>
     <string name="modules_category_misc_label">Diğer</string>
     <string name="module_apps_category_label">Uygulamalar</string>
-    <string name="device_x_label">Cihaz: %s</string>
     <string name="pro_device_limit_reached_title">Cihaz sınırına ulaşıldı</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Şu anda %1$d senkronize edilmiş cihazınız var.</item>

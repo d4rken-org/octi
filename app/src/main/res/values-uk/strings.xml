@@ -104,7 +104,6 @@
     <string name="modules_category_apps_label">Додатки</string>
     <string name="modules_category_misc_label">Різне</string>
     <string name="module_apps_category_label">Додатки</string>
-    <string name="device_x_label">Пристрій: %s</string>
     <string name="pro_device_limit_reached_title">Досягнуто ліміту пристроїв</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Наразі у вас %1$d синхронізований пристрій.</item>

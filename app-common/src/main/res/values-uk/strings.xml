@@ -40,4 +40,5 @@
     <string name="ui_theme_style_setting_explanation">Стиль кольорів для теми застосунку.</string>
     <string name="ui_theme_style_default_label">За замовчуванням</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="device_x_label">Пристрій: %s</string>
 </resources>
