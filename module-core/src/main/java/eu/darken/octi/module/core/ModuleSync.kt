@@ -10,6 +10,8 @@ interface ModuleSync<T : Any> {
 
     val moduleId: ModuleId
 
+    val isSyncing: Flow<Boolean>
+
     val others: Flow<List<ModuleData<T>>>
 
     suspend fun sync(self: ModuleData<T>)

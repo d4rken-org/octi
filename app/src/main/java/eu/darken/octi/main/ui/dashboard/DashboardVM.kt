@@ -23,6 +23,7 @@ import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.updater.UpdateChecker
 import eu.darken.octi.main.core.updater.UpdateService
 import eu.darken.octi.module.core.ModuleData
+import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.core.getInstallerIntent
@@ -96,7 +97,8 @@ class DashboardVM @Inject constructor(
         syncManager.states,
         syncSettings.pausedConnectors.flow,
         tickerUiRefresh,
-    ) { isRefreshing, connectors, allStates, pausedIds, _ ->
+        moduleManager.syncingModules,
+    ) { isRefreshing, connectors, allStates, pausedIds, _, syncingModules ->
         val activeConnectors = connectors.filter { !pausedIds.contains(it.identifier) }
         if (activeConnectors.isEmpty()) return@combine null
 
@@ -107,7 +109,10 @@ class DashboardVM @Inject constructor(
             .mapNotNull { statesList.getOrNull(it) }
 
         when {
-            isRefreshing || activeStates.any { it.isBusy } -> SyncStatus.Syncing(connectorTypes)
+            isRefreshing || activeStates.any { it.isBusy } || syncingModules.isNotEmpty() -> {
+                SyncStatus.Syncing(connectorTypes, syncingModules)
+            }
+
             activeStates.any { it.lastError != null } -> {
                 val error = activeStates.first { it.lastError != null }.lastError
                 SyncStatus.Error(error?.message, connectorTypes)
@@ -165,7 +170,10 @@ class DashboardVM @Inject constructor(
     sealed interface SyncStatus {
         val connectorTypes: List<String>
 
-        data class Syncing(override val connectorTypes: List<String>) : SyncStatus
+        data class Syncing(
+            override val connectorTypes: List<String>,
+            val syncingModules: Set<ModuleId> = emptySet(),
+        ) : SyncStatus
         data class Idle(val lastSyncAt: Instant?, override val connectorTypes: List<String>) : SyncStatus
         data class Error(val message: String?, override val connectorTypes: List<String>) : SyncStatus
     }

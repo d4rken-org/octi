@@ -18,6 +18,7 @@ class ModuleManager @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val moduleRepos: Set<@JvmSuppressWildcards ModuleRepo<out Any>>,
+    private val moduleSyncs: Set<@JvmSuppressWildcards ModuleSync<out Any>>,
 ) {
 
     private val data = combine(moduleRepos.map { it.state }) {
@@ -48,6 +49,17 @@ class ModuleManager @Inject constructor(
         .onEach {
             log(TAG, VERBOSE) { "BYDEVICE: $it" }
         }
+
+    val syncingModules: Flow<Set<ModuleId>> = if (moduleSyncs.isEmpty()) {
+        flowOf(emptySet())
+    } else {
+        kotlinx.coroutines.flow.combine(moduleSyncs.map { sync ->
+            sync.isSyncing.map { busy -> if (busy) sync.moduleId else null }
+        }) { results ->
+            results.filterNotNull().toSet()
+        }
+    }
+        .setupCommonEventHandlers(TAG) { "syncingModules" }
 
     suspend fun refresh() {
         log(TAG) { "refresh()" }

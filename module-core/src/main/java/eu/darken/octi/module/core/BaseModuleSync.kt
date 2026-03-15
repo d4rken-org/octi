@@ -9,7 +9,9 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.sync.core.*
 import eu.darken.octi.sync.core.errors.PayloadDecodingException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import java.io.IOException
@@ -26,6 +28,10 @@ abstract class BaseModuleSync<T : Any> constructor(
 
     override val ourDeviceId: DeviceId
         get() = syncSettings.deviceId
+
+    private val syncingCount = MutableStateFlow(0)
+
+    override val isSyncing: Flow<Boolean> = syncingCount.map { it > 0 }
 
     override val others: Flow<List<ModuleData<T>>> = syncManager.data
         .map { reads ->
@@ -63,7 +69,12 @@ abstract class BaseModuleSync<T : Any> constructor(
             throw IllegalArgumentException("You can only sync your own device data.")
         }
 
-        syncManager.write(serialize(self.data))
+        syncingCount.update { it + 1 }
+        try {
+            syncManager.write(serialize(self.data))
+        } finally {
+            syncingCount.update { it - 1 }
+        }
     }
 
     private fun serialize(item: T): SyncWrite.Device.Module {
