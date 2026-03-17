@@ -10,7 +10,7 @@
             android:name="eu.darken.octi.modules.power.ui.widget.BatteryWidgetConfigActivity"
             android:exported="true"
             android:permission="android.permission.BIND_APPWIDGET"
-            android:theme="@style/AppTheme">
+            android:theme="@android:style/Theme.Material.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
