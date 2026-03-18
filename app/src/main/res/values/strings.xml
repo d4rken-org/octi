@@ -217,11 +217,17 @@
     <string name="support_debuglog_session_compressing_label">Compressing…</string>
     <string name="support_debuglog_session_failed_label">Corrupted</string>
 
+    <string name="sync_setting_dashboard_card_title">Show dashboard card</string>
+    <string name="sync_setting_dashboard_card_desc">Show sync status and module activity on the dashboard</string>
+
     <string name="dashboard_sync_status_syncing">Syncing\u2026</string>
     <string name="dashboard_sync_status_syncing_modules">Syncing %1$s\u2026</string>
     <string name="dashboard_sync_status_last_synced">Last synced %1$s</string>
     <string name="dashboard_sync_status_failed">Sync failed</string>
     <string name="dashboard_sync_status_via">via %1$s</string>
     <string name="dashboard_sync_status_never">Not yet synced</string>
+    <string name="dashboard_sync_detail_idle">Idle</string>
+    <string name="dashboard_sync_detail_reading">Reading\u2026</string>
+    <string name="dashboard_sync_detail_writing">Writing\u2026</string>
 
 </resources>

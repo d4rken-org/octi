@@ -45,6 +45,8 @@ class SyncSettings @Inject constructor(
 
     val foregroundSyncInterval = dataStore.createValue("sync.foreground.interval.minutes", 5)
 
+    val showDashboardCard = dataStore.createValue("sync.dashboard.card.show", true)
+
     val pausedConnectors = dataStore.createSetValue<ConnectorId>("sync.connectors.paused", emptySet(), json)
 
     val deviceId by lazy {

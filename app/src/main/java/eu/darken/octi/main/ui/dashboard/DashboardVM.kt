@@ -25,6 +25,7 @@ import eu.darken.octi.main.core.updater.UpdateService
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.module.core.ModuleManager
+import eu.darken.octi.module.core.ModuleSync
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.core.getInstallerIntent
 import eu.darken.octi.modules.clipboard.ClipboardHandler
@@ -92,13 +93,16 @@ class DashboardVM @Inject constructor(
     }
 
     private val syncStatusFlow: Flow<SyncStatus?> = combine(
+        syncSettings.showDashboardCard.flow,
         isManuallyRefreshing,
         syncManager.connectors,
         syncManager.states,
         syncSettings.pausedConnectors.flow,
         tickerUiRefresh,
         moduleManager.syncingModules,
-    ) { isRefreshing, connectors, allStates, pausedIds, _, syncingModules ->
+        moduleManager.moduleSyncStates,
+    ) { showCard, isRefreshing, connectors, allStates, pausedIds, _, syncingModules, moduleSyncStates ->
+        if (!showCard) return@combine null
         val activeConnectors = connectors.filter { !pausedIds.contains(it.identifier) }
         if (activeConnectors.isEmpty()) return@combine null
 
@@ -108,19 +112,32 @@ class DashboardVM @Inject constructor(
             .filter { !pausedIds.contains(connectors[it].identifier) }
             .mapNotNull { statesList.getOrNull(it) }
 
+        val connectorDetails = activeConnectors.zip(activeStates).map { (connector, state) ->
+            ConnectorDetail(
+                type = connector.identifier.type,
+                isBusy = state.isBusy,
+                lastSyncAt = state.lastSyncAt,
+            )
+        }
+
+        val syncDetail = SyncDetail(
+            modules = moduleSyncStates,
+            connectors = connectorDetails,
+        )
+
         when {
             isRefreshing || activeStates.any { it.isBusy } || syncingModules.isNotEmpty() -> {
-                SyncStatus.Syncing(connectorTypes, syncingModules)
+                SyncStatus.Syncing(connectorTypes, syncingModules, syncDetail)
             }
 
             activeStates.any { it.lastError != null } -> {
                 val error = activeStates.first { it.lastError != null }.lastError
-                SyncStatus.Error(error?.message, connectorTypes)
+                SyncStatus.Error(error?.message, connectorTypes, syncDetail)
             }
 
             else -> {
                 val lastSync = activeStates.mapNotNull { it.lastSyncAt }.maxByOrNull { it }
-                SyncStatus.Idle(lastSync, connectorTypes)
+                SyncStatus.Idle(lastSync, connectorTypes, syncDetail)
             }
         }
     }.setupCommonEventHandlers(TAG) { "syncStatus" }
@@ -129,6 +146,7 @@ class DashboardVM @Inject constructor(
         val devices: List<DeviceItem>,
         val deviceCount: Int,
         val syncStatus: SyncStatus?,
+        val isSyncExpanded: Boolean = false,
         val isOffline: Boolean,
         val showSyncSetup: Boolean,
         val missingPermissions: List<Permission>,
@@ -167,15 +185,36 @@ class DashboardVM @Inject constructor(
         ) : ModuleItem
     }
 
+    data class SyncDetail(
+        val modules: List<ModuleManager.ModuleSyncState>,
+        val connectors: List<ConnectorDetail>,
+    )
+
+    data class ConnectorDetail(
+        val type: String,
+        val isBusy: Boolean,
+        val lastSyncAt: Instant?,
+    )
+
     sealed interface SyncStatus {
         val connectorTypes: List<String>
+        val syncDetail: SyncDetail
 
         data class Syncing(
             override val connectorTypes: List<String>,
             val syncingModules: Set<ModuleId> = emptySet(),
+            override val syncDetail: SyncDetail,
         ) : SyncStatus
-        data class Idle(val lastSyncAt: Instant?, override val connectorTypes: List<String>) : SyncStatus
-        data class Error(val message: String?, override val connectorTypes: List<String>) : SyncStatus
+        data class Idle(
+            val lastSyncAt: Instant?,
+            override val connectorTypes: List<String>,
+            override val syncDetail: SyncDetail,
+        ) : SyncStatus
+        data class Error(
+            val message: String?,
+            override val connectorTypes: List<String>,
+            override val syncDetail: SyncDetail,
+        ) : SyncStatus
     }
 
     val state: Flow<State> = combine(
@@ -227,6 +266,7 @@ class DashboardVM @Inject constructor(
             devices = orderedDeviceItems,
             deviceCount = orderedDeviceItems.size,
             syncStatus = syncStatus,
+            isSyncExpanded = uiConfig.isSyncExpanded,
             isOffline = !networkState.isInternetAvailable,
             showSyncSetup = showSyncSetup,
             missingPermissions = filteredPermissions,
@@ -304,6 +344,10 @@ class DashboardVM @Inject constructor(
 
     fun toggleDeviceCollapsed(deviceId: String) = launch {
         generalSettings.toggleDeviceCollapsed(deviceId)
+    }
+
+    fun toggleSyncExpanded() = launch {
+        generalSettings.dashboardConfig.update { it.copy(isSyncExpanded = !it.isSyncExpanded) }
     }
 
     fun goToPowerAlerts(deviceId: DeviceId) {

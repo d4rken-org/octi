@@ -28,13 +28,15 @@ import java.util.UUID
 abstract class BaseModuleRepo<T : Any>(
     private val tag: String,
     @AppScope private val scope: CoroutineScope,
-    private val moduleId: ModuleId,
+    override val moduleId: ModuleId,
     dispatcherProvider: DispatcherProvider,
-    moduleSettings: ModuleSettings,
+    private val moduleSettings: ModuleSettings,
     private val moduleSync: ModuleSync<T>,
     private val infoSource: ModuleInfoSource<T>,
     private val moduleCache: ModuleCache<T>,
 ) : ModuleRepo<T> {
+
+    override val isEnabled: Flow<Boolean> = moduleSettings.isEnabled.flow
 
     data class State<T>(
         val moduleId: ModuleId,
