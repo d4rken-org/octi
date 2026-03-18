@@ -10,6 +10,7 @@ import eu.darken.octi.sync.core.*
 import eu.darken.octi.sync.core.errors.PayloadDecodingException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import okio.ByteString
@@ -29,36 +30,50 @@ abstract class BaseModuleSync<T : Any> constructor(
     override val ourDeviceId: DeviceId
         get() = syncSettings.deviceId
 
-    private val syncingCount = MutableStateFlow(0)
+    private val readCount = MutableStateFlow(0)
+    private val writeCount = MutableStateFlow(0)
 
-    override val isSyncing: Flow<Boolean> = syncingCount.map { it > 0 }
+    override val syncActivity: Flow<ModuleSync.SyncActivity> = combine(readCount, writeCount) { r, w ->
+        when {
+            w > 0 -> ModuleSync.SyncActivity.WRITING
+            r > 0 -> ModuleSync.SyncActivity.READING
+            else -> ModuleSync.SyncActivity.IDLE
+        }
+    }
+
+    override val isSyncing: Flow<Boolean> = syncActivity.map { it != ModuleSync.SyncActivity.IDLE }
 
     override val others: Flow<List<ModuleData<T>>> = syncManager.data
         .map { reads ->
-            reads
-                .filter { it.deviceId != syncSettings.deviceId }
-                .mapNotNull { device ->
-                    val rawModule = device.modules.singleOrNull {
-                        it.moduleId == moduleId
-                    }
-                    if (rawModule == null) {
-                        log(tag, WARN) { "syncRead(): Missing module $moduleId on ${device.deviceId}" }
-                        return@mapNotNull null
-                    }
+            readCount.update { it + 1 }
+            try {
+                reads
+                    .filter { it.deviceId != syncSettings.deviceId }
+                    .mapNotNull { device ->
+                        val rawModule = device.modules.singleOrNull {
+                            it.moduleId == moduleId
+                        }
+                        if (rawModule == null) {
+                            log(tag, WARN) { "syncRead(): Missing module $moduleId on ${device.deviceId}" }
+                            return@mapNotNull null
+                        }
 
-                    try {
-                        ModuleData(
-                            modifiedAt = rawModule.modifiedAt,
-                            deviceId = device.deviceId,
-                            moduleId = moduleId,
-                            data = deserialize(rawModule),
-                        )
-                    } catch (e: Exception) {
-                        log(tag, ERROR) { "syncRead(): Failed to decode $rawModule:\n${e.asLog()}" }
-                        Bugs.report(PayloadDecodingException(rawModule))
-                        null
+                        try {
+                            ModuleData(
+                                modifiedAt = rawModule.modifiedAt,
+                                deviceId = device.deviceId,
+                                moduleId = moduleId,
+                                data = deserialize(rawModule),
+                            )
+                        } catch (e: Exception) {
+                            log(tag, ERROR) { "syncRead(): Failed to decode $rawModule:\n${e.asLog()}" }
+                            Bugs.report(PayloadDecodingException(rawModule))
+                            null
+                        }
                     }
-                }
+            } finally {
+                readCount.update { it - 1 }
+            }
         }
         .setupCommonEventHandlers(tag) { "others" }
 
@@ -69,11 +84,11 @@ abstract class BaseModuleSync<T : Any> constructor(
             throw IllegalArgumentException("You can only sync your own device data.")
         }
 
-        syncingCount.update { it + 1 }
+        writeCount.update { it + 1 }
         try {
             syncManager.write(serialize(self.data))
         } finally {
-            syncingCount.update { it - 1 }
+            writeCount.update { it - 1 }
         }
     }
 

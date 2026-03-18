@@ -33,7 +33,17 @@ import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material.icons.twotone.Tablet
+import androidx.compose.material.icons.twotone.Apps
+import androidx.compose.material.icons.twotone.BatteryFull
+import androidx.compose.material.icons.twotone.CellTower
+import androidx.compose.material.icons.twotone.Coffee
+import androidx.compose.material.icons.twotone.ContentPaste
+import androidx.compose.material.icons.twotone.ExpandLess
+import androidx.compose.material.icons.twotone.ExpandMore
+import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.Warning
+import androidx.compose.material.icons.twotone.Wifi
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -78,10 +88,13 @@ import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import androidx.compose.runtime.collectAsState
+import eu.darken.octi.common.compose.OctiMascot
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.module.core.ModuleManager
+import eu.darken.octi.module.core.ModuleSync
 import java.time.Instant
 import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.descriptionRes
@@ -231,6 +244,7 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             onDismissUpdate = { vm.dismissUpdate() },
             onViewUpdate = { vm.viewUpdate() },
             onStartUpdate = { vm.startUpdate() },
+            onToggleSyncExpanded = { vm.toggleSyncExpanded() },
             onToggleDeviceCollapsed = { vm.toggleDeviceCollapsed(it) },
             onPowerAlerts = { vm.goToPowerAlerts(it) },
             onAppsList = { vm.goToAppsList(it) },
@@ -258,6 +272,7 @@ fun DashboardScreen(
     onDismissUpdate: () -> Unit,
     onViewUpdate: () -> Unit,
     onStartUpdate: () -> Unit,
+    onToggleSyncExpanded: () -> Unit,
     onToggleDeviceCollapsed: (String) -> Unit,
     onPowerAlerts: (DeviceId) -> Unit,
     onAppsList: (DeviceId) -> Unit,
@@ -335,6 +350,8 @@ fun DashboardScreen(
                 item(key = "sync_status") {
                     SyncStatusBar(
                         syncStatus = syncStatus,
+                        isExpanded = state.isSyncExpanded,
+                        onToggleExpanded = onToggleSyncExpanded,
                         onRefresh = onRefresh,
                     )
                 }
@@ -547,93 +564,237 @@ private fun connectorTypesLabel(connectorTypes: List<String>): String? {
 @Composable
 private fun SyncStatusBar(
     syncStatus: DashboardVM.SyncStatus,
+    isExpanded: Boolean,
+    onToggleExpanded: () -> Unit,
     onRefresh: () -> Unit,
 ) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .animateContentSize(),
+    ) {
+        Box {
+            Column {
+                // Header row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onToggleExpanded)
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    OctiMascot(modifier = Modifier.size(24.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        when (syncStatus) {
+                            is DashboardVM.SyncStatus.Syncing -> {
+                                val moduleNames = syncStatus.syncingModules
+                                    .sortedBy { MODULE_DISPLAY_ORDER.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE }
+                                    .mapNotNull { moduleIdToStringRes(it) }
+                                    .map { stringResource(it) }
+                                val text = if (moduleNames.isNotEmpty()) {
+                                    stringResource(R.string.dashboard_sync_status_syncing_modules, moduleNames.joinToString(", "))
+                                } else {
+                                    stringResource(R.string.dashboard_sync_status_syncing)
+                                }
+                                Text(
+                                    text = text,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+
+                            is DashboardVM.SyncStatus.Idle -> {
+                                val primaryText = syncStatus.lastSyncAt?.let {
+                                    stringResource(
+                                        R.string.dashboard_sync_status_last_synced,
+                                        DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString(),
+                                    )
+                                } ?: stringResource(R.string.dashboard_sync_status_never)
+                                Text(
+                                    text = primaryText,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                            }
+
+                            is DashboardVM.SyncStatus.Error -> Text(
+                                text = stringResource(R.string.dashboard_sync_status_failed),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                            )
+                        }
+                        val secondaryText = when (syncStatus) {
+                            is DashboardVM.SyncStatus.Error -> syncStatus.message ?: connectorTypesLabel(syncStatus.connectorTypes)
+                            else -> connectorTypesLabel(syncStatus.connectorTypes)
+                        }
+                        if (secondaryText != null) {
+                            Text(
+                                text = secondaryText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier.size(48.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        when (syncStatus) {
+                            is DashboardVM.SyncStatus.Syncing -> {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(20.dp),
+                                    strokeWidth = 2.dp,
+                                )
+                            }
+
+                            else -> {
+                                IconButton(onClick = onRefresh) {
+                                    Icon(
+                                        imageVector = Icons.TwoTone.Refresh,
+                                        contentDescription = stringResource(R.string.general_sync_action),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Expanded detail
+                if (isExpanded) {
+                    val detail = syncStatus.syncDetail
+                    HorizontalDivider()
+
+                    // Module rows
+                    Spacer(modifier = Modifier.height(4.dp))
+                    val sortedModules = detail.modules.sortedBy {
+                        MODULE_DISPLAY_ORDER.indexOf(it.moduleId).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
+                    }
+                    sortedModules.forEach { moduleState ->
+                        SyncDetailModuleRow(moduleState)
+                    }
+
+                    // Backend rows
+                    if (detail.connectors.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(4.dp))
+                        detail.connectors.forEach { connector ->
+                            SyncDetailConnectorRow(connector)
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
+
+            // Overlapping bottom-center chevron
+            Icon(
+                imageVector = if (isExpanded) Icons.TwoTone.ExpandLess else Icons.TwoTone.ExpandMore,
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .size(20.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SyncDetailModuleRow(moduleState: ModuleManager.ModuleSyncState) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+            .padding(start = 16.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val icon = moduleIdToIcon(moduleState.moduleId)
         Icon(
-            imageVector = Icons.TwoTone.CloudSync,
+            imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(18.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            when (syncStatus) {
-                is DashboardVM.SyncStatus.Syncing -> {
-                    val moduleNames = syncStatus.syncingModules
-                        .sortedBy { MODULE_DISPLAY_ORDER.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE }
-                        .mapNotNull { moduleIdToStringRes(it) }
-                        .map { stringResource(it) }
-                    val text = if (moduleNames.isNotEmpty()) {
-                        stringResource(R.string.dashboard_sync_status_syncing_modules, moduleNames.joinToString(", "))
-                    } else {
-                        stringResource(R.string.dashboard_sync_status_syncing)
-                    }
-                    Text(
-                        text = text,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-
-                is DashboardVM.SyncStatus.Idle -> {
-                    val primaryText = syncStatus.lastSyncAt?.let {
-                        stringResource(
-                            R.string.dashboard_sync_status_last_synced,
-                            DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString(),
-                        )
-                    } ?: stringResource(R.string.dashboard_sync_status_never)
-                    Text(
-                        text = primaryText,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-
-                is DashboardVM.SyncStatus.Error -> Text(
-                    text = stringResource(R.string.dashboard_sync_status_failed),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-            val secondaryText = when (syncStatus) {
-                is DashboardVM.SyncStatus.Error -> syncStatus.message ?: connectorTypesLabel(syncStatus.connectorTypes)
-                else -> connectorTypesLabel(syncStatus.connectorTypes)
-            }
-            if (secondaryText != null) {
-                Text(
-                    text = secondaryText,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+        Spacer(modifier = Modifier.width(10.dp))
+        val nameRes = moduleIdToStringRes(moduleState.moduleId)
+        Text(
+            text = nameRes?.let { stringResource(it) } ?: moduleState.moduleId.id,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(1f),
+        )
+        val isActive = moduleState.activity != ModuleSync.SyncActivity.IDLE
+        val statusText = when (moduleState.activity) {
+            ModuleSync.SyncActivity.IDLE -> stringResource(R.string.dashboard_sync_detail_idle)
+            ModuleSync.SyncActivity.READING -> stringResource(R.string.dashboard_sync_detail_reading)
+            ModuleSync.SyncActivity.WRITING -> stringResource(R.string.dashboard_sync_detail_writing)
         }
-        Box(
-            modifier = Modifier.size(48.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            when (syncStatus) {
-                is DashboardVM.SyncStatus.Syncing -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                    )
-                }
+        Text(
+            text = statusText,
+            style = MaterialTheme.typography.bodySmall,
+            color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        if (isActive) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(12.dp),
+                strokeWidth = 1.5.dp,
+            )
+        } else {
+            Icon(
+                imageVector = Icons.TwoTone.Coffee,
+                contentDescription = null,
+                modifier = Modifier.size(12.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
 
-                else -> {
-                    IconButton(onClick = onRefresh) {
-                        Icon(
-                            imageVector = Icons.TwoTone.Refresh,
-                            contentDescription = stringResource(R.string.general_sync_action),
-                        )
-                    }
-                }
-            }
+@Composable
+private fun SyncDetailConnectorRow(connector: DashboardVM.ConnectorDetail) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 44.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val name = when (connector.type) {
+            "gdrive" -> stringResource(GDriveR.string.sync_gdrive_type_label)
+            "kserver" -> stringResource(KServerR.string.sync_kserver_type_label)
+            else -> connector.type
+        }
+        Text(
+            text = name,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(1f),
+        )
+        if (connector.isBusy) {
+            Text(
+                text = stringResource(R.string.dashboard_sync_status_syncing),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            CircularProgressIndicator(
+                modifier = Modifier.size(12.dp),
+                strokeWidth = 1.5.dp,
+            )
+        } else {
+            Text(
+                text = stringResource(R.string.dashboard_sync_detail_idle),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Icon(
+                imageVector = Icons.TwoTone.Coffee,
+                contentDescription = null,
+                modifier = Modifier.size(12.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
@@ -646,6 +807,16 @@ private val MODULE_DISPLAY_ORDER = listOf(
     AppsModule.MODULE_ID,
     MetaModule.MODULE_ID,
 )
+
+private fun moduleIdToIcon(moduleId: ModuleId): ImageVector = when (moduleId) {
+    PowerModule.MODULE_ID -> Icons.TwoTone.BatteryFull
+    WifiModule.MODULE_ID -> Icons.TwoTone.Wifi
+    AppsModule.MODULE_ID -> Icons.TwoTone.Apps
+    ClipboardModule.MODULE_ID -> Icons.TwoTone.ContentPaste
+    ConnectivityModule.MODULE_ID -> Icons.TwoTone.CellTower
+    MetaModule.MODULE_ID -> Icons.TwoTone.Info
+    else -> Icons.TwoTone.QuestionMark
+}
 
 private fun moduleIdToStringRes(moduleId: ModuleId): Int? = when (moduleId) {
     PowerModule.MODULE_ID -> PowerR.string.module_power_label
@@ -1147,6 +1318,7 @@ private fun DashboardScreenEmptyPreview() = PreviewWrapper {
         onDismissUpdate = {},
         onViewUpdate = {},
         onStartUpdate = {},
+        onToggleSyncExpanded = {},
         onToggleDeviceCollapsed = {},
         onPowerAlerts = {},
         onAppsList = {},
@@ -1223,6 +1395,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
             syncStatus = DashboardVM.SyncStatus.Idle(
                 lastSyncAt = now.minusSeconds(300),
                 connectorTypes = listOf("gdrive"),
+                syncDetail = DashboardVM.SyncDetail(modules = emptyList(), connectors = emptyList()),
             ),
             isOffline = false,
             showSyncSetup = false,
@@ -1242,6 +1415,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
         onDismissUpdate = {},
         onViewUpdate = {},
         onStartUpdate = {},
+        onToggleSyncExpanded = {},
         onToggleDeviceCollapsed = {},
         onPowerAlerts = {},
         onAppsList = {},
@@ -1317,6 +1491,7 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
             syncStatus = DashboardVM.SyncStatus.Idle(
                 lastSyncAt = now.minusSeconds(300),
                 connectorTypes = listOf("gdrive", "kserver"),
+                syncDetail = DashboardVM.SyncDetail(modules = emptyList(), connectors = emptyList()),
             ),
             isOffline = false,
             showSyncSetup = false,
@@ -1336,6 +1511,7 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
         onDismissUpdate = {},
         onViewUpdate = {},
         onStartUpdate = {},
+        onToggleSyncExpanded = {},
         onToggleDeviceCollapsed = {},
         onPowerAlerts = {},
         onAppsList = {},

@@ -8,6 +8,10 @@ interface ModuleRepo<T> {
         val all: Collection<ModuleData<T>>
     }
 
+    val moduleId: ModuleId
+
+    val isEnabled: Flow<Boolean>
+
     val state: Flow<State<T>>
 
     val keepAlive: Flow<Unit>

@@ -50,15 +50,30 @@ class ModuleManager @Inject constructor(
             log(TAG, VERBOSE) { "BYDEVICE: $it" }
         }
 
-    val syncingModules: Flow<Set<ModuleId>> = if (moduleSyncs.isEmpty()) {
-        flowOf(emptySet())
+    data class ModuleSyncState(
+        val moduleId: ModuleId,
+        val activity: ModuleSync.SyncActivity,
+    )
+
+    val moduleSyncStates: Flow<List<ModuleSyncState>> = if (moduleSyncs.isEmpty()) {
+        flowOf(emptyList())
     } else {
-        kotlinx.coroutines.flow.combine(moduleSyncs.map { sync ->
-            sync.isSyncing.map { busy -> if (busy) sync.moduleId else null }
-        }) { results ->
-            results.filterNotNull().toSet()
+        val enabledFlows = moduleRepos.associateBy { it.moduleId }
+        combine(
+            moduleSyncs.map { sync ->
+                val enabledFlow = enabledFlows[sync.moduleId]?.isEnabled ?: flowOf(true)
+                combine(sync.syncActivity, enabledFlow) { activity, enabled ->
+                    if (enabled) ModuleSyncState(sync.moduleId, activity) else null
+                }
+            }
+        ) { results ->
+            results.filterNotNull().toList()
         }
     }
+        .setupCommonEventHandlers(TAG) { "moduleSyncStates" }
+
+    val syncingModules: Flow<Set<ModuleId>> = moduleSyncStates
+        .map { states -> states.filter { it.activity != ModuleSync.SyncActivity.IDLE }.map { it.moduleId }.toSet() }
         .setupCommonEventHandlers(TAG) { "syncingModules" }
 
     suspend fun refresh() {

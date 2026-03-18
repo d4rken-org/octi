@@ -20,6 +20,7 @@ class SyncSettingsVM @Inject constructor(
 ) : ViewModel4(dispatcherProvider) {
 
     data class State(
+        val showDashboardCard: Boolean,
         val deviceLabel: String?,
         val backgroundSyncEnabled: Boolean,
         val backgroundSyncInterval: Int,
@@ -32,6 +33,7 @@ class SyncSettingsVM @Inject constructor(
     )
 
     val state = combine(
+        syncSettings.showDashboardCard.flow,
         syncSettings.deviceLabel.flow,
         syncSettings.backgroundSyncEnabled.flow,
         syncSettings.backgroundSyncInterval.flow,
@@ -41,8 +43,9 @@ class SyncSettingsVM @Inject constructor(
         syncSettings.backgroundSyncChargingInterval.flow,
         syncSettings.foregroundSyncEnabled.flow,
         syncSettings.foregroundSyncInterval.flow,
-    ) { deviceLabel, bgEnabled, bgInterval, bgMobile, upgradeInfo, chargingEnabled, chargingInterval, fgEnabled, fgInterval ->
+    ) { showCard, deviceLabel, bgEnabled, bgInterval, bgMobile, upgradeInfo, chargingEnabled, chargingInterval, fgEnabled, fgInterval ->
         State(
+            showDashboardCard = showCard,
             deviceLabel = deviceLabel,
             backgroundSyncEnabled = bgEnabled,
             backgroundSyncInterval = bgInterval,
@@ -54,6 +57,10 @@ class SyncSettingsVM @Inject constructor(
             foregroundSyncInterval = fgInterval,
         )
     }.asStateFlow()
+
+    fun setShowDashboardCard(enabled: Boolean) = launch {
+        syncSettings.showDashboardCard.value(enabled)
+    }
 
     fun setDeviceLabel(label: String?) = launch {
         syncSettings.deviceLabel.value(label?.ifBlank { null })

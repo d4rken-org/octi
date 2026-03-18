@@ -6,9 +6,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface ModuleSync<T : Any> {
 
+    enum class SyncActivity { IDLE, READING, WRITING }
+
     val ourDeviceId: DeviceId
 
     val moduleId: ModuleId
+
+    val syncActivity: Flow<SyncActivity>
 
     val isSyncing: Flow<Boolean>
 

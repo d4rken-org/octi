@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class DashboardConfig(
     @SerialName("collapsedDevices") val collapsedDevices: Set<String> = emptySet(),
     @SerialName("deviceOrder") val deviceOrder: List<String> = emptyList(),
+    @SerialName("isSyncExpanded") val isSyncExpanded: Boolean = false,
 ) {
 
     fun isCollapsed(deviceId: String): Boolean = collapsedDevices.contains(deviceId)

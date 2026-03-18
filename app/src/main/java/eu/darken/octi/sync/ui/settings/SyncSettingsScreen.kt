@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.automirrored.twotone.Label
 import androidx.compose.material.icons.twotone.BatteryChargingFull
+import androidx.compose.material.icons.twotone.Dashboard
 import androidx.compose.material.icons.twotone.SignalWifi4Bar
 import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material.icons.twotone.Sync
@@ -69,6 +70,7 @@ fun SyncSettingsScreenHost(vm: SyncSettingsVM = hiltViewModel()) {
         SyncSettingsScreen(
             state = it,
             onNavigateUp = { vm.navUp() },
+            onShowDashboardCardChanged = { enabled -> vm.setShowDashboardCard(enabled) },
             onDeviceLabelChanged = { label -> vm.setDeviceLabel(label) },
             onBackgroundSyncEnabledChanged = { enabled -> vm.setBackgroundSyncEnabled(enabled) },
             onBackgroundSyncIntervalChanged = { minutes -> vm.setBackgroundSyncInterval(minutes) },
@@ -85,6 +87,7 @@ fun SyncSettingsScreenHost(vm: SyncSettingsVM = hiltViewModel()) {
 fun SyncSettingsScreen(
     state: SyncSettingsVM.State,
     onNavigateUp: () -> Unit,
+    onShowDashboardCardChanged: (Boolean) -> Unit,
     onDeviceLabelChanged: (String?) -> Unit,
     onBackgroundSyncEnabledChanged: (Boolean) -> Unit,
     onBackgroundSyncIntervalChanged: (Int) -> Unit,
@@ -115,6 +118,17 @@ fun SyncSettingsScreen(
         },
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
+            // Dashboard card visibility
+            item {
+                SettingsSwitchItem(
+                    icon = Icons.TwoTone.Dashboard,
+                    title = stringResource(R.string.sync_setting_dashboard_card_title),
+                    subtitle = stringResource(R.string.sync_setting_dashboard_card_desc),
+                    checked = state.showDashboardCard,
+                    onCheckedChange = onShowDashboardCardChanged,
+                )
+            }
+
             // Device label
             item {
                 SettingsBaseItem(
@@ -401,6 +415,7 @@ private fun DeviceLabelDialog(
 private fun SyncSettingsScreenPreview() = PreviewWrapper {
     SyncSettingsScreen(
         state = SyncSettingsVM.State(
+            showDashboardCard = true,
             deviceLabel = null,
             backgroundSyncEnabled = true,
             backgroundSyncInterval = 60,
@@ -412,6 +427,7 @@ private fun SyncSettingsScreenPreview() = PreviewWrapper {
             foregroundSyncInterval = 5,
         ),
         onNavigateUp = {},
+        onShowDashboardCardChanged = {},
         onDeviceLabelChanged = {},
         onBackgroundSyncEnabledChanged = {},
         onBackgroundSyncIntervalChanged = {},
