@@ -18,6 +18,7 @@ import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.common.theming.ThemeStyle
 import eu.darken.octi.main.core.updater.UpdateChecker
 import eu.darken.octi.main.ui.dashboard.DashboardConfig
+import eu.darken.octi.main.ui.dashboard.TileLayoutConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.json.Json
@@ -87,6 +88,29 @@ class GeneralSettings @Inject constructor(
         log(TAG) { "updateDeviceOrder(newOrder=$newOrder)" }
         dashboardConfig.update { config ->
             config.toUpdatedOrder(newOrder)
+        }
+    }
+
+    suspend fun updateTileLayout(deviceId: String, config: TileLayoutConfig, allModuleIds: Set<String>) {
+        log(TAG) { "updateTileLayout(deviceId=$deviceId)" }
+        dashboardConfig.update { current ->
+            current.copy(
+                deviceTileLayouts = current.deviceTileLayouts + (deviceId to config.normalize(allModuleIds))
+            )
+        }
+    }
+
+    suspend fun setDefaultTileLayout(config: TileLayoutConfig, allModuleIds: Set<String>) {
+        log(TAG) { "setDefaultTileLayout()" }
+        dashboardConfig.update { current ->
+            current.copy(defaultTileLayout = config.normalize(allModuleIds))
+        }
+    }
+
+    suspend fun resetDeviceTileLayout(deviceId: String) {
+        log(TAG) { "resetDeviceTileLayout(deviceId=$deviceId)" }
+        dashboardConfig.update { current ->
+            current.copy(deviceTileLayouts = current.deviceTileLayouts - deviceId)
         }
     }
 

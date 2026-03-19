@@ -160,6 +160,7 @@ class DashboardVM @Inject constructor(
         val now: Instant,
         val meta: ModuleData<MetaInfo>,
         val moduleItems: List<ModuleItem>,
+        val tileLayout: TileLayoutConfig = TileLayoutConfig(),
         val isCollapsed: Boolean,
         val isLimited: Boolean,
         val isCurrentDevice: Boolean,
@@ -254,10 +255,16 @@ class DashboardVM @Inject constructor(
                 }
             }
 
-        // Apply device limit status dynamically based on position after reordering
+        // Collect all known module IDs for normalization
+        val allModuleIds = ALL_MODULE_IDS
+
+        // Apply device limit status and tile layout dynamically based on position after reordering
         val orderedDeviceItems = deviceItemsWithOrder.mapIndexed { index, item ->
+            val deviceId = item.meta.deviceId.id
+            val effectiveLayout = cleanedConfig.effectiveLayout(deviceId).normalize(allModuleIds)
             item.copy(
-                isCollapsed = cleanedConfig.isCollapsed(item.meta.deviceId.id),
+                tileLayout = effectiveLayout,
+                isCollapsed = cleanedConfig.isCollapsed(deviceId),
                 isLimited = !upgradeInfo.isPro && index >= DEVICE_LIMIT,
             )
         }
@@ -348,6 +355,21 @@ class DashboardVM @Inject constructor(
 
     fun toggleSyncExpanded() = launch {
         generalSettings.dashboardConfig.update { it.copy(isSyncExpanded = !it.isSyncExpanded) }
+    }
+
+    fun saveTileLayout(deviceId: String, config: TileLayoutConfig) = launch {
+        log(TAG) { "saveTileLayout(deviceId=$deviceId)" }
+        generalSettings.updateTileLayout(deviceId, config, ALL_MODULE_IDS)
+    }
+
+    fun saveAsDefaultTileLayout(config: TileLayoutConfig) = launch {
+        log(TAG) { "saveAsDefaultTileLayout()" }
+        generalSettings.setDefaultTileLayout(config, ALL_MODULE_IDS)
+    }
+
+    fun resetTileLayout(deviceId: String) = launch {
+        log(TAG) { "resetTileLayout(deviceId=$deviceId)" }
+        generalSettings.resetDeviceTileLayout(deviceId)
     }
 
     fun goToPowerAlerts(deviceId: DeviceId) {
@@ -471,6 +493,13 @@ class DashboardVM @Inject constructor(
             WifiInfo::class,
             ClipboardInfo::class,
             AppsInfo::class,
+        )
+        private val ALL_MODULE_IDS = setOf(
+            "eu.darken.octi.module.core.power",
+            "eu.darken.octi.module.core.wifi",
+            "eu.darken.octi.module.core.connectivity",
+            "eu.darken.octi.module.core.apps",
+            "eu.darken.octi.module.core.clipboard",
         )
         private const val DEVICE_LIMIT = 3
         private val WIFI_PERMISSIONS = setOf(Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION)

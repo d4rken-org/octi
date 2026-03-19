@@ -8,6 +8,7 @@
         <item quantity="other">%d apps installed</item>
     </plurals>
     <string name="module_apps_last_installed_x">Last installed app: %s</string>
+    <string name="module_apps_tile_apps_installed_label">apps installed</string>
     <string name="module_apps_list_title">Installed apps</string>
 
     <string name="module_apps_sort_label">Sort</string>

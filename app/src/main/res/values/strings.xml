@@ -230,4 +230,9 @@
     <string name="dashboard_sync_detail_reading">Reading\u2026</string>
     <string name="dashboard_sync_detail_writing">Writing\u2026</string>
 
+    <string name="dashboard_editor_done_action">Done</string>
+    <string name="dashboard_editor_hidden_tiles_label">Hidden tiles</string>
+    <string name="dashboard_editor_reset_action">Reset to default</string>
+    <string name="dashboard_editor_save_default_action">Set as default for all</string>
+
 </resources>
