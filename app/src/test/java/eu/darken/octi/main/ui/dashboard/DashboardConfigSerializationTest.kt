@@ -32,7 +32,20 @@ class DashboardConfigSerializationTest : BaseTest() {
         encoded.toComparableJson() shouldBe """
             {
                 "collapsedDevices": [],
-                "deviceOrder": []
+                "deviceOrder": [],
+                "isSyncExpanded": false,
+                "defaultTileLayout": {
+                    "order": [
+                        "eu.darken.octi.module.core.power",
+                        "eu.darken.octi.module.core.wifi",
+                        "eu.darken.octi.module.core.connectivity",
+                        "eu.darken.octi.module.core.apps",
+                        "eu.darken.octi.module.core.clipboard"
+                    ],
+                    "wideModules": ["eu.darken.octi.module.core.power"],
+                    "hiddenModules": []
+                },
+                "deviceTileLayouts": {}
             }
         """.toComparableJson()
     }
@@ -56,6 +69,8 @@ class DashboardConfigSerializationTest : BaseTest() {
         val decoded = json.decodeFromString<DashboardConfig>(emptyJson)
         decoded.collapsedDevices shouldBe emptySet()
         decoded.deviceOrder shouldBe emptyList()
+        decoded.defaultTileLayout shouldBe TileLayoutConfig()
+        decoded.deviceTileLayouts shouldBe emptyMap()
     }
 
     @Test
@@ -78,5 +93,66 @@ class DashboardConfigSerializationTest : BaseTest() {
         val decoded1 = json.decodeFromString<DashboardConfig>(json1)
         val decoded2 = json.decodeFromString<DashboardConfig>(json2)
         decoded1.collapsedDevices shouldBe decoded2.collapsedDevices
+    }
+
+    @Test
+    fun `backward compatibility - old JSON without tile layout fields uses defaults`() {
+        val oldJson = """
+            {
+                "collapsedDevices": ["dev-1"],
+                "deviceOrder": ["dev-1"],
+                "isSyncExpanded": true
+            }
+        """
+        val decoded = json.decodeFromString<DashboardConfig>(oldJson)
+        decoded.defaultTileLayout shouldBe TileLayoutConfig()
+        decoded.deviceTileLayouts shouldBe emptyMap()
+        decoded.isSyncExpanded shouldBe true
+    }
+
+    @Test
+    fun `round-trip with tile layouts`() {
+        val config = DashboardConfig(
+            defaultTileLayout = TileLayoutConfig(
+                order = listOf("eu.darken.octi.module.core.power", "eu.darken.octi.module.core.wifi"),
+                wideModules = setOf("eu.darken.octi.module.core.power"),
+                hiddenModules = setOf("eu.darken.octi.module.core.wifi"),
+            ),
+            deviceTileLayouts = mapOf(
+                "device-1" to TileLayoutConfig(
+                    order = listOf("eu.darken.octi.module.core.wifi", "eu.darken.octi.module.core.power"),
+                    wideModules = emptySet(),
+                    hiddenModules = emptySet(),
+                ),
+            ),
+        )
+        val encoded = json.encodeToString(config)
+        val decoded = json.decodeFromString<DashboardConfig>(encoded)
+        decoded shouldBe config
+    }
+
+    @Test
+    fun `toCleaned removes stale device tile layouts`() {
+        val config = DashboardConfig(
+            collapsedDevices = setOf("dev-1", "dev-2"),
+            deviceTileLayouts = mapOf(
+                "dev-1" to TileLayoutConfig(),
+                "dev-gone" to TileLayoutConfig(),
+            ),
+        )
+        val cleaned = config.toCleaned(setOf("dev-1"))
+        cleaned.collapsedDevices shouldBe setOf("dev-1")
+        cleaned.deviceTileLayouts.keys shouldBe setOf("dev-1")
+    }
+
+    @Test
+    fun `effectiveLayout returns per-device when available`() {
+        val perDevice = TileLayoutConfig(order = listOf("a", "b"))
+        val config = DashboardConfig(
+            defaultTileLayout = TileLayoutConfig(),
+            deviceTileLayouts = mapOf("dev-1" to perDevice),
+        )
+        config.effectiveLayout("dev-1") shouldBe perDevice
+        config.effectiveLayout("dev-2") shouldBe TileLayoutConfig()
     }
 }

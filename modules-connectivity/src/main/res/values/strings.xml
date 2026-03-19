@@ -14,4 +14,6 @@
     <string name="module_connectivity_detail_dns_label">DNS servers</string>
     <string name="module_connectivity_detail_public_ip_label">Public IP</string>
     <string name="module_connectivity_detail_connection_type_label">Connection type</string>
+    <string name="module_connectivity_status_connected_label">Connected</string>
+    <string name="module_connectivity_status_disconnected_label">Disconnected</string>
 </resources>

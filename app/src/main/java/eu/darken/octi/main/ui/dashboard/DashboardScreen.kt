@@ -8,7 +8,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -130,6 +132,7 @@ import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiDashState
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiDetailSheet
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiModuleItem
+import eu.darken.octi.main.ui.dashboard.editor.TileEditorCard
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.syncs.gdrive.R as GDriveR
 import eu.darken.octi.syncs.kserver.R as KServerR
@@ -253,6 +256,9 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             onShareClipboard = { vm.shareCurrentClipboard() },
             onCopyClipboard = { vm.setOsClipboard(it) },
             onWifiPermissionGrant = { vm.showPermissionPopup(it) },
+            onSaveTileLayout = { deviceId, config -> vm.saveTileLayout(deviceId, config) },
+            onSaveAsDefaultTileLayout = { vm.saveAsDefaultTileLayout(it) },
+            onResetTileLayout = { vm.resetTileLayout(it) },
         )
     }
 }
@@ -281,10 +287,23 @@ fun DashboardScreen(
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
     onWifiPermissionGrant: (Permission) -> Unit,
+    onSaveTileLayout: (String, TileLayoutConfig) -> Unit = { _, _ -> },
+    onSaveAsDefaultTileLayout: (TileLayoutConfig) -> Unit = {},
+    onResetTileLayout: (String) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val showMessage: (String) -> Unit = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
     val offlineMessage = stringResource(CommonR.string.general_internal_not_available_msg)
+
+    // Edit mode state
+    var editingDeviceId by rememberSaveable { mutableStateOf<String?>(null) }
+
+    // Auto-exit edit mode if the edited device vanishes
+    LaunchedEffect(state.devices, editingDeviceId) {
+        if (editingDeviceId != null && state.devices.none { it.meta.deviceId.id == editingDeviceId }) {
+            editingDeviceId = null
+        }
+    }
 
     // Detail dialog state
     var showPowerDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Power?>(null) }
@@ -402,9 +421,11 @@ fun DashboardScreen(
                         items = devices.take(deviceLimit),
                         key = { it.meta.deviceId.hashCode() },
                     ) { device ->
-                        DashboardDeviceCard(
+                        DeviceCardOrEditor(
                             device = device,
+                            editingDeviceId = editingDeviceId,
                             onToggleCollapse = onToggleDeviceCollapsed,
+                            onLongPress = { editingDeviceId = it },
                             onUpgrade = onUpgrade,
                             onManageStaleDevice = onSyncServices,
                             onPowerClicked = { showPowerDetail = it },
@@ -419,6 +440,13 @@ fun DashboardScreen(
                             onShareClipboard = onShareClipboard,
                             onCopyClipboard = onCopyClipboard,
                             showMessage = showMessage,
+                            onDoneEditing = { deviceId, config ->
+                                onSaveTileLayout(deviceId, config)
+                                editingDeviceId = null
+                            },
+                            onCancelEditing = { editingDeviceId = null },
+                            onResetTileLayout = onResetTileLayout,
+                            onSaveAsDefault = onSaveAsDefaultTileLayout,
                         )
                     }
 
@@ -435,11 +463,13 @@ fun DashboardScreen(
                     // Show devices after limit
                     items(
                         items = devices.drop(deviceLimit),
-                        key = { it.meta.deviceId.hashCode() + 1000 },
+                        key = { "after_${it.meta.deviceId.id}" },
                     ) { device ->
-                        DashboardDeviceCard(
+                        DeviceCardOrEditor(
                             device = device,
+                            editingDeviceId = editingDeviceId,
                             onToggleCollapse = onToggleDeviceCollapsed,
+                            onLongPress = { editingDeviceId = it },
                             onUpgrade = onUpgrade,
                             onManageStaleDevice = onSyncServices,
                             onPowerClicked = { showPowerDetail = it },
@@ -454,6 +484,13 @@ fun DashboardScreen(
                             onShareClipboard = onShareClipboard,
                             onCopyClipboard = onCopyClipboard,
                             showMessage = showMessage,
+                            onDoneEditing = { deviceId, config ->
+                                onSaveTileLayout(deviceId, config)
+                                editingDeviceId = null
+                            },
+                            onCancelEditing = { editingDeviceId = null },
+                            onResetTileLayout = onResetTileLayout,
+                            onSaveAsDefault = onSaveAsDefaultTileLayout,
                         )
                     }
                 } else {
@@ -461,9 +498,11 @@ fun DashboardScreen(
                         items = devices,
                         key = { it.meta.deviceId.hashCode() },
                     ) { device ->
-                        DashboardDeviceCard(
+                        DeviceCardOrEditor(
                             device = device,
+                            editingDeviceId = editingDeviceId,
                             onToggleCollapse = onToggleDeviceCollapsed,
+                            onLongPress = { editingDeviceId = it },
                             onUpgrade = onUpgrade,
                             onManageStaleDevice = onSyncServices,
                             onPowerClicked = { showPowerDetail = it },
@@ -478,6 +517,13 @@ fun DashboardScreen(
                             onShareClipboard = onShareClipboard,
                             onCopyClipboard = onCopyClipboard,
                             showMessage = showMessage,
+                            onDoneEditing = { deviceId, config ->
+                                onSaveTileLayout(deviceId, config)
+                                editingDeviceId = null
+                            },
+                            onCancelEditing = { editingDeviceId = null },
+                            onResetTileLayout = onResetTileLayout,
+                            onSaveAsDefault = onSaveAsDefaultTileLayout,
                         )
                     }
                 }
@@ -1088,10 +1134,12 @@ private fun UpgradeCard(
 
 // region Device Card
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun DashboardDeviceCard(
     device: DashboardVM.DeviceItem,
     onToggleCollapse: (String) -> Unit,
+    onLongPress: (String) -> Unit,
     onUpgrade: () -> Unit,
     onManageStaleDevice: () -> Unit,
     onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
@@ -1127,18 +1175,24 @@ private fun DashboardDeviceCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
-                    when {
-                        hasModules && !device.isLimited -> onToggleCollapse(device.meta.deviceId.id)
-                        device.isLimited -> onUpgrade()
-                    }
-                }
+                .combinedClickable(
+                    onClick = {
+                        when {
+                            hasModules && !device.isLimited -> onToggleCollapse(device.meta.deviceId.id)
+                            device.isLimited -> onUpgrade()
+                        }
+                    },
+                    onLongClick = {
+                        if (hasModules && !device.isLimited) {
+                            onLongPress(device.meta.deviceId.id)
+                        }
+                    },
+                )
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = when {
-                    device.isLimited -> Icons.TwoTone.Stars
                     device.isCurrentDevice -> Icons.TwoTone.Home
                     else -> when (meta.deviceType) {
                         MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
@@ -1147,7 +1201,7 @@ private fun DashboardDeviceCard(
                     }
                 },
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(32.dp),
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -1157,22 +1211,10 @@ private fun DashboardDeviceCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                val osName = stringResource(MetaR.string.module_meta_android_name_x_label, meta.androidVersionName)
                 Text(
-                    text = "$osName (API ${meta.androidApiLevel})",
-                    style = MaterialTheme.typography.bodySmall,
+                    text = DateUtils.getRelativeTimeSpanString(device.meta.modifiedAt.toEpochMilli()).toString(),
+                    style = MaterialTheme.typography.labelSmall,
                 )
-                Row {
-                    Text(
-                        text = if (BuildConfigWrap.DEBUG) "Octi #${meta.octiGitSha}" else "Octi v${meta.octiVersionName}",
-                        style = MaterialTheme.typography.labelSmall,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = DateUtils.getRelativeTimeSpanString(device.meta.modifiedAt.toEpochMilli()).toString(),
-                        style = MaterialTheme.typography.labelSmall,
-                    )
-                }
             }
             if (!device.isLimited && hasModules) {
                 Icon(
@@ -1182,72 +1224,118 @@ private fun DashboardDeviceCard(
                         .size(24.dp)
                         .rotate(chevronRotation),
                 )
+            } else if (device.isLimited) {
+                Icon(
+                    imageVector = Icons.TwoTone.Stars,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                )
             }
         }
 
-        // Module items
+        // Module tiles
         if (shouldShowModules) {
-            HorizontalDivider()
-
             // Stale warning
             if (isStale) {
+                HorizontalDivider()
                 StaleDeviceWarning(
                     lastSyncTime = device.meta.modifiedAt,
                     onManageDevice = onManageStaleDevice,
                 )
-                HorizontalDivider()
             }
 
-            device.moduleItems.forEachIndexed { index, moduleItem ->
-                when (moduleItem) {
-                    is DashboardVM.ModuleItem.Power -> PowerModuleItem(
-                        state = PowerDashState(
-                            info = moduleItem.data.data,
-                            batteryLowAlert = moduleItem.batteryLowAlert,
-                            showSettings = moduleItem.showSettings,
-                        ),
-                        onDetailClicked = { onPowerClicked(moduleItem) },
-                        onSettingsClicked = { onPowerAlerts(device.meta.deviceId) },
-                    )
+            val availableModuleIds = buildAvailableModuleIds(device.moduleItems)
+            val rows = device.tileLayout.toRows(availableModuleIds)
 
-                    is DashboardVM.ModuleItem.Wifi -> WifiModuleItem(
-                        state = WifiDashState(
-                            info = moduleItem.data.data,
-                            showPermissionAction = moduleItem.showPermissionAction,
-                        ),
-                        onDetailClicked = { onWifiClicked(moduleItem) },
-                        onGrantPermission = onWifiPermissionGrant,
-                    )
-
-                    is DashboardVM.ModuleItem.Connectivity -> ConnectivityModuleItem(
-                        info = moduleItem.data.data,
-                        onDetailClicked = { onConnectivityClicked(moduleItem) },
-                    )
-
-                    is DashboardVM.ModuleItem.Apps -> AppsModuleItem(
-                        info = moduleItem.data.data,
-                        onAppsClicked = { onAppsClicked(device.meta.deviceId) },
-                        onInstallClicked = { onInstallLatestApp(moduleItem.data.data) },
-                    )
-
-                    is DashboardVM.ModuleItem.Clipboard -> ClipboardModuleItem(
-                        state = ClipboardDashState(
-                            info = moduleItem.data.data,
-                            isOurDevice = moduleItem.isOurDevice,
-                        ),
-                        onDetailClicked = { onClipboardClicked(moduleItem) },
-                        onClearClicked = onClearClipboard,
-                        onShareClicked = onShareClipboard,
-                        onCopyClicked = { onCopyClipboard(moduleItem.data.data) },
-                        showMessage = showMessage,
-                    )
-                }
-                if (index < device.moduleItems.lastIndex) {
-                    HorizontalDivider()
-                }
-            }
+            ModuleTileGrid(
+                rows = rows,
+                moduleItems = device.moduleItems,
+                deviceId = device.meta.deviceId,
+                onPowerClicked = onPowerClicked,
+                onPowerAlerts = onPowerAlerts,
+                onWifiClicked = onWifiClicked,
+                onWifiPermissionGrant = onWifiPermissionGrant,
+                onConnectivityClicked = onConnectivityClicked,
+                onAppsClicked = onAppsClicked,
+                onInstallLatestApp = onInstallLatestApp,
+                onClipboardClicked = onClipboardClicked,
+                onClearClipboard = onClearClipboard,
+                onShareClipboard = onShareClipboard,
+                onCopyClipboard = onCopyClipboard,
+                showMessage = showMessage,
+            )
         }
     }
+}
+
+@Composable
+private fun DeviceCardOrEditor(
+    device: DashboardVM.DeviceItem,
+    editingDeviceId: String?,
+    onToggleCollapse: (String) -> Unit,
+    onLongPress: (String) -> Unit,
+    onUpgrade: () -> Unit,
+    onManageStaleDevice: () -> Unit,
+    onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
+    onPowerAlerts: (DeviceId) -> Unit,
+    onWifiClicked: (DashboardVM.ModuleItem.Wifi) -> Unit,
+    onWifiPermissionGrant: (Permission) -> Unit,
+    onConnectivityClicked: (DashboardVM.ModuleItem.Connectivity) -> Unit,
+    onAppsClicked: (DeviceId) -> Unit,
+    onInstallLatestApp: (AppsInfo) -> Unit,
+    onClipboardClicked: (DashboardVM.ModuleItem.Clipboard) -> Unit,
+    onClearClipboard: () -> Unit,
+    onShareClipboard: () -> Unit,
+    onCopyClipboard: (ClipboardInfo) -> Unit,
+    showMessage: (String) -> Unit,
+    onDoneEditing: (String, TileLayoutConfig) -> Unit,
+    onCancelEditing: () -> Unit,
+    onResetTileLayout: (String) -> Unit,
+    onSaveAsDefault: (TileLayoutConfig) -> Unit,
+) {
+    val deviceId = device.meta.deviceId.id
+    if (editingDeviceId == deviceId) {
+        TileEditorCard(
+            deviceName = device.meta.data.deviceLabel ?: device.meta.data.deviceName,
+            initialConfig = device.tileLayout,
+            onDone = { config -> onDoneEditing(deviceId, config) },
+            onCancel = onCancelEditing,
+            onReset = { onResetTileLayout(deviceId) },
+            onSaveAsDefault = onSaveAsDefault,
+        )
+    } else {
+        DashboardDeviceCard(
+            device = device,
+            onToggleCollapse = onToggleCollapse,
+            onLongPress = onLongPress,
+            onUpgrade = onUpgrade,
+            onManageStaleDevice = onManageStaleDevice,
+            onPowerClicked = onPowerClicked,
+            onPowerAlerts = onPowerAlerts,
+            onWifiClicked = onWifiClicked,
+            onWifiPermissionGrant = onWifiPermissionGrant,
+            onConnectivityClicked = onConnectivityClicked,
+            onAppsClicked = onAppsClicked,
+            onInstallLatestApp = onInstallLatestApp,
+            onClipboardClicked = onClipboardClicked,
+            onClearClipboard = onClearClipboard,
+            onShareClipboard = onShareClipboard,
+            onCopyClipboard = onCopyClipboard,
+            showMessage = showMessage,
+        )
+    }
+}
+
+private fun buildAvailableModuleIds(moduleItems: List<DashboardVM.ModuleItem>): Set<String> {
+    return moduleItems.mapNotNull { item ->
+        when (item) {
+            is DashboardVM.ModuleItem.Power -> "eu.darken.octi.module.core.power"
+            is DashboardVM.ModuleItem.Wifi -> "eu.darken.octi.module.core.wifi"
+            is DashboardVM.ModuleItem.Connectivity -> "eu.darken.octi.module.core.connectivity"
+            is DashboardVM.ModuleItem.Apps -> "eu.darken.octi.module.core.apps"
+            is DashboardVM.ModuleItem.Clipboard -> "eu.darken.octi.module.core.clipboard"
+        }
+    }.toSet()
 }
 
 @Composable
