@@ -138,7 +138,7 @@ private fun SignalBars(
         verticalAlignment = Alignment.Bottom,
     ) {
         for (i in 0 until barCount) {
-            val barHeight = (6 + i * 3).dp
+            val barHeight = (4 + i * 3).dp
             Surface(
                 modifier = Modifier
                     .size(width = 4.dp, height = barHeight),

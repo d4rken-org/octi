@@ -1,13 +1,18 @@
 package eu.darken.octi.modules.wifi.ui.dashboard
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -17,6 +22,7 @@ import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.modules.wifi.core.WifiInfo
+import eu.darken.octi.modules.wifi.ui.receptIcon
 
 @Composable
 fun WifiDetailSheet(
@@ -31,10 +37,18 @@ fun WifiDetailSheet(
 @Composable
 private fun WifiDetailContent(info: WifiInfo) {
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-        Text(
-            text = stringResource(WifiR.string.module_wifi_label),
-            style = MaterialTheme.typography.titleLarge,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = info.receptIcon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(WifiR.string.module_wifi_label),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         DetailRow(
             label = stringResource(WifiR.string.module_wifi_detail_ssid_label),
