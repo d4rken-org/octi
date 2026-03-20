@@ -1,5 +1,6 @@
 package eu.darken.octi.modules.power.ui.dashboard
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Row
@@ -69,7 +70,10 @@ fun PowerModuleTile(
         shape = RoundedCornerShape(12.dp),
         color = tileColor,
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
             // Icon + metric + actions on same row
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -85,7 +89,7 @@ fun PowerModuleTile(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "$percent%",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = if (isAlertActive) FontWeight.Bold else FontWeight.Normal,
                     color = if (isAlertActive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 )
@@ -111,7 +115,7 @@ fun PowerModuleTile(
                 text = statusText,
                 style = MaterialTheme.typography.bodySmall,
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             val progressColor = when {
                 isAlertActive || power.battery.percent < 0.2f -> MaterialTheme.colorScheme.error
                 power.battery.percent < 0.4f -> MaterialTheme.colorScheme.tertiary
@@ -123,7 +127,6 @@ fun PowerModuleTile(
                 color = progressColor,
                 trackColor = progressColor.copy(alpha = 0.2f),
             )
-            Spacer(modifier = Modifier.height(4.dp))
             PowerTileSecondaryText(power)
         }
     }

@@ -1,6 +1,7 @@
 package eu.darken.octi.modules.connectivity.ui.dashboard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,9 +26,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import eu.darken.octi.modules.connectivity.R as ConnectivityR
 import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 import eu.darken.octi.modules.connectivity.ui.icon
+import eu.darken.octi.modules.connectivity.R as ConnectivityR
 
 @Composable
 fun ConnectivityModuleTile(
@@ -65,7 +66,10 @@ fun ConnectivityModuleTile(
         shape = RoundedCornerShape(12.dp),
         color = tileColor,
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = info.connectionType.icon,

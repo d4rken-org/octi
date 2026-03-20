@@ -1,5 +1,6 @@
 package eu.darken.octi.modules.clipboard.ui.dashboard
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,12 +24,12 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.modules.clipboard.ClipboardInfo
-import eu.darken.octi.modules.clipboard.R as ClipboardR
 import okio.ByteString.Companion.encodeUtf8
+import eu.darken.octi.common.R as CommonR
+import eu.darken.octi.modules.clipboard.R as ClipboardR
 
 @Composable
 fun ClipboardModuleTile(
@@ -63,7 +64,10 @@ fun ClipboardModuleTile(
         shape = RoundedCornerShape(12.dp),
         color = tileColor,
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.TwoTone.ContentPaste,
@@ -100,11 +104,10 @@ fun ClipboardModuleTile(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "\"$clipText\"",
                 style = MaterialTheme.typography.bodyMedium,
-                maxLines = 3,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
         }

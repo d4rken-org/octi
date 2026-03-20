@@ -1,5 +1,6 @@
 package eu.darken.octi.modules.apps.ui.dashboard
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
+import java.time.Instant
 import eu.darken.octi.modules.apps.R as AppsR
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.core.installerIconRes
@@ -57,7 +59,10 @@ fun AppsModuleTile(
         shape = RoundedCornerShape(12.dp),
         color = tileColor,
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.TwoTone.Apps,
@@ -67,7 +72,7 @@ fun AppsModuleTile(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "$count",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 if (last != null) {
@@ -103,9 +108,57 @@ fun AppsModuleTile(
     }
 }
 
+private val PREVIEW_PACKAGES = listOf(
+    AppsInfo.Pkg(
+        packageName = "com.whatsapp",
+        label = "WhatsApp",
+        versionCode = 231676,
+        versionName = "2.24.8.78",
+        installedAt = Instant.ofEpochMilli(1710800000000),
+        installerPkg = "com.android.vending",
+    ),
+    AppsInfo.Pkg(
+        packageName = "org.mozilla.firefox",
+        label = "Firefox",
+        versionCode = 2016042,
+        versionName = "124.1.0",
+        installedAt = Instant.ofEpochMilli(1710900000000),
+        installerPkg = "org.fdroid.fdroid",
+    ),
+    AppsInfo.Pkg(
+        packageName = "eu.darken.sdmse",
+        label = "SD Maid 2/SE",
+        versionCode = 40803,
+        versionName = "4.8.3-rc0",
+        installedAt = Instant.ofEpochMilli(1710950000000),
+        installerPkg = "com.android.vending",
+    ),
+)
+
 @Preview2
 @Composable
-private fun AppsModuleTilePreview() = PreviewWrapper {
+private fun AppsModuleTileHalfPreview() = PreviewWrapper {
+    AppsModuleTile(
+        info = AppsInfo(installedPackages = PREVIEW_PACKAGES),
+        onAppsClicked = {},
+        onInstallClicked = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun AppsModuleTileWidePreview() = PreviewWrapper {
+    AppsModuleTile(
+        info = AppsInfo(installedPackages = PREVIEW_PACKAGES),
+        isWide = true,
+        onAppsClicked = {},
+        onInstallClicked = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun AppsModuleTileEmptyPreview() = PreviewWrapper {
     AppsModuleTile(
         info = AppsInfo(installedPackages = emptyList()),
         onAppsClicked = {},

@@ -24,13 +24,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.permissions.Permission
-import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.modules.wifi.ui.receptIcon
+import eu.darken.octi.common.R as CommonR
+import eu.darken.octi.modules.wifi.R as WifiR
 
 @Composable
 fun WifiModuleTile(
@@ -69,7 +69,10 @@ fun WifiModuleTile(
         shape = RoundedCornerShape(12.dp),
         color = tileColor,
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = wifi.receptIcon,
