@@ -4,6 +4,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.datastore.value
+import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.modules.apps.core.AppsSettings
@@ -86,6 +87,8 @@ class ModuleSettingsVM @Inject constructor(
     fun setClipboardEnabled(enabled: Boolean) = launch {
         clipboardSettings.isEnabled.value(enabled)
     }
+
+    fun goUpgrade() = navTo(Nav.Main.Upgrade())
 
     companion object {
         private val TAG = logTag("Settings", "Module", "VM")
