@@ -11,6 +11,7 @@ import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.throttleLatest
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -120,13 +121,15 @@ abstract class BaseModuleRepo<T : Any>(
             )
         }
         .onEach { selfData ->
+            updateSelf(selfData)
             try {
                 selfData?.let { moduleSync.sync(selfData) }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 log(tag, ERROR) { "Failed to sync data: ${e.asLog()}" }
                 Bugs.report(e)
             }
-            updateSelf(selfData)
         }
         .setupCommonEventHandlers(tag) { "writeFLow" }
 
