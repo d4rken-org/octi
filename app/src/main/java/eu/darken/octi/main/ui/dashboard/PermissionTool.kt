@@ -48,15 +48,13 @@ class PermissionTool @Inject constructor(
             ?.run { missingPermissions.add(this) }
 
         Permission.ACCESS_COARSE_LOCATION
-            .takeIf { !dismissedPermissions.contains(it) }
-            ?.takeIf { isNetworkEnabled }
+            .takeIf { isNetworkEnabled }
             ?.takeIf { hasApiLevel(27) && !hasApiLevel(29) }
             ?.takeIf { !it.isGranted(context) }
             ?.run { missingPermissions.add(this) }
 
         Permission.ACCESS_FINE_LOCATION
-            .takeIf { !dismissedPermissions.contains(it) }
-            ?.takeIf { isNetworkEnabled }
+            .takeIf { isNetworkEnabled }
             ?.takeIf { hasApiLevel(29) }
             ?.takeIf { !it.isGranted(context) }
             ?.run { missingPermissions.add(this) }
