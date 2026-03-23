@@ -7,6 +7,8 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.createValue
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.DEBUG
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
@@ -23,6 +25,7 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
+import eu.darken.octi.sync.core.SyncEvent
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncSettings
@@ -38,6 +41,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retry
@@ -88,6 +92,78 @@ class GDriveAppDataConnector @AssistedInject constructor(
         subtype = if (client.account.isAppDataScope) "appdatascope" else "",
         account = account.id.id,
     )
+
+    private val changeToken = syncSettings.dataStore.createValue(
+        "gdrive.change_token.${account.id.id}",
+        null as String?,
+    )
+
+    override val syncEvents: Flow<SyncEvent> = flow {
+        while (true) {
+            delay(POLL_INTERVAL_MS)
+            try {
+                val changes = withDrive { checkForChanges() }
+                changes.forEach { emit(it) }
+            } catch (e: Exception) {
+                log(TAG, WARN) { "syncEvents poll failed: ${e.message}" }
+            }
+        }
+    }
+
+    private suspend fun GDriveEnvironment.checkForChanges(): List<SyncEvent> {
+        val token = changeToken.value()
+        if (token == null) {
+            val startToken = drive.changes().getStartPageToken()
+                .setSupportsAllDrives(false)
+                .execute().startPageToken
+            changeToken.value(startToken)
+            log(TAG) { "checkForChanges(): Initialized token=$startToken" }
+            return emptyList()
+        }
+
+        return try {
+            val changeList = drive.changes().list(token)
+                .setSpaces(APPDATAFOLDER)
+                .setFields("newStartPageToken,changes(fileId,removed,file(id,name,parents))")
+                .execute()
+
+            changeList.newStartPageToken?.let { changeToken.value(it) }
+
+            if (changeList.changes.isNullOrEmpty()) return emptyList()
+
+            log(TAG) { "checkForChanges(): ${changeList.changes.size} changes detected" }
+
+            changeList.changes.mapNotNull { change ->
+                if (change.removed) return@mapNotNull null
+                val file = change.file ?: return@mapNotNull null
+                val parentId = file.parents?.firstOrNull() ?: return@mapNotNull null
+
+                // Resolve parent to get device ID
+                val parentFile = try {
+                    drive.files().get(parentId).setFields("name,parents").execute()
+                } catch (e: Exception) {
+                    log(TAG, WARN) { "checkForChanges(): Failed to resolve parent $parentId" }
+                    return@mapNotNull null
+                }
+
+                SyncEvent.ModuleChanged(
+                    connectorId = identifier,
+                    deviceId = DeviceId(parentFile.name),
+                    moduleId = ModuleId(file.name),
+                    modifiedAt = Instant.now(),
+                    action = SyncEvent.ModuleChanged.Action.UPDATED,
+                )
+            }
+        } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
+            if (e.statusCode == 410) {
+                log(TAG, WARN) { "checkForChanges(): Token invalidated, resetting" }
+                changeToken.value(null)
+            } else {
+                log(TAG, ERROR) { "checkForChanges(): API error: ${e.message}" }
+            }
+            emptyList()
+        }
+    }
 
     init {
         writeQueue
@@ -272,7 +348,12 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 if (!options.readData) return@async
 
                 try {
-                    _data.value = readDrive()
+                    val hasChanges = hasChangesSinceLastSync()
+                    if (hasChanges) {
+                        _data.value = readDrive()
+                    } else {
+                        log(TAG) { "sync(): No changes detected, skipping readDrive()" }
+                    }
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "sync(): Failed to read: ${e.asLog()}" }
                 }
@@ -325,6 +406,37 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
 
         log(TAG, VERBOSE) { "writeDrive(): Done" }
+    }
+
+    private suspend fun GDriveEnvironment.hasChangesSinceLastSync(): Boolean {
+        val token = changeToken.value()
+        if (token == null) {
+            val startToken = drive.changes().getStartPageToken()
+                .setSupportsAllDrives(false)
+                .execute().startPageToken
+            changeToken.value(startToken)
+            log(TAG) { "hasChangesSinceLastSync(): No token, initialized to $startToken, doing full sync" }
+            return true
+        }
+
+        return try {
+            val changeList = drive.changes().list(token)
+                .setSpaces(APPDATAFOLDER)
+                .setFields("newStartPageToken,changes(fileId)")
+                .execute()
+
+            changeList.newStartPageToken?.let { changeToken.value(it) }
+
+            val hasChanges = !changeList.changes.isNullOrEmpty()
+            log(TAG) { "hasChangesSinceLastSync(): hasChanges=$hasChanges (${changeList.changes?.size ?: 0} changes)" }
+            hasChanges
+        } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
+            if (e.statusCode == 410) {
+                log(TAG, WARN) { "hasChangesSinceLastSync(): Token invalidated, resetting" }
+                changeToken.value(null)
+            }
+            true // Assume changes on error, fall back to full sync
+        }
     }
 
     private suspend fun GDriveEnvironment.getStorageQuota(): SyncConnectorState.Quota {
@@ -393,6 +505,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     companion object {
         private const val DEVICE_DATA_DIR_NAME = "devices"
+        private const val POLL_INTERVAL_MS = 2 * 60 * 1000L // 2 minutes
         private val TAG = logTag("Sync", "GDrive", "Connector")
     }
 }

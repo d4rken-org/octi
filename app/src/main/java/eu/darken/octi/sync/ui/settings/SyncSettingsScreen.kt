@@ -46,7 +46,6 @@ import eu.darken.octi.common.settings.SettingsSliderItem
 import eu.darken.octi.common.settings.SettingsSwitchItem
 
 private val BACKGROUND_PRESETS = listOf(15, 30, 60, 120, 240, 360, 720, 1440, 2160, 2880)
-private val FOREGROUND_PRESETS = listOf(5, 10, 15, 30, 45, 60)
 
 private fun Int.toNearestPresetIndex(presets: List<Int>): Int {
     val idx = presets.indexOf(this)
@@ -78,7 +77,6 @@ fun SyncSettingsScreenHost(vm: SyncSettingsVM = hiltViewModel()) {
             onChargingEnabledChanged = { enabled -> vm.setChargingEnabled(enabled) },
             onChargingIntervalChanged = { minutes -> vm.setChargingInterval(minutes) },
             onForegroundSyncEnabledChanged = { enabled -> vm.setForegroundSyncEnabled(enabled) },
-            onForegroundSyncIntervalChanged = { minutes -> vm.setForegroundSyncInterval(minutes) },
         )
     }
 }
@@ -95,7 +93,6 @@ fun SyncSettingsScreen(
     onChargingEnabledChanged: (Boolean) -> Unit,
     onChargingIntervalChanged: (Int) -> Unit,
     onForegroundSyncEnabledChanged: (Boolean) -> Unit,
-    onForegroundSyncIntervalChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showDeviceLabelDialog by remember { mutableStateOf(false) }
@@ -180,21 +177,6 @@ fun SyncSettingsScreen(
                     )
                 }
             }
-            if (state.foregroundSyncEnabled && state.isPro) {
-                item {
-                    IntervalSliderItem(
-                        title = stringResource(R.string.sync_setting_foreground_interval_label),
-                        presets = FOREGROUND_PRESETS,
-                        currentValue = state.foregroundSyncInterval,
-                        onIntervalChanged = onForegroundSyncIntervalChanged,
-                        enabled = true,
-                        minValue = 5,
-                        maxValue = 60,
-                        onShowCustomDialog = { showCustomIntervalDialog = it },
-                    )
-                }
-            }
-
             // Background sync section
             item {
                 SettingsCategoryHeader(text = stringResource(R.string.sync_setting_category_background_label))
@@ -424,7 +406,6 @@ private fun SyncSettingsScreenPreview() = PreviewWrapper {
             backgroundSyncChargingEnabled = false,
             backgroundSyncChargingInterval = 15,
             foregroundSyncEnabled = false,
-            foregroundSyncInterval = 5,
         ),
         onNavigateUp = {},
         onShowDashboardCardChanged = {},
@@ -435,6 +416,5 @@ private fun SyncSettingsScreenPreview() = PreviewWrapper {
         onChargingEnabledChanged = {},
         onChargingIntervalChanged = {},
         onForegroundSyncEnabledChanged = {},
-        onForegroundSyncIntervalChanged = {},
     )
 }

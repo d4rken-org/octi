@@ -23,6 +23,7 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
+import eu.darken.octi.sync.core.SyncEvent
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncSettings
@@ -36,7 +37,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retry
@@ -44,6 +47,8 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
 import okio.ByteString
 import java.time.Instant
 
@@ -57,6 +62,8 @@ class KServerConnector @AssistedInject constructor(
     private val networkStateProvider: NetworkStateProvider,
     private val syncSettings: SyncSettings,
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
+    private val baseHttpClient: OkHttpClient,
+    private val json: Json,
 ) : SyncConnector {
 
     private val endpoint by lazy {
@@ -95,6 +102,30 @@ class KServerConnector @AssistedInject constructor(
         subtype = credentials.serverAdress.domain,
         account = credentials.accountId.id,
     )
+
+    private var webSocket: KServerWebSocket? = null
+    private val _webSocketFlow = MutableStateFlow<Flow<SyncEvent>>(emptyFlow())
+    override val syncEvents: Flow<SyncEvent> = _webSocketFlow.flatMapLatest { it }
+
+    fun connectWebSocket() {
+        log(TAG, INFO) { "connectWebSocket()" }
+        val ws = KServerWebSocket(
+            credentials = credentials,
+            connectorId = identifier,
+            syncSettings = syncSettings,
+            networkStateProvider = networkStateProvider,
+            baseHttpClient = baseHttpClient,
+            json = json,
+        )
+        webSocket = ws
+        _webSocketFlow.value = ws.connect()
+    }
+
+    fun disconnectWebSocket() {
+        log(TAG, INFO) { "disconnectWebSocket()" }
+        webSocket = null
+        _webSocketFlow.value = emptyFlow()
+    }
 
     init {
         writeQueue
@@ -177,10 +208,10 @@ class KServerConnector @AssistedInject constructor(
         }
 
         if (options.readData) {
-            log(TAG) { "read()" }
+            log(TAG) { "read(moduleFilter=${options.moduleFilter})" }
             try {
                 runServerAction("read-server") {
-                    _data.value = readServer()
+                    _data.value = readServer(options.moduleFilter)
                 }
             } catch (e: Exception) {
                 if (handleDeviceUnknown(e, "read")) return
@@ -207,14 +238,17 @@ class KServerConnector @AssistedInject constructor(
         ).also { log(TAG, VERBOSE) { "readServer(): Module data: $it" } }
     }
 
-    private suspend fun readServer(): KServerData {
-        log(TAG, DEBUG) { "readServer(): Starting..." }
+    private suspend fun readServer(moduleFilter: Set<ModuleId>? = null): KServerData {
+        log(TAG, DEBUG) { "readServer(moduleFilter=$moduleFilter): Starting..." }
         val deviceIds = endpoint.listDevices()
         log(TAG, VERBOSE) { "readServer(): Found devices: $deviceIds" }
 
+        val targetModuleIds = moduleFilter ?: supportedModuleIds
+        val isTargeted = moduleFilter != null
+
         val devices = deviceIds.map { deviceId ->
             scope.async moduleFetch@{
-                val moduleFetchJobs = supportedModuleIds.map { moduleId ->
+                val moduleFetchJobs = targetModuleIds.map { moduleId ->
                     val fetchResult = try {
                         fetchModule(deviceId, moduleId)
                     } catch (e: Exception) {
@@ -222,7 +256,7 @@ class KServerConnector @AssistedInject constructor(
                         null
                     }
                     log(TAG, VERBOSE) { "Module fetched: $fetchResult" }
-                    delay(1000)
+                    if (!isTargeted) delay(1000)
                     fetchResult
                 }
 

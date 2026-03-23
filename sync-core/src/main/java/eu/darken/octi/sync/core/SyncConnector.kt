@@ -1,6 +1,7 @@
 package eu.darken.octi.sync.core
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 interface SyncConnector {
 
@@ -8,6 +9,8 @@ interface SyncConnector {
 
     val state: Flow<SyncConnectorState>
     val data: Flow<SyncRead?>
+
+    val syncEvents: Flow<SyncEvent> get() = emptyFlow()
 
     /**
      * Data that is written on the next **sync**

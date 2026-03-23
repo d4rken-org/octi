@@ -29,7 +29,6 @@ class SyncSettingsVM @Inject constructor(
         val backgroundSyncChargingEnabled: Boolean,
         val backgroundSyncChargingInterval: Int,
         val foregroundSyncEnabled: Boolean,
-        val foregroundSyncInterval: Int,
     )
 
     val state = combine(
@@ -42,8 +41,7 @@ class SyncSettingsVM @Inject constructor(
         syncSettings.backgroundSyncChargingEnabled.flow,
         syncSettings.backgroundSyncChargingInterval.flow,
         syncSettings.foregroundSyncEnabled.flow,
-        syncSettings.foregroundSyncInterval.flow,
-    ) { showCard, deviceLabel, bgEnabled, bgInterval, bgMobile, upgradeInfo, chargingEnabled, chargingInterval, fgEnabled, fgInterval ->
+    ) { showCard, deviceLabel, bgEnabled, bgInterval, bgMobile, upgradeInfo, chargingEnabled, chargingInterval, fgEnabled ->
         State(
             showDashboardCard = showCard,
             deviceLabel = deviceLabel,
@@ -54,7 +52,6 @@ class SyncSettingsVM @Inject constructor(
             backgroundSyncChargingEnabled = chargingEnabled,
             backgroundSyncChargingInterval = chargingInterval,
             foregroundSyncEnabled = fgEnabled,
-            foregroundSyncInterval = fgInterval,
         )
     }.asStateFlow()
 
@@ -91,11 +88,6 @@ class SyncSettingsVM @Inject constructor(
     fun setForegroundSyncEnabled(enabled: Boolean) = launch {
         if (!requirePro()) return@launch
         syncSettings.foregroundSyncEnabled.value(enabled)
-    }
-
-    fun setForegroundSyncInterval(minutes: Int) = launch {
-        if (!requirePro()) return@launch
-        syncSettings.foregroundSyncInterval.value(minutes.coerceIn(5, 60))
     }
 
     private suspend fun requirePro(): Boolean {

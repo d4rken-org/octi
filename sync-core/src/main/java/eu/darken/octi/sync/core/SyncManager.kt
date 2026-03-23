@@ -20,8 +20,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -65,6 +67,14 @@ class SyncManager @Inject constructor(
             else combine(hs.map { it.state }) { it.toList() }
         }
         .setupCommonEventHandlers(TAG) { "syncStates" }
+        .shareLatest(scope + dispatcherProvider.Default)
+
+    val syncEvents: Flow<SyncEvent> = connectors
+        .flatMapLatest { cons ->
+            if (cons.isEmpty()) emptyFlow()
+            else cons.map { it.syncEvents }.merge()
+        }
+        .setupCommonEventHandlers(TAG) { "syncEvents" }
         .shareLatest(scope + dispatcherProvider.Default)
 
     val data: Flow<Collection<SyncRead.Device>> = syncSettings.pausedConnectors.flow
