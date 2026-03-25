@@ -208,10 +208,17 @@ class KServerConnector @AssistedInject constructor(
         }
 
         if (options.readData) {
-            log(TAG) { "read(moduleFilter=${options.moduleFilter})" }
+            val filter = options.moduleFilter
+            log(TAG) { "read(moduleFilter=$filter)" }
             try {
                 runServerAction("read-server") {
-                    _data.value = readServer(options.moduleFilter)
+                    val newData = readServer(filter)
+                    val existing = _data.value
+                    _data.value = if (filter != null && existing != null) {
+                        mergeData(existing, newData, filter)
+                    } else {
+                        newData
+                    }
                 }
             } catch (e: Exception) {
                 if (handleDeviceUnknown(e, "read")) return
@@ -337,6 +344,27 @@ class KServerConnector @AssistedInject constructor(
             }
             log(TAG, VERBOSE) { "runServerAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
         }
+    }
+
+    internal fun mergeData(
+        existing: SyncRead,
+        update: SyncRead,
+        filter: Set<ModuleId>,
+    ): KServerData {
+        val updatedDeviceMap = update.devices.associateBy { it.deviceId }
+        val mergedDevices = existing.devices.map { existingDevice ->
+            val updatedDevice = updatedDeviceMap[existingDevice.deviceId]
+            if (updatedDevice == null) {
+                existingDevice
+            } else {
+                val keptModules = existingDevice.modules.filter { it.moduleId !in filter }
+                KServerDeviceData(
+                    deviceId = existingDevice.deviceId,
+                    modules = keptModules + updatedDevice.modules,
+                )
+            }
+        }
+        return KServerData(connectorId = existing.connectorId, devices = mergedDevices)
     }
 
     @AssistedFactory
