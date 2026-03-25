@@ -20,7 +20,7 @@ interface KServer {
     enum class Official(val address: Address) {
         @SerialName("PROD") PROD(Address("prod.kserver.octi.darken.eu")),
         @SerialName("BETA") BETA(Address("beta.kserver.octi.darken.eu")),
-        @SerialName("LOCAL") LOCAL(Address("blasphemy", protocol = "http", port = 8080)),
+        @SerialName("LOCAL") LOCAL(Address("blasphemy.greenkingdom", protocol = "http", port = 8080)),
     }
 
     @Serializable
