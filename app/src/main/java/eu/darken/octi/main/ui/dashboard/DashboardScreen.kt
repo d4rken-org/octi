@@ -26,26 +26,25 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Apps
+import androidx.compose.material.icons.twotone.BatteryFull
+import androidx.compose.material.icons.twotone.CellTower
 import androidx.compose.material.icons.twotone.ChevronRight
 import androidx.compose.material.icons.twotone.CloudSync
+import androidx.compose.material.icons.twotone.Coffee
+import androidx.compose.material.icons.twotone.ContentPaste
+import androidx.compose.material.icons.twotone.ExpandLess
+import androidx.compose.material.icons.twotone.ExpandMore
 import androidx.compose.material.icons.twotone.Home
+import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material.icons.twotone.Tablet
-import androidx.compose.material.icons.twotone.Apps
-import androidx.compose.material.icons.twotone.BatteryFull
-import androidx.compose.material.icons.twotone.CellTower
-import androidx.compose.material.icons.twotone.Coffee
-import androidx.compose.material.icons.twotone.ContentPaste
-import androidx.compose.material.icons.twotone.ExpandLess
-import androidx.compose.material.icons.twotone.ExpandMore
-import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material.icons.twotone.Wifi
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -61,6 +60,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,74 +70,67 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import kotlinx.coroutines.launch
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
-import eu.darken.octi.common.R as CommonR
+import eu.darken.octi.common.compose.OctiMascot
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import androidx.compose.runtime.collectAsState
-import eu.darken.octi.common.compose.OctiMascot
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
-import eu.darken.octi.module.core.ModuleData
-import eu.darken.octi.module.core.ModuleId
-import eu.darken.octi.module.core.ModuleManager
-import eu.darken.octi.module.core.ModuleSync
-import java.time.Instant
 import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.descriptionRes
 import eu.darken.octi.common.permissions.labelRes
 import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.main.ui.dashboard.editor.TileEditorCard
+import eu.darken.octi.module.core.ModuleData
+import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.module.core.ModuleManager
+import eu.darken.octi.module.core.ModuleSync
 import eu.darken.octi.modules.apps.AppsModule
-import eu.darken.octi.modules.apps.R as AppsR
 import eu.darken.octi.modules.apps.core.AppsInfo
-import eu.darken.octi.modules.apps.ui.dashboard.AppsModuleItem
-import eu.darken.octi.modules.clipboard.ClipboardModule
 import eu.darken.octi.modules.clipboard.ClipboardInfo
-import eu.darken.octi.modules.clipboard.R as ClipboardR
-import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardDashState
+import eu.darken.octi.modules.clipboard.ClipboardModule
 import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardDetailSheet
-import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardModuleItem
 import eu.darken.octi.modules.connectivity.ConnectivityModule
-import eu.darken.octi.modules.connectivity.R as ConnectivityR
 import eu.darken.octi.modules.connectivity.ui.dashboard.ConnectivityDetailSheet
-import eu.darken.octi.modules.connectivity.ui.dashboard.ConnectivityModuleItem
 import eu.darken.octi.modules.meta.MetaModule
-import eu.darken.octi.modules.meta.R as MetaR
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.PowerModule
-import eu.darken.octi.modules.power.R as PowerR
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
-import eu.darken.octi.modules.power.ui.dashboard.PowerDashState
 import eu.darken.octi.modules.power.ui.dashboard.PowerDetailSheet
-import eu.darken.octi.modules.power.ui.dashboard.PowerModuleItem
 import eu.darken.octi.modules.wifi.WifiModule
-import eu.darken.octi.modules.wifi.R as WifiR
-import eu.darken.octi.modules.wifi.ui.dashboard.WifiDashState
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiDetailSheet
-import eu.darken.octi.modules.wifi.ui.dashboard.WifiModuleItem
-import eu.darken.octi.main.ui.dashboard.editor.TileEditorCard
+import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.StalenessUtil
+import eu.darken.octi.sync.core.SyncOrchestrator
+import kotlinx.coroutines.launch
+import java.time.Instant
+import eu.darken.octi.common.R as CommonR
+import eu.darken.octi.modules.apps.R as AppsR
+import eu.darken.octi.modules.clipboard.R as ClipboardR
+import eu.darken.octi.modules.connectivity.R as ConnectivityR
+import eu.darken.octi.modules.meta.R as MetaR
+import eu.darken.octi.modules.power.R as PowerR
+import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.syncs.gdrive.R as GDriveR
 import eu.darken.octi.syncs.kserver.R as KServerR
-import eu.darken.octi.sync.core.DeviceId
-import eu.darken.octi.sync.core.StalenessUtil
 
 @Composable
 fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
@@ -377,167 +370,167 @@ fun DashboardScreen(
             }
 
             // Sync setup card
-                if (state.showSyncSetup) {
-                    item(key = "sync_setup") {
-                        SyncSetupCard(
-                            onDismiss = onDismissSyncSetup,
-                            onSetup = onSetupSync,
-                        )
-                    }
+            if (state.showSyncSetup) {
+                item(key = "sync_setup") {
+                    SyncSetupCard(
+                        onDismiss = onDismissSyncSetup,
+                        onSetup = onSetupSync,
+                    )
                 }
+            }
 
-                // Permission cards
+            // Permission cards
+            items(
+                items = state.missingPermissions,
+                key = { "perm_${it.permissionId}" },
+            ) { permission ->
+                PermissionCard(
+                    permission = permission,
+                    onGrant = onGrantPermission,
+                    onDismiss = onDismissPermission,
+                )
+            }
+
+            // Update card
+            if (state.update != null) {
+                item(key = "update") {
+                    UpdateCard(
+                        update = state.update,
+                        onDismiss = onDismissUpdate,
+                        onViewUpdate = onViewUpdate,
+                        onUpdate = onStartUpdate,
+                    )
+                }
+            }
+
+            // Device cards with limit card interleaved
+            val devices = state.devices
+            val deviceLimit = 3
+            val showLimitCard = state.deviceLimitReached
+
+            if (showLimitCard) {
+                // Show devices before limit
                 items(
-                    items = state.missingPermissions,
-                    key = { "perm_${it.permissionId}" },
-                ) { permission ->
-                    PermissionCard(
-                        permission = permission,
-                        onGrant = onGrantPermission,
-                        onDismiss = onDismissPermission,
+                    items = devices.take(deviceLimit),
+                    key = { it.meta.deviceId.hashCode() },
+                ) { device ->
+                    DeviceCardOrEditor(
+                        device = device,
+                        editingDeviceId = editingDeviceId,
+                        onToggleCollapse = onToggleDeviceCollapsed,
+                        onLongPress = { editingDeviceId = it },
+                        onUpgrade = onUpgrade,
+                        onManageStaleDevice = onSyncServices,
+                        onPowerClicked = { showPowerDetail = it },
+                        onPowerAlerts = onPowerAlerts,
+                        onWifiClicked = { showWifiDetail = it },
+                        onWifiPermissionGrant = onWifiPermissionGrant,
+                        onConnectivityClicked = { showConnectivityDetail = it },
+                        onAppsClicked = onAppsList,
+                        onInstallLatestApp = onInstallLatestApp,
+                        onClipboardClicked = { showClipboardDetail = it },
+                        onClearClipboard = onClearClipboard,
+                        onShareClipboard = onShareClipboard,
+                        onCopyClipboard = onCopyClipboard,
+                        showMessage = showMessage,
+                        onDoneEditing = { deviceId, config ->
+                            onSaveTileLayout(deviceId, config)
+                            editingDeviceId = null
+                        },
+                        onCancelEditing = { editingDeviceId = null },
+                        onResetTileLayout = onResetTileLayout,
+                        onSaveAsDefault = onSaveAsDefaultTileLayout,
                     )
                 }
 
-                // Update card
-                if (state.update != null) {
-                    item(key = "update") {
-                        UpdateCard(
-                            update = state.update,
-                            onDismiss = onDismissUpdate,
-                            onViewUpdate = onViewUpdate,
-                            onUpdate = onStartUpdate,
-                        )
-                    }
+                // Device limit card
+                item(key = "device_limit") {
+                    DeviceLimitCard(
+                        current = devices.size,
+                        maximum = deviceLimit,
+                        onManageDevices = onSyncServices,
+                        onUpgrade = onUpgrade,
+                    )
                 }
 
-                // Device cards with limit card interleaved
-                val devices = state.devices
-                val deviceLimit = 3
-                val showLimitCard = state.deviceLimitReached
-
-                if (showLimitCard) {
-                    // Show devices before limit
-                    items(
-                        items = devices.take(deviceLimit),
-                        key = { it.meta.deviceId.hashCode() },
-                    ) { device ->
-                        DeviceCardOrEditor(
-                            device = device,
-                            editingDeviceId = editingDeviceId,
-                            onToggleCollapse = onToggleDeviceCollapsed,
-                            onLongPress = { editingDeviceId = it },
-                            onUpgrade = onUpgrade,
-                            onManageStaleDevice = onSyncServices,
-                            onPowerClicked = { showPowerDetail = it },
-                            onPowerAlerts = onPowerAlerts,
-                            onWifiClicked = { showWifiDetail = it },
-                            onWifiPermissionGrant = onWifiPermissionGrant,
-                            onConnectivityClicked = { showConnectivityDetail = it },
-                            onAppsClicked = onAppsList,
-                            onInstallLatestApp = onInstallLatestApp,
-                            onClipboardClicked = { showClipboardDetail = it },
-                            onClearClipboard = onClearClipboard,
-                            onShareClipboard = onShareClipboard,
-                            onCopyClipboard = onCopyClipboard,
-                            showMessage = showMessage,
-                            onDoneEditing = { deviceId, config ->
-                                onSaveTileLayout(deviceId, config)
-                                editingDeviceId = null
-                            },
-                            onCancelEditing = { editingDeviceId = null },
-                            onResetTileLayout = onResetTileLayout,
-                            onSaveAsDefault = onSaveAsDefaultTileLayout,
-                        )
-                    }
-
-                    // Device limit card
-                    item(key = "device_limit") {
-                        DeviceLimitCard(
-                            current = devices.size,
-                            maximum = deviceLimit,
-                            onManageDevices = onSyncServices,
-                            onUpgrade = onUpgrade,
-                        )
-                    }
-
-                    // Show devices after limit
-                    items(
-                        items = devices.drop(deviceLimit),
-                        key = { "after_${it.meta.deviceId.id}" },
-                    ) { device ->
-                        DeviceCardOrEditor(
-                            device = device,
-                            editingDeviceId = editingDeviceId,
-                            onToggleCollapse = onToggleDeviceCollapsed,
-                            onLongPress = { editingDeviceId = it },
-                            onUpgrade = onUpgrade,
-                            onManageStaleDevice = onSyncServices,
-                            onPowerClicked = { showPowerDetail = it },
-                            onPowerAlerts = onPowerAlerts,
-                            onWifiClicked = { showWifiDetail = it },
-                            onWifiPermissionGrant = onWifiPermissionGrant,
-                            onConnectivityClicked = { showConnectivityDetail = it },
-                            onAppsClicked = onAppsList,
-                            onInstallLatestApp = onInstallLatestApp,
-                            onClipboardClicked = { showClipboardDetail = it },
-                            onClearClipboard = onClearClipboard,
-                            onShareClipboard = onShareClipboard,
-                            onCopyClipboard = onCopyClipboard,
-                            showMessage = showMessage,
-                            onDoneEditing = { deviceId, config ->
-                                onSaveTileLayout(deviceId, config)
-                                editingDeviceId = null
-                            },
-                            onCancelEditing = { editingDeviceId = null },
-                            onResetTileLayout = onResetTileLayout,
-                            onSaveAsDefault = onSaveAsDefaultTileLayout,
-                        )
-                    }
-                } else {
-                    items(
-                        items = devices,
-                        key = { it.meta.deviceId.hashCode() },
-                    ) { device ->
-                        DeviceCardOrEditor(
-                            device = device,
-                            editingDeviceId = editingDeviceId,
-                            onToggleCollapse = onToggleDeviceCollapsed,
-                            onLongPress = { editingDeviceId = it },
-                            onUpgrade = onUpgrade,
-                            onManageStaleDevice = onSyncServices,
-                            onPowerClicked = { showPowerDetail = it },
-                            onPowerAlerts = onPowerAlerts,
-                            onWifiClicked = { showWifiDetail = it },
-                            onWifiPermissionGrant = onWifiPermissionGrant,
-                            onConnectivityClicked = { showConnectivityDetail = it },
-                            onAppsClicked = onAppsList,
-                            onInstallLatestApp = onInstallLatestApp,
-                            onClipboardClicked = { showClipboardDetail = it },
-                            onClearClipboard = onClearClipboard,
-                            onShareClipboard = onShareClipboard,
-                            onCopyClipboard = onCopyClipboard,
-                            showMessage = showMessage,
-                            onDoneEditing = { deviceId, config ->
-                                onSaveTileLayout(deviceId, config)
-                                editingDeviceId = null
-                            },
-                            onCancelEditing = { editingDeviceId = null },
-                            onResetTileLayout = onResetTileLayout,
-                            onSaveAsDefault = onSaveAsDefaultTileLayout,
-                        )
-                    }
+                // Show devices after limit
+                items(
+                    items = devices.drop(deviceLimit),
+                    key = { "after_${it.meta.deviceId.id}" },
+                ) { device ->
+                    DeviceCardOrEditor(
+                        device = device,
+                        editingDeviceId = editingDeviceId,
+                        onToggleCollapse = onToggleDeviceCollapsed,
+                        onLongPress = { editingDeviceId = it },
+                        onUpgrade = onUpgrade,
+                        onManageStaleDevice = onSyncServices,
+                        onPowerClicked = { showPowerDetail = it },
+                        onPowerAlerts = onPowerAlerts,
+                        onWifiClicked = { showWifiDetail = it },
+                        onWifiPermissionGrant = onWifiPermissionGrant,
+                        onConnectivityClicked = { showConnectivityDetail = it },
+                        onAppsClicked = onAppsList,
+                        onInstallLatestApp = onInstallLatestApp,
+                        onClipboardClicked = { showClipboardDetail = it },
+                        onClearClipboard = onClearClipboard,
+                        onShareClipboard = onShareClipboard,
+                        onCopyClipboard = onCopyClipboard,
+                        showMessage = showMessage,
+                        onDoneEditing = { deviceId, config ->
+                            onSaveTileLayout(deviceId, config)
+                            editingDeviceId = null
+                        },
+                        onCancelEditing = { editingDeviceId = null },
+                        onResetTileLayout = onResetTileLayout,
+                        onSaveAsDefault = onSaveAsDefaultTileLayout,
+                    )
                 }
-
-                // Upgrade card at bottom
-                if (!state.upgradeInfo.isPro) {
-                    item(key = "upgrade") {
-                        UpgradeCard(
-                            deviceLimit = state.deviceLimit,
-                            onUpgrade = onUpgrade,
-                        )
-                    }
+            } else {
+                items(
+                    items = devices,
+                    key = { it.meta.deviceId.hashCode() },
+                ) { device ->
+                    DeviceCardOrEditor(
+                        device = device,
+                        editingDeviceId = editingDeviceId,
+                        onToggleCollapse = onToggleDeviceCollapsed,
+                        onLongPress = { editingDeviceId = it },
+                        onUpgrade = onUpgrade,
+                        onManageStaleDevice = onSyncServices,
+                        onPowerClicked = { showPowerDetail = it },
+                        onPowerAlerts = onPowerAlerts,
+                        onWifiClicked = { showWifiDetail = it },
+                        onWifiPermissionGrant = onWifiPermissionGrant,
+                        onConnectivityClicked = { showConnectivityDetail = it },
+                        onAppsClicked = onAppsList,
+                        onInstallLatestApp = onInstallLatestApp,
+                        onClipboardClicked = { showClipboardDetail = it },
+                        onClearClipboard = onClearClipboard,
+                        onShareClipboard = onShareClipboard,
+                        onCopyClipboard = onCopyClipboard,
+                        showMessage = showMessage,
+                        onDoneEditing = { deviceId, config ->
+                            onSaveTileLayout(deviceId, config)
+                            editingDeviceId = null
+                        },
+                        onCancelEditing = { editingDeviceId = null },
+                        onResetTileLayout = onResetTileLayout,
+                        onSaveAsDefault = onSaveAsDefaultTileLayout,
+                    )
                 }
             }
+
+            // Upgrade card at bottom
+            if (!state.upgradeInfo.isPro) {
+                item(key = "upgrade") {
+                    UpgradeCard(
+                        deviceLimit = state.deviceLimit,
+                        onUpgrade = onUpgrade,
+                    )
+                }
+            }
+        }
     }
 
     // Detail sheets
@@ -595,7 +588,10 @@ private fun dashboardSubtitle(state: DashboardVM.State): String? {
 }
 
 @Composable
-private fun connectorTypesLabel(connectorTypes: List<String>): String? {
+private fun connectorTypesLabel(
+    syncStatus: DashboardVM.SyncStatus,
+): String? {
+    val connectorTypes = syncStatus.connectorTypes
     if (connectorTypes.isEmpty()) return null
     val names = connectorTypes.map { type ->
         when (type) {
@@ -604,7 +600,36 @@ private fun connectorTypesLabel(connectorTypes: List<String>): String? {
             else -> type
         }
     }
-    return stringResource(R.string.dashboard_sync_status_via, names.joinToString(", "))
+    val base = stringResource(R.string.dashboard_sync_status_via, names.joinToString(", "))
+
+    val orchestratorState = syncStatus.orchestratorState
+    val quickSync = orchestratorState.quickSync
+    if (quickSync.isActive && quickSync.connectorModes.isNotEmpty()) {
+        val modes = connectorTypes.mapNotNull { quickSync.connectorModes[it] }.distinct()
+        val modeLabel = when {
+            modes.size == 1 && modes.first() == SyncOrchestrator.QuickSyncState.Mode.LIVE ->
+                stringResource(R.string.dashboard_sync_status_mode_live)
+
+            modes.size == 1 && modes.first() == SyncOrchestrator.QuickSyncState.Mode.POLLING ->
+                stringResource(R.string.dashboard_sync_status_mode_polling)
+
+            modes.isNotEmpty() -> stringResource(R.string.dashboard_sync_status_mode_quicksync)
+            else -> null
+        }
+        if (modeLabel != null) return "$base \u00B7 $modeLabel"
+    }
+
+    val nextRun = orchestratorState.backgroundSync.defaultWorker.nextRunAt
+    if (nextRun != null) {
+        val minutes = java.time.Duration.between(syncStatus.now, nextRun).toMinutes()
+        if (minutes > 0) {
+            return "$base \u00B7 ${stringResource(R.string.dashboard_sync_status_next_in, "${minutes}m")}"
+        } else {
+            return "$base \u00B7 ${stringResource(R.string.dashboard_sync_status_due)}"
+        }
+    }
+
+    return base
 }
 
 @Composable
@@ -636,11 +661,16 @@ private fun SyncStatusBar(
                         when (syncStatus) {
                             is DashboardVM.SyncStatus.Syncing -> {
                                 val moduleNames = syncStatus.syncingModules
-                                    .sortedBy { MODULE_DISPLAY_ORDER.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE }
+                                    .sortedBy {
+                                        MODULE_DISPLAY_ORDER.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
+                                    }
                                     .mapNotNull { moduleIdToStringRes(it) }
                                     .map { stringResource(it) }
                                 val text = if (moduleNames.isNotEmpty()) {
-                                    stringResource(R.string.dashboard_sync_status_syncing_modules, moduleNames.joinToString(", "))
+                                    stringResource(
+                                        R.string.dashboard_sync_status_syncing_modules,
+                                        moduleNames.joinToString(", ")
+                                    )
                                 } else {
                                     stringResource(R.string.dashboard_sync_status_syncing)
                                 }
@@ -672,8 +702,10 @@ private fun SyncStatusBar(
                             )
                         }
                         val secondaryText = when (syncStatus) {
-                            is DashboardVM.SyncStatus.Error -> syncStatus.message ?: connectorTypesLabel(syncStatus.connectorTypes)
-                            else -> connectorTypesLabel(syncStatus.connectorTypes)
+                            is DashboardVM.SyncStatus.Error -> syncStatus.message
+                                ?: connectorTypesLabel(syncStatus)
+
+                            else -> connectorTypesLabel(syncStatus)
                         }
                         if (secondaryText != null) {
                             Text(
@@ -729,7 +761,10 @@ private fun SyncStatusBar(
                         HorizontalDivider()
                         Spacer(modifier = Modifier.height(4.dp))
                         detail.connectors.forEach { connector ->
-                            SyncDetailConnectorRow(connector)
+                            SyncDetailConnectorRow(
+                                connector = connector,
+                                quickSyncMode = syncStatus.orchestratorState.quickSync.connectorModes[connector.type],
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -800,7 +835,10 @@ private fun SyncDetailModuleRow(moduleState: ModuleManager.ModuleSyncState) {
 }
 
 @Composable
-private fun SyncDetailConnectorRow(connector: DashboardVM.ConnectorDetail) {
+private fun SyncDetailConnectorRow(
+    connector: DashboardVM.ConnectorDetail,
+    quickSyncMode: SyncOrchestrator.QuickSyncState.Mode? = null,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -827,6 +865,23 @@ private fun SyncDetailConnectorRow(connector: DashboardVM.ConnectorDetail) {
             CircularProgressIndicator(
                 modifier = Modifier.size(12.dp),
                 strokeWidth = 1.5.dp,
+            )
+        } else if (quickSyncMode != null) {
+            val modeLabel = when (quickSyncMode) {
+                SyncOrchestrator.QuickSyncState.Mode.LIVE -> stringResource(R.string.dashboard_sync_status_mode_live)
+                SyncOrchestrator.QuickSyncState.Mode.POLLING -> stringResource(R.string.dashboard_sync_status_mode_polling)
+            }
+            Text(
+                text = modeLabel,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Icon(
+                imageVector = Icons.TwoTone.CloudSync,
+                contentDescription = null,
+                modifier = Modifier.size(12.dp),
+                tint = MaterialTheme.colorScheme.primary,
             )
         } else {
             Text(
@@ -1340,7 +1395,7 @@ private fun buildAvailableModuleIds(moduleItems: List<DashboardVM.ModuleItem>): 
 
 @Composable
 private fun StaleDeviceWarning(
-    lastSyncTime: java.time.Instant,
+    lastSyncTime: Instant,
     onManageDevice: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -1373,6 +1428,27 @@ private fun StaleDeviceWarning(
 // endregion
 
 // region Previews
+
+private fun previewOrchestratorState() = SyncOrchestrator.State(
+    quickSync = SyncOrchestrator.QuickSyncState(
+        isActive = false,
+        connectorModes = emptyMap(),
+    ),
+    backgroundSync = SyncOrchestrator.BackgroundSyncState(
+        defaultWorker = SyncOrchestrator.BackgroundSyncState.WorkerInfo(
+            isEnabled = true,
+            isRunning = false,
+            isBlocked = false,
+            nextRunAt = null,
+        ),
+        chargingWorker = SyncOrchestrator.BackgroundSyncState.WorkerInfo(
+            isEnabled = false,
+            isRunning = false,
+            isBlocked = false,
+            nextRunAt = null,
+        ),
+    ),
+)
 
 private data class PreviewUpgradeInfo(
     override val type: UpgradeRepo.Type = UpgradeRepo.Type.FOSS,
@@ -1484,6 +1560,8 @@ private fun DashboardScreenPreview() = PreviewWrapper {
                 lastSyncAt = now.minusSeconds(300),
                 connectorTypes = listOf("gdrive"),
                 syncDetail = DashboardVM.SyncDetail(modules = emptyList(), connectors = emptyList()),
+                orchestratorState = previewOrchestratorState(),
+                now = now,
             ),
             isOffline = false,
             showSyncSetup = false,
@@ -1580,6 +1658,8 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
                 lastSyncAt = now.minusSeconds(300),
                 connectorTypes = listOf("gdrive", "kserver"),
                 syncDetail = DashboardVM.SyncDetail(modules = emptyList(), connectors = emptyList()),
+                orchestratorState = previewOrchestratorState(),
+                now = now,
             ),
             isOffline = false,
             showSyncSetup = false,

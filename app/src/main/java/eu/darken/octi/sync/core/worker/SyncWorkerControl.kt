@@ -1,6 +1,11 @@
 package eu.darken.octi.sync.core.worker
 
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.Bugs
@@ -12,12 +17,15 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.combine
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.time.Duration
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,6 +36,31 @@ class SyncWorkerControl @Inject constructor(
     private val syncSettings: eu.darken.octi.sync.core.SyncSettings,
     private val upgradeRepo: UpgradeRepo,
 ) {
+
+    data class WorkerState(
+        val defaultWorker: WorkerInfo,
+        val chargingWorker: WorkerInfo,
+    ) {
+        data class WorkerInfo(
+            val isEnabled: Boolean,
+            val isRunning: Boolean,
+            val isBlocked: Boolean,
+            val nextRunAt: Instant?,
+        )
+    }
+
+    val workerState: Flow<WorkerState> = kotlinx.coroutines.flow.combine(
+        workerManager.getWorkInfosForUniqueWorkFlow(WORKER_NAME),
+        workerManager.getWorkInfosForUniqueWorkFlow(WORKER_NAME_CHARGING),
+    ) { defaultInfos, chargingInfos ->
+        WorkerState(
+            defaultWorker = defaultInfos.firstOrNull().toWorkerInfo(),
+            chargingWorker = chargingInfos.firstOrNull().toWorkerInfo(),
+        )
+    }
+        .distinctUntilChanged()
+        .setupCommonEventHandlers(TAG) { "workerState" }
+        .shareLatest(scope)
 
     private data class SchedulerConfig(
         val isEnabled: Boolean,
@@ -131,8 +164,25 @@ class SyncWorkerControl @Inject constructor(
     }
 
     companion object {
-        private val WORKER_NAME = "${BuildConfigWrap.APPLICATION_ID}.sync.worker"
-        private val WORKER_NAME_CHARGING = "${BuildConfigWrap.APPLICATION_ID}.sync.worker.charging"
+        internal val WORKER_NAME = "${BuildConfigWrap.APPLICATION_ID}.sync.worker"
+        internal val WORKER_NAME_CHARGING = "${BuildConfigWrap.APPLICATION_ID}.sync.worker.charging"
         private val TAG = logTag("Sync", "Worker", "Control")
+
+        internal fun WorkInfo?.toWorkerInfo(): WorkerState.WorkerInfo {
+            if (this == null) return WorkerState.WorkerInfo(
+                isEnabled = false,
+                isRunning = false,
+                isBlocked = false,
+                nextRunAt = null,
+            )
+            val isActive = state == WorkInfo.State.ENQUEUED || state == WorkInfo.State.RUNNING
+            val nextMs = nextScheduleTimeMillis
+            return WorkerState.WorkerInfo(
+                isEnabled = isActive,
+                isRunning = state == WorkInfo.State.RUNNING,
+                isBlocked = state == WorkInfo.State.BLOCKED,
+                nextRunAt = if (nextMs != Long.MAX_VALUE && nextMs > 0) Instant.ofEpochMilli(nextMs) else null,
+            )
+        }
     }
 }

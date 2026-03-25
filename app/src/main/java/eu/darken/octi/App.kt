@@ -21,9 +21,7 @@ import eu.darken.octi.main.core.CurriculumVitae
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.release.ReleaseManager
 import eu.darken.octi.module.core.ModuleManager
-import eu.darken.octi.sync.core.ForegroundSyncControl
-import eu.darken.octi.sync.core.SyncManager
-import eu.darken.octi.sync.core.worker.SyncWorkerControl
+import eu.darken.octi.sync.core.SyncOrchestrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -37,10 +35,8 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var dispatcherProvider: DispatcherProvider
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var bugReporter: AutomaticBugReporter
-    @Inject lateinit var syncManager: SyncManager
+    @Inject lateinit var syncOrchestrator: SyncOrchestrator
     @Inject lateinit var moduleManager: ModuleManager
-    @Inject lateinit var syncWorkerControl: SyncWorkerControl
-    @Inject lateinit var foregroundSyncControl: ForegroundSyncControl
     @Inject lateinit var generalSettings: GeneralSettings
     @Inject lateinit var debugSessionManager: DebugSessionManager
     @Inject lateinit var imageLoaderFactory: SingletonImageLoader.Factory
@@ -64,11 +60,8 @@ open class App : Application(), Configuration.Provider {
 
         bugReporter.setup(this)
 
-        syncManager.start()
         moduleManager.start()
-
-        syncWorkerControl.start()
-        foregroundSyncControl.start()
+        syncOrchestrator.start()
 
         curriculumVitae.updateAppLaunch()
 
@@ -81,18 +74,19 @@ open class App : Application(), Configuration.Provider {
         log(TAG) { "onCreate() done! ${Exception().asLog()}" }
     }
 
-    override val workManagerConfiguration: Configuration get() = Configuration.Builder()
-        .setMinimumLoggingLevel(
-            when {
-                BuildConfigWrap.DEBUG -> android.util.Log.VERBOSE
-                BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.DEV -> android.util.Log.DEBUG
-                BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.BETA -> android.util.Log.INFO
-                BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.RELEASE -> android.util.Log.WARN
-                else -> android.util.Log.VERBOSE
-            }
-        )
-        .setWorkerFactory(workerFactory)
-        .build()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setMinimumLoggingLevel(
+                when {
+                    BuildConfigWrap.DEBUG -> android.util.Log.VERBOSE
+                    BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.DEV -> android.util.Log.DEBUG
+                    BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.BETA -> android.util.Log.INFO
+                    BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.RELEASE -> android.util.Log.WARN
+                    else -> android.util.Log.VERBOSE
+                }
+            )
+            .setWorkerFactory(workerFactory)
+            .build()
 
     companion object {
         internal val TAG = logTag("App")

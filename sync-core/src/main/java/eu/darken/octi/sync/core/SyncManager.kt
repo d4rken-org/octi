@@ -17,10 +17,10 @@ import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -99,11 +99,6 @@ class SyncManager @Inject constructor(
         .map { it.latestData() }
         .setupCommonEventHandlers(TAG) { "syncData" }
         .shareLatest(scope + dispatcherProvider.Default)
-
-    fun start() {
-        log(TAG) { "start()" }
-        // NOOP?
-    }
 
     suspend fun sync(options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(options=$options)" }

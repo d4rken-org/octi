@@ -2,32 +2,37 @@ package eu.darken.octi.sync.core
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
+import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
-import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.flow.combine
 import eu.darken.octi.common.flow.setupCommonEventHandlers
-import dagger.hilt.android.qualifiers.ApplicationContext
-import android.content.Context
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.syncs.kserver.core.KServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import eu.darken.octi.common.flow.combine
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
@@ -44,8 +49,13 @@ class ForegroundSyncControl @Inject constructor(
     private val networkStateProvider: NetworkStateProvider,
 ) {
 
+    private val _isActive = MutableStateFlow(false)
+    val isActive: StateFlow<Boolean> = _isActive.asStateFlow()
+
     @Volatile private var lastBackgroundedAt: Instant? = null
     private var eventCollectorJob: Job? = null
+    private var connectJob: Job? = null
+    private var disconnectJob: Job? = null
 
     fun start() {
         log(TAG) { "start()" }
@@ -90,6 +100,7 @@ class ForegroundSyncControl @Inject constructor(
         }
             .distinctUntilChanged()
             .onEach { isActive ->
+                _isActive.value = isActive
                 if (isActive) {
                     onForeground()
                 } else {
@@ -104,7 +115,8 @@ class ForegroundSyncControl @Inject constructor(
         log(TAG, INFO) { "onForeground()" }
 
         // Connect WebSocket on KServer connectors
-        scope.launch {
+        disconnectJob?.cancel()
+        connectJob = scope.launch {
             syncManager.connectors.first()
                 .filterIsInstance<KServerConnector>()
                 .forEach { connector ->
@@ -128,51 +140,80 @@ class ForegroundSyncControl @Inject constructor(
             lastBackgroundedAt = null
         }
 
-        // Start collecting sync events with accumulator + debounce
+        // Start collecting sync events with channel-based batching
         eventCollectorJob = scope.launch {
-            var debounceJob: Job? = null
-            val pendingModules = mutableMapOf<ConnectorId, MutableSet<ModuleId>>()
+            val eventChannel = Channel<SyncEvent.ModuleChanged>(Channel.UNLIMITED)
 
-            syncManager.syncEvents.collect { event ->
-                when (event) {
-                    is SyncEvent.ModuleChanged -> when (event.action) {
-                        SyncEvent.ModuleChanged.Action.UPDATED -> {
-                            pendingModules.getOrPut(event.connectorId) { mutableSetOf() }
-                                .add(event.moduleId)
-                            log(TAG) { "Queued: ${event.moduleId} on ${event.connectorId}" }
+            // Producer: collect sync events, filter to UPDATED, send to channel
+            val producerJob = launch {
+                syncManager.syncEvents.collect { event ->
+                    when (event) {
+                        is SyncEvent.ModuleChanged -> when (event.action) {
+                            SyncEvent.ModuleChanged.Action.UPDATED -> {
+                                log(TAG) { "Queued: ${event.moduleId} on ${event.connectorId}" }
+                                eventChannel.send(event)
+                            }
+
+                            SyncEvent.ModuleChanged.Action.DELETED -> {
+                                log(TAG, INFO) { "Module deleted: ${event.moduleId}" }
+                            }
                         }
 
-                        SyncEvent.ModuleChanged.Action.DELETED -> {
-                            log(TAG, INFO) { "Module deleted: ${event.moduleId}" }
+                        is SyncEvent.BlobChanged -> {
+                            log(TAG) { "Blob changed: ${event.blobKey} (${event.action})" }
                         }
-                    }
-
-                    is SyncEvent.BlobChanged -> {
-                        log(TAG) { "Blob changed: ${event.blobKey} (${event.action})" }
                     }
                 }
+            }
 
-                debounceJob?.cancel()
-                debounceJob = launch {
-                    delay(CLIENT_DEBOUNCE_MS)
-                    pendingModules.forEach { (connectorId, modules) ->
-                        log(TAG) { "Batched sync: ${modules.size} modules on $connectorId" }
-                        try {
-                            syncManager.sync(
-                                connectorId,
-                                SyncOptions(
-                                    stats = false,
-                                    readData = true,
-                                    writeData = false,
-                                    moduleFilter = modules.toSet(),
-                                ),
-                            )
-                        } catch (e: Exception) {
-                            log(TAG, ERROR) { "Batched sync failed: ${e.asLog()}" }
+            // Consumer: batch events within a timeout window, then sync
+            try {
+                while (isActive) {
+                    val first = eventChannel.receive()
+                    val pending = mutableMapOf<ConnectorId, MutableSet<ModuleId>>()
+                    pending.getOrPut(first.connectorId) { mutableSetOf() }.add(first.moduleId)
+
+                    // Drain events arriving within the debounce window
+                    withTimeoutOrNull(CLIENT_DEBOUNCE_MS) {
+                        while (true) {
+                            val event = eventChannel.receive()
+                            pending.getOrPut(event.connectorId) { mutableSetOf() }.add(event.moduleId)
                         }
                     }
-                    pendingModules.clear()
+
+                    syncPendingModules(pending)
                 }
+            } finally {
+                // Flush remaining events on cancellation (W8)
+                val remaining = mutableMapOf<ConnectorId, MutableSet<ModuleId>>()
+                while (true) {
+                    val event = eventChannel.tryReceive().getOrNull() ?: break
+                    remaining.getOrPut(event.connectorId) { mutableSetOf() }.add(event.moduleId)
+                }
+                if (remaining.isNotEmpty()) {
+                    log(TAG, INFO) { "Flushing ${remaining.values.sumOf { it.size }} pending events on shutdown" }
+                    withContext(NonCancellable) { syncPendingModules(remaining) }
+                }
+                producerJob.cancel()
+            }
+        }
+    }
+
+    private suspend fun syncPendingModules(pending: Map<ConnectorId, Set<ModuleId>>) {
+        pending.forEach { (connectorId, modules) ->
+            log(TAG) { "Batched sync: ${modules.size} modules on $connectorId" }
+            try {
+                syncManager.sync(
+                    connectorId,
+                    SyncOptions(
+                        stats = false,
+                        readData = true,
+                        writeData = false,
+                        moduleFilter = modules.toSet(),
+                    ),
+                )
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Batched sync failed: ${e.asLog()}" }
             }
         }
     }
@@ -186,7 +227,8 @@ class ForegroundSyncControl @Inject constructor(
         eventCollectorJob = null
 
         // Disconnect WebSocket on KServer connectors
-        scope.launch {
+        connectJob?.cancel()
+        disconnectJob = scope.launch {
             syncManager.connectors.first()
                 .filterIsInstance<KServerConnector>()
                 .forEach { connector ->
