@@ -20,7 +20,7 @@ import eu.darken.octi.syncs.kserver.core.KServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import eu.darken.octi.common.flow.combine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -128,14 +128,52 @@ class ForegroundSyncControl @Inject constructor(
             lastBackgroundedAt = null
         }
 
-        // Start collecting sync events
+        // Start collecting sync events with accumulator + debounce
         eventCollectorJob = scope.launch {
-            syncManager.syncEvents
-                .collectLatest { event ->
-                    // Debounce: wait 500ms for more events before acting
-                    delay(CLIENT_DEBOUNCE_MS)
-                    handleSyncEvent(event)
+            var debounceJob: Job? = null
+            val pendingModules = mutableMapOf<ConnectorId, MutableSet<ModuleId>>()
+
+            syncManager.syncEvents.collect { event ->
+                when (event) {
+                    is SyncEvent.ModuleChanged -> when (event.action) {
+                        SyncEvent.ModuleChanged.Action.UPDATED -> {
+                            pendingModules.getOrPut(event.connectorId) { mutableSetOf() }
+                                .add(event.moduleId)
+                            log(TAG) { "Queued: ${event.moduleId} on ${event.connectorId}" }
+                        }
+
+                        SyncEvent.ModuleChanged.Action.DELETED -> {
+                            log(TAG, INFO) { "Module deleted: ${event.moduleId}" }
+                        }
+                    }
+
+                    is SyncEvent.BlobChanged -> {
+                        log(TAG) { "Blob changed: ${event.blobKey} (${event.action})" }
+                    }
                 }
+
+                debounceJob?.cancel()
+                debounceJob = launch {
+                    delay(CLIENT_DEBOUNCE_MS)
+                    pendingModules.forEach { (connectorId, modules) ->
+                        log(TAG) { "Batched sync: ${modules.size} modules on $connectorId" }
+                        try {
+                            syncManager.sync(
+                                connectorId,
+                                SyncOptions(
+                                    stats = false,
+                                    readData = true,
+                                    writeData = false,
+                                    moduleFilter = modules.toSet(),
+                                ),
+                            )
+                        } catch (e: Exception) {
+                            log(TAG, ERROR) { "Batched sync failed: ${e.asLog()}" }
+                        }
+                    }
+                    pendingModules.clear()
+                }
+            }
         }
     }
 
@@ -155,39 +193,6 @@ class ForegroundSyncControl @Inject constructor(
                     log(TAG) { "Disconnecting WebSocket for ${connector.identifier}" }
                     connector.disconnectWebSocket()
                 }
-        }
-    }
-
-    private suspend fun handleSyncEvent(event: SyncEvent) {
-        when (event) {
-            is SyncEvent.ModuleChanged -> when (event.action) {
-                SyncEvent.ModuleChanged.Action.UPDATED -> {
-                    log(TAG) { "Module updated: ${event.moduleId} on ${event.deviceId}, syncing" }
-                    try {
-                        syncManager.sync(
-                            event.connectorId,
-                            SyncOptions(
-                                stats = false,
-                                readData = true,
-                                writeData = false,
-                                moduleFilter = setOf(event.moduleId),
-                            ),
-                        )
-                    } catch (e: Exception) {
-                        log(TAG, ERROR) { "Targeted sync failed: ${e.asLog()}" }
-                    }
-                }
-
-                SyncEvent.ModuleChanged.Action.DELETED -> {
-                    log(TAG, INFO) { "Module deleted: ${event.moduleId} on ${event.deviceId}" }
-                    // Cache invalidation handled by next full sync
-                }
-            }
-
-            is SyncEvent.BlobChanged -> {
-                log(TAG) { "Blob changed: ${event.blobKey} (${event.action}), UI will update from metadata sync" }
-                // No auto-download — blob downloads are user-initiated
-            }
         }
     }
 
