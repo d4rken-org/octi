@@ -7,7 +7,6 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
@@ -17,7 +16,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
@@ -37,7 +35,6 @@ class KServerWebSocket(
     private val credentials: KServer.Credentials,
     private val connectorId: ConnectorId,
     private val syncSettings: SyncSettings,
-    private val networkStateProvider: NetworkStateProvider,
     private val baseHttpClient: OkHttpClient,
     private val json: Json,
 ) {
@@ -73,13 +70,6 @@ class KServerWebSocket(
                 backoffMs = min(backoffMs * 2, MAX_BACKOFF_MS)
 
                 if (!isActive) return@launch
-
-                val online = networkStateProvider.networkState.first().isInternetAvailable
-                if (!online) {
-                    log(TAG, INFO) { "Offline, deferring reconnect" }
-                    backoffMs = INITIAL_BACKOFF_MS
-                    return@launch
-                }
 
                 doConnect()
             }

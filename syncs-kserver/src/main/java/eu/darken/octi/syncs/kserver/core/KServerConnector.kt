@@ -39,8 +39,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.plus
@@ -113,12 +115,22 @@ class KServerConnector @AssistedInject constructor(
             credentials = credentials,
             connectorId = identifier,
             syncSettings = syncSettings,
-            networkStateProvider = networkStateProvider,
             baseHttpClient = baseHttpClient,
             json = json,
         )
         webSocket = ws
-        _webSocketFlow.value = ws.connect()
+        _webSocketFlow.value = networkStateProvider.networkState
+            .map { it.isInternetAvailable }
+            .distinctUntilChanged()
+            .flatMapLatest { online ->
+                if (online) {
+                    log(TAG, INFO) { "Network available, connecting WebSocket" }
+                    ws.connect()
+                } else {
+                    log(TAG, INFO) { "Network lost, disconnecting WebSocket" }
+                    emptyFlow()
+                }
+            }
     }
 
     fun disconnectWebSocket() {

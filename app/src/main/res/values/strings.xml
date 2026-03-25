@@ -146,8 +146,8 @@
     <string name="sync_setting_charging_interval_label">Charging interval</string>
 
     <string name="sync_setting_category_foreground_label">Foreground synchronization</string>
-    <string name="sync_setting_foreground_enable_title">Sync when app is open</string>
-    <string name="sync_setting_foreground_enable_desc">Sync at shorter intervals while the app is visible.</string>
+    <string name="sync_setting_foreground_enable_title">Quick sync</string>
+    <string name="sync_setting_foreground_enable_desc">Faster synchronization while the app is open. Instant with K-Server, quicker polling with Google Drive.</string>
     <string name="sync_setting_foreground_interval_label">Foreground interval</string>
 
     <string name="modules_settings_label">Modules</string>

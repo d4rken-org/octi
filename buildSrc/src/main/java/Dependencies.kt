@@ -48,6 +48,7 @@ fun Project.setupModule() {
                 "-opt-in=kotlin.time.ExperimentalTime",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+                "-opt-in=kotlinx.serialization.InternalSerializationApi",
             )
         }
     }
