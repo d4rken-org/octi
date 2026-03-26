@@ -7,4 +7,5 @@ data class SyncOptions(
     val readData: Boolean = true,
     val writeData: Boolean = true,
     val moduleFilter: Set<ModuleId>? = null,
+    val deviceFilter: Set<DeviceId>? = null,
 )

@@ -219,14 +219,16 @@ class OctiServerConnector @AssistedInject constructor(
         }
 
         if (options.readData) {
-            val filter = options.moduleFilter
-            log(TAG) { "read(moduleFilter=$filter)" }
+            val moduleFilter = options.moduleFilter
+            val deviceFilter = options.deviceFilter
+            val isTargeted = moduleFilter != null || deviceFilter != null
+            log(TAG) { "read(moduleFilter=$moduleFilter, deviceFilter=$deviceFilter)" }
             try {
                 runServerAction("read-server") {
-                    val newData = readServer(filter)
+                    val newData = readServer(moduleFilter, deviceFilter)
                     val existing = _data.value
-                    _data.value = if (filter != null && existing != null) {
-                        mergeData(existing, newData, filter)
+                    _data.value = if (isTargeted && existing != null) {
+                        mergeData(existing, newData, moduleFilter)
                     } else {
                         newData
                     }
@@ -256,10 +258,18 @@ class OctiServerConnector @AssistedInject constructor(
         ).also { log(TAG, VERBOSE) { "readServer(): Module data: $it" } }
     }
 
-    private suspend fun readServer(moduleFilter: Set<ModuleId>? = null): OctiServerData {
-        log(TAG, DEBUG) { "readServer(moduleFilter=$moduleFilter): Starting..." }
-        val deviceIds = endpoint.listDevices()
-        log(TAG, VERBOSE) { "readServer(): Found devices: $deviceIds" }
+    private suspend fun readServer(
+        moduleFilter: Set<ModuleId>? = null,
+        deviceFilter: Set<DeviceId>? = null,
+    ): OctiServerData {
+        log(TAG, DEBUG) { "readServer(moduleFilter=$moduleFilter, deviceFilter=$deviceFilter): Starting..." }
+        val allDeviceIds = endpoint.listDevices()
+        val deviceIds = if (deviceFilter != null) {
+            allDeviceIds.filter { it in deviceFilter }
+        } else {
+            allDeviceIds
+        }
+        log(TAG, VERBOSE) { "readServer(): Found devices: $deviceIds (${allDeviceIds.size} total)" }
 
         val targetModuleIds = moduleFilter ?: supportedModuleIds
         val isTargeted = moduleFilter != null
@@ -360,22 +370,33 @@ class OctiServerConnector @AssistedInject constructor(
     internal fun mergeData(
         existing: SyncRead,
         update: SyncRead,
-        filter: Set<ModuleId>,
+        moduleFilter: Set<ModuleId>?,
     ): OctiServerData {
         val updatedDeviceMap = update.devices.associateBy { it.deviceId }
+        val existingDeviceIds = existing.devices.map { it.deviceId }.toSet()
+
         val mergedDevices = existing.devices.map { existingDevice ->
             val updatedDevice = updatedDeviceMap[existingDevice.deviceId]
             if (updatedDevice == null) {
                 existingDevice
             } else {
-                val keptModules = existingDevice.modules.filter { it.moduleId !in filter }
+                val keptModules = if (moduleFilter != null) {
+                    existingDevice.modules.filter { it.moduleId !in moduleFilter }
+                } else {
+                    emptyList()
+                }
                 OctiServerDeviceData(
                     deviceId = existingDevice.deviceId,
                     modules = keptModules + updatedDevice.modules,
                 )
             }
         }
-        return OctiServerData(connectorId = existing.connectorId, devices = mergedDevices)
+
+        val newDevices = update.devices
+            .filter { it.deviceId !in existingDeviceIds }
+            .map { OctiServerDeviceData(deviceId = it.deviceId, modules = it.modules.toList()) }
+
+        return OctiServerData(connectorId = existing.connectorId, devices = mergedDevices + newDevices)
     }
 
     @AssistedFactory

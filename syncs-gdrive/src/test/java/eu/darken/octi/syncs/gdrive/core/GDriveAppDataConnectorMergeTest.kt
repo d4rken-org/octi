@@ -1,4 +1,4 @@
-package eu.darken.octi.syncs.octiserver.core
+package eu.darken.octi.syncs.gdrive.core
 
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.ConnectorId
@@ -9,15 +9,14 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import okio.ByteString.Companion.encodeUtf8
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import java.time.Instant
 
-class OctiServerConnectorMergeTest : BaseTest() {
+class GDriveAppDataConnectorMergeTest : BaseTest() {
 
-    private val connectorId = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "test", account = "acc-1")
+    private val connectorId = ConnectorId(type = ConnectorType.GDRIVE, subtype = "test", account = "acc-1")
     private val deviceA = DeviceId("device-a")
     private val deviceB = DeviceId("device-b")
     private val deviceC = DeviceId("device-c")
@@ -28,8 +27,8 @@ class OctiServerConnectorMergeTest : BaseTest() {
     private val clipboard = ModuleId("eu.darken.octi.module.core.clipboard")
     private val apps = ModuleId("eu.darken.octi.module.core.apps")
 
-    private fun module(deviceId: DeviceId, moduleId: ModuleId, payload: String = "data"): OctiServerModuleData {
-        return OctiServerModuleData(
+    private fun module(deviceId: DeviceId, moduleId: ModuleId, payload: String = "data"): GDriveModuleData {
+        return GDriveModuleData(
             connectorId = connectorId,
             deviceId = deviceId,
             moduleId = moduleId,
@@ -38,20 +37,19 @@ class OctiServerConnectorMergeTest : BaseTest() {
         )
     }
 
-    private fun deviceData(deviceId: DeviceId, vararg modules: OctiServerModuleData): OctiServerDeviceData {
-        return OctiServerDeviceData(deviceId = deviceId, modules = modules.toList())
+    private fun deviceData(deviceId: DeviceId, vararg modules: GDriveModuleData): GDriveDeviceData {
+        return GDriveDeviceData(deviceId = deviceId, modules = modules.toList())
     }
 
-    private fun serverData(vararg devices: SyncRead.Device): OctiServerData {
-        return OctiServerData(connectorId = connectorId, devices = devices.toList())
+    private fun driveData(vararg devices: SyncRead.Device): GDriveData {
+        return GDriveData(connectorId = connectorId, devices = devices.toList())
     }
 
-    /** Access mergeData via a minimal instance — it's internal, no DI needed for pure logic */
     private fun mergeData(
         existing: SyncRead,
         update: SyncRead,
         moduleFilter: Set<ModuleId>?,
-    ): OctiServerData {
+    ): GDriveData {
         val updatedDeviceMap = update.devices.associateBy { it.deviceId }
         val existingDeviceIds = existing.devices.map { it.deviceId }.toSet()
 
@@ -65,7 +63,7 @@ class OctiServerConnectorMergeTest : BaseTest() {
                 } else {
                     emptyList()
                 }
-                OctiServerDeviceData(
+                GDriveDeviceData(
                     deviceId = existingDevice.deviceId,
                     modules = keptModules + updatedDevice.modules,
                 )
@@ -74,9 +72,9 @@ class OctiServerConnectorMergeTest : BaseTest() {
 
         val newDevices = update.devices
             .filter { it.deviceId !in existingDeviceIds }
-            .map { OctiServerDeviceData(deviceId = it.deviceId, modules = it.modules.toList()) }
+            .map { GDriveDeviceData(deviceId = it.deviceId, modules = it.modules.toList()) }
 
-        return OctiServerData(connectorId = existing.connectorId, devices = mergedDevices + newDevices)
+        return GDriveData(connectorId = existing.connectorId, devices = mergedDevices + newDevices)
     }
 
     @Nested
@@ -84,7 +82,7 @@ class OctiServerConnectorMergeTest : BaseTest() {
 
         @Test
         fun `updating one module keeps all others`() {
-            val existing = serverData(
+            val existing = driveData(
                 deviceData(
                     deviceB,
                     module(deviceB, power, "power-old"),
@@ -95,7 +93,7 @@ class OctiServerConnectorMergeTest : BaseTest() {
                 ),
             )
 
-            val update = serverData(
+            val update = driveData(
                 deviceData(deviceB, module(deviceB, clipboard, "clipboard-new")),
             )
 
@@ -110,7 +108,7 @@ class OctiServerConnectorMergeTest : BaseTest() {
 
         @Test
         fun `updating multiple modules in filter`() {
-            val existing = serverData(
+            val existing = driveData(
                 deviceData(
                     deviceB,
                     module(deviceB, power, "power-old"),
@@ -119,7 +117,7 @@ class OctiServerConnectorMergeTest : BaseTest() {
                 ),
             )
 
-            val update = serverData(
+            val update = driveData(
                 deviceData(
                     deviceB,
                     module(deviceB, clipboard, "clipboard-new"),
@@ -142,14 +140,13 @@ class OctiServerConnectorMergeTest : BaseTest() {
 
         @Test
         fun `preserves data from devices not in update`() {
-            val existing = serverData(
+            val existing = driveData(
                 deviceData(deviceB, module(deviceB, power, "b-power")),
                 deviceData(deviceC, module(deviceC, wifi, "c-wifi")),
             )
 
-            val update = serverData(
+            val update = driveData(
                 deviceData(deviceB, module(deviceB, clipboard, "b-clipboard-new")),
-                // deviceC not in update
             )
 
             val result = mergeData(existing, update, setOf(clipboard))
@@ -164,6 +161,25 @@ class OctiServerConnectorMergeTest : BaseTest() {
             cModules.single().moduleId shouldBe wifi
             cModules.single().payload shouldBe "c-wifi".encodeUtf8()
         }
+
+        @Test
+        fun `update for one device preserves other devices`() {
+            val existing = driveData(
+                deviceData(deviceA, module(deviceA, power, "a-power-old")),
+                deviceData(deviceB, module(deviceB, power, "b-power-old")),
+            )
+
+            // readDrive with deviceFilter would only return deviceB — merge sees only deviceB in update
+            val update = driveData(
+                deviceData(deviceB, module(deviceB, power, "b-power-new")),
+            )
+
+            val result = mergeData(existing, update, setOf(power))
+
+            result.devices shouldHaveSize 2
+            result.devices.single { it.deviceId == deviceA }.modules.single().payload shouldBe "a-power-old".encodeUtf8()
+            result.devices.single { it.deviceId == deviceB }.modules.single().payload shouldBe "b-power-new".encodeUtf8()
+        }
     }
 
     @Nested
@@ -171,11 +187,11 @@ class OctiServerConnectorMergeTest : BaseTest() {
 
         @Test
         fun `new device in update is appended`() {
-            val existing = serverData(
+            val existing = driveData(
                 deviceData(deviceA, module(deviceA, power, "a-power")),
             )
 
-            val update = serverData(
+            val update = driveData(
                 deviceData(deviceB, module(deviceB, clipboard, "b-clipboard")),
             )
 
@@ -188,11 +204,11 @@ class OctiServerConnectorMergeTest : BaseTest() {
 
         @Test
         fun `new device with targeted sync includes all its modules`() {
-            val existing = serverData(
+            val existing = driveData(
                 deviceData(deviceA, module(deviceA, power, "a-power")),
             )
 
-            val update = serverData(
+            val update = driveData(
                 deviceData(
                     deviceB,
                     module(deviceB, power, "b-power"),
@@ -207,6 +223,20 @@ class OctiServerConnectorMergeTest : BaseTest() {
             newDevice.modules shouldHaveSize 2
             newDevice.modules.map { it.moduleId } shouldContainExactlyInAnyOrder listOf(power, wifi)
         }
+
+        @Test
+        fun `merge with empty existing appends all update devices`() {
+            val existing = driveData()
+
+            val update = driveData(
+                deviceData(deviceB, module(deviceB, clipboard, "new")),
+            )
+
+            val result = mergeData(existing, update, setOf(clipboard))
+
+            result.devices shouldHaveSize 1
+            result.devices.single().deviceId shouldBe deviceB
+        }
     }
 
     @Nested
@@ -214,7 +244,7 @@ class OctiServerConnectorMergeTest : BaseTest() {
 
         @Test
         fun `empty result removes filtered module`() {
-            val existing = serverData(
+            val existing = driveData(
                 deviceData(
                     deviceB,
                     module(deviceB, clipboard, "old-clipboard"),
@@ -222,8 +252,7 @@ class OctiServerConnectorMergeTest : BaseTest() {
                 ),
             )
 
-            // Update has deviceB but no clipboard module (deleted on server)
-            val update = serverData(
+            val update = driveData(
                 deviceData(deviceB),
             )
 
@@ -236,7 +265,7 @@ class OctiServerConnectorMergeTest : BaseTest() {
 
         @Test
         fun `sequential merges accumulate correctly`() {
-            val initial = serverData(
+            val initial = driveData(
                 deviceData(
                     deviceB,
                     module(deviceB, power, "power-v1"),
@@ -245,14 +274,12 @@ class OctiServerConnectorMergeTest : BaseTest() {
                 ),
             )
 
-            // First targeted sync: clipboard
-            val update1 = serverData(
+            val update1 = driveData(
                 deviceData(deviceB, module(deviceB, clipboard, "clipboard-new")),
             )
             val after1 = mergeData(initial, update1, setOf(clipboard))
 
-            // Second targeted sync: meta
-            val update2 = serverData(
+            val update2 = driveData(
                 deviceData(deviceB, module(deviceB, meta, "meta-v2")),
             )
             val after2 = mergeData(after1, update2, setOf(meta))
@@ -267,48 +294,30 @@ class OctiServerConnectorMergeTest : BaseTest() {
 
         @Test
         fun `full sync replaces all data completely`() {
-            // This tests that when moduleFilter is null, we DON'T merge (direct replacement)
-            // The mergeData function is only called when moduleFilter != null,
-            // so this test verifies the contract at the call site
-            val existing = serverData(
+            val existing = driveData(
                 deviceData(deviceB, module(deviceB, power, "old")),
             )
 
-            val fullUpdate = serverData(
+            val fullUpdate = driveData(
                 deviceData(deviceB, module(deviceB, wifi, "new")),
             )
 
             // With null filter, we replace directly (no merge)
-            // This is the behavior when moduleFilter is null in sync()
-            val result = fullUpdate // direct assignment, not mergeData
+            val result = fullUpdate
 
             result.devices.single().modules shouldHaveSize 1
             result.devices.single().modules.single().moduleId shouldBe wifi
         }
 
         @Test
-        fun `merge with empty existing appends all update devices`() {
-            val existing = serverData() // no devices
-
-            val update = serverData(
-                deviceData(deviceB, module(deviceB, clipboard, "new")),
-            )
-
-            val result = mergeData(existing, update, setOf(clipboard))
-
-            result.devices shouldHaveSize 1
-            result.devices.single().deviceId shouldBe deviceB
-        }
-
-        @Test
         fun `merge preserves device order`() {
-            val existing = serverData(
+            val existing = driveData(
                 deviceData(deviceA, module(deviceA, power, "a-power")),
                 deviceData(deviceB, module(deviceB, power, "b-power")),
                 deviceData(deviceC, module(deviceC, power, "c-power")),
             )
 
-            val update = serverData(
+            val update = driveData(
                 deviceData(deviceB, module(deviceB, clipboard, "b-clip")),
             )
 

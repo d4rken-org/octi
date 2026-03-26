@@ -25,9 +25,9 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncConnector
+import eu.darken.octi.sync.core.SyncConnector.EventMode
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncEvent
-import eu.darken.octi.sync.core.SyncConnector.EventMode
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncSettings
@@ -101,10 +101,17 @@ class GDriveAppDataConnector @AssistedInject constructor(
         account = account.id.id,
     )
 
-    private val changeToken = syncSettings.dataStore.createValue(
-        "gdrive.change_token.${account.id.id}",
+    private val pollToken = syncSettings.dataStore.createValue(
+        "gdrive.poll_token.${account.id.id}",
         null as String?,
     )
+
+    private val syncToken = syncSettings.dataStore.createValue(
+        "gdrive.sync_token.${account.id.id}",
+        null as String?,
+    )
+
+    private val parentCache = mutableMapOf<String, String>()
 
     private val _syncEventMode = MutableStateFlow(EventMode.NONE)
     override val syncEventMode: StateFlow<EventMode> = _syncEventMode.asStateFlow()
@@ -125,44 +132,54 @@ class GDriveAppDataConnector @AssistedInject constructor(
         .shareIn(scope, SharingStarted.WhileSubscribed(), replay = 0)
 
     private suspend fun GDriveEnvironment.checkForChanges(): List<SyncEvent> {
-        val token = changeToken.value()
+        val token = pollToken.value()
         if (token == null) {
             val startToken = drive.changes().getStartPageToken()
                 .setSupportsAllDrives(false)
                 .execute().startPageToken
-            changeToken.value(startToken)
+            pollToken.value(startToken)
             log(TAG) { "checkForChanges(): Initialized token=$startToken" }
             return emptyList()
         }
 
         return try {
-            val changeList = drive.changes().list(token)
-                .setSpaces(APPDATAFOLDER)
-                .setFields("newStartPageToken,changes(fileId,removed,file(id,name,parents))")
-                .execute()
+            val allChanges = mutableListOf<com.google.api.services.drive.model.Change>()
+            var pageToken: String? = token
+            var finalToken: String? = null
 
-            changeList.newStartPageToken?.let { changeToken.value(it) }
+            while (pageToken != null) {
+                val changeList = drive.changes().list(pageToken)
+                    .setSpaces(APPDATAFOLDER)
+                    .setFields("nextPageToken,newStartPageToken,changes(fileId,removed,file(id,name,parents))")
+                    .execute()
+                allChanges.addAll(changeList.changes ?: emptyList())
+                finalToken = changeList.newStartPageToken
+                pageToken = changeList.nextPageToken
+            }
 
-            if (changeList.changes.isNullOrEmpty()) return emptyList()
+            finalToken?.let { pollToken.value(it) }
 
-            log(TAG) { "checkForChanges(): ${changeList.changes.size} changes detected" }
+            if (allChanges.isEmpty()) return emptyList()
 
-            changeList.changes.mapNotNull { change ->
+            log(TAG) { "checkForChanges(): ${allChanges.size} changes detected" }
+
+            allChanges.mapNotNull { change ->
                 if (change.removed) return@mapNotNull null
                 val file = change.file ?: return@mapNotNull null
                 val parentId = file.parents?.firstOrNull() ?: return@mapNotNull null
 
-                // Resolve parent to get device ID
-                val parentFile = try {
-                    drive.files().get(parentId).setFields("name,parents").execute()
-                } catch (e: Exception) {
-                    log(TAG, WARN) { "checkForChanges(): Failed to resolve parent $parentId" }
-                    return@mapNotNull null
+                val parentName = parentCache.getOrPut(parentId) {
+                    try {
+                        drive.files().get(parentId).setFields("name").execute().name
+                    } catch (e: Exception) {
+                        log(TAG, WARN) { "checkForChanges(): Failed to resolve parent $parentId" }
+                        return@mapNotNull null
+                    }
                 }
 
                 SyncEvent.ModuleChanged(
                     connectorId = identifier,
-                    deviceId = DeviceId(parentFile.name),
+                    deviceId = DeviceId(parentName),
                     moduleId = ModuleId(file.name),
                     modifiedAt = Instant.now(),
                     action = SyncEvent.ModuleChanged.Action.UPDATED,
@@ -171,7 +188,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
         } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
             if (e.statusCode == 410) {
                 log(TAG, WARN) { "checkForChanges(): Token invalidated, resetting" }
-                changeToken.value(null)
+                parentCache.clear()
+                pollToken.value(null)
             } else {
                 log(TAG, ERROR) { "checkForChanges(): API error: ${e.message}" }
             }
@@ -232,8 +250,11 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
-    private suspend fun GDriveEnvironment.readDrive(): GDriveData {
-        log(TAG, DEBUG) { "readDrive(): Starting..." }
+    private suspend fun GDriveEnvironment.readDrive(
+        moduleFilter: Set<ModuleId>? = null,
+        deviceFilter: Set<DeviceId>? = null,
+    ): GDriveData {
+        log(TAG, DEBUG) { "readDrive(moduleFilter=$moduleFilter, deviceFilter=$deviceFilter): Starting..." }
         val start = System.currentTimeMillis()
 
         val deviceDataDir = appDataRoot.child(DEVICE_DATA_DIR_NAME)
@@ -247,16 +268,24 @@ class GDriveAppDataConnector @AssistedInject constructor(
             )
         }
 
-        val validDeviceDirs = deviceDataDir.listFiles().filter {
+        val allDeviceDirs = deviceDataDir.listFiles().filter {
             val isDir = it.isDirectory
             if (!isDir) log(TAG, WARN) { "Unexpected file in userDir: $it" }
             isDir
         }
 
+        val validDeviceDirs = if (deviceFilter != null) {
+            allDeviceDirs.filter { deviceFilter.contains(DeviceId(it.name)) }
+        } else {
+            allDeviceDirs
+        }
+
+        val targetModules = moduleFilter?.let { supportedModuleIds.intersect(it) } ?: supportedModuleIds
+
         val deviceFetchJobs = validDeviceDirs.map { deviceDir ->
             scope.async(dispatcherProvider.IO) deviceFetch@{
                 log(TAG, DEBUG) { "readDrive(): Reading module data for device: $deviceDir" }
-                val moduleDirs = deviceDir.listFiles().filter { supportedModuleIds.contains(ModuleId(it.name)) }
+                val moduleDirs = deviceDir.listFiles().filter { targetModules.contains(ModuleId(it.name)) }
                 val moduleFetchJobs = moduleDirs.map { moduleFile ->
                     scope.async(dispatcherProvider.IO) moduleFetch@{
                         log(TAG, VERBOSE) { "readDrive(): Reading ${moduleFile.name} for ${deviceDir.name}" }
@@ -296,6 +325,88 @@ class GDriveAppDataConnector @AssistedInject constructor(
         )
     }
 
+    internal sealed interface SyncChangeResult {
+        data class HasChanges(val newToken: String) : SyncChangeResult
+        data object NoChanges : SyncChangeResult
+        data object ForceFullSync : SyncChangeResult
+    }
+
+    private suspend fun GDriveEnvironment.checkSyncChanges(): SyncChangeResult {
+        val token = syncToken.value()
+        if (token == null) {
+            val startToken = drive.changes().getStartPageToken()
+                .setSupportsAllDrives(false)
+                .execute().startPageToken
+            syncToken.value(startToken)
+            log(TAG) { "checkSyncChanges(): No token, initialized to $startToken, forcing full sync" }
+            return SyncChangeResult.ForceFullSync
+        }
+
+        return try {
+            val allChanges = mutableListOf<com.google.api.services.drive.model.Change>()
+            var pageToken: String? = token
+            var finalToken: String? = null
+
+            while (pageToken != null) {
+                val changeList = drive.changes().list(pageToken)
+                    .setSpaces(APPDATAFOLDER)
+                    .setFields("nextPageToken,newStartPageToken,changes(fileId)")
+                    .execute()
+                allChanges.addAll(changeList.changes ?: emptyList())
+                finalToken = changeList.newStartPageToken
+                pageToken = changeList.nextPageToken
+            }
+
+            if (allChanges.isNotEmpty()) {
+                val newToken = finalToken ?: token
+                log(TAG) { "checkSyncChanges(): ${allChanges.size} changes, newToken=$newToken" }
+                SyncChangeResult.HasChanges(newToken)
+            } else {
+                finalToken?.let { syncToken.value(it) }
+                log(TAG) { "checkSyncChanges(): No changes" }
+                SyncChangeResult.NoChanges
+            }
+        } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
+            if (e.statusCode == 410) {
+                log(TAG, WARN) { "checkSyncChanges(): Token invalidated, resetting" }
+                syncToken.value(null)
+            }
+            SyncChangeResult.ForceFullSync
+        }
+    }
+
+    internal fun mergeData(
+        existing: SyncRead,
+        update: SyncRead,
+        moduleFilter: Set<ModuleId>?,
+    ): GDriveData {
+        val updatedDeviceMap = update.devices.associateBy { it.deviceId }
+        val existingDeviceIds = existing.devices.map { it.deviceId }.toSet()
+
+        val mergedDevices = existing.devices.map { existingDevice ->
+            val updatedDevice = updatedDeviceMap[existingDevice.deviceId]
+            if (updatedDevice == null) {
+                existingDevice
+            } else {
+                val keptModules = if (moduleFilter != null) {
+                    existingDevice.modules.filter { it.moduleId !in moduleFilter }
+                } else {
+                    emptyList()
+                }
+                GDriveDeviceData(
+                    deviceId = existingDevice.deviceId,
+                    modules = keptModules + updatedDevice.modules,
+                )
+            }
+        }
+
+        val newDevices = update.devices
+            .filter { it.deviceId !in existingDeviceIds }
+            .map { GDriveDeviceData(deviceId = it.deviceId, modules = it.modules.toList()) }
+
+        return GDriveData(connectorId = existing.connectorId, devices = mergedDevices + newDevices)
+    }
+
     private val syncLock = Mutex()
     private var isSyncing = false
 
@@ -318,74 +429,104 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
         }
 
-        runDriveAction("sync-sync") {
-            val jobs = mutableSetOf<Deferred<*>>()
+        try {
+            runDriveAction("sync-sync") {
+                val jobs = mutableSetOf<Deferred<*>>()
 
 
-            scope.async(dispatcherProvider.IO) {
-                if (!options.stats) return@async
+                scope.async(dispatcherProvider.IO) {
+                    if (!options.stats) return@async
 
-                try {
-                    val deviceDirs = appDataRoot.child(DEVICE_DATA_DIR_NAME)
-                        ?.listFiles()
-                        ?.filter { it.isDirectory }
-                        ?.map { DeviceId(id = it.name) }
+                    try {
+                        val deviceDirs = appDataRoot.child(DEVICE_DATA_DIR_NAME)
+                            ?.listFiles()
+                            ?.filter { it.isDirectory }
+                            ?.map { DeviceId(id = it.name) }
 
-                    _state.updateBlocking { copy(devices = deviceDirs) }
-                } catch (e: Exception) {
-                    log(TAG, ERROR) { "sync(): Failed to list of known devices: ${e.asLog()}" }
-                }
-                val stop = System.currentTimeMillis()
-                log(TAG, VERBOSE) { "sync(...): devices finished (took ${stop - start}ms)" }
-            }.run { jobs.add(this) }
-
-            scope.async(dispatcherProvider.IO) {
-                if (!options.stats) return@async
-
-                try {
-                    val newQuota = getStorageQuota()
-                    _state.updateBlocking { copy(quota = newQuota) }
-                } catch (e: Exception) {
-                    log(TAG, ERROR) { "sync(): Failed to update storage quota: ${e.asLog()}" }
-                }
-                val stop = System.currentTimeMillis()
-                log(TAG, VERBOSE) { "sync(...): quota finished (took ${stop - start}ms)" }
-            }.run { jobs.add(this) }
-
-
-            if (options.writeData) {
-                // TODO Attempt to write data if we were offline and are now online?
-            }
-
-
-            scope.async(dispatcherProvider.IO) {
-                if (!options.readData) return@async
-
-                try {
-                    val hasChanges = hasChangesSinceLastSync()
-                    if (hasChanges) {
-                        _data.value = readDrive()
-                    } else {
-                        log(TAG) { "sync(): No changes detected, skipping readDrive()" }
+                        _state.updateBlocking { copy(devices = deviceDirs) }
+                    } catch (e: Exception) {
+                        log(TAG, ERROR) { "sync(): Failed to list of known devices: ${e.asLog()}" }
                     }
-                } catch (e: Exception) {
-                    log(TAG, ERROR) { "sync(): Failed to read: ${e.asLog()}" }
+                    val stop = System.currentTimeMillis()
+                    log(TAG, VERBOSE) { "sync(...): devices finished (took ${stop - start}ms)" }
+                }.run { jobs.add(this) }
+
+                scope.async(dispatcherProvider.IO) {
+                    if (!options.stats) return@async
+
+                    try {
+                        val newQuota = getStorageQuota()
+                        _state.updateBlocking { copy(quota = newQuota) }
+                    } catch (e: Exception) {
+                        log(TAG, ERROR) { "sync(): Failed to update storage quota: ${e.asLog()}" }
+                    }
+                    val stop = System.currentTimeMillis()
+                    log(TAG, VERBOSE) { "sync(...): quota finished (took ${stop - start}ms)" }
+                }.run { jobs.add(this) }
+
+
+                if (options.writeData) {
+                    // TODO Attempt to write data if we were offline and are now online?
                 }
+
+
+                scope.async(dispatcherProvider.IO) {
+                    if (!options.readData) return@async
+
+                    try {
+                        val isTargeted = options.moduleFilter != null || options.deviceFilter != null
+
+                        if (isTargeted) {
+                            val existing = _data.value
+                            if (existing == null) {
+                                log(TAG) { "sync(): First sync, forcing full read despite filters" }
+                                _data.value = readDrive()
+                                val startToken = drive.changes().getStartPageToken()
+                                    .setSupportsAllDrives(false)
+                                    .execute().startPageToken
+                                syncToken.value(startToken)
+                            } else {
+                                val newData = readDrive(options.moduleFilter, options.deviceFilter)
+                                _data.value = mergeData(existing, newData, options.moduleFilter)
+                            }
+                        } else {
+                            when (val result = checkSyncChanges()) {
+                                is SyncChangeResult.HasChanges -> {
+                                    _data.value = readDrive()
+                                    syncToken.value(result.newToken)
+                                }
+
+                                is SyncChangeResult.ForceFullSync -> {
+                                    _data.value = readDrive()
+                                    val startToken = drive.changes().getStartPageToken()
+                                        .setSupportsAllDrives(false)
+                                        .execute().startPageToken
+                                    syncToken.value(startToken)
+                                }
+
+                                is SyncChangeResult.NoChanges -> {
+                                    log(TAG) { "sync(): No changes detected, skipping readDrive()" }
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        log(TAG, ERROR) { "sync(): Failed to read: ${e.asLog()}" }
+                    }
+                    val stop = System.currentTimeMillis()
+                    log(TAG, VERBOSE) { "sync(...): readData finished (took ${stop - start}ms)" }
+                }.run { jobs.add(this) }
+
+
+                log(TAG) { "sync(...): Waiting for jobs to finish..." }
+                jobs.awaitAll()
+                log(TAG) { "sync(...): ... jobs finished." }
+            }
+        } finally {
+            syncLock.withLock {
+                isSyncing = false
                 val stop = System.currentTimeMillis()
-                log(TAG, VERBOSE) { "sync(...): readData finished (took ${stop - start}ms)" }
-            }.run { jobs.add(this) }
-
-
-            log(TAG) { "sync(...): Waiting for jobs to finish..." }
-            jobs.awaitAll()
-            log(TAG) { "sync(...): ... jobs finished." }
-        }
-
-
-        syncLock.withLock {
-            isSyncing = false
-            val stop = System.currentTimeMillis()
-            log(TAG, VERBOSE) { "sync(): Sync done, releasing (took ${stop - start}ms)" }
+                log(TAG, VERBOSE) { "sync(): Sync done, releasing (took ${stop - start}ms)" }
+            }
         }
     }
 
@@ -420,37 +561,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
 
         log(TAG, VERBOSE) { "writeDrive(): Done" }
-    }
-
-    private suspend fun GDriveEnvironment.hasChangesSinceLastSync(): Boolean {
-        val token = changeToken.value()
-        if (token == null) {
-            val startToken = drive.changes().getStartPageToken()
-                .setSupportsAllDrives(false)
-                .execute().startPageToken
-            changeToken.value(startToken)
-            log(TAG) { "hasChangesSinceLastSync(): No token, initialized to $startToken, doing full sync" }
-            return true
-        }
-
-        return try {
-            val changeList = drive.changes().list(token)
-                .setSpaces(APPDATAFOLDER)
-                .setFields("newStartPageToken,changes(fileId)")
-                .execute()
-
-            changeList.newStartPageToken?.let { changeToken.value(it) }
-
-            val hasChanges = !changeList.changes.isNullOrEmpty()
-            log(TAG) { "hasChangesSinceLastSync(): hasChanges=$hasChanges (${changeList.changes?.size ?: 0} changes)" }
-            hasChanges
-        } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
-            if (e.statusCode == 410) {
-                log(TAG, WARN) { "hasChangesSinceLastSync(): Token invalidated, resetting" }
-                changeToken.value(null)
-            }
-            true // Assume changes on error, fall back to full sync
-        }
     }
 
     private suspend fun GDriveEnvironment.getStorageQuota(): SyncConnectorState.Quota {

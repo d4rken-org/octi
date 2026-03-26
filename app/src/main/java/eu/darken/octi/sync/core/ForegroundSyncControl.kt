@@ -16,6 +16,7 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.DeviceId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -155,14 +156,14 @@ class ForegroundSyncControl @Inject constructor(
             try {
                 while (isActive) {
                     val first = eventChannel.receive()
-                    val pending = mutableMapOf<ConnectorId, MutableSet<ModuleId>>()
-                    pending.getOrPut(first.connectorId) { mutableSetOf() }.add(first.moduleId)
+                    val pending = mutableMapOf<ConnectorId, PendingSync>()
+                    pending.getOrPut(first.connectorId) { PendingSync() }.add(first)
 
                     // Drain events arriving within the debounce window
                     withTimeoutOrNull(CLIENT_DEBOUNCE_MS) {
                         while (true) {
                             val event = eventChannel.receive()
-                            pending.getOrPut(event.connectorId) { mutableSetOf() }.add(event.moduleId)
+                            pending.getOrPut(event.connectorId) { PendingSync() }.add(event)
                         }
                     }
 
@@ -170,13 +171,13 @@ class ForegroundSyncControl @Inject constructor(
                 }
             } finally {
                 // Flush remaining events on cancellation (W8)
-                val remaining = mutableMapOf<ConnectorId, MutableSet<ModuleId>>()
+                val remaining = mutableMapOf<ConnectorId, PendingSync>()
                 while (true) {
                     val event = eventChannel.tryReceive().getOrNull() ?: break
-                    remaining.getOrPut(event.connectorId) { mutableSetOf() }.add(event.moduleId)
+                    remaining.getOrPut(event.connectorId) { PendingSync() }.add(event)
                 }
                 if (remaining.isNotEmpty()) {
-                    log(TAG, INFO) { "Flushing ${remaining.values.sumOf { it.size }} pending events on shutdown" }
+                    log(TAG, INFO) { "Flushing ${remaining.values.sumOf { it.modules.size }} pending events on shutdown" }
                     withContext(NonCancellable) { syncPendingModules(remaining) }
                 }
                 producerJob.cancel()
@@ -184,9 +185,19 @@ class ForegroundSyncControl @Inject constructor(
         }
     }
 
-    private suspend fun syncPendingModules(pending: Map<ConnectorId, Set<ModuleId>>) {
-        pending.forEach { (connectorId, modules) ->
-            log(TAG) { "Batched sync: ${modules.size} modules on $connectorId" }
+    private data class PendingSync(
+        val modules: MutableSet<ModuleId> = mutableSetOf(),
+        val devices: MutableSet<DeviceId> = mutableSetOf(),
+    ) {
+        fun add(event: SyncEvent.ModuleChanged) {
+            modules.add(event.moduleId)
+            devices.add(event.deviceId)
+        }
+    }
+
+    private suspend fun syncPendingModules(pending: Map<ConnectorId, PendingSync>) {
+        pending.forEach { (connectorId, sync) ->
+            log(TAG) { "Batched sync: ${sync.modules.size} modules, ${sync.devices.size} devices on $connectorId" }
             try {
                 syncManager.sync(
                     connectorId,
@@ -194,7 +205,8 @@ class ForegroundSyncControl @Inject constructor(
                         stats = false,
                         readData = true,
                         writeData = false,
-                        moduleFilter = modules.toSet(),
+                        moduleFilter = sync.modules.toSet(),
+                        deviceFilter = sync.devices.toSet(),
                     ),
                 )
             } catch (e: Exception) {
