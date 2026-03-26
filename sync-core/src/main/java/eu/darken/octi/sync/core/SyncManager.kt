@@ -10,6 +10,8 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
 import eu.darken.octi.sync.core.cache.SyncCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
@@ -75,7 +77,7 @@ class SyncManager @Inject constructor(
             else cons.map { it.syncEvents }.merge()
         }
         .setupCommonEventHandlers(TAG) { "syncEvents" }
-        .shareLatest(scope + dispatcherProvider.Default)
+        .shareIn(scope + dispatcherProvider.Default, SharingStarted.WhileSubscribed(), replay = 0)
 
     val data: Flow<Collection<SyncRead.Device>> = syncSettings.pausedConnectors.flow
         .combine(connectors) { paused, connectorList -> connectorList.filter { !paused.contains(it.identifier) } }

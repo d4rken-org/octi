@@ -37,12 +37,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.plus
@@ -105,39 +107,25 @@ class KServerConnector @AssistedInject constructor(
         account = credentials.accountId.id,
     )
 
-    private var webSocket: KServerWebSocket? = null
-    private val _webSocketFlow = MutableStateFlow<Flow<SyncEvent>>(emptyFlow())
-    override val syncEvents: Flow<SyncEvent> = _webSocketFlow.flatMapLatest { it }
-
-    fun connectWebSocket() {
-        log(TAG, INFO) { "connectWebSocket()" }
-        val ws = KServerWebSocket(
-            credentials = credentials,
-            connectorId = identifier,
-            syncSettings = syncSettings,
-            baseHttpClient = baseHttpClient,
-            json = json,
-        )
-        webSocket = ws
-        _webSocketFlow.value = networkStateProvider.networkState
-            .map { it.isInternetAvailable }
-            .distinctUntilChanged()
-            .flatMapLatest { online ->
-                if (online) {
-                    log(TAG, INFO) { "Network available, connecting WebSocket" }
-                    ws.connect()
-                } else {
-                    log(TAG, INFO) { "Network lost, disconnecting WebSocket" }
-                    emptyFlow()
-                }
+    override val syncEvents: Flow<SyncEvent> = networkStateProvider.networkState
+        .map { it.isInternetAvailable }
+        .distinctUntilChanged()
+        .flatMapLatest { online ->
+            if (online) {
+                log(TAG, INFO) { "Network available, connecting WebSocket" }
+                KServerWebSocket(
+                    credentials = credentials,
+                    connectorId = identifier,
+                    syncSettings = syncSettings,
+                    baseHttpClient = baseHttpClient,
+                    json = json,
+                ).connect()
+            } else {
+                log(TAG, INFO) { "Network lost, WebSocket inactive" }
+                emptyFlow()
             }
-    }
-
-    fun disconnectWebSocket() {
-        log(TAG, INFO) { "disconnectWebSocket()" }
-        webSocket = null
-        _webSocketFlow.value = emptyFlow()
-    }
+        }
+        .shareIn(scope, SharingStarted.WhileSubscribed(), replay = 0)
 
     init {
         writeQueue

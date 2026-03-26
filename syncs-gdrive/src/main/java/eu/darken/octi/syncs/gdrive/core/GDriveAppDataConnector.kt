@@ -40,11 +40,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -108,7 +110,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 log(TAG, WARN) { "syncEvents poll failed: ${e.message}" }
             }
         }
-    }
+    }.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 0)
 
     private suspend fun GDriveEnvironment.checkForChanges(): List<SyncEvent> {
         val token = changeToken.value()

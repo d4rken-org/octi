@@ -16,7 +16,6 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.module.core.ModuleId
-import eu.darken.octi.syncs.kserver.core.KServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -26,7 +25,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
@@ -54,8 +52,6 @@ class ForegroundSyncControl @Inject constructor(
 
     @Volatile private var lastBackgroundedAt: Instant? = null
     private var eventCollectorJob: Job? = null
-    private var connectJob: Job? = null
-    private var disconnectJob: Job? = null
 
     fun start() {
         log(TAG) { "start()" }
@@ -113,17 +109,6 @@ class ForegroundSyncControl @Inject constructor(
 
     private fun onForeground() {
         log(TAG, INFO) { "onForeground()" }
-
-        // Connect WebSocket on KServer connectors
-        disconnectJob?.cancel()
-        connectJob = scope.launch {
-            syncManager.connectors.first()
-                .filterIsInstance<KServerConnector>()
-                .forEach { connector ->
-                    log(TAG) { "Connecting WebSocket for ${connector.identifier}" }
-                    connector.connectWebSocket()
-                }
-        }
 
         // Catch-up sync if backgrounded for > 2 minutes
         scope.launch {
@@ -222,20 +207,9 @@ class ForegroundSyncControl @Inject constructor(
         log(TAG, INFO) { "onBackground()" }
         lastBackgroundedAt = Instant.now()
 
-        // Stop collecting events (also stops GDrive polling since the flow is cold)
+        // Stop collecting events — cancels upstream WebSocket/polling via WhileSubscribed
         eventCollectorJob?.cancel()
         eventCollectorJob = null
-
-        // Disconnect WebSocket on KServer connectors
-        connectJob?.cancel()
-        disconnectJob = scope.launch {
-            syncManager.connectors.first()
-                .filterIsInstance<KServerConnector>()
-                .forEach { connector ->
-                    log(TAG) { "Disconnecting WebSocket for ${connector.identifier}" }
-                    connector.disconnectWebSocket()
-                }
-        }
     }
 
     companion object {
