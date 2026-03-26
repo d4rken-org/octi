@@ -20,7 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.OutdoorGrill
+import eu.darken.octi.syncs.octiserver.ui.OctiServerIcon
 import androidx.compose.material.icons.twotone.PauseCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,18 +48,19 @@ import eu.darken.octi.R
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.syncs.gdrive.R as GDriveR
-import eu.darken.octi.syncs.kserver.R as KServerR
+import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
-import eu.darken.octi.syncs.kserver.core.KServer
-import eu.darken.octi.syncs.kserver.core.KServerConnector
+import eu.darken.octi.syncs.octiserver.core.OctiServer
+import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import okio.ByteString.Companion.encodeUtf8
 import java.time.Instant
 
@@ -129,7 +130,7 @@ fun SyncListScreen(
                 key = { item ->
                     when (item) {
                         is SyncListVM.ConnectorItem.GDrive -> "gdrive-${item.account.id.id}"
-                        is SyncListVM.ConnectorItem.KServer -> "kserver-${item.credentials.accountId.id}"
+                        is SyncListVM.ConnectorItem.OctiServer -> "octiserver-${item.credentials.accountId.id}"
                     }
                 },
             ) { item ->
@@ -141,7 +142,7 @@ fun SyncListScreen(
                         onClick = { showActionsFor = item },
                     )
 
-                    is SyncListVM.ConnectorItem.KServer -> KServerConnectorCard(
+                    is SyncListVM.ConnectorItem.OctiServer -> OctiServerConnectorCard(
                         item = item,
                         isHighlighted = isHighlighted,
                         onClick = { showActionsFor = item },
@@ -177,7 +178,7 @@ fun SyncListScreen(
                 },
             )
 
-            is SyncListVM.ConnectorItem.KServer -> KServerActionsSheet(
+            is SyncListVM.ConnectorItem.OctiServer -> OctiServerActionsSheet(
                 item = item,
                 onDismiss = { showActionsFor = null },
                 onTogglePause = {
@@ -287,8 +288,8 @@ private fun GDriveConnectorCard(
 }
 
 @Composable
-private fun KServerConnectorCard(
-    item: SyncListVM.ConnectorItem.KServer,
+private fun OctiServerConnectorCard(
+    item: SyncListVM.ConnectorItem.OctiServer,
     isHighlighted: Boolean = false,
     onClick: () -> Unit,
 ) {
@@ -311,19 +312,17 @@ private fun KServerConnectorCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Icon(
-                    imageVector = Icons.Default.OutdoorGrill,
-                    contentDescription = null,
+                OctiServerIcon(
                     modifier = Modifier.size(24.dp),
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = when {
                         item.credentials.serverAdress.domain.endsWith(".darken.eu") -> {
-                            "${stringResource(KServerR.string.sync_kserver_type_label)} (${item.credentials.serverAdress.domain})"
+                            "${stringResource(OctiServerR.string.sync_octiserver_type_label)} (${item.credentials.serverAdress.domain})"
                         }
                         else -> {
-                            "${stringResource(KServerR.string.sync_kserver_type_label)} (${item.credentials.serverAdress.address})"
+                            "${stringResource(OctiServerR.string.sync_octiserver_type_label)} (${item.credentials.serverAdress.address})"
                         }
                     },
                     style = MaterialTheme.typography.titleMedium,
@@ -458,18 +457,18 @@ private fun SyncListScreenPreview() = PreviewWrapper {
     SyncListScreen(
         state = SyncListVM.State(
             connectors = listOf(
-                SyncListVM.ConnectorItem.KServer(
-                    connectorId = ConnectorId(type = "kserver", subtype = "default", account = "preview-account"),
-                    credentials = KServer.Credentials(
-                        serverAdress = KServer.Address("prod.kserver.octi.darken.eu"),
-                        accountId = KServer.Credentials.AccountId("preview-account-id"),
-                        devicePassword = KServer.Credentials.DevicePassword("preview-password"),
+                SyncListVM.ConnectorItem.OctiServer(
+                    connectorId = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "default", account = "preview-account"),
+                    credentials = OctiServer.Credentials(
+                        serverAdress = OctiServer.Address("prod.kserver.octi.darken.eu"),
+                        accountId = OctiServer.Credentials.AccountId("preview-account-id"),
+                        devicePassword = OctiServer.Credentials.DevicePassword("preview-password"),
                         encryptionKeyset = PayloadEncryption.KeySet(
                             type = "AES256_GCM",
                             key = "preview-key-data".encodeUtf8(),
                         ),
                     ),
-                    ourState = KServerConnector.State(
+                    ourState = OctiServerConnector.State(
                         activeActions = 0,
                         lastActionAt = Instant.now().minusSeconds(300),
                         devices = setOf(DeviceId("device-1"), DeviceId("device-2")),

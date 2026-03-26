@@ -43,6 +43,7 @@ import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.StalenessUtil
 import java.time.Instant
@@ -198,7 +199,7 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
     val deviceId2 = DeviceId("device-def-456")
     SyncDevicesScreen(
         state = SyncDevicesVM.State(
-            connectorType = "kserver",
+            connectorType = ConnectorType.OCTISERVER,
             items = listOf(
                 SyncDevicesVM.DeviceItem(
                     deviceId = deviceId1,
@@ -247,7 +248,7 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
 @Composable
 private fun SyncDevicesScreenEmptyPreview() = PreviewWrapper {
     SyncDevicesScreen(
-        state = SyncDevicesVM.State(connectorType = "kserver"),
+        state = SyncDevicesVM.State(connectorType = ConnectorType.OCTISERVER),
         onNavigateUp = {},
         onDeleteDevice = {},
     )

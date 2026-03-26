@@ -10,7 +10,7 @@
 ### Sync Backends
 - `sync-core`: Core sync abstractions (`SyncManager`, `SyncConnector`, `ConnectorHub`, `SyncRead`, `SyncWrite`)
 - `syncs-gdrive`: Google Drive sync implementation
-- `syncs-kserver`: K-Server sync implementation (end-to-end encrypted)
+- `syncs-octiserver`: Octi Server sync implementation (end-to-end encrypted)
 
 ### Module System
 - `module-core`: Module abstractions and base classes (`BaseModuleSync`, `BaseModuleRepo`, `BaseModuleCache`, `ModuleManager`)
@@ -26,7 +26,7 @@
 Data flows through: `SyncConnector` → `ConnectorHub` → `SyncManager`
 
 - `SyncConnector`: Interface for sync backend operations (read/write/sync)
-- `ConnectorHub`: Groups connectors by backend type (GDrive, KServer), injected via `@IntoSet`
+- `ConnectorHub`: Groups connectors by backend type (GDrive, OctiServer), injected via `@IntoSet`
 - `SyncManager`: Central coordinator that combines all `ConnectorHub` instances, manages connector state and data flow
 
 ## Module System Architecture

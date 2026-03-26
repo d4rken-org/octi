@@ -24,12 +24,12 @@ class SyncAddVM @Inject constructor(
         val onClick: () -> Unit,
     )
 
-    enum class SyncType { GDRIVE, KSERVER }
+    enum class SyncType { GDRIVE, OCTISERVER }
 
     val state = flow {
         val items = listOf(
             SyncAddItem(SyncType.GDRIVE) { navTo(Nav.Sync.AddGDrive) },
-            SyncAddItem(SyncType.KSERVER) { navTo(Nav.Sync.AddKServer) },
+            SyncAddItem(SyncType.OCTISERVER) { navTo(Nav.Sync.AddOctiServer) },
         )
         emit(State(items = items))
     }.asStateFlow()

@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Parcelize
 data class ConnectorId(
-    @SerialName("type") val type: String,
+    @SerialName("type") val type: ConnectorType,
     @SerialName("subtype") val subtype: String,
     @SerialName("account") val account: String,
 ) : Parcelable {
 
     val idString: String
-        get() = "$type-$subtype-$account"
+        get() = "${type.typeId}-$subtype-$account"
 
 }

@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class SyncEventsSharingTest : BaseTest() {
 
-    private val connectorId = ConnectorId(type = "kserver", subtype = "test", account = "acc1")
+    private val connectorId = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "test", account = "acc1")
     private val deviceId = DeviceId("device-1")
     private val moduleId = ModuleId("eu.darken.octi.module.core.power")
 

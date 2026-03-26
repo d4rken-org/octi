@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_octiserver_type_label">Octi Server</string>
+    <string name="sync_octiserver_type_description">En synkroniseringsserver med öppen källkod för Octi skapad av utvecklaren av denna app. Data krypteras på klientsidan, endast dina enheter kan dekryptera den.\n\nEftersom både appen och servern fortfarande förbättras kan den vara mindre stabil än andra synkroniseringsalternativ.</string>
+    <string name="sync_octiserver_add_create_action_hint">Inaktiva konton raderas efter några veckor.</string>
+    <string name="sync_octiserver_add_subtitle">Lägg till ny Google Drive</string>
+    <string name="sync_octiserver_add_link_action_hint">Du behöver åtkomst till en annan enhet som redan är länkad.</string>
+    <string name="sync_octiserver_about_title">Om Octi Server</string>
+    <string name="sync_octiserver_about_desc">Octi Server är en synkroniseringsserver med öppen källkod (i Kotlin) för Octi av darken.</string>
+    <string name="sync_octiserver_about_author_action">Författare</string>
+    <string name="sync_octiserver_about_source_action">Källkod</string>
+    <string name="sync_octiserver_reset_confirmation_desc">Rensa enhetens data på det här kontot. Enheter förblir länkade men deras lagrade data tas bort.</string>
+    <string name="sync_octiserver_disconnect_confirmation_desc">Detta tar bort den här enheten från ditt konto. Om detta är den sista länkade enheten kommer ditt konto att raderas.</string>
+    <string name="sync_octiserver_link_device_action">Länka ny enhet</string>
+    <string name="sync_octiserver_link_code_label">Länkkod</string>
+    <string name="sync_octiserver_link_host_option_direct">Skapa en textkod som du kan skicka via andra appar</string>
+    <string name="sync_octiserver_link_host_option_qrcode">Visa en QR-kod</string>
+    <string name="sync_octiserver_link_host_device_linked_message">En ny enhet har länkats till ditt konto.</string>
+    <string name="sync_octiserver_link_client_option_direct">Kopiera och klistra in en länkkod manuellt</string>
+    <string name="sync_octiserver_link_client_option_qrcode">Skanna en QR-kod från en annan enhet</string>
+    <string name="sync_octiserver_link_client_startcamera_action">Starta kamera</string>
+    <string name="sync_octiserver_link_client_link_action">Länka enhet</string>
+    <string name="sync_octiserver_error_device_not_registered">Den här enheten är inte längre registrerad på servern. Koppla från och länka om från en annan enhet, eller skapa ett nytt konto.</string>
+</resources>

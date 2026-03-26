@@ -14,7 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
-import androidx.compose.material.icons.filled.OutdoorGrill
+import eu.darken.octi.syncs.octiserver.ui.OctiServerIcon
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.syncs.gdrive.R as GDriveR
-import eu.darken.octi.syncs.kserver.R as KServerR
+import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -132,9 +132,9 @@ private fun SyncAddItemRow(item: SyncAddVM.SyncAddItem) {
                 GDriveR.string.sync_gdrive_type_appdata_description,
             )
 
-            SyncAddVM.SyncType.KSERVER -> Pair(
-                KServerR.string.sync_kserver_type_label,
-                KServerR.string.sync_kserver_type_description,
+            SyncAddVM.SyncType.OCTISERVER -> Pair(
+                OctiServerR.string.sync_octiserver_type_label,
+                OctiServerR.string.sync_octiserver_type_description,
             )
         }
 
@@ -145,9 +145,7 @@ private fun SyncAddItemRow(item: SyncAddVM.SyncAddItem) {
                 modifier = Modifier.size(20.dp),
             )
 
-            SyncAddVM.SyncType.KSERVER -> Icon(
-                imageVector = Icons.Default.OutdoorGrill,
-                contentDescription = null,
+            SyncAddVM.SyncType.OCTISERVER -> OctiServerIcon(
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -174,7 +172,7 @@ private fun SyncAddScreenPreview() = PreviewWrapper {
         state = SyncAddVM.State(
             items = listOf(
                 SyncAddVM.SyncAddItem(type = SyncAddVM.SyncType.GDRIVE, onClick = {}),
-                SyncAddVM.SyncAddItem(type = SyncAddVM.SyncType.KSERVER, onClick = {}),
+                SyncAddVM.SyncAddItem(type = SyncAddVM.SyncType.OCTISERVER, onClick = {}),
             ),
         ),
         onNavigateUp = {},

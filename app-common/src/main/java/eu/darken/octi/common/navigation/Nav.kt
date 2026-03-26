@@ -35,13 +35,13 @@ object Nav {
         data object AddGDrive : Sync
 
         @Serializable
-        data object AddKServer : Sync
+        data object AddOctiServer : Sync
 
         @Serializable
-        data class KServerLinkHost(val connectorId: String) : Sync
+        data class OctiServerLinkHost(val connectorId: String) : Sync
 
         @Serializable
-        data object KServerLinkClient : Sync
+        data object OctiServerLinkClient : Sync
 
         @Serializable
         data class Devices(val connectorId: String) : Sync

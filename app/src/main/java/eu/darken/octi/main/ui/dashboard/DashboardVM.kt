@@ -37,6 +37,7 @@ import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.core.alert.PowerAlertManager
 import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncExecutor
 import eu.darken.octi.sync.core.SyncManager
@@ -196,19 +197,19 @@ class DashboardVM @Inject constructor(
 
     data class ConnectorDetail(
         val connectorId: ConnectorId,
-        val type: String,
+        val type: ConnectorType,
         val isBusy: Boolean,
         val lastSyncAt: Instant?,
     )
 
     sealed interface SyncStatus {
-        val connectorTypes: List<String>
+        val connectorTypes: List<ConnectorType>
         val syncDetail: SyncDetail
         val orchestratorState: SyncOrchestrator.State
         val now: Instant
 
         data class Syncing(
-            override val connectorTypes: List<String>,
+            override val connectorTypes: List<ConnectorType>,
             val syncingModules: Set<ModuleId> = emptySet(),
             override val syncDetail: SyncDetail,
             override val orchestratorState: SyncOrchestrator.State,
@@ -217,7 +218,7 @@ class DashboardVM @Inject constructor(
 
         data class Idle(
             val lastSyncAt: Instant?,
-            override val connectorTypes: List<String>,
+            override val connectorTypes: List<ConnectorType>,
             override val syncDetail: SyncDetail,
             override val orchestratorState: SyncOrchestrator.State,
             override val now: Instant,
@@ -225,7 +226,7 @@ class DashboardVM @Inject constructor(
 
         data class Error(
             val message: String?,
-            override val connectorTypes: List<String>,
+            override val connectorTypes: List<ConnectorType>,
             override val syncDetail: SyncDetail,
             override val orchestratorState: SyncOrchestrator.State,
             override val now: Instant,

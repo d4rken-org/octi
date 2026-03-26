@@ -2,6 +2,7 @@ package eu.darken.octi.sync.core.cache
 
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
@@ -18,7 +19,7 @@ class CachedSyncReadSerializationTest : BaseTest() {
         encodeDefaults = true
     }
 
-    private val testConnectorId = ConnectorId(type = "kserver", subtype = "prod", account = "acc-123")
+    private val testConnectorId = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "prod", account = "acc-123")
     private val testDeviceId = DeviceId(id = "device-abc")
     private val testModuleId = ModuleId(id = "eu.darken.octi.module.power")
 
@@ -56,7 +57,7 @@ class CachedSyncReadSerializationTest : BaseTest() {
             }
         """
         val decoded = json.decodeFromString<CachedSyncRead>(moshiJson)
-        decoded.connectorId shouldBe ConnectorId(type = "gdrive", subtype = "appdata", account = "user@gmail.com")
+        decoded.connectorId shouldBe ConnectorId(type = ConnectorType.GDRIVE, subtype = "appdata", account = "user@gmail.com")
     }
 
     @Test
@@ -78,7 +79,7 @@ class CachedSyncReadSerializationTest : BaseTest() {
         """
         val decoded = json.decodeFromString<CachedSyncRead>(moshiJson)
         val module = decoded.devices.first().modules.first()
-        module.connectorId shouldBe ConnectorId(type = "kserver", subtype = "prod", account = "acc-1")
+        module.connectorId shouldBe ConnectorId(type = ConnectorType.OCTISERVER, subtype = "prod", account = "acc-1")
     }
 
     @Test

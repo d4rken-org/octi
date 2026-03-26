@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_octiserver_type_label">Octi Server</string>
+    <string name="sync_octiserver_type_description">Um servidor de sincronização open-source para Octi feito pelo desenvolvedor deste app. Os dados são criptografados no lado do cliente, somente seus dispositivos podem descriptografá-los.\n\nComo tanto o app quanto o servidor ainda estão em desenvolvimento, pode ser menos estável que outras opções de sincronização.</string>
+    <string name="sync_octiserver_add_create_action_hint">Contas inativas são excluídas após algumas semanas.</string>
+    <string name="sync_octiserver_add_subtitle">Adicionar nova Google Drive</string>
+    <string name="sync_octiserver_add_link_action_hint">Você vai precisar de acesso a outro dispositivo que já esteja vinculado.</string>
+    <string name="sync_octiserver_about_title">Sobre o Octi Server</string>
+    <string name="sync_octiserver_about_desc">O Octi Server é um servidor de sincronização open-source (em Kotlin) para Octi por darken.</string>
+    <string name="sync_octiserver_about_author_action">Autor</string>
+    <string name="sync_octiserver_about_source_action">Código fonte</string>
+    <string name="sync_octiserver_reset_confirmation_desc">Limpar os dados do dispositivo nesta conta. Os dispositivos permanecem vinculados, mas seus dados armazenados são apagados.</string>
+    <string name="sync_octiserver_disconnect_confirmation_desc">Isso irá remover este dispositivo da sua conta. Se este for o último dispositivo vinculado, sua conta será excluída.</string>
+    <string name="sync_octiserver_link_device_action">Vincular novo dispositivo</string>
+    <string name="sync_octiserver_link_code_label">Código de vinculação</string>
+    <string name="sync_octiserver_link_host_option_direct">Criar um código de texto que você pode enviar por outros aplicativos</string>
+    <string name="sync_octiserver_link_host_option_qrcode">Mostrar um QRCode</string>
+    <string name="sync_octiserver_link_host_device_linked_message">Um novo dispositivo foi vinculado à sua conta.</string>
+    <string name="sync_octiserver_link_client_option_direct">Copiar e colar manualmente um código de vinculação</string>
+    <string name="sync_octiserver_link_client_option_qrcode">Escanear um QR code de outro dispositivo</string>
+    <string name="sync_octiserver_link_client_startcamera_action">Iniciar câmera</string>
+    <string name="sync_octiserver_link_client_link_action">Vincular dispositivo</string>
+    <string name="sync_octiserver_error_device_not_registered">Este dispositivo não está mais registrado no servidor. Desconecte e vincule novamente a partir de outro dispositivo, ou crie uma nova conta.</string>
+</resources>

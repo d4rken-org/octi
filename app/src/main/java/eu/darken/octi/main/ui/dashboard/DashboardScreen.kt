@@ -74,6 +74,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -132,7 +133,9 @@ import eu.darken.octi.modules.power.R as PowerR
 import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.syncs.gdrive.R as GDriveR
-import eu.darken.octi.syncs.kserver.R as KServerR
+import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.syncs.octiserver.R as OctiServerR
+import eu.darken.octi.syncs.octiserver.ui.OctiServerIcon
 
 @Composable
 fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
@@ -597,9 +600,8 @@ private fun connectorTypesLabel(
     if (connectorTypes.isEmpty()) return null
     val names = connectorTypes.map { type ->
         when (type) {
-            "gdrive" -> stringResource(GDriveR.string.sync_gdrive_type_label)
-            "kserver" -> stringResource(KServerR.string.sync_kserver_type_label)
-            else -> type
+            ConnectorType.GDRIVE -> stringResource(GDriveR.string.sync_gdrive_type_label)
+            ConnectorType.OCTISERVER -> stringResource(OctiServerR.string.sync_octiserver_type_label)
         }
     }
     val base = stringResource(R.string.dashboard_sync_status_via, names.joinToString(", "))
@@ -842,14 +844,24 @@ private fun SyncDetailConnectorRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 44.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
+            .padding(start = 16.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val name = when (connector.type) {
-            "gdrive" -> stringResource(GDriveR.string.sync_gdrive_type_label)
-            "kserver" -> stringResource(KServerR.string.sync_kserver_type_label)
-            else -> connector.type
+            ConnectorType.GDRIVE -> stringResource(GDriveR.string.sync_gdrive_type_label)
+            ConnectorType.OCTISERVER -> stringResource(OctiServerR.string.sync_octiserver_type_label)
         }
+        when (connector.type) {
+            ConnectorType.GDRIVE -> Icon(
+                painter = painterResource(R.drawable.ic_baseline_gdrive_24),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            ConnectorType.OCTISERVER -> OctiServerIcon(modifier = Modifier.size(18.dp))
+        }
+        Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = name,
             style = MaterialTheme.typography.bodySmall,
@@ -1559,7 +1571,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
             deviceCount = 1,
             syncStatus = DashboardVM.SyncStatus.Idle(
                 lastSyncAt = now.minusSeconds(300),
-                connectorTypes = listOf("gdrive"),
+                connectorTypes = listOf(ConnectorType.GDRIVE),
                 syncDetail = DashboardVM.SyncDetail(modules = emptyList(), connectors = emptyList()),
                 orchestratorState = previewOrchestratorState(),
                 now = now,
@@ -1657,7 +1669,7 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
             deviceCount = 2,
             syncStatus = DashboardVM.SyncStatus.Idle(
                 lastSyncAt = now.minusSeconds(300),
-                connectorTypes = listOf("gdrive", "kserver"),
+                connectorTypes = listOf(ConnectorType.GDRIVE, ConnectorType.OCTISERVER),
                 syncDetail = DashboardVM.SyncDetail(modules = emptyList(), connectors = emptyList()),
                 orchestratorState = previewOrchestratorState(),
                 now = now,

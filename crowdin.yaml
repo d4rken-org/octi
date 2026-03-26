@@ -140,9 +140,9 @@
     "translation": "/syncs-gdrive/src/main/res/values-%android_code%/strings.xml",
     "languages_mapping": *stringmapping
   }, {
-    "source": "/syncs-kserver/src/main/res/values/strings.xml",
-    "dest": "/strings-syncs-kserver.xml",
-    "translation": "/syncs-kserver/src/main/res/values-%android_code%/strings.xml",
+    "source": "/syncs-octiserver/src/main/res/values/strings.xml",
+    "dest": "/strings-syncs-octiserver.xml",
+    "translation": "/syncs-octiserver/src/main/res/values-%android_code%/strings.xml",
     "languages_mapping": *stringmapping
   }, {
     "source": "/fastlane/metadata/android/en-US/full_description.txt",

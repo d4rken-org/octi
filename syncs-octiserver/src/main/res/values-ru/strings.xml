@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_octiserver_type_label">Octi Server</string>
+    <string name="sync_octiserver_type_description">Сервер синхронизации с открытым исходным кодом для Octi, созданный разработчиком этого приложения. Данные шифруются на стороне клиента, только Ваши устройства могут их расшифровать.\n\nПоскольку и приложение, и сервер все еще совершенствуются, он может быть менее стабильным, чем другие варианты синхронизации.</string>
+    <string name="sync_octiserver_add_create_action_hint">Неактивные учетные записи удаляются через несколько недель.</string>
+    <string name="sync_octiserver_add_subtitle">Добавить новый Google Drive</string>
+    <string name="sync_octiserver_add_link_action_hint">Вам потребуется доступ к другому устройству, которое уже подключено.</string>
+    <string name="sync_octiserver_about_title">О Octi Server</string>
+    <string name="sync_octiserver_about_desc">Octi Server - это сервер синхронизации с открытым исходным кодом (на Kotlin) для Octi от darken.</string>
+    <string name="sync_octiserver_about_author_action">Автор</string>
+    <string name="sync_octiserver_about_source_action">Исходный код</string>
+    <string name="sync_octiserver_reset_confirmation_desc">Очистить данные устройства в этой учетной записи. Устройства остаются связанными, но их сохраненные данные удаляются.</string>
+    <string name="sync_octiserver_disconnect_confirmation_desc">Это удалит это устройство из Вашей учетной записи. Если это последнее связанное устройство, Ваша учетная запись будет удалена.</string>
+    <string name="sync_octiserver_link_device_action">Связать новое устройство</string>
+    <string name="sync_octiserver_link_code_label">Код связи</string>
+    <string name="sync_octiserver_link_host_option_direct">Создать текстовый код, который можно отправить через другие приложения</string>
+    <string name="sync_octiserver_link_host_option_qrcode">Показать QR-код</string>
+    <string name="sync_octiserver_link_host_device_linked_message">Новое устройство было связано с Вашей учетной записью.</string>
+    <string name="sync_octiserver_link_client_option_direct">Вручную скопировать и вставить код связи</string>
+    <string name="sync_octiserver_link_client_option_qrcode">Сканировать QR-код с другого устройства</string>
+    <string name="sync_octiserver_link_client_startcamera_action">Запустить камеру</string>
+    <string name="sync_octiserver_link_client_link_action">Связать устройство</string>
+    <string name="sync_octiserver_error_device_not_registered">Устройство не зарегистрировано на сервере. Отключите его и привяжите заново через другое устройство, либо создайте новый аккаунт.</string>
+</resources>

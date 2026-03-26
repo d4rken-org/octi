@@ -25,7 +25,7 @@ Information modules:
 Synchronization options:
 
 * Google Drive: Easy to use if all devices use the same account.
-* [K-Server](https://github.com/d4rken/octi-sync-server-kotlin): End-To-End encrypted server that doesn't require a Google account.
+* [Octi Server](https://github.com/d4rken-org/octi-server): End-To-End encrypted server that doesn't require a Google account.
 
 Hungry for details? [Check the wiki](https://github.com/d4rken-org/octi/wiki). Still have
 questions? [Join us on discord](https://discord.gg/s7V4C6zuVy)!

@@ -14,6 +14,7 @@ import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.meta.core.MetaSerializer
+import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOptions
@@ -60,7 +61,7 @@ class SyncDevicesVM @Inject constructor(
 
     data class State(
         val items: List<DeviceItem> = emptyList(),
-        val connectorType: String? = null,
+        val connectorType: ConnectorType? = null,
     )
 
     val state = connectorFlow

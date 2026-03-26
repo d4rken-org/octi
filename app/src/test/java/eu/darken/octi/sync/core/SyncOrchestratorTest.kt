@@ -1,5 +1,6 @@
 package eu.darken.octi.sync.core
 
+import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -55,7 +56,7 @@ class SyncOrchestratorTest : BaseTest() {
     )
 
     private fun mockConnector(
-        type: String,
+        type: ConnectorType,
         mode: SyncConnector.EventMode = SyncConnector.EventMode.NONE,
     ): SyncConnector = mockk {
         every { identifier } returns ConnectorId(type = type, subtype = "test", account = "test")
@@ -65,9 +66,9 @@ class SyncOrchestratorTest : BaseTest() {
     @Nested
     inner class `quick sync state` {
         @Test
-        fun `kserver with LIVE mode reported by connector`() = runTest2(autoCancel = true) {
+        fun `octiserver with LIVE mode reported by connector`() = runTest2(autoCancel = true) {
             isActiveFlow.value = true
-            connectorsFlow.value = listOf(mockConnector("kserver", SyncConnector.EventMode.LIVE))
+            connectorsFlow.value = listOf(mockConnector(ConnectorType.OCTISERVER, SyncConnector.EventMode.LIVE))
 
             val state = createOrchestrator(this).state.first()
 
@@ -90,7 +91,7 @@ class SyncOrchestratorTest : BaseTest() {
         fun `mixed modes from multiple connectors`() = runTest2(autoCancel = true) {
             isActiveFlow.value = true
             connectorsFlow.value = listOf(
-                mockConnector("kserver", SyncConnector.EventMode.LIVE),
+                mockConnector(ConnectorType.OCTISERVER, SyncConnector.EventMode.LIVE),
                 mockConnector("gdrive", SyncConnector.EventMode.POLLING),
             )
 
@@ -103,7 +104,7 @@ class SyncOrchestratorTest : BaseTest() {
         @Test
         fun `connector with NONE mode is filtered out`() = runTest2(autoCancel = true) {
             isActiveFlow.value = true
-            connectorsFlow.value = listOf(mockConnector("kserver", SyncConnector.EventMode.NONE))
+            connectorsFlow.value = listOf(mockConnector(ConnectorType.OCTISERVER, SyncConnector.EventMode.NONE))
 
             val state = createOrchestrator(this).state.first()
 
@@ -113,7 +114,7 @@ class SyncOrchestratorTest : BaseTest() {
         @Test
         fun `inactive but connector reports LIVE still shows mode`() = runTest2(autoCancel = true) {
             isActiveFlow.value = false
-            connectorsFlow.value = listOf(mockConnector("kserver", SyncConnector.EventMode.LIVE))
+            connectorsFlow.value = listOf(mockConnector(ConnectorType.OCTISERVER, SyncConnector.EventMode.LIVE))
 
             val state = createOrchestrator(this).state.first()
 
@@ -126,7 +127,7 @@ class SyncOrchestratorTest : BaseTest() {
     inner class `background sync state` {
         @Test
         fun `propagates default worker running state`() = runTest2(autoCancel = true) {
-            connectorsFlow.value = listOf(mockConnector("kserver"))
+            connectorsFlow.value = listOf(mockConnector(ConnectorType.OCTISERVER))
             workerStateFlow.value = workerStateFlow.value.copy(
                 defaultWorker = SyncWorkerControl.WorkerState.WorkerInfo(
                     isEnabled = true,
@@ -145,7 +146,7 @@ class SyncOrchestratorTest : BaseTest() {
         @Test
         fun `propagates next run time`() = runTest2(autoCancel = true) {
             val nextRun = Instant.now().plusSeconds(2700)
-            connectorsFlow.value = listOf(mockConnector("kserver"))
+            connectorsFlow.value = listOf(mockConnector(ConnectorType.OCTISERVER))
             workerStateFlow.value = workerStateFlow.value.copy(
                 defaultWorker = SyncWorkerControl.WorkerState.WorkerInfo(
                     isEnabled = true,

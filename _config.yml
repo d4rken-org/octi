@@ -33,5 +33,5 @@ exclude:
   - modules-wifi
   - sync-core
   - syncs-gdrive
-  - syncs-kserver
+  - syncs-octiserver
   - CONTRIBUTING.md

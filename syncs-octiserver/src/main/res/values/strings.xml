@@ -1,0 +1,23 @@
+<resources>
+    <string name="sync_octiserver_type_label">Octi Server</string>
+    <string name="sync_octiserver_type_description">An open-source sync server for Octi made by this app\'s developer. Data is encrypted client-side, only your devices can decrypt it.\n\nAs both the app and the server are still being improved, it may be less stable than other sync options.</string>
+    <string name="sync_octiserver_add_create_action_hint">Inactive accounts are deleted after a few weeks.</string>
+    <string name="sync_octiserver_add_subtitle">Add Octi Server account</string>
+    <string name="sync_octiserver_add_link_action_hint">You will need access to another device that is already linked.</string>
+    <string name="sync_octiserver_about_title">About Octi Server</string>
+    <string name="sync_octiserver_about_desc">Octi Server is an open-source sync server for Octi by darken.</string>
+    <string name="sync_octiserver_about_author_action">Author</string>
+    <string name="sync_octiserver_about_source_action">Source code</string>
+    <string name="sync_octiserver_reset_confirmation_desc">Clear device\'s data on this account. Devices stay linked but their stored data is removed.</string>
+    <string name="sync_octiserver_disconnect_confirmation_desc">This will remove this device from your account. If this is the last linked device, your account will be deleted.</string>
+    <string name="sync_octiserver_link_device_action">Link new device</string>
+    <string name="sync_octiserver_link_code_label">Link code</string>
+    <string name="sync_octiserver_link_host_option_direct">Create a text code that you can send through other apps</string>
+    <string name="sync_octiserver_link_host_option_qrcode">Show a QRCode</string>
+    <string name="sync_octiserver_link_host_device_linked_message">A new device was linked to your account.</string>
+    <string name="sync_octiserver_link_client_option_direct">Manually copy and paste a link code</string>
+    <string name="sync_octiserver_link_client_option_qrcode">Scan a QR code from another device</string>
+    <string name="sync_octiserver_link_client_startcamera_action">Start camera</string>
+    <string name="sync_octiserver_link_client_link_action">Link device</string>
+    <string name="sync_octiserver_error_device_not_registered">This device is no longer registered on the server. Disconnect and re-link from another device, or create a new account.</string>
+</resources>

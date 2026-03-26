@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_octiserver_type_label">Octi Server</string>
+    <string name="sync_octiserver_type_description">Un servidor de sincronització de codi obert per a l\'Octi fet pel desenvolupador d\'aquesta aplicació. Les dades estan xifrades pel costat del client, només els vostres dispositius poden desxifrar-les.\n\nCom que l\'aplicació i el servidor encara s\'estan millorant, pot ser que sigui menys estable que altres opcions de sincronització.</string>
+    <string name="sync_octiserver_add_create_action_hint">Els comptes inactius se suprimeixen al cap d\'unes setmanes.</string>
+    <string name="sync_octiserver_add_subtitle">Afegeix un Google Drive nou</string>
+    <string name="sync_octiserver_add_link_action_hint">Necessitareu accedir a un altre dispositiu que ja estigui enllaçat.</string>
+    <string name="sync_octiserver_about_title">Quant al Octi Server</string>
+    <string name="sync_octiserver_about_desc">El Octi Server és un servidor de sincronització de codi obert (en Kotlin) per a l\'Octi pel darken.</string>
+    <string name="sync_octiserver_about_author_action">Autor</string>
+    <string name="sync_octiserver_about_source_action">Codi font</string>
+    <string name="sync_octiserver_reset_confirmation_desc">Esborra les dades del dispositiu en aquest compte. Els dispositius romanen enllaçats, però les seves dades emmagatzemades s\'eliminen.</string>
+    <string name="sync_octiserver_disconnect_confirmation_desc">Això eliminarà aquest dispositiu del vostre compte. Si aquest és l\'últim dispositiu enllaçat, el vostre compte se suprimirà.</string>
+    <string name="sync_octiserver_link_device_action">Enllaça un dispositiu nou</string>
+    <string name="sync_octiserver_link_code_label">Codi d\'enllaç</string>
+    <string name="sync_octiserver_link_host_option_direct">Crea un codi de text que podeu enviar mitjançant altres aplicacions</string>
+    <string name="sync_octiserver_link_host_option_qrcode">Mostra un codi QR</string>
+    <string name="sync_octiserver_link_host_device_linked_message">S\'ha enllaçat un dispositiu nou al vostre compte.</string>
+    <string name="sync_octiserver_link_client_option_direct">Copieu i enganxeu manualment un codi d\'enllaç</string>
+    <string name="sync_octiserver_link_client_option_qrcode">Escaneja un codi QR des d\'un altre dispositiu</string>
+    <string name="sync_octiserver_link_client_startcamera_action">Inicieu la càmera</string>
+    <string name="sync_octiserver_link_client_link_action">Enllaça el dispositiu</string>
+    <string name="sync_octiserver_error_device_not_registered">Aquest dispositiu ja no està registrat al servidor. Desconnecta\'l i torna a vincular-lo des d\'un altre dispositiu, o crea un compte nou.</string>
+</resources>

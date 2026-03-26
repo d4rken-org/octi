@@ -25,20 +25,21 @@ import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import java.time.Instant
 
 @Composable
 fun DeviceActionsSheet(
     device: SyncDevicesVM.DeviceItem,
-    connectorType: String?,
+    connectorType: ConnectorType?,
     onDismiss: () -> Unit,
     onDelete: () -> Unit,
 ) {
     val removeIsRevoke = when (connectorType) {
-        "gdrive" -> false
-        "kserver" -> true
-        else -> null
+        ConnectorType.GDRIVE -> false
+        ConnectorType.OCTISERVER -> true
+        null -> null
     }
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
@@ -111,7 +112,7 @@ private fun DeviceActionsSheetPreview() = PreviewWrapper {
             lastSeen = Instant.now(),
             error = null,
         ),
-        connectorType = "kserver",
+        connectorType = ConnectorType.OCTISERVER,
         onDismiss = {},
         onDelete = {},
     )

@@ -20,8 +20,8 @@ import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.StalenessUtil.countStaleDevices
 import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
 import eu.darken.octi.syncs.gdrive.core.GoogleAccount
-import eu.darken.octi.syncs.kserver.core.KServer
-import eu.darken.octi.syncs.kserver.core.KServerConnector
+import eu.darken.octi.syncs.octiserver.core.OctiServer
+import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -63,9 +63,9 @@ class SyncListVM @Inject constructor(
             val staleDevicesCount: Int,
         ) : ConnectorItem
 
-        data class KServer(
+        data class OctiServer(
             override val connectorId: ConnectorId,
-            val credentials: KServer.Credentials,
+            val credentials: OctiServer.Credentials,
             val ourState: SyncConnectorState,
             val otherStates: Collection<SyncConnectorState>,
             val isPaused: Boolean,
@@ -120,7 +120,7 @@ class SyncListVM @Inject constructor(
                             staleDevicesCount = data.countStaleDevices(),
                         )
 
-                        is KServerConnector -> ConnectorItem.KServer(
+                        is OctiServerConnector -> ConnectorItem.OctiServer(
                             connectorId = connector.identifier,
                             credentials = connector.credentials,
                             ourState = state,
@@ -181,7 +181,7 @@ class SyncListVM @Inject constructor(
 
     fun linkNewDevice(connectorId: ConnectorId) {
         log(TAG) { "linkNewDevice($connectorId)" }
-        navTo(Nav.Sync.KServerLinkHost(connectorId.idString))
+        navTo(Nav.Sync.OctiServerLinkHost(connectorId.idString))
     }
 
     companion object {

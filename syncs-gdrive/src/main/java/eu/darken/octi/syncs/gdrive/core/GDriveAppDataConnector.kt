@@ -22,6 +22,7 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
@@ -95,7 +96,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val writeQueue = MutableSharedFlow<SyncWrite>()
 
     override val identifier: ConnectorId = ConnectorId(
-        type = "gdrive",
+        type = ConnectorType.GDRIVE,
         subtype = if (client.account.isAppDataScope) "appdatascope" else "",
         account = account.id.id,
     )

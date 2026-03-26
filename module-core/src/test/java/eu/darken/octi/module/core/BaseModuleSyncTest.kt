@@ -2,6 +2,7 @@ package eu.darken.octi.module.core
 
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncRead
@@ -35,7 +36,7 @@ class BaseModuleSyncTest : BaseTest() {
     private val testDeviceId = DeviceId("test-device")
     private val otherDeviceId = DeviceId("other-device")
     private val testModuleId = ModuleId("test.module")
-    private val testConnectorId = ConnectorId(type = "test", subtype = "test", account = "test")
+    private val testConnectorId = ConnectorId(type = ConnectorType.GDRIVE, subtype = "test", account = "test")
 
     private lateinit var sync: TestModuleSync
 

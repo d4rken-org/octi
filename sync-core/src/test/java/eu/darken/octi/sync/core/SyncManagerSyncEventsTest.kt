@@ -21,8 +21,8 @@ import java.time.Instant
 
 class SyncManagerSyncEventsTest : BaseTest() {
 
-    private val connectorId1 = ConnectorId(type = "kserver", subtype = "test", account = "acc1")
-    private val connectorId2 = ConnectorId(type = "gdrive", subtype = "test", account = "acc2")
+    private val connectorId1 = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "test", account = "acc1")
+    private val connectorId2 = ConnectorId(type = ConnectorType.GDRIVE, subtype = "test", account = "acc2")
     private val deviceId = DeviceId("device-1")
     private val moduleId1 = ModuleId("eu.darken.octi.module.core.power")
     private val moduleId2 = ModuleId("eu.darken.octi.module.core.meta")
