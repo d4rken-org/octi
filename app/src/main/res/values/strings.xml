@@ -227,7 +227,7 @@
     <string name="dashboard_sync_status_via">via %1$s</string>
     <string name="dashboard_sync_status_never">Not yet synced</string>
     <string name="dashboard_sync_status_mode_live">Live</string>
-    <string name="dashboard_sync_status_mode_polling">Polling</string>
+    <string name="dashboard_sync_status_mode_fast">Fast sync</string>
     <string name="dashboard_sync_status_mode_quicksync">Quick sync</string>
     <string name="dashboard_sync_status_next_in">Next in %1$s</string>
     <string name="dashboard_sync_status_due">Due</string>

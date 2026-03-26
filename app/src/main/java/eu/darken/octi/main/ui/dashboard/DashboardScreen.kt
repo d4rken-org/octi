@@ -118,6 +118,8 @@ import eu.darken.octi.modules.wifi.WifiModule
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiDetailSheet
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.StalenessUtil
+import eu.darken.octi.sync.core.SyncConnector.EventMode
+import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncOrchestrator
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -603,20 +605,18 @@ private fun connectorTypesLabel(
     val base = stringResource(R.string.dashboard_sync_status_via, names.joinToString(", "))
 
     val orchestratorState = syncStatus.orchestratorState
-    val quickSync = orchestratorState.quickSync
-    if (quickSync.isActive && quickSync.connectorModes.isNotEmpty()) {
-        val modes = connectorTypes.mapNotNull { quickSync.connectorModes[it] }.distinct()
+    val activeModes = orchestratorState.quickSync.connectorModes.values.distinct()
+    if (activeModes.isNotEmpty()) {
         val modeLabel = when {
-            modes.size == 1 && modes.first() == SyncOrchestrator.QuickSyncState.Mode.LIVE ->
+            activeModes.size == 1 && activeModes.first() == SyncConnector.EventMode.LIVE ->
                 stringResource(R.string.dashboard_sync_status_mode_live)
 
-            modes.size == 1 && modes.first() == SyncOrchestrator.QuickSyncState.Mode.POLLING ->
-                stringResource(R.string.dashboard_sync_status_mode_polling)
+            activeModes.size == 1 && activeModes.first() == SyncConnector.EventMode.POLLING ->
+                stringResource(R.string.dashboard_sync_status_mode_fast)
 
-            modes.isNotEmpty() -> stringResource(R.string.dashboard_sync_status_mode_quicksync)
-            else -> null
+            else -> stringResource(R.string.dashboard_sync_status_mode_quicksync)
         }
-        if (modeLabel != null) return "$base \u00B7 $modeLabel"
+        return "$base \u00B7 $modeLabel"
     }
 
     val nextRun = orchestratorState.backgroundSync.defaultWorker.nextRunAt
@@ -763,7 +763,7 @@ private fun SyncStatusBar(
                         detail.connectors.forEach { connector ->
                             SyncDetailConnectorRow(
                                 connector = connector,
-                                quickSyncMode = syncStatus.orchestratorState.quickSync.connectorModes[connector.type],
+                                quickSyncMode = syncStatus.orchestratorState.quickSync.connectorModes[connector.connectorId],
                             )
                         }
                     }
@@ -837,7 +837,7 @@ private fun SyncDetailModuleRow(moduleState: ModuleManager.ModuleSyncState) {
 @Composable
 private fun SyncDetailConnectorRow(
     connector: DashboardVM.ConnectorDetail,
-    quickSyncMode: SyncOrchestrator.QuickSyncState.Mode? = null,
+    quickSyncMode: SyncConnector.EventMode? = null,
 ) {
     Row(
         modifier = Modifier
@@ -866,10 +866,11 @@ private fun SyncDetailConnectorRow(
                 modifier = Modifier.size(12.dp),
                 strokeWidth = 1.5.dp,
             )
-        } else if (quickSyncMode != null) {
+        } else if (quickSyncMode != null && quickSyncMode != SyncConnector.EventMode.NONE) {
             val modeLabel = when (quickSyncMode) {
-                SyncOrchestrator.QuickSyncState.Mode.LIVE -> stringResource(R.string.dashboard_sync_status_mode_live)
-                SyncOrchestrator.QuickSyncState.Mode.POLLING -> stringResource(R.string.dashboard_sync_status_mode_polling)
+                SyncConnector.EventMode.LIVE -> stringResource(R.string.dashboard_sync_status_mode_live)
+                SyncConnector.EventMode.POLLING -> stringResource(R.string.dashboard_sync_status_mode_fast)
+                SyncConnector.EventMode.NONE -> error("Filtered above")
             }
             Text(
                 text = modeLabel,

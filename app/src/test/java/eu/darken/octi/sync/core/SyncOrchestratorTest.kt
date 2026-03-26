@@ -54,57 +54,71 @@ class SyncOrchestratorTest : BaseTest() {
         syncManager = syncManager,
     )
 
-    private fun mockConnector(type: String): SyncConnector = mockk {
+    private fun mockConnector(
+        type: String,
+        mode: SyncConnector.EventMode = SyncConnector.EventMode.NONE,
+    ): SyncConnector = mockk {
         every { identifier } returns ConnectorId(type = type, subtype = "test", account = "test")
+        every { syncEventMode } returns MutableStateFlow(mode)
     }
 
     @Nested
     inner class `quick sync state` {
         @Test
-        fun `active with kserver shows LIVE mode`() = runTest2(autoCancel = true) {
+        fun `kserver with LIVE mode reported by connector`() = runTest2(autoCancel = true) {
             isActiveFlow.value = true
-            connectorsFlow.value = listOf(mockConnector("kserver"))
+            connectorsFlow.value = listOf(mockConnector("kserver", SyncConnector.EventMode.LIVE))
 
             val state = createOrchestrator(this).state.first()
 
             state.quickSync.isActive shouldBe true
-            state.quickSync.connectorModes shouldBe mapOf("kserver" to SyncOrchestrator.QuickSyncState.Mode.LIVE)
+            state.quickSync.connectorModes.values.toList() shouldBe listOf(SyncConnector.EventMode.LIVE)
         }
 
         @Test
-        fun `active with gdrive shows POLLING mode`() = runTest2(autoCancel = true) {
+        fun `gdrive with POLLING mode reported by connector`() = runTest2(autoCancel = true) {
             isActiveFlow.value = true
-            connectorsFlow.value = listOf(mockConnector("gdrive"))
+            connectorsFlow.value = listOf(mockConnector("gdrive", SyncConnector.EventMode.POLLING))
 
             val state = createOrchestrator(this).state.first()
 
             state.quickSync.isActive shouldBe true
-            state.quickSync.connectorModes shouldBe mapOf("gdrive" to SyncOrchestrator.QuickSyncState.Mode.POLLING)
+            state.quickSync.connectorModes.values.toList() shouldBe listOf(SyncConnector.EventMode.POLLING)
         }
 
         @Test
-        fun `active with both connectors shows mixed modes`() = runTest2(autoCancel = true) {
+        fun `mixed modes from multiple connectors`() = runTest2(autoCancel = true) {
             isActiveFlow.value = true
-            connectorsFlow.value = listOf(mockConnector("kserver"), mockConnector("gdrive"))
-
-            val state = createOrchestrator(this).state.first()
-
-            state.quickSync.isActive shouldBe true
-            state.quickSync.connectorModes shouldBe mapOf(
-                "kserver" to SyncOrchestrator.QuickSyncState.Mode.LIVE,
-                "gdrive" to SyncOrchestrator.QuickSyncState.Mode.POLLING,
+            connectorsFlow.value = listOf(
+                mockConnector("kserver", SyncConnector.EventMode.LIVE),
+                mockConnector("gdrive", SyncConnector.EventMode.POLLING),
             )
+
+            val state = createOrchestrator(this).state.first()
+
+            state.quickSync.isActive shouldBe true
+            state.quickSync.connectorModes.size shouldBe 2
         }
 
         @Test
-        fun `inactive shows empty modes`() = runTest2(autoCancel = true) {
+        fun `connector with NONE mode is filtered out`() = runTest2(autoCancel = true) {
+            isActiveFlow.value = true
+            connectorsFlow.value = listOf(mockConnector("kserver", SyncConnector.EventMode.NONE))
+
+            val state = createOrchestrator(this).state.first()
+
+            state.quickSync.connectorModes shouldBe emptyMap()
+        }
+
+        @Test
+        fun `inactive but connector reports LIVE still shows mode`() = runTest2(autoCancel = true) {
             isActiveFlow.value = false
-            connectorsFlow.value = listOf(mockConnector("kserver"))
+            connectorsFlow.value = listOf(mockConnector("kserver", SyncConnector.EventMode.LIVE))
 
             val state = createOrchestrator(this).state.first()
 
             state.quickSync.isActive shouldBe false
-            state.quickSync.connectorModes shouldBe emptyMap()
+            state.quickSync.connectorModes.values.toList() shouldBe listOf(SyncConnector.EventMode.LIVE)
         }
     }
 

@@ -29,10 +29,8 @@ class SyncOrchestrator @Inject constructor(
 
     data class QuickSyncState(
         val isActive: Boolean,
-        val connectorModes: Map<String, Mode>,
-    ) {
-        enum class Mode { LIVE, POLLING }
-    }
+        val connectorModes: Map<ConnectorId, SyncConnector.EventMode>,
+    )
 
     data class BackgroundSyncState(
         val defaultWorker: WorkerInfo,
@@ -51,17 +49,9 @@ class SyncOrchestrator @Inject constructor(
         syncManager.connectors,
         syncWorkerControl.workerState,
     ) { quickSyncActive, connectors, workerState ->
-        val connectorTypes = connectors.map { it.identifier.type }.distinct()
-        val modes = if (quickSyncActive) {
-            connectorTypes.associateWith { type ->
-                when (type) {
-                    "kserver" -> QuickSyncState.Mode.LIVE
-                    else -> QuickSyncState.Mode.POLLING
-                }
-            }
-        } else {
-            emptyMap()
-        }
+        val modes = connectors
+            .associate { it.identifier to it.syncEventMode.value }
+            .filterValues { it != SyncConnector.EventMode.NONE }
         State(
             quickSync = QuickSyncState(isActive = quickSyncActive, connectorModes = modes),
             backgroundSync = BackgroundSyncState(

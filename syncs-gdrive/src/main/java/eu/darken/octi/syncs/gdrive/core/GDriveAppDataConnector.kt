@@ -26,6 +26,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncEvent
+import eu.darken.octi.sync.core.SyncConnector.EventMode
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncSettings
@@ -41,10 +42,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.plus
@@ -100,6 +105,9 @@ class GDriveAppDataConnector @AssistedInject constructor(
         null as String?,
     )
 
+    private val _syncEventMode = MutableStateFlow(EventMode.NONE)
+    override val syncEventMode: StateFlow<EventMode> = _syncEventMode.asStateFlow()
+
     override val syncEvents: Flow<SyncEvent> = flow {
         while (true) {
             delay(POLL_INTERVAL_MS)
@@ -110,7 +118,10 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 log(TAG, WARN) { "syncEvents poll failed: ${e.message}" }
             }
         }
-    }.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 0)
+    }
+        .onStart { _syncEventMode.value = EventMode.POLLING }
+        .onCompletion { _syncEventMode.value = EventMode.NONE }
+        .shareIn(scope, SharingStarted.WhileSubscribed(), replay = 0)
 
     private suspend fun GDriveEnvironment.checkForChanges(): List<SyncEvent> {
         val token = changeToken.value()

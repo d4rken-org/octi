@@ -24,6 +24,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncEvent
+import eu.darken.octi.sync.core.SyncConnector.EventMode
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncSettings
@@ -37,6 +38,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
@@ -107,6 +110,9 @@ class KServerConnector @AssistedInject constructor(
         account = credentials.accountId.id,
     )
 
+    private val _syncEventMode = MutableStateFlow(EventMode.NONE)
+    override val syncEventMode: StateFlow<EventMode> = _syncEventMode.asStateFlow()
+
     override val syncEvents: Flow<SyncEvent> = networkStateProvider.networkState
         .map { it.isInternetAvailable }
         .distinctUntilChanged()
@@ -119,9 +125,13 @@ class KServerConnector @AssistedInject constructor(
                     syncSettings = syncSettings,
                     baseHttpClient = baseHttpClient,
                     json = json,
+                    onConnectionChanged = { connected ->
+                        _syncEventMode.value = if (connected) EventMode.LIVE else EventMode.NONE
+                    },
                 ).connect()
             } else {
                 log(TAG, INFO) { "Network lost, WebSocket inactive" }
+                _syncEventMode.value = EventMode.NONE
                 emptyFlow()
             }
         }

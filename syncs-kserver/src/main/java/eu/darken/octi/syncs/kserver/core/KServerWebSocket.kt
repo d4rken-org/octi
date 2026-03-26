@@ -37,6 +37,7 @@ class KServerWebSocket(
     private val syncSettings: SyncSettings,
     private val baseHttpClient: OkHttpClient,
     private val json: Json,
+    private val onConnectionChanged: (Boolean) -> Unit = {},
 ) {
 
     @Serializable
@@ -94,6 +95,7 @@ class KServerWebSocket(
                 override fun onOpen(webSocket: WebSocket, response: Response) {
                     log(TAG, INFO) { "Connected" }
                     backoffMs = INITIAL_BACKOFF_MS
+                    onConnectionChanged(true)
                 }
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
@@ -111,11 +113,13 @@ class KServerWebSocket(
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                     log(TAG, WARN) { "Connection failed: ${t.message}" }
+                    onConnectionChanged(false)
                     scheduleReconnect()
                 }
 
                 override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
                     log(TAG, INFO) { "Connection closing: $code $reason" }
+                    onConnectionChanged(false)
                     webSocket.close(1000, null)
                     scheduleReconnect()
                 }
@@ -126,6 +130,7 @@ class KServerWebSocket(
 
         awaitClose {
             log(TAG, INFO) { "Closing WebSocket" }
+            onConnectionChanged(false)
             activeSocket?.close(1000, "Client closing")
         }
     }

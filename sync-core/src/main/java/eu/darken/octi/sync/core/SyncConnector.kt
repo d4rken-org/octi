@@ -1,9 +1,13 @@
 package eu.darken.octi.sync.core
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 
 interface SyncConnector {
+
+    enum class EventMode { NONE, LIVE, POLLING }
 
     val identifier: ConnectorId
 
@@ -11,6 +15,7 @@ interface SyncConnector {
     val data: Flow<SyncRead?>
 
     val syncEvents: Flow<SyncEvent> get() = emptyFlow()
+    val syncEventMode: StateFlow<EventMode> get() = MutableStateFlow(EventMode.NONE)
 
     /**
      * Data that is written on the next **sync**

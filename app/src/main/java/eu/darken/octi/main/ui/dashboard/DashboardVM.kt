@@ -36,6 +36,7 @@ import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
 import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.core.alert.PowerAlertManager
 import eu.darken.octi.modules.wifi.core.WifiInfo
+import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncExecutor
 import eu.darken.octi.sync.core.SyncManager
@@ -115,6 +116,7 @@ class DashboardVM @Inject constructor(
         val connectorDetails = activeConnectors.mapNotNull { connector ->
             val state = statesMap[connector.identifier] ?: return@mapNotNull null
             ConnectorDetail(
+                connectorId = connector.identifier,
                 type = connector.identifier.type,
                 isBusy = state.isBusy,
                 lastSyncAt = state.lastSyncAt,
@@ -193,6 +195,7 @@ class DashboardVM @Inject constructor(
     )
 
     data class ConnectorDetail(
+        val connectorId: ConnectorId,
         val type: String,
         val isBusy: Boolean,
         val lastSyncAt: Instant?,
