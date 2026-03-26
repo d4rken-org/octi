@@ -41,9 +41,7 @@ class SyncSettings @Inject constructor(
 
     val backgroundSyncChargingInterval = dataStore.createValue("sync.background.charging.interval.minutes", 15)
 
-    val foregroundSyncEnabled = dataStore.createValue("sync.foreground.enabled", false)
-
-    val foregroundSyncInterval = dataStore.createValue("sync.foreground.interval.minutes", 5)
+    val foregroundSyncEnabled = dataStore.createValue("sync.foreground.enabled", true)
 
     val showDashboardCard = dataStore.createValue("sync.dashboard.card.show", true)
 
