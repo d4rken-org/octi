@@ -42,6 +42,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncExecutor
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOrchestrator
+import eu.darken.octi.sync.core.StalenessUtil
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
@@ -168,6 +169,7 @@ class DashboardVM @Inject constructor(
         val isCollapsed: Boolean,
         val isLimited: Boolean,
         val isCurrentDevice: Boolean,
+        val isStale: Boolean = false,
     )
 
     sealed interface ModuleItem {
@@ -280,6 +282,7 @@ class DashboardVM @Inject constructor(
             item.copy(
                 tileLayout = effectiveLayout,
                 isCollapsed = cleanedConfig.isCollapsed(deviceId),
+                isStale = StalenessUtil.isStale(item.meta.modifiedAt),
                 isLimited = !upgradeInfo.isPro && index >= DEVICE_LIMIT,
             )
         }

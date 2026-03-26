@@ -70,6 +70,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -1224,7 +1225,7 @@ private fun DashboardDeviceCard(
     showMessage: (String) -> Unit,
 ) {
     val meta = device.meta.data
-    val isStale = StalenessUtil.isStale(device.meta.modifiedAt)
+    val isStale = device.isStale
     val hasModules = device.moduleItems.isNotEmpty()
     val shouldShowModules = !device.isLimited && hasModules && !device.isCollapsed
 
@@ -1279,10 +1280,22 @@ private fun DashboardDeviceCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Text(
-                    text = DateUtils.getRelativeTimeSpanString(device.meta.modifiedAt.toEpochMilli()).toString(),
-                    style = MaterialTheme.typography.labelSmall,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (isStale) {
+                        Icon(
+                            imageVector = Icons.TwoTone.Warning,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(14.dp),
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+                    Text(
+                        text = DateUtils.getRelativeTimeSpanString(device.meta.modifiedAt.toEpochMilli()).toString(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isStale) MaterialTheme.colorScheme.error else Color.Unspecified,
+                    )
+                }
             }
             if (!device.isLimited && hasModules) {
                 Icon(
