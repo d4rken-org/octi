@@ -79,7 +79,7 @@ class SyncOrchestratorTest : BaseTest() {
         @Test
         fun `gdrive with POLLING mode reported by connector`() = runTest2(autoCancel = true) {
             isActiveFlow.value = true
-            connectorsFlow.value = listOf(mockConnector("gdrive", SyncConnector.EventMode.POLLING))
+            connectorsFlow.value = listOf(mockConnector(ConnectorType.GDRIVE, SyncConnector.EventMode.POLLING))
 
             val state = createOrchestrator(this).state.first()
 
@@ -92,7 +92,7 @@ class SyncOrchestratorTest : BaseTest() {
             isActiveFlow.value = true
             connectorsFlow.value = listOf(
                 mockConnector(ConnectorType.OCTISERVER, SyncConnector.EventMode.LIVE),
-                mockConnector("gdrive", SyncConnector.EventMode.POLLING),
+                mockConnector(ConnectorType.GDRIVE, SyncConnector.EventMode.POLLING),
             )
 
             val state = createOrchestrator(this).state.first()
