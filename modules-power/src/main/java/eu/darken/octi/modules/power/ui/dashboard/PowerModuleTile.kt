@@ -2,15 +2,17 @@ package eu.darken.octi.modules.power.ui.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Battery1Bar
+import androidx.compose.material.icons.twotone.BatteryFull
 import androidx.compose.material.icons.twotone.NotificationsNone
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material3.Icon
@@ -25,10 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import eu.darken.octi.common.TemperatureFormatter
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -36,8 +40,12 @@ import eu.darken.octi.modules.power.R as PowerR
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
+import eu.darken.octi.modules.power.core.alert.BatteryHighAlertRule
+import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
+import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.ui.PowerEstimationFormatter
 import eu.darken.octi.modules.power.ui.batteryIcon
+import eu.darken.octi.sync.core.DeviceId
 
 @Composable
 fun PowerModuleTile(
@@ -94,7 +102,7 @@ fun PowerModuleTile(
                     color = if (isAlertActive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                if (lowAlert != null) {
+                if (lowAlert != null || state.batteryHighAlert != null) {
                     Icon(
                         imageVector = Icons.TwoTone.NotificationsNone,
                         contentDescription = null,
@@ -127,6 +135,11 @@ fun PowerModuleTile(
                 color = progressColor,
                 trackColor = progressColor.copy(alpha = 0.2f),
             )
+            val lowThreshold = state.batteryLowAlert?.rule?.threshold
+            val highThreshold = state.batteryHighAlert?.rule?.threshold
+            if (lowThreshold != null || highThreshold != null) {
+                ThresholdMarkers(lowThreshold = lowThreshold, highThreshold = highThreshold)
+            }
             PowerTileSecondaryText(power)
         }
     }
@@ -159,6 +172,98 @@ private fun PowerTileSecondaryText(power: PowerInfo) {
         text = if (temperatureText != null) "$temperatureText - $estimationText" else estimationText,
         style = MaterialTheme.typography.labelSmall,
     )
+}
+
+@Composable
+private fun ThresholdMarkers(
+    lowThreshold: Float?,
+    highThreshold: Float?,
+) {
+    data class Marker(val threshold: Float, val anchorAtStart: Boolean)
+
+    val markers = listOfNotNull(
+        lowThreshold?.let { Marker(it, anchorAtStart = true) },
+        highThreshold?.let { Marker(it, anchorAtStart = false) },
+    )
+    Layout(
+        content = {
+            lowThreshold?.let {
+                MarkerLabel(
+                    percentage = (it * 100).toInt(),
+                    icon = Icons.TwoTone.Battery1Bar,
+                    anchorAtStart = true,
+                )
+            }
+            highThreshold?.let {
+                MarkerLabel(
+                    percentage = (it * 100).toInt(),
+                    icon = Icons.TwoTone.BatteryFull,
+                    anchorAtStart = false,
+                )
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+    ) { measurables, constraints ->
+        val placeables = measurables.map { it.measure(constraints.copy(minWidth = 0)) }
+        val height = placeables.maxOfOrNull { it.height } ?: 0
+        layout(constraints.maxWidth, height) {
+            placeables.forEachIndexed { index, placeable ->
+                val marker = markers[index]
+                val thresholdX = constraints.maxWidth * marker.threshold
+                val x = if (marker.anchorAtStart) {
+                    thresholdX.toInt()
+                } else {
+                    (thresholdX - placeable.width).toInt()
+                }.coerceIn(0, constraints.maxWidth - placeable.width)
+                placeable.placeRelative(x, 0)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MarkerLabel(
+    percentage: Int,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    anchorAtStart: Boolean,
+) {
+    val color = MaterialTheme.colorScheme.onSurfaceVariant
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        if (!anchorAtStart) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(9.dp),
+                tint = color,
+            )
+            Text(
+                text = "${percentage}%",
+                fontSize = 9.sp,
+                lineHeight = 11.sp,
+                color = color,
+            )
+        }
+        Text(
+            text = "▲",
+            fontSize = 7.sp,
+            lineHeight = 9.sp,
+            color = color,
+        )
+        if (anchorAtStart) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(9.dp),
+                tint = color,
+            )
+            Text(
+                text = "${percentage}%",
+                fontSize = 9.sp,
+                lineHeight = 11.sp,
+                color = color,
+            )
+        }
+    }
 }
 
 @Preview2
@@ -194,6 +299,32 @@ private fun PowerModuleTileHalfPreview() = PreviewWrapper {
             showSettings = false,
         ),
         isWide = false,
+        onDetailClicked = {},
+        onSettingsClicked = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun PowerModuleTileWithThresholdsPreview() = PreviewWrapper {
+    PowerModuleTile(
+        state = PowerDashState(
+            info = PowerInfo(
+                status = Status.DISCHARGING,
+                battery = PowerInfo.Battery(level = 55, scale = 100, health = 2, temp = 30f),
+                chargeIO = ChargeIO(null, null, null, null, null),
+            ),
+            batteryLowAlert = PowerAlert(
+                rule = BatteryLowAlertRule(deviceId = DeviceId("preview"), threshold = 0.20f),
+                event = null,
+            ),
+            batteryHighAlert = PowerAlert(
+                rule = BatteryHighAlertRule(deviceId = DeviceId("preview"), threshold = 0.80f),
+                event = null,
+            ),
+            showSettings = true,
+        ),
+        isWide = true,
         onDetailClicked = {},
         onSettingsClicked = {},
     )

@@ -117,6 +117,7 @@ private fun ModuleTileDispatch(
             state = PowerDashState(
                 info = item.data.data,
                 batteryLowAlert = item.batteryLowAlert,
+                batteryHighAlert = item.batteryHighAlert,
                 showSettings = item.showSettings,
             ),
             modifier = modifier,

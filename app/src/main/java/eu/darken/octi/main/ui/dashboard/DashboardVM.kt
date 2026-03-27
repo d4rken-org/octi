@@ -32,6 +32,7 @@ import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
+import eu.darken.octi.modules.power.core.alert.BatteryHighAlertRule
 import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
 import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.core.alert.PowerAlertManager
@@ -178,7 +179,8 @@ class DashboardVM @Inject constructor(
     sealed interface ModuleItem {
         data class Power(
             val data: ModuleData<PowerInfo>,
-            val batteryLowAlert: PowerAlert<BatteryLowAlertRule>?,
+            val batteryLowAlert: PowerAlert<BatteryLowAlertRule>? = null,
+            val batteryHighAlert: PowerAlert<BatteryHighAlertRule>? = null,
             val showSettings: Boolean,
         ) : ModuleItem
 
@@ -478,6 +480,7 @@ class DashboardVM @Inject constructor(
                             is PowerInfo -> ModuleItem.Power(
                                 data = moduleData as ModuleData<PowerInfo>,
                                 batteryLowAlert = powerAlerts.firstOrNull { it.rule is BatteryLowAlertRule } as? PowerAlert<BatteryLowAlertRule>,
+                                batteryHighAlert = powerAlerts.firstOrNull { it.rule is BatteryHighAlertRule } as? PowerAlert<BatteryHighAlertRule>,
                                 showSettings = deviceId != syncSettings.deviceId,
                             )
 

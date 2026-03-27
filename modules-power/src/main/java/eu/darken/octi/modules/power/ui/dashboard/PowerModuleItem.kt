@@ -30,6 +30,7 @@ import eu.darken.octi.modules.power.R as PowerR
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
+import eu.darken.octi.modules.power.core.alert.BatteryHighAlertRule
 import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
 import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.ui.PowerEstimationFormatter
@@ -37,7 +38,8 @@ import eu.darken.octi.modules.power.ui.batteryIcon
 
 data class PowerDashState(
     val info: PowerInfo,
-    val batteryLowAlert: PowerAlert<BatteryLowAlertRule>?,
+    val batteryLowAlert: PowerAlert<BatteryLowAlertRule>? = null,
+    val batteryHighAlert: PowerAlert<BatteryHighAlertRule>? = null,
     val showSettings: Boolean,
 )
 
@@ -79,7 +81,7 @@ fun PowerModuleItem(
             )
             PowerSecondaryText(power)
         }
-        if (state.batteryLowAlert != null) {
+        if (state.batteryLowAlert != null || state.batteryHighAlert != null) {
             Icon(
                 imageVector = Icons.TwoTone.NotificationsNone,
                 contentDescription = null,
