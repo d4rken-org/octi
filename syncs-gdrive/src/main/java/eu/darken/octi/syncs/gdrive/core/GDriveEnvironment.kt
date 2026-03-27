@@ -80,6 +80,14 @@ interface GDriveEnvironment {
         }
     }
 
+    suspend fun getFileMetadata(
+        fileId: String,
+        fields: String = "id,name,parents,modifiedTime",
+    ): GDriveFile {
+        log(TAG, VERBOSE) { "getFileMetadata($fileId)" }
+        return drive.files().get(fileId).setFields(fields).execute()
+    }
+
     suspend fun GDriveFile.readData(): ByteString? {
         log(TAG, VERBOSE) { "readData($name)" }
 

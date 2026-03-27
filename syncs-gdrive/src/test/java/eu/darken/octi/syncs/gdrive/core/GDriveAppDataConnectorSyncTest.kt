@@ -3,6 +3,7 @@ package eu.darken.octi.syncs.gdrive.core
 import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.google.api.services.drive.Drive
+import com.google.api.client.util.DateTime
 import com.google.api.services.drive.model.Change
 import com.google.api.services.drive.model.ChangeList
 import com.google.api.services.drive.model.FileList
@@ -14,12 +15,17 @@ import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeBlank
+import okio.ByteString.Companion.encodeUtf8
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -365,6 +371,225 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
                 .createValue("gdrive.sync_token.test-account", null as String?)
                 .value()
             token shouldBe "final-token"
+        }
+    }
+
+    @Nested
+    inner class `fileId cache` {
+
+        private val deviceA = DeviceId("device-a")
+        private val powerFileId = "power-file-id-123"
+
+        private fun setupDriveWithPowerModule(payload: String = "power-data") {
+            val rootFile = GDriveFile().apply {
+                id = "root-id"
+                name = "appDataFolder"
+                mimeType = "application/vnd.google-apps.folder"
+            }
+            val devicesDir = GDriveFile().apply {
+                id = "devices-dir-id"
+                name = "devices"
+                mimeType = "application/vnd.google-apps.folder"
+            }
+            val deviceADir = GDriveFile().apply {
+                id = "device-a-dir-id"
+                name = "device-a"
+                mimeType = "application/vnd.google-apps.folder"
+            }
+            val powerFile = GDriveFile().apply {
+                id = powerFileId
+                name = power.id
+                mimeType = "application/octet-stream"
+                modifiedTime = DateTime(1000L)
+            }
+
+            val rootGet = mockk<Drive.Files.Get>(relaxed = true).also {
+                every { it.execute() } returns rootFile
+            }
+            val moduleGet = mockk<Drive.Files.Get>(relaxed = true).also {
+                every { it.setFields(any<String>()) } returns it
+                every { it.execute() } returns powerFile
+                every { it.executeMediaAndDownloadTo(any()) } answers {
+                    firstArg<java.io.OutputStream>().write(payload.toByteArray())
+                }
+            }
+
+            every { mockFiles.get(any()) } answers {
+                when (firstArg<String>()) {
+                    "appDataFolder" -> rootGet
+                    powerFileId -> moduleGet
+                    else -> mockk(relaxed = true)
+                }
+            }
+
+            var listCallIdx = 0
+            every { mockFilesList.execute() } answers {
+                listCallIdx++
+                when (listCallIdx) {
+                    1 -> FileList().apply { files = listOf(devicesDir) }
+                    2 -> FileList().apply { files = listOf(deviceADir) }
+                    3 -> FileList().apply { files = listOf(powerFile) }
+                    else -> FileList().apply { files = emptyList() }
+                }
+            }
+        }
+
+        @Test
+        fun `targeted sync uses direct fetch when cache is warm`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupDriveWithPowerModule("original")
+
+            // Full sync populates _data + fileIdCache
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+            connector.data.first().shouldNotBeNull()
+
+            // Override module mock with updated payload for direct fetch
+            val updatedPowerFile = GDriveFile().apply {
+                id = powerFileId
+                name = power.id
+                parents = listOf("device-a-dir-id")
+                modifiedTime = DateTime(2000L)
+            }
+            val updatedGet = mockk<Drive.Files.Get>(relaxed = true).also {
+                every { it.setFields(any<String>()) } returns it
+                every { it.execute() } returns updatedPowerFile
+                every { it.executeMediaAndDownloadTo(any()) } answers {
+                    firstArg<java.io.OutputStream>().write("updated".toByteArray())
+                }
+            }
+            every { mockFiles.get(powerFileId) } returns updatedGet
+
+            // Break directory traversal — readDrive would return empty
+            every { mockFilesList.execute() } returns FileList().apply { files = emptyList() }
+
+            // Targeted sync with BOTH filters → should use direct fetch
+            connector.sync(
+                SyncOptions(
+                    stats = false,
+                    readData = true,
+                    writeData = false,
+                    moduleFilter = setOf(power),
+                    deviceFilter = setOf(deviceA),
+                ),
+            )
+
+            // Data should have updated payload — proves direct fetch was used
+            val data = connector.data.first()
+            data.shouldNotBeNull()
+            val module = data.devices
+                .first { it.deviceId == deviceA }
+                .modules
+                .first { it.moduleId == power }
+            module.payload.utf8() shouldBe "updated"
+        }
+
+        @Test
+        fun `targeted sync with only moduleFilter uses readDrive not cache`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupDriveWithPowerModule("original")
+
+            // Full sync
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+
+            // Re-setup drive with different payload
+            setupDriveWithPowerModule("from-readDrive")
+
+            // Targeted sync with ONLY moduleFilter → readDrive, not cache
+            connector.sync(
+                SyncOptions(
+                    stats = false,
+                    readData = true,
+                    writeData = false,
+                    moduleFilter = setOf(power),
+                ),
+            )
+
+            val data = connector.data.first()
+            data.shouldNotBeNull()
+            val module = data.devices
+                .first { it.deviceId == deviceA }
+                .modules
+                .first { it.moduleId == power }
+            module.payload.utf8() shouldBe "from-readDrive"
+        }
+
+        @Test
+        fun `targeted sync falls back to readDrive when cache is empty`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupEmptyDriveRead()
+
+            // First sync: empty drive → _data populated but cache empty
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+
+            // Setup populated drive for fallback
+            setupDriveWithPowerModule("fallback-data")
+
+            // Targeted sync — cache miss → falls back to readDrive
+            connector.sync(
+                SyncOptions(
+                    stats = false,
+                    readData = true,
+                    writeData = false,
+                    moduleFilter = setOf(power),
+                    deviceFilter = setOf(deviceA),
+                ),
+            )
+
+            val data = connector.data.first()
+            data.shouldNotBeNull()
+            val module = data.devices
+                .first { it.deviceId == deviceA }
+                .modules
+                .first { it.moduleId == power }
+            module.payload.utf8() shouldBe "fallback-data"
+        }
+
+        @Test
+        fun `direct fetch validates file name and falls back on mismatch`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupDriveWithPowerModule("original")
+
+            // Full sync populates cache
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+
+            // Override getFileMetadata to return wrong name (stale cache)
+            val wrongNameFile = GDriveFile().apply {
+                id = powerFileId
+                name = "wrong-module-name"
+                parents = listOf("device-a-dir-id")
+                modifiedTime = DateTime(2000L)
+            }
+            val wrongGet = mockk<Drive.Files.Get>(relaxed = true).also {
+                every { it.setFields(any<String>()) } returns it
+                every { it.execute() } returns wrongNameFile
+            }
+            every { mockFiles.get(powerFileId) } returns wrongGet
+
+            // Re-setup list mock for fallback readDrive
+            setupDriveWithPowerModule("fallback-after-mismatch")
+
+            // Targeted sync — direct fetch detects mismatch, falls back
+            connector.sync(
+                SyncOptions(
+                    stats = false,
+                    readData = true,
+                    writeData = false,
+                    moduleFilter = setOf(power),
+                    deviceFilter = setOf(deviceA),
+                ),
+            )
+
+            val data = connector.data.first()
+            data.shouldNotBeNull()
+            val module = data.devices
+                .first { it.deviceId == deviceA }
+                .modules
+                .first { it.moduleId == power }
+            module.payload.utf8() shouldBe "fallback-after-mismatch"
         }
     }
 }

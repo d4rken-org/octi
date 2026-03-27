@@ -59,6 +59,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okio.IOException
 import java.time.Instant
+import java.util.concurrent.ConcurrentHashMap
 import com.google.api.services.drive.model.File as GDriveFile
 
 
@@ -112,6 +113,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
     )
 
     private val parentCache = mutableMapOf<String, String>()
+    private val fileIdCache = ConcurrentHashMap<Pair<DeviceId, ModuleId>, String>()
+    private val fileIdReverseCache = ConcurrentHashMap<String, Pair<DeviceId, ModuleId>>()
 
     private val _syncEventMode = MutableStateFlow(EventMode.NONE)
     override val syncEventMode: StateFlow<EventMode> = _syncEventMode.asStateFlow()
@@ -164,7 +167,10 @@ class GDriveAppDataConnector @AssistedInject constructor(
             log(TAG) { "checkForChanges(): ${allChanges.size} changes detected" }
 
             allChanges.mapNotNull { change ->
-                if (change.removed) return@mapNotNull null
+                if (change.removed) {
+                    fileIdReverseCache.remove(change.fileId)?.let { fileIdCache.remove(it) }
+                    return@mapNotNull null
+                }
                 val file = change.file ?: return@mapNotNull null
                 val parentId = file.parents?.firstOrNull() ?: return@mapNotNull null
 
@@ -177,10 +183,17 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     }
                 }
 
+                val moduleId = ModuleId(file.name)
+                if (moduleId in supportedModuleIds) {
+                    val cacheKey = DeviceId(parentName) to moduleId
+                    fileIdCache[cacheKey] = file.id
+                    fileIdReverseCache[file.id] = cacheKey
+                }
+
                 SyncEvent.ModuleChanged(
                     connectorId = identifier,
                     deviceId = DeviceId(parentName),
-                    moduleId = ModuleId(file.name),
+                    moduleId = moduleId,
                     modifiedAt = Instant.now(),
                     action = SyncEvent.ModuleChanged.Action.UPDATED,
                 )
@@ -189,6 +202,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             if (e.statusCode == 410) {
                 log(TAG, WARN) { "checkForChanges(): Token invalidated, resetting" }
                 parentCache.clear()
+                clearFileIdCache()
                 pollToken.value(null)
             } else {
                 log(TAG, ERROR) { "checkForChanges(): API error: ${e.message}" }
@@ -221,6 +235,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     override suspend fun resetData(): Unit = withContext(NonCancellable) {
         log(TAG, INFO) { "resetData()" }
+        clearFileIdCache()
         runDriveAction("reset-data") {
             appDataRoot.child(DEVICE_DATA_DIR_NAME)
                 ?.listFiles()
@@ -233,6 +248,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     override suspend fun deleteDevice(deviceId: DeviceId): Unit = withContext(NonCancellable) {
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
+        evictFileIdCache(deviceId)
         runDriveAction("delete-device: $deviceId") {
             appDataRoot.child(DEVICE_DATA_DIR_NAME)
                 ?.listFiles()
@@ -245,6 +261,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 ?.deleteAll()
             if (deviceId == syncSettings.deviceId) {
                 log(TAG, WARN) { "We just deleted ourselves, this connector is dead now" }
+                clearFileIdCache()
                 _state.updateBlocking { copy(isDead = true) }
             }
         }
@@ -296,10 +313,16 @@ class GDriveAppDataConnector @AssistedInject constructor(
                             return@moduleFetch null
                         }
 
+                        val deviceId = DeviceId(deviceDir.name)
+                        val moduleId = ModuleId(moduleFile.name)
+                        val cacheKey = deviceId to moduleId
+                        fileIdCache[cacheKey] = moduleFile.id
+                        fileIdReverseCache[moduleFile.id] = cacheKey
+
                         GDriveModuleData(
                             connectorId = identifier,
-                            deviceId = DeviceId(deviceDir.name),
-                            moduleId = ModuleId(moduleFile.name),
+                            deviceId = deviceId,
+                            moduleId = moduleId,
                             modifiedAt = Instant.ofEpochMilli(moduleFile.modifiedTime.value),
                             payload = payload,
                         ).also { log(TAG, VERBOSE) { "readDrive(): Got module data: $it" } }
@@ -322,6 +345,52 @@ class GDriveAppDataConnector @AssistedInject constructor(
         return GDriveData(
             connectorId = identifier,
             devices = devices,
+        )
+    }
+
+    private suspend fun GDriveEnvironment.readDriveByFileIds(
+        cachedIds: Map<Pair<DeviceId, ModuleId>, String>,
+    ): GDriveData {
+        log(TAG, DEBUG) { "readDriveByFileIds(): Fetching ${cachedIds.size} files directly by ID" }
+        val start = System.currentTimeMillis()
+
+        val fetchJobs = cachedIds.map { (key, fileId) ->
+            val (deviceId, moduleId) = key
+            scope.async(dispatcherProvider.IO) {
+                val file = getFileMetadata(fileId)
+
+                if (file.name != moduleId.id) {
+                    log(TAG, WARN) { "readDriveByFileIds(): Name mismatch for $fileId: expected=${moduleId.id}, got=${file.name}" }
+                    fileIdCache.remove(key)
+                    fileIdReverseCache.remove(fileId)
+                    return@async null
+                }
+
+                val payload = file.readData()
+                if (payload == null) {
+                    log(TAG, WARN) { "readDriveByFileIds(): Empty payload for $fileId" }
+                    return@async null
+                }
+
+                GDriveModuleData(
+                    connectorId = identifier,
+                    deviceId = deviceId,
+                    moduleId = moduleId,
+                    modifiedAt = Instant.ofEpochMilli(file.modifiedTime.value),
+                    payload = payload,
+                )
+            }
+        }
+
+        val modules = fetchJobs.awaitAll().filterNotNull()
+        log(TAG) { "readDriveByFileIds() took ${System.currentTimeMillis() - start}ms" }
+
+        val deviceGroups = modules.groupBy { it.deviceId }
+        return GDriveData(
+            connectorId = identifier,
+            devices = deviceGroups.map { (deviceId, mods) ->
+                GDriveDeviceData(deviceId = deviceId, modules = mods)
+            },
         )
     }
 
@@ -369,6 +438,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
             if (e.statusCode == 410) {
                 log(TAG, WARN) { "checkSyncChanges(): Token invalidated, resetting" }
+                clearFileIdCache()
                 syncToken.value(null)
             }
             SyncChangeResult.ForceFullSync
@@ -405,6 +475,48 @@ class GDriveAppDataConnector @AssistedInject constructor(
             .map { GDriveDeviceData(deviceId = it.deviceId, modules = it.modules.toList()) }
 
         return GDriveData(connectorId = existing.connectorId, devices = mergedDevices + newDevices)
+    }
+
+    private fun clearFileIdCache() {
+        fileIdCache.clear()
+        fileIdReverseCache.clear()
+    }
+
+    private fun evictFileIdCache(deviceId: DeviceId) {
+        fileIdCache.keys.filter { it.first == deviceId }.forEach { key ->
+            fileIdCache.remove(key)?.let { fileIdReverseCache.remove(it) }
+        }
+    }
+
+    private suspend fun GDriveEnvironment.readTargeted(
+        options: SyncOptions,
+        existing: SyncRead,
+    ): GDriveData {
+        val mFilter = options.moduleFilter
+        val dFilter = options.deviceFilter
+
+        if (mFilter != null && dFilter != null) {
+            val targetModules = mFilter.intersect(supportedModuleIds)
+            val requested = dFilter.flatMap { deviceId ->
+                targetModules.map { moduleId -> deviceId to moduleId }
+            }.toSet()
+            val cached = requested.mapNotNull { key -> fileIdCache[key]?.let { key to it } }.toMap()
+
+            if (cached.size == requested.size) {
+                log(TAG) { "readTargeted(): All ${cached.size} fileIds cached, using direct fetch" }
+                try {
+                    return readDriveByFileIds(cached)
+                } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    log(TAG, WARN) { "readTargeted(): Direct fetch failed, falling back: ${e.asLog()}" }
+                }
+            } else {
+                log(TAG) { "readTargeted(): Cache miss (${cached.size}/${requested.size}), using readDrive" }
+            }
+        }
+
+        return readDrive(mFilter, dFilter)
     }
 
     private val syncLock = Mutex()
@@ -486,7 +598,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                                     .execute().startPageToken
                                 syncToken.value(startToken)
                             } else {
-                                val newData = readDrive(options.moduleFilter, options.deviceFilter)
+                                val newData = readTargeted(options, existing)
                                 _data.value = mergeData(existing, newData, options.moduleFilter)
                             }
                         } else {
