@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Apps
 import androidx.compose.material.icons.twotone.BatteryFull
@@ -37,6 +38,7 @@ import androidx.compose.material.icons.twotone.ExpandLess
 import androidx.compose.material.icons.twotone.ExpandMore
 import androidx.compose.material.icons.twotone.Home
 import androidx.compose.material.icons.twotone.Info
+import androidx.compose.material.icons.twotone.MoreVert
 import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.Refresh
@@ -47,6 +49,8 @@ import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material.icons.twotone.Wifi
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -258,6 +262,8 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             onSaveTileLayout = { deviceId, config -> vm.saveTileLayout(deviceId, config) },
             onSaveAsDefaultTileLayout = { vm.saveAsDefaultTileLayout(it) },
             onResetTileLayout = { vm.resetTileLayout(it) },
+            onMoveDeviceUp = { vm.moveDeviceUp(it) },
+            onMoveDeviceDown = { vm.moveDeviceDown(it) },
         )
     }
 }
@@ -289,6 +295,8 @@ fun DashboardScreen(
     onSaveTileLayout: (String, TileLayoutConfig) -> Unit = { _, _ -> },
     onSaveAsDefaultTileLayout: (TileLayoutConfig) -> Unit = {},
     onResetTileLayout: (String) -> Unit = {},
+    onMoveDeviceUp: (String) -> Unit = {},
+    onMoveDeviceDown: (String) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val showMessage: (String) -> Unit = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
@@ -411,46 +419,15 @@ fun DashboardScreen(
 
             // Device cards with limit card interleaved
             val devices = state.devices
-            val deviceLimit = 3
+            val deviceLimit = state.deviceLimit
             val showLimitCard = state.deviceLimitReached
 
-            if (showLimitCard) {
-                // Show devices before limit
-                items(
-                    items = devices.take(deviceLimit),
-                    key = { it.meta.deviceId.hashCode() },
-                ) { device ->
-                    DeviceCardOrEditor(
-                        device = device,
-                        editingDeviceId = editingDeviceId,
-                        onToggleCollapse = onToggleDeviceCollapsed,
-                        onLongPress = { editingDeviceId = it },
-                        onUpgrade = onUpgrade,
-                        onManageStaleDevice = onSyncServices,
-                        onPowerClicked = { showPowerDetail = it },
-                        onPowerAlerts = onPowerAlerts,
-                        onWifiClicked = { showWifiDetail = it },
-                        onWifiPermissionGrant = onWifiPermissionGrant,
-                        onConnectivityClicked = { showConnectivityDetail = it },
-                        onAppsClicked = onAppsList,
-                        onInstallLatestApp = onInstallLatestApp,
-                        onClipboardClicked = { showClipboardDetail = it },
-                        onClearClipboard = onClearClipboard,
-                        onShareClipboard = onShareClipboard,
-                        onCopyClipboard = onCopyClipboard,
-                        showMessage = showMessage,
-                        onDoneEditing = { deviceId, config ->
-                            onSaveTileLayout(deviceId, config)
-                            editingDeviceId = null
-                        },
-                        onCancelEditing = { editingDeviceId = null },
-                        onResetTileLayout = onResetTileLayout,
-                        onSaveAsDefault = onSaveAsDefaultTileLayout,
-                    )
-                }
-
-                // Device limit card
-                item(key = "device_limit") {
+            itemsIndexed(
+                items = devices,
+                key = { _, device -> device.meta.deviceId.id },
+            ) { index, device ->
+                // Insert device limit card before the first limited device
+                if (showLimitCard && index == deviceLimit) {
                     DeviceLimitCard(
                         current = devices.size,
                         maximum = deviceLimit,
@@ -459,72 +436,37 @@ fun DashboardScreen(
                     )
                 }
 
-                // Show devices after limit
-                items(
-                    items = devices.drop(deviceLimit),
-                    key = { "after_${it.meta.deviceId.id}" },
-                ) { device ->
-                    DeviceCardOrEditor(
-                        device = device,
-                        editingDeviceId = editingDeviceId,
-                        onToggleCollapse = onToggleDeviceCollapsed,
-                        onLongPress = { editingDeviceId = it },
-                        onUpgrade = onUpgrade,
-                        onManageStaleDevice = onSyncServices,
-                        onPowerClicked = { showPowerDetail = it },
-                        onPowerAlerts = onPowerAlerts,
-                        onWifiClicked = { showWifiDetail = it },
-                        onWifiPermissionGrant = onWifiPermissionGrant,
-                        onConnectivityClicked = { showConnectivityDetail = it },
-                        onAppsClicked = onAppsList,
-                        onInstallLatestApp = onInstallLatestApp,
-                        onClipboardClicked = { showClipboardDetail = it },
-                        onClearClipboard = onClearClipboard,
-                        onShareClipboard = onShareClipboard,
-                        onCopyClipboard = onCopyClipboard,
-                        showMessage = showMessage,
-                        onDoneEditing = { deviceId, config ->
-                            onSaveTileLayout(deviceId, config)
-                            editingDeviceId = null
-                        },
-                        onCancelEditing = { editingDeviceId = null },
-                        onResetTileLayout = onResetTileLayout,
-                        onSaveAsDefault = onSaveAsDefaultTileLayout,
-                    )
-                }
-            } else {
-                items(
-                    items = devices,
-                    key = { it.meta.deviceId.hashCode() },
-                ) { device ->
-                    DeviceCardOrEditor(
-                        device = device,
-                        editingDeviceId = editingDeviceId,
-                        onToggleCollapse = onToggleDeviceCollapsed,
-                        onLongPress = { editingDeviceId = it },
-                        onUpgrade = onUpgrade,
-                        onManageStaleDevice = onSyncServices,
-                        onPowerClicked = { showPowerDetail = it },
-                        onPowerAlerts = onPowerAlerts,
-                        onWifiClicked = { showWifiDetail = it },
-                        onWifiPermissionGrant = onWifiPermissionGrant,
-                        onConnectivityClicked = { showConnectivityDetail = it },
-                        onAppsClicked = onAppsList,
-                        onInstallLatestApp = onInstallLatestApp,
-                        onClipboardClicked = { showClipboardDetail = it },
-                        onClearClipboard = onClearClipboard,
-                        onShareClipboard = onShareClipboard,
-                        onCopyClipboard = onCopyClipboard,
-                        showMessage = showMessage,
-                        onDoneEditing = { deviceId, config ->
-                            onSaveTileLayout(deviceId, config)
-                            editingDeviceId = null
-                        },
-                        onCancelEditing = { editingDeviceId = null },
-                        onResetTileLayout = onResetTileLayout,
-                        onSaveAsDefault = onSaveAsDefaultTileLayout,
-                    )
-                }
+                DeviceCardOrEditor(
+                    device = device,
+                    editingDeviceId = editingDeviceId,
+                    isFirst = index == 0,
+                    isLast = index == devices.lastIndex,
+                    onToggleCollapse = onToggleDeviceCollapsed,
+                    onEditCard = { editingDeviceId = it },
+                    onUpgrade = onUpgrade,
+                    onManageStaleDevice = onSyncServices,
+                    onPowerClicked = { showPowerDetail = it },
+                    onPowerAlerts = onPowerAlerts,
+                    onWifiClicked = { showWifiDetail = it },
+                    onWifiPermissionGrant = onWifiPermissionGrant,
+                    onConnectivityClicked = { showConnectivityDetail = it },
+                    onAppsClicked = onAppsList,
+                    onInstallLatestApp = onInstallLatestApp,
+                    onClipboardClicked = { showClipboardDetail = it },
+                    onClearClipboard = onClearClipboard,
+                    onShareClipboard = onShareClipboard,
+                    onCopyClipboard = onCopyClipboard,
+                    showMessage = showMessage,
+                    onDoneEditing = { deviceId, config ->
+                        onSaveTileLayout(deviceId, config)
+                        editingDeviceId = null
+                    },
+                    onCancelEditing = { editingDeviceId = null },
+                    onResetTileLayout = onResetTileLayout,
+                    onSaveAsDefault = onSaveAsDefaultTileLayout,
+                    onMoveUp = onMoveDeviceUp,
+                    onMoveDown = onMoveDeviceDown,
+                )
             }
 
             // Upgrade card at bottom
@@ -1208,7 +1150,7 @@ private fun UpgradeCard(
 private fun DashboardDeviceCard(
     device: DashboardVM.DeviceItem,
     onToggleCollapse: (String) -> Unit,
-    onLongPress: (String) -> Unit,
+    onEditCard: (String) -> Unit,
     onUpgrade: () -> Unit,
     onManageStaleDevice: () -> Unit,
     onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
@@ -1227,12 +1169,15 @@ private fun DashboardDeviceCard(
     val meta = device.meta.data
     val isStale = device.isStale
     val hasModules = device.moduleItems.isNotEmpty()
+    val canEdit = hasModules && !device.isLimited
     val shouldShowModules = !device.isLimited && hasModules && !device.isCollapsed
 
     val chevronRotation by animateFloatAsState(
         targetValue = if (device.isCollapsed) 0f else 90f,
         label = "chevronRotation",
     )
+
+    var showMenu by remember { mutableStateOf(false) }
 
     ElevatedCard(
         modifier = Modifier
@@ -1242,75 +1187,105 @@ private fun DashboardDeviceCard(
     ) {
         // Header
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .combinedClickable(
-                    onClick = {
-                        when {
-                            hasModules && !device.isLimited -> onToggleCollapse(device.meta.deviceId.id)
-                            device.isLimited -> onUpgrade()
-                        }
-                    },
-                    onLongClick = {
-                        if (hasModules && !device.isLimited) {
-                            onLongPress(device.meta.deviceId.id)
-                        }
-                    },
-                )
-                .padding(12.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = when {
-                    device.isCurrentDevice -> Icons.TwoTone.Home
-                    else -> when (meta.deviceType) {
-                        MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
-                        MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
-                        MetaInfo.DeviceType.UNKNOWN -> Icons.TwoTone.QuestionMark
-                    }
-                },
-                contentDescription = null,
-                modifier = Modifier.size(32.dp),
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = meta.deviceLabel?.let { "$it (${meta.deviceName})" } ?: meta.deviceName,
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+            // Clickable area (icon, name, chevron)
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .combinedClickable(
+                        onClick = {
+                            when {
+                                canEdit -> onToggleCollapse(device.meta.deviceId.id)
+                                device.isLimited -> onUpgrade()
+                            }
+                        },
+                        onLongClick = {
+                            if (canEdit) {
+                                onEditCard(device.meta.deviceId.id)
+                            }
+                        },
+                    )
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = when {
+                        device.isCurrentDevice -> Icons.TwoTone.Home
+                        else -> when (meta.deviceType) {
+                            MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
+                            MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
+                            MetaInfo.DeviceType.UNKNOWN -> Icons.TwoTone.QuestionMark
+                        }
+                    },
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (isStale) {
-                        Icon(
-                            imageVector = Icons.TwoTone.Warning,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(14.dp),
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                    }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = DateUtils.getRelativeTimeSpanString(device.meta.modifiedAt.toEpochMilli()).toString(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (isStale) MaterialTheme.colorScheme.error else Color.Unspecified,
+                        text = meta.deviceLabel?.let { "$it (${meta.deviceName})" } ?: meta.deviceName,
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (isStale) {
+                            Icon(
+                                imageVector = Icons.TwoTone.Warning,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(14.dp),
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
+                        Text(
+                            text = DateUtils.getRelativeTimeSpanString(device.meta.modifiedAt.toEpochMilli()).toString(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isStale) MaterialTheme.colorScheme.error else Color.Unspecified,
+                        )
+                    }
+                }
+                if (canEdit) {
+                    Icon(
+                        imageVector = Icons.TwoTone.ChevronRight,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .rotate(chevronRotation),
+                    )
+                } else if (device.isLimited) {
+                    Icon(
+                        imageVector = Icons.TwoTone.Stars,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
                     )
                 }
             }
-            if (!device.isLimited && hasModules) {
-                Icon(
-                    imageVector = Icons.TwoTone.ChevronRight,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .rotate(chevronRotation),
-                )
-            } else if (device.isLimited) {
-                Icon(
-                    imageVector = Icons.TwoTone.Stars,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                )
+
+            // Overflow menu (outside combinedClickable to avoid gesture conflicts)
+            if (canEdit) {
+                Box {
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(
+                            imageVector = Icons.TwoTone.MoreVert,
+                            contentDescription = stringResource(R.string.dashboard_device_edit_card_action),
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false },
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.dashboard_device_edit_card_action)) },
+                            onClick = {
+                                showMenu = false
+                                onEditCard(device.meta.deviceId.id)
+                            },
+                        )
+                    }
+                }
             }
         }
 
@@ -1353,8 +1328,10 @@ private fun DashboardDeviceCard(
 private fun DeviceCardOrEditor(
     device: DashboardVM.DeviceItem,
     editingDeviceId: String?,
+    isFirst: Boolean,
+    isLast: Boolean,
     onToggleCollapse: (String) -> Unit,
-    onLongPress: (String) -> Unit,
+    onEditCard: (String) -> Unit,
     onUpgrade: () -> Unit,
     onManageStaleDevice: () -> Unit,
     onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
@@ -1373,6 +1350,8 @@ private fun DeviceCardOrEditor(
     onCancelEditing: () -> Unit,
     onResetTileLayout: (String) -> Unit,
     onSaveAsDefault: (TileLayoutConfig) -> Unit,
+    onMoveUp: (String) -> Unit,
+    onMoveDown: (String) -> Unit,
 ) {
     val deviceId = device.meta.deviceId.id
     if (editingDeviceId == deviceId) {
@@ -1383,12 +1362,16 @@ private fun DeviceCardOrEditor(
             onCancel = onCancelEditing,
             onReset = { onResetTileLayout(deviceId) },
             onSaveAsDefault = onSaveAsDefault,
+            isFirst = isFirst,
+            isLast = isLast,
+            onMoveUp = { onMoveUp(deviceId) },
+            onMoveDown = { onMoveDown(deviceId) },
         )
     } else {
         DashboardDeviceCard(
             device = device,
             onToggleCollapse = onToggleCollapse,
-            onLongPress = onLongPress,
+            onEditCard = onEditCard,
             onUpgrade = onUpgrade,
             onManageStaleDevice = onManageStaleDevice,
             onPowerClicked = onPowerClicked,

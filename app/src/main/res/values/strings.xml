@@ -240,4 +240,8 @@
     <string name="dashboard_editor_reset_action">Reset to default</string>
     <string name="dashboard_editor_save_default_action">Set as default for all</string>
 
+    <string name="dashboard_device_edit_card_action">Edit card</string>
+    <string name="dashboard_device_move_up_action">Move up</string>
+    <string name="dashboard_device_move_down_action">Move down</string>
+
 </resources>

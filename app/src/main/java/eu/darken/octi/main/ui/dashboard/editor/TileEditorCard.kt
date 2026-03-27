@@ -23,12 +23,15 @@ import androidx.compose.material.icons.twotone.BatteryFull
 import androidx.compose.material.icons.twotone.CellTower
 import androidx.compose.material.icons.twotone.ContentPaste
 import androidx.compose.material.icons.twotone.DragHandle
+import androidx.compose.material.icons.twotone.KeyboardArrowDown
+import androidx.compose.material.icons.twotone.KeyboardArrowUp
 import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.VisibilityOff
 import androidx.compose.material.icons.twotone.Wifi
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -68,6 +71,10 @@ fun TileEditorCard(
     onCancel: () -> Unit,
     onReset: () -> Unit,
     onSaveAsDefault: (TileLayoutConfig) -> Unit,
+    isFirst: Boolean = true,
+    isLast: Boolean = true,
+    onMoveUp: () -> Unit = {},
+    onMoveDown: () -> Unit = {},
 ) {
     val state = remember { TileEditorState(initialConfig) }
 
@@ -90,9 +97,21 @@ fun TileEditorCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .padding(start = 4.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            IconButton(onClick = onMoveUp, enabled = !isFirst) {
+                Icon(
+                    Icons.TwoTone.KeyboardArrowUp,
+                    contentDescription = stringResource(R.string.dashboard_device_move_up_action),
+                )
+            }
+            IconButton(onClick = onMoveDown, enabled = !isLast) {
+                Icon(
+                    Icons.TwoTone.KeyboardArrowDown,
+                    contentDescription = stringResource(R.string.dashboard_device_move_down_action),
+                )
+            }
             Text(
                 text = deviceName,
                 style = MaterialTheme.typography.titleSmall,
@@ -417,5 +436,9 @@ private fun TileEditorCardPreview() = PreviewWrapper {
         onCancel = {},
         onReset = {},
         onSaveAsDefault = {},
+        isFirst = false,
+        isLast = false,
+        onMoveUp = {},
+        onMoveDown = {},
     )
 }

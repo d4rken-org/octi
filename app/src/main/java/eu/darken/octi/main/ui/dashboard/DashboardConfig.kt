@@ -80,7 +80,7 @@ data class DashboardConfig(
 
     fun toCleaned(existingDeviceIds: Set<String>): DashboardConfig = copy(
         collapsedDevices = collapsedDevices.intersect(existingDeviceIds),
-        deviceOrder = deviceOrder.filter { existingDeviceIds.contains(it) },
+        deviceOrder = deviceOrder.filter { existingDeviceIds.contains(it) }.distinct(),
         deviceTileLayouts = deviceTileLayouts.filterKeys { it in existingDeviceIds },
     )
 

@@ -55,6 +55,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.time.Instant
 import javax.inject.Inject
 
@@ -87,6 +89,7 @@ class DashboardVM @Inject constructor(
 
     val dashboardEvents = SingleEventFlow<DashboardEvent>()
 
+    private val reorderMutex = Mutex()
     private val isManuallyRefreshing = MutableStateFlow(false)
 
     private val tickerUiRefresh = flow {
@@ -362,9 +365,26 @@ class DashboardVM @Inject constructor(
         )
     }
 
-    fun updateDeviceOrder(newOrder: List<String>) = launch {
-        log(TAG) { "updateDeviceOrder(newOrder=$newOrder)" }
-        generalSettings.updateDeviceOrder(newOrder)
+    fun moveDeviceUp(deviceId: String) = launch {
+        reorderMutex.withLock {
+            val currentOrder = state.first().devices.map { it.meta.deviceId.id }
+            val idx = currentOrder.indexOf(deviceId)
+            if (idx <= 0) return@withLock
+            val newOrder = currentOrder.toMutableList().apply { add(idx - 1, removeAt(idx)) }
+            log(TAG) { "moveDeviceUp($deviceId) idx=$idx" }
+            generalSettings.updateDeviceOrder(newOrder)
+        }
+    }
+
+    fun moveDeviceDown(deviceId: String) = launch {
+        reorderMutex.withLock {
+            val currentOrder = state.first().devices.map { it.meta.deviceId.id }
+            val idx = currentOrder.indexOf(deviceId)
+            if (idx < 0 || idx >= currentOrder.lastIndex) return@withLock
+            val newOrder = currentOrder.toMutableList().apply { add(idx + 1, removeAt(idx)) }
+            log(TAG) { "moveDeviceDown($deviceId) idx=$idx" }
+            generalSettings.updateDeviceOrder(newOrder)
+        }
     }
 
     fun toggleDeviceCollapsed(deviceId: String) = launch {

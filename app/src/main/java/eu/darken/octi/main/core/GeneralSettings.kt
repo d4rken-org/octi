@@ -103,7 +103,10 @@ class GeneralSettings @Inject constructor(
     suspend fun setDefaultTileLayout(config: TileLayoutConfig, allModuleIds: Set<String>) {
         log(TAG) { "setDefaultTileLayout()" }
         dashboardConfig.update { current ->
-            current.copy(defaultTileLayout = config.normalize(allModuleIds))
+            current.copy(
+                defaultTileLayout = config.normalize(allModuleIds),
+                deviceTileLayouts = emptyMap(),
+            )
         }
     }
 
