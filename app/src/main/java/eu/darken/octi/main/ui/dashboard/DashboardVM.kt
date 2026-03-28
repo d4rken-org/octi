@@ -257,7 +257,7 @@ class DashboardVM @Inject constructor(
 
         val filteredPermissions = missingPermissions
             .filterNot { WIFI_PERMISSIONS.contains(it) }
-            .toList()
+            .take(1)
 
         // Clean config to remove stale device data, then apply custom ordering
         val currentDeviceIds = deviceItems.map { it.meta.deviceId.id }.toSet()

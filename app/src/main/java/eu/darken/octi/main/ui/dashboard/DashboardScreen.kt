@@ -11,8 +11,11 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,9 +26,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Apps
 import androidx.compose.material.icons.twotone.BatteryFull
@@ -57,6 +61,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -365,15 +370,25 @@ fun DashboardScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
-        LazyColumn(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         ) {
-            // Sync status bar
+            val columns = when {
+                maxWidth >= 900.dp -> 3
+                maxWidth >= 600.dp -> 2
+                else -> 1
+            }
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+            // Sync status bar (full-span)
             state.syncStatus?.let { syncStatus ->
-                item(key = "sync_status") {
+                item(key = "sync_status", span = { GridItemSpan(maxLineSpan) }) {
                     SyncStatusBar(
                         syncStatus = syncStatus,
                         isExpanded = state.isSyncExpanded,
@@ -383,31 +398,26 @@ fun DashboardScreen(
                 }
             }
 
-            // Sync setup card
-            if (state.showSyncSetup) {
-                item(key = "sync_setup") {
-                    SyncSetupCard(
-                        onDismiss = onDismissSyncSetup,
-                        onSetup = onSetupSync,
+            // Action chips row (sync setup + permissions + upgrade)
+            val hasActionChips = state.showSyncSetup || state.missingPermissions.isNotEmpty() || !state.upgradeInfo.isPro
+            if (hasActionChips) {
+                item(key = "action_chips", span = { GridItemSpan(maxLineSpan) }) {
+                    ActionChipsRow(
+                        showSyncSetup = state.showSyncSetup,
+                        missingPermissions = state.missingPermissions,
+                        showUpgrade = !state.upgradeInfo.isPro,
+                        onSetupSync = onSetupSync,
+                        onDismissSyncSetup = onDismissSyncSetup,
+                        onGrantPermission = onGrantPermission,
+                        onDismissPermission = onDismissPermission,
+                        onUpgrade = onUpgrade,
                     )
                 }
             }
 
-            // Permission cards
-            items(
-                items = state.missingPermissions,
-                key = { "perm_${it.permissionId}" },
-            ) { permission ->
-                PermissionCard(
-                    permission = permission,
-                    onGrant = onGrantPermission,
-                    onDismiss = onDismissPermission,
-                )
-            }
-
-            // Update card
+            // Update card (full-span)
             if (state.update != null) {
-                item(key = "update") {
+                item(key = "update", span = { GridItemSpan(maxLineSpan) }) {
                     UpdateCard(
                         update = state.update,
                         onDismiss = onDismissUpdate,
@@ -417,25 +427,17 @@ fun DashboardScreen(
                 }
             }
 
-            // Device cards with limit card interleaved
+            // Device cards
             val devices = state.devices
             val deviceLimit = state.deviceLimit
             val showLimitCard = state.deviceLimitReached
+            val freeDevices = if (showLimitCard) devices.take(deviceLimit) else devices
 
-            itemsIndexed(
-                items = devices,
-                key = { _, device -> device.meta.deviceId.id },
-            ) { index, device ->
-                // Insert device limit card before the first limited device
-                if (showLimitCard && index == deviceLimit) {
-                    DeviceLimitCard(
-                        current = devices.size,
-                        maximum = deviceLimit,
-                        onManageDevices = onSyncServices,
-                        onUpgrade = onUpgrade,
-                    )
-                }
-
+            items(
+                items = freeDevices,
+                key = { it.meta.deviceId.id },
+            ) { device ->
+                val index = devices.indexOf(device)
                 DeviceCardOrEditor(
                     device = device,
                     editingDeviceId = editingDeviceId,
@@ -469,15 +471,57 @@ fun DashboardScreen(
                 )
             }
 
-            // Upgrade card at bottom
-            if (!state.upgradeInfo.isPro) {
-                item(key = "upgrade") {
-                    UpgradeCard(
-                        deviceLimit = state.deviceLimit,
+            // Device limit card (full-span)
+            if (showLimitCard) {
+                item(key = "device_limit", span = { GridItemSpan(maxLineSpan) }) {
+                    DeviceLimitCard(
+                        current = devices.size,
+                        maximum = deviceLimit,
+                        onManageDevices = onSyncServices,
                         onUpgrade = onUpgrade,
                     )
                 }
+
+                items(
+                    items = devices.drop(deviceLimit),
+                    key = { it.meta.deviceId.id },
+                ) { device ->
+                    val index = devices.indexOf(device)
+                    DeviceCardOrEditor(
+                        device = device,
+                        editingDeviceId = editingDeviceId,
+                        isFirst = false,
+                        isLast = index == devices.lastIndex,
+                        onToggleCollapse = onToggleDeviceCollapsed,
+                        onEditCard = { editingDeviceId = it },
+                        onUpgrade = onUpgrade,
+                        onManageStaleDevice = onSyncServices,
+                        onPowerClicked = { showPowerDetail = it },
+                        onPowerAlerts = onPowerAlerts,
+                        onWifiClicked = { showWifiDetail = it },
+                        onWifiPermissionGrant = onWifiPermissionGrant,
+                        onConnectivityClicked = { showConnectivityDetail = it },
+                        onAppsClicked = onAppsList,
+                        onInstallLatestApp = onInstallLatestApp,
+                        onClipboardClicked = { showClipboardDetail = it },
+                        onClearClipboard = onClearClipboard,
+                        onShareClipboard = onShareClipboard,
+                        onCopyClipboard = onCopyClipboard,
+                        showMessage = showMessage,
+                        onDoneEditing = { deviceId, config ->
+                            onSaveTileLayout(deviceId, config)
+                            editingDeviceId = null
+                        },
+                        onCancelEditing = { editingDeviceId = null },
+                        onResetTileLayout = onResetTileLayout,
+                        onSaveAsDefault = onSaveAsDefaultTileLayout,
+                        onMoveUp = onMoveDeviceUp,
+                        onMoveDown = onMoveDeviceDown,
+                    )
+                }
             }
+
+        }
         }
     }
 
@@ -906,6 +950,97 @@ private fun DashboardToolbarTitle(upgradeInfo: UpgradeRepo.Info) {
         )
     } else {
         Text(text = appName)
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
+@Composable
+private fun ActionChipsRow(
+    showSyncSetup: Boolean,
+    missingPermissions: List<Permission>,
+    showUpgrade: Boolean,
+    onSetupSync: () -> Unit,
+    onDismissSyncSetup: () -> Unit,
+    onGrantPermission: (Permission) -> Unit,
+    onDismissPermission: (Permission) -> Unit,
+    onUpgrade: () -> Unit,
+) {
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (showSyncSetup) {
+            ActionChip(
+                icon = Icons.TwoTone.CloudSync,
+                label = stringResource(R.string.onboarding_setupsync_title),
+                onClick = onSetupSync,
+                onLongClick = onDismissSyncSetup,
+            )
+        }
+        missingPermissions.forEach { permission ->
+            ActionChip(
+                icon = when (permission) {
+                    Permission.IGNORE_BATTERY_OPTIMIZATION -> Icons.TwoTone.BatteryFull
+                    Permission.POST_NOTIFICATIONS -> Icons.TwoTone.Info
+                    else -> Icons.TwoTone.Info
+                },
+                label = stringResource(
+                    when (permission) {
+                        Permission.IGNORE_BATTERY_OPTIMIZATION -> R.string.permission_battery_optimization_label
+                        Permission.POST_NOTIFICATIONS -> R.string.permission_notifications_post_label
+                        else -> R.string.permission_required_label
+                    }
+                ),
+                onClick = { onGrantPermission(permission) },
+                onLongClick = { onDismissPermission(permission) },
+            )
+        }
+        if (showUpgrade) {
+            ActionChip(
+                icon = Icons.TwoTone.Stars,
+                label = stringResource(CommonR.string.general_upgrade_action),
+                onClick = onUpgrade,
+                onLongClick = null,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun ActionChip(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)?,
+) {
+    Surface(
+        modifier = Modifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick,
+        ),
+        shape = MaterialTheme.shapes.small,
+        tonalElevation = 2.dp,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.primary,
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
     }
 }
 

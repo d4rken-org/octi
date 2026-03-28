@@ -1,15 +1,23 @@
 package eu.darken.octi.main.ui.onboarding.welcome
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.CloudSync
+import androidx.compose.material.icons.twotone.ContentPaste
+import androidx.compose.material.icons.twotone.Devices
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
@@ -27,6 +36,7 @@ import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
+import eu.darken.octi.main.ui.onboarding.StepIndicator
 
 @Composable
 fun WelcomeScreenHost(vm: WelcomeVM = hiltViewModel()) {
@@ -48,74 +58,124 @@ fun WelcomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 32.dp)
-                .verticalScroll(rememberScrollState()),
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.height(48.dp))
+            // Scrollable content fills available space
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(modifier = Modifier.height(48.dp))
 
-            OctiMascot(modifier = Modifier.size(96.dp))
+                OctiMascot(modifier = Modifier.size(96.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = stringResource(CommonR.string.app_name),
-                style = MaterialTheme.typography.headlineLarge,
-            )
-
-            Text(
-                text = stringResource(R.string.onboarding_welcome_subtitle),
-                style = MaterialTheme.typography.titleLarge,
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                text = stringResource(R.string.onboarding_welcome_body1),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.onboarding_welcome_body2),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.onboarding_welcome_body3),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            if (showBetaHint) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = stringResource(R.string.onboarding_welcome_beta_hint),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(CommonR.string.app_name),
+                    style = MaterialTheme.typography.headlineLarge,
                 )
+
+                Text(
+                    text = stringResource(R.string.onboarding_welcome_subtitle),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Column(
+                    modifier = Modifier.widthIn(max = 600.dp),
+                ) {
+                    FeatureRow(
+                        icon = { Icon(Icons.TwoTone.Devices, contentDescription = null, modifier = Modifier.size(32.dp), tint = MaterialTheme.colorScheme.primary) },
+                        title = stringResource(R.string.onboarding_features_page1_title),
+                        body = stringResource(R.string.onboarding_features_page1_body),
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    FeatureRow(
+                        icon = { Icon(Icons.TwoTone.ContentPaste, contentDescription = null, modifier = Modifier.size(32.dp), tint = MaterialTheme.colorScheme.primary) },
+                        title = stringResource(R.string.onboarding_features_page2_title),
+                        body = stringResource(R.string.onboarding_features_page2_body),
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    FeatureRow(
+                        icon = { Icon(Icons.TwoTone.CloudSync, contentDescription = null, modifier = Modifier.size(32.dp), tint = MaterialTheme.colorScheme.primary) },
+                        title = stringResource(R.string.onboarding_features_page3_title),
+                        body = stringResource(R.string.onboarding_features_page3_body),
+                    )
+                }
+
+                if (showBetaHint) {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = stringResource(R.string.onboarding_welcome_beta_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth(),
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = onContinue,
+            // Fixed bottom section
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
+                    .widthIn(max = 600.dp)
+                    .padding(horizontal = 64.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = stringResource(CommonR.string.general_continue))
-            }
+                Button(
+                    onClick = onContinue,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = stringResource(CommonR.string.general_continue))
+                }
 
-            Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+
+                StepIndicator(totalSteps = 2, currentStep = 1)
+
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun FeatureRow(
+    icon: @Composable () -> Unit,
+    title: String,
+    body: String,
+) {
+    Row(
+        verticalAlignment = Alignment.Top,
+    ) {
+        icon()
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = body,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
