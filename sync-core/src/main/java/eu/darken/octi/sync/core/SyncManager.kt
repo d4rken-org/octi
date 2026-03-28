@@ -1,5 +1,6 @@
 package eu.darken.octi.sync.core
 
+import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.datastore.value
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,6 +46,7 @@ class SyncManager @Inject constructor(
 ) {
 
     private val syncLock = Mutex()
+    private val cachedWrites = ConcurrentHashMap<ModuleId, SyncWrite.Device.Module>()
 
     private val disabledConnectors = MutableStateFlow(emptySet<SyncConnector>())
 
@@ -130,12 +133,24 @@ class SyncManager @Inject constructor(
     suspend fun sync(connectorId: ConnectorId, options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(id=$connectorId, options=$options)" }
         val connector = connectors.first().single { it.identifier == connectorId }
+
+        if (options.writeData && cachedWrites.isNotEmpty()) {
+            log(TAG) { "sync(): Replaying ${cachedWrites.size} cached writes to $connectorId" }
+            connector.write(
+                SyncWriteContainer(
+                    deviceId = syncSettings.deviceId,
+                    modules = cachedWrites.values.toList(),
+                )
+            )
+        }
+
         connector.sync(options)
     }
 
     suspend fun write(toWrite: SyncWrite.Device.Module) {
         val start = System.currentTimeMillis()
         log(TAG) { "write(data=$toWrite)..." }
+        cachedWrites[toWrite.moduleId] = toWrite
         connectors.first()
             .filter {
                 val paused = syncSettings.pausedConnectors.value().contains(it.identifier)
