@@ -3,10 +3,12 @@ package eu.darken.octi.sync.core
 import eu.darken.octi.common.datastore.DataStoreValue
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.cache.SyncCache
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -103,18 +105,19 @@ class SyncManagerWriteCacheTest : BaseTest() {
 
             sm.write(createModule(powerModuleId, "battery-data"))
 
+            // No connector to write to
             coVerify(exactly = 0) { connector.write(any()) }
 
-            // Add connector back
+            // Add connector back and sync
             connectorsFlow.value = listOf(connector)
             advanceUntilIdle()
 
-            // Sync with writeData=true should replay cached write
             sm.sync(connectorId, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val writes = mutableListOf<SyncWrite>()
-            coVerify(atLeast = 1) { connector.write(capture(writes)) }
-            writes.last().modules.single().moduleId shouldBe powerModuleId
+            // Cached write passed via writePayload in sync options
+            val optionsSlot = slot<SyncOptions>()
+            coVerify { connector.sync(capture(optionsSlot)) }
+            optionsSlot.captured.writePayload.single().moduleId shouldBe powerModuleId
 
             job.cancel()
             advanceUntilIdle()
@@ -124,7 +127,7 @@ class SyncManagerWriteCacheTest : BaseTest() {
     @Nested
     inner class `sync write replay` {
         @Test
-        fun `sync with writeData true replays cached writes`() = runTest2 {
+        fun `sync with writeData true passes cached writes via writePayload`() = runTest2 {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
@@ -133,18 +136,16 @@ class SyncManagerWriteCacheTest : BaseTest() {
 
             sm.sync(connectorId, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val writes = mutableListOf<SyncWrite>()
-            coVerify(atLeast = 3) { connector.write(capture(writes)) }
-
-            val replayWrite = writes.last()
-            replayWrite.modules.map { it.moduleId }.toSet() shouldBe setOf(powerModuleId, wifiModuleId)
+            val optionsSlot = slot<SyncOptions>()
+            coVerify { connector.sync(capture(optionsSlot)) }
+            optionsSlot.captured.writePayload.map { it.moduleId } shouldContainExactlyInAnyOrder listOf(powerModuleId, wifiModuleId)
 
             job.cancel()
             advanceUntilIdle()
         }
 
         @Test
-        fun `sync with writeData false does not replay`() = runTest2 {
+        fun `sync with writeData false does not pass payload`() = runTest2 {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
@@ -152,7 +153,9 @@ class SyncManagerWriteCacheTest : BaseTest() {
 
             sm.sync(connectorId, SyncOptions(writeData = false, readData = false, stats = false))
 
-            coVerify(exactly = 1) { connector.write(any()) }
+            val optionsSlot = slot<SyncOptions>()
+            coVerify { connector.sync(capture(optionsSlot)) }
+            optionsSlot.captured.writePayload shouldBe emptyList()
 
             job.cancel()
             advanceUntilIdle()
@@ -168,51 +171,76 @@ class SyncManagerWriteCacheTest : BaseTest() {
 
             sm.sync(connectorId, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val writes = mutableListOf<SyncWrite>()
-            coVerify(atLeast = 1) { connector.write(capture(writes)) }
-
-            val replayWrite = writes.last()
-            replayWrite.modules.size shouldBe 1
-            replayWrite.modules.single().moduleId shouldBe powerModuleId
-            replayWrite.modules.single().payload shouldBe "new-data".encodeUtf8()
+            val optionsSlot = slot<SyncOptions>()
+            coVerify { connector.sync(capture(optionsSlot)) }
+            optionsSlot.captured.writePayload.size shouldBe 1
+            optionsSlot.captured.writePayload.single().payload shouldBe "new-data".encodeUtf8()
 
             job.cancel()
             advanceUntilIdle()
         }
 
         @Test
-        fun `replay includes all cached modules independently`() = runTest2 {
+        fun `empty cache results in empty writePayload`() = runTest2 {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            sm.write(createModule(powerModuleId, "power"))
-            sm.write(createModule(wifiModuleId, "wifi"))
-            sm.write(createModule(metaModuleId, "meta"))
-
             sm.sync(connectorId, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val writes = mutableListOf<SyncWrite>()
-            coVerify(atLeast = 1) { connector.write(capture(writes)) }
+            val optionsSlot = slot<SyncOptions>()
+            coVerify { connector.sync(capture(optionsSlot)) }
+            optionsSlot.captured.writePayload shouldBe emptyList()
 
-            val replayWrite = writes.last()
-            replayWrite.modules.map { it.moduleId }.toSet() shouldBe setOf(
-                powerModuleId,
-                wifiModuleId,
-                metaModuleId,
-            )
+            job.cancel()
+            advanceUntilIdle()
+        }
+    }
+
+    @Nested
+    inner class `ack tracking` {
+        @Test
+        fun `successful sync clears cache entries`() = runTest2 {
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.write(createModule(powerModuleId, "data"))
+
+            // First sync — should have payload
+            sm.sync(connectorId, SyncOptions(writeData = true, readData = false, stats = false))
+            val firstOptions = slot<SyncOptions>()
+            coVerify { connector.sync(capture(firstOptions)) }
+            firstOptions.captured.writePayload.size shouldBe 1
+
+            // Second sync — cache should be cleared after ack
+            sm.sync(connectorId, SyncOptions(writeData = true, readData = false, stats = false))
+            val allOptions = mutableListOf<SyncOptions>()
+            coVerify(exactly = 2) { connector.sync(capture(allOptions)) }
+            allOptions.last().writePayload shouldBe emptyList()
 
             job.cancel()
             advanceUntilIdle()
         }
 
         @Test
-        fun `empty cache skips replay`() = runTest2 {
+        fun `newer write during sync is not cleared by ack`() = runTest2 {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
+            val oldModule = createModule(powerModuleId, "old")
+            sm.write(oldModule)
+
+            // Overwrite with newer data before sync
+            val newModule = createModule(powerModuleId, "new")
+            sm.write(newModule)
+
+            // Sync picks up "new" module
             sm.sync(connectorId, SyncOptions(writeData = true, readData = false, stats = false))
 
-            coVerify(exactly = 0) { connector.write(any()) }
+            // After ack, cache is cleared because "new" was what was sent
+            sm.sync(connectorId, SyncOptions(writeData = true, readData = false, stats = false))
+            val allOptions = mutableListOf<SyncOptions>()
+            coVerify(exactly = 2) { connector.sync(capture(allOptions)) }
+            allOptions.last().writePayload shouldBe emptyList()
 
             job.cancel()
             advanceUntilIdle()
@@ -236,7 +264,9 @@ class SyncManagerWriteCacheTest : BaseTest() {
             pausedConnectorsValue.value = emptySet()
             sm.sync(connectorId, SyncOptions(writeData = true, readData = false, stats = false))
 
-            coVerify(atLeast = 1) { connector.write(any()) }
+            val optionsSlot = slot<SyncOptions>()
+            coVerify { connector.sync(capture(optionsSlot)) }
+            optionsSlot.captured.writePayload.single().moduleId shouldBe powerModuleId
 
             job.cancel()
             advanceUntilIdle()

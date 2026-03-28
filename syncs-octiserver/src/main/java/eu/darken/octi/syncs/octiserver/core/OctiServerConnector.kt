@@ -30,7 +30,9 @@ import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
+import eu.darken.octi.sync.core.SyncWriteContainer
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
@@ -102,7 +104,7 @@ class OctiServerConnector @AssistedInject constructor(
     private val _data = MutableStateFlow<SyncRead?>(null)
     override val data: Flow<SyncRead?> = _data
 
-    private val writeQueue = MutableSharedFlow<SyncWrite>()
+    private val writeQueue = MutableSharedFlow<SyncWrite>(extraBufferCapacity = 1)
     private val serverLock = Mutex()
 
     override val identifier: ConnectorId = ConnectorId(
@@ -214,8 +216,20 @@ class OctiServerConnector @AssistedInject constructor(
             }
         }
 
-        if (options.writeData) {
-            // TODO
+        if (options.writeData && options.writePayload.isNotEmpty()) {
+            log(TAG) { "sync(): Writing ${options.writePayload.size} cached modules" }
+            options.writePayload.forEach { module ->
+                try {
+                    runServerAction("write-cached-${module.moduleId}") {
+                        writeServer(SyncWriteContainer(deviceId = syncSettings.deviceId, modules = listOf(module)))
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    if (handleDeviceUnknown(e, "write cached ${module.moduleId}")) return
+                    log(TAG, ERROR) { "Failed to write cached ${module.moduleId}: ${e.asLog()}" }
+                }
+            }
         }
 
         if (options.readData) {

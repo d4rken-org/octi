@@ -134,17 +134,26 @@ class SyncManager @Inject constructor(
         log(TAG) { "sync(id=$connectorId, options=$options)" }
         val connector = connectors.first().single { it.identifier == connectorId }
 
-        if (options.writeData && cachedWrites.isNotEmpty()) {
-            log(TAG) { "sync(): Replaying ${cachedWrites.size} cached writes to $connectorId" }
-            connector.write(
-                SyncWriteContainer(
-                    deviceId = syncSettings.deviceId,
-                    modules = cachedWrites.values.toList(),
-                )
-            )
+        val pendingSnapshot = if (options.writeData && cachedWrites.isNotEmpty()) {
+            cachedWrites.toMap().also {
+                log(TAG) { "sync(): Passing ${it.size} cached writes to $connectorId" }
+            }
+        } else {
+            emptyMap()
         }
 
-        connector.sync(options)
+        val effectiveOptions = if (pendingSnapshot.isNotEmpty()) {
+            options.copy(writePayload = pendingSnapshot.values.toList())
+        } else {
+            options
+        }
+
+        connector.sync(effectiveOptions)
+
+        // Ack: clear only entries that haven't been updated since the snapshot
+        pendingSnapshot.forEach { (moduleId, module) ->
+            cachedWrites.remove(moduleId, module)
+        }
     }
 
     suspend fun write(toWrite: SyncWrite.Device.Module) {

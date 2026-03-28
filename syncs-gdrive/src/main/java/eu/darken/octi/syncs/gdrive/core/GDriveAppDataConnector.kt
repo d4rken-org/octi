@@ -32,7 +32,9 @@ import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
+import eu.darken.octi.sync.core.SyncWriteContainer
 import eu.darken.octi.syncs.gdrive.core.GDriveEnvironment.Companion.APPDATAFOLDER
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.NonCancellable
@@ -94,7 +96,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val _data = MutableStateFlow<SyncRead?>(null)
     override val data: Flow<SyncRead?> = _data
     private val driveLock = Mutex()
-    private val writeQueue = MutableSharedFlow<SyncWrite>()
+    private val writeQueue = MutableSharedFlow<SyncWrite>(extraBufferCapacity = 1)
 
     override val identifier: ConnectorId = ConnectorId(
         type = ConnectorType.GDRIVE,
@@ -577,8 +579,18 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 }.run { jobs.add(this) }
 
 
-                if (options.writeData) {
-                    // TODO Attempt to write data if we were offline and are now online?
+                if (options.writeData && options.writePayload.isNotEmpty()) {
+                    log(TAG) { "sync(): Writing ${options.writePayload.size} cached modules (batched)" }
+                    try {
+                        writeDrive(SyncWriteContainer(
+                            deviceId = syncSettings.deviceId,
+                            modules = options.writePayload,
+                        ))
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        log(TAG, ERROR) { "Failed to write cached modules: ${e.asLog()}" }
+                    }
                 }
 
 
