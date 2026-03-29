@@ -43,6 +43,6 @@ dependencies {
     addIO()
     addTesting()
 
-    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha03")
-    implementation("com.google.crypto.tink:tink-android:1.7.0")
+    implementation("androidx.security:security-crypto-ktx:1.1.0")
+    implementation("com.google.crypto.tink:tink-android:1.16.0")
 }

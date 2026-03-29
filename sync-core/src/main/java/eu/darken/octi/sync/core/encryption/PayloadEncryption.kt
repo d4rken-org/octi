@@ -3,7 +3,11 @@
 package eu.darken.octi.sync.core.encryption
 
 import android.os.Parcelable
-import com.google.crypto.tink.*
+import com.google.crypto.tink.DeterministicAead
+import com.google.crypto.tink.InsecureSecretKeyAccess
+import com.google.crypto.tink.KeyTemplates
+import com.google.crypto.tink.KeysetHandle
+import com.google.crypto.tink.TinkProtoKeysetFormat
 import com.google.crypto.tink.daead.DeterministicAeadConfig
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
@@ -17,27 +21,23 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
-import java.io.ByteArrayOutputStream
 
 
 class PayloadEncryption constructor(private val keySet: KeySet? = null) {
 
     private val keysetHandle by lazy {
         keySet?.let {
-            CleartextKeysetHandle.read(BinaryKeysetReader.withBytes(keySet.key.toByteArray()))
+            TinkProtoKeysetFormat.parseKeyset(keySet.key.toByteArray(), InsecureSecretKeyAccess.get())
         } ?: KeysetHandle.generateNew(KeyTemplates.get(DEFAULT_KEY_TEMPLATE))
     }
 
     private val primitive by lazy { keysetHandle.getPrimitive(DeterministicAead::class.java) }
 
     fun exportKeyset(): KeySet {
-        val output = ByteArrayOutputStream()
-        output.use {
-            CleartextKeysetHandle.getKeyset(keysetHandle).writeTo(it)
-        }
+        val serialized = TinkProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get())
         return KeySet(
             type = DEFAULT_KEY_TEMPLATE,
-            key = output.toByteArray().toByteString()
+            key = serialized.toByteString(),
         ).also { log(TAG, VERBOSE) { "exportKeyset(): $it" } }
     }
 

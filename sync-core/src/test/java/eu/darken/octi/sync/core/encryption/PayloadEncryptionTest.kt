@@ -42,4 +42,21 @@ class PayloadEncryptionTest : BaseTest() {
         crypti.exportKeyset() shouldBe keyset
     }
 
+    @Test
+    fun `old keyset round-trips through export and re-import`() {
+        val keyset = PayloadEncryption.KeySet(
+            type = "AES256_SIV",
+            key = "CMyhkP8HEoQBCngKMHR5cGUuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmNyeXB0by50aW5rLkFlc1NpdktleRJCEkDAEayVsnPs8JIV0wrVP3EuGuM8dEkIxw0gqyuNJGDqJAQoAJB44ZS9JayECYZ/mUv13oslpQ+Vxjj98je6InGMGAEQARjMoZD/ByAB".decodeBase64()!!
+        )
+        val testData = "Banana Pancakes".toByteString()
+
+        val crypti1 = PayloadEncryption(keyset)
+        val exported = crypti1.exportKeyset()
+        exported shouldBe keyset
+
+        val crypti2 = PayloadEncryption(exported)
+        val encrypted = crypti1.encrypt(testData)
+        crypti2.decrypt(encrypted) shouldBe testData
+    }
+
 }
