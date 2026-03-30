@@ -732,6 +732,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }.also {
                 _state.updateBlocking { copy(lastError = null) }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             log(TAG, ERROR) { "runDriveAction($tag) failed: ${e.asLog()}" }
             _state.updateBlocking { copy(lastError = e) }

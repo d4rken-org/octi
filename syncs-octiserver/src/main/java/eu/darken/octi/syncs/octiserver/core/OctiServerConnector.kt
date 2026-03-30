@@ -214,6 +214,8 @@ class OctiServerConnector @AssistedInject constructor(
                     endpoint.listDevices()
                 }
                 _state.updateBlocking { copy(devices = knownDeviceIds) }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 if (handleDeviceUnknown(e, "list known devices")) return
                 log(TAG, ERROR) { "Failed to list known devices: ${e.asLog()}" }
@@ -251,6 +253,8 @@ class OctiServerConnector @AssistedInject constructor(
                         newData
                     }
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 if (handleDeviceUnknown(e, "read")) return
                 log(TAG, ERROR) { "Failed to read: ${e.asLog()}" }
@@ -380,6 +384,8 @@ class OctiServerConnector @AssistedInject constructor(
             }.also {
                 _state.updateBlocking { copy(lastError = null) }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             log(TAG, ERROR) { "runServerAction($tag) failed: ${e.asLog()}" }
             _state.updateBlocking { copy(lastError = e) }
