@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,6 +42,7 @@ fun AppsModuleTile(
 ) {
     val count = info.installedPackages.size
     val last = info.installedPackages.maxByOrNull { it.installedAt }
+    val countLabel = pluralStringResource(AppsR.plurals.module_apps_tile_count, count, count)
     val installedLabel = pluralStringResource(AppsR.plurals.module_apps_x_installed, count, count)
 
     val tileColor = if (isWide) {
@@ -71,7 +71,7 @@ fun AppsModuleTile(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "$count",
+                    text = countLabel,
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -88,17 +88,13 @@ fun AppsModuleTile(
                     }
                 }
             }
-            Text(
-                text = stringResource(AppsR.string.module_apps_tile_apps_installed_label),
-                style = MaterialTheme.typography.bodySmall,
-            )
             if (last != null) {
-                Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = stringResource(
-                        AppsR.string.module_apps_last_installed_x,
-                        last.label ?: last.packageName,
-                    ),
+                    text = stringResource(AppsR.string.module_apps_tile_last_installed_label),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Text(
+                    text = last.label ?: last.packageName,
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

@@ -9,6 +9,11 @@
     </plurals>
     <string name="module_apps_last_installed_x">Last installed app: %s</string>
     <string name="module_apps_tile_apps_installed_label">apps installed</string>
+    <plurals name="module_apps_tile_count">
+        <item quantity="one">%d app</item>
+        <item quantity="other">%d apps</item>
+    </plurals>
+    <string name="module_apps_tile_last_installed_label">Last installed</string>
     <string name="module_apps_list_title">Installed apps</string>
 
     <string name="module_apps_sort_label">Sort</string>
