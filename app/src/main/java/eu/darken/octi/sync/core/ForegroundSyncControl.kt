@@ -1,13 +1,12 @@
 package eu.darken.octi.sync.core
 
-import android.app.Activity
-import android.app.Application
-import android.content.Context
-import android.os.Bundle
-import dagger.hilt.android.qualifiers.ApplicationContext
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -17,9 +16,11 @@ import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.DeviceId
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +41,6 @@ import javax.inject.Singleton
 @Singleton
 class ForegroundSyncControl @Inject constructor(
     @AppScope private val scope: CoroutineScope,
-    @ApplicationContext private val context: Context,
     private val syncManager: SyncManager,
     private val syncExecutor: SyncExecutor,
     private val syncSettings: SyncSettings,
@@ -52,34 +52,33 @@ class ForegroundSyncControl @Inject constructor(
     val isActive: StateFlow<Boolean> = _isActive.asStateFlow()
 
     @Volatile private var lastBackgroundedAt: Instant? = null
-    private var eventCollectorJob: Job? = null
+    @Volatile private var eventCollectorJob: Job? = null
+    @Volatile private var backgroundDebounceJob: Job? = null
+    @Volatile private var started = false
 
     fun start() {
+        if (started) return
+        started = true
         log(TAG) { "start()" }
 
         val isForeground = MutableStateFlow(false)
-        (context as Application).registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
-            private var startedCount = 0
-            override fun onActivityStarted(activity: Activity) {
-                startedCount++
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                backgroundDebounceJob?.cancel()
+                backgroundDebounceJob = null
                 isForeground.value = true
-                log(TAG) { "Activity started (count=$startedCount), isForeground=true" }
+                log(TAG) { "Process foregrounded, isForeground=true" }
             }
 
-            override fun onActivityStopped(activity: Activity) {
-                startedCount--
-                if (startedCount <= 0) {
-                    startedCount = 0
+            override fun onStop(owner: LifecycleOwner) {
+                backgroundDebounceJob?.cancel()
+                backgroundDebounceJob = scope.launch {
+                    log(TAG) { "Process backgrounded, debouncing ${BACKGROUND_DEBOUNCE.toMillis()}ms..." }
+                    delay(BACKGROUND_DEBOUNCE.toMillis())
                     isForeground.value = false
-                    log(TAG) { "All activities stopped, isForeground=false" }
+                    log(TAG) { "Background debounce elapsed, isForeground=false" }
                 }
             }
-
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
-            override fun onActivityResumed(activity: Activity) {}
-            override fun onActivityPaused(activity: Activity) {}
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
-            override fun onActivityDestroyed(activity: Activity) {}
         })
 
         combine(
@@ -126,9 +125,16 @@ class ForegroundSyncControl @Inject constructor(
             lastBackgroundedAt = null
         }
 
+        // Cancel any lingering collector (e.g. still draining via NonCancellable)
+        eventCollectorJob?.cancel()
+        eventCollectorJob = null
+
         // Start collecting sync events with channel-based batching
         eventCollectorJob = scope.launch {
-            val eventChannel = Channel<SyncEvent.ModuleChanged>(Channel.UNLIMITED)
+            val eventChannel = Channel<SyncEvent.ModuleChanged>(
+                capacity = 256,
+                onBufferOverflow = BufferOverflow.DROP_OLDEST,
+            )
 
             // Producer: collect sync events, filter to UPDATED, send to channel
             val producerJob = launch {
@@ -156,31 +162,44 @@ class ForegroundSyncControl @Inject constructor(
             try {
                 while (isActive) {
                     val first = eventChannel.receive()
-                    val pending = mutableMapOf<ConnectorId, PendingSync>()
-                    pending.getOrPut(first.connectorId) { PendingSync() }.add(first)
 
-                    // Drain events arriving within the debounce window
-                    withTimeoutOrNull(CLIENT_DEBOUNCE_MS) {
-                        while (true) {
-                            val event = eventChannel.receive()
-                            pending.getOrPut(event.connectorId) { PendingSync() }.add(event)
+                    // Once we have an event, protect the entire batch+sync from cancellation
+                    withContext(NonCancellable) {
+                        val pending = mutableMapOf<ConnectorId, PendingSync>()
+                        pending.getOrPut(first.connectorId) { PendingSync() }.add(first)
+
+                        // Drain events arriving within the debounce window
+                        withTimeoutOrNull(CLIENT_DEBOUNCE.toMillis()) {
+                            while (true) {
+                                val event = eventChannel.receive()
+                                pending.getOrPut(event.connectorId) { PendingSync() }.add(event)
+                            }
                         }
-                    }
 
-                    syncPendingModules(pending)
+                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT.toMillis()) {
+                            syncPendingModules(pending)
+                        } ?: log(TAG, WARN) { "In-flight sync timed out after ${SYNC_COMPLETION_TIMEOUT.toMillis()}ms" }
+                    }
                 }
             } finally {
-                // Flush remaining events on cancellation (W8)
-                val remaining = mutableMapOf<ConnectorId, PendingSync>()
-                while (true) {
-                    val event = eventChannel.tryReceive().getOrNull() ?: break
-                    remaining.getOrPut(event.connectorId) { PendingSync() }.add(event)
+                withContext(NonCancellable) {
+                    // Stop producer first so no more events arrive during drain
+                    producerJob.cancel()
+                    producerJob.join()
+
+                    // Flush remaining events on cancellation
+                    val remaining = mutableMapOf<ConnectorId, PendingSync>()
+                    while (true) {
+                        val event = eventChannel.tryReceive().getOrNull() ?: break
+                        remaining.getOrPut(event.connectorId) { PendingSync() }.add(event)
+                    }
+                    if (remaining.isNotEmpty()) {
+                        log(TAG, INFO) { "Flushing ${remaining.values.sumOf { it.modules.size }} pending events on shutdown" }
+                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT.toMillis()) {
+                            syncPendingModules(remaining)
+                        } ?: log(TAG, WARN) { "Flush sync timed out after ${SYNC_COMPLETION_TIMEOUT.toMillis()}ms" }
+                    }
                 }
-                if (remaining.isNotEmpty()) {
-                    log(TAG, INFO) { "Flushing ${remaining.values.sumOf { it.modules.size }} pending events on shutdown" }
-                    withContext(NonCancellable) { syncPendingModules(remaining) }
-                }
-                producerJob.cancel()
             }
         }
     }
@@ -209,6 +228,8 @@ class ForegroundSyncControl @Inject constructor(
                         deviceFilter = sync.devices.toSet(),
                     ),
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 log(TAG, ERROR) { "Batched sync failed: ${e.asLog()}" }
             }
@@ -225,7 +246,9 @@ class ForegroundSyncControl @Inject constructor(
     }
 
     companion object {
-        private const val CLIENT_DEBOUNCE_MS = 500L
+        private val CLIENT_DEBOUNCE = Duration.ofMillis(500)
+        private val BACKGROUND_DEBOUNCE = Duration.ofSeconds(5)
+        private val SYNC_COMPLETION_TIMEOUT = Duration.ofSeconds(30)
         private val CATCHUP_THRESHOLD = Duration.ofMinutes(2)
         private val TAG = logTag("Sync", "Foreground", "Control")
     }
