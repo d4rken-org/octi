@@ -10,6 +10,9 @@ import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,14 +47,22 @@ class SyncOrchestrator @Inject constructor(
         )
     }
 
+    private val connectorModes: Flow<Map<ConnectorId, SyncConnector.EventMode>> = syncManager.connectors
+        .flatMapLatest { connectors ->
+            if (connectors.isEmpty()) {
+                flowOf(emptyMap())
+            } else {
+                kotlinx.coroutines.flow.combine(
+                    connectors.map { c -> c.syncEventMode.map { mode -> c.identifier to mode } }
+                ) { pairs -> pairs.toMap().filterValues { it != SyncConnector.EventMode.NONE } }
+            }
+        }
+
     val state: Flow<State> = combine(
         foregroundSyncControl.isActive,
-        syncManager.connectors,
+        connectorModes,
         syncWorkerControl.workerState,
-    ) { quickSyncActive, connectors, workerState ->
-        val modes = connectors
-            .associate { it.identifier to it.syncEventMode.value }
-            .filterValues { it != SyncConnector.EventMode.NONE }
+    ) { quickSyncActive, modes, workerState ->
         State(
             quickSync = QuickSyncState(isActive = quickSyncActive, connectorModes = modes),
             backgroundSync = BackgroundSyncState(
