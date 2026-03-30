@@ -8,10 +8,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -970,7 +968,6 @@ private fun DashboardToolbarTitle(upgradeInfo: UpgradeRepo.Info) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 private fun ActionChipsRow(
     showSyncSetup: Boolean,
@@ -1037,7 +1034,6 @@ private fun ActionChipsRow(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ActionChip(
     icon: ImageVector,
@@ -1309,7 +1305,6 @@ private fun UpgradeCard(
 
 // region Device Card
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun DashboardDeviceCard(
     device: DashboardVM.DeviceItem,

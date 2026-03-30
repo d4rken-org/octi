@@ -1,6 +1,5 @@
 package eu.darken.octi.common.settings
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SettingsBaseItem(
     title: String,
