@@ -49,6 +49,7 @@ class SyncListVM @Inject constructor(
     data class State(
         val connectors: List<ConnectorItem> = emptyList(),
         val highlightedConnectorIds: Set<ConnectorId> = emptySet(),
+        val isPro: Boolean = false,
     )
 
     sealed interface ConnectorItem {
@@ -140,8 +141,13 @@ class SyncListVM @Inject constructor(
 
             combine(withStates) { it.toList() }
         }
-        .combine(highlightedIds) { connectors, highlighted ->
-            State(connectors = connectors, highlightedConnectorIds = highlighted)
+        .combine(highlightedIds) { connectors, highlighted -> connectors to highlighted }
+        .combine(upgradeRepo.upgradeInfo) { (connectors, highlighted), upgradeInfo ->
+            State(
+                connectors = connectors,
+                highlightedConnectorIds = highlighted,
+                isPro = upgradeInfo.isPro,
+            )
         }
         .asStateFlow()
 

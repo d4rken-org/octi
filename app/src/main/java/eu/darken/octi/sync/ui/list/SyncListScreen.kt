@@ -98,7 +98,8 @@ fun SyncListScreen(
     onReset: (ConnectorId) -> Unit,
     onDisconnect: (ConnectorId) -> Unit,
 ) {
-    var showActionsFor by remember { mutableStateOf<SyncListVM.ConnectorItem?>(null) }
+    var showActionsForId by remember { mutableStateOf<ConnectorId?>(null) }
+    val showActionsFor = showActionsForId?.let { id -> state.connectors.find { it.connectorId == id } }
 
     Scaffold(
         topBar = {
@@ -139,13 +140,13 @@ fun SyncListScreen(
                     is SyncListVM.ConnectorItem.GDrive -> GDriveConnectorCard(
                         item = item,
                         isHighlighted = isHighlighted,
-                        onClick = { showActionsFor = item },
+                        onClick = { showActionsForId = item.connectorId },
                     )
 
                     is SyncListVM.ConnectorItem.OctiServer -> OctiServerConnectorCard(
                         item = item,
                         isHighlighted = isHighlighted,
-                        onClick = { showActionsFor = item },
+                        onClick = { showActionsForId = item.connectorId },
                     )
                 }
             }
@@ -156,53 +157,55 @@ fun SyncListScreen(
         when (item) {
             is SyncListVM.ConnectorItem.GDrive -> GDriveActionsSheet(
                 item = item,
-                onDismiss = { showActionsFor = null },
+                isPro = state.isPro,
+                onDismiss = { showActionsForId = null },
                 onTogglePause = {
                     onTogglePause(item.connectorId)
                 },
                 onForceSync = {
                     onForceSync(item.connectorId)
-                    showActionsFor = null
+                    showActionsForId = null
                 },
                 onViewDevices = {
                     onViewDevices(item.connectorId)
-                    showActionsFor = null
+                    showActionsForId = null
                 },
                 onReset = {
                     onReset(item.connectorId)
-                    showActionsFor = null
+                    showActionsForId = null
                 },
                 onDisconnect = {
                     onDisconnect(item.connectorId)
-                    showActionsFor = null
+                    showActionsForId = null
                 },
             )
 
             is SyncListVM.ConnectorItem.OctiServer -> OctiServerActionsSheet(
                 item = item,
-                onDismiss = { showActionsFor = null },
+                isPro = state.isPro,
+                onDismiss = { showActionsForId = null },
                 onTogglePause = {
                     onTogglePause(item.connectorId)
                 },
                 onForceSync = {
                     onForceSync(item.connectorId)
-                    showActionsFor = null
+                    showActionsForId = null
                 },
                 onViewDevices = {
                     onViewDevices(item.connectorId)
-                    showActionsFor = null
+                    showActionsForId = null
                 },
                 onLinkNewDevice = {
                     onLinkNewDevice(item.connectorId)
-                    showActionsFor = null
+                    showActionsForId = null
                 },
                 onReset = {
                     onReset(item.connectorId)
-                    showActionsFor = null
+                    showActionsForId = null
                 },
                 onDisconnect = {
                     onDisconnect(item.connectorId)
-                    showActionsFor = null
+                    showActionsForId = null
                 },
             )
         }

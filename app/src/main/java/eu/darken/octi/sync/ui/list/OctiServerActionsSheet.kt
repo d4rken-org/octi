@@ -15,12 +15,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,6 +45,7 @@ import java.time.Instant
 @Composable
 fun OctiServerActionsSheet(
     item: SyncListVM.ConnectorItem.OctiServer,
+    isPro: Boolean,
     onDismiss: () -> Unit,
     onTogglePause: () -> Unit,
     onForceSync: () -> Unit,
@@ -77,10 +81,19 @@ fun OctiServerActionsSheet(
                     text = stringResource(R.string.sync_connector_paused_label),
                     modifier = Modifier.weight(1f),
                 )
-                Switch(
-                    checked = item.isPaused,
-                    onCheckedChange = { onTogglePause() },
-                )
+                if (isPro) {
+                    Switch(
+                        checked = item.isPaused,
+                        onCheckedChange = null,
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.TwoTone.Stars,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(start = 16.dp),
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -173,6 +186,7 @@ fun OctiServerActionsSheet(
 @Composable
 private fun OctiServerActionsSheetPreview() = PreviewWrapper {
     OctiServerActionsSheet(
+        isPro = true,
         item = SyncListVM.ConnectorItem.OctiServer(
             connectorId = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "default", account = "preview-account"),
             credentials = OctiServer.Credentials(
