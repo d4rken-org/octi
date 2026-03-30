@@ -600,10 +600,17 @@ private fun connectorTypesLabel(
 ): String? {
     val connectorTypes = syncStatus.connectorTypes
     if (connectorTypes.isEmpty()) return null
+    val connectorsByType = syncStatus.syncDetail.connectors.groupBy { it.type }
     val names = connectorTypes.map { type ->
-        when (type) {
+        val typeName = when (type) {
             ConnectorType.GDRIVE -> stringResource(GDriveR.string.sync_gdrive_type_label)
             ConnectorType.OCTISERVER -> stringResource(OctiServerR.string.sync_octiserver_type_label)
+        }
+        val count = connectorsByType[type]?.size ?: 1
+        if (count > 1) {
+            stringResource(R.string.dashboard_sync_connector_type_count, typeName, count)
+        } else {
+            typeName
         }
     }
     val base = stringResource(R.string.dashboard_sync_status_via, names.joinToString(", "))
@@ -864,11 +871,21 @@ private fun SyncDetailConnectorRow(
             ConnectorType.OCTISERVER -> OctiServerIcon(modifier = Modifier.size(18.dp))
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            text = name,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.weight(1f),
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = name,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = connector.accountLabel,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         if (connector.isBusy) {
             Text(
                 text = stringResource(R.string.dashboard_sync_status_syncing),

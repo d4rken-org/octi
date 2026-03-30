@@ -10,6 +10,7 @@ interface SyncConnector {
     enum class EventMode { NONE, LIVE, POLLING }
 
     val identifier: ConnectorId
+    val accountLabel: String
 
     val state: Flow<SyncConnectorState>
     val data: Flow<SyncRead?>

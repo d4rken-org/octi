@@ -109,6 +109,8 @@ class OctiServerConnector @AssistedInject constructor(
     private val writeQueue = MutableSharedFlow<SyncWrite>(extraBufferCapacity = 1)
     private val serverLock = Mutex()
 
+    override val accountLabel: String get() = credentials.serverAdress.domain
+
     override val identifier: ConnectorId = ConnectorId(
         type = ConnectorType.OCTISERVER,
         subtype = credentials.serverAdress.domain,

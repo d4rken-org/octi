@@ -60,6 +60,7 @@ class SyncOrchestratorTest : BaseTest() {
         mode: SyncConnector.EventMode = SyncConnector.EventMode.NONE,
     ): SyncConnector = mockk {
         every { identifier } returns ConnectorId(type = type, subtype = "test", account = "test")
+        every { accountLabel } returns "test"
         every { syncEventMode } returns MutableStateFlow(mode)
     }
 

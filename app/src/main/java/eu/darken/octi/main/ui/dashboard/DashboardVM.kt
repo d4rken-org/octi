@@ -128,8 +128,9 @@ class DashboardVM @Inject constructor(
                 type = connector.identifier.type,
                 isBusy = state.isBusy,
                 lastSyncAt = state.lastSyncAt,
+                accountLabel = connector.accountLabel,
             )
-        }
+        }.disambiguateLabels()
 
         val syncDetail = SyncDetail(
             modules = moduleSyncStates,
@@ -211,6 +212,7 @@ class DashboardVM @Inject constructor(
         val type: ConnectorType,
         val isBusy: Boolean,
         val lastSyncAt: Instant?,
+        val accountLabel: String,
     )
 
     sealed interface SyncStatus {
@@ -536,6 +538,19 @@ class DashboardVM @Inject constructor(
     private val ModuleData<out Any>.orderPrio: Int
         get() = INFO_ORDER.indexOfFirst { it.isInstance(this.data) }
 
+
+    private fun List<ConnectorDetail>.disambiguateLabels(): List<ConnectorDetail> {
+        val duplicates = groupBy { it.type to it.accountLabel }.filterValues { it.size > 1 }
+        if (duplicates.isEmpty()) return this
+        return map { detail ->
+            if (duplicates.containsKey(detail.type to detail.accountLabel)) {
+                val shortId = detail.connectorId.account.take(8)
+                detail.copy(accountLabel = "${detail.accountLabel} ($shortId)")
+            } else {
+                detail
+            }
+        }
+    }
 
     companion object {
         private val INFO_ORDER = listOf(

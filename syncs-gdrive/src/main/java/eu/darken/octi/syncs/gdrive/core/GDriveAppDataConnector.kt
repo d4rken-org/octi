@@ -98,6 +98,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val driveLock = Mutex()
     private val writeQueue = MutableSharedFlow<SyncWrite>(extraBufferCapacity = 1)
 
+    override val accountLabel: String get() = account.email
+
     override val identifier: ConnectorId = ConnectorId(
         type = ConnectorType.GDRIVE,
         subtype = if (client.account.isAppDataScope) "appdatascope" else "",
