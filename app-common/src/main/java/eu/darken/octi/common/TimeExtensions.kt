@@ -10,3 +10,8 @@ fun OffsetDateTime.toSystemTimezone(): ZonedDateTime = this
 
 fun Instant.toSystemTimezone(): ZonedDateTime = this
     .atZone(ZoneId.systemDefault())
+
+fun Instant.clampToNow(): Instant {
+    val now = Instant.now()
+    return if (isAfter(now)) now else this
+}

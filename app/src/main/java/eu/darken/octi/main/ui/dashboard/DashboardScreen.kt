@@ -35,7 +35,9 @@ import androidx.compose.material.icons.twotone.Apps
 import androidx.compose.material.icons.twotone.BatteryFull
 import androidx.compose.material.icons.twotone.CellTower
 import androidx.compose.material.icons.twotone.ChevronRight
+import androidx.compose.material.icons.twotone.Schedule
 import androidx.compose.material.icons.twotone.CloudSync
+import eu.darken.octi.sync.core.ClockAnalyzer
 import androidx.compose.material.icons.twotone.Coffee
 import androidx.compose.material.icons.twotone.ContentPaste
 import androidx.compose.material.icons.twotone.ExpandLess
@@ -97,6 +99,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import eu.darken.octi.R
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.clampToNow
 import eu.darken.octi.common.compose.OctiMascot
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -322,6 +325,7 @@ fun DashboardScreen(
     var showWifiDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Wifi?>(null) }
     var showConnectivityDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Connectivity?>(null) }
     var showClipboardDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Clipboard?>(null) }
+    var showClockDiscrepancySheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.isOffline) {
         if (state.isOffline) {
@@ -398,19 +402,22 @@ fun DashboardScreen(
                 }
             }
 
-            // Action chips row (sync setup + permissions + upgrade)
-            val hasActionChips = state.showSyncSetup || state.missingPermissions.isNotEmpty() || !state.upgradeInfo.isPro
+            // Action chips row (sync setup + permissions + upgrade + clock discrepancy)
+            val hasClockDiscrepancy = state.clockAnalysis != null
+            val hasActionChips = state.showSyncSetup || state.missingPermissions.isNotEmpty() || !state.upgradeInfo.isPro || hasClockDiscrepancy
             if (hasActionChips) {
                 item(key = "action_chips", span = { GridItemSpan(maxLineSpan) }) {
                     ActionChipsRow(
                         showSyncSetup = state.showSyncSetup,
                         missingPermissions = state.missingPermissions,
                         showUpgrade = !state.upgradeInfo.isPro,
+                        showClockDiscrepancy = hasClockDiscrepancy,
                         onSetupSync = onSetupSync,
                         onDismissSyncSetup = onDismissSyncSetup,
                         onGrantPermission = onGrantPermission,
                         onDismissPermission = onDismissPermission,
                         onUpgrade = onUpgrade,
+                        onClockDiscrepancy = { showClockDiscrepancySheet = true },
                     )
                 }
             }
@@ -447,6 +454,7 @@ fun DashboardScreen(
                     onEditCard = { editingDeviceId = it },
                     onUpgrade = onUpgrade,
                     onManageStaleDevice = onSyncServices,
+                    onClockDiscrepancy = { showClockDiscrepancySheet = true },
                     onPowerClicked = { showPowerDetail = it },
                     onPowerAlerts = onPowerAlerts,
                     onWifiClicked = { showWifiDetail = it },
@@ -496,6 +504,7 @@ fun DashboardScreen(
                         onEditCard = { editingDeviceId = it },
                         onUpgrade = onUpgrade,
                         onManageStaleDevice = onSyncServices,
+                        onClockDiscrepancy = { showClockDiscrepancySheet = true },
                         onPowerClicked = { showPowerDetail = it },
                         onPowerAlerts = onPowerAlerts,
                         onWifiClicked = { showWifiDetail = it },
@@ -554,6 +563,14 @@ fun DashboardScreen(
             onDismiss = { showClipboardDetail = null },
             onCopy = onCopyClipboard,
             showMessage = showMessage,
+        )
+    }
+
+    if (showClockDiscrepancySheet && state.clockAnalysis != null) {
+        ClockDiscrepancySheet(
+            analysis = state.clockAnalysis,
+            deviceNames = state.devices.associate { it.meta.deviceId to it.meta.data.labelOrFallback },
+            onDismiss = { showClockDiscrepancySheet = false },
         )
     }
 }
@@ -959,11 +976,13 @@ private fun ActionChipsRow(
     showSyncSetup: Boolean,
     missingPermissions: List<Permission>,
     showUpgrade: Boolean,
+    showClockDiscrepancy: Boolean,
     onSetupSync: () -> Unit,
     onDismissSyncSetup: () -> Unit,
     onGrantPermission: (Permission) -> Unit,
     onDismissPermission: (Permission) -> Unit,
     onUpgrade: () -> Unit,
+    onClockDiscrepancy: () -> Unit,
 ) {
     FlowRow(
         modifier = Modifier
@@ -1006,6 +1025,15 @@ private fun ActionChipsRow(
                 onLongClick = null,
             )
         }
+        if (showClockDiscrepancy) {
+            ActionChip(
+                icon = Icons.TwoTone.Schedule,
+                label = stringResource(SyncR.string.sync_clock_discrepancy_chip_label),
+                onClick = onClockDiscrepancy,
+                onLongClick = null,
+                tint = MaterialTheme.colorScheme.tertiary,
+            )
+        }
     }
 }
 
@@ -1016,6 +1044,7 @@ private fun ActionChip(
     label: String,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)?,
+    tint: Color = MaterialTheme.colorScheme.primary,
 ) {
     Surface(
         modifier = Modifier.combinedClickable(
@@ -1034,7 +1063,7 @@ private fun ActionChip(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = tint,
             )
             Text(
                 text = label,
@@ -1288,6 +1317,7 @@ private fun DashboardDeviceCard(
     onEditCard: (String) -> Unit,
     onUpgrade: () -> Unit,
     onManageStaleDevice: () -> Unit,
+    onClockDiscrepancy: () -> Unit,
     onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
     onPowerAlerts: (DeviceId) -> Unit,
     onWifiClicked: (DashboardVM.ModuleItem.Wifi) -> Unit,
@@ -1303,6 +1333,7 @@ private fun DashboardDeviceCard(
 ) {
     val meta = device.meta.data
     val isStale = device.isStale
+    val isClockSkewed = device.isClockSkewed
     val hasModules = device.moduleItems.isNotEmpty()
     val canEdit = hasModules && !device.isLimited
     val shouldShowModules = !device.isLimited && hasModules && !device.isCollapsed
@@ -1366,19 +1397,25 @@ private fun DashboardDeviceCard(
                         overflow = TextOverflow.Ellipsis,
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (isStale) {
+                        if (isStale || isClockSkewed) {
                             Icon(
                                 imageVector = Icons.TwoTone.Warning,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
+                                tint = if (isStale) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary,
                                 modifier = Modifier.size(14.dp),
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                         }
                         Text(
-                            text = DateUtils.getRelativeTimeSpanString(device.meta.modifiedAt.toEpochMilli()).toString(),
+                            text = DateUtils.getRelativeTimeSpanString(
+                                device.meta.modifiedAt.clampToNow().toEpochMilli()
+                            ).toString(),
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (isStale) MaterialTheme.colorScheme.error else Color.Unspecified,
+                            color = when {
+                                isStale -> MaterialTheme.colorScheme.error
+                                isClockSkewed -> MaterialTheme.colorScheme.tertiary
+                                else -> Color.Unspecified
+                            },
                         )
                     }
                 }
@@ -1434,6 +1471,11 @@ private fun DashboardDeviceCard(
                     onManageDevice = onManageStaleDevice,
                 )
             }
+            // Clock skew warning
+            if (isClockSkewed && !isStale) {
+                HorizontalDivider()
+                ClockSkewWarning(onDetails = onClockDiscrepancy)
+            }
 
             val availableModuleIds = buildAvailableModuleIds(device.moduleItems)
             val rows = device.tileLayout.toRows(availableModuleIds)
@@ -1469,6 +1511,7 @@ private fun DeviceCardOrEditor(
     onEditCard: (String) -> Unit,
     onUpgrade: () -> Unit,
     onManageStaleDevice: () -> Unit,
+    onClockDiscrepancy: () -> Unit,
     onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
     onPowerAlerts: (DeviceId) -> Unit,
     onWifiClicked: (DashboardVM.ModuleItem.Wifi) -> Unit,
@@ -1509,6 +1552,7 @@ private fun DeviceCardOrEditor(
             onEditCard = onEditCard,
             onUpgrade = onUpgrade,
             onManageStaleDevice = onManageStaleDevice,
+            onClockDiscrepancy = onClockDiscrepancy,
             onPowerClicked = onPowerClicked,
             onPowerAlerts = onPowerAlerts,
             onWifiClicked = onWifiClicked,
@@ -1565,6 +1609,35 @@ private fun StaleDeviceWarning(
         )
         TextButton(onClick = onManageDevice) {
             Text(stringResource(CommonR.string.general_manage_action))
+        }
+    }
+}
+
+@Composable
+private fun ClockSkewWarning(
+    onDetails: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = Icons.TwoTone.Warning,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.tertiary,
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = stringResource(SyncR.string.sync_device_clock_skew_warning_text),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.tertiary,
+            modifier = Modifier.weight(1f),
+        )
+        TextButton(onClick = onDetails) {
+            Text(stringResource(CommonR.string.general_show_details_action))
         }
     }
 }

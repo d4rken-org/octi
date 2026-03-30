@@ -60,6 +60,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okio.ByteString
+import java.time.Duration
 import java.time.Instant
 
 
@@ -91,6 +92,7 @@ class OctiServerConnector @AssistedInject constructor(
         override val quota: SyncConnectorState.Quota? = null,
         override val devices: Collection<DeviceId>? = null,
         override val isAvailable: Boolean = true,
+        override val clockOffsets: List<SyncConnectorState.ClockOffset> = emptyList(),
     ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
@@ -257,6 +259,16 @@ class OctiServerConnector @AssistedInject constructor(
     private suspend fun fetchModule(deviceId: DeviceId, moduleId: ModuleId): OctiServerModuleData? {
         val readData = endpoint.readModule(deviceId = deviceId, moduleId = moduleId) ?: return null
 
+        if (readData.serverTime != null) {
+            val serverTime = readData.serverTime
+            val offset = Duration.between(serverTime, readData.localTime)
+            log(TAG, VERBOSE) { "fetchModule($deviceId:$moduleId): serverTime=$serverTime, offset=${offset.seconds}s" }
+            val clockOffset = SyncConnectorState.ClockOffset(offset = offset, measuredAt = readData.localTime)
+            _state.updateBlocking { copy(clockOffsets = clockOffsets + clockOffset) }
+        } else {
+            log(TAG, VERBOSE) { "fetchModule($deviceId:$moduleId): no serverTime in response" }
+        }
+
         val payload = if (readData.payload != ByteString.EMPTY) {
             crypti.decrypt(readData.payload).fromGzip()
         } else {
@@ -277,6 +289,7 @@ class OctiServerConnector @AssistedInject constructor(
         deviceFilter: Set<DeviceId>? = null,
     ): OctiServerData {
         log(TAG, DEBUG) { "readServer(moduleFilter=$moduleFilter, deviceFilter=$deviceFilter): Starting..." }
+        _state.updateBlocking { copy(clockOffsets = emptyList()) }
         val allDeviceIds = endpoint.listDevices()
         val deviceIds = if (deviceFilter != null) {
             allDeviceIds.filter { it in deviceFilter }

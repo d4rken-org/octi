@@ -1,5 +1,6 @@
 package eu.darken.octi.sync.core
 
+import java.time.Duration
 import java.time.Instant
 
 interface SyncConnectorState {
@@ -28,4 +29,14 @@ interface SyncConnectorState {
     val devices: Collection<DeviceId>?
 
     val isAvailable: Boolean
+
+    data class ClockOffset(
+        val offset: Duration,
+        val measuredAt: Instant,
+    )
+
+    // Clock offsets collected during the most recent sync round.
+    // Positive offset = local ahead, negative = local behind.
+    val clockOffsets: List<ClockOffset>
+        get() = emptyList()
 }

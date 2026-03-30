@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_device_stale_warning_text">Device hasn\'t synced in %s</string>
+    <string name="sync_device_clock_skew_warning_text">Device clock appears out of sync</string>
+    <string name="sync_clock_discrepancy_chip_label">Clock skew</string>
+    <string name="sync_clock_discrepancy_title">Clock discrepancy</string>
+    <string name="sync_clock_discrepancy_uncertain">A clock discrepancy was detected between your devices. With only two devices, it\'s not possible to determine which has the incorrect time.\n\nCheck your device time settings.</string>
+    <string name="sync_clock_discrepancy_current_suspect">This device\'s clock appears out of sync. Your other devices agree on a different time.\n\nCheck this device\'s time settings.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">The clock on %s appears out of sync. Your other devices agree on the current time.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Your device\'s clock is ahead of the server by %s.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Your device\'s clock is behind the server by %s.</string>
 
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d device hasn\'t synced recently</item>

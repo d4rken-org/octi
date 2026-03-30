@@ -43,6 +43,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncExecutor
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOrchestrator
+import eu.darken.octi.sync.core.ClockAnalyzer
 import eu.darken.octi.sync.core.StalenessUtil
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
@@ -80,6 +81,7 @@ class DashboardVM @Inject constructor(
     private val alertManager: PowerAlertManager,
     private val syncExecutor: SyncExecutor,
     private val syncOrchestrator: SyncOrchestrator,
+    private val clockAnalyzer: ClockAnalyzer,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -163,6 +165,7 @@ class DashboardVM @Inject constructor(
         val upgradeInfo: UpgradeRepo.Info,
         val deviceLimitReached: Boolean,
         val deviceLimit: Int = DEVICE_LIMIT,
+        val clockAnalysis: ClockAnalyzer.ClockAnalysis? = null,
     )
 
     data class DeviceItem(
@@ -174,6 +177,7 @@ class DashboardVM @Inject constructor(
         val isLimited: Boolean,
         val isCurrentDevice: Boolean,
         val isStale: Boolean = false,
+        val isClockSkewed: Boolean = false,
     )
 
     sealed interface ModuleItem {
@@ -250,7 +254,8 @@ class DashboardVM @Inject constructor(
         upgradeRepo.upgradeInfo,
         updateService.availableUpdate.onStart { emit(null) },
         generalSettings.dashboardConfig.flow,
-    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig ->
+        clockAnalyzer.analysis,
+    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig, clockAnalysis ->
 
         val connectorCount = syncManager.connectors.first().size
         val showSyncSetup = !isSyncSetupDismissed && connectorCount == 0
@@ -288,6 +293,10 @@ class DashboardVM @Inject constructor(
                 tileLayout = effectiveLayout,
                 isCollapsed = cleanedConfig.isCollapsed(deviceId),
                 isStale = StalenessUtil.isStale(item.meta.modifiedAt),
+                isClockSkewed = when {
+                    item.isCurrentDevice -> clockAnalysis?.isCurrentDeviceSuspect == true
+                    else -> clockAnalysis?.suspectDeviceIds?.contains(item.meta.deviceId) == true
+                },
                 isLimited = !upgradeInfo.isPro && index >= DEVICE_LIMIT,
             )
         }
@@ -303,6 +312,7 @@ class DashboardVM @Inject constructor(
             update = update,
             upgradeInfo = upgradeInfo,
             deviceLimitReached = orderedDeviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro,
+            clockAnalysis = clockAnalysis,
         )
     }
         .setupCommonEventHandlers(TAG) { "state" }

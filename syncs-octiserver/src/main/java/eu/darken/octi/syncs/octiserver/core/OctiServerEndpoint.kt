@@ -148,6 +148,8 @@ class OctiServerEndpoint @AssistedInject constructor(
     data class ReadData(
         val modifiedAt: Instant,
         val payload: ByteString,
+        val serverTime: Instant? = null,
+        val localTime: Instant,
     )
 
     suspend fun readModule(deviceId: DeviceId, moduleId: ModuleId): ReadData? = withContext(dispatcherProvider.IO) {
@@ -164,15 +166,24 @@ class OctiServerEndpoint @AssistedInject constructor(
 
         if (!response.isSuccessful) throw OctiServerHttpException(HttpException(response))
 
+        val localTime = Instant.now()
+
         val lastModifiedAt = response.headers()["X-Modified-At"]
-            ?.let { ZonedDateTime.parse(it, DateTimeFormatter.RFC_1123_DATE_TIME) }?.toInstant()
+            ?.let { runCatching { ZonedDateTime.parse(it, DateTimeFormatter.RFC_1123_DATE_TIME) }.getOrNull() }
+            ?.toInstant()
             ?: return@withContext null
+
+        val serverTime = response.headers()["Date"]
+            ?.let { runCatching { ZonedDateTime.parse(it, DateTimeFormatter.RFC_1123_DATE_TIME) }.getOrNull() }
+            ?.toInstant()
 
         val body = response.body()?.byteString()?.takeIf { it != NULL_BODY } ?: ByteString.EMPTY
 
         ReadData(
             modifiedAt = lastModifiedAt,
             payload = body,
+            serverTime = serverTime,
+            localTime = localTime,
         )
     }
 

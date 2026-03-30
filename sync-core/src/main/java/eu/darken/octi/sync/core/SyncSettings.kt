@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.datastore.createSetValue
 import eu.darken.octi.common.datastore.createValue
+import java.time.Duration
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -46,6 +47,8 @@ class SyncSettings @Inject constructor(
     val showDashboardCard = dataStore.createValue("sync.dashboard.card.show", true)
 
     val pausedConnectors = dataStore.createSetValue<ConnectorId>("sync.connectors.paused", emptySet(), json)
+
+    val clockSkewThreshold = dataStore.createValue("sync.clock.skew.threshold", Duration.ofMinutes(2), json)
 
     val deviceId by lazy {
         val key = stringPreferencesKey("sync.identifier.device")
