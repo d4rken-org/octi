@@ -19,6 +19,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.encryption.EncryptionMode
 import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +68,7 @@ class SyncDevicesVM @Inject constructor(
 
         fun isEncryptionIncompatible(encryptionType: String?): Boolean {
             if (!hasNoModuleData) return false
-            if (encryptionType != "AES256_GCM_SIV") return false
+            if (EncryptionMode.fromTypeString(encryptionType) != EncryptionMode.AES256_GCM_SIV) return false
             val addedAt = serverAddedAt ?: return false
             return Duration.between(addedAt, Instant.now()).toMinutes() >= 2
         }

@@ -46,6 +46,7 @@ import eu.darken.octi.sync.core.SyncOrchestrator
 import eu.darken.octi.sync.core.ClockAnalyzer
 import eu.darken.octi.sync.core.StalenessUtil
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.encryption.EncryptionMode
 import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
@@ -349,7 +350,7 @@ class DashboardVM @Inject constructor(
         val incompatible = syncStatus?.allLinkedDevices
             ?.filter { item ->
                 item.deviceId !in visibleDeviceIds
-                        && item.encryptionType == "AES256_GCM_SIV"
+                        && EncryptionMode.fromTypeString(item.encryptionType) == EncryptionMode.AES256_GCM_SIV
                         && item.addedAt?.let { Duration.between(it, Instant.now()).toMinutes() >= 2 } == true
             }
             ?: emptyList()

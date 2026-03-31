@@ -105,7 +105,7 @@ class PayloadEncryptionTest : BaseTest() {
         val crypti1 = PayloadEncryption()
         val exported = crypti1.exportKeyset()
 
-        exported.type shouldBe "AES256_GCM_SIV"
+        exported.type shouldBe EncryptionMode.AES256_GCM_SIV.typeString
 
         val crypti2 = PayloadEncryption(exported)
         val testData = "Banana Pancakes".toByteString()
@@ -132,6 +132,6 @@ class PayloadEncryptionTest : BaseTest() {
     @Test
     fun `legacy mode generates SIV keyset`() {
         val crypti = PayloadEncryption(useLegacyEncryption = true)
-        crypti.exportKeyset().type shouldBe "AES256_SIV"
+        crypti.exportKeyset().type shouldBe EncryptionMode.AES256_SIV.typeString
     }
 }

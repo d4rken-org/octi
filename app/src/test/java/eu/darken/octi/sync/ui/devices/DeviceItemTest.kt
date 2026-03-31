@@ -2,6 +2,7 @@ package eu.darken.octi.sync.ui.devices
 
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.encryption.EncryptionMode
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -63,20 +64,20 @@ class DeviceItemTest : BaseTest() {
         @Test
         fun `true when no module data, GCM-SIV account, added over 2 minutes ago`() {
             val old = Instant.now().minusSeconds(300)
-            item(serverAddedAt = old).isEncryptionIncompatible("AES256_GCM_SIV") shouldBe true
+            item(serverAddedAt = old).isEncryptionIncompatible(EncryptionMode.AES256_GCM_SIV.typeString) shouldBe true
         }
 
         @Test
         fun `false when device has module data`() {
             val old = Instant.now().minusSeconds(300)
             item(metaInfo = metaInfo(), serverAddedAt = old)
-                .isEncryptionIncompatible("AES256_GCM_SIV") shouldBe false
+                .isEncryptionIncompatible(EncryptionMode.AES256_GCM_SIV.typeString) shouldBe false
         }
 
         @Test
         fun `false when account uses legacy SIV`() {
             val old = Instant.now().minusSeconds(300)
-            item(serverAddedAt = old).isEncryptionIncompatible("AES256_SIV") shouldBe false
+            item(serverAddedAt = old).isEncryptionIncompatible(EncryptionMode.AES256_SIV.typeString) shouldBe false
         }
 
         @Test
@@ -88,19 +89,19 @@ class DeviceItemTest : BaseTest() {
         @Test
         fun `false when device was just added`() {
             val justNow = Instant.now().minusSeconds(30)
-            item(serverAddedAt = justNow).isEncryptionIncompatible("AES256_GCM_SIV") shouldBe false
+            item(serverAddedAt = justNow).isEncryptionIncompatible(EncryptionMode.AES256_GCM_SIV.typeString) shouldBe false
         }
 
         @Test
         fun `false when serverAddedAt is null`() {
-            item(serverAddedAt = null).isEncryptionIncompatible("AES256_GCM_SIV") shouldBe false
+            item(serverAddedAt = null).isEncryptionIncompatible(EncryptionMode.AES256_GCM_SIV.typeString) shouldBe false
         }
 
         @Test
         fun `false when device has deserialization error`() {
             val old = Instant.now().minusSeconds(300)
             item(error = RuntimeException("bad data"), serverAddedAt = old)
-                .isEncryptionIncompatible("AES256_GCM_SIV") shouldBe false
+                .isEncryptionIncompatible(EncryptionMode.AES256_GCM_SIV.typeString) shouldBe false
         }
     }
 }

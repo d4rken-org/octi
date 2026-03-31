@@ -35,21 +35,22 @@ class PayloadEncryption constructor(
         keySet?.let {
             TinkProtoKeysetFormat.parseKeyset(keySet.key.toByteArray(), InsecureSecretKeyAccess.get())
         } ?: if (useLegacyEncryption) {
-            KeysetHandle.generateNew(KeyTemplates.get(LEGACY_KEY_TEMPLATE))
+            KeysetHandle.generateNew(KeyTemplates.get(EncryptionMode.AES256_SIV.typeString))
         } else {
             KeysetHandle.generateNew(AesGcmSivKeyManager.aes256GcmSivTemplate())
         }
     }
 
     private val isSiv: Boolean
-        get() = keySet?.type == LEGACY_KEY_TEMPLATE || (keySet == null && useLegacyEncryption)
+        get() = EncryptionMode.fromTypeString(keySet?.type)?.isLegacy == true || (keySet == null && useLegacyEncryption)
 
     private val aeadPrimitive by lazy { keysetHandle.getPrimitive(Aead::class.java) }
     private val daeadPrimitive by lazy { keysetHandle.getPrimitive(DeterministicAead::class.java) }
 
     fun exportKeyset(): KeySet {
         val serialized = TinkProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get())
-        val type = keySet?.type ?: if (useLegacyEncryption) LEGACY_KEY_TEMPLATE else DEFAULT_KEY_TEMPLATE
+        val type = keySet?.type
+            ?: if (useLegacyEncryption) EncryptionMode.AES256_SIV.typeString else EncryptionMode.AES256_GCM_SIV.typeString
         return KeySet(
             type = type,
             key = serialized.toByteString(),
@@ -90,8 +91,6 @@ class PayloadEncryption constructor(
 
     companion object {
         private val TAG = logTag("Sync", "Crypto", "Payload")
-        private const val DEFAULT_KEY_TEMPLATE = "AES256_GCM_SIV"
-        private const val LEGACY_KEY_TEMPLATE = "AES256_SIV"
 
         init {
             // Register BouncyCastle for AES-GCM-SIV support in JVM unit tests.
