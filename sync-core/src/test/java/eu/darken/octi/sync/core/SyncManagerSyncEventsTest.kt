@@ -7,6 +7,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.merge
@@ -49,11 +50,68 @@ class SyncManagerSyncEventsTest : BaseTest() {
         every { syncEvents } returns events
     }
 
-    private fun createMergedFlow(connectorsFlow: MutableStateFlow<List<SyncConnector>>) =
-        connectorsFlow.flatMapLatest { cons ->
+    private fun createMergedFlow(
+        connectorsFlow: MutableStateFlow<List<SyncConnector>>,
+        pausedConnectors: MutableStateFlow<Set<ConnectorId>> = MutableStateFlow(emptySet()),
+    ) = pausedConnectors
+        .combine(connectorsFlow) { paused, connectorList ->
+            connectorList.filter { !paused.contains(it.identifier) }
+        }
+        .flatMapLatest { cons ->
             if (cons.isEmpty()) emptyFlow()
             else cons.map { it.syncEvents }.merge()
         }
+
+    @Nested
+    inner class `pause filtering` {
+        @Test
+        fun `paused connector events are not emitted`() = runTest2 {
+            val events1 = createEventFlow()
+            val events2 = createEventFlow()
+            val pausedConnectors = MutableStateFlow(setOf(connectorId1))
+            val connectorsFlow = MutableStateFlow(
+                listOf(mockConnector(connectorId1, events1), mockConnector(connectorId2, events2)),
+            )
+
+            val received = mutableListOf<SyncEvent>()
+            val job = launch { createMergedFlow(connectorsFlow, pausedConnectors).toList(received) }
+            advanceUntilIdle()
+
+            events1.emit(mockEvent(connectorId1))
+            events2.emit(mockEvent(connectorId2))
+            advanceUntilIdle()
+
+            job.cancelAndJoin()
+
+            received.size shouldBe 1
+            (received.single() as SyncEvent.ModuleChanged).connectorId shouldBe connectorId2
+        }
+
+        @Test
+        fun `unpausing connector resumes events`() = runTest2 {
+            val events1 = createEventFlow()
+            val pausedConnectors = MutableStateFlow(setOf(connectorId1))
+            val connectorsFlow = MutableStateFlow(listOf(mockConnector(connectorId1, events1)))
+
+            val received = mutableListOf<SyncEvent>()
+            val job = launch { createMergedFlow(connectorsFlow, pausedConnectors).toList(received) }
+            advanceUntilIdle()
+
+            events1.emit(mockEvent(connectorId1))
+            advanceUntilIdle()
+            received.size shouldBe 0
+
+            pausedConnectors.value = emptySet()
+            advanceUntilIdle()
+
+            events1.emit(mockEvent(connectorId1))
+            advanceUntilIdle()
+
+            job.cancelAndJoin()
+
+            received.size shouldBe 1
+        }
+    }
 
     @Nested
     inner class `event merging` {

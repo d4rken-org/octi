@@ -74,7 +74,10 @@ class SyncManager @Inject constructor(
         .setupCommonEventHandlers(TAG) { "syncStates" }
         .shareLatest(scope + dispatcherProvider.Default)
 
-    val syncEvents: Flow<SyncEvent> = connectors
+    val syncEvents: Flow<SyncEvent> = syncSettings.pausedConnectors.flow
+        .combine(connectors) { paused, connectorList ->
+            connectorList.filter { !paused.contains(it.identifier) }
+        }
         .flatMapLatest { cons ->
             if (cons.isEmpty()) emptyFlow()
             else cons.map { it.syncEvents }.merge()

@@ -8,6 +8,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.merge
@@ -120,9 +121,13 @@ class SyncEventsSharingTest : BaseTest() {
             }
 
             val connectorsFlow = MutableStateFlow(listOf(connector))
+            val pausedConnectors = MutableStateFlow<Set<ConnectorId>>(emptySet())
 
             // Replicate SyncManager.syncEvents composition
-            val managerEvents = connectorsFlow
+            val managerEvents = pausedConnectors
+                .combine(connectorsFlow) { paused, connectorList ->
+                    connectorList.filter { !paused.contains(it.identifier) }
+                }
                 .flatMapLatest { cons ->
                     if (cons.isEmpty()) emptyFlow()
                     else cons.map { it.syncEvents }.merge()
