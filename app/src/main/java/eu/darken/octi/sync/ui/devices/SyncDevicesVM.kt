@@ -61,6 +61,7 @@ class SyncDevicesVM @Inject constructor(
         val error: Exception?,
         val serverVersion: String?,
         val serverAddedAt: Instant?,
+        val serverPlatform: String?,
     ) {
         val hasNoModuleData: Boolean get() = metaInfo == null && error == null
 
@@ -113,6 +114,7 @@ class SyncDevicesVM @Inject constructor(
                                     error = error,
                                     serverVersion = linked?.version,
                                     serverAddedAt = linked?.addedAt,
+                                    serverPlatform = linked?.platform,
                                 )
                             }
                                 ?.sortedBy { it.metaInfo?.labelOrFallback?.lowercase() }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Last seen %1$s</string>
     <string name="sync_device_stale_warning_text">Device hasn\'t synced in %s</string>
     <string name="sync_device_clock_skew_warning_text">Device clock appears out of sync</string>
     <string name="sync_clock_discrepancy_chip_label">Clock skew</string>

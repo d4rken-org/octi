@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.twotone.Android
 import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.Tablet
@@ -125,81 +126,95 @@ private fun DeviceRow(
 ) {
     val context = LocalContext.current
 
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(16.dp),
     ) {
-        Icon(
-            imageVector = when (item.metaInfo?.deviceType) {
-                MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
-                MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
-                else -> Icons.TwoTone.QuestionMark
-            },
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = item.metaInfo?.labelOrFallback ?: "",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f),
-                )
-                item.metaInfo?.octiVersionName?.let { version ->
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = when (item.metaInfo?.deviceType) {
+                    MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
+                    MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
+                    else -> Icons.TwoTone.QuestionMark
+                },
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = item.metaInfo?.labelOrFallback ?: "",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f),
+            )
+            Column(horizontalAlignment = Alignment.End) {
+                item.serverVersion?.let { version ->
                     Text(
                         text = version,
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }
+                item.serverPlatform?.let { platform ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = when (platform.lowercase()) {
+                                "android" -> Icons.TwoTone.Android
+                                else -> Icons.TwoTone.QuestionMark
+                            },
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = platform.replaceFirstChar { it.uppercase() },
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
             }
+        }
 
+        item.lastSeen?.let { lastSeen ->
             Text(
-                text = item.deviceId.id,
+                text = stringResource(
+                    SyncR.string.sync_device_last_seen_label,
+                    DateUtils.getRelativeTimeSpanString(lastSeen.toEpochMilli()).toString(),
+                ),
                 style = MaterialTheme.typography.bodySmall,
             )
+        }
 
-            item.lastSeen?.let { lastSeen ->
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = DateUtils.getRelativeTimeSpanString(lastSeen.toEpochMilli()).toString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+        val isStale = StalenessUtil.isStale(item.lastSeen)
+        if (isStale && item.lastSeen != null) {
+            val stalePeriod = StalenessUtil.formatStalePeriod(context, item.lastSeen)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(SyncR.string.sync_device_stale_warning_text, stalePeriod),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
 
-            val isStale = StalenessUtil.isStale(item.lastSeen)
-            if (isStale && item.lastSeen != null) {
-                val stalePeriod = StalenessUtil.formatStalePeriod(context, item.lastSeen)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(SyncR.string.sync_device_stale_warning_text, stalePeriod),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
+        item.error?.let { error ->
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = error.toString(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                maxLines = 10,
+            )
+        }
 
-            item.error?.let { error ->
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = error.toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                    maxLines = 10,
-                )
-            }
-
-            if (item.isEncryptionIncompatible(encryptionType)) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(OctiServerR.string.sync_octiserver_device_encryption_incompatible),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
+        if (item.isEncryptionIncompatible(encryptionType)) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(OctiServerR.string.sync_octiserver_device_encryption_incompatible),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
         }
     }
 }
@@ -232,6 +247,7 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
                     error = null,
                     serverVersion = "0.14.0",
                     serverAddedAt = Instant.now(),
+                    serverPlatform = "android",
                 ),
                 SyncDevicesVM.DeviceItem(
                     deviceId = deviceId2,
@@ -252,6 +268,7 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
                     error = RuntimeException("Connection timed out"),
                     serverVersion = "0.13.0",
                     serverAddedAt = Instant.now().minusSeconds(86400 * 60),
+                    serverPlatform = "android",
                 ),
             ),
         ),

@@ -113,6 +113,7 @@
         <item quantity="other">%d devices</item>
     </plurals>
     <string name="sync_device_compatibility_hint">compatibility issue</string>
+    <string name="sync_device_added_at_label">Added %1$s</string>
     <plurals name="general_unique_devices_count_label">
         <item quantity="one">%d unique, only available here</item>
         <item quantity="other">%d unique, only available here</item>

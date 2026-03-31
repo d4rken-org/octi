@@ -23,6 +23,7 @@ class DeviceItemTest : BaseTest() {
         error = error,
         serverVersion = null,
         serverAddedAt = serverAddedAt,
+        serverPlatform = null,
     )
 
     private fun metaInfo() = MetaInfo(
