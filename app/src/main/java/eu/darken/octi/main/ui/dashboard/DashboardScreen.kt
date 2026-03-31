@@ -55,6 +55,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -400,9 +401,10 @@ fun DashboardScreen(
                 }
             }
 
-            // Action chips row (sync setup + permissions + upgrade + clock discrepancy)
+            // Action chips row (sync setup + permissions + upgrade + clock discrepancy + compatibility)
             val hasClockDiscrepancy = state.clockAnalysis != null
-            val hasActionChips = state.showSyncSetup || state.missingPermissions.isNotEmpty() || !state.upgradeInfo.isPro || hasClockDiscrepancy
+            val hasCompatibilityIssue = state.incompatibleDevices.isNotEmpty()
+            val hasActionChips = state.showSyncSetup || state.missingPermissions.isNotEmpty() || !state.upgradeInfo.isPro || hasClockDiscrepancy || hasCompatibilityIssue
             if (hasActionChips) {
                 item(key = "action_chips", span = { GridItemSpan(maxLineSpan) }) {
                     ActionChipsRow(
@@ -410,12 +412,14 @@ fun DashboardScreen(
                         missingPermissions = state.missingPermissions,
                         showUpgrade = !state.upgradeInfo.isPro,
                         showClockDiscrepancy = hasClockDiscrepancy,
+                        showCompatibilityIssue = hasCompatibilityIssue,
                         onSetupSync = onSetupSync,
                         onDismissSyncSetup = onDismissSyncSetup,
                         onGrantPermission = onGrantPermission,
                         onDismissPermission = onDismissPermission,
                         onUpgrade = onUpgrade,
                         onClockDiscrepancy = { showClockDiscrepancySheet = true },
+                        onCompatibilityIssue = onSyncServices,
                     )
                 }
             }
@@ -526,6 +530,14 @@ fun DashboardScreen(
                         onMoveDown = onMoveDeviceDown,
                     )
                 }
+            }
+
+            // Incompatible device cards
+            items(
+                items = state.incompatibleDevices,
+                key = { "incompatible_${it.deviceId.id}" },
+            ) { item ->
+                IncompatibleDeviceCard(item = item)
             }
 
         }
@@ -991,12 +1003,14 @@ private fun ActionChipsRow(
     missingPermissions: List<Permission>,
     showUpgrade: Boolean,
     showClockDiscrepancy: Boolean,
+    showCompatibilityIssue: Boolean = false,
     onSetupSync: () -> Unit,
     onDismissSyncSetup: () -> Unit,
     onGrantPermission: (Permission) -> Unit,
     onDismissPermission: (Permission) -> Unit,
     onUpgrade: () -> Unit,
     onClockDiscrepancy: () -> Unit,
+    onCompatibilityIssue: () -> Unit = {},
 ) {
     FlowRow(
         modifier = Modifier
@@ -1048,6 +1062,15 @@ private fun ActionChipsRow(
                 tint = MaterialTheme.colorScheme.tertiary,
             )
         }
+        if (showCompatibilityIssue) {
+            ActionChip(
+                icon = Icons.TwoTone.Warning,
+                label = stringResource(R.string.sync_device_compatibility_hint),
+                onClick = onCompatibilityIssue,
+                onLongClick = null,
+                tint = MaterialTheme.colorScheme.error,
+            )
+        }
     }
 }
 
@@ -1081,6 +1104,49 @@ private fun ActionChip(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelLarge,
+            )
+        }
+    }
+}
+
+@Composable
+private fun IncompatibleDeviceCard(item: DashboardVM.IncompatibleDeviceItem) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+        ),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.TwoTone.Warning,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.error,
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.label ?: item.deviceId.id.take(8),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    val details = listOfNotNull(item.version, item.platform).joinToString(" · ")
+                    if (details.isNotEmpty()) {
+                        Text(
+                            text = details,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(OctiServerR.string.sync_octiserver_device_encryption_incompatible),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onErrorContainer,
             )
         }
     }

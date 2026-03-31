@@ -22,4 +22,19 @@ class OctiServerConnectorTest {
         decrypted shouldBe compressed
         decompressed shouldBe testData.toByteString()
     }
+
+    @Test
+    fun `test encryption with associated data`() {
+        val testData = "The cake is a lie!"
+        val crypti = PayloadEncryption()
+        val ad = "device123:eu.darken.octi.module.power".toByteArray()
+
+        val compressed = testData.toByteString().toGzip()
+        val encrypted = crypti.encrypt(compressed, ad)
+        val decrypted = crypti.decrypt(encrypted, ad)
+        val decompressed = decrypted.fromGzip()
+
+        decrypted shouldBe compressed
+        decompressed shouldBe testData.toByteString()
+    }
 }

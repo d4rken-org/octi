@@ -32,11 +32,13 @@ class OctiServerEndpoint @AssistedInject constructor(
     private val baseHttpClient: OkHttpClient,
     @RetrofitJson private val retrofitJson: Json,
     private val basicAuthInterceptor: BasicAuthInterceptor,
+    private val deviceHeaderInterceptor: DeviceHeaderInterceptor,
 ) {
 
     private val httpClient by lazy {
         baseHttpClient.newBuilder().apply {
             addInterceptor(basicAuthInterceptor)
+            addInterceptor(deviceHeaderInterceptor)
         }.build()
     }
 
@@ -58,8 +60,10 @@ class OctiServerEndpoint @AssistedInject constructor(
         this.credentials = credentials
     }
 
-    suspend fun createNewAccount(): OctiServer.Credentials = withContext(dispatcherProvider.IO) {
-        log(TAG) { "createNewAccount()" }
+    suspend fun createNewAccount(
+        useLegacyEncryption: Boolean = false,
+    ): OctiServer.Credentials = withContext(dispatcherProvider.IO) {
+        log(TAG) { "createNewAccount(useLegacyEncryption=$useLegacyEncryption)" }
         val response = try {
             api.register(deviceID = ourDeviceIdString)
         } catch (e: HttpException) {
@@ -71,7 +75,7 @@ class OctiServerEndpoint @AssistedInject constructor(
             serverAdress = serverAdress,
             accountId = OctiServer.Credentials.AccountId(response.accountID),
             devicePassword = OctiServer.Credentials.DevicePassword(response.password),
-            encryptionKeyset = PayloadEncryption().exportKeyset()
+            encryptionKeyset = PayloadEncryption(useLegacyEncryption = useLegacyEncryption).exportKeyset()
         )
     }
 
@@ -109,7 +113,16 @@ class OctiServerEndpoint @AssistedInject constructor(
         return@withContext OctiServer.Credentials.LinkCode(code = response.shareCode)
     }
 
-    suspend fun listDevices(): Collection<DeviceId> = withContext(dispatcherProvider.IO) {
+    data class LinkedDevice(
+        val deviceId: DeviceId,
+        val version: String?,
+        val platform: String?,
+        val label: String?,
+        val addedAt: Instant?,
+        val lastSeen: Instant?,
+    )
+
+    suspend fun listDevices(): Collection<LinkedDevice> = withContext(dispatcherProvider.IO) {
         log(TAG) { "listDevices()" }
         val response = try {
             api.getDeviceList(
@@ -118,7 +131,16 @@ class OctiServerEndpoint @AssistedInject constructor(
         } catch (e: HttpException) {
             throw OctiServerHttpException(e)
         }
-        response.devices.map { DeviceId(it.id) }
+        response.devices.map {
+            LinkedDevice(
+                deviceId = DeviceId(it.id),
+                version = it.version,
+                platform = it.platform,
+                label = it.label,
+                addedAt = it.addedAt,
+                lastSeen = it.lastSeen,
+            )
+        }
     }
 
     suspend fun resetDevices(deviceIds: Set<DeviceId> = emptySet()): Unit = withContext(dispatcherProvider.IO) {

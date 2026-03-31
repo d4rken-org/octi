@@ -111,6 +111,8 @@ private fun DeviceActionsSheetPreview() = PreviewWrapper {
             ),
             lastSeen = Instant.now(),
             error = null,
+            serverVersion = null,
+            serverAddedAt = null,
         ),
         connectorType = ConnectorType.OCTISERVER,
         onDismiss = {},

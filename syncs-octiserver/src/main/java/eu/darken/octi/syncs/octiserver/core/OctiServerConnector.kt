@@ -85,6 +85,9 @@ class OctiServerConnector @AssistedInject constructor(
 
     private val crypti by lazy { PayloadEncryption(credentials.encryptionKeyset) }
 
+    private fun buildAssociatedData(deviceId: DeviceId, moduleId: ModuleId): ByteArray =
+        "${deviceId.id}:${moduleId.id}".toByteArray()
+
     data class State(
         override val activeActions: Int = 0,
         override val lastActionAt: Instant? = null,
@@ -93,6 +96,7 @@ class OctiServerConnector @AssistedInject constructor(
         override val devices: Collection<DeviceId>? = null,
         override val isAvailable: Boolean = true,
         override val clockOffsets: List<SyncConnectorState.ClockOffset> = emptyList(),
+        val linkedDevices: List<OctiServerEndpoint.LinkedDevice> = emptyList(),
     ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
@@ -210,10 +214,15 @@ class OctiServerConnector @AssistedInject constructor(
 
         if (options.stats) {
             try {
-                val knownDeviceIds = runServerAction("read-devicelist") {
+                val linked = runServerAction("read-devicelist") {
                     endpoint.listDevices()
                 }
-                _state.updateBlocking { copy(devices = knownDeviceIds) }
+                _state.updateBlocking {
+                    copy(
+                        devices = linked.map { it.deviceId },
+                        linkedDevices = linked.toList(),
+                    )
+                }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -276,7 +285,7 @@ class OctiServerConnector @AssistedInject constructor(
         }
 
         val payload = if (readData.payload != ByteString.EMPTY) {
-            crypti.decrypt(readData.payload).fromGzip()
+            crypti.decrypt(readData.payload, buildAssociatedData(deviceId, moduleId)).fromGzip()
         } else {
             ByteString.EMPTY
         }
@@ -296,7 +305,8 @@ class OctiServerConnector @AssistedInject constructor(
     ): OctiServerData {
         log(TAG, DEBUG) { "readServer(moduleFilter=$moduleFilter, deviceFilter=$deviceFilter): Starting..." }
         _state.updateBlocking { copy(clockOffsets = emptyList()) }
-        val allDeviceIds = endpoint.listDevices()
+        val allLinkedDevices = endpoint.listDevices()
+        val allDeviceIds = allLinkedDevices.map { it.deviceId }
         val deviceIds = if (deviceFilter != null) {
             allDeviceIds.filter { it in deviceFilter }
         } else {
@@ -348,7 +358,7 @@ class OctiServerConnector @AssistedInject constructor(
         data.modules.forEach { module ->
             endpoint.writeModule(
                 moduleId = module.moduleId,
-                payload = crypti.encrypt(module.payload.toGzip()),
+                payload = crypti.encrypt(module.payload.toGzip(), buildAssociatedData(data.deviceId, module.moduleId)),
             )
         }
         log(TAG, VERBOSE) { "writeServer(): Done" }

@@ -21,4 +21,7 @@
     <string name="sync_octiserver_link_client_startcamera_action">Start camera</string>
     <string name="sync_octiserver_link_client_link_action">Link device</string>
     <string name="sync_octiserver_error_device_not_registered">This device is no longer registered on the server. Disconnect and re-link from another device, or create a new account.</string>
+    <string name="sync_octiserver_add_legacy_encryption_label">Legacy encryption</string>
+    <string name="sync_octiserver_add_legacy_encryption_hint">New accounts use improved encryption. App versions older than %1$s cannot sync with new-style accounts.</string>
+    <string name="sync_octiserver_device_encryption_incompatible">This device may not support this account\'s encryption. Update the app or recreate the account with legacy encryption.</string>
 </resources>

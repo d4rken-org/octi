@@ -1,5 +1,6 @@
 package eu.darken.octi.syncs.octiserver.core
 
+import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -13,6 +14,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.time.Instant
 
 interface OctiServerApi {
 
@@ -50,7 +52,11 @@ interface OctiServerApi {
         @Serializable
         data class Device(
             @SerialName("id") val id: String,
-            @SerialName("version") val version: String?,
+            @SerialName("version") val version: String? = null,
+            @SerialName("platform") val platform: String? = null,
+            @SerialName("label") val label: String? = null,
+            @SerialName("addedAt") @Serializable(with = InstantSerializer::class) val addedAt: Instant? = null,
+            @SerialName("lastSeen") @Serializable(with = InstantSerializer::class) val lastSeen: Instant? = null,
         )
     }
 

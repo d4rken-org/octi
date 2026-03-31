@@ -112,6 +112,7 @@
         <item quantity="one">%d device</item>
         <item quantity="other">%d devices</item>
     </plurals>
+    <string name="sync_device_compatibility_hint">compatibility issue</string>
     <plurals name="general_unique_devices_count_label">
         <item quantity="one">%d unique, only available here</item>
         <item quantity="other">%d unique, only available here</item>

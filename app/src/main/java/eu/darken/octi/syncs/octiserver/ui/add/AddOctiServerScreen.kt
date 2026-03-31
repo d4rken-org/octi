@@ -23,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -63,6 +64,7 @@ fun AddOctiServerScreenHost(vm: AddOctiServerVM = hiltViewModel()) {
             state = it,
             onNavigateUp = { vm.navUp() },
             onSelectType = { type -> vm.selectType(type) },
+            onToggleLegacyEncryption = { vm.toggleLegacyEncryption() },
             onCreateAccount = { customServer -> vm.createAccount(customServer) },
             onLinkAccount = { vm.linkAccount() },
         )
@@ -74,6 +76,7 @@ fun AddOctiServerScreen(
     state: AddOctiServerVM.State,
     onNavigateUp: () -> Unit,
     onSelectType: (OctiServer.Official?) -> Unit,
+    onToggleLegacyEncryption: () -> Unit,
     onCreateAccount: (String?) -> Unit,
     onLinkAccount: () -> Unit,
 ) {
@@ -147,6 +150,34 @@ fun AddOctiServerScreen(
                         .padding(horizontal = 32.dp),
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Switch(
+                    checked = state.useLegacyEncryption,
+                    onCheckedChange = { onToggleLegacyEncryption() },
+                    enabled = !state.isBusy,
+                )
+                Text(
+                    text = stringResource(OctiServerR.string.sync_octiserver_add_legacy_encryption_label),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+
+            Text(
+                text = stringResource(OctiServerR.string.sync_octiserver_add_legacy_encryption_hint, "v1.0.0"),
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -255,6 +286,7 @@ private fun AddOctiServerScreenPreview() = PreviewWrapper {
         state = AddOctiServerVM.State(serverType = OctiServer.Official.PROD),
         onNavigateUp = {},
         onSelectType = {},
+        onToggleLegacyEncryption = {},
         onCreateAccount = {},
         onLinkAccount = {},
     )
@@ -267,6 +299,7 @@ private fun AddOctiServerScreenCustomPreview() = PreviewWrapper {
         state = AddOctiServerVM.State(serverType = null),
         onNavigateUp = {},
         onSelectType = {},
+        onToggleLegacyEncryption = {},
         onCreateAccount = {},
         onLinkAccount = {},
     )
@@ -279,6 +312,7 @@ private fun AddOctiServerScreenBusyPreview() = PreviewWrapper {
         state = AddOctiServerVM.State(serverType = OctiServer.Official.PROD, isBusy = true),
         onNavigateUp = {},
         onSelectType = {},
+        onToggleLegacyEncryption = {},
         onCreateAccount = {},
         onLinkAccount = {},
     )

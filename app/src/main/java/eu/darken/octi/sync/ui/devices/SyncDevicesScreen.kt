@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
 import eu.darken.octi.sync.R as SyncR
+import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import androidx.compose.runtime.collectAsState
@@ -96,6 +97,7 @@ fun SyncDevicesScreen(
             items(state.items, key = { it.deviceId.id }) { item ->
                 DeviceRow(
                     item = item,
+                    encryptionType = state.encryptionType,
                     onClick = { selectedDevice = item },
                 )
             }
@@ -118,6 +120,7 @@ fun SyncDevicesScreen(
 @Composable
 private fun DeviceRow(
     item: SyncDevicesVM.DeviceItem,
+    encryptionType: String? = null,
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -188,6 +191,15 @@ private fun DeviceRow(
                     maxLines = 10,
                 )
             }
+
+            if (item.isEncryptionIncompatible(encryptionType)) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(OctiServerR.string.sync_octiserver_device_encryption_incompatible),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
         }
     }
 }
@@ -218,6 +230,8 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
                     ),
                     lastSeen = Instant.now(),
                     error = null,
+                    serverVersion = "0.14.0",
+                    serverAddedAt = Instant.now(),
                 ),
                 SyncDevicesVM.DeviceItem(
                     deviceId = deviceId2,
@@ -236,6 +250,8 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
                     ),
                     lastSeen = Instant.now().minusSeconds(86400 * 60),
                     error = RuntimeException("Connection timed out"),
+                    serverVersion = "0.13.0",
+                    serverAddedAt = Instant.now().minusSeconds(86400 * 60),
                 ),
             ),
         ),

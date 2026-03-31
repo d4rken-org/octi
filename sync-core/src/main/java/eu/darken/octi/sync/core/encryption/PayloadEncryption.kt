@@ -3,11 +3,14 @@
 package eu.darken.octi.sync.core.encryption
 
 import android.os.Parcelable
+import com.google.crypto.tink.Aead
 import com.google.crypto.tink.DeterministicAead
 import com.google.crypto.tink.InsecureSecretKeyAccess
 import com.google.crypto.tink.KeyTemplates
 import com.google.crypto.tink.KeysetHandle
 import com.google.crypto.tink.TinkProtoKeysetFormat
+import com.google.crypto.tink.aead.AeadConfig
+import com.google.crypto.tink.aead.AesGcmSivKeyManager
 import com.google.crypto.tink.daead.DeterministicAeadConfig
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
@@ -23,30 +26,54 @@ import okio.ByteString
 import okio.ByteString.Companion.toByteString
 
 
-class PayloadEncryption constructor(private val keySet: KeySet? = null) {
+class PayloadEncryption constructor(
+    private val keySet: KeySet? = null,
+    private val useLegacyEncryption: Boolean = false,
+) {
 
     private val keysetHandle by lazy {
         keySet?.let {
             TinkProtoKeysetFormat.parseKeyset(keySet.key.toByteArray(), InsecureSecretKeyAccess.get())
-        } ?: KeysetHandle.generateNew(KeyTemplates.get(DEFAULT_KEY_TEMPLATE))
+        } ?: if (useLegacyEncryption) {
+            KeysetHandle.generateNew(KeyTemplates.get(LEGACY_KEY_TEMPLATE))
+        } else {
+            KeysetHandle.generateNew(AesGcmSivKeyManager.aes256GcmSivTemplate())
+        }
     }
 
-    private val primitive by lazy { keysetHandle.getPrimitive(DeterministicAead::class.java) }
+    private val isSiv: Boolean
+        get() = keySet?.type == LEGACY_KEY_TEMPLATE || (keySet == null && useLegacyEncryption)
+
+    private val aeadPrimitive by lazy { keysetHandle.getPrimitive(Aead::class.java) }
+    private val daeadPrimitive by lazy { keysetHandle.getPrimitive(DeterministicAead::class.java) }
 
     fun exportKeyset(): KeySet {
         val serialized = TinkProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get())
+        val type = keySet?.type ?: if (useLegacyEncryption) LEGACY_KEY_TEMPLATE else DEFAULT_KEY_TEMPLATE
         return KeySet(
-            type = DEFAULT_KEY_TEMPLATE,
+            type = type,
             key = serialized.toByteString(),
         ).also { log(TAG, VERBOSE) { "exportKeyset(): $it" } }
     }
 
-    fun encrypt(data: ByteString): ByteString = primitive.encryptDeterministically(data.toByteArray(), ByteArray(0))
+    /**
+     * @param associatedData only honored for GCM-SIV keysets. Legacy SIV keysets ignore this
+     * parameter (existing data was encrypted without AD, so changing this would break decryption).
+     */
+    fun encrypt(data: ByteString, associatedData: ByteArray = ByteArray(0)): ByteString = if (isSiv) {
+        daeadPrimitive.encryptDeterministically(data.toByteArray(), ByteArray(0))
+    } else {
+        aeadPrimitive.encrypt(data.toByteArray(), associatedData)
+    }
         .toByteString()
         .also { log(TAG, VERBOSE) { "Encrypted: $data to $it" } }
 
-
-    fun decrypt(data: ByteString): ByteString = primitive.decryptDeterministically(data.toByteArray(), ByteArray(0))
+    /** @see encrypt for [associatedData] behavior with legacy SIV keysets. */
+    fun decrypt(data: ByteString, associatedData: ByteArray = ByteArray(0)): ByteString = if (isSiv) {
+        daeadPrimitive.decryptDeterministically(data.toByteArray(), ByteArray(0))
+    } else {
+        aeadPrimitive.decrypt(data.toByteArray(), associatedData)
+    }
         .toByteString()
         .also { log(TAG, VERBOSE) { "Decrypted: $data to $it" } }
 
@@ -63,11 +90,28 @@ class PayloadEncryption constructor(private val keySet: KeySet? = null) {
 
     companion object {
         private val TAG = logTag("Sync", "Crypto", "Payload")
-        private const val DEFAULT_KEY_TEMPLATE = "AES256_SIV"
+        private const val DEFAULT_KEY_TEMPLATE = "AES256_GCM_SIV"
+        private const val LEGACY_KEY_TEMPLATE = "AES256_SIV"
 
         init {
+            // Register BouncyCastle for AES-GCM-SIV support in JVM unit tests.
+            // On Android (Dalvik/ART), the platform provider already handles it — skip
+            // to avoid overriding Conscrypt at JCA position 1.
+            val vmName = System.getProperty("java.vm.name") ?: ""
+            val isAndroidRuntime = vmName.contains("Dalvik", ignoreCase = true)
+            if (!isAndroidRuntime) {
+                try {
+                    val bcClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider")
+                    val provider = bcClass.getDeclaredConstructor().newInstance() as java.security.Provider
+                    java.security.Security.insertProviderAt(provider, 1)
+                } catch (_: ClassNotFoundException) {
+                    // BouncyCastle not on classpath
+                }
+            }
             DeterministicAeadConfig.register()
-            log(TAG) { "DeterministicAeadConfig registered" }
+            AeadConfig.register()
+            AesGcmSivKeyManager.register(true)
+            log(TAG) { "DeterministicAeadConfig + AeadConfig + AesGcmSiv registered" }
         }
     }
 }

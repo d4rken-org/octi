@@ -46,6 +46,7 @@ import eu.darken.octi.sync.core.SyncOrchestrator
 import eu.darken.octi.sync.core.ClockAnalyzer
 import eu.darken.octi.sync.core.StalenessUtil
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -59,6 +60,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
 
@@ -137,19 +139,40 @@ class DashboardVM @Inject constructor(
             connectors = connectorDetails,
         )
 
+        val totalDevices = activeStates.sumOf { it.devices?.size ?: 0 }
+
+        val allLinkedDevices = activeConnectors.zip(activeStates)
+            .mapNotNull { (connector, state) ->
+                (state as? OctiServerConnector.State)?.let { octiState ->
+                    val encType = (connector as? OctiServerConnector)?.credentials?.encryptionKeyset?.type
+                    octiState.linkedDevices.map { linked ->
+                        IncompatibleDeviceItem(
+                            deviceId = linked.deviceId,
+                            label = linked.label,
+                            version = linked.version,
+                            platform = linked.platform,
+                            lastSeen = linked.lastSeen,
+                            encryptionType = encType,
+                            addedAt = linked.addedAt,
+                        )
+                    }
+                }
+            }
+            .flatten()
+
         when {
             isRefreshing || activeStates.any { it.isBusy } || syncingModules.isNotEmpty() -> {
-                SyncStatus.Syncing(connectorTypes, syncingModules, syncDetail, orchestratorState, now)
+                SyncStatus.Syncing(connectorTypes, syncingModules, syncDetail, orchestratorState, now, totalDevices, allLinkedDevices)
             }
 
             activeStates.any { it.lastError != null } -> {
                 val error = activeStates.first { it.lastError != null }.lastError
-                SyncStatus.Error(error?.message, connectorTypes, syncDetail, orchestratorState, now)
+                SyncStatus.Error(error?.message, connectorTypes, syncDetail, orchestratorState, now, totalDevices, allLinkedDevices)
             }
 
             else -> {
                 val lastSync = activeStates.mapNotNull { it.lastSyncAt }.maxByOrNull { it }
-                SyncStatus.Idle(lastSync, connectorTypes, syncDetail, orchestratorState, now)
+                SyncStatus.Idle(lastSync, connectorTypes, syncDetail, orchestratorState, now, totalDevices, allLinkedDevices)
             }
         }
     }.setupCommonEventHandlers(TAG) { "syncStatus" }
@@ -167,6 +190,7 @@ class DashboardVM @Inject constructor(
         val deviceLimitReached: Boolean,
         val deviceLimit: Int = DEVICE_LIMIT,
         val clockAnalysis: ClockAnalyzer.ClockAnalysis? = null,
+        val incompatibleDevices: List<IncompatibleDeviceItem> = emptyList(),
     )
 
     data class DeviceItem(
@@ -179,6 +203,16 @@ class DashboardVM @Inject constructor(
         val isCurrentDevice: Boolean,
         val isStale: Boolean = false,
         val isClockSkewed: Boolean = false,
+    )
+
+    data class IncompatibleDeviceItem(
+        val deviceId: DeviceId,
+        val label: String?,
+        val version: String?,
+        val platform: String?,
+        val lastSeen: Instant?,
+        val encryptionType: String?,
+        val addedAt: Instant?,
     )
 
     sealed interface ModuleItem {
@@ -220,6 +254,8 @@ class DashboardVM @Inject constructor(
         val syncDetail: SyncDetail
         val orchestratorState: SyncOrchestrator.State
         val now: Instant
+        val totalDeviceCount: Int
+        val allLinkedDevices: List<IncompatibleDeviceItem>
 
         data class Syncing(
             override val connectorTypes: List<ConnectorType>,
@@ -227,6 +263,8 @@ class DashboardVM @Inject constructor(
             override val syncDetail: SyncDetail,
             override val orchestratorState: SyncOrchestrator.State,
             override val now: Instant,
+            override val totalDeviceCount: Int = 0,
+            override val allLinkedDevices: List<IncompatibleDeviceItem> = emptyList(),
         ) : SyncStatus
 
         data class Idle(
@@ -235,6 +273,8 @@ class DashboardVM @Inject constructor(
             override val syncDetail: SyncDetail,
             override val orchestratorState: SyncOrchestrator.State,
             override val now: Instant,
+            override val totalDeviceCount: Int = 0,
+            override val allLinkedDevices: List<IncompatibleDeviceItem> = emptyList(),
         ) : SyncStatus
 
         data class Error(
@@ -243,6 +283,8 @@ class DashboardVM @Inject constructor(
             override val syncDetail: SyncDetail,
             override val orchestratorState: SyncOrchestrator.State,
             override val now: Instant,
+            override val totalDeviceCount: Int = 0,
+            override val allLinkedDevices: List<IncompatibleDeviceItem> = emptyList(),
         ) : SyncStatus
     }
 
@@ -303,6 +345,15 @@ class DashboardVM @Inject constructor(
             )
         }
 
+        val visibleDeviceIds = orderedDeviceItems.map { it.meta.deviceId }.toSet()
+        val incompatible = syncStatus?.allLinkedDevices
+            ?.filter { item ->
+                item.deviceId !in visibleDeviceIds
+                        && item.encryptionType == "AES256_GCM_SIV"
+                        && item.addedAt?.let { Duration.between(it, Instant.now()).toMinutes() >= 2 } == true
+            }
+            ?: emptyList()
+
         State(
             devices = orderedDeviceItems,
             deviceCount = orderedDeviceItems.size,
@@ -315,6 +366,7 @@ class DashboardVM @Inject constructor(
             upgradeInfo = upgradeInfo,
             deviceLimitReached = orderedDeviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro,
             clockAnalysis = clockAnalysis,
+            incompatibleDevices = incompatible,
         )
     }
         .setupCommonEventHandlers(TAG) { "state" }

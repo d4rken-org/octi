@@ -1,10 +1,13 @@
 package eu.darken.octi.sync.core.encryption
 
 import eu.darken.octi.common.collections.toByteString
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import okio.ByteString.Companion.decodeBase64
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
+import java.security.GeneralSecurityException
 
 class PayloadEncryptionTest : BaseTest() {
 
@@ -19,7 +22,8 @@ class PayloadEncryptionTest : BaseTest() {
         testData shouldBe decrypted
 
         decrypted shouldBe crypti.decrypt(encrypted)
-        crypti.encrypt(testData) shouldBe encrypted
+        // GCM-SIV is non-deterministic, so re-encrypting gives different ciphertext
+        crypti.encrypt(testData) shouldNotBe encrypted
 
         crypti.exportKeyset() shouldBe crypti.exportKeyset()
     }
@@ -59,4 +63,75 @@ class PayloadEncryptionTest : BaseTest() {
         crypti2.decrypt(encrypted) shouldBe testData
     }
 
+    @Test
+    fun `GCM-SIV encrypt and decrypt with associated data`() {
+        val crypti = PayloadEncryption()
+        val testData = "Banana Pancakes".toByteString()
+        val ad = "device1:module1".toByteArray()
+
+        val encrypted = crypti.encrypt(testData, ad)
+        val decrypted = crypti.decrypt(encrypted, ad)
+
+        decrypted shouldBe testData
+    }
+
+    @Test
+    fun `GCM-SIV decrypt fails with wrong associated data`() {
+        val crypti = PayloadEncryption()
+        val testData = "Banana Pancakes".toByteString()
+        val ad = "device1:module1".toByteArray()
+        val wrongAd = "device2:module2".toByteArray()
+
+        val encrypted = crypti.encrypt(testData, ad)
+
+        shouldThrow<GeneralSecurityException> {
+            crypti.decrypt(encrypted, wrongAd)
+        }
+    }
+
+    @Test
+    fun `GCM-SIV is non-deterministic`() {
+        val crypti = PayloadEncryption()
+        val testData = "Banana Pancakes".toByteString()
+
+        val encrypted1 = crypti.encrypt(testData)
+        val encrypted2 = crypti.encrypt(testData)
+
+        encrypted1 shouldNotBe encrypted2
+    }
+
+    @Test
+    fun `GCM-SIV keyset round-trips through export and re-import`() {
+        val crypti1 = PayloadEncryption()
+        val exported = crypti1.exportKeyset()
+
+        exported.type shouldBe "AES256_GCM_SIV"
+
+        val crypti2 = PayloadEncryption(exported)
+        val testData = "Banana Pancakes".toByteString()
+        val ad = "device1:module1".toByteArray()
+
+        val encrypted = crypti1.encrypt(testData, ad)
+        crypti2.decrypt(encrypted, ad) shouldBe testData
+    }
+
+    @Test
+    fun `SIV ignores associated data parameter`() {
+        val crypti = PayloadEncryption(useLegacyEncryption = true)
+        val testData = "Banana Pancakes".toByteString()
+        val ad = "device1:module1".toByteArray()
+
+        val encrypted = crypti.encrypt(testData, ad)
+
+        // SIV ignores AD, so decrypting without AD should work
+        crypti.decrypt(encrypted) shouldBe testData
+        // And with different AD should also work
+        crypti.decrypt(encrypted, "other".toByteArray()) shouldBe testData
+    }
+
+    @Test
+    fun `legacy mode generates SIV keyset`() {
+        val crypti = PayloadEncryption(useLegacyEncryption = true)
+        crypti.exportKeyset().type shouldBe "AES256_SIV"
+    }
 }

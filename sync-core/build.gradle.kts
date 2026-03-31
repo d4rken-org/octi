@@ -45,4 +45,5 @@ dependencies {
 
     implementation("androidx.security:security-crypto-ktx:1.1.0")
     implementation("com.google.crypto.tink:tink-android:1.16.0")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
 }

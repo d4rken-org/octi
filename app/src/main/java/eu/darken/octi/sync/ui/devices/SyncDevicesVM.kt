@@ -19,6 +19,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
 
@@ -57,17 +59,29 @@ class SyncDevicesVM @Inject constructor(
         val metaInfo: MetaInfo?,
         val lastSeen: Instant?,
         val error: Exception?,
-    )
+        val serverVersion: String?,
+        val serverAddedAt: Instant?,
+    ) {
+        val hasNoModuleData: Boolean get() = metaInfo == null && error == null
+
+        fun isEncryptionIncompatible(encryptionType: String?): Boolean {
+            if (!hasNoModuleData) return false
+            if (encryptionType != "AES256_GCM_SIV") return false
+            val addedAt = serverAddedAt ?: return false
+            return Duration.between(addedAt, Instant.now()).toMinutes() >= 2
+        }
+    }
 
     data class State(
         val items: List<DeviceItem> = emptyList(),
         val connectorType: ConnectorType? = null,
+        val encryptionType: String? = null,
     )
 
     val state = connectorFlow
         .flatMapLatest { connector ->
             connector.state
-                .distinctUntilChangedBy { it.devices }
+                .distinctUntilChangedBy { it.devices to (it as? OctiServerConnector.State)?.linkedDevices }
                 .flatMapLatest { connState ->
                     connector.data
                         .map { data ->
@@ -78,11 +92,12 @@ class SyncDevicesVM @Inject constructor(
                         .map { metaDatas ->
                             log(TAG) { "Loading devices for $connState" }
 
+                            val linkedDevices = (connState as? OctiServerConnector.State)?.linkedDevices
+
                             val items = connState.devices?.map { deviceId ->
-                                var lastSeen: Instant? = null
+                                val linked = linkedDevices?.find { it.deviceId == deviceId }
                                 var error: Exception? = null
                                 val metaInfo = metaDatas?.find { it.deviceId == deviceId }?.let {
-                                    lastSeen = it.modifiedAt
                                     try {
                                         metaSerializer.deserialize(it.payload)
                                     } catch (e: Exception) {
@@ -94,8 +109,10 @@ class SyncDevicesVM @Inject constructor(
                                 DeviceItem(
                                     deviceId = deviceId,
                                     metaInfo = metaInfo,
-                                    lastSeen = lastSeen,
+                                    lastSeen = linked?.lastSeen,
                                     error = error,
+                                    serverVersion = linked?.version,
+                                    serverAddedAt = linked?.addedAt,
                                 )
                             }
                                 ?.sortedBy { it.metaInfo?.labelOrFallback?.lowercase() }
@@ -104,6 +121,8 @@ class SyncDevicesVM @Inject constructor(
                             State(
                                 items = items,
                                 connectorType = connector.identifier.type,
+                                encryptionType = (connector as? OctiServerConnector)
+                                    ?.credentials?.encryptionKeyset?.type,
                             )
                         }
                 }
