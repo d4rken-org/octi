@@ -748,7 +748,12 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     block()
                 }
             }.also {
-                _state.updateBlocking { copy(lastError = null) }
+                _state.updateBlocking {
+                    copy(
+                        lastError = null,
+                        lastActionAt = Instant.now(),
+                    )
+                }
             }
         } catch (e: CancellationException) {
             throw e
@@ -759,10 +764,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         } finally {
             _state.updateBlocking {
                 log(TAG, VERBOSE) { "runDriveAction($tag) finished" }
-                copy(
-                    activeActions = activeActions - 1,
-                    lastActionAt = Instant.now(),
-                )
+                copy(activeActions = activeActions - 1)
             }
             log(TAG, VERBOSE) { "runDriveAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
         }

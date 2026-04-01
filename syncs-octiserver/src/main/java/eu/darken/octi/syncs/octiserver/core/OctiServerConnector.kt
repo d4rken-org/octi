@@ -392,7 +392,12 @@ class OctiServerConnector @AssistedInject constructor(
             serverLock.withLock {
                 withContext(NonCancellable) { block() }
             }.also {
-                _state.updateBlocking { copy(lastError = null) }
+                _state.updateBlocking {
+                    copy(
+                        lastError = null,
+                        lastActionAt = Instant.now(),
+                    )
+                }
             }
         } catch (e: CancellationException) {
             throw e
@@ -403,10 +408,7 @@ class OctiServerConnector @AssistedInject constructor(
         } finally {
             _state.updateBlocking {
                 log(TAG, VERBOSE) { "runServerAction($tag) finished" }
-                copy(
-                    activeActions = activeActions - 1,
-                    lastActionAt = Instant.now(),
-                )
+                copy(activeActions = activeActions - 1)
             }
             log(TAG, VERBOSE) { "runServerAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
         }
