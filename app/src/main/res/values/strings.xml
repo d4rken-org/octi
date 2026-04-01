@@ -153,6 +153,10 @@
     <string name="permission_location_desc">Location permission enable Octi to display your Wifi names, or show you the current position of your device.</string>
     <string name="permission_battery_optimization_label">Battery optimizations</string>
     <string name="permission_battery_optimization_desc">Disable battery optimizations to allow synchronisation without opening the app.</string>
+    <string name="permission_reliability_label">Reliability</string>
+    <string name="permission_reliability_title">Improve Reliability</string>
+    <string name="permission_reliability_desc">Octi needs to run in the background to keep your devices in sync. Disabling battery optimizations ensures reliable synchronization without needing to open the app.</string>
+    <string name="permission_reliability_settings_action">Open settings</string>
     <string name="permission_notifications_post_label">Post notifications</string>
     <string name="permission_notifications_post_desc">The post notification permission allows Octi to notify you about events on other devices that you have configured.</string>
 

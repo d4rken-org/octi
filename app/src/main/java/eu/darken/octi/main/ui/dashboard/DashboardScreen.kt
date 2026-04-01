@@ -337,6 +337,7 @@ fun DashboardScreen(
     var showConnectivityDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Connectivity?>(null) }
     var showClipboardDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Clipboard?>(null) }
     var showIssuesSheetSeverity by remember { mutableStateOf<IssueSeverity?>(null) }
+    var showReliabilitySheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.isOffline) {
         if (state.isOffline) {
@@ -427,7 +428,13 @@ fun DashboardScreen(
                         warningCount = warningCount,
                         onSetupSync = onSetupSync,
                         onDismissSyncSetup = onDismissSyncSetup,
-                        onGrantPermission = onGrantPermission,
+                        onGrantPermission = { permission ->
+                            if (permission == Permission.IGNORE_BATTERY_OPTIMIZATION) {
+                                showReliabilitySheet = true
+                            } else {
+                                onGrantPermission(permission)
+                            }
+                        },
                         onDismissPermission = onDismissPermission,
                         onUpgrade = onUpgrade,
                         onErrorsClick = { showIssuesSheetSeverity = IssueSeverity.ERROR },
@@ -599,6 +606,20 @@ fun DashboardScreen(
         } else {
             showIssuesSheetSeverity = null
         }
+    }
+
+    if (showReliabilitySheet) {
+        ReliabilitySheet(
+            onGoToSettings = {
+                onGrantPermission(Permission.IGNORE_BATTERY_OPTIMIZATION)
+                showReliabilitySheet = false
+            },
+            onDismissPermission = {
+                onDismissPermission(Permission.IGNORE_BATTERY_OPTIMIZATION)
+                showReliabilitySheet = false
+            },
+            onDismiss = { showReliabilitySheet = false },
+        )
     }
 }
 
@@ -1053,7 +1074,7 @@ private fun ActionChipsRow(
                 },
                 label = stringResource(
                     when (permission) {
-                        Permission.IGNORE_BATTERY_OPTIMIZATION -> R.string.permission_battery_optimization_label
+                        Permission.IGNORE_BATTERY_OPTIMIZATION -> R.string.permission_reliability_label
                         Permission.POST_NOTIFICATIONS -> R.string.permission_notifications_post_label
                         else -> R.string.permission_required_label
                     }
