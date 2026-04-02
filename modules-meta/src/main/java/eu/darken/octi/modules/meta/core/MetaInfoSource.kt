@@ -29,6 +29,8 @@ class MetaInfoSource @Inject constructor(
     private val syncSettings: SyncSettings,
 ) : ModuleInfoSource<MetaInfo> {
 
+    private val deviceBootedAt: Instant = Instant.now().minusMillis(SystemClock.elapsedRealtime())
+
     override val info: Flow<MetaInfo> = syncSettings.deviceLabel.flow
         .flatMapLatest { deviceLabel ->
             flow {
@@ -53,7 +55,7 @@ class MetaInfoSource @Inject constructor(
                         androidApiLevel = Build.VERSION.SDK_INT,
                         androidSecurityPatch = Build.VERSION.SECURITY_PATCH,
 
-                        deviceBootedAt = Instant.now().minusMillis(SystemClock.elapsedRealtime()),
+                        deviceBootedAt = deviceBootedAt,
                     )
                     emit(info)
                     delay(10 * 1000)
