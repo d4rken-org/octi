@@ -611,12 +611,12 @@ fun DashboardScreen(
     if (showReliabilitySheet) {
         ReliabilitySheet(
             onGoToSettings = {
-                onGrantPermission(Permission.IGNORE_BATTERY_OPTIMIZATION)
                 showReliabilitySheet = false
+                onGrantPermission(Permission.IGNORE_BATTERY_OPTIMIZATION)
             },
             onDismissPermission = {
-                onDismissPermission(Permission.IGNORE_BATTERY_OPTIMIZATION)
                 showReliabilitySheet = false
+                onDismissPermission(Permission.IGNORE_BATTERY_OPTIMIZATION)
             },
             onDismiss = { showReliabilitySheet = false },
         )

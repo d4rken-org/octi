@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -61,10 +63,21 @@ fun ReliabilitySheet(
             }
             TextButton(
                 onClick = onDismissPermission,
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text = stringResource(CommonR.string.general_dismiss_action))
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+}
+
+@Preview2
+@Composable
+private fun ReliabilitySheetPreview() = PreviewWrapper {
+    ReliabilitySheet(
+        onGoToSettings = {},
+        onDismissPermission = {},
+        onDismiss = {},
+    )
 }
