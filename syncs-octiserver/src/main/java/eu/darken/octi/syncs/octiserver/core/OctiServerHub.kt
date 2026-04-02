@@ -59,7 +59,7 @@ class OctiServerHub @Inject constructor(
                 // Connectors that have been added and have no data yet
                 connectors.forEach { connector ->
                     log(TAG, INFO) { "Syncing initial data for ${connector.credentials}" }
-                    connector.sync(SyncOptions())
+                    connector.sync(SyncOptions(writeData = false))
                     log(TAG, INFO) { "Initial data sync done for ${connector.credentials}" }
                 }
             }

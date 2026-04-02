@@ -45,18 +45,15 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
@@ -103,8 +100,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
     override val state: Flow<State> = _state.flow
     private val _data = MutableStateFlow<SyncRead?>(null)
     override val data: Flow<SyncRead?> = _data
+    // TODO: Consider removing lock — concurrent syncs may be safe since each module is an independent endpoint
     private val driveLock = Mutex()
-    private val writeQueue = MutableSharedFlow<SyncWrite>(extraBufferCapacity = 1)
 
     override val accountLabel: String get() = account.email
 
@@ -223,27 +220,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
-    init {
-        writeQueue
-            .onEach { toWrite ->
-                runDriveAction("write-queue: $toWrite") {
-                    writeDrive(toWrite)
-                }
-            }
-            .retry {
-                delay(5000)
-                true
-            }
-            .setupCommonEventHandlers(TAG) { "writeQueue" }
-            .launchIn(scope)
-    }
-
     private suspend fun isInternetAvailable() = networkStateProvider.networkState.first().isInternetAvailable
-
-    override suspend fun write(toWrite: SyncWrite) {
-        log(TAG) { "write(toWrite=$toWrite)" }
-        writeQueue.emit(toWrite)
-    }
 
     override suspend fun resetData(): Unit = withContext(NonCancellable) {
         log(TAG, INFO) { "resetData()" }

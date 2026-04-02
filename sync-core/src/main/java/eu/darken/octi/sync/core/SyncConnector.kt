@@ -19,11 +19,6 @@ interface SyncConnector {
     val syncEventMode: StateFlow<EventMode> get() = MutableStateFlow(EventMode.NONE)
 
     /**
-     * Data that is written on the next **sync**
-     */
-    suspend fun write(toWrite: SyncWrite)
-
-    /**
      * Wipe all Octi data stored via this connector
      */
     suspend fun resetData()

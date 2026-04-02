@@ -10,22 +10,20 @@ import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
 import io.kotest.matchers.shouldBe
 import io.mockk.MockKAnnotations
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import okio.ByteString
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
 import java.time.Instant
+import okio.ByteString
 
 class BaseModuleSyncTest : BaseTest() {
 
@@ -45,6 +43,8 @@ class BaseModuleSyncTest : BaseTest() {
         MockKAnnotations.init(this)
         every { syncSettings.deviceId } returns testDeviceId
         every { syncManager.data } returns flowOf(emptyList())
+        every { syncManager.updatePayload(any()) } returns Unit
+        every { syncManager.requestSync() } returns Unit
 
         sync = TestModuleSync(
             moduleId = testModuleId,
@@ -94,12 +94,7 @@ class BaseModuleSyncTest : BaseTest() {
         }
 
         @Test
-        fun `syncActivity is WRITING during active sync`() = runTest2 {
-            coEvery { syncManager.write(any<SyncWrite.Device.Module>()) } coAnswers {
-                sync.syncActivity.first() shouldBe ModuleSync.SyncActivity.WRITING
-                sync.isSyncing.first() shouldBe true
-            }
-
+        fun `sync calls updatePayload and requestSync`() = runTest2 {
             val data = ModuleData(
                 modifiedAt = Instant.now(),
                 deviceId = testDeviceId,
@@ -108,12 +103,27 @@ class BaseModuleSyncTest : BaseTest() {
             )
             sync.sync(data)
 
+            verify(exactly = 1) { syncManager.updatePayload(any()) }
+            verify(exactly = 1) { syncManager.requestSync() }
+        }
+
+        @Test
+        fun `syncActivity is IDLE after sync completes`() = runTest2 {
+            val data = ModuleData(
+                modifiedAt = Instant.now(),
+                deviceId = testDeviceId,
+                moduleId = testModuleId,
+                data = "test-data",
+            )
+            sync.sync(data)
+
+            sync.syncActivity.first() shouldBe ModuleSync.SyncActivity.IDLE
             sync.isSyncing.first() shouldBe false
         }
 
         @Test
         fun `syncActivity is IDLE after sync throws`() = runTest2 {
-            coEvery { syncManager.write(any<SyncWrite.Device.Module>()) } throws RuntimeException("Sync failed")
+            every { syncManager.updatePayload(any()) } throws RuntimeException("Sync failed")
 
             val data = ModuleData(
                 modifiedAt = Instant.now(),
@@ -132,25 +142,21 @@ class BaseModuleSyncTest : BaseTest() {
         }
 
         @Test
-        fun `syncActivity is IDLE after cancellation`() = runTest2 {
-            coEvery { syncManager.write(any<SyncWrite.Device.Module>()) } coAnswers {
-                kotlinx.coroutines.awaitCancellation()
-            }
-
+        fun `rejects sync for other device data`() = runTest2 {
             val data = ModuleData(
                 modifiedAt = Instant.now(),
-                deviceId = testDeviceId,
+                deviceId = otherDeviceId,
                 moduleId = testModuleId,
                 data = "test-data",
             )
 
-            val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            try {
                 sync.sync(data)
+            } catch (e: IllegalArgumentException) {
+                e.message shouldBe "You can only sync your own device data."
             }
-            job.cancel()
-            job.join()
 
-            sync.isSyncing.first() shouldBe false
+            verify(exactly = 0) { syncManager.updatePayload(any()) }
         }
     }
 
@@ -182,46 +188,6 @@ class BaseModuleSyncTest : BaseTest() {
             val othersJob = testSync.others.launchIn(this)
 
             dataFlow.emit(listOf(createSyncReadDevice(otherDeviceId, testModuleId, "bad-data")))
-
-            testSync.isSyncing.first() shouldBe false
-
-            othersJob.cancel()
-        }
-
-        @Test
-        fun `isSyncing stays true when read overlaps with ongoing write`() = runTest2 {
-            val dataFlow = MutableSharedFlow<Collection<SyncRead.Device>>()
-            val testSync = createSync(dataFlow)
-            coEvery { syncManager.write(any<SyncWrite.Device.Module>()) } coAnswers {
-                kotlinx.coroutines.awaitCancellation()
-            }
-
-            val othersJob = testSync.others.launchIn(this)
-
-            // Start a write that suspends indefinitely
-            val writeJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-                testSync.sync(
-                    ModuleData(
-                        modifiedAt = Instant.now(),
-                        deviceId = testDeviceId,
-                        moduleId = testModuleId,
-                        data = "write-data",
-                    )
-                )
-            }
-
-            // isSyncing should be true from the write
-            testSync.isSyncing.first() shouldBe true
-
-            // Emit read data while write is still in progress - counter goes 1->2->1
-            dataFlow.emit(listOf(createSyncReadDevice(otherDeviceId, testModuleId, "read-data")))
-
-            // Still syncing because write is ongoing
-            testSync.isSyncing.first() shouldBe true
-
-            // Cancel write
-            writeJob.cancel()
-            writeJob.join()
 
             testSync.isSyncing.first() shouldBe false
 

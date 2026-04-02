@@ -66,7 +66,7 @@ class OctiServerLinkHostVM @Inject constructor(
         launch {
             val connector = connectorFlow.first()
             while (currentCoroutineContext().isActive) {
-                connector.sync(SyncOptions())
+                connector.sync(SyncOptions(writeData = false))
                 delay(3000)
             }
         }

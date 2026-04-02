@@ -86,7 +86,8 @@ abstract class BaseModuleSync<T : Any> constructor(
 
         writeCount.update { it + 1 }
         try {
-            syncManager.write(serialize(self.data))
+            syncManager.updatePayload(serialize(self.data))
+            syncManager.requestSync()
         } finally {
             writeCount.update { it - 1 }
         }

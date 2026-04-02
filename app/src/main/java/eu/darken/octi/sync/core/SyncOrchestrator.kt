@@ -3,16 +3,21 @@ package eu.darken.octi.sync.core
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.flow.combine
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -79,6 +84,19 @@ class SyncOrchestrator @Inject constructor(
         log(TAG) { "start()" }
         syncWorkerControl.start()
         foregroundSyncControl.start()
+
+        syncManager.pendingSyncTrigger
+            .onEach {
+                log(TAG) { "pendingSyncTrigger: syncing pending writes" }
+                try {
+                    syncManager.sync()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    log(TAG, ERROR) { "pendingSyncTrigger: sync failed: ${e.asLog()}" }
+                }
+            }
+            .launchIn(scope)
     }
 
     companion object {

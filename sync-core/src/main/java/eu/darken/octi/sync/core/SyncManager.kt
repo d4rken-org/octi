@@ -6,12 +6,15 @@ import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.shareIn
 import eu.darken.octi.sync.core.cache.SyncCache
 import kotlinx.coroutines.CoroutineScope
@@ -43,10 +46,16 @@ class SyncManager @Inject constructor(
     private val syncSettings: SyncSettings,
     private val syncCache: SyncCache,
     private val connectorHubs: Set<@JvmSuppressWildcards ConnectorHub>,
+    private val connectorSyncState: ConnectorSyncState,
 ) {
 
     private val syncLock = Mutex()
-    private val cachedWrites = ConcurrentHashMap<ModuleId, SyncWrite.Device.Module>()
+    private val modulePayloads = ConcurrentHashMap<ModuleId, SyncWrite.Device.Module>()
+
+    private val syncRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
+    @Suppress("MagicNumber")
+    val pendingSyncTrigger: Flow<Unit> = syncRequests.debounce(2_000L)
 
     private val disabledConnectors = MutableStateFlow(emptySet<SyncConnector>())
 
@@ -135,50 +144,43 @@ class SyncManager @Inject constructor(
 
     suspend fun sync(connectorId: ConnectorId, options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(id=$connectorId, options=$options)" }
-        val connector = connectors.first().single { it.identifier == connectorId }
-
-        val pendingSnapshot = if (options.writeData && cachedWrites.isNotEmpty()) {
-            cachedWrites.toMap().also {
-                log(TAG) { "sync(): Passing ${it.size} cached writes to $connectorId" }
-            }
-        } else {
-            emptyMap()
+        val connector = connectors.first().singleOrNull { it.identifier == connectorId }
+        if (connector == null) {
+            log(TAG, WARN) { "sync(): Connector $connectorId not found, skipping" }
+            return
         }
 
-        val effectiveOptions = if (pendingSnapshot.isNotEmpty()) {
-            options.copy(writePayload = pendingSnapshot.values.toList())
+        val writeModules = if (options.writeData) {
+            modulePayloads.values.filter { module ->
+                val currentHash = module.payload.sha256().hex()
+                val lastSent = connectorSyncState.getHash(connectorId, module.moduleId)
+                currentHash != lastSent
+            }
+        } else {
+            emptyList()
+        }
+
+        val effectiveOptions = if (writeModules.isNotEmpty()) {
+            log(TAG) { "sync(): Passing ${writeModules.size} changed modules to $connectorId" }
+            options.copy(writePayload = writeModules)
         } else {
             options
         }
 
         connector.sync(effectiveOptions)
 
-        // Ack: clear only entries that haven't been updated since the snapshot
-        pendingSnapshot.forEach { (moduleId, module) ->
-            cachedWrites.remove(moduleId, module)
+        writeModules.forEach { module ->
+            connectorSyncState.setHash(connectorId, module.moduleId, module.payload.sha256().hex())
         }
     }
 
-    suspend fun write(toWrite: SyncWrite.Device.Module) {
-        val start = System.currentTimeMillis()
-        log(TAG) { "write(data=$toWrite)..." }
-        cachedWrites[toWrite.moduleId] = toWrite
-        connectors.first()
-            .filter {
-                val paused = syncSettings.pausedConnectors.value().contains(it.identifier)
-                if (paused) log(TAG, INFO) { "Connector is paused: $it" }
-                !paused
-            }
-            .forEach {
-                it.write(
-                    SyncWriteContainer(
-                        deviceId = syncSettings.deviceId,
-                        modules = listOf(toWrite)
-                    )
-                )
-            }
+    fun updatePayload(payload: SyncWrite.Device.Module) {
+        log(TAG) { "updatePayload(moduleId=${payload.moduleId})" }
+        modulePayloads[payload.moduleId] = payload
+    }
 
-        log(TAG) { "write(data=$toWrite) done (${System.currentTimeMillis() - start}ms)" }
+    fun requestSync() {
+        syncRequests.tryEmit(Unit)
     }
 
     suspend fun resetData(identifier: ConnectorId) = withContext(NonCancellable) {
@@ -189,6 +191,8 @@ class SyncManager @Inject constructor(
 
     suspend fun disconnect(identifier: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "disconnect(identifier=$identifier)" }
+
+        connectorSyncState.clearConnector(identifier)
 
         val connector = getConnectorById<SyncConnector>(identifier).first()
 
