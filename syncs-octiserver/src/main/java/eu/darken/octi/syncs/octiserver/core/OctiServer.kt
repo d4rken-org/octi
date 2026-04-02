@@ -1,15 +1,11 @@
-@file:UseSerializers(InstantSerializer::class, ByteStringSerializer::class)
-
 package eu.darken.octi.syncs.octiserver.core
 
 import android.os.Parcelable
-import eu.darken.octi.common.serialization.serializer.ByteStringSerializer
 import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import java.time.Instant
 import java.util.UUID
 
@@ -40,7 +36,7 @@ interface OctiServer {
         @SerialName("accountId") val accountId: AccountId,
         @SerialName("devicePassword") val devicePassword: DevicePassword,
         @SerialName("encryptionKeyset") val encryptionKeyset: PayloadEncryption.KeySet,
-        @SerialName("createdAt") val createdAt: Instant = Instant.now(),
+        @Serializable(with = InstantSerializer::class) @SerialName("createdAt") val createdAt: Instant = Instant.now(),
     ) {
 
         override fun toString(): String =

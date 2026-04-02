@@ -1,12 +1,9 @@
-@file:UseSerializers(InstantSerializer::class)
-
 package eu.darken.octi.modules.power.core
 
 import android.os.BatteryManager
 import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import java.time.Instant
 
 @Serializable
@@ -22,9 +19,9 @@ data class PowerInfo(
     data class ChargeIO(
         @SerialName("currentNow") val currentNow: Int?,
         @SerialName("currentAvg") val currenAvg: Int?,
-        @SerialName("fullSince") val fullSince: Instant?,
-        @SerialName("fullAt") val fullAt: Instant?,
-        @SerialName("emptyAt") val emptyAt: Instant?,
+        @Serializable(with = InstantSerializer::class) @SerialName("fullSince") val fullSince: Instant?,
+        @Serializable(with = InstantSerializer::class) @SerialName("fullAt") val fullAt: Instant?,
+        @Serializable(with = InstantSerializer::class) @SerialName("emptyAt") val emptyAt: Instant?,
     ) {
         val speed: Speed
             get() = when {

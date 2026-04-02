@@ -1,16 +1,13 @@
-@file:UseSerializers(InstantSerializer::class)
-
 package eu.darken.octi.common.upgrade.core
 
 import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import java.time.Instant
 
 @Serializable
 data class FossUpgrade(
-    @SerialName("upgradedAt") val upgradedAt: Instant,
+    @Serializable(with = InstantSerializer::class) @SerialName("upgradedAt") val upgradedAt: Instant,
     @SerialName("reason") val upgradeType: Type,
 ) {
     @Serializable

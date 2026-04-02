@@ -1,5 +1,3 @@
-@file:UseSerializers(InstantSerializer::class, ByteStringSerializer::class)
-
 package eu.darken.octi.module.core
 
 import android.content.Context
@@ -17,7 +15,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import okio.ByteString
 import java.io.File
@@ -48,10 +45,10 @@ abstract class BaseModuleCache<T : Any> constructor(
 
     @Serializable
     data class CachedModuleData(
-        @SerialName("modifiedAt") val modifiedAt: Instant,
+        @Serializable(with = InstantSerializer::class) @SerialName("modifiedAt") val modifiedAt: Instant,
         @SerialName("deviceId") val deviceId: DeviceId,
         @SerialName("moduleId") val moduleId: ModuleId,
-        @SerialName("data") val data: ByteString,
+        @Serializable(with = ByteStringSerializer::class) @SerialName("data") val data: ByteString,
     )
 
     private fun ModuleData<T>.toCachedModuleData() = CachedModuleData(

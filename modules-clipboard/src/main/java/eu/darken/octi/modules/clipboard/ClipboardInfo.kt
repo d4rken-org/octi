@@ -1,17 +1,14 @@
-@file:UseSerializers(ByteStringSerializer::class)
-
 package eu.darken.octi.modules.clipboard
 
 import eu.darken.octi.common.serialization.serializer.ByteStringSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import okio.ByteString
 
 @Serializable
 data class ClipboardInfo(
     @SerialName("type") val type: Type = Type.EMPTY,
-    @SerialName("data") val data: ByteString = ByteString.EMPTY,
+    @Serializable(with = ByteStringSerializer::class) @SerialName("data") val data: ByteString = ByteString.EMPTY,
 ) {
 
     init {

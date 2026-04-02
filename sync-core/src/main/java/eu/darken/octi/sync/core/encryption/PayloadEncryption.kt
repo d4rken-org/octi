@@ -1,5 +1,3 @@
-@file:UseSerializers(ByteStringSerializer::class)
-
 package eu.darken.octi.sync.core.encryption
 
 import android.os.Parcelable
@@ -21,7 +19,6 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 
@@ -84,7 +81,7 @@ class PayloadEncryption constructor(
     @TypeParceler<ByteString, ByteStringParcelizer>
     data class KeySet(
         @SerialName("type") val type: String,
-        @SerialName("key") val key: ByteString,
+        @Serializable(with = ByteStringSerializer::class) @SerialName("key") val key: ByteString,
     ) : Parcelable {
         override fun toString(): String = "ShareCode(key=${key.base64().take(4)}...)"
     }

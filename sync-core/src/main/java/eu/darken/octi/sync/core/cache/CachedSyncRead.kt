@@ -1,5 +1,3 @@
-@file:UseSerializers(InstantSerializer::class, ByteStringSerializer::class)
-
 package eu.darken.octi.sync.core.cache
 
 import eu.darken.octi.common.serialization.serializer.ByteStringSerializer
@@ -10,7 +8,6 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncRead
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import okio.ByteString
 import java.time.Instant
 
@@ -31,8 +28,8 @@ data class CachedSyncRead(
             @SerialName("accountId") override val connectorId: ConnectorId,
             @SerialName("deviceId") override val deviceId: DeviceId,
             @SerialName("moduleId") override val moduleId: ModuleId,
-            @SerialName("modifiedAt") override val modifiedAt: Instant,
-            @SerialName("payload") override val payload: ByteString,
+            @Serializable(with = InstantSerializer::class) @SerialName("modifiedAt") override val modifiedAt: Instant,
+            @Serializable(with = ByteStringSerializer::class) @SerialName("payload") override val payload: ByteString,
         ) : SyncRead.Device.Module
     }
 }

@@ -1,12 +1,9 @@
-@file:UseSerializers(InstantSerializer::class)
-
 package eu.darken.octi.modules.meta.core
 
 import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import java.time.Instant
 
 @Serializable
@@ -21,7 +18,7 @@ data class MetaInfo(
     @SerialName("deviceManufacturer") val deviceManufacturer: String,
     @SerialName("deviceName") val deviceName: String,
     @SerialName("deviceType") val deviceType: DeviceType,
-    @SerialName("deviceBootedAt") val deviceBootedAt: Instant,
+    @Serializable(with = InstantSerializer::class) @SerialName("deviceBootedAt") val deviceBootedAt: Instant,
 
     @SerialName("androidVersionName") val androidVersionName: String,
     @SerialName("androidApiLevel") val androidApiLevel: Int,

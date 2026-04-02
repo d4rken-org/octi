@@ -1,11 +1,8 @@
-@file:UseSerializers(OffsetDateTimeSerializer::class)
-
 package eu.darken.octi.main.core
 
 import eu.darken.octi.common.serialization.serializer.OffsetDateTimeSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import retrofit2.http.GET
 import retrofit2.http.Path
 import java.time.OffsetDateTime
@@ -18,7 +15,7 @@ interface GithubApi {
         @SerialName("tag_name") val tagName: String,
         @SerialName("prerelease") val isPreRelease: Boolean,
         @SerialName("html_url") val htmlUrl: String,
-        @SerialName("published_at") val publishedAt: OffsetDateTime,
+        @Serializable(with = OffsetDateTimeSerializer::class) @SerialName("published_at") val publishedAt: OffsetDateTime,
         @SerialName("body") val body: String,
         @SerialName("assets") val assets: List<Asset>,
     ) {
