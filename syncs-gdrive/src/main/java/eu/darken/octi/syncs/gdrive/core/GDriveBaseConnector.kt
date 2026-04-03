@@ -1,5 +1,6 @@
 package eu.darken.octi.syncs.gdrive.core
 
+import android.accounts.Account
 import android.content.Context
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -13,21 +14,18 @@ import kotlinx.coroutines.withContext
 abstract class GDriveBaseConnector(
     private val dispatcherProvider: DispatcherProvider,
     private val context: Context,
-    private val client: GoogleClient,
+    val account: GoogleAccount,
     private val scopes: List<String> = listOf(DriveScopes.DRIVE_APPDATA),
 ) {
 
     private val gdrive: Drive by lazy {
         val credential = GoogleAccountCredential.usingOAuth2(context, scopes).apply {
-            selectedAccount = client.account.signInAccount.account
+            selectedAccount = Account(account.email, "com.google")
         }
         Drive.Builder(NetHttpTransport(), GsonFactory(), credential).apply {
             applicationName = context.getString(eu.darken.octi.common.R.string.app_name)
         }.build()
     }
-
-    val account: GoogleAccount
-        get() = client.account
 
     internal suspend fun <R> withDrive(action: suspend GDriveEnvironment.() -> R): R {
         val env = object : GDriveEnvironment {
@@ -41,4 +39,3 @@ abstract class GDriveBaseConnector(
         internal val TAG = logTag("Sync", "GDrive", "Connector", "Base")
     }
 }
-

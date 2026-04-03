@@ -69,7 +69,7 @@ import com.google.api.services.drive.model.File as GDriveFile
 
 
 class GDriveAppDataConnector @AssistedInject constructor(
-    @Assisted private val client: GoogleClient,
+    @Assisted account: GoogleAccount,
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
@@ -77,7 +77,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
     private val syncSettings: SyncSettings,
     private val json: Json,
-) : GDriveBaseConnector(dispatcherProvider, context, client), SyncConnector {
+) : GDriveBaseConnector(dispatcherProvider, context, account), SyncConnector {
 
     data class State(
         override val activeActions: Int = 0,
@@ -107,7 +107,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     override val identifier: ConnectorId = ConnectorId(
         type = ConnectorType.GDRIVE,
-        subtype = if (client.account.isAppDataScope) "appdatascope" else "",
+        subtype = "appdatascope",
         account = account.id.id,
     )
 
@@ -772,7 +772,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(client: GoogleClient): GDriveAppDataConnector
+        fun create(account: GoogleAccount): GDriveAppDataConnector
     }
 
     companion object {

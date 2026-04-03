@@ -51,9 +51,7 @@ fun GDriveActionsSheet(
             Text(
                 text = buildString {
                     append(stringResource(GDriveR.string.sync_gdrive_type_label))
-                    if (item.account.isAppDataScope) {
-                        append(" (${stringResource(GDriveR.string.sync_gdrive_appdata_label)})")
-                    }
+                    append(" (${stringResource(GDriveR.string.sync_gdrive_appdata_label)})")
                 },
                 style = MaterialTheme.typography.titleMedium,
             )

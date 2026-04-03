@@ -92,9 +92,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         every { syncSettings.dataStore } returns testDataStore
         every { syncSettings.deviceId } returns DeviceId("test-device")
 
-        val mockClient = mockk<GoogleClient>(relaxed = true)
-        every { mockClient.account.id.id } returns "test-account"
-        every { mockClient.account.isAppDataScope } returns true
+        val testAccount = GoogleAccount(accountId = "test-account", email = "test@example.com")
 
         val mockNetworkState = mockk<NetworkStateProvider>(relaxed = true)
         every { mockNetworkState.networkState } returns flowOf(
@@ -102,7 +100,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         )
 
         val connector = GDriveAppDataConnector(
-            client = mockClient,
+            account = testAccount,
             scope = this.backgroundScope,
             dispatcherProvider = testDispatcher,
             context = mockk<Context>(relaxed = true),

@@ -45,7 +45,8 @@ dependencies {
     addRetrofit()
     addTesting()
 
-    implementation("com.google.android.gms:play-services-auth:20.3.0")
+    implementation("com.google.android.gms:play-services-auth:21.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${Versions.Kotlin.coroutines}")
     implementation("com.google.api-client:google-api-client-android:+") {
         exclude("org.apache.httpcomponents")
     }
