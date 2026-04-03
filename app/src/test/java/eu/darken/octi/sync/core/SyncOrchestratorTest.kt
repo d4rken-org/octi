@@ -3,12 +3,16 @@ package eu.darken.octi.sync.core
 import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.worker.SyncWorkerControl
 import io.kotest.matchers.shouldBe
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -24,6 +28,7 @@ class SyncOrchestratorTest : BaseTest() {
 
     private val isActiveFlow = MutableStateFlow(false)
     private val connectorsFlow = MutableStateFlow<List<SyncConnector>>(emptyList())
+    private val pendingSyncTriggerFlow = MutableSharedFlow<Unit>()
     private val workerStateFlow = MutableStateFlow(
         SyncWorkerControl.WorkerState(
             defaultWorker = SyncWorkerControl.WorkerState.WorkerInfo(
@@ -45,6 +50,7 @@ class SyncOrchestratorTest : BaseTest() {
     fun setup() {
         every { foregroundSyncControl.isActive } returns isActiveFlow
         every { syncManager.connectors } returns connectorsFlow
+        every { syncManager.pendingSyncTrigger } returns pendingSyncTriggerFlow
         every { syncWorkerControl.workerState } returns workerStateFlow
     }
 
@@ -172,6 +178,58 @@ class SyncOrchestratorTest : BaseTest() {
 
             verify { syncWorkerControl.start() }
             verify { foregroundSyncControl.start() }
+        }
+    }
+
+    @Nested
+    inner class `pending sync trigger` {
+        @Test
+        fun `trigger emission calls syncManager sync`() = runTest2(autoCancel = true) {
+            val orchestrator = createOrchestrator(this)
+            orchestrator.start()
+            advanceUntilIdle()
+
+            pendingSyncTriggerFlow.emit(Unit)
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { syncManager.sync(any<SyncOptions>()) }
+        }
+
+        @Test
+        fun `sync failure calls requestSync for retry`() = runTest2(autoCancel = true) {
+            coEvery { syncManager.sync(any<SyncOptions>()) } throws RuntimeException("Network error")
+
+            val orchestrator = createOrchestrator(this)
+            orchestrator.start()
+            advanceUntilIdle()
+
+            pendingSyncTriggerFlow.emit(Unit)
+            advanceUntilIdle()
+
+            verify(exactly = 1) { syncManager.requestSync() }
+        }
+
+        @Test
+        fun `flow survives error and handles next trigger`() = runTest2(autoCancel = true) {
+            var callCount = 0
+            coEvery { syncManager.sync(any<SyncOptions>()) } coAnswers {
+                callCount++
+                if (callCount == 1) throw RuntimeException("First fails")
+            }
+
+            val orchestrator = createOrchestrator(this)
+            orchestrator.start()
+            advanceUntilIdle()
+
+            // First trigger — fails
+            pendingSyncTriggerFlow.emit(Unit)
+            advanceUntilIdle()
+
+            // Second trigger — should still work
+            pendingSyncTriggerFlow.emit(Unit)
+            advanceUntilIdle()
+
+            coVerify(exactly = 2) { syncManager.sync(any<SyncOptions>()) }
         }
     }
 }

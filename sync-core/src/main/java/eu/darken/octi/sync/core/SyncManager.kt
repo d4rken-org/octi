@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.shareIn
 import eu.darken.octi.sync.core.cache.SyncCache
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.awaitCancellation
@@ -120,7 +121,8 @@ class SyncManager @Inject constructor(
     suspend fun sync(options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(options=$options)" }
         if (!syncLock.tryLock()) {
-            log(TAG) { "Sync already in progress, skipping" }
+            log(TAG) { "Sync already in progress, re-queuing" }
+            requestSync()
             return
         }
         try {
@@ -132,8 +134,13 @@ class SyncManager @Inject constructor(
                 }
                 .map {
                     scope.launch {
-                        // TODO error handling
-                        sync(it.identifier, options = options)
+                        try {
+                            sync(it.identifier, options = options)
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            log(TAG, ERROR) { "sync(): ${it.identifier} failed: ${e.asLog()}" }
+                        }
                     }
                 }
             syncJobs.joinAll()
@@ -150,27 +157,27 @@ class SyncManager @Inject constructor(
             return
         }
 
-        val writeModules = if (options.writeData) {
-            modulePayloads.values.filter { module ->
+        val changedModules = if (options.writeData) {
+            modulePayloads.values.mapNotNull { module ->
                 val currentHash = module.payload.sha256().hex()
                 val lastSent = connectorSyncState.getHash(connectorId, module.moduleId)
-                currentHash != lastSent
+                if (currentHash != lastSent) module to currentHash else null
             }
         } else {
             emptyList()
         }
 
-        val effectiveOptions = if (writeModules.isNotEmpty()) {
-            log(TAG) { "sync(): Passing ${writeModules.size} changed modules to $connectorId" }
-            options.copy(writePayload = writeModules)
+        val effectiveOptions = if (changedModules.isNotEmpty()) {
+            log(TAG) { "sync(): Passing ${changedModules.size} changed modules to $connectorId" }
+            options.copy(writePayload = changedModules.map { it.first })
         } else {
             options
         }
 
         connector.sync(effectiveOptions)
 
-        writeModules.forEach { module ->
-            connectorSyncState.setHash(connectorId, module.moduleId, module.payload.sha256().hex())
+        changedModules.forEach { (module, hash) ->
+            connectorSyncState.setHash(connectorId, module.moduleId, hash)
         }
     }
 

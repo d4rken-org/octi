@@ -94,6 +94,7 @@ class SyncOrchestrator @Inject constructor(
                     throw e
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "pendingSyncTrigger: sync failed: ${e.asLog()}" }
+                    syncManager.requestSync()
                 }
             }
             .launchIn(scope)

@@ -11,10 +11,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.api.BeforeEach
@@ -354,6 +358,76 @@ class SyncManagerSyncWriteTest : BaseTest() {
             allOptions[0].writePayload.single().payload shouldBe "v1".encodeUtf8()
             allOptions[1].writePayload.single().payload shouldBe "v2".encodeUtf8()
 
+            job.cancel()
+            advanceUntilIdle()
+        }
+    }
+
+    @Nested
+    inner class `error isolation` {
+        @Test
+        fun `one connector failure does not prevent other connectors from syncing`() = runTest2 {
+            connectorsFlow.value = listOf(connector1, connector2)
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.updatePayload(createModule(powerModuleId, "data"))
+
+            // connector1 throws, connector2 should still sync
+            coEvery { connector1.sync(any()) } throws RuntimeException("Network error")
+
+            sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
+            advanceUntilIdle()
+
+            // connector2 should have been called despite connector1 failure
+            val opts2 = slot<SyncOptions>()
+            coVerify { connector2.sync(capture(opts2)) }
+            opts2.captured.writePayload.size shouldBe 1
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+    }
+
+    @Nested
+    inner class `sync lock contention` {
+        @Test
+        fun `sync re-queues when lock is busy and data is sent after`() = runTest2 {
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.updatePayload(createModule(powerModuleId, "data"))
+
+            // Make connector1.sync() block until we release it
+            val gate = CompletableDeferred<Unit>()
+            coEvery { connector1.sync(any()) } coAnswers { gate.await() }
+
+            // Start collecting pendingSyncTrigger BEFORE the contention happens
+            var triggerFired = false
+            val collector = launch {
+                sm.pendingSyncTrigger.first()
+                triggerFired = true
+            }
+            advanceUntilIdle()
+
+            // First sync acquires lock and blocks inside connector.sync()
+            val firstSync = launch { sm.sync(SyncOptions(writeData = true, readData = false, stats = false)) }
+            advanceUntilIdle()
+
+            // Second sync should hit tryLock failure and call requestSync()
+            sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
+            advanceUntilIdle()
+
+            // Release the gate so first sync completes
+            gate.complete(Unit)
+            advanceUntilIdle()
+            firstSync.join()
+
+            // Advance past the 2s debounce — the re-queued requestSync() should fire
+            advanceTimeBy(3_000L)
+            triggerFired shouldBe true
+
+            collector.cancel()
             job.cancel()
             advanceUntilIdle()
         }
