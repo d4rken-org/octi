@@ -216,7 +216,7 @@ class OctiServerConnector @AssistedInject constructor(
                     throw e
                 } catch (e: Exception) {
                     if (handleDeviceUnknown(e, "write cached ${module.moduleId}")) return
-                    log(TAG, ERROR) { "Failed to write cached ${module.moduleId}: ${e.asLog()}" }
+                    throw e
                 }
             }
         }

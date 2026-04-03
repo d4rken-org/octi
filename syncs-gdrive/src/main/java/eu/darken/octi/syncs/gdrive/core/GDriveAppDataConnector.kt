@@ -590,16 +590,10 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
                 if (options.writeData && options.writePayload.isNotEmpty()) {
                     log(TAG) { "sync(): Writing ${options.writePayload.size} cached modules (batched)" }
-                    try {
-                        writeDrive(SyncWriteContainer(
-                            deviceId = syncSettings.deviceId,
-                            modules = options.writePayload,
-                        ))
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Exception) {
-                        log(TAG, ERROR) { "Failed to write cached modules: ${e.asLog()}" }
-                    }
+                    writeDrive(SyncWriteContainer(
+                        deviceId = syncSettings.deviceId,
+                        modules = options.writePayload,
+                    ))
                 }
 
 
