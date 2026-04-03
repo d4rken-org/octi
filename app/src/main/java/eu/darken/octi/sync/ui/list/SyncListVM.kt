@@ -52,6 +52,7 @@ class SyncListVM @Inject constructor(
         val connectors: List<ConnectorItem> = emptyList(),
         val highlightedConnectorIds: Set<ConnectorId> = emptySet(),
         val isPro: Boolean = false,
+        val deviceId: String = "",
     )
 
     sealed interface ConnectorItem {
@@ -150,6 +151,7 @@ class SyncListVM @Inject constructor(
                 connectors = connectors,
                 highlightedConnectorIds = highlighted,
                 isPro = upgradeInfo.isPro,
+                deviceId = syncSettings.deviceId.id,
             )
         }
         .asStateFlow()

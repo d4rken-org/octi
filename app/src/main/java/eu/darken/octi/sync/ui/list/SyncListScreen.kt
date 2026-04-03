@@ -154,6 +154,26 @@ fun SyncListScreen(
                     )
                 }
             }
+
+            item {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.sync_device_id_label),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = state.deviceId,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 
@@ -480,6 +500,7 @@ private fun ConnectorIssuesRow(issues: List<ConnectorIssue>) {
 private fun SyncListScreenPreview() = PreviewWrapper {
     SyncListScreen(
         state = SyncListVM.State(
+            deviceId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
             connectors = listOf(
                 SyncListVM.ConnectorItem.OctiServer(
                     connectorId = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "default", account = "preview-account"),
@@ -521,7 +542,7 @@ private fun SyncListScreenPreview() = PreviewWrapper {
 @Composable
 private fun SyncListScreenEmptyPreview() = PreviewWrapper {
     SyncListScreen(
-        state = SyncListVM.State(),
+        state = SyncListVM.State(deviceId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
         onNavigateUp = {},
         onAddConnector = {},
         onTogglePause = {},
