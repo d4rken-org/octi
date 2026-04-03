@@ -17,9 +17,9 @@
     </plurals>
 
     <string name="sync_device_outdated_version_warning">Running outdated version %s</string>
-    <string name="sync_issues_type_stale_device">stale device</string>
-    <string name="sync_issues_type_clock_skew">clock issue</string>
-    <string name="sync_issues_type_outdated_version">outdated version</string>
+    <string name="sync_issues_type_stale_device">Stale device</string>
+    <string name="sync_issues_type_clock_skew">Clock issue</string>
+    <string name="sync_issues_type_outdated_version">Outdated version</string>
 
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d day</item>

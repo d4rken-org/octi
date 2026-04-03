@@ -468,24 +468,31 @@ private fun DevicesField(state: SyncConnectorState, otherStates: Collection<Sync
 
 @Composable
 private fun ConnectorIssuesRow(issues: List<ConnectorIssue>) {
-    val errorCount = issues.count { it.severity == IssueSeverity.ERROR }
-    val warningCount = issues.count { it.severity == IssueSeverity.WARNING }
-    if (errorCount == 0 && warningCount == 0) return
+    val errors = issues.filter { it.severity == IssueSeverity.ERROR }
+    val warnings = issues.filter { it.severity == IssueSeverity.WARNING }
+    if (errors.isEmpty() && warnings.isEmpty()) return
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(top = 4.dp),
-    ) {
-        if (errorCount > 0) {
+    val context = LocalContext.current
+
+    Column(modifier = Modifier.padding(top = 4.dp)) {
+        if (errors.isNotEmpty()) {
+            val summary = errors
+                .groupBy { it.label.get(context) }
+                .map { (typeLabel, group) -> "${group.size} $typeLabel" }
+                .joinToString(", ")
             Text(
-                text = pluralStringResource(R.plurals.sync_issues_errors_count, errorCount, errorCount),
+                text = summary,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
             )
         }
-        if (warningCount > 0) {
+        if (warnings.isNotEmpty()) {
+            val summary = warnings
+                .groupBy { it.label.get(context) }
+                .map { (typeLabel, group) -> "${group.size} $typeLabel" }
+                .joinToString(", ")
             Text(
-                text = pluralStringResource(R.plurals.sync_issues_warnings_count, warningCount, warningCount),
+                text = summary,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.tertiary,
             )

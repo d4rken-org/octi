@@ -19,11 +19,12 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.ConnectorIssue
+import eu.darken.octi.sync.core.ConnectorIssueAggregator
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -39,6 +40,7 @@ class SyncDevicesVM @Inject constructor(
     private val syncSettings: SyncSettings,
     private val manager: SyncManager,
     private val metaSerializer: MetaSerializer,
+    private val issueAggregator: ConnectorIssueAggregator,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     private val connectorIdFlow = MutableStateFlow<String?>(null)
@@ -72,48 +74,47 @@ class SyncDevicesVM @Inject constructor(
 
     val state = connectorFlow
         .flatMapLatest { connector ->
-            connector.state
-                .distinctUntilChangedBy { it.deviceMetadata to it.issues }
-                .flatMapLatest { connState ->
-                    connector.data
-                        .map { data ->
-                            data?.devices
-                                ?.flatMap { it.modules }
-                                ?.filter { it.moduleId == MetaModule.MODULE_ID }
-                        }
-                        .map { metaDatas ->
-                            log(TAG) { "Loading devices for $connState" }
+            combine(
+                connector.state.map { it.deviceMetadata },
+                connector.data.map { data ->
+                    data?.devices
+                        ?.flatMap { it.modules }
+                        ?.filter { it.moduleId == MetaModule.MODULE_ID }
+                },
+                issueAggregator.issues,
+            ) { deviceMetadata, metaDatas, allIssues ->
+                log(TAG) { "Loading devices, ${deviceMetadata.size} metadata, ${allIssues.size} issues" }
 
-                            val items = connState.deviceMetadata.map { deviceMeta ->
-                                val deviceId = deviceMeta.deviceId
-                                var error: Exception? = null
-                                val metaInfo = metaDatas?.find { it.deviceId == deviceId }?.let {
-                                    try {
-                                        metaSerializer.deserialize(it.payload)
-                                    } catch (e: Exception) {
-                                        log(TAG, ERROR) { "Failed to deserialize MetaInfo:\n${e.asLog()}" }
-                                        error = e
-                                        null
-                                    }
-                                }
-                                DeviceItem(
-                                    deviceId = deviceId,
-                                    metaInfo = metaInfo,
-                                    lastSeen = deviceMeta.lastSeen,
-                                    error = error,
-                                    serverVersion = deviceMeta.version,
-                                    serverAddedAt = deviceMeta.addedAt,
-                                    serverPlatform = deviceMeta.platform,
-                                    issues = connState.issues.filter { it.deviceId == deviceId },
-                                )
-                            }.sortedBy { it.metaInfo?.labelOrFallback?.lowercase() }
-
-                            State(
-                                items = items,
-                                connectorType = connector.identifier.type,
-                            )
+                val connectorId = connector.identifier
+                val items = deviceMetadata.map { deviceMeta ->
+                    val deviceId = deviceMeta.deviceId
+                    var error: Exception? = null
+                    val metaInfo = metaDatas?.find { it.deviceId == deviceId }?.let {
+                        try {
+                            metaSerializer.deserialize(it.payload)
+                        } catch (e: Exception) {
+                            log(TAG, ERROR) { "Failed to deserialize MetaInfo:\n${e.asLog()}" }
+                            error = e
+                            null
                         }
-                }
+                    }
+                    DeviceItem(
+                        deviceId = deviceId,
+                        metaInfo = metaInfo,
+                        lastSeen = deviceMeta.lastSeen,
+                        error = error,
+                        serverVersion = deviceMeta.version,
+                        serverAddedAt = deviceMeta.addedAt,
+                        serverPlatform = deviceMeta.platform,
+                        issues = allIssues.filter { it.connectorId == connectorId && it.deviceId == deviceId },
+                    )
+                }.sortedBy { it.metaInfo?.labelOrFallback?.lowercase() }
+
+                State(
+                    items = items,
+                    connectorType = connectorId.type,
+                )
+            }
         }
         .asStateFlow()
 
