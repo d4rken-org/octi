@@ -58,7 +58,7 @@ Access with `.flow` (reactive), `value()` (suspend read), `value(newVal)` (suspe
 - `@Serializable` for data classes (replaces Moshi's `@JsonClass(generateAdapter = true)`)
 - `@SerialName("fieldName")` for field mapping (replaces Moshi's `@Json(name = "fieldName")`)
 - Inject the project `Json` instance from `SerializationModule` — do not create ad-hoc `Json {}` in production code
-- Custom serializers (e.g., `InstantSerializer`, `ByteStringSerializer`) via `@UseSerializers`
+- Custom serializers (e.g., `InstantSerializer`, `ByteStringSerializer`) via per-property `@Serializable(with = ...)` or contextual serializers in `SerializationModule`
 - `ByteString` from okio for binary data serialization in sync payloads
 - Each module has a `ModuleSerializer<T>` using `json.toByteString()` / `json.fromJson()`
 - Navigation routes also use `@Serializable` (same framework)
