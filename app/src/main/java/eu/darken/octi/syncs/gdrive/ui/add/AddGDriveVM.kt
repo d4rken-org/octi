@@ -1,5 +1,6 @@
 package eu.darken.octi.syncs.gdrive.ui.add
 
+import android.accounts.Account
 import android.app.Activity
 import androidx.activity.result.ActivityResult
 import androidx.lifecycle.SavedStateHandle
@@ -22,21 +23,37 @@ class AddGDriveVM @Inject constructor(
 
     val events = SingleEventFlow<AddGDriveEvents>()
 
-    fun startSignIn() = launch {
+    fun startSignIn() {
         log(TAG) { "startSignIn()" }
-        when (val action = accRepo.startNewAuth()) {
+        events.tryEmit(AddGDriveEvents.ShowAccountPicker)
+    }
+
+    fun onAccountPicked(email: String) = launch {
+        log(TAG) { "onAccountPicked(email=$email)" }
+
+        if (accRepo.isAccountConnected(email)) {
+            log(TAG) { "onAccountPicked(): Account already connected" }
+            events.tryEmit(AddGDriveEvents.AccountAlreadyConnected(email))
+            return@launch
+        }
+
+        when (val action = accRepo.startNewAuth(Account(email, "com.google"))) {
             is GoogleAccountRepo.AuthAction.AlreadyAuthorized -> {
-                accRepo.add(action.account)
-                popTo(Nav.Sync.List)
+                val added = accRepo.add(action.account)
+                if (added) {
+                    popTo(Nav.Sync.List)
+                } else {
+                    events.tryEmit(AddGDriveEvents.AccountAlreadyConnected(email))
+                }
             }
 
             is GoogleAccountRepo.AuthAction.NeedsConsent -> {
-                events.tryEmit(AddGDriveEvents.AuthConsent(action.pendingIntent))
+                events.tryEmit(AddGDriveEvents.AuthConsent(action.pendingIntent, email))
             }
         }
     }
 
-    fun onAuthResult(result: ActivityResult) = launch {
+    fun onAuthResult(result: ActivityResult, expectedEmail: String?) = launch {
         log(TAG) { "onAuthResult(resultCode=${result.resultCode})" }
         if (result.resultCode != Activity.RESULT_OK) {
             log(TAG) { "onAuthResult(): User cancelled" }
@@ -47,9 +64,13 @@ class AddGDriveVM @Inject constructor(
             log(TAG) { "onAuthResult(): No data in result" }
             return@launch
         }
-        val account = accRepo.handleAuthResult(data)
-        accRepo.add(account)
-        popTo(Nav.Sync.List)
+        val account = accRepo.handleAuthResult(data, expectedEmail = expectedEmail)
+        val added = accRepo.add(account)
+        if (added) {
+            popTo(Nav.Sync.List)
+        } else {
+            events.tryEmit(AddGDriveEvents.AccountAlreadyConnected(account.email))
+        }
     }
 
     companion object {

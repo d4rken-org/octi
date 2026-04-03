@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Reset all Octi data stored on Google Drive. Your device stays logged into Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Log out from Google Drive and delete data related to this device.</string>
     <string name="sync_gdrive_error_no_account_on_device">This device is not signed into any Google account.</string>
+    <string name="sync_gdrive_error_account_already_connected">This account is already connected.</string>
 </resources>

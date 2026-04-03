@@ -33,6 +33,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import android.accounts.Account
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
@@ -99,10 +100,11 @@ class GoogleAccountRepo @Inject constructor(
         data class NeedsConsent(val pendingIntent: PendingIntent) : AuthAction()
     }
 
-    suspend fun startNewAuth(): AuthAction {
-        log(TAG) { "startNewAuth()" }
+    suspend fun startNewAuth(targetAccount: Account? = null): AuthAction {
+        log(TAG) { "startNewAuth(targetAccount=$targetAccount)" }
         val request = AuthorizationRequest.builder()
             .setRequestedScopes(listOf(SCOPE_DRIVE_APPDATA, SCOPE_EMAIL, SCOPE_OPENID))
+            .apply { if (targetAccount != null) setAccount(targetAccount) }
             .build()
 
         val result = Identity.getAuthorizationClient(context).authorize(request).await()
@@ -114,18 +116,25 @@ class GoogleAccountRepo @Inject constructor(
             AuthAction.NeedsConsent(pendingIntent)
         } else {
             log(TAG) { "startNewAuth(): Already authorized" }
-            val account = resolveAccountIdentity(result)
+            val account = resolveAccountIdentity(result, expectedEmail = targetAccount?.name)
             AuthAction.AlreadyAuthorized(account)
         }
     }
 
-    suspend fun handleAuthResult(intent: Intent): GoogleAccount {
-        log(TAG) { "handleAuthResult()" }
+    suspend fun handleAuthResult(intent: Intent, expectedEmail: String? = null): GoogleAccount {
+        log(TAG) { "handleAuthResult(expectedEmail=$expectedEmail)" }
         val result = Identity.getAuthorizationClient(context).getAuthorizationResultFromIntent(intent)
-        return resolveAccountIdentity(result)
+        return resolveAccountIdentity(result, expectedEmail)
     }
 
-    private suspend fun resolveAccountIdentity(result: AuthorizationResult): GoogleAccount {
+    suspend fun isAccountConnected(email: String): Boolean {
+        return _accounts.flow.first().any { it.email == email }
+    }
+
+    private suspend fun resolveAccountIdentity(
+        result: AuthorizationResult,
+        expectedEmail: String? = null,
+    ): GoogleAccount {
         val accessToken = result.accessToken
             ?: throw IllegalStateException("No access token in AuthorizationResult")
 
@@ -158,6 +167,12 @@ class GoogleAccountRepo @Inject constructor(
                     ?: throw IllegalStateException("No 'sub' in userinfo response")
                 val email = jsonObj["email"]?.jsonPrimitive?.content
                     ?: throw IllegalStateException("No 'email' in userinfo response")
+
+                if (expectedEmail != null && !email.equals(expectedEmail, ignoreCase = true)) {
+                    throw IllegalStateException(
+                        "Account mismatch: expected $expectedEmail but resolved $email"
+                    )
+                }
 
                 GoogleAccount(accountId = sub, email = email).also {
                     log(TAG) { "resolveAccountIdentity(): Resolved accountId=$sub" }
