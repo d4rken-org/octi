@@ -1,4 +1,4 @@
-package eu.darken.octi.modules.power.ui.widget
+package eu.darken.octi.modules.connectivity.ui.widget
 
 import android.text.format.DateUtils
 import androidx.annotation.ColorRes
@@ -12,7 +12,6 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
@@ -34,30 +33,30 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.module.core.ModuleRepo
+import eu.darken.octi.modules.connectivity.R
+import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 import eu.darken.octi.common.R as CommonR
-import eu.darken.octi.modules.power.R
 
-private data class BatteryDeviceRow(
+private data class NetworkDeviceRow(
     val deviceName: String,
     val lastSeen: CharSequence,
-    val percent: Int,
-    val isCharging: Boolean,
+    val connectionType: ConnectivityInfo.ConnectionType?,
+    val localIp: String,
+    val publicIp: String,
 )
 
 @Composable
-fun BatteryWidgetContent(
+fun NetworkWidgetContent(
     metaState: ModuleRepo.State<*>?,
-    powerState: ModuleRepo.State<*>?,
+    connectivityState: ModuleRepo.State<*>?,
     themeColors: WidgetTheme.Colors?,
     maxRows: Int,
 ) {
-    val devices = buildDeviceRows(metaState, powerState, maxRows)
+    val devices = buildDeviceRows(metaState, connectivityState, maxRows)
     val containerBg = themeColors?.containerBg
     val context = LocalContext.current
     val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
         ?.let { actionStartActivity(it) }
-    // Widget padding: 8dp each side, spacer: 4dp, percent text: 44dp
-    val barWidthDp = (LocalSize.current.width.value - 64f).coerceAtLeast(0f)
 
     GlanceTheme {
         Box(
@@ -78,10 +77,9 @@ fun BatteryWidgetContent(
         ) {
             Column(modifier = GlanceModifier.fillMaxSize()) {
                 devices.forEachIndexed { index, device ->
-                    BatteryDeviceRowContent(
+                    NetworkDeviceRowContent(
                         device = device,
                         themeColors = themeColors,
-                        barWidthDp = barWidthDp,
                     )
                     if (index < devices.lastIndex) {
                         Spacer(modifier = GlanceModifier.height(2.dp))
@@ -95,81 +93,71 @@ fun BatteryWidgetContent(
 @Suppress("UNCHECKED_CAST")
 private fun buildDeviceRows(
     metaState: ModuleRepo.State<*>?,
-    powerState: ModuleRepo.State<*>?,
+    connectivityState: ModuleRepo.State<*>?,
     maxRows: Int,
-): List<BatteryDeviceRow> {
-    if (metaState == null || powerState == null) return emptyList()
+): List<NetworkDeviceRow> {
+    if (connectivityState == null) return emptyList()
 
-    val metaAll = metaState.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>> ?: return emptyList()
-    val powerOthers = powerState.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.power.core.PowerInfo>> ?: return emptyList()
+    val metaAll = metaState?.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>>
+    val connectivityAll = connectivityState.all as? Collection<eu.darken.octi.module.core.ModuleData<ConnectivityInfo>>
+        ?: return emptyList()
 
-    return powerOthers
-        .mapNotNull { powerData ->
-            val metaData = metaAll.firstOrNull { it.deviceId == powerData.deviceId }
-            metaData?.let { powerData to it }
+    return connectivityAll
+        .map { connData ->
+            val metaData = metaAll?.firstOrNull { it.deviceId == connData.deviceId }
+            connData to metaData
         }
-        .sortedBy { (_, metaData) -> metaData.data.labelOrFallback.lowercase() }
+        .sortedBy { (_, metaData) -> (metaData?.data?.labelOrFallback ?: "Unknown").lowercase() }
         .take(maxRows)
-        .map { (powerData, metaData) ->
-            BatteryDeviceRow(
-                deviceName = metaData.data.labelOrFallback,
+        .map { (connData, metaData) ->
+            NetworkDeviceRow(
+                deviceName = metaData?.data?.labelOrFallback ?: "Unknown",
                 lastSeen = DateUtils.getRelativeTimeSpanString(
-                    metaData.modifiedAt.toEpochMilliseconds(),
+                    (metaData?.modifiedAt ?: connData.modifiedAt).toEpochMilliseconds(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE,
                 ),
-                percent = (powerData.data.battery.percent * 100).toInt(),
-                isCharging = powerData.data.isCharging,
+                connectionType = connData.data.connectionType,
+                localIp = connData.data.localAddressIpv4 ?: "\u2014",
+                publicIp = connData.data.publicIp ?: "\u2014",
             )
         }
 }
 
 @Composable
-private fun BatteryDeviceRowContent(
-    device: BatteryDeviceRow,
+private fun NetworkDeviceRowContent(
+    device: NetworkDeviceRow,
     themeColors: WidgetTheme.Colors?,
-    barWidthDp: Float,
 ) {
-    val barFill = colorOrDefault(themeColors?.barFill, CommonR.color.widgetBarFill)
-    val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
     val iconColor = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon)
-    val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
+    val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
 
-    Row(
+    val iconRes = when (device.connectionType) {
+        ConnectivityInfo.ConnectionType.WIFI -> R.drawable.widget_network_wifi_24
+        ConnectivityInfo.ConnectionType.CELLULAR -> R.drawable.widget_network_cellular_24
+        ConnectivityInfo.ConnectionType.ETHERNET -> R.drawable.widget_network_ethernet_24
+        ConnectivityInfo.ConnectionType.NONE, null -> R.drawable.widget_network_off_24
+    }
+
+    Box(
         modifier = GlanceModifier
             .fillMaxWidth()
-            .height(30.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .height(44.dp)
+            .cornerRadius(12.dp)
+            .background(barTrack),
     ) {
-        Box(
-            modifier = GlanceModifier
-                .defaultWeight()
-                .height(30.dp)
-                .cornerRadius(12.dp)
-                .background(barTrack),
+        Column(
+            modifier = GlanceModifier.fillMaxSize().padding(horizontal = 10.dp, vertical = 4.dp),
         ) {
-            val fillWidth = (barWidthDp * device.percent / 100f).coerceAtLeast(0f)
-            if (fillWidth > 0f) {
-                Box(
-                    modifier = GlanceModifier
-                        .width(fillWidth.dp)
-                        .height(30.dp)
-                        .cornerRadius(12.dp)
-                        .background(barFill),
-                ) {}
-            }
             Row(
-                modifier = GlanceModifier.fillMaxSize().padding(horizontal = 10.dp),
+                modifier = GlanceModifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Image(
-                    provider = ImageProvider(
-                        if (device.isCharging) R.drawable.widget_battery_charging_full_24
-                        else R.drawable.widget_battery_full_24,
-                    ),
+                    provider = ImageProvider(iconRes),
                     contentDescription = null,
-                    modifier = GlanceModifier.size(20.dp),
+                    modifier = GlanceModifier.size(18.dp),
                     colorFilter = ColorFilter.tint(iconColor),
                 )
                 Spacer(modifier = GlanceModifier.width(4.dp))
@@ -186,23 +174,26 @@ private fun BatteryDeviceRowContent(
                 Text(
                     text = "\u00b7 ${device.lastSeen}",
                     style = TextStyle(
-                        fontSize = 11.sp,
+                        fontSize = 10.sp,
+                        color = iconColor,
+                    ),
+                    maxLines = 1,
+                )
+            }
+            Row(
+                modifier = GlanceModifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "${device.localIp} \u00b7 ${device.publicIp}",
+                    style = TextStyle(
+                        fontSize = 10.sp,
                         color = iconColor,
                     ),
                     maxLines = 1,
                 )
             }
         }
-        Spacer(modifier = GlanceModifier.width(4.dp))
-        Text(
-            text = "${device.percent}%",
-            style = TextStyle(
-                fontWeight = FontWeight.Bold,
-                fontSize = 13.sp,
-                color = onContainer,
-            ),
-            modifier = GlanceModifier.width(44.dp),
-        )
     }
 }
 

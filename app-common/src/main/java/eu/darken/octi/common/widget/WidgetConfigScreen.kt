@@ -1,0 +1,340 @@
+package eu.darken.octi.common.widget
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
+import eu.darken.octi.common.R
+
+@Composable
+fun WidgetConfigScreen(
+    initialMode: String?,
+    initialPresetName: String?,
+    initialBgColor: Int?,
+    initialAccentColor: Int?,
+    onClose: () -> Unit,
+    onApply: (isMaterialYou: Boolean, presetName: String?, bgColor: Int?, accentColor: Int?) -> Unit,
+    previewContent: @Composable (WidgetTheme.Colors?) -> Unit,
+) {
+    val initialTheme = WidgetTheme.fromName(initialPresetName)
+    val isInitiallyCustom = initialMode == WidgetTheme.MODE_CUSTOM && initialTheme == null
+    val isInitiallyPreset = initialMode == WidgetTheme.MODE_CUSTOM && initialTheme != null
+
+    var selectedPreset by rememberSaveable { mutableStateOf(initialTheme ?: WidgetTheme.MATERIAL_YOU) }
+    var isCustomMode by rememberSaveable { mutableStateOf(isInitiallyCustom) }
+    var bgColor by rememberSaveable { mutableStateOf(initialBgColor) }
+    var accentColor by rememberSaveable { mutableStateOf(initialAccentColor) }
+    var bgHex by rememberSaveable { mutableStateOf(initialBgColor?.let { String.format("%06X", it and 0xFFFFFF) } ?: "") }
+    var accentHex by rememberSaveable { mutableStateOf(initialAccentColor?.let { String.format("%06X", it and 0xFFFFFF) } ?: "") }
+
+    LaunchedEffect(Unit) {
+        if (isInitiallyPreset && bgColor == null) {
+            bgColor = initialTheme.presetBg
+            accentColor = initialTheme.presetAccent
+        }
+    }
+
+    val isMaterialYou = !isCustomMode && selectedPreset == WidgetTheme.MATERIAL_YOU
+    val canApply = isMaterialYou || (bgColor != null && accentColor != null)
+
+    val bg = bgColor
+    val accent = accentColor
+    val currentColors = when {
+        isMaterialYou -> null
+        bg != null && accent != null -> WidgetTheme.deriveColors(bg, accent)
+        else -> null
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.widget_config_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onClose) {
+                        Icon(Icons.Filled.Close, contentDescription = null)
+                    }
+                },
+            )
+        },
+        bottomBar = {
+            Column(modifier = Modifier.navigationBarsPadding()) {
+                HorizontalDivider()
+                Button(
+                    onClick = {
+                        onApply(
+                            isMaterialYou,
+                            if (isCustomMode) null else selectedPreset.name,
+                            bgColor,
+                            accentColor,
+                        )
+                    },
+                    enabled = canApply,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                ) {
+                    Text(stringResource(R.string.widget_config_apply_action))
+                }
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+        ) {
+            // Preview
+            Text(
+                text = stringResource(R.string.widget_config_preview_label),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            previewContent(currentColors)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Presets
+            Text(
+                text = stringResource(R.string.widget_config_presets_label),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                WidgetTheme.entries.forEach { theme ->
+                    FilterChip(
+                        selected = !isCustomMode && selectedPreset == theme,
+                        onClick = {
+                            isCustomMode = false
+                            selectedPreset = theme
+                            if (theme != WidgetTheme.MATERIAL_YOU) {
+                                bgColor = theme.presetBg
+                                accentColor = theme.presetAccent
+                                bgHex = theme.presetBg?.let { String.format("%06X", it and 0xFFFFFF) } ?: ""
+                                accentHex = theme.presetAccent?.let { String.format("%06X", it and 0xFFFFFF) } ?: ""
+                            }
+                        },
+                        label = { Text(stringResource(theme.labelRes)) },
+                        leadingIcon = if (theme.presetBg != null) {
+                            {
+                                Box(
+                                    modifier = Modifier
+                                        .size(12.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(theme.presetBg)),
+                                )
+                            }
+                        } else null,
+                    )
+                }
+
+                FilterChip(
+                    selected = isCustomMode,
+                    onClick = {
+                        isCustomMode = true
+                        selectedPreset = WidgetTheme.MATERIAL_YOU
+                    },
+                    label = { Text(stringResource(R.string.widget_config_custom_label)) },
+                )
+            }
+
+            // Custom colors
+            if (isCustomMode) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = stringResource(R.string.widget_config_background_label),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ColorSwatchGrid(
+                            selectedColor = bgColor,
+                            onColorSelected = { color ->
+                                bgColor = color
+                                bgHex = String.format("%06X", color and 0xFFFFFF)
+                            },
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        HexColorInput(
+                            value = bgHex,
+                            onValueChange = { hex ->
+                                bgHex = hex
+                                val color = WidgetTheme.parseHexColor(hex)
+                                if (color != null) bgColor = color
+                            },
+                            onClear = {
+                                bgHex = ""
+                                bgColor = null
+                            },
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = stringResource(R.string.widget_config_accent_label),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ColorSwatchGrid(
+                            selectedColor = accentColor,
+                            onColorSelected = { color ->
+                                accentColor = color
+                                accentHex = String.format("%06X", color and 0xFFFFFF)
+                            },
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        HexColorInput(
+                            value = accentHex,
+                            onValueChange = { hex ->
+                                accentHex = hex
+                                val color = WidgetTheme.parseHexColor(hex)
+                                if (color != null) accentColor = color
+                            },
+                            onClear = {
+                                accentHex = ""
+                                accentColor = null
+                            },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ColorSwatchGrid(
+    selectedColor: Int?,
+    onColorSelected: (Int) -> Unit,
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        maxItemsInEachRow = 6,
+    ) {
+        WidgetTheme.SWATCH_COLORS.forEach { color ->
+            val isSelected = selectedColor == color
+            val contrastColor = WidgetTheme.bestContrast(color)
+
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(color))
+                    .then(
+                        if (isSelected) {
+                            Modifier.border(
+                                BorderStroke(3.dp, Color(contrastColor)),
+                                RoundedCornerShape(8.dp),
+                            )
+                        } else {
+                            Modifier.border(
+                                BorderStroke(1.dp, Color(0x33000000)),
+                                RoundedCornerShape(8.dp),
+                            )
+                        }
+                    )
+                    .clickable { onColorSelected(color) },
+                contentAlignment = Alignment.Center,
+            ) {
+                if (isSelected) {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        tint = Color(contrastColor),
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun HexColorInput(
+    value: String,
+    onValueChange: (String) -> Unit,
+    onClear: () -> Unit,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { input ->
+            val filtered = input.filter { it.isLetterOrDigit() }.take(6).uppercase()
+            onValueChange(filtered)
+        },
+        label = { Text(stringResource(R.string.widget_config_hex_hint)) },
+        prefix = { Text("#") },
+        textStyle = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace),
+        singleLine = true,
+        trailingIcon = {
+            if (value.isNotEmpty()) {
+                IconButton(onClick = onClear) {
+                    Icon(Icons.Filled.Close, contentDescription = null)
+                }
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+    )
+}

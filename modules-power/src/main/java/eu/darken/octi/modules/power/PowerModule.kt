@@ -8,8 +8,10 @@ import dagger.multibindings.IntoSet
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.module.core.ModuleSync
+import eu.darken.octi.common.widget.WidgetManager
 import eu.darken.octi.modules.power.core.PowerRepo
 import eu.darken.octi.modules.power.core.PowerSync
+import eu.darken.octi.modules.power.ui.widget.BatteryWidgetManager
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -26,6 +28,10 @@ class PowerModule {
     @Provides
     @IntoSet
     fun moduleId(): ModuleId = MODULE_ID
+
+    @Provides
+    @IntoSet
+    fun widgetManager(manager: BatteryWidgetManager): WidgetManager = manager
 
     companion object {
         val MODULE_ID = ModuleId("eu.darken.octi.module.core.power")

@@ -46,4 +46,22 @@
     <string name="ui_theme_color_blue_label">Blue</string>
     <string name="ui_theme_color_sunset_label">Sunset</string>
     <string name="device_x_label">Device: %s</string>
+
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material You</string>
+    <string name="widget_theme_classic_green">Classic Green</string>
+    <string name="widget_theme_blue">Blue</string>
+    <string name="widget_theme_orange">Orange</string>
+    <string name="widget_theme_red">Red</string>
+    <string name="widget_theme_dark">Dark</string>
+
+    <!-- Widget config -->
+    <string name="widget_config_title">Customize Widget</string>
+    <string name="widget_config_apply_action">Apply</string>
+    <string name="widget_config_presets_label">Presets</string>
+    <string name="widget_config_background_label">Background color</string>
+    <string name="widget_config_accent_label">Accent color</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">Preview</string>
+    <string name="widget_config_custom_label">Custom</string>
 </resources>

@@ -1,4 +1,4 @@
-package eu.darken.octi.modules.power.ui.widget
+package eu.darken.octi.modules.clipboard.ui.widget
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -9,18 +9,17 @@ import eu.darken.octi.common.widget.WidgetManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
-class BatteryWidgetManager @Inject constructor(
+class ClipboardWidgetManager @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : WidgetManager {
 
     override suspend fun refreshWidgets() {
         log(TAG) { "refreshWidgets()" }
-        BatteryGlanceWidget().updateAll(context)
+        ClipboardGlanceWidget().updateAll(context)
     }
 
     companion object {
-        val TAG = logTag("Module", "Power", "Widget", "Manager")
+        val TAG = logTag("Module", "Clipboard", "Widget", "Manager")
     }
 }

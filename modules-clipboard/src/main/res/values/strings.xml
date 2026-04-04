@@ -10,4 +10,7 @@
     <string name="module_clipboard_detail_type_empty">Empty</string>
     <string name="module_clipboard_detail_type_text">Text</string>
     <string name="module_clipboard_copy_action">Copy to clipboard</string>
+
+    <string name="module_clipboard_widget_description">Display clipboard content from your synced devices.</string>
+    <string name="module_clipboard_widget_paste_action">Share clipboard</string>
 </resources>

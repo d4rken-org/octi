@@ -16,4 +16,6 @@
     <string name="module_connectivity_detail_connection_type_label">Connection type</string>
     <string name="module_connectivity_status_connected_label">Connected</string>
     <string name="module_connectivity_status_disconnected_label">Disconnected</string>
+
+    <string name="module_connectivity_widget_description">Display network information from your synced devices.</string>
 </resources>

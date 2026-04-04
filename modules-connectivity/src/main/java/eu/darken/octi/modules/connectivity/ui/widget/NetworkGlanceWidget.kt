@@ -1,4 +1,4 @@
-package eu.darken.octi.modules.power.ui.widget
+package eu.darken.octi.modules.connectivity.ui.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -20,7 +20,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.widget.WidgetTheme
 
-class BatteryGlanceWidget : GlanceAppWidget() {
+class NetworkGlanceWidget : GlanceAppWidget() {
 
     override val sizeMode: SizeMode = SizeMode.Exact
 
@@ -29,9 +29,9 @@ class BatteryGlanceWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         log(TAG, VERBOSE) { "provideGlance(id=$id)" }
 
-        val ep = EntryPointAccessors.fromApplication(context, BatteryWidgetEntryPoint::class.java)
+        val ep = EntryPointAccessors.fromApplication(context, NetworkWidgetEntryPoint::class.java)
         val metaRepo = ep.metaRepo()
-        val powerRepo = ep.powerRepo()
+        val connectivityRepo = ep.connectivityRepo()
 
         val appWidgetId = try {
             GlanceAppWidgetManager(context).getAppWidgetId(id)
@@ -45,14 +45,14 @@ class BatteryGlanceWidget : GlanceAppWidget() {
             val themeColors = WidgetTheme.parseThemeColors(widgetOptions)
 
             val metaState = metaRepo.state.collectAsState(initial = null)
-            val powerState = powerRepo.state.collectAsState(initial = null)
+            val connectivityState = connectivityRepo.state.collectAsState(initial = null)
 
             val heightDp = LocalSize.current.height.value
-            val maxRows = if (heightDp > 0) maxOf(1, ((heightDp - 16) / 32).toInt()) else Int.MAX_VALUE
+            val maxRows = if (heightDp > 0) maxOf(1, ((heightDp - 16) / 46).toInt()) else Int.MAX_VALUE
 
-            BatteryWidgetContent(
+            NetworkWidgetContent(
                 metaState = metaState.value,
-                powerState = powerState.value,
+                connectivityState = connectivityState.value,
                 themeColors = themeColors,
                 maxRows = maxRows,
             )
@@ -60,15 +60,15 @@ class BatteryGlanceWidget : GlanceAppWidget() {
     }
 
     companion object {
-        val TAG = logTag("Module", "Power", "Widget", "Glance")
+        val TAG = logTag("Module", "Connectivity", "Widget", "Glance")
     }
 }
 
-class BatteryWidgetProvider : GlanceAppWidgetReceiver() {
+class NetworkWidgetProvider : GlanceAppWidgetReceiver() {
 
-    override val glanceAppWidget: GlanceAppWidget = BatteryGlanceWidget()
+    override val glanceAppWidget: GlanceAppWidget = NetworkGlanceWidget()
 
     companion object {
-        val TAG = logTag("Module", "Power", "Widget", "Provider")
+        val TAG = logTag("Module", "Connectivity", "Widget", "Provider")
     }
 }

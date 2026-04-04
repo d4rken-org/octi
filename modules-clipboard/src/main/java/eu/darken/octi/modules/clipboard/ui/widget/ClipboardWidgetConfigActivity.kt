@@ -1,15 +1,13 @@
-package eu.darken.octi.modules.power.ui.widget
+package eu.darken.octi.modules.clipboard.ui.widget
 
 import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
@@ -36,8 +33,6 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.common.R as CommonR
-import eu.darken.octi.common.compose.Preview2
-import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
@@ -45,16 +40,19 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.theming.OctiTheme
 import eu.darken.octi.common.theming.ThemeSettings
 import eu.darken.octi.common.theming.ThemeState
+import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.common.widget.WidgetConfigScreen
 import eu.darken.octi.common.widget.WidgetTheme
-import eu.darken.octi.modules.power.R
+import eu.darken.octi.modules.clipboard.R
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
+class ClipboardWidgetConfigActivity : androidx.activity.ComponentActivity() {
 
     @Inject lateinit var themeSettings: ThemeSettings
+    @Inject lateinit var upgradeRepo: UpgradeRepo
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
@@ -73,30 +71,39 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
             return
         }
 
-        val currentOptions = AppWidgetManager.getInstance(this).getAppWidgetOptions(appWidgetId)
-        val initialMode = currentOptions.getString(WidgetTheme.KEY_THEME_MODE)
-        val initialPreset = currentOptions.getString(WidgetTheme.KEY_THEME_PRESET)
-        val initialBg = if (currentOptions.containsKey(WidgetTheme.KEY_CUSTOM_BG)) {
-            currentOptions.getInt(WidgetTheme.KEY_CUSTOM_BG)
-        } else null
-        val initialAccent = if (currentOptions.containsKey(WidgetTheme.KEY_CUSTOM_ACCENT)) {
-            currentOptions.getInt(WidgetTheme.KEY_CUSTOM_ACCENT)
-        } else null
+        lifecycleScope.launch {
+            if (!upgradeRepo.upgradeInfo.first().isPro) {
+                setResult(RESULT_CANCELED)
+                finish()
+                return@launch
+            }
 
-        setContent {
-            val themeState by themeSettings.themeState.collectAsState(ThemeState())
-            OctiTheme(state = themeState) {
-                WidgetConfigScreen(
-                    initialMode = initialMode,
-                    initialPresetName = initialPreset,
-                    initialBgColor = initialBg,
-                    initialAccentColor = initialAccent,
-                    onClose = { finish() },
-                    onApply = { isMaterialYou, presetName, bgColor, accentColor ->
-                        applyAndFinish(isMaterialYou, presetName, bgColor, accentColor)
-                    },
-                    previewContent = { colors -> BatteryWidgetPreview(colors = colors) },
-                )
+            val currentOptions = AppWidgetManager.getInstance(this@ClipboardWidgetConfigActivity)
+                .getAppWidgetOptions(appWidgetId)
+            val initialMode = currentOptions.getString(WidgetTheme.KEY_THEME_MODE)
+            val initialPreset = currentOptions.getString(WidgetTheme.KEY_THEME_PRESET)
+            val initialBg = if (currentOptions.containsKey(WidgetTheme.KEY_CUSTOM_BG)) {
+                currentOptions.getInt(WidgetTheme.KEY_CUSTOM_BG)
+            } else null
+            val initialAccent = if (currentOptions.containsKey(WidgetTheme.KEY_CUSTOM_ACCENT)) {
+                currentOptions.getInt(WidgetTheme.KEY_CUSTOM_ACCENT)
+            } else null
+
+            setContent {
+                val themeState by themeSettings.themeState.collectAsState(ThemeState())
+                OctiTheme(state = themeState) {
+                    WidgetConfigScreen(
+                        initialMode = initialMode,
+                        initialPresetName = initialPreset,
+                        initialBgColor = initialBg,
+                        initialAccentColor = initialAccent,
+                        onClose = { finish() },
+                        onApply = { isMaterialYou, presetName, bgColor, accentColor ->
+                            applyAndFinish(isMaterialYou, presetName, bgColor, accentColor)
+                        },
+                        previewContent = { colors -> ClipboardWidgetPreview(colors = colors) },
+                    )
+                }
             }
         }
     }
@@ -130,7 +137,7 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
         lifecycleScope.launch {
             try {
                 val glanceId = GlanceAppWidgetManager(appContext).getGlanceIdBy(appWidgetId)
-                BatteryGlanceWidget().update(appContext, glanceId)
+                ClipboardGlanceWidget().update(appContext, glanceId)
             } catch (e: Exception) {
                 log(TAG, ERROR) { "Failed to update widget: ${e.asLog()}" }
             }
@@ -144,12 +151,12 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
     }
 
     companion object {
-        private val TAG = logTag("Module", "Power", "Widget", "Config")
+        private val TAG = logTag("Module", "Clipboard", "Widget", "Config")
     }
 }
 
 @Composable
-private fun BatteryWidgetPreview(colors: WidgetTheme.Colors?) {
+private fun ClipboardWidgetPreview(colors: WidgetTheme.Colors?) {
     val previewColors = colors ?: WidgetTheme.Colors(
         containerBg = colorResource(CommonR.color.widgetContainerBackground).toArgb(),
         barFill = colorResource(CommonR.color.widgetBarFill).toArgb(),
@@ -165,94 +172,34 @@ private fun BatteryWidgetPreview(colors: WidgetTheme.Colors?) {
                 .background(Color(previewColors.containerBg))
                 .padding(8.dp),
         ) {
-            PreviewWidgetRow(
-                name = "Pixel 8",
-                lastSeen = "5 min ago",
-                percent = 75,
-                colors = previewColors,
-            )
-        }
-    }
-}
-
-@Composable
-private fun PreviewWidgetRow(
-    name: String,
-    lastSeen: String,
-    percent: Int,
-    colors: WidgetTheme.Colors,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(30.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .height(30.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color(colors.barTrack)),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(percent / 100f)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color(colors.barFill)),
-            )
             Row(
                 modifier = Modifier
-                    .matchParentSize()
-                    .padding(horizontal = 10.dp),
+                    .fillMaxWidth()
+                    .height(30.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.widget_battery_full_24),
+                    painter = painterResource(R.drawable.widget_clipboard_24),
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = Color(colors.icon),
+                    tint = Color(previewColors.icon),
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = name,
+                    text = "Pixel 8",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(colors.icon),
+                    color = Color(previewColors.icon),
                     maxLines = 1,
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "\u00b7 $lastSeen",
-                    fontSize = 11.sp,
-                    color = Color(colors.icon),
+                    text = "Hello world\u2026",
+                    fontSize = 10.sp,
+                    color = Color(previewColors.icon),
                     maxLines = 1,
                 )
             }
         }
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = "$percent%",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(colors.onContainer),
-            modifier = Modifier.width(44.dp),
-            textAlign = androidx.compose.ui.text.style.TextAlign.End,
-        )
     }
-}
-
-@Preview2
-@Composable
-private fun WidgetConfigScreenPreview() = PreviewWrapper {
-    WidgetConfigScreen(
-        initialMode = null,
-        initialPresetName = null,
-        initialBgColor = null,
-        initialAccentColor = null,
-        onClose = {},
-        onApply = { _, _, _, _ -> },
-        previewContent = { colors -> BatteryWidgetPreview(colors = colors) },
-    )
 }

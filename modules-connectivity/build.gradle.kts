@@ -41,6 +41,9 @@ dependencies {
     testImplementation(project(":app-common-test"))
     implementation(project(":module-core"))
     implementation(project(":sync-core"))
+    implementation(project(":modules-meta"))
+    implementation("androidx.glance:glance-appwidget:1.2.0-rc01")
+    implementation("androidx.glance:glance-material3:1.2.0-rc01")
 
     addAndroidCore()
     addDI()
