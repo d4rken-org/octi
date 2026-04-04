@@ -43,6 +43,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,7 +58,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -125,6 +128,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val fileIdCache = ConcurrentHashMap<Pair<DeviceId, ModuleId>, String>()
     private val fileIdReverseCache = ConcurrentHashMap<String, Pair<DeviceId, ModuleId>>()
 
+    @Volatile private var lastWrittenDeviceInfo: GDriveDeviceInfo? = null
     private val _syncEventMode = MutableStateFlow(EventMode.NONE)
     override val syncEventMode: StateFlow<EventMode> = _syncEventMode.asStateFlow()
 
@@ -680,26 +684,39 @@ class GDriveAppDataConnector @AssistedInject constructor(
             log(TAG) { "writeDrive(): Created device dir $it" }
         }
 
-        data.modules.forEach { module ->
-            log(TAG, VERBOSE) { "writeDrive(): Writing module $module" }
-            val moduleFile = deviceDir.child(module.moduleId.id) ?: deviceDir.createFile(module.moduleId.id).also {
-                log(TAG, VERBOSE) { "writeDrive(): Created module file $it" }
-            }
-            moduleFile.writeData(module.payload)
+        val writeSemaphore = Semaphore(3)
+        coroutineScope {
+            data.modules.map { module ->
+                async {
+                    writeSemaphore.withPermit {
+                        log(TAG, VERBOSE) { "writeDrive(): Writing module $module" }
+                        val moduleFile = deviceDir.child(module.moduleId.id)
+                            ?: deviceDir.createFile(module.moduleId.id).also {
+                                log(TAG, VERBOSE) { "writeDrive(): Created module file $it" }
+                            }
+                        moduleFile.writeData(module.payload)
+                    }
+                }
+            }.awaitAll()
         }
 
-        // Write device info metadata
+        // Write device info metadata only when changed
         try {
             val deviceInfo = GDriveDeviceInfo(
                 version = BuildConfigWrap.VERSION_NAME,
                 platform = "android",
                 label = syncSettings.deviceLabel.value(),
             )
-            val infoPayload = json.encodeToString(deviceInfo).encodeToByteArray().toByteString()
-            val infoFile = deviceDir.child(DEVICE_INFO_FILE) ?: deviceDir.createFile(DEVICE_INFO_FILE).also {
-                log(TAG, VERBOSE) { "writeDrive(): Created device info file $it" }
+            if (deviceInfo != lastWrittenDeviceInfo) {
+                val infoPayload = json.encodeToString(deviceInfo).encodeToByteArray().toByteString()
+                val infoFile = deviceDir.child(DEVICE_INFO_FILE) ?: deviceDir.createFile(DEVICE_INFO_FILE).also {
+                    log(TAG, VERBOSE) { "writeDrive(): Created device info file $it" }
+                }
+                infoFile.writeData(infoPayload)
+                lastWrittenDeviceInfo = deviceInfo
+            } else {
+                log(TAG, VERBOSE) { "writeDrive(): Device info unchanged, skipping" }
             }
-            infoFile.writeData(infoPayload)
         } catch (e: Exception) {
             log(TAG, WARN) { "writeDrive(): Failed to write $DEVICE_INFO_FILE: ${e.message}" }
         }

@@ -392,42 +392,53 @@ class SyncManagerSyncWriteTest : BaseTest() {
     @Nested
     inner class `sync lock contention` {
         @Test
-        fun `sync re-queues when lock is busy and data is sent after`() = runTest2 {
+        fun `pending flag triggers re-run after current sync completes`() = runTest2 {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            sm.updatePayload(createModule(powerModuleId, "data"))
+            sm.updatePayload(createModule(powerModuleId, "v1"))
 
-            // Make connector1.sync() block until we release it
+            // Make connector1.sync() block until we release the gate
             val gate = CompletableDeferred<Unit>()
-            coEvery { connector1.sync(any()) } coAnswers { gate.await() }
-
-            // Start collecting pendingSyncTrigger BEFORE the contention happens
-            var triggerFired = false
-            val collector = launch {
-                sm.pendingSyncTrigger.first()
-                triggerFired = true
+            var callCount = 0
+            coEvery { connector1.sync(any()) } coAnswers {
+                callCount++
+                if (callCount == 1) gate.await()
             }
-            advanceUntilIdle()
 
             // First sync acquires lock and blocks inside connector.sync()
             val firstSync = launch { sm.sync(SyncOptions(writeData = true, readData = false, stats = false)) }
             advanceUntilIdle()
 
-            // Second sync should hit tryLock failure and call requestSync()
+            // Second sync hits tryLock failure and sets pending flag
             sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
             advanceUntilIdle()
 
-            // Release the gate so first sync completes
+            // Release the gate — first sync completes, then re-runs due to pending flag
             gate.complete(Unit)
             advanceUntilIdle()
             firstSync.join()
 
-            // Advance past the 2s debounce — the re-queued requestSync() should fire
-            advanceTimeBy(3_000L)
-            triggerFired shouldBe true
+            // connector.sync should have been called twice: original + pending re-run
+            coVerify(exactly = 2) { connector1.sync(any()) }
 
-            collector.cancel()
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `no re-run when nothing is pending`() = runTest2 {
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.updatePayload(createModule(powerModuleId, "data"))
+
+            sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
+            advanceUntilIdle()
+
+            // Only called once — no pending flag was set
+            coVerify(exactly = 1) { connector1.sync(any()) }
+
             job.cancel()
             advanceUntilIdle()
         }

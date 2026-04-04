@@ -37,6 +37,7 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -51,6 +52,7 @@ class SyncManager @Inject constructor(
 ) {
 
     private val syncLock = Mutex()
+    private val pendingSync = AtomicBoolean(false)
     private val modulePayloads = ConcurrentHashMap<ModuleId, SyncWrite.Device.Module>()
 
     private val syncRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
@@ -121,29 +123,32 @@ class SyncManager @Inject constructor(
     suspend fun sync(options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(${options.logLabel})" }
         if (!syncLock.tryLock()) {
-            log(TAG) { "Sync already in progress, re-queuing" }
-            requestSync()
+            pendingSync.set(true)
+            log(TAG) { "Sync already in progress, flagged for re-run" }
             return
         }
         try {
-            val syncJobs = connectors.first()
-                .filter {
-                    val paused = syncSettings.pausedConnectors.value().contains(it.identifier)
-                    if (paused) log(TAG, INFO) { "Connector is paused: $it" }
-                    !paused
-                }
-                .map {
-                    scope.launch {
-                        try {
-                            sync(it.identifier, options = options)
-                        } catch (e: CancellationException) {
-                            throw e
-                        } catch (e: Exception) {
-                            log(TAG, ERROR) { "sync(): ${it.identifier} failed: ${e.asLog()}" }
+            do {
+                pendingSync.set(false)
+                val syncJobs = connectors.first()
+                    .filter {
+                        val paused = syncSettings.pausedConnectors.value().contains(it.identifier)
+                        if (paused) log(TAG, INFO) { "Connector is paused: $it" }
+                        !paused
+                    }
+                    .map {
+                        scope.launch {
+                            try {
+                                sync(it.identifier, options = options)
+                            } catch (e: CancellationException) {
+                                throw e
+                            } catch (e: Exception) {
+                                log(TAG, ERROR) { "sync(): ${it.identifier} failed: ${e.asLog()}" }
+                            }
                         }
                     }
-                }
-            syncJobs.joinAll()
+                syncJobs.joinAll()
+            } while (pendingSync.getAndSet(false))
         } finally {
             syncLock.unlock()
         }
