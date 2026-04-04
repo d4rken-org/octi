@@ -196,8 +196,8 @@ class SyncOrchestratorTest : BaseTest() {
         }
 
         @Test
-        fun `sync failure calls requestSync for retry`() = runTest2(autoCancel = true) {
-            coEvery { syncManager.sync(any<SyncOptions>()) } throws RuntimeException("Network error")
+        fun `transient failure calls requestSync for retry`() = runTest2(autoCancel = true) {
+            coEvery { syncManager.sync(any<SyncOptions>()) } throws java.io.IOException("Network error")
 
             val orchestrator = createOrchestrator(this)
             orchestrator.start()
@@ -207,6 +207,20 @@ class SyncOrchestratorTest : BaseTest() {
             advanceUntilIdle()
 
             verify(exactly = 1) { syncManager.requestSync() }
+        }
+
+        @Test
+        fun `non-transient failure does not retry`() = runTest2(autoCancel = true) {
+            coEvery { syncManager.sync(any<SyncOptions>()) } throws RuntimeException("Auth error")
+
+            val orchestrator = createOrchestrator(this)
+            orchestrator.start()
+            advanceUntilIdle()
+
+            pendingSyncTriggerFlow.emit(Unit)
+            advanceUntilIdle()
+
+            verify(exactly = 0) { syncManager.requestSync() }
         }
 
         @Test
