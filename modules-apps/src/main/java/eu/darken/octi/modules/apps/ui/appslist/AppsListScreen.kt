@@ -47,7 +47,7 @@ import eu.darken.octi.modules.apps.R as AppsR
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.core.AppsSortMode
 import eu.darken.octi.modules.apps.core.installerIconRes
-import java.time.Instant
+import kotlin.time.Clock
 
 @Composable
 fun AppsListScreenHost(
@@ -240,7 +240,7 @@ private fun AppsListScreenPreview() = PreviewWrapper {
                         label = "Google Maps",
                         versionCode = 123456,
                         versionName = "11.98.0",
-                        installedAt = Instant.now(),
+                        installedAt = Clock.System.now(),
                         installerPkg = "com.android.vending",
                     ),
                     onClick = {},
@@ -251,7 +251,7 @@ private fun AppsListScreenPreview() = PreviewWrapper {
                         label = "Firefox",
                         versionCode = 2024010,
                         versionName = "122.0",
-                        installedAt = Instant.now(),
+                        installedAt = Clock.System.now(),
                         installerPkg = "com.android.vending",
                     ),
                     onClick = {},
@@ -262,7 +262,7 @@ private fun AppsListScreenPreview() = PreviewWrapper {
                         label = "F-Droid",
                         versionCode = 1019,
                         versionName = "1.19.0",
-                        installedAt = Instant.now(),
+                        installedAt = Clock.System.now(),
                         installerPkg = null,
                     ),
                     onClick = {},

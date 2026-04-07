@@ -13,7 +13,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class OctiServerConnectorMergeTest : BaseTest() {
 
@@ -33,7 +34,7 @@ class OctiServerConnectorMergeTest : BaseTest() {
             connectorId = connectorId,
             deviceId = deviceId,
             moduleId = moduleId,
-            modifiedAt = Instant.now(),
+            modifiedAt = Clock.System.now(),
             payload = payload.encodeUtf8(),
         )
     }

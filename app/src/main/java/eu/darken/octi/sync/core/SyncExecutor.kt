@@ -12,6 +12,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.TimeSource
 
 @Singleton
 class SyncExecutor @Inject constructor(
@@ -23,7 +24,7 @@ class SyncExecutor @Inject constructor(
 
     suspend fun execute(reason: String) {
         log(TAG, INFO) { "execute() starting, reason=$reason" }
-        val start = System.currentTimeMillis()
+        val start = TimeSource.Monotonic.markNow()
 
         try {
             moduleManager.refresh()
@@ -59,8 +60,8 @@ class SyncExecutor @Inject constructor(
             log(TAG, ERROR) { "Failed to check alerts: ${e.asLog()}" }
         }
 
-        val duration = System.currentTimeMillis() - start
-        log(TAG, INFO) { "execute() finished in ${duration}ms, reason=$reason" }
+        val duration = start.elapsedNow()
+        log(TAG, INFO) { "execute() finished in ${duration.inWholeMilliseconds}ms, reason=$reason" }
     }
 
     companion object {

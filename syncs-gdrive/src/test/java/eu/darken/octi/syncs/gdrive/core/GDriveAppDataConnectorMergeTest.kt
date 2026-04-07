@@ -12,7 +12,8 @@ import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class GDriveAppDataConnectorMergeTest : BaseTest() {
 
@@ -32,7 +33,7 @@ class GDriveAppDataConnectorMergeTest : BaseTest() {
             connectorId = connectorId,
             deviceId = deviceId,
             moduleId = moduleId,
-            modifiedAt = Instant.now(),
+            modifiedAt = Clock.System.now(),
             payload = payload.encodeUtf8(),
         )
     }

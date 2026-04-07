@@ -62,7 +62,8 @@ import eu.darken.octi.R
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun RecorderScreen(
@@ -261,7 +262,7 @@ fun RecorderScreen(
                                         Formatter.formatShortFileSize(context, state.totalUncompressedSize)
                                     }
                                     val durationText = state.recordingDuration?.let { d ->
-                                        val totalSeconds = d.seconds
+                                        val totalSeconds = d.inWholeSeconds
                                         val minutes = totalSeconds / 60
                                         val seconds = totalSeconds % 60
                                         if (minutes > 0) context.getString(R.string.debug_debuglog_duration_minutes_seconds, minutes, seconds)
@@ -418,7 +419,7 @@ private fun RecorderScreenPreview() = PreviewWrapper {
             fileCount = 2,
             totalUncompressedSize = 524544L,
             compressedSize = 131072L,
-            recordingDuration = Duration.ofMinutes(2).plusSeconds(35),
+            recordingDuration = 2.minutes + 35.seconds,
             loading = false,
         ),
         onShare = {},

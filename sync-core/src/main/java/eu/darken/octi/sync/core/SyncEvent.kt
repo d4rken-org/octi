@@ -1,7 +1,7 @@
 package eu.darken.octi.sync.core
 
 import eu.darken.octi.module.core.ModuleId
-import java.time.Instant
+import kotlin.time.Instant
 
 sealed interface SyncEvent {
     val connectorId: ConnectorId

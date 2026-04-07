@@ -66,7 +66,8 @@ import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import eu.darken.octi.syncs.octiserver.core.OctiServer
 import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import okio.ByteString.Companion.encodeUtf8
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun SyncListScreenHost(vm: SyncListVM = hiltViewModel()) {
@@ -422,7 +423,7 @@ private fun LastSyncField(state: SyncConnectorState) {
     )
     Text(
         text = state.lastSyncAt
-            ?.let { DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString() }
+            ?.let { DateUtils.getRelativeTimeSpanString(it.toEpochMilliseconds()).toString() }
             ?: stringResource(R.string.sync_last_never_label),
         style = MaterialTheme.typography.bodyMedium,
         color = if (state.lastError != null) {
@@ -520,7 +521,7 @@ private fun SyncListScreenPreview() = PreviewWrapper {
                     ),
                     ourState = OctiServerConnector.State(
                         activeActions = 0,
-                        lastActionAt = Instant.now().minusSeconds(300),
+                        lastActionAt = Clock.System.now() - 300.seconds,
                         deviceMetadata = listOf(
                             DeviceMetadata(deviceId = DeviceId("device-1")),
                             DeviceMetadata(deviceId = DeviceId("device-2")),

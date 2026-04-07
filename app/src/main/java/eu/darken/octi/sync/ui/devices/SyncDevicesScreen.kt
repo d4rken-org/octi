@@ -49,7 +49,8 @@ import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.IssueSeverity
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun SyncDevicesScreenHost(
@@ -192,7 +193,7 @@ private fun DeviceRow(
             Text(
                 text = stringResource(
                     SyncR.string.sync_device_last_seen_label,
-                    DateUtils.getRelativeTimeSpanString(lastSeen.toEpochMilli()).toString(),
+                    DateUtils.getRelativeTimeSpanString(lastSeen.toEpochMilliseconds()).toString(),
                 ),
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -241,15 +242,15 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
                         deviceManufacturer = "Google",
                         deviceName = "Pixel 8",
                         deviceType = MetaInfo.DeviceType.PHONE,
-                        deviceBootedAt = Instant.now(),
+                        deviceBootedAt = Clock.System.now(),
                         androidVersionName = "14",
                         androidApiLevel = 34,
                         androidSecurityPatch = "2024-01-05",
                     ),
-                    lastSeen = Instant.now(),
+                    lastSeen = Clock.System.now(),
                     error = null,
                     serverVersion = "0.14.0",
-                    serverAddedAt = Instant.now(),
+                    serverAddedAt = Clock.System.now(),
                     serverPlatform = "android",
                 ),
                 SyncDevicesVM.DeviceItem(
@@ -262,15 +263,15 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
                         deviceManufacturer = "Samsung",
                         deviceName = "Galaxy Tab S9",
                         deviceType = MetaInfo.DeviceType.TABLET,
-                        deviceBootedAt = Instant.now(),
+                        deviceBootedAt = Clock.System.now(),
                         androidVersionName = "14",
                         androidApiLevel = 34,
                         androidSecurityPatch = "2024-01-01",
                     ),
-                    lastSeen = Instant.now().minusSeconds(86400 * 60),
+                    lastSeen = Clock.System.now() - (86400 * 60).seconds,
                     error = RuntimeException("Connection timed out"),
                     serverVersion = "0.13.0",
-                    serverAddedAt = Instant.now().minusSeconds(86400 * 60),
+                    serverAddedAt = Clock.System.now() - (86400 * 60).seconds,
                     serverPlatform = "android",
                 ),
             ),

@@ -12,9 +12,9 @@ import eu.darken.octi.main.core.CurriculumVitae
 import io.github.z4kn4fein.semver.Version
 import io.github.z4kn4fein.semver.VersionFormatException
 import kotlinx.coroutines.flow.firstOrNull
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
 
 @Singleton
 class ReleaseManager @Inject constructor(
@@ -63,7 +63,7 @@ class ReleaseManager @Inject constructor(
 
             else -> {
                 log(TAG, INFO) { "releaseParty(): User isn't invited." }
-                settings.releasePartyAt.value(Instant.now())
+                settings.releasePartyAt.value(Clock.System.now())
                 false
             }
         }

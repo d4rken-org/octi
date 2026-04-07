@@ -26,10 +26,11 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import java.time.Instant
 import java.util.Base64
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class OctiServerWebSocket(
     private val credentials: OctiServer.Credentials,
@@ -140,7 +141,7 @@ class OctiServerWebSocket(
             connectorId = connectorId,
             deviceId = DeviceId(deviceId),
             moduleId = ModuleId(moduleId),
-            modifiedAt = modifiedAt?.let { runCatching { Instant.parse(it) }.getOrNull() } ?: Instant.now(),
+            modifiedAt = modifiedAt?.let { runCatching { Instant.parse(it) }.getOrNull() } ?: Clock.System.now(),
             action = when (action) {
                 "deleted" -> SyncEvent.ModuleChanged.Action.DELETED
                 else -> SyncEvent.ModuleChanged.Action.UPDATED

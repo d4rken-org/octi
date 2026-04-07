@@ -8,7 +8,9 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 class SyncWorkerControlWorkerStateTest : BaseTest() {
 
@@ -76,13 +78,13 @@ class SyncWorkerControlWorkerStateTest : BaseTest() {
 
         @Test
         fun `valid next schedule time converts to Instant`() {
-            val epochMs = Instant.now().plusSeconds(3600).toEpochMilli()
+            val epochMs = (Clock.System.now() + 3600.seconds).toEpochMilliseconds()
             val result = mockWorkInfo(
                 state = WorkInfo.State.ENQUEUED,
                 nextScheduleTimeMillis = epochMs,
             ).toWorkerInfo()
 
-            result.nextRunAt shouldBe Instant.ofEpochMilli(epochMs)
+            result.nextRunAt shouldBe Instant.fromEpochMilliseconds(epochMs)
         }
 
         @Test

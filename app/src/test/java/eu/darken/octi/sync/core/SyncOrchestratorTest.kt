@@ -18,7 +18,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 class SyncOrchestratorTest : BaseTest() {
 
@@ -152,7 +153,7 @@ class SyncOrchestratorTest : BaseTest() {
 
         @Test
         fun `propagates next run time`() = runTest2(autoCancel = true) {
-            val nextRun = Instant.now().plusSeconds(2700)
+            val nextRun = Clock.System.now() + 2700.seconds
             connectorsFlow.value = listOf(mockConnector(ConnectorType.OCTISERVER))
             workerStateFlow.value = workerStateFlow.value.copy(
                 defaultWorker = SyncWorkerControl.WorkerState.WorkerInfo(

@@ -4,7 +4,7 @@ import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
+import kotlin.time.Instant
 
 @Serializable
 data class MetaInfo(

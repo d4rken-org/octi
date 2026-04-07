@@ -1,7 +1,7 @@
 package eu.darken.octi.common.upgrade
 
 import kotlinx.coroutines.flow.Flow
-import java.time.Instant
+import kotlin.time.Instant
 
 interface UpgradeRepo {
     val mainWebsite: String

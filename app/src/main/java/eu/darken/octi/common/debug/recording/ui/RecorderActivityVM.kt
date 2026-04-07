@@ -29,9 +29,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import java.io.File
-import java.time.Duration
-import java.time.Instant
 import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class RecorderActivityVM @Inject constructor(
@@ -68,16 +68,16 @@ class RecorderActivityVM @Inject constructor(
                         session.sessionDir.toPath(),
                         java.nio.file.attribute.BasicFileAttributes::class.java,
                     )
-                    val endTime = if (session.coreLogFile.exists()) {
+                    val endMillis = if (session.coreLogFile.exists()) {
                         val logAttrs = java.nio.file.Files.readAttributes(
                             session.coreLogFile.toPath(),
                             java.nio.file.attribute.BasicFileAttributes::class.java,
                         )
-                        logAttrs.lastModifiedTime().toInstant()
+                        logAttrs.lastModifiedTime().toMillis()
                     } else {
-                        dirAttrs.lastModifiedTime().toInstant()
+                        dirAttrs.lastModifiedTime().toMillis()
                     }
-                    Duration.between(dirAttrs.creationTime().toInstant(), endTime)
+                    (endMillis - dirAttrs.creationTime().toMillis()).milliseconds
                 } catch (e: Exception) {
                     log(TAG) { "Failed to read session dir creation time: $e" }
                     null

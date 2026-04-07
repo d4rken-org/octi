@@ -1,7 +1,8 @@
 package eu.darken.octi.sync.core
 
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Instant
 
 interface SyncConnectorState {
     val activeActions: Int
@@ -10,7 +11,7 @@ interface SyncConnectorState {
     val lastError: Exception?
 
     data class Quota(
-        val updatedAt: Instant = Instant.now(),
+        val updatedAt: Instant = Clock.System.now(),
         val storageUsed: Long = -1,
         val storageTotal: Long = -1,
     ) {

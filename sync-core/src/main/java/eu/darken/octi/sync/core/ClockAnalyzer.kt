@@ -10,10 +10,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import java.time.Duration
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 @Singleton
 class ClockAnalyzer @Inject constructor(
@@ -35,13 +39,13 @@ class ClockAnalyzer @Inject constructor(
         syncManager.states,
         syncSettings.clockSkewThreshold.flow,
     ) { devices, states, threshold ->
-        val now = Instant.now()
+        val now = Clock.System.now()
         val deviceTimestamps = devices.mapNotNull { device ->
             val mostRecent = device.modules.maxOfOrNull { it.modifiedAt } ?: return@mapNotNull null
             device.deviceId to mostRecent
         }
         val allOffsets = states.flatMap { it.clockOffsets }
-        val freshOffsets = allOffsets.filter { it.measuredAt.isAfter(now.minus(Duration.ofMinutes(30))) }
+        val freshOffsets = allOffsets.filter { it.measuredAt > (now - 30.minutes) }
         Companion.analyze(deviceTimestamps, syncSettings.deviceId, freshOffsets, threshold, now)
     }
         .distinctUntilChanged()
@@ -63,29 +67,29 @@ class ClockAnalyzer @Inject constructor(
                 return null
             }
 
-            val threshold = threshold.coerceIn(Duration.ofSeconds(1), Duration.ofDays(1))
+            val threshold = threshold.coerceIn(1.seconds, 1.days)
 
             // If current device is absent from sync data, we can't reliably determine blame
             val currentDevicePresent = devices.any { (id, _) -> id == currentDeviceId }
             val remoteDevices = devices.filter { (id, _) -> id != currentDeviceId }
             val skewedDeviceIds = remoteDevices
-                .filter { (_, modifiedAt) -> modifiedAt.isAfter(now.plus(threshold)) }
+                .filter { (_, modifiedAt) -> modifiedAt > (now + threshold) }
                 .map { (id, _) -> id }
                 .toSet()
 
             // Compute server clock offset early — it's a primary detection signal
             // Positive = local ahead, negative = local behind
-            val freshOffsets = clockOffsets.filter { it.measuredAt.isAfter(now.minus(Duration.ofMinutes(30))) }
+            val freshOffsets = clockOffsets.filter { it.measuredAt > (now - 30.minutes) }
             val localClockOffset = if (freshOffsets.isNotEmpty()) {
-                val offsets = freshOffsets.map { it.offset.seconds }.sorted()
+                val offsets = freshOffsets.map { it.offset.inWholeSeconds }.sorted()
                 val mid = offsets.size / 2
                 val medianSeconds = if (offsets.size % 2 == 0) (offsets[mid - 1] + offsets[mid]) / 2 else offsets[mid]
-                Duration.ofSeconds(medianSeconds)
+                medianSeconds.seconds
             } else {
                 null
             }
 
-            val offsetExceedsThreshold = localClockOffset != null && localClockOffset.abs() > threshold
+            val offsetExceedsThreshold = localClockOffset != null && localClockOffset.absoluteValue > threshold
 
             // No skewed devices AND no significant offset → no discrepancy
             if (skewedDeviceIds.isEmpty() && !offsetExceedsThreshold) {

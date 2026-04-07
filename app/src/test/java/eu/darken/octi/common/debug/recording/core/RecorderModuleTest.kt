@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import testhelpers.BaseTest
 import java.io.File
+import kotlin.time.Clock
 
 class RecorderModuleTest : BaseTest() {
 
@@ -95,7 +96,7 @@ class RecorderModuleTest : BaseTest() {
         @Test
         fun `parses valid content`() {
             val sessionDir = File(tempDir, "my-session")
-            val startedAt = System.currentTimeMillis() - 60_000
+            val startedAt = Clock.System.now().toEpochMilliseconds() - 60_000
             triggerFile.writeText("${sessionDir.absolutePath}\n$startedAt")
 
             val result = module.readTriggerFile()
@@ -129,7 +130,7 @@ class RecorderModuleTest : BaseTest() {
 
         @Test
         fun `returns null for future timestamp`() {
-            val futureTime = System.currentTimeMillis() + 86_400_000
+            val futureTime = Clock.System.now().toEpochMilliseconds() + 86_400_000
             triggerFile.writeText("/some/path\n$futureTime")
             module.readTriggerFile().shouldBeNull()
         }
@@ -152,7 +153,7 @@ class RecorderModuleTest : BaseTest() {
         @Test
         fun `resumes existing session from trigger file`() {
             val sessionDir = createSessionDir("eu.darken.octi_1.0_1709312400000")
-            val startedAt = System.currentTimeMillis() - 120_000
+            val startedAt = Clock.System.now().toEpochMilliseconds() - 120_000
             module.writeTriggerFile(sessionDir, startedAt)
 
             val (resultDir, resultStartedAt) = module.findOrCreateSession()
@@ -163,7 +164,7 @@ class RecorderModuleTest : BaseTest() {
         @Test
         fun `preserves original startedAt on resume`() {
             val sessionDir = createSessionDir("eu.darken.octi_1.0_1709312400000")
-            val originalStartedAt = System.currentTimeMillis() - 3_600_000
+            val originalStartedAt = Clock.System.now().toEpochMilliseconds() - 3_600_000
             module.writeTriggerFile(sessionDir, originalStartedAt)
 
             val (_, resultStartedAt) = module.findOrCreateSession()
@@ -173,7 +174,7 @@ class RecorderModuleTest : BaseTest() {
         @Test
         fun `creates new session when trigger references missing dir`() {
             val missingDir = File(logDir, "eu.darken.octi_1.0_gone")
-            module.writeTriggerFile(missingDir, System.currentTimeMillis() - 1000)
+            module.writeTriggerFile(missingDir, Clock.System.now().toEpochMilliseconds() - 1000)
 
             val (resultDir, _) = module.findOrCreateSession()
             resultDir.isDirectory shouldBe true
@@ -183,7 +184,7 @@ class RecorderModuleTest : BaseTest() {
         @Test
         fun `creates new session when trigger references dir without core log`() {
             val emptySession = File(logDir, "eu.darken.octi_1.0_empty").also { it.mkdirs() }
-            module.writeTriggerFile(emptySession, System.currentTimeMillis() - 1000)
+            module.writeTriggerFile(emptySession, Clock.System.now().toEpochMilliseconds() - 1000)
 
             val (resultDir, _) = module.findOrCreateSession()
             resultDir.absolutePath shouldBe File(logDir, resultDir.name).absolutePath
@@ -253,7 +254,7 @@ class RecorderModuleTest : BaseTest() {
         @Test
         fun `write then read preserves data`() {
             val sessionDir = File(tempDir, "roundtrip-session")
-            val startedAt = System.currentTimeMillis() - 5000
+            val startedAt = Clock.System.now().toEpochMilliseconds() - 5000
             module.writeTriggerFile(sessionDir, startedAt)
 
             val result = module.readTriggerFile()
@@ -265,7 +266,7 @@ class RecorderModuleTest : BaseTest() {
         @Test
         fun `multiple restarts resume same session`() {
             val sessionDir = createSessionDir("eu.darken.octi_1.0_1709312400000")
-            val startedAt = System.currentTimeMillis() - 300_000
+            val startedAt = Clock.System.now().toEpochMilliseconds() - 300_000
             module.writeTriggerFile(sessionDir, startedAt)
 
             repeat(3) {

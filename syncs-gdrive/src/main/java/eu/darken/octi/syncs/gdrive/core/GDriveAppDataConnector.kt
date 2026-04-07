@@ -66,8 +66,10 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okio.ByteString.Companion.toByteString
 import okio.IOException
-import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlin.time.TimeSource
 import com.google.api.services.drive.model.File as GDriveFile
 
 
@@ -207,7 +209,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     connectorId = identifier,
                     deviceId = DeviceId(parentName),
                     moduleId = moduleId,
-                    modifiedAt = Instant.now(),
+                    modifiedAt = Clock.System.now(),
                     action = SyncEvent.ModuleChanged.Action.UPDATED,
                 )
             }
@@ -265,7 +267,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         deviceFilter: Set<DeviceId>? = null,
     ): GDriveData {
         log(TAG, DEBUG) { "readDrive(moduleFilter=$moduleFilter, deviceFilter=$deviceFilter): Starting..." }
-        val start = System.currentTimeMillis()
+        val start = TimeSource.Monotonic.markNow()
 
         val deviceDataDir = appDataRoot.child(DEVICE_DATA_DIR_NAME)
         log(TAG, VERBOSE) { "readDrive(): userDir=$deviceDataDir" }
@@ -316,7 +318,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                             connectorId = identifier,
                             deviceId = deviceId,
                             moduleId = moduleId,
-                            modifiedAt = Instant.ofEpochMilli(moduleFile.modifiedTime.value),
+                            modifiedAt = Instant.fromEpochMilliseconds(moduleFile.modifiedTime.value),
                             payload = payload,
                         ).also { log(TAG, VERBOSE) { "readDrive(): Got module data: $it" } }
                     }
@@ -333,7 +335,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
 
         val devices = deviceFetchJobs.awaitAll()
-        log(TAG) { "readDrive() took ${System.currentTimeMillis() - start}ms" }
+        log(TAG) { "readDrive() took ${start.elapsedNow().inWholeMilliseconds}ms" }
 
         return GDriveData(
             connectorId = identifier,
@@ -345,7 +347,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         cachedIds: Map<Pair<DeviceId, ModuleId>, String>,
     ): GDriveData {
         log(TAG, DEBUG) { "readDriveByFileIds(): Fetching ${cachedIds.size} files directly by ID" }
-        val start = System.currentTimeMillis()
+        val start = TimeSource.Monotonic.markNow()
 
         val fetchJobs = cachedIds.map { (key, fileId) ->
             val (deviceId, moduleId) = key
@@ -369,14 +371,14 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     connectorId = identifier,
                     deviceId = deviceId,
                     moduleId = moduleId,
-                    modifiedAt = Instant.ofEpochMilli(file.modifiedTime.value),
+                    modifiedAt = Instant.fromEpochMilliseconds(file.modifiedTime.value),
                     payload = payload,
                 )
             }
         }
 
         val modules = fetchJobs.awaitAll().filterNotNull()
-        log(TAG) { "readDriveByFileIds() took ${System.currentTimeMillis() - start}ms" }
+        log(TAG) { "readDriveByFileIds() took ${start.elapsedNow().inWholeMilliseconds}ms" }
 
         val deviceGroups = modules.groupBy { it.deviceId }
         return GDriveData(
@@ -517,7 +519,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     override suspend fun sync(options: SyncOptions) {
         log(TAG) { "sync(${options.logLabel})" }
-        val start = System.currentTimeMillis()
+        val start = TimeSource.Monotonic.markNow()
 
         if (!isInternetAvailable()) {
             log(TAG, WARN) { "sync(): Skipping, we are offline." }
@@ -560,7 +562,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                             }
                             val lastSeen = dir.listFiles()
                                 .filter { it.name != DEVICE_INFO_FILE && !it.isDirectory }
-                                .maxOfOrNull { Instant.ofEpochMilli(it.modifiedTime.value) }
+                                .maxOfOrNull { Instant.fromEpochMilliseconds(it.modifiedTime.value) }
                             DeviceMetadata(
                                 deviceId = deviceId,
                                 version = info?.version,
@@ -574,8 +576,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     } catch (e: Exception) {
                         log(TAG, ERROR) { "sync(): Failed to list of known devices: ${e.asLog()}" }
                     }
-                    val stop = System.currentTimeMillis()
-                    log(TAG, VERBOSE) { "sync(...): devices finished (took ${stop - start}ms)" }
+                    log(TAG, VERBOSE) { "sync(...): devices finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
                 }.run { jobs.add(this) }
 
                 scope.async(dispatcherProvider.IO) {
@@ -587,8 +588,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     } catch (e: Exception) {
                         log(TAG, ERROR) { "sync(): Failed to update storage quota: ${e.asLog()}" }
                     }
-                    val stop = System.currentTimeMillis()
-                    log(TAG, VERBOSE) { "sync(...): quota finished (took ${stop - start}ms)" }
+                    log(TAG, VERBOSE) { "sync(...): quota finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
                 }.run { jobs.add(this) }
 
 
@@ -643,8 +643,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     } catch (e: Exception) {
                         log(TAG, ERROR) { "sync(): Failed to read: ${e.asLog()}" }
                     }
-                    val stop = System.currentTimeMillis()
-                    log(TAG, VERBOSE) { "sync(...): readData finished (took ${stop - start}ms)" }
+                    log(TAG, VERBOSE) { "sync(...): readData finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
                 }.run { jobs.add(this) }
 
 
@@ -656,8 +655,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         } finally {
             syncLock.withLock {
                 isSyncing = false
-                val stop = System.currentTimeMillis()
-                log(TAG, VERBOSE) { "sync(): Sync done, releasing (took ${stop - start}ms)" }
+                log(TAG, VERBOSE) { "sync(): Sync done, releasing (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
             }
         }
     }
@@ -739,7 +737,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             .limit
 
         return SyncConnectorState.Quota(
-            updatedAt = Instant.now(),
+            updatedAt = Clock.System.now(),
             storageUsed = allItems.sumOf { it.quotaBytesUsed ?: 0 },
             storageTotal = storageTotal
         )
@@ -749,7 +747,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         tag: String,
         block: suspend GDriveEnvironment.() -> R,
     ): R {
-        val start = System.currentTimeMillis()
+        val start = TimeSource.Monotonic.markNow()
         log(TAG, VERBOSE) { "runDriveAction($tag)" }
 
         if (_state.value().isDead) {
@@ -768,7 +766,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 _state.updateBlocking {
                     copy(
                         lastError = null,
-                        lastActionAt = Instant.now(),
+                        lastActionAt = Clock.System.now(),
                     )
                 }
             }
@@ -783,7 +781,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 log(TAG, VERBOSE) { "runDriveAction($tag) finished" }
                 copy(activeActions = activeActions - 1)
             }
-            log(TAG, VERBOSE) { "runDriveAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
+            log(TAG, VERBOSE) { "runDriveAction($tag) finished after ${start.elapsedNow().inWholeMilliseconds}ms" }
         }
     }
 

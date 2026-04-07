@@ -23,8 +23,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.plus
-import java.time.Instant
 import java.util.UUID
+import kotlin.time.Clock
 
 
 abstract class BaseModuleRepo<T : Any>(
@@ -117,7 +117,7 @@ abstract class BaseModuleRepo<T : Any>(
         .map {
             if (it == null) return@map null
             ModuleData(
-                modifiedAt = Instant.now(),
+                modifiedAt = Clock.System.now(),
                 deviceId = moduleSync.ourDeviceId,
                 moduleId = moduleId,
                 data = it

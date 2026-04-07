@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import java.time.Instant
+import kotlin.time.Instant
 import eu.darken.octi.modules.apps.R as AppsR
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.core.installerIconRes
@@ -110,7 +110,7 @@ private val PREVIEW_PACKAGES = listOf(
         label = "WhatsApp",
         versionCode = 231676,
         versionName = "2.24.8.78",
-        installedAt = Instant.ofEpochMilli(1710800000000),
+        installedAt = Instant.fromEpochMilliseconds(1710800000000),
         installerPkg = "com.android.vending",
     ),
     AppsInfo.Pkg(
@@ -118,7 +118,7 @@ private val PREVIEW_PACKAGES = listOf(
         label = "Firefox",
         versionCode = 2016042,
         versionName = "124.1.0",
-        installedAt = Instant.ofEpochMilli(1710900000000),
+        installedAt = Instant.fromEpochMilliseconds(1710900000000),
         installerPkg = "org.fdroid.fdroid",
     ),
     AppsInfo.Pkg(
@@ -126,7 +126,7 @@ private val PREVIEW_PACKAGES = listOf(
         label = "SD Maid 2/SE",
         versionCode = 40803,
         versionName = "4.8.3-rc0",
-        installedAt = Instant.ofEpochMilli(1710950000000),
+        installedAt = Instant.fromEpochMilliseconds(1710950000000),
         installerPkg = "com.android.vending",
     ),
 )

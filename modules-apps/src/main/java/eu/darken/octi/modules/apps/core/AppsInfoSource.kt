@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
-import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Instant
 
 @Singleton
 class AppsInfoSource @Inject constructor(
@@ -43,8 +43,8 @@ class AppsInfoSource @Inject constructor(
             .map { pkgInfo ->
                 AppsInfo.Pkg(
                     packageName = pkgInfo.packageName,
-                    installedAt = Instant.ofEpochMilli(pkgInfo.firstInstallTime),
-                    updatedAt = Instant.ofEpochMilli(pkgInfo.lastUpdateTime),
+                    installedAt = Instant.fromEpochMilliseconds(pkgInfo.firstInstallTime),
+                    updatedAt = Instant.fromEpochMilliseconds(pkgInfo.lastUpdateTime),
                     versionCode = PackageInfoCompat.getLongVersionCode(pkgInfo),
                     versionName = pkgInfo.versionName,
                     label = pkgInfo.applicationInfo?.loadLabel(pm)?.toString(),

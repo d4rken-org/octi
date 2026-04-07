@@ -2,15 +2,15 @@ package eu.darken.octi.sync.core
 
 import android.content.Context
 import eu.darken.octi.sync.R
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 object StalenessUtil {
     const val STALE_DEVICE_THRESHOLD_DAYS = 30L
 
     fun isStale(lastSyncTime: Instant?): Boolean {
         if (lastSyncTime == null) return false
-        val daysSinceLastSync = Duration.between(lastSyncTime, Instant.now()).toDays()
+        val daysSinceLastSync = (Clock.System.now() - lastSyncTime).inWholeDays
         return daysSinceLastSync > STALE_DEVICE_THRESHOLD_DAYS
     }
 
@@ -25,7 +25,7 @@ object StalenessUtil {
     }
 
     fun formatStalePeriod(context: Context, lastSyncTime: Instant): String {
-        val daysSinceLastSync = Duration.between(lastSyncTime, Instant.now()).toDays().toInt()
+        val daysSinceLastSync = (Clock.System.now() - lastSyncTime).inWholeDays.toInt()
 
         return when {
             daysSinceLastSync < 60 -> {

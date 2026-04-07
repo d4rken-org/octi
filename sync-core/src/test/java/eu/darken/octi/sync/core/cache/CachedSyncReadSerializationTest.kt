@@ -9,7 +9,7 @@ import kotlinx.serialization.json.Json
 import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
-import java.time.Instant
+import kotlin.time.Instant
 
 class CachedSyncReadSerializationTest : BaseTest() {
 

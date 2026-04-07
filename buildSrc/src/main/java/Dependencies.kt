@@ -88,6 +88,7 @@ fun DependencyHandlerScope.addCoroutines() {
 fun DependencyHandlerScope.addSerialization() {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Serialization.core}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Serialization.core}")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:${Versions.Datetime.core}")
 }
 
 fun DependencyHandlerScope.addIO() {

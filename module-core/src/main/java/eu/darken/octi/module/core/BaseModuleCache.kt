@@ -19,7 +19,7 @@ import kotlinx.serialization.json.Json
 import okio.ByteString
 import java.io.File
 import java.io.IOException
-import java.time.Instant
+import kotlin.time.Instant
 
 
 abstract class BaseModuleCache<T : Any> constructor(

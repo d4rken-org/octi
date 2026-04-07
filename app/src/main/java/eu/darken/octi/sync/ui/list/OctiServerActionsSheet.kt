@@ -41,7 +41,8 @@ import eu.darken.octi.syncs.octiserver.core.OctiServer
 import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import okio.ByteString.Companion.encodeUtf8
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun OctiServerActionsSheet(
@@ -201,7 +202,7 @@ private fun OctiServerActionsSheetPreview() = PreviewWrapper {
             ),
             ourState = OctiServerConnector.State(
                 activeActions = 0,
-                lastActionAt = Instant.now().minusSeconds(300),
+                lastActionAt = Clock.System.now() - 300.seconds,
                 deviceMetadata = listOf(
                     DeviceMetadata(deviceId = DeviceId("device-1")),
                     DeviceMetadata(deviceId = DeviceId("device-2")),

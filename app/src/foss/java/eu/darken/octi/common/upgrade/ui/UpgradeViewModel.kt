@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import javax.inject.Inject
+import kotlin.time.Clock
 
 @HiltViewModel
 class UpgradeViewModel @Inject constructor(
@@ -39,7 +40,7 @@ class UpgradeViewModel @Inject constructor(
 
     fun goGithubSponsors() {
         log(TAG) { "goGithubSponsors()" }
-        handle["browserOpenedAt"] = System.currentTimeMillis()
+        handle["browserOpenedAt"] = Clock.System.now().toEpochMilliseconds()
         upgradeRepo.openSponsorsPage()
     }
 
@@ -47,7 +48,7 @@ class UpgradeViewModel @Inject constructor(
         val openedAt = handle.get<Long>("browserOpenedAt") ?: return
         handle["browserOpenedAt"] = null
 
-        val elapsed = System.currentTimeMillis() - openedAt
+        val elapsed = Clock.System.now().toEpochMilliseconds() - openedAt
         log(TAG) { "onResumed(): elapsed=${elapsed}ms" }
 
         if (elapsed < MIN_SPONSOR_TIME_MS) {

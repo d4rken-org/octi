@@ -1,17 +1,9 @@
 package eu.darken.octi.common
 
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-
-fun OffsetDateTime.toSystemTimezone(): ZonedDateTime = this
-    .atZoneSameInstant(ZoneId.systemDefault())
-
-fun Instant.toSystemTimezone(): ZonedDateTime = this
-    .atZone(ZoneId.systemDefault())
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 fun Instant.clampToNow(): Instant {
-    val now = Instant.now()
-    return if (isAfter(now)) now else this
+    val now = Clock.System.now()
+    return if (this > now) now else this
 }

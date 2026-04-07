@@ -3,7 +3,7 @@ package eu.darken.octi.sync.core
 import eu.darken.octi.common.ca.CaString
 import eu.darken.octi.common.ca.caString
 import eu.darken.octi.sync.R
-import java.time.Instant
+import kotlin.time.Instant
 
 sealed interface CommonIssue : ConnectorIssue {
 

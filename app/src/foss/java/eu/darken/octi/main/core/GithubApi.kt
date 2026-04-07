@@ -1,11 +1,11 @@
 package eu.darken.octi.main.core
 
-import eu.darken.octi.common.serialization.serializer.OffsetDateTimeSerializer
+import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import retrofit2.http.GET
 import retrofit2.http.Path
-import java.time.OffsetDateTime
+import kotlin.time.Instant
 
 interface GithubApi {
 
@@ -15,7 +15,7 @@ interface GithubApi {
         @SerialName("tag_name") val tagName: String,
         @SerialName("prerelease") val isPreRelease: Boolean,
         @SerialName("html_url") val htmlUrl: String,
-        @Serializable(with = OffsetDateTimeSerializer::class) @SerialName("published_at") val publishedAt: OffsetDateTime,
+        @Serializable(with = InstantSerializer::class) @SerialName("published_at") val publishedAt: Instant,
         @SerialName("body") val body: String,
         @SerialName("assets") val assets: List<Asset>,
     ) {

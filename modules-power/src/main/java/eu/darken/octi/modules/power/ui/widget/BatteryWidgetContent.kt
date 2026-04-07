@@ -112,7 +112,7 @@ private fun buildDeviceRows(
             BatteryDeviceRow(
                 deviceName = metaData.data.labelOrFallback,
                 lastSeen = DateUtils.getRelativeTimeSpanString(
-                    metaData.modifiedAt.toEpochMilli(),
+                    metaData.modifiedAt.toEpochMilliseconds(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE,

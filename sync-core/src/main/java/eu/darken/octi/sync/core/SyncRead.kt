@@ -2,7 +2,7 @@ package eu.darken.octi.sync.core
 
 import eu.darken.octi.module.core.ModuleId
 import okio.ByteString
-import java.time.Instant
+import kotlin.time.Instant
 
 interface SyncRead {
     val connectorId: ConnectorId

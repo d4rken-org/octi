@@ -5,8 +5,7 @@ import android.text.format.DateUtils
 import eu.darken.octi.modules.power.R
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.Status
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Clock
 
 class PowerEstimationFormatter(private val context: Context) {
 
@@ -14,16 +13,16 @@ class PowerEstimationFormatter(private val context: Context) {
         power.status == Status.FULL && power.chargeIO.fullSince != null -> {
             context.getString(
                 R.string.module_power_battery_full_since_x,
-                DateUtils.getRelativeTimeSpanString(power.chargeIO.fullSince.toEpochMilli())
+                DateUtils.getRelativeTimeSpanString(power.chargeIO.fullSince.toEpochMilliseconds())
             )
         }
 
         power.status == Status.CHARGING
                 && power.chargeIO.fullAt != null
-                && Duration.between(Instant.now(), power.chargeIO.fullAt).isNegative -> {
+                && (power.chargeIO.fullAt - Clock.System.now()).isNegative() -> {
             context.getString(
                 R.string.module_power_battery_full_since_x,
-                DateUtils.getRelativeTimeSpanString(power.chargeIO.fullAt.toEpochMilli())
+                DateUtils.getRelativeTimeSpanString(power.chargeIO.fullAt.toEpochMilliseconds())
             )
         }
 
@@ -31,8 +30,8 @@ class PowerEstimationFormatter(private val context: Context) {
             context.getString(
                 R.string.module_power_battery_full_in_x,
                 DateUtils.getRelativeTimeSpanString(
-                    power.chargeIO.fullAt.toEpochMilli(),
-                    Instant.now().toEpochMilli(),
+                    power.chargeIO.fullAt.toEpochMilliseconds(),
+                    Clock.System.now().toEpochMilliseconds(),
                     DateUtils.MINUTE_IN_MILLIS,
                 )
             )
@@ -42,8 +41,8 @@ class PowerEstimationFormatter(private val context: Context) {
             context.getString(
                 R.string.module_power_battery_empty_in_x,
                 DateUtils.getRelativeTimeSpanString(
-                    power.chargeIO.emptyAt.toEpochMilli(),
-                    Instant.now().toEpochMilli(),
+                    power.chargeIO.emptyAt.toEpochMilliseconds(),
+                    Clock.System.now().toEpochMilliseconds(),
                     DateUtils.MINUTE_IN_MILLIS,
                 )
             )

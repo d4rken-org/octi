@@ -17,9 +17,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Instant
 
 @Singleton
 class MetaInfoSource @Inject constructor(
@@ -29,7 +31,7 @@ class MetaInfoSource @Inject constructor(
     private val syncSettings: SyncSettings,
 ) : ModuleInfoSource<MetaInfo> {
 
-    private val deviceBootedAt: Instant = Instant.now().minusMillis(SystemClock.elapsedRealtime())
+    private val deviceBootedAt: Instant = Clock.System.now() - SystemClock.elapsedRealtime().milliseconds
 
     override val info: Flow<MetaInfo> = syncSettings.deviceLabel.flow
         .flatMapLatest { deviceLabel ->

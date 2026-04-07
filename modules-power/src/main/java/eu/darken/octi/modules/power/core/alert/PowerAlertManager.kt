@@ -26,9 +26,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
 
 @Singleton
 class PowerAlertManager @Inject constructor(
@@ -230,7 +230,7 @@ class PowerAlertManager @Inject constructor(
                         val otherEvents = oldEvents.filterNot { it.id == alertId }
 
                         (otherEvents + event.copy(
-                            dismissedAt = Instant.now()
+                            dismissedAt = Clock.System.now()
                         )).toSet()
                     }
                     notifications.dismiss(rule)

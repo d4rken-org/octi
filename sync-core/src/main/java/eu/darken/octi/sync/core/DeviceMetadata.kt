@@ -1,6 +1,6 @@
 package eu.darken.octi.sync.core
 
-import java.time.Instant
+import kotlin.time.Instant
 
 data class DeviceMetadata(
     val deviceId: DeviceId,

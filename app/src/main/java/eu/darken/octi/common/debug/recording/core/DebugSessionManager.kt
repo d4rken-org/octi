@@ -29,6 +29,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
 
 @Singleton
 class DebugSessionManager @Inject constructor(
@@ -211,8 +212,8 @@ class DebugSessionManager @Inject constructor(
                     DebugSession.Recording(
                         session = session,
                         size = dirSize,
-                        lastModified = System.currentTimeMillis(),
-                        startedAt = recState.recordingStartedAt ?: System.currentTimeMillis(),
+                        lastModified = Clock.System.now().toEpochMilliseconds(),
+                        startedAt = recState.recordingStartedAt ?: Clock.System.now().toEpochMilliseconds(),
                     )
                 )
             }

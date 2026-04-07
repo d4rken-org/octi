@@ -27,9 +27,10 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Singleton
 class UpgradeRepoGplay @Inject constructor(
@@ -46,7 +47,7 @@ class UpgradeRepoGplay @Inject constructor(
         .onStart { emit(null) }
         .setupCommonEventHandlers(TAG) { "upgradeInfo1" }
         .map { data: BillingData? -> // Only relinquish pro state if we haven't had it for a while
-            val now = System.currentTimeMillis()
+            val now = Clock.System.now().toEpochMilliseconds()
             val lastProStateAt = billingCache.lastProStateAt.value()
             log(TAG) { "Map: now=$now, lastProStateAt=$lastProStateAt, data=${data}" }
 
@@ -70,7 +71,7 @@ class UpgradeRepoGplay @Inject constructor(
         .distinctUntilChanged()
         .catch {
             // Ignore Google Play errors if the last pro state was recent
-            val now = System.currentTimeMillis()
+            val now = Clock.System.now().toEpochMilliseconds()
             val lastProStateAt = billingCache.lastProStateAt.value()
             log(TAG) { "Catch: now=$now, lastProStateAt=$lastProStateAt, error=$it" }
             if ((now - lastProStateAt) < 7 * 24 * 60 * 1000L) { // 7 days
@@ -131,7 +132,7 @@ class UpgradeRepoGplay @Inject constructor(
 
         override val upgradedAt: Instant? = upgrades
             .maxByOrNull { it.purchase.purchaseTime }
-            ?.let { Instant.ofEpochMilli(it.purchase.purchaseTime) }
+            ?.let { Instant.fromEpochMilliseconds(it.purchase.purchaseTime) }
     }
 
 

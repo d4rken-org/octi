@@ -6,7 +6,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStreamWriter
-import java.time.Instant
+import kotlin.time.Clock
 
 
 @SuppressLint("LogNotTimber")
@@ -57,7 +57,7 @@ class FileLogger(private val logFile: File) : Logging.Logger {
     override fun log(priority: Logging.Priority, tag: String, message: String, metaData: Map<String, Any>?) {
         logWriter?.let {
             try {
-                it.write("${Instant.ofEpochMilli(System.currentTimeMillis())}  ${priority.shortLabel}/$tag: $message\n")
+                it.write("${Clock.System.now()}  ${priority.shortLabel}/$tag: $message\n")
                 it.flush()
             } catch (e: IOException) {
                 Log.e(TAG, "Failed to write log line.", e)

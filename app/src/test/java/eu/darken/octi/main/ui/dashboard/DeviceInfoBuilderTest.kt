@@ -16,8 +16,9 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 class DeviceInfoBuilderTest : BaseTest() {
 
@@ -39,7 +40,7 @@ class DeviceInfoBuilderTest : BaseTest() {
         deviceManufacturer = "Test",
         deviceName = "TestDevice",
         deviceType = MetaInfo.DeviceType.PHONE,
-        deviceBootedAt = now.minus(Duration.ofHours(1)),
+        deviceBootedAt = now - 1.hours,
         androidVersionName = "15",
         androidApiLevel = 35,
         androidSecurityPatch = null,
@@ -88,7 +89,7 @@ class DeviceInfoBuilderTest : BaseTest() {
     inner class `stale device` {
         @Test
         fun `stale issue is returned for matching device`() {
-            val staleTime = now.minus(Duration.ofDays(31))
+            val staleTime = now - 31.days
             val item = deviceItem()
             val issues = listOf(
                 CommonIssue.StaleDevice(
@@ -121,7 +122,7 @@ class DeviceInfoBuilderTest : BaseTest() {
     inner class `multiple issues` {
         @Test
         fun `errors are sorted before warnings`() {
-            val staleTime = now.minus(Duration.ofDays(31))
+            val staleTime = now - 31.days
             val item = deviceItem()
             val issues = listOf(
                 CommonIssue.ClockSkew(connectorId = connectorId, deviceId = currentDeviceId),

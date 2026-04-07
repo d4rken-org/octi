@@ -25,6 +25,7 @@ import kotlinx.coroutines.plus
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
 
 @Singleton
 class RecorderModule @Inject constructor(
@@ -113,7 +114,7 @@ class RecorderModule @Inject constructor(
 
     private fun createSessionDir(): File {
         val sanitizedVersion = BuildConfigWrap.VERSION_NAME.replace(Regex("[^A-Za-z0-9._-]"), "_")
-        val dirName = "${BuildConfigWrap.APPLICATION_ID}_${sanitizedVersion}_${System.currentTimeMillis()}"
+        val dirName = "${BuildConfigWrap.APPLICATION_ID}_${sanitizedVersion}_${Clock.System.now().toEpochMilliseconds()}"
 
         val baseDir = getPreferredLogDir()
         val sessionDir = File(baseDir, dirName)
@@ -144,7 +145,7 @@ class RecorderModule @Inject constructor(
         if (lines.size < 2) return null
         val sessionDir = File(lines[0])
         val startedAt = lines[1].toLongOrNull() ?: return null
-        if (startedAt !in 1..System.currentTimeMillis()) return null
+        if (startedAt !in 1..Clock.System.now().toEpochMilliseconds()) return null
         return sessionDir to startedAt
     }
 
@@ -162,12 +163,12 @@ class RecorderModule @Inject constructor(
 
         val existingDir = findExistingSessionDir(lastSession)
         if (existingDir != null) {
-            val startedAt = existingDir.lastModified().takeIf { it > 0 } ?: System.currentTimeMillis()
+            val startedAt = existingDir.lastModified().takeIf { it > 0 } ?: Clock.System.now().toEpochMilliseconds()
             log(TAG, INFO) { "Legacy resume from scan: ${existingDir.name}" }
             return existingDir to startedAt
         }
 
-        return createSessionDir() to System.currentTimeMillis()
+        return createSessionDir() to Clock.System.now().toEpochMilliseconds()
     }
 
     internal fun findExistingSessionDir(lastSession: LogSession? = null): File? {
@@ -231,7 +232,7 @@ class RecorderModule @Inject constructor(
         if (!currentState.isRecording) return StopResult.NotRecording
 
         val sessionDir = currentState.recorder?.sessionDir ?: return StopResult.NotRecording
-        val elapsed = System.currentTimeMillis() - (currentState.recordingStartedAt ?: 0L)
+        val elapsed = Clock.System.now().toEpochMilliseconds() - (currentState.recordingStartedAt ?: 0L)
         if (elapsed < MIN_RECORDING_MS) return StopResult.TooShort
 
         stopRecorder()

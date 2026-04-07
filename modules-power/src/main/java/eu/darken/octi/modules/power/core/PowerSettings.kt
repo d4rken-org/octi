@@ -11,9 +11,9 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.module.core.ModuleSettings
 import eu.darken.octi.modules.power.core.alert.PowerAlertRule
 import kotlinx.serialization.json.Json
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Instant
 
 @Singleton
 class PowerSettings @Inject constructor(

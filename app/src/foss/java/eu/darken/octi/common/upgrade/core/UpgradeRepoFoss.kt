@@ -12,10 +12,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Singleton
 class UpgradeRepoFoss @Inject constructor(
@@ -51,7 +52,7 @@ class UpgradeRepoFoss @Inject constructor(
     fun unlockUpgrade() {
         log(TAG) { "unlockUpgrade()" }
         fossCache.upgrade.valueBlocking = FossUpgrade(
-            upgradedAt = Instant.now(),
+            upgradedAt = Clock.System.now(),
             upgradeType = FossUpgrade.Type.GITHUB_SPONSORS,
         )
     }

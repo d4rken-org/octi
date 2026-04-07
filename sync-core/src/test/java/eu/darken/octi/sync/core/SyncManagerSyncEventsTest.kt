@@ -18,7 +18,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class SyncManagerSyncEventsTest : BaseTest() {
 
@@ -36,7 +37,7 @@ class SyncManagerSyncEventsTest : BaseTest() {
         connectorId = connectorId,
         deviceId = deviceId,
         moduleId = moduleId,
-        modifiedAt = Instant.now(),
+        modifiedAt = Clock.System.now(),
         action = SyncEvent.ModuleChanged.Action.UPDATED,
     )
 

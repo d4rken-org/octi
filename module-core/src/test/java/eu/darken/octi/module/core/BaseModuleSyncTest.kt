@@ -22,7 +22,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 import okio.ByteString
 
 class BaseModuleSyncTest : BaseTest() {
@@ -65,7 +66,7 @@ class BaseModuleSyncTest : BaseTest() {
                 override val connectorId = testConnectorId
                 override val deviceId = deviceId
                 override val moduleId = moduleId
-                override val modifiedAt = Instant.now()
+                override val modifiedAt = Clock.System.now()
                 override val payload: ByteString = ByteString.of(*payload.toByteArray())
             }
         )
@@ -96,7 +97,7 @@ class BaseModuleSyncTest : BaseTest() {
         @Test
         fun `sync calls updatePayload and requestSync`() = runTest2 {
             val data = ModuleData(
-                modifiedAt = Instant.now(),
+                modifiedAt = Clock.System.now(),
                 deviceId = testDeviceId,
                 moduleId = testModuleId,
                 data = "test-data",
@@ -110,7 +111,7 @@ class BaseModuleSyncTest : BaseTest() {
         @Test
         fun `syncActivity is IDLE after sync completes`() = runTest2 {
             val data = ModuleData(
-                modifiedAt = Instant.now(),
+                modifiedAt = Clock.System.now(),
                 deviceId = testDeviceId,
                 moduleId = testModuleId,
                 data = "test-data",
@@ -126,7 +127,7 @@ class BaseModuleSyncTest : BaseTest() {
             every { syncManager.updatePayload(any()) } throws RuntimeException("Sync failed")
 
             val data = ModuleData(
-                modifiedAt = Instant.now(),
+                modifiedAt = Clock.System.now(),
                 deviceId = testDeviceId,
                 moduleId = testModuleId,
                 data = "test-data",
@@ -144,7 +145,7 @@ class BaseModuleSyncTest : BaseTest() {
         @Test
         fun `rejects sync for other device data`() = runTest2 {
             val data = ModuleData(
-                modifiedAt = Instant.now(),
+                modifiedAt = Clock.System.now(),
                 deviceId = otherDeviceId,
                 moduleId = testModuleId,
                 data = "test-data",

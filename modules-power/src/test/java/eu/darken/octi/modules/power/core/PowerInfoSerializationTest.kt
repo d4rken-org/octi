@@ -6,7 +6,7 @@ import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.json.toComparableJson
-import java.time.Instant
+import kotlin.time.Instant
 
 class PowerInfoSerializationTest : BaseTest() {
 

@@ -3,7 +3,7 @@ package eu.darken.octi.modules.apps.core
 import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
+import kotlin.time.Instant
 
 @Serializable
 data class AppsInfo(

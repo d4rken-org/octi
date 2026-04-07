@@ -9,7 +9,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.datastore.createSetValue
 import eu.darken.octi.common.datastore.createValue
-import java.time.Duration
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -18,6 +17,8 @@ import kotlinx.serialization.json.Json
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Singleton
 class SyncSettings @Inject constructor(
@@ -48,7 +49,7 @@ class SyncSettings @Inject constructor(
 
     val pausedConnectors = dataStore.createSetValue<ConnectorId>("sync.connectors.paused", emptySet(), json)
 
-    val clockSkewThreshold = dataStore.createValue("sync.clock.skew.threshold", Duration.ofMinutes(2), json)
+    val clockSkewThreshold = dataStore.createValue("sync.clock.skew.threshold", 2.minutes, json)
 
     val deviceId by lazy {
         val key = stringPreferencesKey("sync.identifier.device")
@@ -66,6 +67,6 @@ class SyncSettings @Inject constructor(
 
     companion object {
         internal val TAG = logTag("Sync", "Settings")
-        val FIRST_SYNC_GRACE_PERIOD: Duration = Duration.ofMinutes(5)
+        val FIRST_SYNC_GRACE_PERIOD: Duration = 5.minutes
     }
 }

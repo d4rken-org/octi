@@ -9,7 +9,7 @@ import eu.darken.octi.sync.core.SyncRead
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import okio.ByteString
-import java.time.Instant
+import kotlin.time.Instant
 
 @Serializable
 data class CachedSyncRead(

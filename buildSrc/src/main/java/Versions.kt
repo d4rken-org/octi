@@ -24,6 +24,10 @@ object Versions {
         const val core = "1.9.0"
     }
 
+    object Datetime {
+        const val core = "0.7.0"
+    }
+
     object AndroidX {
         const val core = ""
 

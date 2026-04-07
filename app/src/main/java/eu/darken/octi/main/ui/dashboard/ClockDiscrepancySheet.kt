@@ -23,7 +23,8 @@ import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.sync.core.ClockAnalyzer.ClockAnalysis
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.R as SyncR
-import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun ClockDiscrepancySheet(
@@ -82,13 +83,13 @@ private fun ClockDiscrepancyContent(
         )
 
         analysis.localClockOffset?.let { offset ->
-            val absSeconds = offset.abs().seconds
+            val absSeconds = offset.absoluteValue.inWholeSeconds
             val offsetText = when {
                 absSeconds >= 3600 -> "${absSeconds / 3600}h ${(absSeconds % 3600) / 60}m"
                 absSeconds >= 60 -> "${absSeconds / 60}m ${absSeconds % 60}s"
                 else -> "${absSeconds}s"
             }
-            val directionStringRes = if (!offset.isNegative) {
+            val directionStringRes = if (!offset.isNegative()) {
                 SyncR.string.sync_clock_discrepancy_server_offset_ahead
             } else {
                 SyncR.string.sync_clock_discrepancy_server_offset_behind
@@ -128,7 +129,7 @@ private fun CurrentSuspectPreview() = PreviewWrapper {
             suspectDeviceIds = emptySet(),
             isCurrentDeviceSuspect = true,
             canDetermineSource = true,
-            localClockOffset = Duration.ofMinutes(-30),
+            localClockOffset = (-30).minutes,
         ),
     )
 }
@@ -142,7 +143,7 @@ private fun RemoteSuspectPreview() = PreviewWrapper {
             suspectDeviceIds = setOf(DeviceId("device-a")),
             isCurrentDeviceSuspect = false,
             canDetermineSource = true,
-            localClockOffset = Duration.ofSeconds(5),
+            localClockOffset = 5.seconds,
         ),
         deviceNames = mapOf(DeviceId("device-a") to "Pixel Tablet"),
     )

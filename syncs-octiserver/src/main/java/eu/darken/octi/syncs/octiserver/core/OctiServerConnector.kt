@@ -58,8 +58,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okio.ByteString
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlin.time.TimeSource
 
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -259,7 +260,7 @@ class OctiServerConnector @AssistedInject constructor(
             if (device.deviceId == syncSettings.deviceId) return@mapNotNull null
             if (device.deviceId in dataDeviceIds) return@mapNotNull null
             val addedAt = device.addedAt ?: return@mapNotNull null
-            if (Duration.between(addedAt, Instant.now()) < SyncSettings.FIRST_SYNC_GRACE_PERIOD) return@mapNotNull null
+            if ((Clock.System.now() - addedAt) < SyncSettings.FIRST_SYNC_GRACE_PERIOD) return@mapNotNull null
             OctiServerIssue.EncryptionIncompatible(
                 connectorId = identifier,
                 deviceId = device.deviceId,
@@ -276,8 +277,8 @@ class OctiServerConnector @AssistedInject constructor(
 
         if (readData.serverTime != null) {
             val serverTime = readData.serverTime
-            val offset = Duration.between(serverTime, readData.localTime)
-            log(TAG, VERBOSE) { "fetchModule(${deviceId.logLabel}:${moduleId.logLabel}): serverTime=$serverTime, offset=${offset.seconds}s" }
+            val offset = readData.localTime - serverTime
+            log(TAG, VERBOSE) { "fetchModule(${deviceId.logLabel}:${moduleId.logLabel}): serverTime=$serverTime, offset=${offset.inWholeSeconds}s" }
             val clockOffset = SyncConnectorState.ClockOffset(offset = offset, measuredAt = readData.localTime)
             _state.updateBlocking { copy(clockOffsets = clockOffsets + clockOffset) }
         } else {
@@ -303,7 +304,7 @@ class OctiServerConnector @AssistedInject constructor(
         moduleFilter: Set<ModuleId>? = null,
         deviceFilter: Set<DeviceId>? = null,
     ): OctiServerData {
-        val start = System.currentTimeMillis()
+        val start = TimeSource.Monotonic.markNow()
         log(TAG, DEBUG) { "readServer(modules=${moduleFilter?.size}, devices=${deviceFilter?.size}): Starting..." }
         _state.updateBlocking { copy(clockOffsets = emptyList()) }
         val allLinkedDevices = endpoint.listDevices()
@@ -345,7 +346,7 @@ class OctiServerConnector @AssistedInject constructor(
             connectorId = identifier,
             devices = devices
         )
-        log(TAG) { "readServer() took ${System.currentTimeMillis() - start}ms (${devices.size} devices)" }
+        log(TAG) { "readServer() took ${start.elapsedNow().inWholeMilliseconds}ms (${devices.size} devices)" }
         return result
     }
 
@@ -386,7 +387,7 @@ class OctiServerConnector @AssistedInject constructor(
         tag: String,
         block: suspend () -> R,
     ): R {
-        val start = System.currentTimeMillis()
+        val start = TimeSource.Monotonic.markNow()
         log(TAG, VERBOSE) { "runServerAction($tag)" }
 
         return try {
@@ -398,7 +399,7 @@ class OctiServerConnector @AssistedInject constructor(
                 _state.updateBlocking {
                     copy(
                         lastError = null,
-                        lastActionAt = Instant.now(),
+                        lastActionAt = Clock.System.now(),
                     )
                 }
             }
@@ -413,7 +414,7 @@ class OctiServerConnector @AssistedInject constructor(
                 log(TAG, VERBOSE) { "runServerAction($tag) finished" }
                 copy(activeActions = activeActions - 1)
             }
-            log(TAG, VERBOSE) { "runServerAction($tag) finished after ${System.currentTimeMillis() - start}ms" }
+            log(TAG, VERBOSE) { "runServerAction($tag) finished after ${start.elapsedNow().inWholeMilliseconds}ms" }
         }
     }
 

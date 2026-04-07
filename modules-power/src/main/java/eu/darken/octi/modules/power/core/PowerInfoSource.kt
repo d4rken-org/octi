@@ -33,9 +33,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
 
 @Singleton
 class PowerInfoSource @Inject constructor(
@@ -138,7 +139,7 @@ class PowerInfoSource @Inject constructor(
             batteryManager.computeChargeTimeRemaining()
         }
             ?.takeIf { it != -1L }
-            ?.let { Instant.now().plusMillis(it) }
+            ?.let { Clock.System.now() + it.milliseconds }
 
         if (newStatus == PowerInfo.Status.CHARGING) {
             powerSettings.chargedFullAt.value(chargedFullAt)

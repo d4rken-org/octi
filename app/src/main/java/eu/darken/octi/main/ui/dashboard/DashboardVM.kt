@@ -60,9 +60,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.time.Duration
-import java.time.Instant
 import javax.inject.Inject
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
@@ -99,7 +99,7 @@ class DashboardVM @Inject constructor(
 
     private val tickerUiRefresh = flow {
         while (currentCoroutineContext().isActive) {
-            emit(Instant.now())
+            emit(Clock.System.now())
             delay(60 * 1000)
         }
     }
@@ -571,7 +571,7 @@ class DashboardVM @Inject constructor(
                 .filter { meta ->
                     meta.deviceId !in normalDeviceIds
                             && meta.deviceId != syncSettings.deviceId
-                            && meta.addedAt?.let { Duration.between(it, Instant.now()) >= SyncSettings.FIRST_SYNC_GRACE_PERIOD } != false
+                            && meta.addedAt?.let { (Clock.System.now() - it) >= SyncSettings.FIRST_SYNC_GRACE_PERIOD } != false
                 }
                 .map { meta ->
                     DeviceItem(

@@ -7,7 +7,8 @@ import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.json.toComparableJson
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class OctiServerSerializationTest : BaseTest() {
 

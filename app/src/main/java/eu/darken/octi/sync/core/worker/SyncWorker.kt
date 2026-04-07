@@ -13,6 +13,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.sync.core.SyncExecutor
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
+import kotlin.time.TimeSource
 
 
 @HiltWorker
@@ -31,14 +32,14 @@ class SyncWorker @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result = try {
-        val start = System.currentTimeMillis()
+        val start = TimeSource.Monotonic.markNow()
         log(TAG, VERBOSE) { "Executing $inputData now (runAttemptCount=$runAttemptCount)" }
 
         doDoWork()
 
-        val duration = System.currentTimeMillis() - start
+        val duration = start.elapsedNow()
 
-        log(TAG, VERBOSE) { "Execution finished after ${duration}ms, $inputData" }
+        log(TAG, VERBOSE) { "Execution finished after ${duration.inWholeMilliseconds}ms, $inputData" }
 
         Result.success(inputData)
     } catch (e: Exception) {

@@ -1,7 +1,7 @@
 package eu.darken.octi.modules.power.core.alert
 
 import eu.darken.octi.sync.core.DeviceId
-import java.time.Instant
+import kotlin.time.Instant
 
 data class PowerAlert<R : PowerAlertRule>(
     val rule: R,

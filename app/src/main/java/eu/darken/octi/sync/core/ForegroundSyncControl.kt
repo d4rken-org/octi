@@ -34,10 +34,13 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import java.time.Duration
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 @Singleton
 class ForegroundSyncControl @Inject constructor(
@@ -74,8 +77,8 @@ class ForegroundSyncControl @Inject constructor(
             override fun onStop(owner: LifecycleOwner) {
                 backgroundDebounceJob?.cancel()
                 backgroundDebounceJob = scope.launch {
-                    log(TAG) { "Process backgrounded, debouncing ${BACKGROUND_DEBOUNCE.toMillis()}ms..." }
-                    delay(BACKGROUND_DEBOUNCE.toMillis())
+                    log(TAG) { "Process backgrounded, debouncing ${BACKGROUND_DEBOUNCE.inWholeMilliseconds}ms..." }
+                    delay(BACKGROUND_DEBOUNCE.inWholeMilliseconds)
                     isForeground.value = false
                     log(TAG) { "Background debounce elapsed, isForeground=false" }
                 }
@@ -115,12 +118,12 @@ class ForegroundSyncControl @Inject constructor(
         scope.launch {
             val backgroundedAt = lastBackgroundedAt
             if (backgroundedAt != null) {
-                val away = Duration.between(backgroundedAt, Instant.now())
+                val away = Clock.System.now() - backgroundedAt
                 if (away > CATCHUP_THRESHOLD) {
-                    log(TAG, INFO) { "Away for ${away.seconds}s, running catch-up sync" }
+                    log(TAG, INFO) { "Away for ${away.inWholeSeconds}s, running catch-up sync" }
                     syncExecutor.execute("ForegroundCatchUp")
                 } else {
-                    log(TAG) { "Away for ${away.seconds}s, skipping catch-up" }
+                    log(TAG) { "Away for ${away.inWholeSeconds}s, skipping catch-up" }
                 }
             }
             lastBackgroundedAt = null
@@ -170,16 +173,16 @@ class ForegroundSyncControl @Inject constructor(
                         pending.getOrPut(first.connectorId) { PendingSync() }.add(first)
 
                         // Drain events arriving within the debounce window
-                        withTimeoutOrNull(CLIENT_DEBOUNCE.toMillis()) {
+                        withTimeoutOrNull(CLIENT_DEBOUNCE.inWholeMilliseconds) {
                             while (true) {
                                 val event = eventChannel.receive()
                                 pending.getOrPut(event.connectorId) { PendingSync() }.add(event)
                             }
                         }
 
-                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT.toMillis()) {
+                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT.inWholeMilliseconds) {
                             syncPendingModules(pending)
-                        } ?: log(TAG, WARN) { "In-flight sync timed out after ${SYNC_COMPLETION_TIMEOUT.toMillis()}ms" }
+                        } ?: log(TAG, WARN) { "In-flight sync timed out after ${SYNC_COMPLETION_TIMEOUT.inWholeMilliseconds}ms" }
                     }
                 }
             } finally {
@@ -196,9 +199,9 @@ class ForegroundSyncControl @Inject constructor(
                     }
                     if (remaining.isNotEmpty()) {
                         log(TAG, INFO) { "Flushing ${remaining.values.sumOf { it.modules.size }} pending events on shutdown" }
-                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT.toMillis()) {
+                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT.inWholeMilliseconds) {
                             syncPendingModules(remaining)
-                        } ?: log(TAG, WARN) { "Flush sync timed out after ${SYNC_COMPLETION_TIMEOUT.toMillis()}ms" }
+                        } ?: log(TAG, WARN) { "Flush sync timed out after ${SYNC_COMPLETION_TIMEOUT.inWholeMilliseconds}ms" }
                     }
                 }
             }
@@ -239,7 +242,7 @@ class ForegroundSyncControl @Inject constructor(
 
     private fun onBackground() {
         log(TAG, INFO) { "onBackground()" }
-        lastBackgroundedAt = Instant.now()
+        lastBackgroundedAt = Clock.System.now()
 
         // Stop collecting events — cancels upstream WebSocket/polling via WhileSubscribed
         eventCollectorJob?.cancel()
@@ -247,10 +250,10 @@ class ForegroundSyncControl @Inject constructor(
     }
 
     companion object {
-        private val CLIENT_DEBOUNCE = Duration.ofMillis(500)
-        private val BACKGROUND_DEBOUNCE = Duration.ofSeconds(5)
-        private val SYNC_COMPLETION_TIMEOUT = Duration.ofSeconds(30)
-        private val CATCHUP_THRESHOLD = Duration.ofMinutes(2)
+        private val CLIENT_DEBOUNCE = 500.milliseconds
+        private val BACKGROUND_DEBOUNCE = 5.seconds
+        private val SYNC_COMPLETION_TIMEOUT = 30.seconds
+        private val CATCHUP_THRESHOLD = 2.minutes
         private val TAG = logTag("Sync", "Foreground", "Control")
     }
 }

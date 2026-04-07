@@ -4,7 +4,7 @@ import android.os.BatteryManager
 import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
+import kotlin.time.Instant
 
 @Serializable
 data class PowerInfo(

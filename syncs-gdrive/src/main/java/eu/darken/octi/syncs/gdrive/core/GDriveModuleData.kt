@@ -5,7 +5,7 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncRead
 import okio.ByteString
-import java.time.Instant
+import kotlin.time.Instant
 
 data class GDriveModuleData(
     override val connectorId: ConnectorId,

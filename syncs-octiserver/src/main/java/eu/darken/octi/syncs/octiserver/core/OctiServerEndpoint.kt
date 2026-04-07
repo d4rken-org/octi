@@ -22,9 +22,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okio.ByteString
 import retrofit2.HttpException
 import retrofit2.Retrofit
-import java.time.Instant
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class OctiServerEndpoint @AssistedInject constructor(
     @Assisted private val serverAdress: OctiServer.Address,
@@ -72,7 +71,7 @@ class OctiServerEndpoint @AssistedInject constructor(
         }
 
         OctiServer.Credentials(
-            createdAt = Instant.now(),
+            createdAt = Clock.System.now(),
             serverAdress = serverAdress,
             accountId = OctiServer.Credentials.AccountId(response.accountID),
             devicePassword = OctiServer.Credentials.DevicePassword(response.password),
@@ -189,16 +188,14 @@ class OctiServerEndpoint @AssistedInject constructor(
 
         if (!response.isSuccessful) throw OctiServerHttpException(HttpException(response))
 
-        val localTime = Instant.now()
+        val localTime = Clock.System.now()
 
         val lastModifiedAt = response.headers()["X-Modified-At"]
-            ?.let { runCatching { ZonedDateTime.parse(it, DateTimeFormatter.RFC_1123_DATE_TIME) }.getOrNull() }
-            ?.toInstant()
+            ?.parseRfc1123ToInstant()
             ?: return@withContext null
 
         val serverTime = response.headers()["Date"]
-            ?.let { runCatching { ZonedDateTime.parse(it, DateTimeFormatter.RFC_1123_DATE_TIME) }.getOrNull() }
-            ?.toInstant()
+            ?.parseRfc1123ToInstant()
 
         val body = response.body()?.byteString()?.takeIf { it != NULL_BODY } ?: ByteString.EMPTY
 

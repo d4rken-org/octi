@@ -5,7 +5,7 @@ import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.json.toComparableJson
-import java.time.OffsetDateTime
+import kotlin.time.Instant
 
 class GithubApiSerializationTest : BaseTest() {
 
@@ -20,7 +20,7 @@ class GithubApiSerializationTest : BaseTest() {
         tagName = "v1.0.0",
         isPreRelease = false,
         htmlUrl = "https://github.com/d4rken-org/octi/releases/tag/v1.0.0",
-        publishedAt = OffsetDateTime.parse("2024-06-15T12:00:00Z"),
+        publishedAt = Instant.parse("2024-06-15T12:00:00Z"),
         body = "Release notes here",
         assets = listOf(
             GithubApi.ReleaseInfo.Asset(

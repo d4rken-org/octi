@@ -136,7 +136,9 @@ import eu.darken.octi.sync.core.SyncConnector.EventMode
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncOrchestrator
 import kotlinx.coroutines.launch
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.modules.apps.R as AppsR
 import eu.darken.octi.modules.clipboard.R as ClipboardR
@@ -682,7 +684,7 @@ private fun connectorTypesLabel(
 
     val nextRun = orchestratorState.backgroundSync.defaultWorker.nextRunAt
     if (nextRun != null) {
-        val minutes = java.time.Duration.between(syncStatus.now, nextRun).toMinutes()
+        val minutes = (nextRun - syncStatus.now).inWholeMinutes
         if (minutes > 0) {
             return "$base \u00B7 ${stringResource(R.string.dashboard_sync_status_next_in, "${minutes}m")}"
         } else {
@@ -747,7 +749,7 @@ private fun SyncStatusBar(
                                 val primaryText = syncStatus.lastSyncAt?.let {
                                     stringResource(
                                         R.string.dashboard_sync_status_last_synced,
-                                        DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString(),
+                                        DateUtils.getRelativeTimeSpanString(it.toEpochMilliseconds()).toString(),
                                     )
                                 } ?: stringResource(R.string.dashboard_sync_status_never)
                                 Text(
@@ -1491,7 +1493,7 @@ private fun DashboardDeviceCard(
                             }
                             Text(
                                 text = DateUtils.getRelativeTimeSpanString(
-                                    device.meta.modifiedAt.clampToNow().toEpochMilli()
+                                    device.meta.modifiedAt.clampToNow().toEpochMilliseconds()
                                 ).toString(),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = badgeColor ?: Color.Unspecified,
@@ -1775,7 +1777,7 @@ private fun DashboardScreenEmptyPreview() = PreviewWrapper {
 @Preview2
 @Composable
 private fun DashboardScreenPreview() = PreviewWrapper {
-    val now = Instant.now()
+    val now = Clock.System.now()
     val deviceId = DeviceId("preview-device-1")
 
     DashboardScreen(
@@ -1785,7 +1787,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
                     now = now,
                     deviceId = deviceId,
                     meta = ModuleData(
-                        modifiedAt = now.minusSeconds(300),
+                        modifiedAt = now - 300.seconds,
                         deviceId = deviceId,
                         moduleId = ModuleId("meta"),
                         data = MetaInfo(
@@ -1796,7 +1798,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
                             deviceManufacturer = "Google",
                             deviceName = "Pixel 8",
                             deviceType = MetaInfo.DeviceType.PHONE,
-                            deviceBootedAt = now.minusSeconds(86400),
+                            deviceBootedAt = now - 86400.seconds,
                             androidVersionName = "14",
                             androidApiLevel = 34,
                             androidSecurityPatch = "2024-01-05",
@@ -1805,7 +1807,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
                     moduleItems = listOf(
                         DashboardVM.ModuleItem.Power(
                             data = ModuleData(
-                                modifiedAt = now.minusSeconds(60),
+                                modifiedAt = now - 60.seconds,
                                 deviceId = deviceId,
                                 moduleId = ModuleId("power"),
                                 data = PowerInfo(
@@ -1836,7 +1838,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
             ),
             deviceCount = 1,
             syncStatus = DashboardVM.SyncStatus.Idle(
-                lastSyncAt = now.minusSeconds(300),
+                lastSyncAt = now - 300.seconds,
                 connectorTypes = listOf(ConnectorType.GDRIVE),
                 syncDetail = DashboardVM.SyncDetail(modules = emptyList(), connectors = emptyList()),
                 orchestratorState = previewOrchestratorState(),
@@ -1877,7 +1879,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
 @Preview2
 @Composable
 private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
-    val now = Instant.now()
+    val now = Clock.System.now()
     val deviceId1 = DeviceId("preview-device-1")
     val deviceId2 = DeviceId("preview-device-2")
 
@@ -1891,7 +1893,7 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
         now = now,
         deviceId = deviceId,
         meta = ModuleData(
-            modifiedAt = now.minusSeconds(300),
+            modifiedAt = now - 300.seconds,
             deviceId = deviceId,
             moduleId = ModuleId("meta"),
             data = MetaInfo(
@@ -1902,7 +1904,7 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
                 deviceManufacturer = "Google",
                 deviceName = label,
                 deviceType = type,
-                deviceBootedAt = now.minusSeconds(86400),
+                deviceBootedAt = now - 86400.seconds,
                 androidVersionName = "14",
                 androidApiLevel = 34,
                 androidSecurityPatch = "2024-01-05",
@@ -1911,7 +1913,7 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
         moduleItems = listOf(
             DashboardVM.ModuleItem.Power(
                 data = ModuleData(
-                    modifiedAt = now.minusSeconds(60),
+                    modifiedAt = now - 60.seconds,
                     deviceId = deviceId,
                     moduleId = ModuleId("power"),
                     data = PowerInfo(
@@ -1937,7 +1939,7 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
             ),
             deviceCount = 2,
             syncStatus = DashboardVM.SyncStatus.Idle(
-                lastSyncAt = now.minusSeconds(300),
+                lastSyncAt = now - 300.seconds,
                 connectorTypes = listOf(ConnectorType.GDRIVE, ConnectorType.OCTISERVER),
                 syncDetail = DashboardVM.SyncDetail(modules = emptyList(), connectors = emptyList()),
                 orchestratorState = previewOrchestratorState(),

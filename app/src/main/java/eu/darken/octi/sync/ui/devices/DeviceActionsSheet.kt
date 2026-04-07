@@ -37,10 +37,9 @@ import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.IssueSeverity
 import eu.darken.octi.sync.core.DeviceId
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 @Composable
 fun DeviceActionsSheet(
@@ -112,7 +111,7 @@ fun DeviceActionsSheet(
                 Text(
                     text = stringResource(
                         SyncR.string.sync_device_last_seen_label,
-                        DateUtils.getRelativeTimeSpanString(lastSeen.toEpochMilli()).toString(),
+                        DateUtils.getRelativeTimeSpanString(lastSeen.toEpochMilliseconds()).toString(),
                     ),
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -123,9 +122,11 @@ fun DeviceActionsSheet(
                 Text(
                     text = stringResource(
                         R.string.sync_device_added_at_label,
-                        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                            .withZone(ZoneId.systemDefault())
-                            .format(addedAt),
+                        DateUtils.formatDateTime(
+                            LocalContext.current,
+                            addedAt.toEpochMilliseconds(),
+                            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH,
+                        ),
                     ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -198,15 +199,15 @@ private fun DeviceActionsSheetPreview() = PreviewWrapper {
                 deviceManufacturer = "Google",
                 deviceName = "Pixel 8",
                 deviceType = MetaInfo.DeviceType.PHONE,
-                deviceBootedAt = Instant.now(),
+                deviceBootedAt = Clock.System.now(),
                 androidVersionName = "14",
                 androidApiLevel = 34,
                 androidSecurityPatch = "2024-01-05",
             ),
-            lastSeen = Instant.now(),
+            lastSeen = Clock.System.now(),
             error = null,
             serverVersion = "0.14.0",
-            serverAddedAt = Instant.now().minusSeconds(86400 * 30),
+            serverAddedAt = Clock.System.now() - (86400 * 30).seconds,
             serverPlatform = "android",
         ),
         connectorType = ConnectorType.OCTISERVER,

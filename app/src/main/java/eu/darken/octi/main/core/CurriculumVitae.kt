@@ -20,9 +20,10 @@ import io.github.z4kn4fein.semver.VersionFormatException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Singleton
 class CurriculumVitae @Inject constructor(
@@ -61,7 +62,7 @@ class CurriculumVitae @Inject constructor(
             log(TAG) { "Installed at: $installedAt" }
             return
         }
-        val newInstalledAt = usPkgInfo.firstInstallTime.let { Instant.ofEpochMilli(it) }
+        val newInstalledAt = usPkgInfo.firstInstallTime.let { Instant.fromEpochMilliseconds(it) }
         log(TAG) { "Saving install time: $newInstalledAt" }
         _installedFirst.value(newInstalledAt)
     }
@@ -69,7 +70,7 @@ class CurriculumVitae @Inject constructor(
     private suspend fun updateLaunchTime() {
         val oldLaunchTime = _launchedLast.value()
         log(TAG) { "Last launch time was $oldLaunchTime" }
-        _launchedLast.value(Instant.now())
+        _launchedLast.value(Clock.System.now())
     }
 
     private suspend fun updateLaunchCount() {
@@ -120,7 +121,7 @@ class CurriculumVitae @Inject constructor(
     private suspend fun updateOpenedTime() {
         val oldOpenedTime = _openedLast.value()
         log(TAG) { "Last open was $oldOpenedTime" }
-        _openedLast.value(Instant.now())
+        _openedLast.value(Clock.System.now())
     }
 
     private suspend fun updateOpenedCount() {

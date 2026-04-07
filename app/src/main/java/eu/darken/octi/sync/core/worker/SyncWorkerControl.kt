@@ -24,10 +24,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.time.Duration
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
+import kotlin.time.toJavaDuration
 
 @Singleton
 class SyncWorkerControl @Inject constructor(
@@ -109,7 +110,7 @@ class SyncWorkerControl @Inject constructor(
                     .build()
 
                 val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(
-                    Duration.ofMinutes(config.interval.coerceAtLeast(15).toLong())
+                    config.interval.coerceAtLeast(15).minutes.toJavaDuration()
                 ).apply {
                     setConstraints(constraints)
                 }.build()
@@ -140,7 +141,7 @@ class SyncWorkerControl @Inject constructor(
                     .build()
 
                 val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(
-                    Duration.ofMinutes(config.chargingInterval.coerceAtLeast(15).toLong())
+                    config.chargingInterval.coerceAtLeast(15).minutes.toJavaDuration()
                 ).apply {
                     setConstraints(constraints)
                 }.build()
@@ -181,7 +182,7 @@ class SyncWorkerControl @Inject constructor(
                 isEnabled = isActive,
                 isRunning = state == WorkInfo.State.RUNNING,
                 isBlocked = state == WorkInfo.State.BLOCKED,
-                nextRunAt = if (nextMs != Long.MAX_VALUE && nextMs > 0) Instant.ofEpochMilli(nextMs) else null,
+                nextRunAt = if (nextMs != Long.MAX_VALUE && nextMs > 0) Instant.fromEpochMilliseconds(nextMs) else null,
             )
         }
     }

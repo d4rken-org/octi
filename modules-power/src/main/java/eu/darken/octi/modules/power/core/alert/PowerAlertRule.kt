@@ -4,7 +4,8 @@ import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Serializable
 sealed interface PowerAlertRule {
@@ -14,7 +15,7 @@ sealed interface PowerAlertRule {
     @Serializable
     data class Event(
         val id: PowerAlertRuleId,
-        @Serializable(with = InstantSerializer::class) val triggeredAt: Instant = Instant.now(),
+        @Serializable(with = InstantSerializer::class) val triggeredAt: Instant = Clock.System.now(),
         @Serializable(with = InstantSerializer::class) val dismissedAt: Instant? = null,
     )
 }

@@ -9,6 +9,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import java.io.ByteArrayOutputStream
+import kotlin.time.Clock
 import com.google.api.services.drive.model.File as GDriveFile
 
 interface GDriveEnvironment {
@@ -62,7 +63,7 @@ interface GDriveEnvironment {
         val metaData = GDriveFile().apply {
             name = fileName
             parents = listOf(this@createFile.id)
-            modifiedTime = DateTime(System.currentTimeMillis())
+            modifiedTime = DateTime(Clock.System.now().toEpochMilliseconds())
         }
         return drive.files().create(metaData).execute()
     }
@@ -73,7 +74,7 @@ interface GDriveEnvironment {
         val payload = ByteArrayContent("application/octet-stream", toWrite.toByteArray())
         val writeMetaData = GDriveFile().apply {
             mimeType = "application/octet-stream"
-            modifiedTime = DateTime(System.currentTimeMillis())
+            modifiedTime = DateTime(Clock.System.now().toEpochMilliseconds())
         }
         drive.files().update(id, writeMetaData, payload).execute().also {
             log(TAG, VERBOSE) { "writeData($name): done: $it" }

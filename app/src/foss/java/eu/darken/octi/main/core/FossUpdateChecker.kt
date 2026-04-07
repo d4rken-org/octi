@@ -10,9 +10,10 @@ import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.main.core.updater.UpdateChecker
-import java.time.Duration
-import java.time.Instant
 import javax.inject.Inject
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 
 @Reusable
 class FossUpdateChecker @Inject constructor(
@@ -25,7 +26,7 @@ class FossUpdateChecker @Inject constructor(
         log(TAG) { "getLatest($channel) checking..." }
 
         val release: GithubApi.ReleaseInfo? = try {
-            if (Duration.between(settings.lastReleaseCheck.value(), Instant.now()) < UPDATE_CHECK_INTERVAL) {
+            if ((Clock.System.now() - settings.lastReleaseCheck.value()) < UPDATE_CHECK_INTERVAL) {
                 log(TAG) { "Using cached release data" }
                 when (channel) {
                     UpdateChecker.Channel.BETA -> settings.lastReleaseBeta.value()
@@ -38,7 +39,7 @@ class FossUpdateChecker @Inject constructor(
                     UpdateChecker.Channel.PROD -> checker.latestRelease(OWNER, REPO)
                 }.also {
                     log(TAG, INFO) { "getLatest($channel) new data is $it" }
-                    settings.lastReleaseCheck.value(Instant.now())
+                    settings.lastReleaseCheck.value(Clock.System.now())
                     when (channel) {
                         UpdateChecker.Channel.BETA -> settings.lastReleaseBeta.value(it)
                         UpdateChecker.Channel.PROD -> settings.lastReleaseProd.value(it)
@@ -109,7 +110,7 @@ class FossUpdateChecker @Inject constructor(
     ) : UpdateChecker.Update
 
     companion object {
-        private val UPDATE_CHECK_INTERVAL = Duration.ofHours(6)
+        private val UPDATE_CHECK_INTERVAL: Duration = 6.hours
         private const val OWNER = "d4rken-org"
         private const val REPO = "octi"
         private val TAG = logTag("Updater", "Checker", "FOSS")

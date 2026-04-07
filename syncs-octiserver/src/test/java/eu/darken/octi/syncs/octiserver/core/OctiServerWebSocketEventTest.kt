@@ -11,7 +11,8 @@ import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class OctiServerWebSocketEventTest : BaseTest() {
 
@@ -46,7 +47,7 @@ class OctiServerWebSocketEventTest : BaseTest() {
             connectorId = testConnectorId,
             deviceId = DeviceId(deviceId),
             moduleId = ModuleId(moduleId),
-            modifiedAt = modifiedAt?.let { runCatching { Instant.parse(it) }.getOrNull() } ?: Instant.now(),
+            modifiedAt = modifiedAt?.let { runCatching { Instant.parse(it) }.getOrNull() } ?: Clock.System.now(),
             action = when (action) {
                 "deleted" -> SyncEvent.ModuleChanged.Action.DELETED
                 else -> SyncEvent.ModuleChanged.Action.UPDATED
@@ -160,7 +161,8 @@ class OctiServerWebSocketEventTest : BaseTest() {
             val event = payload.events[0].toSyncEvent()
             event.shouldBeInstanceOf<SyncEvent.ModuleChanged>()
             // modifiedAt should be close to now (not crash)
-            event.modifiedAt.epochSecond shouldBe Instant.now().epochSecond
+            // Tolerance instead of equality to avoid flakiness across second boundaries
+            (kotlin.math.abs(event.modifiedAt.epochSeconds - Clock.System.now().epochSeconds) <= 2L) shouldBe true
         }
 
         @Test
@@ -235,7 +237,7 @@ class OctiServerWebSocketEventTest : BaseTest() {
                     connectorId = testConnectorId,
                     deviceId = DeviceId("d1"),
                     moduleId = ModuleId("m1"),
-                    modifiedAt = Instant.now(),
+                    modifiedAt = Clock.System.now(),
                     action = SyncEvent.ModuleChanged.Action.UPDATED,
                 ),
                 SyncEvent.BlobChanged(

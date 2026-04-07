@@ -5,8 +5,9 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 class ClockAnalyzerTest : BaseTest() {
 
@@ -23,7 +24,7 @@ class ClockAnalyzerTest : BaseTest() {
         devices: List<Pair<DeviceId, Instant>>,
         clockOffsets: List<Duration> = emptyList(),
         thresholdSeconds: Long = defaultThreshold,
-    ) = ClockAnalyzer.analyze(devices, currentDevice, clockOffsets.map { it.asClockOffset() }, Duration.ofSeconds(thresholdSeconds), now)
+    ) = ClockAnalyzer.analyze(devices, currentDevice, clockOffsets.map { it.asClockOffset() }, thresholdSeconds.seconds, now)
 
     @Nested
     inner class `no discrepancy` {
@@ -31,8 +32,8 @@ class ClockAnalyzerTest : BaseTest() {
         @Test
         fun `all timestamps in past - returns null`() {
             val devices = listOf(
-                currentDevice to now.minusSeconds(60),
-                deviceA to now.minusSeconds(30),
+                currentDevice to now - 60.seconds,
+                deviceA to now - 30.seconds,
             )
             analyze(devices).shouldBeNull()
         }
@@ -47,7 +48,7 @@ class ClockAnalyzerTest : BaseTest() {
         fun `skew within threshold - returns null`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(60), // 1 min ahead, threshold is 2 min
+                deviceA to now + 60.seconds, // 1 min ahead, threshold is 2 min
             )
             analyze(devices).shouldBeNull()
         }
@@ -56,7 +57,7 @@ class ClockAnalyzerTest : BaseTest() {
         fun `skew exactly at threshold - returns null`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(120), // exactly at 2 min threshold
+                deviceA to now + 120.seconds, // exactly at 2 min threshold
             )
             analyze(devices).shouldBeNull()
         }
@@ -69,7 +70,7 @@ class ClockAnalyzerTest : BaseTest() {
         fun `1 remote skewed - canDetermineSource is false`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(300), // 5 min ahead
+                deviceA to now + 300.seconds, // 5 min ahead
             )
             val result = analyze(devices)!!
             result.canDetermineSource shouldBe false
@@ -86,8 +87,8 @@ class ClockAnalyzerTest : BaseTest() {
         fun `1 remote skewed - suspects that device`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(300), // skewed
-                deviceB to now.minusSeconds(10), // fine
+                deviceA to now + 300.seconds, // skewed
+                deviceB to now - 10.seconds, // fine
             )
             val result = analyze(devices)!!
             result.canDetermineSource shouldBe true
@@ -99,8 +100,8 @@ class ClockAnalyzerTest : BaseTest() {
         fun `2 remotes skewed - suspects current device`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(300),
-                deviceB to now.plusSeconds(280),
+                deviceA to now + 300.seconds,
+                deviceB to now + 280.seconds,
             )
             val result = analyze(devices)!!
             result.canDetermineSource shouldBe true
@@ -112,9 +113,9 @@ class ClockAnalyzerTest : BaseTest() {
         fun `all remotes skewed - suspects current device`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(300),
-                deviceB to now.plusSeconds(400),
-                deviceC to now.plusSeconds(350),
+                deviceA to now + 300.seconds,
+                deviceB to now + 400.seconds,
+                deviceC to now + 350.seconds,
             )
             val result = analyze(devices)!!
             result.isCurrentDeviceSuspect shouldBe true
@@ -129,25 +130,25 @@ class ClockAnalyzerTest : BaseTest() {
         fun `local clock behind server - current device suspect even with 2 devices`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(300),
+                deviceA to now + 300.seconds,
             )
             // Local is 300s behind server (negative offset)
-            val offsets = listOf(Duration.ofSeconds(-300))
+            val offsets = listOf((-300).seconds)
             val result = analyze(devices, offsets)!!
             result.canDetermineSource shouldBe true
             result.isCurrentDeviceSuspect shouldBe true
             result.suspectDeviceIds shouldBe emptySet()
-            result.localClockOffset shouldBe Duration.ofSeconds(-300)
+            result.localClockOffset shouldBe (-300).seconds
         }
 
         @Test
         fun `local clock matches server - remote device is suspect`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(300),
+                deviceA to now + 300.seconds,
             )
             // Local is only 10s off server (within threshold)
-            val offsets = listOf(Duration.ofSeconds(-10))
+            val offsets = listOf((-10).seconds)
             val result = analyze(devices, offsets)!!
             result.canDetermineSource shouldBe true
             result.isCurrentDeviceSuspect shouldBe false
@@ -158,28 +159,28 @@ class ClockAnalyzerTest : BaseTest() {
         fun `multiple offsets - uses median`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(300),
+                deviceA to now + 300.seconds,
             )
             val offsets = listOf(
-                Duration.ofSeconds(-290),
-                Duration.ofSeconds(-310),
-                Duration.ofSeconds(-300),
+                (-290).seconds,
+                (-310).seconds,
+                (-300).seconds,
             )
             val result = analyze(devices, offsets)!!
             result.isCurrentDeviceSuspect shouldBe true
             // Sorted: [-310, -300, -290], median is -300
-            result.localClockOffset shouldBe Duration.ofSeconds(-300)
+            result.localClockOffset shouldBe (-300).seconds
         }
 
         @Test
         fun `offset overrides heuristic - 3 devices, 1 skewed but offset says local wrong`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(300),
-                deviceB to now.minusSeconds(10),
+                deviceA to now + 300.seconds,
+                deviceB to now - 10.seconds,
             )
             // Heuristic would say deviceA is suspect, but offset says local is wrong
-            val offsets = listOf(Duration.ofSeconds(-300))
+            val offsets = listOf((-300).seconds)
             val result = analyze(devices, offsets)!!
             result.isCurrentDeviceSuspect shouldBe true
             result.suspectDeviceIds shouldBe emptySet()
@@ -193,7 +194,7 @@ class ClockAnalyzerTest : BaseTest() {
         fun `custom threshold 300s - skew of 200s not detected`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(200),
+                deviceA to now + 200.seconds,
             )
             analyze(devices, thresholdSeconds = 300).shouldBeNull()
         }
@@ -202,7 +203,7 @@ class ClockAnalyzerTest : BaseTest() {
         fun `custom threshold 300s - skew of 400s detected`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(400),
+                deviceA to now + 400.seconds,
             )
             val result = analyze(devices, thresholdSeconds = 300)!!
             result.skewedDeviceIds shouldBe setOf(deviceA)
@@ -212,7 +213,7 @@ class ClockAnalyzerTest : BaseTest() {
         fun `threshold 0 coerced to 1 - skew of 2s detected`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(2),
+                deviceA to now + 2.seconds,
             )
             val result = analyze(devices, thresholdSeconds = 0)!!
             result.skewedDeviceIds shouldBe setOf(deviceA)
@@ -222,7 +223,7 @@ class ClockAnalyzerTest : BaseTest() {
         fun `skew one second past threshold - detected`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(121),
+                deviceA to now + 121.seconds,
             )
             val result = analyze(devices)!!
             result.skewedDeviceIds shouldBe setOf(deviceA)
@@ -232,7 +233,7 @@ class ClockAnalyzerTest : BaseTest() {
         fun `extreme threshold coerced to max 86400`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(90000),
+                deviceA to now + 90000.seconds,
             )
             val result = analyze(devices, thresholdSeconds = Long.MAX_VALUE)!!
             result.skewedDeviceIds shouldBe setOf(deviceA)
@@ -246,8 +247,8 @@ class ClockAnalyzerTest : BaseTest() {
         fun `current device not in sync data - canDetermineSource is false`() {
             val otherDevice = DeviceId("other")
             val devices = listOf(
-                deviceA to now.plusSeconds(300),
-                otherDevice to now.minusSeconds(10),
+                deviceA to now + 300.seconds,
+                otherDevice to now - 10.seconds,
             )
             val result = analyze(devices)!!
             result.canDetermineSource shouldBe false
@@ -257,11 +258,11 @@ class ClockAnalyzerTest : BaseTest() {
         @Test
         fun `current device absent but clock offset available - can still determine`() {
             val devices = listOf(
-                deviceA to now.plusSeconds(300),
-                deviceB to now.minusSeconds(10),
+                deviceA to now + 300.seconds,
+                deviceB to now - 10.seconds,
             )
             // Local only 5s off server (within threshold)
-            val offsets = listOf(Duration.ofSeconds(-5))
+            val offsets = listOf((-5).seconds)
             val result = analyze(devices, offsets)!!
             result.canDetermineSource shouldBe true
             result.suspectDeviceIds shouldBe setOf(deviceA)
@@ -276,16 +277,16 @@ class ClockAnalyzerTest : BaseTest() {
             // Local clock is 30 min ahead — remote timestamps appear normal/past
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.minusSeconds(1800),
+                deviceA to now - 1800.seconds,
             )
             // Server says local is +1800s ahead
-            val offsets = listOf(Duration.ofSeconds(1800))
+            val offsets = listOf((1800).seconds)
             val result = analyze(devices, offsets)!!
             result.canDetermineSource shouldBe true
             result.isCurrentDeviceSuspect shouldBe true
             result.suspectDeviceIds shouldBe emptySet()
             result.skewedDeviceIds shouldBe emptySet()
-            result.localClockOffset shouldBe Duration.ofSeconds(1800)
+            result.localClockOffset shouldBe (1800).seconds
         }
 
         @Test
@@ -294,7 +295,7 @@ class ClockAnalyzerTest : BaseTest() {
             // No server offset available → can't detect
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.minusSeconds(1800),
+                deviceA to now - 1800.seconds,
             )
             analyze(devices).shouldBeNull()
         }
@@ -303,10 +304,10 @@ class ClockAnalyzerTest : BaseTest() {
         fun `clock slightly ahead within threshold - returns null`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.minusSeconds(60),
+                deviceA to now - 60.seconds,
             )
             // Offset is within threshold
-            val offsets = listOf(Duration.ofSeconds(60))
+            val offsets = listOf((60).seconds)
             analyze(devices, offsets).shouldBeNull()
         }
     }
@@ -318,15 +319,15 @@ class ClockAnalyzerTest : BaseTest() {
         fun `2 offsets - uses average of both`() {
             val devices = listOf(
                 currentDevice to now,
-                deviceA to now.plusSeconds(300),
+                deviceA to now + 300.seconds,
             )
             val offsets = listOf(
-                Duration.ofSeconds(-280),
-                Duration.ofSeconds(-320),
+                (-280).seconds,
+                (-320).seconds,
             )
             val result = analyze(devices, offsets)!!
             // Average of -320 and -280 = -300
-            result.localClockOffset shouldBe Duration.ofSeconds(-300)
+            result.localClockOffset shouldBe (-300).seconds
         }
     }
 }
