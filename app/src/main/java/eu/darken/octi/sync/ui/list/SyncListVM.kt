@@ -83,11 +83,11 @@ class SyncListVM @Inject constructor(
 
     init {
         launch {
-            val isEmpty = syncManager.connectors.first().isEmpty()
+            val isEmpty = syncManager.allConnectors.first().isEmpty()
             if (isEmpty) addConnector()
         }
 
-        syncManager.connectors
+        syncManager.allConnectors
             .map { connectors -> connectors.map { it.identifier }.toSet() }
             .withPrevious()
             .onEach { (previous, current) ->
@@ -109,7 +109,7 @@ class SyncListVM @Inject constructor(
     }
 
     val state = syncSettings.pausedConnectors.flow
-        .combine(syncManager.connectors) { paused, connectorList -> paused to connectorList }
+        .combine(syncManager.allConnectors) { paused, connectorList -> paused to connectorList }
         .flatMapLatest { (paused, connectors) ->
             if (connectors.isEmpty()) return@flatMapLatest flowOf(emptyList())
 

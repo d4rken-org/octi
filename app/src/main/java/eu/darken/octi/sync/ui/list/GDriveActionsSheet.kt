@@ -93,6 +93,7 @@ fun GDriveActionsSheet(
             Button(
                 onClick = onForceSync,
                 modifier = Modifier.fillMaxWidth(),
+                enabled = !item.isPaused,
             ) {
                 Text(text = stringResource(R.string.general_sync_action))
             }
@@ -108,6 +109,7 @@ fun GDriveActionsSheet(
             FilledTonalButton(
                 onClick = { showResetConfirmation = true },
                 modifier = Modifier.fillMaxWidth(),
+                enabled = !item.isPaused,
             ) {
                 Text(text = stringResource(R.string.general_reset_action))
             }

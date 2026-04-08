@@ -103,6 +103,7 @@ fun OctiServerActionsSheet(
             Button(
                 onClick = onForceSync,
                 modifier = Modifier.fillMaxWidth(),
+                enabled = !item.isPaused,
             ) {
                 Text(text = stringResource(R.string.general_sync_action))
             }
@@ -118,6 +119,7 @@ fun OctiServerActionsSheet(
             FilledTonalButton(
                 onClick = onLinkNewDevice,
                 modifier = Modifier.fillMaxWidth(),
+                enabled = !item.isPaused,
             ) {
                 Text(text = stringResource(OctiServerR.string.sync_octiserver_link_device_action))
             }
@@ -125,6 +127,7 @@ fun OctiServerActionsSheet(
             FilledTonalButton(
                 onClick = { showResetConfirmation = true },
                 modifier = Modifier.fillMaxWidth(),
+                enabled = !item.isPaused,
             ) {
                 Text(text = stringResource(R.string.general_reset_action))
             }

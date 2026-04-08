@@ -340,6 +340,111 @@ class SyncManagerSyncWriteTest : BaseTest() {
     }
 
     @Nested
+    inner class `pause guards` {
+        @Test
+        fun `sync(connectorId) is a no-op when connector is paused`() = runTest2 {
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            pausedConnectorsValue.value = setOf(connectorId1)
+            sm.updatePayload(createModule(powerModuleId, "data"))
+
+            sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+
+            coVerify(exactly = 0) { connector1.sync(any()) }
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `resetData is a no-op when connector is paused`() = runTest2 {
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            pausedConnectorsValue.value = setOf(connectorId1)
+
+            sm.resetData(connectorId1)
+
+            coVerify(exactly = 0) { connector1.resetData() }
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `global sync() skips paused connectors`() = runTest2 {
+            connectorsFlow.value = listOf(connector1, connector2)
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            pausedConnectorsValue.value = setOf(connectorId1)
+            sm.updatePayload(createModule(powerModuleId, "data"))
+
+            sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
+            advanceUntilIdle()
+
+            coVerify(exactly = 0) { connector1.sync(any()) }
+            coVerify(exactly = 1) { connector2.sync(any()) }
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `unpausing resumes sync`() = runTest2 {
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            pausedConnectorsValue.value = setOf(connectorId1)
+            sm.updatePayload(createModule(powerModuleId, "data"))
+
+            sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+            coVerify(exactly = 0) { connector1.sync(any()) }
+
+            pausedConnectorsValue.value = emptySet()
+            sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+
+            coVerify(exactly = 1) { connector1.sync(any()) }
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `connectors flow excludes paused entries`() = runTest2 {
+            connectorsFlow.value = listOf(connector1, connector2)
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            pausedConnectorsValue.value = setOf(connectorId1)
+            advanceUntilIdle()
+
+            val active = sm.connectors.first()
+            active.map { it.identifier } shouldBe listOf(connectorId2)
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `allConnectors flow includes paused entries`() = runTest2 {
+            connectorsFlow.value = listOf(connector1, connector2)
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            pausedConnectorsValue.value = setOf(connectorId1)
+            advanceUntilIdle()
+
+            val all = sm.allConnectors.first()
+            all.map { it.identifier } shouldContainExactlyInAnyOrder listOf(connectorId1, connectorId2)
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+    }
+
+    @Nested
     inner class `payload updated during sync` {
         @Test
         fun `new payload sent on next sync when updated between syncs`() = runTest2 {

@@ -122,6 +122,7 @@ fun SyncDevicesScreen(
         DeviceActionsSheet(
             device = device,
             connectorType = state.connectorType,
+            isPaused = state.isPaused,
             onDismiss = { selectedDevice = null },
             onDelete = {
                 selectedDevice = null

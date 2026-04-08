@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.mapNotNull
 
 
 inline fun <reified T : SyncConnector> SyncManager.getConnectorById(identifier: ConnectorId): Flow<T> {
-    return connectors.map { connecs -> connecs.single { it.identifier == identifier } }.map { it as T }
+    return allConnectors.map { connecs -> connecs.single { it.identifier == identifier } }.map { it as T }
 }
 
 fun Collection<SyncRead>.latestData(): Collection<SyncRead.Device> = this

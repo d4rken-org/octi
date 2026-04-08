@@ -110,19 +110,17 @@ class DashboardVM @Inject constructor(
         isManuallyRefreshing,
         syncManager.connectors,
         syncManager.states,
-        syncSettings.pausedConnectors.flow,
         tickerUiRefresh,
         moduleManager.syncingModules,
         moduleManager.moduleSyncStates,
         syncOrchestrator.state,
-    ) { showCard, isRefreshing, connectors, allStates, pausedIds, now, syncingModules, moduleSyncStates, orchestratorState ->
+    ) { showCard, isRefreshing, activeConnectors, activeStatesCollection, now, syncingModules, moduleSyncStates, orchestratorState ->
         if (!showCard) return@combine null
-        val activeConnectors = connectors.filter { !pausedIds.contains(it.identifier) }
         if (activeConnectors.isEmpty()) return@combine null
 
         val connectorTypes = activeConnectors.map { it.identifier.type }.distinct()
-        val statesMap = connectors.zip(allStates.toList()).associate { (c, s) -> c.identifier to s }
-        val activeStates = activeConnectors.mapNotNull { statesMap[it.identifier] }
+        val activeStates = activeConnectors.zip(activeStatesCollection.toList()).map { (_, s) -> s }
+        val statesMap = activeConnectors.zip(activeStatesCollection.toList()).associate { (c, s) -> c.identifier to s }
 
         val connectorDetails = activeConnectors.mapNotNull { connector ->
             val state = statesMap[connector.identifier] ?: return@mapNotNull null
@@ -275,10 +273,13 @@ class DashboardVM @Inject constructor(
         updateService.availableUpdate.onStart { emit(null) },
         generalSettings.dashboardConfig.flow,
         issueAggregator.issues,
-    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig, issues ->
+        syncSettings.pausedConnectors.flow,
+    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig, allIssues, pausedIds ->
 
-        val connectorCount = syncManager.connectors.first().size
+        val connectorCount = syncManager.allConnectors.first().size
         val showSyncSetup = !isSyncSetupDismissed && connectorCount == 0
+
+        val issues = allIssues.filter { it.connectorId !in pausedIds }
 
         val filteredPermissions = missingPermissions
             .filterNot { WIFI_PERMISSIONS.contains(it) }
@@ -498,11 +499,9 @@ class DashboardVM @Inject constructor(
         syncManager.states,
         alertManager.alerts,
         upgradeRepo.upgradeInfo,
-        syncSettings.pausedConnectors.flow,
-    ) { now, byDevice, missingPermissions, connectors, allStates, alerts, _, pausedIds ->
-        val statesList = allStates.toList()
-        val activeConnectors = connectors.filter { !pausedIds.contains(it.identifier) }
-        val statesMap = connectors.zip(statesList).associate { (c, s) -> c.identifier to s }
+    ) { now, byDevice, missingPermissions, activeConnectors, activeStates, alerts, _ ->
+        val statesList = activeStates.toList()
+        val statesMap = activeConnectors.zip(statesList).associate { (c, s) -> c.identifier to s }
 
         // Build normal device items from module data
         val normalItems = byDevice.devices

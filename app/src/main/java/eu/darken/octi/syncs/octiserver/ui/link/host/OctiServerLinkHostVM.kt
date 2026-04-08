@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.value
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
@@ -11,12 +13,15 @@ import eu.darken.octi.common.flow.withPrevious
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOptions
+import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import eu.darken.octi.syncs.octiserver.ui.link.OctiServerLinkOption
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -33,6 +38,7 @@ import kotlin.time.Duration.Companion.seconds
 class OctiServerLinkHostVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val syncManager: SyncManager,
+    private val syncSettings: SyncSettings,
     private val json: Json,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
@@ -50,7 +56,7 @@ class OctiServerLinkHostVM @Inject constructor(
     private val connectorFlow = connectorIdFlow
         .filterNotNull()
         .flatMapLatest { idStr ->
-            syncManager.connectors.map { connectors ->
+            syncManager.allConnectors.map { connectors ->
                 connectors.single { it.identifier.idString == idStr } as OctiServerConnector
             }
         }
@@ -66,10 +72,20 @@ class OctiServerLinkHostVM @Inject constructor(
 
         launch {
             val connector = connectorFlow.first()
-            while (currentCoroutineContext().isActive) {
-                connector.sync(SyncOptions(writeData = false))
-                delay(3.seconds)
-            }
+            syncSettings.pausedConnectors.flow
+                .map { it.contains(connector.identifier) }
+                .distinctUntilChanged()
+                .collectLatest { isPaused ->
+                    if (isPaused) {
+                        log(TAG, WARN) { "initialize(): connector ${connector.identifier} is paused, navigating up" }
+                        navUp()
+                        return@collectLatest
+                    }
+                    while (currentCoroutineContext().isActive) {
+                        connector.sync(SyncOptions(writeData = false))
+                        delay(3.seconds)
+                    }
+                }
         }
     }
 
@@ -86,6 +102,11 @@ class OctiServerLinkHostVM @Inject constructor(
                 _state.value = _state.value.copy(encodedLinkCode = null)
             }
             val connector = connectorFlow.first()
+            if (syncSettings.pausedConnectors.value().contains(connector.identifier)) {
+                log(TAG, WARN) { "onScreenVisible(): connector ${connector.identifier} is paused, navigating up" }
+                navUp()
+                return@launch
+            }
             val container = connector.createLinkCode()
             log(TAG) { "New magic link code generated." }
             stateLock.withLock {

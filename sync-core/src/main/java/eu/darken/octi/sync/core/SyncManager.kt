@@ -69,27 +69,49 @@ class SyncManager @Inject constructor(
         .setupCommonEventHandlers(TAG) { "syncHubs" }
         .shareLatest(scope + dispatcherProvider.Default)
 
-    val connectors: Flow<List<SyncConnector>> = combine(
+    /**
+     * All connectors, including paused ones. Only consumers that need to surface paused
+     * entries (e.g. the sync list screen, by-id lookups for disconnect) should use this.
+     */
+    val allConnectors: Flow<List<SyncConnector>> = combine(
         hubs.flatMapLatest { hs -> combine(hs.map { it.connectors }) { it.toList().flatten() } },
         disabledConnectors
     ) { connectors, disabledConnectors ->
         connectors.filter { !disabledConnectors.contains(it) }
     }
-        .setupCommonEventHandlers(TAG) { "syncConnectors" }
+        .setupCommonEventHandlers(TAG) { "allConnectors" }
         .shareLatest(scope + dispatcherProvider.Default)
 
+    /**
+     * Active (non-paused) connectors. This is the default view — new code should use this
+     * unless it explicitly needs paused entries too.
+     */
+    val connectors: Flow<List<SyncConnector>> = allConnectors
+        .combine(syncSettings.pausedConnectors.flow) { conns, paused ->
+            conns.filter { !paused.contains(it.identifier) }
+        }
+        .setupCommonEventHandlers(TAG) { "connectors" }
+        .shareLatest(scope + dispatcherProvider.Default)
+
+    /** States from all connectors, including paused. */
+    val allStates: Flow<Collection<SyncConnectorState>> = allConnectors
+        .flatMapLatest { hs ->
+            if (hs.isEmpty()) flowOf(emptyList())
+            else combine(hs.map { it.state }) { it.toList() }
+        }
+        .setupCommonEventHandlers(TAG) { "allStates" }
+        .shareLatest(scope + dispatcherProvider.Default)
+
+    /** States from active (non-paused) connectors. Default view. */
     val states: Flow<Collection<SyncConnectorState>> = connectors
         .flatMapLatest { hs ->
             if (hs.isEmpty()) flowOf(emptyList())
             else combine(hs.map { it.state }) { it.toList() }
         }
-        .setupCommonEventHandlers(TAG) { "syncStates" }
+        .setupCommonEventHandlers(TAG) { "states" }
         .shareLatest(scope + dispatcherProvider.Default)
 
-    val syncEvents: Flow<SyncEvent> = syncSettings.pausedConnectors.flow
-        .combine(connectors) { paused, connectorList ->
-            connectorList.filter { !paused.contains(it.identifier) }
-        }
+    val syncEvents: Flow<SyncEvent> = connectors
         .flatMapLatest { cons ->
             if (cons.isEmpty()) emptyFlow()
             else cons.map { it.syncEvents }.merge()
@@ -97,8 +119,7 @@ class SyncManager @Inject constructor(
         .setupCommonEventHandlers(TAG) { "syncEvents" }
         .shareIn(scope + dispatcherProvider.Default, SharingStarted.WhileSubscribed(), replay = 0)
 
-    val data: Flow<Collection<SyncRead.Device>> = syncSettings.pausedConnectors.flow
-        .combine(connectors) { paused, connectorList -> connectorList.filter { !paused.contains(it.identifier) } }
+    val data: Flow<Collection<SyncRead.Device>> = connectors
         .flatMapLatest { connectorList ->
             if (connectorList.isEmpty()) {
                 flowOf(emptyList())
@@ -130,23 +151,17 @@ class SyncManager @Inject constructor(
         try {
             do {
                 pendingSync.set(false)
-                val syncJobs = connectors.first()
-                    .filter {
-                        val paused = syncSettings.pausedConnectors.value().contains(it.identifier)
-                        if (paused) log(TAG, INFO) { "Connector is paused: $it" }
-                        !paused
-                    }
-                    .map {
-                        scope.launch {
-                            try {
-                                sync(it.identifier, options = options)
-                            } catch (e: CancellationException) {
-                                throw e
-                            } catch (e: Exception) {
-                                log(TAG, ERROR) { "sync(): ${it.identifier} failed: ${e.asLog()}" }
-                            }
+                val syncJobs = connectors.first().map {
+                    scope.launch {
+                        try {
+                            sync(it.identifier, options = options)
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            log(TAG, ERROR) { "sync(): ${it.identifier} failed: ${e.asLog()}" }
                         }
                     }
+                }
                 syncJobs.joinAll()
             } while (pendingSync.getAndSet(false))
         } finally {
@@ -156,7 +171,11 @@ class SyncManager @Inject constructor(
 
     suspend fun sync(connectorId: ConnectorId, options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(${connectorId.logLabel}, ${options.logLabel})" }
-        val connector = connectors.first().singleOrNull { it.identifier == connectorId }
+        if (syncSettings.pausedConnectors.value().contains(connectorId)) {
+            log(TAG, INFO) { "sync(${connectorId.logLabel}): connector is paused, skipping" }
+            return
+        }
+        val connector = allConnectors.first().singleOrNull { it.identifier == connectorId }
         if (connector == null) {
             log(TAG, WARN) { "sync(): Connector $connectorId not found, skipping" }
             return
@@ -197,6 +216,10 @@ class SyncManager @Inject constructor(
 
     suspend fun resetData(identifier: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "resetData(identifier=$identifier)" }
+        if (syncSettings.pausedConnectors.value().contains(identifier)) {
+            log(TAG, INFO) { "resetData($identifier): connector is paused, skipping" }
+            return@withContext
+        }
         getConnectorById<SyncConnector>(identifier).first().resetData()
         log(TAG) { "resetData(identifier=$identifier) done" }
     }

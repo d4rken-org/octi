@@ -25,8 +25,8 @@ class ConnectorIssueAggregator @Inject constructor(
 ) {
 
     val issues: Flow<List<ConnectorIssue>> = combine(
-        syncManager.states,
-        syncManager.connectors,
+        syncManager.allStates,
+        syncManager.allConnectors,
         clockAnalyzer.analysis,
     ) { states, connectors, clockAnalysis ->
         val connectorIssues = states.flatMap { it.issues }

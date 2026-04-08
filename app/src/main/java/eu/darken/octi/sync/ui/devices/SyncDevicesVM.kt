@@ -3,6 +3,7 @@ package eu.darken.octi.sync.ui.devices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
@@ -48,7 +49,7 @@ class SyncDevicesVM @Inject constructor(
     private val connectorFlow = connectorIdFlow
         .filterNotNull()
         .flatMapLatest { idStr ->
-            manager.connectors.map { connectors ->
+            manager.allConnectors.map { connectors ->
                 connectors.singleOrNull { it.identifier.idString == idStr }
                     ?: throw NoSuchElementException("No connector for $idStr")
             }
@@ -70,6 +71,7 @@ class SyncDevicesVM @Inject constructor(
     data class State(
         val items: List<DeviceItem> = emptyList(),
         val connectorType: ConnectorType? = null,
+        val isPaused: Boolean = false,
     )
 
     val state = connectorFlow
@@ -82,7 +84,8 @@ class SyncDevicesVM @Inject constructor(
                         ?.filter { it.moduleId == MetaModule.MODULE_ID }
                 },
                 issueAggregator.issues,
-            ) { deviceMetadata, metaDatas, allIssues ->
+                syncSettings.pausedConnectors.flow,
+            ) { deviceMetadata, metaDatas, allIssues, pausedIds ->
                 log(TAG) { "Loading devices, ${deviceMetadata.size} metadata, ${allIssues.size} issues" }
 
                 val connectorId = connector.identifier
@@ -113,6 +116,7 @@ class SyncDevicesVM @Inject constructor(
                 State(
                     items = items,
                     connectorType = connectorId.type,
+                    isPaused = pausedIds.contains(connectorId),
                 )
             }
         }
@@ -127,12 +131,16 @@ class SyncDevicesVM @Inject constructor(
         log(TAG, INFO) { "Deleting device $deviceId" }
         appScope.launch {
             try {
+                val connector = connectorFlow.first()
                 if (syncSettings.deviceId == deviceId) {
                     log(TAG, WARN) { "We are deleting US, doing disconnect instead of delete" }
-                    val connector = connectorFlow.first()
                     manager.disconnect(connector.identifier)
                 } else {
-                    connectorFlow.first().apply {
+                    if (syncSettings.pausedConnectors.value().contains(connector.identifier)) {
+                        log(TAG, WARN) { "deleteDevice($deviceId): connector ${connector.identifier} is paused, skipping" }
+                        return@launch
+                    }
+                    connector.apply {
                         deleteDevice(deviceId)
                         sync(SyncOptions(writeData = false))
                     }

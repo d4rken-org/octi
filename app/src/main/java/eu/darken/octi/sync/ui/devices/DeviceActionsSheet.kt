@@ -45,6 +45,7 @@ import kotlin.time.Instant
 fun DeviceActionsSheet(
     device: SyncDevicesVM.DeviceItem,
     connectorType: ConnectorType?,
+    isPaused: Boolean,
     onDismiss: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -152,6 +153,7 @@ fun DeviceActionsSheet(
 
             Button(
                 onClick = onDelete,
+                enabled = !isPaused,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
                 ),
@@ -211,6 +213,7 @@ private fun DeviceActionsSheetPreview() = PreviewWrapper {
             serverPlatform = "android",
         ),
         connectorType = ConnectorType.OCTISERVER,
+        isPaused = false,
         onDismiss = {},
         onDelete = {},
     )
