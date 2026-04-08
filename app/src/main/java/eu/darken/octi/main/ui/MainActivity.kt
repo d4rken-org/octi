@@ -1,5 +1,6 @@
 package eu.darken.octi.main.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,6 +19,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.debug.recording.core.DebugSessionManager
 import eu.darken.octi.common.navigation.LocalNavigationController
+import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationController
 import eu.darken.octi.common.navigation.NavigationEntry
 import eu.darken.octi.common.theming.OctiTheme
@@ -68,6 +70,20 @@ class MainActivity : Activity2() {
                     )
                 }
             }
+        }
+
+        // Cold-start via widget deeplink: parse extras, VM holds them until Dashboard observes.
+        vm.handleDeeplinkIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val handled = vm.handleDeeplinkIntent(intent)
+        if (handled) {
+            // Force nav back to Dashboard so the deeplink observer picks it up. If Dashboard
+            // is not on the back stack (e.g. mid-onboarding), popTo no-ops and we leave nav alone.
+            navCtrl.popTo(Nav.Main.Dashboard)
         }
     }
 

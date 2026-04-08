@@ -103,6 +103,8 @@ import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
+import eu.darken.octi.common.navigation.WidgetDeeplink
+import eu.darken.octi.main.ui.MainActivityVM
 import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.descriptionRes
 import eu.darken.octi.common.permissions.labelRes
@@ -135,7 +137,9 @@ import eu.darken.octi.sync.core.IssueSeverity
 import eu.darken.octi.sync.core.SyncConnector.EventMode
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncOrchestrator
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
@@ -152,14 +156,57 @@ import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import eu.darken.octi.syncs.octiserver.ui.OctiServerIcon
 
+/** How long the deeplink collector waits for dashboard state to populate before giving up. */
+private const val DEEPLINK_STATE_WAIT_MS = 5_000L
+
 @Composable
 fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
     ErrorEventHandler(vm)
     NavigationEventHandler(vm)
 
     val context = LocalContext.current
+    val mainVm: MainActivityVM = hiltViewModel(context as androidx.activity.ComponentActivity)
 
     val snackbarHostState = remember { SnackbarHostState() }
+    val hostScope = rememberCoroutineScope()
+
+    // Resolved module item to open as a detail sheet from a widget deeplink.
+    // Set by the deeplink collector below and cleared by the Screen after it opens the sheet.
+    var externalSheetTarget by remember { mutableStateOf<DashboardVM.ModuleItem?>(null) }
+
+    // Collect widget deeplink events, await populated dashboard state (bounded), resolve the
+    // target ModuleItem, and either hand it off to the Screen or show a snackbar if no data.
+    LaunchedEffect(Unit) {
+        mainVm.deeplinkEvents.collect { event ->
+            val stateSnapshot = withTimeoutOrNull(DEEPLINK_STATE_WAIT_MS) {
+                vm.state.first { it.devices.isNotEmpty() }
+            }
+            val devices = stateSnapshot?.devices.orEmpty()
+            val device = devices.firstOrNull { it.deviceId.id == event.deviceId }
+            val item: DashboardVM.ModuleItem? = when (event.moduleType) {
+                WidgetDeeplink.ModuleType.POWER ->
+                    device?.moduleItems?.filterIsInstance<DashboardVM.ModuleItem.Power>()?.firstOrNull()
+                WidgetDeeplink.ModuleType.CONNECTIVITY ->
+                    device?.moduleItems?.filterIsInstance<DashboardVM.ModuleItem.Connectivity>()?.firstOrNull()
+                WidgetDeeplink.ModuleType.CLIPBOARD ->
+                    device?.moduleItems?.filterIsInstance<DashboardVM.ModuleItem.Clipboard>()?.firstOrNull()
+            }
+            if (item != null) {
+                externalSheetTarget = item
+            } else {
+                val moduleLabelRes = when (event.moduleType) {
+                    WidgetDeeplink.ModuleType.POWER -> CommonR.string.widget_deeplink_module_power
+                    WidgetDeeplink.ModuleType.CONNECTIVITY -> CommonR.string.widget_deeplink_module_connectivity
+                    WidgetDeeplink.ModuleType.CLIPBOARD -> CommonR.string.widget_deeplink_module_clipboard
+                }
+                val msg = context.getString(
+                    CommonR.string.widget_deeplink_no_data_msg,
+                    context.getString(moduleLabelRes),
+                )
+                hostScope.launch { snackbarHostState.showSnackbar(msg) }
+            }
+        }
+    }
 
     var awaitingPermission by rememberSaveable { mutableStateOf(false) }
     var showPermissionPopup by remember { mutableStateOf<DashboardEvent.ShowPermissionPopup?>(null) }
@@ -283,6 +330,8 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             onResetTileLayout = { vm.resetTileLayout(it) },
             onMoveDeviceUp = { vm.moveDeviceUp(it) },
             onMoveDeviceDown = { vm.moveDeviceDown(it) },
+            externalSheetTarget = externalSheetTarget,
+            onExternalSheetHandled = { externalSheetTarget = null },
         )
     }
 }
@@ -318,6 +367,8 @@ fun DashboardScreen(
     onResetTileLayout: (String) -> Unit = {},
     onMoveDeviceUp: (String) -> Unit = {},
     onMoveDeviceDown: (String) -> Unit = {},
+    externalSheetTarget: DashboardVM.ModuleItem? = null,
+    onExternalSheetHandled: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val showMessage: (String) -> Unit = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
@@ -345,6 +396,22 @@ fun DashboardScreen(
         if (state.isOffline) {
             snackbarHostState.showSnackbar(offlineMessage)
         }
+    }
+
+    // Open a detail sheet triggered externally (widget deeplink). The host resolves the target
+    // ModuleItem and sets it here; we map to the right local sheet state and ack via callback.
+    LaunchedEffect(externalSheetTarget) {
+        val target = externalSheetTarget ?: return@LaunchedEffect
+        when (target) {
+            is DashboardVM.ModuleItem.Power -> showPowerDetail = target
+            is DashboardVM.ModuleItem.Connectivity -> showConnectivityDetail = target
+            is DashboardVM.ModuleItem.Clipboard -> showClipboardDetail = target
+            is DashboardVM.ModuleItem.Wifi,
+            is DashboardVM.ModuleItem.Apps -> {
+                // Not reachable from widgets today; no-op.
+            }
+        }
+        onExternalSheetHandled()
     }
 
     Scaffold(

@@ -47,14 +47,27 @@ class NetworkGlanceWidget : GlanceAppWidget() {
             val metaState = metaRepo.state.collectAsState(initial = null)
             val connectivityState = connectivityRepo.state.collectAsState(initial = null)
 
-            val heightDp = LocalSize.current.height.value
-            val maxRows = if (heightDp > 0) maxOf(1, ((heightDp - 16) / 46).toInt()) else Int.MAX_VALUE
+            val size = LocalSize.current
+            val heightDp = size.height.value
+            val widthDp = size.width.value
+            val maxRows = if (heightDp > 0) {
+                val available = heightDp - NetworkWidgetSizing.FIXED_OVERHEAD_DP
+                if (widthDp >= NetworkWidgetSizing.TWO_COLUMN_MIN_WIDTH_DP) {
+                    // Two tiles per grid row; fits 0 if the widget is shorter than one tile.
+                    maxOf(0, (available / NetworkWidgetSizing.TILE_SLOT_DP).toInt()) * 2
+                } else {
+                    maxOf(0, (available / NetworkWidgetSizing.ROW_SLOT_DP).toInt())
+                }
+            } else {
+                Int.MAX_VALUE
+            }
 
             NetworkWidgetContent(
                 metaState = metaState.value,
                 connectivityState = connectivityState.value,
                 themeColors = themeColors,
                 maxRows = maxRows,
+                widthDp = widthDp,
             )
         }
     }

@@ -48,7 +48,12 @@ class ClipboardGlanceWidget : GlanceAppWidget() {
             val clipboardState = clipboardRepo.state.collectAsState(initial = null)
 
             val heightDp = LocalSize.current.height.value
-            val maxRows = if (heightDp > 0) maxOf(1, ((heightDp - 48) / 34).toInt()) else Int.MAX_VALUE
+            val maxRows = if (heightDp > 0) {
+                val available = heightDp - ClipboardWidgetSizing.FIXED_OVERHEAD_DP
+                maxOf(0, (available / ClipboardWidgetSizing.ROW_SLOT_DP).toInt())
+            } else {
+                Int.MAX_VALUE
+            }
 
             ClipboardWidgetContent(
                 metaState = metaState.value,

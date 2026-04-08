@@ -64,4 +64,10 @@
     <string name="widget_config_hex_hint">RRGGBB</string>
     <string name="widget_config_preview_label">Preview</string>
     <string name="widget_config_custom_label">Custom</string>
+
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">No %1$s data for this device</string>
+    <string name="widget_deeplink_module_power">battery</string>
+    <string name="widget_deeplink_module_connectivity">network</string>
+    <string name="widget_deeplink_module_clipboard">clipboard</string>
 </resources>

@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
@@ -172,41 +174,54 @@ private fun NetworkWidgetPreview(colors: WidgetTheme.Colors?) {
                 .background(Color(previewColors.containerBg))
                 .padding(8.dp),
         ) {
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(previewColors.barTrack))
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.widget_network_wifi_24),
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = Color(previewColors.icon),
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.widget_network_wifi_24),
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = Color(previewColors.icon),
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Pixel 8",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(previewColors.icon),
+                            maxLines = 1,
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "\u00b7 Wi-Fi",
+                            fontSize = 10.sp,
+                            color = Color(previewColors.icon),
+                            maxLines = 1,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Pixel 8",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(previewColors.icon),
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "\u00b7 5 min ago",
+                        text = "192.168.1.5",
                         fontSize = 10.sp,
                         color = Color(previewColors.icon),
+                        maxLines = 1,
+                    )
+                    Text(
+                        text = "203.0.113.1",
+                        fontSize = 10.sp,
+                        color = Color(previewColors.icon),
+                        maxLines = 1,
                     )
                 }
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = "192.168.1.5 \u00b7 203.0.113.1",
-                    fontSize = 10.sp,
-                    color = Color(previewColors.icon),
-                )
             }
         }
     }

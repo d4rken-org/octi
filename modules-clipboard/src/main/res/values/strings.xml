@@ -12,5 +12,6 @@
     <string name="module_clipboard_copy_action">Copy to clipboard</string>
 
     <string name="module_clipboard_widget_description">Display clipboard content from your synced devices.</string>
-    <string name="module_clipboard_widget_paste_action">Share clipboard</string>
+    <string name="module_clipboard_widget_paste_action">Share my clipboard</string>
+    <string name="module_clipboard_widget_self_empty">Nothing shared yet</string>
 </resources>

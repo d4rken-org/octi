@@ -12,7 +12,6 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.LocalSize
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
@@ -34,17 +33,43 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import eu.darken.octi.common.navigation.WidgetDeeplink
 import eu.darken.octi.common.widget.WidgetTheme
+import eu.darken.octi.module.core.BaseModuleRepo
+import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.clipboard.R
 import eu.darken.octi.common.R as CommonR
+
+internal object ClipboardWidgetSizing {
+    val ROW_HEIGHT = 30.dp
+    val ROW_SPACER = 2.dp
+    val SELF_SECTION_SPACER = 4.dp
+    val SHARE_BUTTON_HEIGHT = 36.dp
+    val OUTER_PADDING = 8.dp
+
+    /** Total fixed vertical space outside the scrolling device rows. */
+    val FIXED_OVERHEAD_DP: Float
+        get() = (OUTER_PADDING.value * 2) +
+                SELF_SECTION_SPACER.value +
+                ROW_HEIGHT.value +
+                SELF_SECTION_SPACER.value +
+                SHARE_BUTTON_HEIGHT.value
+    val ROW_SLOT_DP: Float
+        get() = ROW_HEIGHT.value + ROW_SPACER.value
+}
 
 private data class ClipboardDeviceRow(
     val deviceName: String,
     val lastSeen: CharSequence,
     val clipboardText: String?,
     val deviceId: String,
+)
+
+private data class SelfClipboardDisplay(
+    val deviceId: String?,
+    val text: String?,
 )
 
 @Composable
@@ -54,7 +79,8 @@ fun ClipboardWidgetContent(
     themeColors: WidgetTheme.Colors?,
     maxRows: Int,
 ) {
-    val devices = buildDeviceRows(metaState, clipboardState, maxRows)
+    val self = extractSelf(clipboardState)
+    val devices = buildDeviceRows(metaState, clipboardState, self?.deviceId, maxRows)
     val containerBg = themeColors?.containerBg
     val context = LocalContext.current
     val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
@@ -75,7 +101,7 @@ fun ClipboardWidgetContent(
                 .then(
                     if (openApp != null) GlanceModifier.clickable(openApp) else GlanceModifier
                 )
-                .padding(8.dp),
+                .padding(ClipboardWidgetSizing.OUTER_PADDING),
         ) {
             Column(modifier = GlanceModifier.fillMaxSize()) {
                 devices.forEachIndexed { index, device ->
@@ -84,66 +110,95 @@ fun ClipboardWidgetContent(
                         themeColors = themeColors,
                     )
                     if (index < devices.lastIndex) {
-                        Spacer(modifier = GlanceModifier.height(2.dp))
+                        Spacer(modifier = GlanceModifier.height(ClipboardWidgetSizing.ROW_SPACER))
                     }
                 }
-                if (devices.isNotEmpty()) {
-                    Spacer(modifier = GlanceModifier.height(4.dp))
-                }
-                Row(
-                    modifier = GlanceModifier
-                        .fillMaxWidth()
-                        .height(28.dp)
-                        .cornerRadius(8.dp)
-                        .then(
-                            if (themeColors?.barTrack != null) {
-                                GlanceModifier.background(ColorProvider(Color(themeColors.barTrack)))
-                            } else {
-                                GlanceModifier.background(ColorProvider(CommonR.color.widgetBarTrack))
-                            }
-                        )
-                        .clickable(actionRunCallback<PasteClipboardCallback>())
-                        .padding(horizontal = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(
-                        provider = ImageProvider(R.drawable.widget_content_paste_24),
-                        contentDescription = null,
-                        modifier = GlanceModifier.size(16.dp),
-                        colorFilter = ColorFilter.tint(
-                            colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon),
-                        ),
-                    )
-                    Spacer(modifier = GlanceModifier.width(4.dp))
-                    Text(
-                        text = context.getString(R.string.module_clipboard_widget_paste_action),
-                        style = TextStyle(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp,
-                            color = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon),
-                        ),
-                    )
-                }
+                Spacer(modifier = GlanceModifier.height(ClipboardWidgetSizing.SELF_SECTION_SPACER))
+                SelfClipboardRow(
+                    self = self,
+                    themeColors = themeColors,
+                )
+                Spacer(modifier = GlanceModifier.height(ClipboardWidgetSizing.SELF_SECTION_SPACER))
+                ShareClipboardButton(themeColors = themeColors)
             }
         }
     }
+}
+
+@Composable
+private fun ShareClipboardButton(themeColors: WidgetTheme.Colors?) {
+    val context = LocalContext.current
+    Row(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .height(ClipboardWidgetSizing.SHARE_BUTTON_HEIGHT)
+            .cornerRadius(8.dp)
+            .then(
+                if (themeColors?.barTrack != null) {
+                    GlanceModifier.background(ColorProvider(Color(themeColors.barTrack)))
+                } else {
+                    GlanceModifier.background(ColorProvider(CommonR.color.widgetBarTrack))
+                }
+            )
+            .clickable(actionRunCallback<PasteClipboardCallback>())
+            .padding(horizontal = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            provider = ImageProvider(R.drawable.widget_content_paste_24),
+            contentDescription = null,
+            modifier = GlanceModifier.size(18.dp),
+            colorFilter = ColorFilter.tint(
+                colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon),
+            ),
+        )
+        Spacer(modifier = GlanceModifier.width(6.dp))
+        Text(
+            text = context.getString(R.string.module_clipboard_widget_paste_action),
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon),
+            ),
+        )
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun extractSelf(clipboardState: ModuleRepo.State<*>?): SelfClipboardDisplay? {
+    if (clipboardState == null) return null
+    val baseState = clipboardState as? BaseModuleRepo.State<*> ?: return null
+    val selfData = (baseState.self as? ModuleData<ClipboardInfo>) ?: return null
+    val deviceId = selfData.deviceId.id
+    val text = when (selfData.data.type) {
+        ClipboardInfo.Type.SIMPLE_TEXT -> {
+            val full = selfData.data.data.utf8()
+            if (full.length > 40) full.take(40) + "\u2026" else full
+        }
+        ClipboardInfo.Type.EMPTY -> null
+    }
+    return SelfClipboardDisplay(deviceId = deviceId, text = text)
 }
 
 @Suppress("UNCHECKED_CAST")
 private fun buildDeviceRows(
     metaState: ModuleRepo.State<*>?,
     clipboardState: ModuleRepo.State<*>?,
+    selfDeviceId: String?,
     maxRows: Int,
 ): List<ClipboardDeviceRow> {
     if (metaState == null || clipboardState == null) return emptyList()
+    if (maxRows <= 0) return emptyList()
 
-    val metaAll = metaState.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>>
+    val metaAll = metaState.all as? Collection<ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>>
         ?: return emptyList()
-    val clipboardAll = clipboardState.all as? Collection<eu.darken.octi.module.core.ModuleData<ClipboardInfo>>
+    val clipboardAll = clipboardState.all as? Collection<ModuleData<ClipboardInfo>>
         ?: return emptyList()
 
     return clipboardAll
+        .asSequence()
+        .filter { it.deviceId.id != selfDeviceId }
         .mapNotNull { clipData ->
             val metaData = metaAll.firstOrNull { it.deviceId == clipData.deviceId }
             metaData?.let { clipData to it }
@@ -167,9 +222,10 @@ private fun buildDeviceRows(
                     DateUtils.FORMAT_ABBREV_RELATIVE,
                 ),
                 clipboardText = text,
-                deviceId = clipData.deviceId.id.toString(),
+                deviceId = clipData.deviceId.id,
             )
         }
+        .toList()
 }
 
 @Composable
@@ -177,22 +233,28 @@ private fun ClipboardDeviceRowContent(
     device: ClipboardDeviceRow,
     themeColors: WidgetTheme.Colors?,
 ) {
+    val context = LocalContext.current
     val iconColor = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon)
     val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
-    val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
+
+    val rowClick = WidgetDeeplink.buildIntent(context, device.deviceId, WidgetDeeplink.ModuleType.CLIPBOARD)
+        ?.let { actionStartActivity(it) }
 
     Row(
         modifier = GlanceModifier
             .fillMaxWidth()
-            .height(30.dp),
+            .height(ClipboardWidgetSizing.ROW_HEIGHT),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = GlanceModifier
                 .defaultWeight()
-                .height(30.dp)
+                .height(ClipboardWidgetSizing.ROW_HEIGHT)
                 .cornerRadius(12.dp)
-                .background(barTrack),
+                .background(barTrack)
+                .then(
+                    if (rowClick != null) GlanceModifier.clickable(rowClick) else GlanceModifier
+                ),
         ) {
             Row(
                 modifier = GlanceModifier.fillMaxSize().padding(horizontal = 10.dp),
@@ -228,7 +290,7 @@ private fun ClipboardDeviceRowContent(
         Spacer(modifier = GlanceModifier.width(4.dp))
         Box(
             modifier = GlanceModifier
-                .size(30.dp)
+                .size(ClipboardWidgetSizing.ROW_HEIGHT)
                 .cornerRadius(8.dp)
                 .background(barTrack)
                 .clickable(
@@ -242,7 +304,54 @@ private fun ClipboardDeviceRowContent(
                 provider = ImageProvider(R.drawable.widget_content_copy_24),
                 contentDescription = null,
                 modifier = GlanceModifier.size(16.dp),
-                colorFilter = ColorFilter.tint(onContainer),
+                colorFilter = ColorFilter.tint(iconColor),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SelfClipboardRow(
+    self: SelfClipboardDisplay?,
+    themeColors: WidgetTheme.Colors?,
+) {
+    val context = LocalContext.current
+    val iconColor = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon)
+    val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
+
+    val rowClick = self?.deviceId
+        ?.let { WidgetDeeplink.buildIntent(context, it, WidgetDeeplink.ModuleType.CLIPBOARD) }
+        ?.let { actionStartActivity(it) }
+
+    Box(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .height(ClipboardWidgetSizing.ROW_HEIGHT)
+            .cornerRadius(12.dp)
+            .background(barTrack)
+            .then(
+                if (rowClick != null) GlanceModifier.clickable(rowClick) else GlanceModifier
+            ),
+    ) {
+        Row(
+            modifier = GlanceModifier.fillMaxSize().padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(
+                provider = ImageProvider(R.drawable.widget_clipboard_24),
+                contentDescription = null,
+                modifier = GlanceModifier.size(18.dp),
+                colorFilter = ColorFilter.tint(iconColor),
+            )
+            Spacer(modifier = GlanceModifier.width(6.dp))
+            Text(
+                text = self?.text ?: context.getString(R.string.module_clipboard_widget_self_empty),
+                style = TextStyle(
+                    fontStyle = if (self?.text == null) androidx.glance.text.FontStyle.Italic else androidx.glance.text.FontStyle.Normal,
+                    fontSize = 11.sp,
+                    color = iconColor,
+                ),
+                maxLines = 1,
             )
         }
     }

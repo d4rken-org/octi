@@ -32,12 +32,22 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import eu.darken.octi.common.navigation.WidgetDeeplink
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.modules.power.R
 
+private object BatteryWidgetSizing {
+    /** 8dp outer padding × 2 sides + 4dp spacer between bar and percent text + 44dp percent text width. */
+    const val BAR_HORIZONTAL_OVERHEAD_DP = 64f
+}
+
+private fun colorOrDefault(value: Int?, @ColorRes defaultRes: Int): ColorProvider =
+    value?.let { ColorProvider(Color(it)) } ?: ColorProvider(defaultRes)
+
 private data class BatteryDeviceRow(
+    val deviceId: String,
     val deviceName: String,
     val lastSeen: CharSequence,
     val percent: Int,
@@ -56,8 +66,8 @@ fun BatteryWidgetContent(
     val context = LocalContext.current
     val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
         ?.let { actionStartActivity(it) }
-    // Widget padding: 8dp each side, spacer: 4dp, percent text: 44dp
-    val barWidthDp = (LocalSize.current.width.value - 64f).coerceAtLeast(0f)
+    val barWidthDp = (LocalSize.current.width.value - BatteryWidgetSizing.BAR_HORIZONTAL_OVERHEAD_DP)
+        .coerceAtLeast(0f)
 
     GlanceTheme {
         Box(
@@ -112,6 +122,7 @@ private fun buildDeviceRows(
         .take(maxRows)
         .map { (powerData, metaData) ->
             BatteryDeviceRow(
+                deviceId = powerData.deviceId.id,
                 deviceName = metaData.data.labelOrFallback,
                 lastSeen = DateUtils.getRelativeTimeSpanString(
                     metaData.modifiedAt.toEpochMilliseconds(),
@@ -131,10 +142,14 @@ private fun BatteryDeviceRowContent(
     themeColors: WidgetTheme.Colors?,
     barWidthDp: Float,
 ) {
+    val context = LocalContext.current
     val barFill = colorOrDefault(themeColors?.barFill, CommonR.color.widgetBarFill)
     val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
     val iconColor = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon)
     val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
+
+    val rowClick = WidgetDeeplink.buildIntent(context, device.deviceId, WidgetDeeplink.ModuleType.POWER)
+        ?.let { actionStartActivity(it) }
 
     Row(
         modifier = GlanceModifier
@@ -147,7 +162,10 @@ private fun BatteryDeviceRowContent(
                 .defaultWeight()
                 .height(30.dp)
                 .cornerRadius(12.dp)
-                .background(barTrack),
+                .background(barTrack)
+                .then(
+                    if (rowClick != null) GlanceModifier.clickable(rowClick) else GlanceModifier
+                ),
         ) {
             val fillWidth = (barWidthDp * device.percent / 100f).coerceAtLeast(0f)
             if (fillWidth > 0f) {
@@ -206,5 +224,3 @@ private fun BatteryDeviceRowContent(
     }
 }
 
-private fun colorOrDefault(value: Int?, @ColorRes defaultRes: Int): ColorProvider =
-    value?.let { ColorProvider(Color(it)) } ?: ColorProvider(defaultRes)
