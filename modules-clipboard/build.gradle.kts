@@ -44,6 +44,9 @@ dependencies {
     implementation(project(":modules-meta"))
     implementation("androidx.glance:glance-appwidget:1.2.0-rc01")
     implementation("androidx.glance:glance-material3:1.2.0-rc01")
+    testImplementation("androidx.glance:glance-appwidget-testing:1.2.0-rc01")
+    testImplementation("androidx.glance:glance-testing:1.2.0-rc01")
+    testImplementation("org.robolectric:robolectric:4.16.1")
 
     addAndroidCore()
     addDI()

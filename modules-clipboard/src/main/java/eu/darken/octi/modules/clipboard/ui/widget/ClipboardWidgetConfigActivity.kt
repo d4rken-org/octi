@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -178,7 +179,7 @@ private fun ClipboardWidgetPreview(colors: WidgetTheme.Colors?) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(30.dp)
+                    .height(36.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color(previewColors.barTrack)),
             ) {
@@ -189,12 +190,12 @@ private fun ClipboardWidgetPreview(colors: WidgetTheme.Colors?) {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.widget_clipboard_24),
+                        painter = painterResource(R.drawable.widget_device_phone_24),
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp),
+                        modifier = Modifier.size(18.dp),
                         tint = Color(previewColors.icon),
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Pixel 8",
                         fontSize = 11.sp,
@@ -202,10 +203,47 @@ private fun ClipboardWidgetPreview(colors: WidgetTheme.Colors?) {
                         color = Color(previewColors.icon),
                         maxLines = 1,
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Hello world\u2026",
                         fontSize = 10.sp,
+                        color = Color(previewColors.icon),
+                        maxLines = 1,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(36.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(previewColors.barFill)),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.widget_clipboard_24),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = Color(previewColors.icon),
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(R.string.module_clipboard_widget_self_label),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(previewColors.icon),
+                        maxLines = 1,
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Hello world",
+                        fontSize = 11.sp,
                         color = Color(previewColors.icon),
                         maxLines = 1,
                     )

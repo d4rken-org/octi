@@ -13,7 +13,9 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
@@ -32,7 +34,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import eu.darken.octi.common.navigation.WidgetDeeplink
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.modules.connectivity.R
@@ -203,17 +204,16 @@ private fun NetworkDeviceTileContent(
     val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
     val iconRes = connectionIconRes(device.connectionType)
 
-    val tileClick = WidgetDeeplink.buildIntent(context, device.deviceId, WidgetDeeplink.ModuleType.CONNECTIVITY)
-        ?.let { actionStartActivity(it) }
+    val copyAction = actionRunCallback<CopyNetworkAddressesCallback>(
+        actionParametersOf(CopyNetworkAddressesCallback.KEY_DEVICE_ID to device.deviceId),
+    )
 
     Box(
         modifier = modifier
             .height(NetworkWidgetSizing.TILE_HEIGHT)
             .cornerRadius(12.dp)
             .background(barTrack)
-            .then(
-                if (tileClick != null) GlanceModifier.clickable(tileClick) else GlanceModifier
-            ),
+            .clickable(copyAction),
     ) {
         Column(
             modifier = GlanceModifier.fillMaxSize().padding(horizontal = 10.dp, vertical = 6.dp),
@@ -225,7 +225,7 @@ private fun NetworkDeviceTileContent(
                 Image(
                     provider = ImageProvider(iconRes),
                     contentDescription = null,
-                    modifier = GlanceModifier.size(18.dp),
+                    modifier = GlanceModifier.size(16.dp),
                     colorFilter = ColorFilter.tint(iconColor),
                 )
                 Spacer(modifier = GlanceModifier.width(4.dp))
@@ -279,8 +279,9 @@ private fun NetworkDeviceCompactRow(
     val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
     val iconRes = connectionIconRes(device.connectionType)
 
-    val rowClick = WidgetDeeplink.buildIntent(context, device.deviceId, WidgetDeeplink.ModuleType.CONNECTIVITY)
-        ?.let { actionStartActivity(it) }
+    val copyAction = actionRunCallback<CopyNetworkAddressesCallback>(
+        actionParametersOf(CopyNetworkAddressesCallback.KEY_DEVICE_ID to device.deviceId),
+    )
 
     Box(
         modifier = GlanceModifier
@@ -288,9 +289,7 @@ private fun NetworkDeviceCompactRow(
             .height(NetworkWidgetSizing.SINGLE_ROW_HEIGHT)
             .cornerRadius(12.dp)
             .background(barTrack)
-            .then(
-                if (rowClick != null) GlanceModifier.clickable(rowClick) else GlanceModifier
-            ),
+            .clickable(copyAction),
     ) {
         Column(
             modifier = GlanceModifier.fillMaxSize().padding(horizontal = 10.dp, vertical = 4.dp),
@@ -302,7 +301,7 @@ private fun NetworkDeviceCompactRow(
                 Image(
                     provider = ImageProvider(iconRes),
                     contentDescription = null,
-                    modifier = GlanceModifier.size(18.dp),
+                    modifier = GlanceModifier.size(16.dp),
                     colorFilter = ColorFilter.tint(iconColor),
                 )
                 Spacer(modifier = GlanceModifier.width(4.dp))

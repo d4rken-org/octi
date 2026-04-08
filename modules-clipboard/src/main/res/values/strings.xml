@@ -13,5 +13,14 @@
 
     <string name="module_clipboard_widget_description">Display clipboard content from your synced devices.</string>
     <string name="module_clipboard_widget_paste_action">Share my clipboard</string>
+    <string name="module_clipboard_widget_share_action">Share my clipboard</string>
+    <string name="module_clipboard_widget_copied_toast">Copied</string>
+    <string name="module_clipboard_widget_self_label">You</string>
     <string name="module_clipboard_widget_self_empty">Nothing shared yet</string>
+    <string name="module_clipboard_widget_no_data">No clipboard data</string>
+    <string name="module_clipboard_widget_share_success">Clipboard shared</string>
+    <string name="module_clipboard_widget_share_empty">Nothing to share</string>
+    <string name="module_clipboard_widget_share_blocked">Clipboard access blocked</string>
+    <string name="module_clipboard_widget_share_unsupported">Clipboard content not supported</string>
+    <string name="module_clipboard_widget_share_failed">Failed to share clipboard</string>
 </resources>

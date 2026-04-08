@@ -18,4 +18,6 @@
     <string name="module_connectivity_status_disconnected_label">Disconnected</string>
 
     <string name="module_connectivity_widget_description">Display network information from your synced devices.</string>
+    <string name="module_connectivity_widget_copy_action">Copy network addresses</string>
+    <string name="module_connectivity_widget_copied_toast">Copied addresses</string>
 </resources>

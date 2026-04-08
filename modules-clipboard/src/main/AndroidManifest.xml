@@ -12,6 +12,15 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="eu.darken.octi.modules.clipboard.ui.widget.ClipboardShareActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <receiver
             android:name="eu.darken.octi.modules.clipboard.ui.widget.ClipboardWidgetProvider"
             android:exported="false">

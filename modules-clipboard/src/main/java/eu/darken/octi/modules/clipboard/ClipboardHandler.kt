@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.collections.toByteString
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.datastore.value
+import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -58,16 +59,54 @@ class ClipboardHandler @Inject constructor(
         }
     }
 
-    suspend fun shareCurrentOSClipboard() {
-        log(TAG) { "shareCurrentOSClipboard()" }
-        val info = if (cm.hasPrimaryClip()) {
-            cm.primaryClip?.toClipboardInfo()
-        } else {
-            null
-        }
+    enum class ShareResult { OK, EMPTY, BLOCKED, UNSUPPORTED }
 
-        log(TAG) { "shareCurrentOSClipboard(): $info" }
-        setSharedClipboard(info ?: ClipboardInfo())
+    suspend fun shareCurrentOSClipboard(): ShareResult {
+        log(TAG, VERBOSE) { "shareCurrentOSClipboard(): hasPrimaryClip=${cm.hasPrimaryClip()}" }
+        val readResult = runCatching {
+            if (cm.hasPrimaryClip()) cm.primaryClip else null
+        }
+        val info: ClipboardInfo
+        val result: ShareResult
+        val reason: String
+        when {
+            readResult.isFailure -> {
+                result = ShareResult.BLOCKED
+                reason = "SECURITY_BLOCKED:${readResult.exceptionOrNull()?.javaClass?.simpleName}"
+                info = ClipboardInfo()
+            }
+            readResult.getOrNull() == null -> {
+                result = ShareResult.EMPTY
+                reason = "NO_CLIP"
+                info = ClipboardInfo()
+            }
+            else -> {
+                val clip = readResult.getOrNull()!!
+                val mime = (0 until clip.description.mimeTypeCount)
+                    .joinToString(",") { clip.description.getMimeType(it) }
+                val converted = clip.toClipboardInfo()
+                when {
+                    converted == null -> {
+                        result = ShareResult.UNSUPPORTED
+                        reason = "UNSUPPORTED_TYPE($mime)"
+                        info = ClipboardInfo()
+                    }
+                    converted.type == ClipboardInfo.Type.EMPTY -> {
+                        result = ShareResult.EMPTY
+                        reason = "EMPTY_TEXT($mime)"
+                        info = converted
+                    }
+                    else -> {
+                        result = ShareResult.OK
+                        reason = "OK($mime,len=${converted.data.size})"
+                        info = converted
+                    }
+                }
+            }
+        }
+        log(TAG, VERBOSE) { "shareCurrentOSClipboard(): reason=$reason" }
+        if (result == ShareResult.OK) setSharedClipboard(info)
+        return result
     }
 
     private fun ClipboardInfo.toClipData(): ClipData? = when (type) {

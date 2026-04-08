@@ -9,31 +9,33 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="36dp"
+        android:background="@color/widgetBarTrack"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="10dp"
-        android:paddingEnd="4dp">
+        android:paddingEnd="10dp">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/widget_clipboard_24"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/widget_device_phone_24"
             android:tint="@color/widgetBarIcon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="6dp"
             android:text="Pixel 8"
             android:textColor="@color/widgetBarIcon"
             android:textSize="11sp"
             android:textStyle="bold" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Meeting notes…"
@@ -41,38 +43,83 @@
             android:textSize="10sp" />
     </LinearLayout>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="2dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_marginTop="2dp"
+        android:layout_height="36dp"
+        android:background="@color/widgetBarTrack"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="10dp"
-        android:paddingEnd="4dp">
+        android:paddingEnd="10dp">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/widget_device_tablet_24"
+            android:tint="@color/widgetBarIcon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="Galaxy Tab"
+            android:textColor="@color/widgetBarIcon"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Shopping list…"
+            android:textColor="@color/widgetBarIcon"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@color/widgetBarTrack"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:src="@drawable/widget_clipboard_24"
             android:tint="@color/widgetBarIcon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="Galaxy S24"
+            android:layout_marginStart="6dp"
+            android:text="@string/module_clipboard_widget_self_label"
             android:textColor="@color/widgetBarIcon"
             android:textSize="11sp"
             android:textStyle="bold" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="Shopping list…"
+            android:text="Hello world"
             android:textColor="@color/widgetBarIcon"
-            android:textSize="10sp" />
+            android:textSize="11sp" />
     </LinearLayout>
 </LinearLayout>
