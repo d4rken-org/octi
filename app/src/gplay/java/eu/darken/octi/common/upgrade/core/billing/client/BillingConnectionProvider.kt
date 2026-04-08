@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.retryWhen
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class BillingConnectionProvider @Inject constructor(
@@ -117,7 +118,7 @@ class BillingConnectionProvider @Inject constructor(
             }
 
             log(TAG) { "Will retry BillingClient connection... *sigh*" }
-            delay(2000 * attempt)
+            delay((2 * attempt).seconds)
             true
         }
 

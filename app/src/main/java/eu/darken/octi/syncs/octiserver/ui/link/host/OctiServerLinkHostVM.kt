@@ -27,6 +27,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class OctiServerLinkHostVM @Inject constructor(
@@ -67,7 +68,7 @@ class OctiServerLinkHostVM @Inject constructor(
             val connector = connectorFlow.first()
             while (currentCoroutineContext().isActive) {
                 connector.sync(SyncOptions(writeData = false))
-                delay(3000)
+                delay(3.seconds)
             }
         }
     }

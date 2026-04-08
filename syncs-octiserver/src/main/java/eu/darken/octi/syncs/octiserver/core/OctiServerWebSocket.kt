@@ -28,8 +28,8 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import java.util.Base64
 import java.util.concurrent.TimeUnit
-import kotlin.math.min
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 class OctiServerWebSocket(
@@ -60,16 +60,16 @@ class OctiServerWebSocket(
             .pingInterval(30, TimeUnit.SECONDS)
             .build()
 
-        var backoffMs = INITIAL_BACKOFF_MS
+        var backoff = INITIAL_BACKOFF
         var activeSocket: WebSocket? = null
 
         lateinit var doConnect: () -> Unit
 
         val scheduleReconnect: () -> Unit = {
             launch {
-                log(TAG) { "Reconnecting in ${backoffMs}ms" }
-                delay(backoffMs)
-                backoffMs = min(backoffMs * 2, MAX_BACKOFF_MS)
+                log(TAG) { "Reconnecting in $backoff" }
+                delay(backoff)
+                backoff = minOf(backoff * 2, MAX_BACKOFF)
 
                 if (!isActive) return@launch
 
@@ -95,7 +95,7 @@ class OctiServerWebSocket(
             activeSocket = wsClient.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket, response: Response) {
                     log(TAG, INFO) { "Connected" }
-                    backoffMs = INITIAL_BACKOFF_MS
+                    backoff = INITIAL_BACKOFF
                     onConnectionChanged(true)
                 }
 
@@ -155,8 +155,8 @@ class OctiServerWebSocket(
     }
 
     companion object {
-        private const val INITIAL_BACKOFF_MS = 1000L
-        private const val MAX_BACKOFF_MS = 30_000L
+        private val INITIAL_BACKOFF = 1.seconds
+        private val MAX_BACKOFF = 30.seconds
         private val TAG = logTag("Sync", "OctiServer", "WebSocket")
     }
 }

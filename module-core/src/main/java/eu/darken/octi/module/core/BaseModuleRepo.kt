@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.plus
 import java.util.UUID
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 
 abstract class BaseModuleRepo<T : Any>(
@@ -109,7 +110,7 @@ abstract class BaseModuleRepo<T : Any>(
                 flowOf(null)
             } else {
                 refreshTrigger.flatMapLatest {
-                    infoSource.info.throttleLatest(1000)
+                    infoSource.info.throttleLatest(1.seconds)
                 }
             }
         }

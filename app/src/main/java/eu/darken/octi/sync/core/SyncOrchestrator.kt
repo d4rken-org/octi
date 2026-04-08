@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.onEach
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @Singleton
@@ -103,8 +105,8 @@ class SyncOrchestrator @Inject constructor(
                     consecutiveFailures++
                     log(TAG, ERROR) { "pendingSyncTrigger: sync failed ($consecutiveFailures/$MAX_RETRIES): ${e.asLog()}" }
                     if (consecutiveFailures < MAX_RETRIES && e.hasCause(IOException::class)) {
-                        val backoff = RETRY_BASE_DELAY_MS * (1L shl (consecutiveFailures - 1))
-                        log(TAG, WARN) { "pendingSyncTrigger: retrying in ${backoff}ms" }
+                        val backoff: Duration = RETRY_BASE_DELAY * (1 shl (consecutiveFailures - 1))
+                        log(TAG, WARN) { "pendingSyncTrigger: retrying in $backoff" }
                         delay(backoff)
                         syncManager.requestSync()
                     } else {
@@ -118,7 +120,7 @@ class SyncOrchestrator @Inject constructor(
 
     companion object {
         private const val MAX_RETRIES = 3
-        private const val RETRY_BASE_DELAY_MS = 2_000L
+        private val RETRY_BASE_DELAY = 2.seconds
         private val TAG = logTag("App", "Sync", "Orchestrator")
 
         private fun SyncWorkerControl.WorkerState.WorkerInfo.toOrchestratorInfo() = BackgroundSyncState.WorkerInfo(

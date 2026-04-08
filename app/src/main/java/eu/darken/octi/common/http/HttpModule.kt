@@ -14,9 +14,10 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
-import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -41,9 +42,9 @@ class HttpModule {
         userAgentInterceptor: UserAgentInterceptor,
     ): OkHttpClient = OkHttpClient().newBuilder().apply {
         cache(cache)
-        connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-        readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-        writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        connectTimeout(TIMEOUT.toJavaDuration())
+        readTimeout(TIMEOUT.toJavaDuration())
+        writeTimeout(TIMEOUT.toJavaDuration())
         retryOnConnectionFailure(true)
         addInterceptor(loggingInterceptor)
         addInterceptor(userAgentInterceptor)
@@ -64,6 +65,6 @@ class HttpModule {
 
     companion object {
         private val TAG = logTag("Http")
-        const val TIMEOUT_SECONDS = 20L
+        private val TIMEOUT = 20.seconds
     }
 }

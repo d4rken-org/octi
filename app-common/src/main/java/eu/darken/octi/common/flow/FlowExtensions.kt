@@ -17,7 +17,7 @@ import kotlin.time.Duration
  */
 fun <T : Any> Flow<T>.shareLatest(
     scope: CoroutineScope,
-    started: SharingStarted = SharingStarted.WhileSubscribed(replayExpirationMillis = 0),
+    started: SharingStarted = SharingStarted.WhileSubscribed(replayExpiration = Duration.ZERO),
     tag: String? = null,
 ) = this
     .onStart { if (tag != null) log(tag, VERBOSE) { "shareLatest(...) start" } }

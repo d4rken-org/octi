@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
 class PowerAlertNotificationReceiver : BroadcastReceiver() {
@@ -42,7 +43,7 @@ class PowerAlertNotificationReceiver : BroadcastReceiver() {
                 log(TAG, ERROR) { "Unknown action: ${intent.action}" }
             }
 
-            delay(1000)
+            delay(1.seconds)
             log(TAG) { "Finished notification receiver" }
             asyncPi.finish()
         }

@@ -59,6 +59,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okio.ByteString
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 import kotlin.time.TimeSource
 
@@ -329,7 +330,7 @@ class OctiServerConnector @AssistedInject constructor(
                         null
                     }
                     log(TAG, VERBOSE) { "Module fetched: $fetchResult" }
-                    if (!isTargeted) delay(1000)
+                    if (!isTargeted) delay(1.seconds)
                     fetchResult
                 }
 

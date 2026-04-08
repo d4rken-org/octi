@@ -29,6 +29,7 @@ import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class PowerAlertManager @Inject constructor(
@@ -55,7 +56,7 @@ class PowerAlertManager @Inject constructor(
 
     init {
         combine(
-            powerRepo.state.throttleLatest(1000),
+            powerRepo.state.throttleLatest(1.seconds),
             powerSettings.alertRules.flow,
         ) { powerStates, alertRules ->
             processAlerts(powerStates, alertRules)

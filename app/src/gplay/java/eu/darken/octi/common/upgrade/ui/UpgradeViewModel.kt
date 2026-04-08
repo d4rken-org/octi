@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class UpgradeViewModel @Inject constructor(
@@ -52,7 +53,7 @@ class UpgradeViewModel @Inject constructor(
 
     val state: Flow<Pricing> = combine(
         flow {
-            val data = withTimeoutOrNull(5000) {
+            val data = withTimeoutOrNull(5.seconds) {
                 try {
                     upgradeRepo.querySkus(OurSku.Iap.PRO_UPGRADE)
                 } catch (e: Exception) {
@@ -63,7 +64,7 @@ class UpgradeViewModel @Inject constructor(
             emit(data)
         },
         flow {
-            val data = withTimeoutOrNull(5000) {
+            val data = withTimeoutOrNull(5.seconds) {
                 try {
                     upgradeRepo.querySkus(OurSku.Sub.PRO_UPGRADE)
                 } catch (e: Exception) {

@@ -20,6 +20,7 @@ import eu.darken.octi.common.upgrade.core.billing.SkuDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -30,6 +31,10 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @Singleton
@@ -58,7 +63,7 @@ class UpgradeRepoGplay @Inject constructor(
                     Info(billingData = data)
                 }
 
-                (now - lastProStateAt) < 7 * 24 * 60 * 1000L -> { // 7 days
+                (now - lastProStateAt).milliseconds < PRO_GRACE_PERIOD -> {
                     log(TAG, VERBOSE) { "We are not pro, but were recently, did GPlay try annoy us again?" }
                     Info(gracePeriod = true, billingData = null)
                 }
@@ -74,7 +79,7 @@ class UpgradeRepoGplay @Inject constructor(
             val now = Clock.System.now().toEpochMilliseconds()
             val lastProStateAt = billingCache.lastProStateAt.value()
             log(TAG) { "Catch: now=$now, lastProStateAt=$lastProStateAt, error=$it" }
-            if ((now - lastProStateAt) < 7 * 24 * 60 * 1000L) { // 7 days
+            if ((now - lastProStateAt).milliseconds < PRO_GRACE_PERIOD) {
                 log(TAG, VERBOSE) { "We are not pro, but were recently, and just and an error, what is GPlay doing???" }
                 emit(Info(gracePeriod = true, billingData = null))
             } else {
@@ -82,7 +87,7 @@ class UpgradeRepoGplay @Inject constructor(
             }
         }
         .setupCommonEventHandlers(TAG) { "upgradeInfo2" }
-        .shareIn(scope, SharingStarted.WhileSubscribed(3000L, 0L), replay = 1)
+        .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeout = 3.seconds, replayExpiration = Duration.ZERO), replay = 1)
 
     fun launchBillingFlow(activity: Activity, sku: Sku, offer: Sku.Subscription.Offer?) {
         log(TAG) { "launchBillingFlow($activity,$sku)" }
@@ -138,6 +143,7 @@ class UpgradeRepoGplay @Inject constructor(
 
     companion object {
         private const val SITE = "https://play.google.com/store/apps/details?id=eu.darken.octi"
+        private val PRO_GRACE_PERIOD = 7.days
         val TAG: String = logTag("Upgrade", "Gplay", "Repo")
     }
 }

@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class SyncListVM @Inject constructor(
@@ -98,7 +99,7 @@ class SyncListVM @Inject constructor(
                     newIds.forEach { id ->
                         highlightJobs[id]?.cancel()
                         highlightJobs[id] = vmScope.launch {
-                            delay(2_000)
+                            delay(2.seconds)
                             highlightedIds.value = highlightedIds.value - id
                             highlightJobs.remove(id)
                         }

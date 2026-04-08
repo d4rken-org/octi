@@ -40,6 +40,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class SyncManager @Inject constructor(
@@ -57,8 +58,7 @@ class SyncManager @Inject constructor(
 
     private val syncRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
-    @Suppress("MagicNumber")
-    val pendingSyncTrigger: Flow<Unit> = syncRequests.debounce(2_000L)
+    val pendingSyncTrigger: Flow<Unit> = syncRequests.debounce(2.seconds)
 
     private val disabledConnectors = MutableStateFlow(emptySet<SyncConnector>())
 

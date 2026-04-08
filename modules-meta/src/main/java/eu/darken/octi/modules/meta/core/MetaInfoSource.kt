@@ -21,6 +21,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @Singleton
@@ -60,7 +61,7 @@ class MetaInfoSource @Inject constructor(
                         deviceBootedAt = deviceBootedAt,
                     )
                     emit(info)
-                    delay(10 * 1000)
+                    delay(10.seconds)
                 }
             }
         }

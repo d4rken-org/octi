@@ -62,6 +62,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 @HiltViewModel
@@ -100,7 +101,7 @@ class DashboardVM @Inject constructor(
     private val tickerUiRefresh = flow {
         while (currentCoroutineContext().isActive) {
             emit(Clock.System.now())
-            delay(60 * 1000)
+            delay(1.minutes)
         }
     }
 

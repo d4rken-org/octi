@@ -18,7 +18,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -32,6 +33,8 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class BillingManager @Inject constructor(
@@ -49,17 +52,17 @@ class BillingManager @Inject constructor(
         }
         .catch { log(TAG, ERROR) { "Unable to provide client connection:\n${it.asLog()}" } }
         .setupCommonEventHandlers(TAG) { "connection" }
-        .shareIn(scope, WhileSubscribed(3000L, 0L), replay = 1)
+        .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeout = 3.seconds, replayExpiration = Duration.ZERO), replay = 1)
 
     private val purchases = connection
         .flatMapLatest { it.purchases }
         .distinctUntilChanged()
         .setupCommonEventHandlers(TAG) { "purchases" }
-        .shareIn(scope, WhileSubscribed(3000L, 0L), replay = 1)
+        .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeout = 3.seconds, replayExpiration = Duration.ZERO), replay = 1)
 
     val billingData: Flow<BillingData> = purchases
         .map { BillingData(purchases = it) }
-        .shareIn(scope, WhileSubscribed(3000L, 0L), replay = 1)
+        .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeout = 3.seconds, replayExpiration = Duration.ZERO), replay = 1)
 
     init {
         purchases
@@ -108,7 +111,7 @@ class BillingManager @Inject constructor(
                 }
 
                 log(TAG) { "Will retry ACK" }
-                delay(3000 * attempt)
+                delay((3 * attempt).seconds)
                 true
             }
             .launchIn(scope)

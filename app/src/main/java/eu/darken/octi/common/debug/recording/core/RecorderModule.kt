@@ -26,6 +26,8 @@ import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class RecorderModule @Inject constructor(
@@ -233,7 +235,7 @@ class RecorderModule @Inject constructor(
 
         val sessionDir = currentState.recorder?.sessionDir ?: return StopResult.NotRecording
         val elapsed = Clock.System.now().toEpochMilliseconds() - (currentState.recordingStartedAt ?: 0L)
-        if (elapsed < MIN_RECORDING_MS) return StopResult.TooShort
+        if (elapsed.milliseconds < MIN_RECORDING) return StopResult.TooShort
 
         stopRecorder()
         return StopResult.Stopped(LogSession(sessionDir))
@@ -261,6 +263,6 @@ class RecorderModule @Inject constructor(
     companion object {
         internal val TAG = logTag("Debug", "Log", "Recorder", "Module")
         private const val FORCE_FILE = "force_debug_run"
-        internal const val MIN_RECORDING_MS = 5_000L
+        internal val MIN_RECORDING = 5.seconds
     }
 }

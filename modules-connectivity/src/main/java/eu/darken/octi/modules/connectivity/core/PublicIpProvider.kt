@@ -21,6 +21,8 @@ import okhttp3.Request
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class PublicIpProvider @Inject constructor(
@@ -47,7 +49,7 @@ class PublicIpProvider @Inject constructor(
             return@mapLatest null
         }
 
-        delay(SETTLE_DELAY_MS)
+        delay(SETTLE_DELAY)
 
         for (url in endpointUrls) {
             val result = fetchPublicIp(url)
@@ -65,7 +67,7 @@ class PublicIpProvider @Inject constructor(
                 .build()
 
             val call = httpClient.newCall(request).also {
-                it.timeout().timeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                it.timeout().timeout(TIMEOUT.inWholeMilliseconds, TimeUnit.MILLISECONDS)
             }
 
             call.execute().use { response ->
@@ -84,8 +86,8 @@ class PublicIpProvider @Inject constructor(
     }
 
     companion object {
-        private const val SETTLE_DELAY_MS = 500L
-        private const val TIMEOUT_MS = 5_000L
+        private val SETTLE_DELAY = 500.milliseconds
+        private val TIMEOUT = 5.seconds
         private val TAG = logTag("Module", "Connectivity", "PublicIpProvider")
     }
 }

@@ -68,6 +68,7 @@ import okio.ByteString.Companion.toByteString
 import okio.IOException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlin.time.TimeSource
 import com.google.api.services.drive.model.File as GDriveFile
@@ -136,7 +137,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     override val syncEvents: Flow<SyncEvent> = flow {
         while (true) {
-            delay(POLL_INTERVAL_MS)
+            delay(POLL_INTERVAL)
             try {
                 val changes = withDrive { checkForChanges() }
                 changes.forEach { emit(it) }
@@ -793,7 +794,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     companion object {
         private const val DEVICE_DATA_DIR_NAME = "devices"
         private const val DEVICE_INFO_FILE = "_device.json"
-        private const val POLL_INTERVAL_MS = 2 * 60 * 1000L // 2 minutes
+        private val POLL_INTERVAL = 2.minutes
         private val TAG = logTag("Sync", "GDrive", "Connector")
     }
 }

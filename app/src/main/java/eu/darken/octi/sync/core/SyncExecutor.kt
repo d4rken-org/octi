@@ -12,6 +12,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
 @Singleton
@@ -34,7 +35,7 @@ class SyncExecutor @Inject constructor(
             log(TAG, ERROR) { "Failed to refresh modules: ${e.asLog()}" }
         }
 
-        delay(3000)
+        delay(3.seconds)
 
         try {
             syncManager.sync()

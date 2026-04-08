@@ -77,8 +77,8 @@ class ForegroundSyncControl @Inject constructor(
             override fun onStop(owner: LifecycleOwner) {
                 backgroundDebounceJob?.cancel()
                 backgroundDebounceJob = scope.launch {
-                    log(TAG) { "Process backgrounded, debouncing ${BACKGROUND_DEBOUNCE.inWholeMilliseconds}ms..." }
-                    delay(BACKGROUND_DEBOUNCE.inWholeMilliseconds)
+                    log(TAG) { "Process backgrounded, debouncing $BACKGROUND_DEBOUNCE..." }
+                    delay(BACKGROUND_DEBOUNCE)
                     isForeground.value = false
                     log(TAG) { "Background debounce elapsed, isForeground=false" }
                 }
@@ -173,16 +173,16 @@ class ForegroundSyncControl @Inject constructor(
                         pending.getOrPut(first.connectorId) { PendingSync() }.add(first)
 
                         // Drain events arriving within the debounce window
-                        withTimeoutOrNull(CLIENT_DEBOUNCE.inWholeMilliseconds) {
+                        withTimeoutOrNull(CLIENT_DEBOUNCE) {
                             while (true) {
                                 val event = eventChannel.receive()
                                 pending.getOrPut(event.connectorId) { PendingSync() }.add(event)
                             }
                         }
 
-                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT.inWholeMilliseconds) {
+                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT) {
                             syncPendingModules(pending)
-                        } ?: log(TAG, WARN) { "In-flight sync timed out after ${SYNC_COMPLETION_TIMEOUT.inWholeMilliseconds}ms" }
+                        } ?: log(TAG, WARN) { "In-flight sync timed out after $SYNC_COMPLETION_TIMEOUT" }
                     }
                 }
             } finally {
@@ -199,9 +199,9 @@ class ForegroundSyncControl @Inject constructor(
                     }
                     if (remaining.isNotEmpty()) {
                         log(TAG, INFO) { "Flushing ${remaining.values.sumOf { it.modules.size }} pending events on shutdown" }
-                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT.inWholeMilliseconds) {
+                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT) {
                             syncPendingModules(remaining)
-                        } ?: log(TAG, WARN) { "Flush sync timed out after ${SYNC_COMPLETION_TIMEOUT.inWholeMilliseconds}ms" }
+                        } ?: log(TAG, WARN) { "Flush sync timed out after $SYNC_COMPLETION_TIMEOUT" }
                     }
                 }
             }

@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class UpgradeViewModel @Inject constructor(
@@ -51,7 +53,7 @@ class UpgradeViewModel @Inject constructor(
         val elapsed = Clock.System.now().toEpochMilliseconds() - openedAt
         log(TAG) { "onResumed(): elapsed=${elapsed}ms" }
 
-        if (elapsed < MIN_SPONSOR_TIME_MS) {
+        if (elapsed.milliseconds < MIN_SPONSOR_TIME) {
             log(TAG) { "onResumed(): too fast, showing snackbar" }
             snackbarEvents.tryEmit(Unit)
         } else {
@@ -62,7 +64,7 @@ class UpgradeViewModel @Inject constructor(
     }
 
     companion object {
-        private const val MIN_SPONSOR_TIME_MS = 5_000L
+        private val MIN_SPONSOR_TIME = 5.seconds
         private val TAG = logTag("Upgrade", "ViewModel")
     }
 }
