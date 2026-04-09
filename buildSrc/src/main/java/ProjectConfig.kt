@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.LibraryExtension
+import org.gradle.api.Project
 import java.io.File
 import java.util.Properties
 
@@ -8,17 +9,48 @@ object ProjectConfig {
     const val targetSdk = 36
     const val packageName = "eu.darken.octi"
 
-    object Version {
-        val versionProperties = Properties().apply {
-            File("version.properties").inputStream().use { load(it) }
-        }
-        val major = versionProperties.getProperty("project.versioning.major").toInt()
-        val minor = versionProperties.getProperty("project.versioning.minor").toInt()
-        val patch = versionProperties.getProperty("project.versioning.patch").toInt()
-        val build = versionProperties.getProperty("project.versioning.build").toInt()
+    data class Version(
+        val major: Int,
+        val minor: Int,
+        val patch: Int,
+        val build: Int,
+        val type: String,
+    ) {
+        val name: String
+            get() = "$major.$minor.$patch-$type$build"
+        val code: Int
+            get() = major * 10000000 + minor * 100000 + patch * 1000 + build * 10
+    }
 
-        val name = "${major}.${minor}.${patch}-rc${build}"
-        val code = major * 10000000 + minor * 100000 + patch * 1000 + build * 10
+    fun version(project: Project): Version {
+        val propsPath = File(project.rootDir, "version.properties")
+        require(propsPath.isFile) {
+            "version.properties not found at: ${propsPath.absolutePath}"
+        }
+        val props = Properties().apply {
+            propsPath.inputStream().use { load(it) }
+        }
+        fun intKey(key: String): Int {
+            val raw = props.getProperty(key)
+                ?: error("Missing key '$key' in ${propsPath.absolutePath}")
+            return raw.toIntOrNull()
+                ?: error("Key '$key' in ${propsPath.absolutePath} is not an integer: '$raw'")
+        }
+        fun stringKey(key: String): String {
+            return props.getProperty(key)?.takeIf { it.isNotBlank() }
+                ?: error("Missing key '$key' in ${propsPath.absolutePath}")
+        }
+        val type = stringKey("project.versioning.type")
+        require(type in setOf("rc", "beta")) {
+            "Invalid 'project.versioning.type'='$type' in ${propsPath.absolutePath}, expected one of: rc, beta"
+        }
+        return Version(
+            major = intKey("project.versioning.major"),
+            minor = intKey("project.versioning.minor"),
+            patch = intKey("project.versioning.patch"),
+            build = intKey("project.versioning.build"),
+            type = type,
+        )
     }
 }
 

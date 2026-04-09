@@ -308,7 +308,9 @@ do-version-properties() {
   V_MINOR_REGEX='^([a-zA-Z\.]+minor)=([0-9]+)$'
   V_PATCH_REGEX='^([a-zA-Z\.]+patch)=([0-9]+)$'
   V_BUILD_REGEX='^([a-zA-Z\.]+build)=([0-9]+)$'
+  V_TYPE_REGEX='^([a-zA-Z\.]+type)=(rc|beta)$'
 
+  V_TYPE_FOUND=false
   PROPS_FILE_NEW=""
 
   LAST_LINE=$(wc -l <$PROPS_FILE_NAME)
@@ -333,6 +335,11 @@ do-version-properties() {
       updated="${BASH_REMATCH[1]}=${V_BUILD_COUNTER}"
       echo "Found build, replacing: $line -> $updated"
       PROPS_FILE_NEW+=$updated
+    elif [[ $line =~ $V_TYPE_REGEX ]]; then
+      updated="${BASH_REMATCH[1]}=${V_BUILD_TYPE}"
+      echo "Found type, replacing: $line -> $updated"
+      PROPS_FILE_NEW+=$updated
+      V_TYPE_FOUND=true
     else
       PROPS_FILE_NEW+="$line"
     fi
@@ -342,6 +349,16 @@ do-version-properties() {
     fi
 
   done <"$PROPS_FILE_NAME"
+
+  if [ "$V_TYPE_FOUND" = false ]; then
+    echo -e "\n${S_NOTICE}No 'project.versioning.type' key in ${PROPS_FILE_NAME}, adding project.versioning.type=${V_BUILD_TYPE}"
+    # Insert before the trailing banner line (####...) if present, otherwise append.
+    PROPS_FILE_NEW=$(echo -e "$PROPS_FILE_NEW" | awk -v line="project.versioning.type=${V_BUILD_TYPE}" '
+      /^####+$/ && !inserted { print line; inserted=1 }
+      { print }
+      END { if (!inserted) print line }
+    ')
+  fi
 
   echo -e "$PROPS_FILE_NEW" >"$PROPS_FILE_NAME"
   git add "$PROPS_FILE_NAME"

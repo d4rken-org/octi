@@ -18,20 +18,22 @@ android {
     compileSdk = ProjectConfig.compileSdk
 
     defaultConfig {
+        val version = ProjectConfig.version(project)
+
         applicationId = packageName
 
         minSdk = ProjectConfig.minSdk
         targetSdk = ProjectConfig.targetSdk
 
-        versionCode = ProjectConfig.Version.code
-        versionName = ProjectConfig.Version.name
+        versionCode = version.code
+        versionName = version.name
 
         testInstrumentationRunner = "eu.darken.octi.HiltTestRunner"
 
         buildConfigField("String", "PACKAGENAME", "\"${ProjectConfig.packageName}\"")
         buildConfigField("String", "GITSHA", "\"${commitHashProvider.get()}\"")
-        buildConfigField("String", "VERSION_CODE", "\"${ProjectConfig.Version.code}\"")
-        buildConfigField("String", "VERSION_NAME", "\"${ProjectConfig.Version.name}\"")
+        buildConfigField("String", "VERSION_CODE", "\"${version.code}\"")
+        buildConfigField("String", "VERSION_NAME", "\"${version.name}\"")
     }
 
     signingConfigs {
