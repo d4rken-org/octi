@@ -1,9 +1,11 @@
 package eu.darken.octi.modules.clipboard.ui.widget
 
+import android.content.Context
 import androidx.glance.appwidget.testing.unit.runGlanceAppWidgetUnitTest
 import androidx.glance.testing.unit.hasContentDescription
 import androidx.glance.testing.unit.hasText
 import androidx.test.core.app.ApplicationProvider
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleId
@@ -64,25 +66,29 @@ class ClipboardWidgetContentGlanceTest {
     private fun fakeClipboardState(
         self: ClipboardInfo = ClipboardInfo(),
         remote: ClipboardInfo? = null,
+        extraRemotes: List<Pair<DeviceId, ClipboardInfo>> = emptyList(),
     ): BaseModuleRepo.State<ClipboardInfo> = BaseModuleRepo.State(
         moduleId = clipboardModuleId,
         self = clipboardModuleData(selfDeviceId, self),
         isOthersInitialized = true,
-        others = listOfNotNull(
-            remote?.let { clipboardModuleData(remoteDeviceId, it) },
-        ),
+        others = buildList {
+            remote?.let { add(clipboardModuleData(remoteDeviceId, it)) }
+            extraRemotes.forEach { (id, info) -> add(clipboardModuleData(id, info)) }
+        },
     )
 
     private fun fakeMetaState(
         selfLabel: String = "MyPhone",
         remoteLabel: String? = null,
+        extraRemotes: List<Pair<DeviceId, String>> = emptyList(),
     ): BaseModuleRepo.State<MetaInfo> = BaseModuleRepo.State(
         moduleId = metaModuleId,
         self = metaModuleData(selfDeviceId, selfLabel),
         isOthersInitialized = true,
-        others = listOfNotNull(
-            remoteLabel?.let { metaModuleData(remoteDeviceId, it) },
-        ),
+        others = buildList {
+            remoteLabel?.let { add(metaModuleData(remoteDeviceId, it)) }
+            extraRemotes.forEach { (id, label) -> add(metaModuleData(id, label)) }
+        },
     )
 
     @Test
@@ -137,5 +143,120 @@ class ClipboardWidgetContentGlanceTest {
         MetaInfo.DeviceType.PHONE.widgetIconRes() shouldBe R.drawable.widget_device_phone_24
         MetaInfo.DeviceType.TABLET.widgetIconRes() shouldBe R.drawable.widget_device_tablet_24
         MetaInfo.DeviceType.UNKNOWN.widgetIconRes() shouldBe R.drawable.widget_device_unknown_24
+    }
+
+    @Test
+    fun `filter with matching remote id keeps remote row and self row`() = runGlanceAppWidgetUnitTest {
+        setContext(ApplicationProvider.getApplicationContext())
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(remoteLabel = "Pixel 9"),
+                clipboardState = fakeClipboardState(
+                    remote = ClipboardInfo(
+                        type = ClipboardInfo.Type.SIMPLE_TEXT,
+                        data = "Hello".encodeUtf8(),
+                    ),
+                ),
+                themeColors = null,
+                maxRows = 5,
+                allowedDeviceIds = setOf(remoteDeviceId.id),
+            )
+        }
+        onNode(hasText("Pixel 9")).assertExists()
+        onNode(hasText("You")).assertExists()
+    }
+
+    @Test
+    fun `filter with unknown id hides remote rows but keeps self row`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(remoteLabel = "Pixel 9"),
+                clipboardState = fakeClipboardState(
+                    remote = ClipboardInfo(
+                        type = ClipboardInfo.Type.SIMPLE_TEXT,
+                        data = "Hello".encodeUtf8(),
+                    ),
+                ),
+                themeColors = null,
+                maxRows = 5,
+                allowedDeviceIds = setOf("unknown-device-id"),
+            )
+        }
+        onNode(hasText("Pixel 9")).assertDoesNotExist()
+        onNode(hasText("You")).assertExists()
+        onNode(hasText(context.getString(CommonR.string.widget_empty_label))).assertExists()
+    }
+
+    @Test
+    fun `filter targeting self id renders empty state and keeps self share row`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(remoteLabel = "Pixel 9"),
+                clipboardState = fakeClipboardState(
+                    remote = ClipboardInfo(
+                        type = ClipboardInfo.Type.SIMPLE_TEXT,
+                        data = "Hello".encodeUtf8(),
+                    ),
+                ),
+                themeColors = null,
+                maxRows = 5,
+                allowedDeviceIds = setOf(selfDeviceId.id),
+            )
+        }
+        onNode(hasText("Pixel 9")).assertDoesNotExist()
+        onNode(hasText("You")).assertExists()
+        onNode(hasText(context.getString(CommonR.string.widget_empty_label))).assertExists()
+    }
+
+    @Test
+    fun `unfiltered empty remote list renders the no-sync-devices label`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(remoteLabel = null),
+                clipboardState = fakeClipboardState(remote = null),
+                themeColors = null,
+                maxRows = 5,
+                allowedDeviceIds = null,
+            )
+        }
+        onNode(hasText(context.getString(CommonR.string.widget_no_sync_devices_label))).assertExists()
+        onNode(hasText(context.getString(CommonR.string.widget_empty_label))).assertDoesNotExist()
+        onNode(hasText("You")).assertExists()
+    }
+
+    @Test
+    fun `filter is applied before take so a late-sorting selection survives small maxRows`() = runGlanceAppWidgetUnitTest {
+        setContext(ApplicationProvider.getApplicationContext())
+        val aId = DeviceId("a-phone")
+        val mId = DeviceId("m-phone")
+        val zId = DeviceId("z-phone")
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(
+                    remoteLabel = null,
+                    extraRemotes = listOf(aId to "Alpha", mId to "Mike", zId to "Zulu"),
+                ),
+                clipboardState = fakeClipboardState(
+                    remote = null,
+                    extraRemotes = listOf(
+                        aId to ClipboardInfo(type = ClipboardInfo.Type.SIMPLE_TEXT, data = "a".encodeUtf8()),
+                        mId to ClipboardInfo(type = ClipboardInfo.Type.SIMPLE_TEXT, data = "m".encodeUtf8()),
+                        zId to ClipboardInfo(type = ClipboardInfo.Type.SIMPLE_TEXT, data = "z".encodeUtf8()),
+                    ),
+                ),
+                themeColors = null,
+                maxRows = 1,
+                allowedDeviceIds = setOf(zId.id),
+            )
+        }
+        onNode(hasText("Zulu")).assertExists()
+        onNode(hasText("Alpha")).assertDoesNotExist()
+        onNode(hasText("Mike")).assertDoesNotExist()
     }
 }

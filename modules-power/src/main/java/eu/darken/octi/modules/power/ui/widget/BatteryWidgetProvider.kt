@@ -18,7 +18,7 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.widget.WidgetTheme
+import eu.darken.octi.common.widget.WidgetInstanceConfig
 
 class BatteryGlanceWidget : GlanceAppWidget() {
 
@@ -42,7 +42,9 @@ class BatteryGlanceWidget : GlanceAppWidget() {
 
         provideContent {
             val widgetOptions = AppWidgetManager.getInstance(context).getAppWidgetOptions(appWidgetId)
-            val themeColors = WidgetTheme.parseThemeColors(widgetOptions)
+            val instanceConfig = WidgetInstanceConfig.parse(widgetOptions)
+            val themeColors = instanceConfig.themeColors
+            val allowedDeviceIds = instanceConfig.allowedDeviceIds.takeIf { it.isNotEmpty() }
 
             val metaState = metaRepo.state.collectAsState(initial = null)
             val powerState = powerRepo.state.collectAsState(initial = null)
@@ -55,6 +57,7 @@ class BatteryGlanceWidget : GlanceAppWidget() {
                 powerState = powerState.value,
                 themeColors = themeColors,
                 maxRows = maxRows,
+                allowedDeviceIds = allowedDeviceIds,
             )
         }
     }

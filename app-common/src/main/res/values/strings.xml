@@ -65,6 +65,14 @@
     <string name="widget_config_preview_label">Preview</string>
     <string name="widget_config_custom_label">Custom</string>
 
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">Devices</string>
+    <string name="widget_config_devices_empty_hint">If no devices are selected, all devices will be shown.</string>
+    <string name="widget_config_devices_selected_hint">Only selected devices will be shown.</string>
+    <string name="widget_config_devices_none_known">No sync devices known yet.</string>
+    <string name="widget_empty_label">No matching devices</string>
+    <string name="widget_no_sync_devices_label">No sync devices yet</string>
+
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">No %1$s data for this device</string>
     <string name="widget_deeplink_module_power">battery</string>

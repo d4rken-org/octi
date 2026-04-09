@@ -60,14 +60,17 @@ fun BatteryWidgetContent(
     powerState: ModuleRepo.State<*>?,
     themeColors: WidgetTheme.Colors?,
     maxRows: Int,
+    allowedDeviceIds: Set<String>? = null,
 ) {
-    val devices = buildDeviceRows(metaState, powerState, maxRows)
+    val devices = buildDeviceRows(metaState, powerState, maxRows, allowedDeviceIds)
     val containerBg = themeColors?.containerBg
     val context = LocalContext.current
     val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
         ?.let { actionStartActivity(it) }
     val barWidthDp = (LocalSize.current.width.value - BatteryWidgetSizing.BAR_HORIZONTAL_OVERHEAD_DP)
         .coerceAtLeast(0f)
+    val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
+    val showEmptyState = devices.isEmpty() && maxRows > 0 && metaState != null && powerState != null
 
     GlanceTheme {
         Box(
@@ -86,15 +89,36 @@ fun BatteryWidgetContent(
                 )
                 .padding(8.dp),
         ) {
-            Column(modifier = GlanceModifier.fillMaxSize()) {
-                devices.forEachIndexed { index, device ->
-                    BatteryDeviceRowContent(
-                        device = device,
-                        themeColors = themeColors,
-                        barWidthDp = barWidthDp,
+            if (showEmptyState) {
+                val emptyStateRes = if (allowedDeviceIds.isNullOrEmpty()) {
+                    CommonR.string.widget_no_sync_devices_label
+                } else {
+                    CommonR.string.widget_empty_label
+                }
+                Box(
+                    modifier = GlanceModifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = context.getString(emptyStateRes),
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            color = onContainer,
+                        ),
+                        maxLines = 1,
                     )
-                    if (index < devices.lastIndex) {
-                        Spacer(modifier = GlanceModifier.height(2.dp))
+                }
+            } else {
+                Column(modifier = GlanceModifier.fillMaxSize()) {
+                    devices.forEachIndexed { index, device ->
+                        BatteryDeviceRowContent(
+                            device = device,
+                            themeColors = themeColors,
+                            barWidthDp = barWidthDp,
+                        )
+                        if (index < devices.lastIndex) {
+                            Spacer(modifier = GlanceModifier.height(2.dp))
+                        }
                     }
                 }
             }
@@ -107,16 +131,22 @@ private fun buildDeviceRows(
     metaState: ModuleRepo.State<*>?,
     powerState: ModuleRepo.State<*>?,
     maxRows: Int,
+    allowedDeviceIds: Set<String>?,
 ): List<BatteryDeviceRow> {
     if (metaState == null || powerState == null) return emptyList()
+    if (maxRows <= 0) return emptyList()
 
     val metaAll = metaState.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>> ?: return emptyList()
-    val powerOthers = powerState.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.power.core.PowerInfo>> ?: return emptyList()
+    val powerAll = powerState.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.power.core.PowerInfo>> ?: return emptyList()
 
-    return powerOthers
+    return powerAll
         .mapNotNull { powerData ->
             val metaData = metaAll.firstOrNull { it.deviceId == powerData.deviceId }
             metaData?.let { powerData to it }
+        }
+        .let { pairs ->
+            if (allowedDeviceIds.isNullOrEmpty()) pairs
+            else pairs.filter { (powerData, _) -> powerData.deviceId.id in allowedDeviceIds }
         }
         .sortedBy { (_, metaData) -> metaData.data.labelOrFallback.lowercase() }
         .take(maxRows)

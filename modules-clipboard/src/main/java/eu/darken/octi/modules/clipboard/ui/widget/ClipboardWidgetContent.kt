@@ -107,13 +107,16 @@ fun ClipboardWidgetContent(
     clipboardState: ModuleRepo.State<*>?,
     themeColors: WidgetTheme.Colors?,
     maxRows: Int,
+    allowedDeviceIds: Set<String>? = null,
 ) {
     val self = extractSelf(clipboardState)
-    val devices = buildDeviceRows(metaState, clipboardState, self?.deviceId, maxRows)
+    val devices = buildDeviceRows(metaState, clipboardState, self?.deviceId, maxRows, allowedDeviceIds)
     val containerBg = themeColors?.containerBg
     val context = LocalContext.current
     val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
         ?.let { actionStartActivity(it) }
+    val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
+    val showEmptyState = devices.isEmpty() && maxRows > 0 && metaState != null && clipboardState != null
 
     GlanceTheme {
         Box(
@@ -133,13 +136,36 @@ fun ClipboardWidgetContent(
                 .padding(ClipboardWidgetSizing.OUTER_PADDING),
         ) {
             Column(modifier = GlanceModifier.fillMaxSize()) {
-                devices.forEachIndexed { index, device ->
-                    ClipboardDeviceRowContent(
-                        device = device,
-                        themeColors = themeColors,
-                    )
-                    if (index < devices.lastIndex) {
-                        Spacer(modifier = GlanceModifier.height(ClipboardWidgetSizing.ROW_SPACER))
+                if (showEmptyState) {
+                    val emptyStateRes = if (allowedDeviceIds.isNullOrEmpty()) {
+                        CommonR.string.widget_no_sync_devices_label
+                    } else {
+                        CommonR.string.widget_empty_label
+                    }
+                    Box(
+                        modifier = GlanceModifier
+                            .fillMaxWidth()
+                            .defaultWeight(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = context.getString(emptyStateRes),
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                color = onContainer,
+                            ),
+                            maxLines = 1,
+                        )
+                    }
+                } else {
+                    devices.forEachIndexed { index, device ->
+                        ClipboardDeviceRowContent(
+                            device = device,
+                            themeColors = themeColors,
+                        )
+                        if (index < devices.lastIndex) {
+                            Spacer(modifier = GlanceModifier.height(ClipboardWidgetSizing.ROW_SPACER))
+                        }
                     }
                 }
                 Spacer(modifier = GlanceModifier.height(ClipboardWidgetSizing.SELF_SECTION_SPACER))
@@ -169,6 +195,7 @@ private fun buildDeviceRows(
     clipboardState: ModuleRepo.State<*>?,
     selfDeviceId: String?,
     maxRows: Int,
+    allowedDeviceIds: Set<String>?,
 ): List<ClipboardDeviceRow> {
     if (metaState == null || clipboardState == null) return emptyList()
     if (maxRows <= 0) return emptyList()
@@ -180,6 +207,7 @@ private fun buildDeviceRows(
     return clipboardAll
         .asSequence()
         .filter { it.deviceId.id != selfDeviceId }
+        .filter { allowedDeviceIds.isNullOrEmpty() || it.deviceId.id in allowedDeviceIds }
         .mapNotNull { clipData ->
             val metaData = metaAll.firstOrNull { it.deviceId == clipData.deviceId }
             metaData?.let { clipData to it }

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/widgetContainerBackground"
+    android:background="@drawable/widget_preview_container"
     android:clipToOutline="true"
     android:orientation="vertical"
     android:padding="8dp">
@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/widgetBarTrack"
+        android:background="@drawable/widget_preview_tile"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="10dp"
@@ -43,14 +43,11 @@
             android:textSize="10sp" />
     </LinearLayout>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="2dp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/widgetBarTrack"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/widget_preview_tile"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="10dp"
@@ -83,14 +80,11 @@
             android:textSize="10sp" />
     </LinearLayout>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="4dp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/widgetBarTrack"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/widget_preview_accent_tile"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="10dp"

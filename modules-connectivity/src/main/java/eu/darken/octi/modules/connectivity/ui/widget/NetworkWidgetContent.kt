@@ -72,13 +72,16 @@ fun NetworkWidgetContent(
     themeColors: WidgetTheme.Colors?,
     maxRows: Int,
     widthDp: Float,
+    allowedDeviceIds: Set<String>? = null,
 ) {
-    val devices = buildDeviceTiles(metaState, connectivityState, maxRows)
+    val devices = buildDeviceTiles(metaState, connectivityState, maxRows, allowedDeviceIds)
     val containerBg = themeColors?.containerBg
     val context = LocalContext.current
     val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
         ?.let { actionStartActivity(it) }
     val useTwoColumn = widthDp >= NetworkWidgetSizing.TWO_COLUMN_MIN_WIDTH_DP
+    val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
+    val showEmptyState = devices.isEmpty() && maxRows > 0 && metaState != null && connectivityState != null
 
     GlanceTheme {
         Box(
@@ -97,7 +100,26 @@ fun NetworkWidgetContent(
                 )
                 .padding(NetworkWidgetSizing.OUTER_PADDING),
         ) {
-            Column(modifier = GlanceModifier.fillMaxSize()) {
+            if (showEmptyState) {
+                val emptyStateRes = if (allowedDeviceIds.isNullOrEmpty()) {
+                    CommonR.string.widget_no_sync_devices_label
+                } else {
+                    CommonR.string.widget_empty_label
+                }
+                Box(
+                    modifier = GlanceModifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = context.getString(emptyStateRes),
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            color = onContainer,
+                        ),
+                        maxLines = 1,
+                    )
+                }
+            } else Column(modifier = GlanceModifier.fillMaxSize()) {
                 if (useTwoColumn) {
                     val pairs = devices.chunked(2)
                     pairs.forEachIndexed { rowIndex, pair ->
@@ -143,6 +165,7 @@ private fun buildDeviceTiles(
     metaState: ModuleRepo.State<*>?,
     connectivityState: ModuleRepo.State<*>?,
     maxRows: Int,
+    allowedDeviceIds: Set<String>?,
 ): List<NetworkDeviceTile> {
     if (metaState == null || connectivityState == null) return emptyList()
     if (maxRows <= 0) return emptyList()
@@ -156,6 +179,10 @@ private fun buildDeviceTiles(
         .mapNotNull { connData ->
             val metaData = metaAll.firstOrNull { it.deviceId == connData.deviceId }
             metaData?.let { connData to it }
+        }
+        .let { pairs ->
+            if (allowedDeviceIds.isNullOrEmpty()) pairs
+            else pairs.filter { (connData, _) -> connData.deviceId.id in allowedDeviceIds }
         }
         .sortedBy { (_, metaData) -> metaData.data.labelOrFallback.lowercase() }
         .take(maxRows)

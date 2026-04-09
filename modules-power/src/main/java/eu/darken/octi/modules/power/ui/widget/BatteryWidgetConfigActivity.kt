@@ -2,6 +2,7 @@ package eu.darken.octi.modules.power.ui.widget
 
 import android.appwidget.AppWidgetManager
 import android.os.Bundle
+import android.text.format.DateUtils
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
@@ -16,6 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.PhoneAndroid
+import androidx.compose.material.icons.twotone.QuestionMark
+import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -27,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,23 +44,31 @@ import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
-import eu.darken.octi.common.debug.logging.asLog
-import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.theming.OctiTheme
 import eu.darken.octi.common.theming.ThemeSettings
 import eu.darken.octi.common.theming.ThemeState
+import eu.darken.octi.common.widget.WidgetConfigDevice
 import eu.darken.octi.common.widget.WidgetConfigScreen
+import eu.darken.octi.common.widget.WidgetInstanceConfig
 import eu.darken.octi.common.widget.WidgetTheme
+import eu.darken.octi.common.widget.applyWidgetConfig
+import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.modules.meta.core.MetaRepo
 import eu.darken.octi.modules.power.R
+import eu.darken.octi.modules.power.core.PowerRepo
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
 class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
 
     @Inject lateinit var themeSettings: ThemeSettings
+    @Inject lateinit var metaRepo: MetaRepo
+    @Inject lateinit var powerRepo: PowerRepo
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
@@ -73,79 +87,87 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
             return
         }
 
-        val currentOptions = AppWidgetManager.getInstance(this).getAppWidgetOptions(appWidgetId)
-        val initialMode = currentOptions.getString(WidgetTheme.KEY_THEME_MODE)
-        val initialPreset = currentOptions.getString(WidgetTheme.KEY_THEME_PRESET)
-        val initialBg = if (currentOptions.containsKey(WidgetTheme.KEY_CUSTOM_BG)) {
-            currentOptions.getInt(WidgetTheme.KEY_CUSTOM_BG)
-        } else null
-        val initialAccent = if (currentOptions.containsKey(WidgetTheme.KEY_CUSTOM_ACCENT)) {
-            currentOptions.getInt(WidgetTheme.KEY_CUSTOM_ACCENT)
-        } else null
+        lifecycleScope.launch {
+            val currentOptions = AppWidgetManager.getInstance(this@BatteryWidgetConfigActivity)
+                .getAppWidgetOptions(appWidgetId)
+            val instanceConfig = WidgetInstanceConfig.parse(currentOptions)
 
-        setContent {
-            val themeState by themeSettings.themeState.collectAsState(ThemeState())
-            OctiTheme(state = themeState) {
-                WidgetConfigScreen(
-                    initialMode = initialMode,
-                    initialPresetName = initialPreset,
-                    initialBgColor = initialBg,
-                    initialAccentColor = initialAccent,
-                    onClose = { finish() },
-                    onApply = { isMaterialYou, presetName, bgColor, accentColor ->
-                        applyAndFinish(isMaterialYou, presetName, bgColor, accentColor)
-                    },
-                    previewContent = { colors -> BatteryWidgetPreview(colors = colors) },
-                )
+            val availableDevices = withTimeoutOrNull(DEVICE_LOAD_TIMEOUT) {
+                val metaById = metaRepo.state.first().all.associateBy { it.deviceId }
+                val now = System.currentTimeMillis()
+                powerRepo.state.first().all.mapNotNull { p ->
+                    val m = metaById[p.deviceId] ?: return@mapNotNull null
+                    WidgetConfigDevice(
+                        id = p.deviceId.id,
+                        label = m.data.labelOrFallback,
+                        subtitle = lastSeenSubtitle(m.modifiedAt.toEpochMilliseconds(), now),
+                        icon = composeIconFor(m.data.deviceType),
+                    )
+                }
+            }
+                .orEmpty()
+                .distinctBy { it.id }
+                .sortedBy { it.label.lowercase() }
+
+            setContent {
+                val themeState by themeSettings.themeState.collectAsState(ThemeState())
+                OctiTheme(state = themeState) {
+                    WidgetConfigScreen(
+                        initialMode = if (instanceConfig.isMaterialYou) {
+                            WidgetInstanceConfig.MODE_MATERIAL_YOU
+                        } else {
+                            WidgetInstanceConfig.MODE_CUSTOM
+                        },
+                        initialPresetName = instanceConfig.presetName,
+                        initialBgColor = instanceConfig.customBg,
+                        initialAccentColor = instanceConfig.customAccent,
+                        availableDevices = availableDevices,
+                        initialSelectedDeviceIds = instanceConfig.allowedDeviceIds,
+                        onClose = { finish() },
+                        onApply = { isMy, preset, bg, accent, ids ->
+                            val appContext = applicationContext
+                            applyWidgetConfig(
+                                appWidgetId = appWidgetId,
+                                newConfig = WidgetInstanceConfig(
+                                    isMaterialYou = isMy,
+                                    presetName = preset,
+                                    customBg = bg,
+                                    customAccent = accent,
+                                    allowedDeviceIds = ids,
+                                ),
+                                tag = TAG,
+                            ) {
+                                val glanceId = GlanceAppWidgetManager(appContext).getGlanceIdBy(appWidgetId)
+                                BatteryGlanceWidget().update(appContext, glanceId)
+                            }
+                        },
+                        previewContent = { colors -> BatteryWidgetPreview(colors = colors) },
+                    )
+                }
             }
         }
     }
 
-    private fun applyAndFinish(
-        isMaterialYou: Boolean,
-        presetName: String?,
-        bgColor: Int?,
-        accentColor: Int?,
-    ) {
-        val widgetManager = AppWidgetManager.getInstance(this)
-        val options = widgetManager.getAppWidgetOptions(appWidgetId)
-
-        if (isMaterialYou) {
-            options.putString(WidgetTheme.KEY_THEME_MODE, WidgetTheme.MODE_MATERIAL_YOU)
-            options.putString(WidgetTheme.KEY_THEME_PRESET, WidgetTheme.MATERIAL_YOU.name)
-            options.remove(WidgetTheme.KEY_CUSTOM_BG)
-            options.remove(WidgetTheme.KEY_CUSTOM_ACCENT)
-        } else {
-            options.putString(WidgetTheme.KEY_THEME_MODE, WidgetTheme.MODE_CUSTOM)
-            options.putString(WidgetTheme.KEY_THEME_PRESET, presetName ?: "")
-            val bg = bgColor ?: run { finish(); return }
-            val accent = accentColor ?: run { finish(); return }
-            options.putInt(WidgetTheme.KEY_CUSTOM_BG, bg)
-            options.putInt(WidgetTheme.KEY_CUSTOM_ACCENT, accent)
-        }
-
-        widgetManager.updateAppWidgetOptions(appWidgetId, options)
-
-        val appContext = applicationContext
-        lifecycleScope.launch {
-            try {
-                val glanceId = GlanceAppWidgetManager(appContext).getGlanceIdBy(appWidgetId)
-                BatteryGlanceWidget().update(appContext, glanceId)
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to update widget: ${e.asLog()}" }
-            }
-        }
-
-        setResult(
-            RESULT_OK,
-            android.content.Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
+    private fun lastSeenSubtitle(modifiedAtMillis: Long, nowMillis: Long): String {
+        val relative = DateUtils.getRelativeTimeSpanString(
+            modifiedAtMillis,
+            nowMillis,
+            DateUtils.MINUTE_IN_MILLIS,
+            DateUtils.FORMAT_ABBREV_RELATIVE,
         )
-        finish()
+        return getString(eu.darken.octi.sync.R.string.sync_device_last_seen_label, relative.toString())
     }
 
     companion object {
         private val TAG = logTag("Module", "Power", "Widget", "Config")
+        private val DEVICE_LOAD_TIMEOUT = 2.seconds
     }
+}
+
+private fun composeIconFor(type: MetaInfo.DeviceType): ImageVector = when (type) {
+    MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
+    MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
+    MetaInfo.DeviceType.UNKNOWN -> Icons.TwoTone.QuestionMark
 }
 
 @Composable
@@ -252,7 +274,7 @@ private fun WidgetConfigScreenPreview() = PreviewWrapper {
         initialBgColor = null,
         initialAccentColor = null,
         onClose = {},
-        onApply = { _, _, _, _ -> },
+        onApply = { _, _, _, _, _ -> },
         previewContent = { colors -> BatteryWidgetPreview(colors = colors) },
     )
 }

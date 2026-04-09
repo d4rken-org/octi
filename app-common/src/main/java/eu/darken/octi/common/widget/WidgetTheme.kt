@@ -1,14 +1,9 @@
 package eu.darken.octi.common.widget
 
 import android.graphics.Color
-import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.core.graphics.ColorUtils
 import eu.darken.octi.common.R
-import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
-import eu.darken.octi.common.debug.logging.asLog
-import eu.darken.octi.common.debug.logging.log
-import eu.darken.octi.common.debug.logging.logTag
 
 enum class WidgetTheme(
     @StringRes val labelRes: Int,
@@ -48,28 +43,6 @@ enum class WidgetTheme(
 
         fun fromName(name: String?): WidgetTheme? = entries.find { it.name == name }
 
-        private val TAG = logTag("Widget", "Theme")
-
-        fun parseThemeColors(options: Bundle): Colors? = try {
-            val mode = options.getString(KEY_THEME_MODE)
-            when (mode) {
-                MODE_CUSTOM -> {
-                    if (options.containsKey(KEY_CUSTOM_BG) && options.containsKey(KEY_CUSTOM_ACCENT)) {
-                        val bg = options.getInt(KEY_CUSTOM_BG)
-                        val accent = options.getInt(KEY_CUSTOM_ACCENT)
-                        deriveColors(bg, accent)
-                    } else {
-                        null
-                    }
-                }
-
-                else -> null
-            }
-        } catch (e: Exception) {
-            log(TAG, WARN) { "Failed to parse theme colors: ${e.asLog()}" }
-            null
-        }
-
         fun parseHexColor(input: String?): Int? {
             if (input.isNullOrBlank()) return null
             val cleaned = input.trim().removePrefix("#").uppercase()
@@ -90,13 +63,5 @@ enum class WidgetTheme(
             0xFF795548.toInt(), 0xFF9E9E9E.toInt(), 0xFF607D8B.toInt(), 0xFFFFFFFF.toInt(),
             0xFF1E1E1E.toInt(), 0xFF263238.toInt(), 0xFF1B5E20.toInt(), 0xFF0D47A1.toInt(),
         )
-
-        const val KEY_THEME_MODE = "theme_mode"
-        const val KEY_THEME_PRESET = "theme_preset"
-        const val KEY_CUSTOM_BG = "custom_bg"
-        const val KEY_CUSTOM_ACCENT = "custom_accent"
-
-        const val MODE_MATERIAL_YOU = "material_you"
-        const val MODE_CUSTOM = "custom"
     }
 }
