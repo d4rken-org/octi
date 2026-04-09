@@ -2,8 +2,10 @@
 <resources>
     <!-- Light mode widget colors (pre-API 31) -->
     <color name="widgetContainerBackground">#FF2D6A44</color>
-    <color name="widgetBarFill">#FFB1F1C2</color>
-    <color name="widgetBarTrack">#33FFFFFF</color>
-    <color name="widgetBarIcon">#FF00210E</color>
     <color name="widgetOnContainer">#FFFFFFFF</color>
+    <color name="widgetTileBackground">#FF4A7057</color>
+    <color name="widgetOnTile">#FFF3FFF4</color>
+    <color name="widgetOnTileVariant">#FFCEE0D2</color>
+    <color name="widgetAccentBackground">#FFB1F1C2</color>
+    <color name="widgetOnAccent">#FF00210E</color>
 </resources>

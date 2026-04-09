@@ -2,8 +2,10 @@
 <resources>
     <!-- Material You dynamic colors for widget (Android 12+, light mode) -->
     <color name="widgetContainerBackground">@android:color/system_accent1_600</color>
-    <color name="widgetBarFill">@android:color/system_accent1_100</color>
-    <color name="widgetBarTrack">#33FFFFFF</color>
-    <color name="widgetBarIcon">@android:color/system_accent1_900</color>
-    <color name="widgetOnContainer">@android:color/system_accent1_0</color>
+    <color name="widgetOnContainer">@android:color/system_accent1_50</color>
+    <color name="widgetTileBackground">@android:color/system_accent2_500</color>
+    <color name="widgetOnTile">@android:color/system_neutral1_50</color>
+    <color name="widgetOnTileVariant">@android:color/system_neutral2_200</color>
+    <color name="widgetAccentBackground">@android:color/system_accent1_100</color>
+    <color name="widgetOnAccent">@android:color/system_accent1_900</color>
 </resources>

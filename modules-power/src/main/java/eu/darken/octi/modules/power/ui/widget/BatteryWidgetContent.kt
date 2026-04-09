@@ -173,9 +173,9 @@ private fun BatteryDeviceRowContent(
     barWidthDp: Float,
 ) {
     val context = LocalContext.current
-    val barFill = colorOrDefault(themeColors?.barFill, CommonR.color.widgetBarFill)
-    val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
-    val iconColor = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon)
+    val accentBg = colorOrDefault(themeColors?.accentBg, CommonR.color.widgetAccentBackground)
+    val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
+    val accentContent = colorOrDefault(themeColors?.onAccent, CommonR.color.widgetOnAccent)
     val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
 
     val rowClick = WidgetDeeplink.buildIntent(context, device.deviceId, WidgetDeeplink.ModuleType.POWER)
@@ -192,7 +192,7 @@ private fun BatteryDeviceRowContent(
                 .defaultWeight()
                 .height(30.dp)
                 .cornerRadius(12.dp)
-                .background(barTrack)
+                .background(tileBg)
                 .then(
                     if (rowClick != null) GlanceModifier.clickable(rowClick) else GlanceModifier
                 ),
@@ -204,7 +204,7 @@ private fun BatteryDeviceRowContent(
                         .width(fillWidth.dp)
                         .height(30.dp)
                         .cornerRadius(12.dp)
-                        .background(barFill),
+                        .background(accentBg),
                 ) {}
             }
             Row(
@@ -218,7 +218,7 @@ private fun BatteryDeviceRowContent(
                     ),
                     contentDescription = null,
                     modifier = GlanceModifier.size(20.dp),
-                    colorFilter = ColorFilter.tint(iconColor),
+                    colorFilter = ColorFilter.tint(accentContent),
                 )
                 Spacer(modifier = GlanceModifier.width(4.dp))
                 Text(
@@ -226,7 +226,7 @@ private fun BatteryDeviceRowContent(
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = 11.sp,
-                        color = iconColor,
+                        color = accentContent,
                     ),
                     maxLines = 1,
                 )
@@ -235,7 +235,7 @@ private fun BatteryDeviceRowContent(
                     text = "\u00b7 ${device.lastSeen}",
                     style = TextStyle(
                         fontSize = 11.sp,
-                        color = iconColor,
+                        color = accentContent,
                     ),
                     maxLines = 1,
                 )
@@ -253,4 +253,3 @@ private fun BatteryDeviceRowContent(
         )
     }
 }
-

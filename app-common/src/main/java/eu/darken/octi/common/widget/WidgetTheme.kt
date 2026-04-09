@@ -20,10 +20,12 @@ enum class WidgetTheme(
 
     data class Colors(
         val containerBg: Int,
-        val barFill: Int,
-        val barTrack: Int,
-        val icon: Int,
         val onContainer: Int,
+        val tileBg: Int,
+        val onTile: Int,
+        val onTileVariant: Int,
+        val accentBg: Int,
+        val onAccent: Int,
     )
 
     companion object {
@@ -33,13 +35,38 @@ enum class WidgetTheme(
             return if (contrastWhite >= contrastBlack) Color.WHITE else Color.BLACK
         }
 
-        fun deriveColors(bg: Int, accent: Int): Colors = Colors(
-            containerBg = bg,
-            barFill = accent,
-            barTrack = ColorUtils.setAlphaComponent(accent, 0x55),
-            icon = bestContrast(accent),
-            onContainer = bestContrast(bg),
-        )
+        fun deriveColors(bg: Int, accent: Int): Colors {
+            val onContainer = bestContrast(bg)
+            val tileBg = deriveTileBackground(bg, accent, onContainer)
+            val onTile = bestContrast(tileBg)
+
+            return Colors(
+                containerBg = bg,
+                onContainer = onContainer,
+                tileBg = tileBg,
+                onTile = onTile,
+                onTileVariant = ColorUtils.blendARGB(onTile, tileBg, 0.38f),
+                accentBg = accent,
+                onAccent = bestContrast(accent),
+            )
+        }
+
+        private fun deriveTileBackground(bg: Int, accent: Int, onContainer: Int): Int {
+            val elevatedSurface = ColorUtils.blendARGB(
+                bg,
+                onContainer,
+                if (onContainer == Color.WHITE) 0.14f else 0.10f,
+            )
+            var tileBg = ColorUtils.blendARGB(elevatedSurface, accent, 0.08f)
+            if (ColorUtils.calculateContrast(tileBg, bg) < 1.15) {
+                tileBg = ColorUtils.blendARGB(
+                    bg,
+                    onContainer,
+                    if (onContainer == Color.WHITE) 0.18f else 0.14f,
+                )
+            }
+            return tileBg
+        }
 
         fun fromName(name: String?): WidgetTheme? = entries.find { it.name == name }
 

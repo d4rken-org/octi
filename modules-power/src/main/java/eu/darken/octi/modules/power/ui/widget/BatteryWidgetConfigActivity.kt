@@ -31,9 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,6 +51,7 @@ import eu.darken.octi.common.widget.WidgetConfigScreen
 import eu.darken.octi.common.widget.WidgetInstanceConfig
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.common.widget.applyWidgetConfig
+import eu.darken.octi.common.widget.widgetDefaultColors
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.meta.core.MetaRepo
 import eu.darken.octi.modules.power.R
@@ -172,13 +171,7 @@ private fun composeIconFor(type: MetaInfo.DeviceType): ImageVector = when (type)
 
 @Composable
 private fun BatteryWidgetPreview(colors: WidgetTheme.Colors?) {
-    val previewColors = colors ?: WidgetTheme.Colors(
-        containerBg = colorResource(CommonR.color.widgetContainerBackground).toArgb(),
-        barFill = colorResource(CommonR.color.widgetBarFill).toArgb(),
-        barTrack = colorResource(CommonR.color.widgetBarTrack).toArgb(),
-        icon = colorResource(CommonR.color.widgetBarIcon).toArgb(),
-        onContainer = colorResource(CommonR.color.widgetOnContainer).toArgb(),
-    )
+    val previewColors = colors ?: widgetDefaultColors()
 
     Card(shape = RoundedCornerShape(16.dp)) {
         Column(
@@ -215,14 +208,14 @@ private fun PreviewWidgetRow(
                 .weight(1f)
                 .height(30.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color(colors.barTrack)),
+                .background(Color(colors.tileBg)),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(percent / 100f)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(colors.barFill)),
+                    .background(Color(colors.accentBg)),
             )
             Row(
                 modifier = Modifier
@@ -234,21 +227,21 @@ private fun PreviewWidgetRow(
                     painter = painterResource(R.drawable.widget_battery_full_24),
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = Color(colors.icon),
+                    tint = Color(colors.onAccent),
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = name,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(colors.icon),
+                    color = Color(colors.onAccent),
                     maxLines = 1,
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "\u00b7 $lastSeen",
                     fontSize = 11.sp,
-                    color = Color(colors.icon),
+                    color = Color(colors.onAccent),
                     maxLines = 1,
                 )
             }

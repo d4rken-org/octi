@@ -29,14 +29,14 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@drawable/widget_network_wifi_24"
-                android:tint="@color/widgetBarIcon" />
+                android:tint="@color/widgetOnTile" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:text="Pixel 8"
-                android:textColor="@color/widgetBarIcon"
+                android:textColor="@color/widgetOnTile"
                 android:textSize="11sp"
                 android:textStyle="bold" />
 
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:text="· 5m ago"
-                android:textColor="@color/widgetBarIcon"
+                android:textColor="@color/widgetOnTileVariant"
                 android:textSize="10sp" />
         </LinearLayout>
 
@@ -53,14 +53,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="192.168.1.5"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnTileVariant"
             android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="203.0.113.1"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnTileVariant"
             android:textSize="10sp" />
     </LinearLayout>
 
@@ -86,14 +86,14 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@drawable/widget_network_cellular_24"
-                android:tint="@color/widgetBarIcon" />
+                android:tint="@color/widgetOnTile" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:text="Galaxy S24"
-                android:textColor="@color/widgetBarIcon"
+                android:textColor="@color/widgetOnTile"
                 android:textSize="11sp"
                 android:textStyle="bold" />
 
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:text="· 10m ago"
-                android:textColor="@color/widgetBarIcon"
+                android:textColor="@color/widgetOnTileVariant"
                 android:textSize="10sp" />
         </LinearLayout>
 
@@ -110,14 +110,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="10.0.0.12"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnTileVariant"
             android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="198.51.100.7"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnTileVariant"
             android:textSize="10sp" />
     </LinearLayout>
 </LinearLayout>

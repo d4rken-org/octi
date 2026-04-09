@@ -35,7 +35,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import androidx.core.content.ContextCompat
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
@@ -239,11 +238,9 @@ private fun ClipboardDeviceRowContent(
     themeColors: WidgetTheme.Colors?,
 ) {
     val context = LocalContext.current
-    val iconColorRaw = themeColors?.icon
-        ?: ContextCompat.getColor(context, CommonR.color.widgetBarIcon)
-    val iconColor = ColorProvider(Color(iconColorRaw))
-    val fadedIconColor = ColorProvider(Color(iconColorRaw).copy(alpha = 0.5f))
-    val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
+    val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
+    val primaryColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
+    val secondaryColor = colorOrDefault(themeColors?.onTileVariant, CommonR.color.widgetOnTileVariant)
 
     val rowAction = if (device.hasCopyableContent) {
         actionRunCallback<CopyClipboardCallback>(
@@ -253,14 +250,15 @@ private fun ClipboardDeviceRowContent(
         actionRunCallback<NoOpClickCallback>()
     }
 
-    val textColor = if (device.hasCopyableContent) iconColor else fadedIconColor
+    val titleColor = if (device.hasCopyableContent) primaryColor else secondaryColor
+    val bodyColor = secondaryColor
 
     Box(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
             .cornerRadius(12.dp)
-            .background(barTrack)
+            .background(tileBg)
             .clickable(rowAction),
     ) {
         Row(
@@ -275,7 +273,7 @@ private fun ClipboardDeviceRowContent(
                     null
                 },
                 modifier = GlanceModifier.size(18.dp),
-                colorFilter = ColorFilter.tint(textColor),
+                colorFilter = ColorFilter.tint(titleColor),
             )
             Spacer(modifier = GlanceModifier.width(6.dp))
             Text(
@@ -283,7 +281,7 @@ private fun ClipboardDeviceRowContent(
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 11.sp,
-                    color = textColor,
+                    color = titleColor,
                 ),
                 maxLines = 1,
             )
@@ -293,7 +291,7 @@ private fun ClipboardDeviceRowContent(
                     text = device.clipboardText ?: "",
                     style = TextStyle(
                         fontSize = 10.sp,
-                        color = textColor,
+                        color = bodyColor,
                     ),
                     maxLines = 1,
                     modifier = GlanceModifier.defaultWeight(),
@@ -304,7 +302,7 @@ private fun ClipboardDeviceRowContent(
                     style = TextStyle(
                         fontSize = 10.sp,
                         fontStyle = FontStyle.Italic,
-                        color = textColor,
+                        color = bodyColor,
                     ),
                     maxLines = 1,
                     modifier = GlanceModifier.defaultWeight(),
@@ -320,8 +318,8 @@ private fun SelfClipboardRow(
     themeColors: WidgetTheme.Colors?,
 ) {
     val context = LocalContext.current
-    val iconColor = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon)
-    val barFill = colorOrDefault(themeColors?.barFill, CommonR.color.widgetBarFill)
+    val accentContent = colorOrDefault(themeColors?.onAccent, CommonR.color.widgetOnAccent)
+    val accentBg = colorOrDefault(themeColors?.accentBg, CommonR.color.widgetAccentBackground)
 
     val shareAction = actionStartActivity(ClipboardShareActivity.createIntent(context))
 
@@ -330,7 +328,7 @@ private fun SelfClipboardRow(
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
             .cornerRadius(12.dp)
-            .background(barFill)
+            .background(accentBg)
             .clickable(shareAction),
     ) {
         Row(
@@ -341,7 +339,7 @@ private fun SelfClipboardRow(
                 provider = ImageProvider(R.drawable.widget_clipboard_24),
                 contentDescription = context.getString(R.string.module_clipboard_widget_share_action),
                 modifier = GlanceModifier.size(18.dp),
-                colorFilter = ColorFilter.tint(iconColor),
+                colorFilter = ColorFilter.tint(accentContent),
             )
             Spacer(modifier = GlanceModifier.width(6.dp))
             Text(
@@ -349,7 +347,7 @@ private fun SelfClipboardRow(
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 11.sp,
-                    color = iconColor,
+                    color = accentContent,
                 ),
                 maxLines = 1,
             )
@@ -359,7 +357,7 @@ private fun SelfClipboardRow(
                 style = TextStyle(
                     fontStyle = if (self?.text == null) FontStyle.Italic else FontStyle.Normal,
                     fontSize = 11.sp,
-                    color = iconColor,
+                    color = accentContent,
                 ),
                 maxLines = 1,
                 modifier = GlanceModifier.defaultWeight(),

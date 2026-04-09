@@ -31,9 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +51,7 @@ import eu.darken.octi.common.widget.WidgetConfigScreen
 import eu.darken.octi.common.widget.WidgetInstanceConfig
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.common.widget.applyWidgetConfig
+import eu.darken.octi.common.widget.widgetDefaultColors
 import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.modules.clipboard.ClipboardRepo
 import eu.darken.octi.modules.clipboard.R
@@ -184,13 +183,7 @@ private fun composeIconFor(type: MetaInfo.DeviceType): ImageVector = when (type)
 
 @Composable
 private fun ClipboardWidgetPreview(colors: WidgetTheme.Colors?) {
-    val previewColors = colors ?: WidgetTheme.Colors(
-        containerBg = colorResource(CommonR.color.widgetContainerBackground).toArgb(),
-        barFill = colorResource(CommonR.color.widgetBarFill).toArgb(),
-        barTrack = colorResource(CommonR.color.widgetBarTrack).toArgb(),
-        icon = colorResource(CommonR.color.widgetBarIcon).toArgb(),
-        onContainer = colorResource(CommonR.color.widgetOnContainer).toArgb(),
-    )
+    val previewColors = colors ?: widgetDefaultColors()
 
     Card(shape = RoundedCornerShape(16.dp)) {
         Column(
@@ -204,7 +197,7 @@ private fun ClipboardWidgetPreview(colors: WidgetTheme.Colors?) {
                     .fillMaxWidth()
                     .height(36.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(previewColors.barTrack)),
+                    .background(Color(previewColors.tileBg)),
             ) {
                 Row(
                     modifier = Modifier
@@ -216,21 +209,21 @@ private fun ClipboardWidgetPreview(colors: WidgetTheme.Colors?) {
                         painter = painterResource(R.drawable.widget_device_phone_24),
                         contentDescription = null,
                         modifier = Modifier.size(18.dp),
-                        tint = Color(previewColors.icon),
+                        tint = Color(previewColors.onTile),
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Pixel 8",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(previewColors.icon),
+                        color = Color(previewColors.onTile),
                         maxLines = 1,
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Hello world\u2026",
                         fontSize = 10.sp,
-                        color = Color(previewColors.icon),
+                        color = Color(previewColors.onTileVariant),
                         maxLines = 1,
                     )
                 }
@@ -241,7 +234,7 @@ private fun ClipboardWidgetPreview(colors: WidgetTheme.Colors?) {
                     .fillMaxWidth()
                     .height(36.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(previewColors.barFill)),
+                    .background(Color(previewColors.accentBg)),
             ) {
                 Row(
                     modifier = Modifier
@@ -253,21 +246,21 @@ private fun ClipboardWidgetPreview(colors: WidgetTheme.Colors?) {
                         painter = painterResource(R.drawable.widget_clipboard_24),
                         contentDescription = null,
                         modifier = Modifier.size(18.dp),
-                        tint = Color(previewColors.icon),
+                        tint = Color(previewColors.onAccent),
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = stringResource(R.string.module_clipboard_widget_self_label),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(previewColors.icon),
+                        color = Color(previewColors.onAccent),
                         maxLines = 1,
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Hello world",
                         fontSize = 11.sp,
-                        color = Color(previewColors.icon),
+                        color = Color(previewColors.onAccent),
                         maxLines = 1,
                     )
                 }

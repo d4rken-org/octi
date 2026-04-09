@@ -42,7 +42,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/widget_battery_full_24"
-                    android:tint="@color/widgetBarIcon" />
+                    android:tint="@color/widgetOnAccent" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="Pixel 8"
-                    android:textColor="@color/widgetBarIcon"
+                    android:textColor="@color/widgetOnAccent"
                     android:textSize="11sp"
                     android:textStyle="bold" />
 
@@ -62,7 +62,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="\u00b7 5m ago"
-                    android:textColor="@color/widgetBarIcon"
+                    android:textColor="@color/widgetOnAccent"
                     android:textSize="11sp" />
 
             </LinearLayout>
@@ -117,7 +117,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/widget_battery_full_24"
-                    android:tint="@color/widgetBarIcon" />
+                    android:tint="@color/widgetOnAccent" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -126,7 +126,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="Galaxy S24"
-                    android:textColor="@color/widgetBarIcon"
+                    android:textColor="@color/widgetOnAccent"
                     android:textSize="11sp"
                     android:textStyle="bold" />
 
@@ -137,7 +137,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="\u00b7 10m ago"
-                    android:textColor="@color/widgetBarIcon"
+                    android:textColor="@color/widgetOnAccent"
                     android:textSize="11sp" />
 
             </LinearLayout>

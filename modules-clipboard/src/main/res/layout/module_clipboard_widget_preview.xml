@@ -20,14 +20,14 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:src="@drawable/widget_device_phone_24"
-            android:tint="@color/widgetBarIcon" />
+            android:tint="@color/widgetOnTile" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:text="Pixel 8"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnTile"
             android:textSize="11sp"
             android:textStyle="bold" />
 
@@ -39,7 +39,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Meeting notes…"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnTileVariant"
             android:textSize="10sp" />
     </LinearLayout>
 
@@ -57,14 +57,14 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:src="@drawable/widget_device_tablet_24"
-            android:tint="@color/widgetBarIcon" />
+            android:tint="@color/widgetOnTile" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:text="Galaxy Tab"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnTile"
             android:textSize="11sp"
             android:textStyle="bold" />
 
@@ -76,7 +76,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Shopping list…"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnTileVariant"
             android:textSize="10sp" />
     </LinearLayout>
 
@@ -94,14 +94,14 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:src="@drawable/widget_clipboard_24"
-            android:tint="@color/widgetBarIcon" />
+            android:tint="@color/widgetOnAccent" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:text="@string/module_clipboard_widget_self_label"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnAccent"
             android:textSize="11sp"
             android:textStyle="bold" />
 
@@ -113,7 +113,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Hello world"
-            android:textColor="@color/widgetBarIcon"
+            android:textColor="@color/widgetOnAccent"
             android:textSize="11sp" />
     </LinearLayout>
 </LinearLayout>

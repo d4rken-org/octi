@@ -2,8 +2,10 @@
 <resources>
     <!-- Dark mode widget colors (pre-API 31) -->
     <color name="widgetContainerBackground">#FF11512E</color>
-    <color name="widgetBarFill">#FFB1F1C2</color>
-    <color name="widgetBarTrack">#33FFFFFF</color>
-    <color name="widgetBarIcon">#FF11512E</color>
-    <color name="widgetOnContainer">#FFB1F1C2</color>
+    <color name="widgetOnContainer">#FFE4F7E8</color>
+    <color name="widgetTileBackground">#FF39634A</color>
+    <color name="widgetOnTile">#FFE4F7E8</color>
+    <color name="widgetOnTileVariant">#FFB4CCBA</color>
+    <color name="widgetAccentBackground">#FFB1F1C2</color>
+    <color name="widgetOnAccent">#FF00210E</color>
 </resources>

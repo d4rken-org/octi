@@ -227,8 +227,9 @@ private fun NetworkDeviceTileContent(
     modifier: GlanceModifier = GlanceModifier,
 ) {
     val context = LocalContext.current
-    val iconColor = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon)
-    val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
+    val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
+    val titleColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
+    val detailColor = colorOrDefault(themeColors?.onTileVariant, CommonR.color.widgetOnTileVariant)
     val iconRes = connectionIconRes(device.connectionType)
 
     val copyAction = actionRunCallback<CopyNetworkAddressesCallback>(
@@ -239,7 +240,7 @@ private fun NetworkDeviceTileContent(
         modifier = modifier
             .height(NetworkWidgetSizing.TILE_HEIGHT)
             .cornerRadius(12.dp)
-            .background(barTrack)
+            .background(tileBg)
             .clickable(copyAction),
     ) {
         Column(
@@ -253,7 +254,7 @@ private fun NetworkDeviceTileContent(
                     provider = ImageProvider(iconRes),
                     contentDescription = null,
                     modifier = GlanceModifier.size(16.dp),
-                    colorFilter = ColorFilter.tint(iconColor),
+                    colorFilter = ColorFilter.tint(titleColor),
                 )
                 Spacer(modifier = GlanceModifier.width(4.dp))
                 Text(
@@ -261,7 +262,7 @@ private fun NetworkDeviceTileContent(
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = 11.sp,
-                        color = iconColor,
+                        color = titleColor,
                     ),
                     maxLines = 1,
                 )
@@ -271,7 +272,7 @@ private fun NetworkDeviceTileContent(
                 text = "${connectionTypeLabel(context, device.connectionType)} \u00b7 ${device.lastSeen}",
                 style = TextStyle(
                     fontSize = 10.sp,
-                    color = iconColor,
+                    color = detailColor,
                 ),
                 maxLines = 1,
             )
@@ -280,7 +281,7 @@ private fun NetworkDeviceTileContent(
                 text = device.localIp,
                 style = TextStyle(
                     fontSize = 10.sp,
-                    color = iconColor,
+                    color = detailColor,
                 ),
                 maxLines = 1,
             )
@@ -288,7 +289,7 @@ private fun NetworkDeviceTileContent(
                 text = device.publicIp,
                 style = TextStyle(
                     fontSize = 10.sp,
-                    color = iconColor,
+                    color = detailColor,
                 ),
                 maxLines = 1,
             )
@@ -302,8 +303,9 @@ private fun NetworkDeviceCompactRow(
     themeColors: WidgetTheme.Colors?,
 ) {
     val context = LocalContext.current
-    val iconColor = colorOrDefault(themeColors?.icon, CommonR.color.widgetBarIcon)
-    val barTrack = colorOrDefault(themeColors?.barTrack, CommonR.color.widgetBarTrack)
+    val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
+    val titleColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
+    val detailColor = colorOrDefault(themeColors?.onTileVariant, CommonR.color.widgetOnTileVariant)
     val iconRes = connectionIconRes(device.connectionType)
 
     val copyAction = actionRunCallback<CopyNetworkAddressesCallback>(
@@ -315,7 +317,7 @@ private fun NetworkDeviceCompactRow(
             .fillMaxWidth()
             .height(NetworkWidgetSizing.SINGLE_ROW_HEIGHT)
             .cornerRadius(12.dp)
-            .background(barTrack)
+            .background(tileBg)
             .clickable(copyAction),
     ) {
         Column(
@@ -329,7 +331,7 @@ private fun NetworkDeviceCompactRow(
                     provider = ImageProvider(iconRes),
                     contentDescription = null,
                     modifier = GlanceModifier.size(16.dp),
-                    colorFilter = ColorFilter.tint(iconColor),
+                    colorFilter = ColorFilter.tint(titleColor),
                 )
                 Spacer(modifier = GlanceModifier.width(4.dp))
                 Text(
@@ -337,7 +339,7 @@ private fun NetworkDeviceCompactRow(
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = 11.sp,
-                        color = iconColor,
+                        color = titleColor,
                     ),
                     maxLines = 1,
                 )
@@ -346,7 +348,7 @@ private fun NetworkDeviceCompactRow(
                     text = "\u00b7 ${device.lastSeen}",
                     style = TextStyle(
                         fontSize = 10.sp,
-                        color = iconColor,
+                        color = detailColor,
                     ),
                     maxLines = 1,
                 )
@@ -355,7 +357,7 @@ private fun NetworkDeviceCompactRow(
                 text = "${device.localIp} \u00b7 ${device.publicIp}",
                 style = TextStyle(
                     fontSize = 10.sp,
-                    color = iconColor,
+                    color = detailColor,
                 ),
                 maxLines = 1,
             )

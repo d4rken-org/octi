@@ -30,9 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,6 +49,7 @@ import eu.darken.octi.common.widget.WidgetConfigScreen
 import eu.darken.octi.common.widget.WidgetInstanceConfig
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.common.widget.applyWidgetConfig
+import eu.darken.octi.common.widget.widgetDefaultColors
 import eu.darken.octi.modules.connectivity.R
 import eu.darken.octi.modules.connectivity.core.ConnectivityRepo
 import eu.darken.octi.modules.meta.core.MetaInfo
@@ -177,13 +176,7 @@ private fun composeIconFor(type: MetaInfo.DeviceType): ImageVector = when (type)
 
 @Composable
 private fun NetworkWidgetPreview(colors: WidgetTheme.Colors?) {
-    val previewColors = colors ?: WidgetTheme.Colors(
-        containerBg = colorResource(CommonR.color.widgetContainerBackground).toArgb(),
-        barFill = colorResource(CommonR.color.widgetBarFill).toArgb(),
-        barTrack = colorResource(CommonR.color.widgetBarTrack).toArgb(),
-        icon = colorResource(CommonR.color.widgetBarIcon).toArgb(),
-        onContainer = colorResource(CommonR.color.widgetOnContainer).toArgb(),
-    )
+    val previewColors = colors ?: widgetDefaultColors()
 
     Card(shape = RoundedCornerShape(16.dp)) {
         Column(
@@ -196,7 +189,7 @@ private fun NetworkWidgetPreview(colors: WidgetTheme.Colors?) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(previewColors.barTrack))
+                    .background(Color(previewColors.tileBg))
                     .padding(horizontal = 10.dp, vertical = 6.dp),
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -208,21 +201,21 @@ private fun NetworkWidgetPreview(colors: WidgetTheme.Colors?) {
                             painter = painterResource(R.drawable.widget_network_wifi_24),
                             contentDescription = null,
                             modifier = Modifier.size(18.dp),
-                            tint = Color(previewColors.icon),
+                            tint = Color(previewColors.onTile),
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "Pixel 8",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(previewColors.icon),
+                            color = Color(previewColors.onTile),
                             maxLines = 1,
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "\u00b7 Wi-Fi",
                             fontSize = 10.sp,
-                            color = Color(previewColors.icon),
+                            color = Color(previewColors.onTileVariant),
                             maxLines = 1,
                         )
                     }
@@ -230,13 +223,13 @@ private fun NetworkWidgetPreview(colors: WidgetTheme.Colors?) {
                     Text(
                         text = "192.168.1.5",
                         fontSize = 10.sp,
-                        color = Color(previewColors.icon),
+                        color = Color(previewColors.onTileVariant),
                         maxLines = 1,
                     )
                     Text(
                         text = "203.0.113.1",
                         fontSize = 10.sp,
-                        color = Color(previewColors.icon),
+                        color = Color(previewColors.onTileVariant),
                         maxLines = 1,
                     )
                 }

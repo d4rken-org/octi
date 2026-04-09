@@ -284,14 +284,14 @@ private fun WidgetConfigPreviewContent(colors: WidgetTheme.Colors?) {
                     .fillMaxWidth()
                     .height(10.dp)
                     .clip(RoundedCornerShape(999.dp))
-                    .background(Color(previewColors.barTrack)),
+                    .background(Color(previewColors.tileBg)),
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.68f)
                         .height(10.dp)
                         .clip(RoundedCornerShape(999.dp))
-                        .background(Color(previewColors.barFill)),
+                        .background(Color(previewColors.accentBg)),
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
