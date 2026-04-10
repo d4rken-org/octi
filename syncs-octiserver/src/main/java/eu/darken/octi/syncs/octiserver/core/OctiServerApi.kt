@@ -97,4 +97,72 @@ interface OctiServerApi {
         @Body payload: RequestBody,
     )
 
+    // --- Blob endpoints ---
+
+    @retrofit2.http.Streaming
+    @retrofit2.http.PUT("blob/{blobKey}")
+    suspend fun putBlob(
+        @Path("blobKey") blobKey: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
+        @Query("module-id") moduleId: String,
+        @Header("X-Blob-Size") sizeBytes: Long,
+        @Header("X-Blob-Checksum") checksum: String,
+        @Body body: RequestBody,
+    )
+
+    @retrofit2.http.Streaming
+    @GET("blob/{blobKey}")
+    suspend fun getBlob(
+        @Path("blobKey") blobKey: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
+        @Query("module-id") moduleId: String,
+    ): Response<ResponseBody>
+
+    @DELETE("blob/{blobKey}")
+    suspend fun deleteBlob(
+        @Path("blobKey") blobKey: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
+        @Query("module-id") moduleId: String,
+    )
+
+    @Serializable
+    data class BlobListResponse(
+        @SerialName("blobs") val blobs: List<BlobEntry>,
+    ) {
+        @Serializable
+        data class BlobEntry(
+            @SerialName("key") val key: String,
+            @SerialName("size") val size: Long,
+            @Serializable(with = InstantSerializer::class) @SerialName("createdAt") val createdAt: Instant,
+            @SerialName("checksum") val checksum: String,
+        )
+    }
+
+    @GET("blobs")
+    suspend fun listBlobs(
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String? = null,
+        @Query("module-id") moduleId: String? = null,
+    ): BlobListResponse
+
+    @DELETE("blobs")
+    suspend fun bulkDeleteBlobs(
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
+    )
+
+    @Serializable
+    data class BlobQuotaResponse(
+        @SerialName("usedBytes") val usedBytes: Long,
+        @SerialName("totalBytes") val totalBytes: Long,
+    )
+
+    @GET("blob-quota")
+    suspend fun getBlobQuota(
+        @Header("X-Device-ID") callerDeviceId: String,
+    ): BlobQuotaResponse
+
 }

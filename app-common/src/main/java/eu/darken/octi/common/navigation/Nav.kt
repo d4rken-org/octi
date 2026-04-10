@@ -22,6 +22,9 @@ object Nav {
 
         @Serializable
         data class PowerAlerts(val deviceId: String) : Main
+
+        @Serializable
+        data class FileShareList(val deviceId: String) : Main
     }
 
     sealed interface Sync : NavigationDestination {

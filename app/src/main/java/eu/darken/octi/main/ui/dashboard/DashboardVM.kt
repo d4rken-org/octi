@@ -30,6 +30,7 @@ import eu.darken.octi.modules.apps.core.getInstallerIntent
 import eu.darken.octi.modules.clipboard.ClipboardHandler
 import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
+import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.alert.BatteryHighAlertRule
@@ -210,6 +211,11 @@ class DashboardVM @Inject constructor(
         data class Apps(val data: ModuleData<AppsInfo>) : ModuleItem
         data class Clipboard(
             val data: ModuleData<ClipboardInfo>,
+            val isOurDevice: Boolean,
+        ) : ModuleItem
+
+        data class FileShare(
+            val data: ModuleData<FileShareInfo>,
             val isOurDevice: Boolean,
         ) : ModuleItem
     }
@@ -457,6 +463,10 @@ class DashboardVM @Inject constructor(
         navTo(Nav.Main.AppsList(deviceId.id))
     }
 
+    fun goToFileShareList(deviceId: DeviceId) {
+        navTo(Nav.Main.FileShareList(deviceId.id))
+    }
+
     fun onInstallLatestApp(appsInfo: AppsInfo) = launch {
         appsInfo.installedPackages.maxByOrNull { it.installedAt }?.let {
             val (main, fallback) = it.getInstallerIntent()
@@ -545,6 +555,11 @@ class DashboardVM @Inject constructor(
                                 isOurDevice = deviceId == syncSettings.deviceId,
                             )
 
+                            is FileShareInfo -> ModuleItem.FileShare(
+                                data = moduleData as ModuleData<FileShareInfo>,
+                                isOurDevice = deviceId == syncSettings.deviceId,
+                            )
+
                             else -> {
                                 log(TAG, WARN) { "Unsupported module data: ${moduleData.data}" }
                                 null
@@ -630,6 +645,7 @@ class DashboardVM @Inject constructor(
             ConnectivityInfo::class,
             WifiInfo::class,
             ClipboardInfo::class,
+            FileShareInfo::class,
             AppsInfo::class,
         )
         private val ALL_MODULE_IDS = setOf(
@@ -638,6 +654,7 @@ class DashboardVM @Inject constructor(
             "eu.darken.octi.module.core.connectivity",
             "eu.darken.octi.module.core.apps",
             "eu.darken.octi.module.core.clipboard",
+            "eu.darken.octi.module.core.files",
         )
         private const val DEVICE_LIMIT = 3
         private val WIFI_PERMISSIONS = setOf(Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION)

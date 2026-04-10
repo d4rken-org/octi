@@ -17,6 +17,8 @@ import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardDashState
 import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardModuleTile
 import eu.darken.octi.modules.connectivity.ui.dashboard.ConnectivityModuleTile
+import eu.darken.octi.modules.files.ui.dashboard.FileShareDashState
+import eu.darken.octi.modules.files.ui.dashboard.FileShareModuleTile
 import eu.darken.octi.modules.power.ui.dashboard.PowerDashState
 import eu.darken.octi.modules.power.ui.dashboard.PowerModuleTile
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiDashState
@@ -40,6 +42,7 @@ fun ModuleTileGrid(
     onClearClipboard: () -> Unit,
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
+    onFileShareClicked: (DeviceId) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     val moduleMap = buildModuleIdMap(moduleItems)
@@ -84,6 +87,7 @@ fun ModuleTileGrid(
                         onClearClipboard = onClearClipboard,
                         onShareClipboard = onShareClipboard,
                         onCopyClipboard = onCopyClipboard,
+                        onFileShareClicked = onFileShareClicked,
                         showMessage = showMessage,
                     )
                 }
@@ -110,6 +114,7 @@ private fun ModuleTileDispatch(
     onClearClipboard: () -> Unit,
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
+    onFileShareClicked: (DeviceId) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     when (val item = moduleMap[moduleId]) {
@@ -166,6 +171,16 @@ private fun ModuleTileDispatch(
             showMessage = showMessage,
         )
 
+        is DashboardVM.ModuleItem.FileShare -> FileShareModuleTile(
+            state = FileShareDashState(
+                info = item.data.data,
+                isOurDevice = item.isOurDevice,
+            ),
+            modifier = modifier,
+            isWide = isWide,
+            onTileClicked = { onFileShareClicked(deviceId) },
+        )
+
         null -> {} // Module not available for this device
     }
 }
@@ -178,6 +193,7 @@ private fun buildModuleIdMap(moduleItems: List<DashboardVM.ModuleItem>): Map<Str
             is DashboardVM.ModuleItem.Connectivity -> "eu.darken.octi.module.core.connectivity"
             is DashboardVM.ModuleItem.Apps -> "eu.darken.octi.module.core.apps"
             is DashboardVM.ModuleItem.Clipboard -> "eu.darken.octi.module.core.clipboard"
+            is DashboardVM.ModuleItem.FileShare -> "eu.darken.octi.module.core.files"
         }
     }
 }

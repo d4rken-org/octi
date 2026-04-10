@@ -257,7 +257,7 @@ class OctiServerConnector @AssistedInject constructor(
         val encType = credentials.encryptionKeyset.type
         val isGcmSiv = EncryptionMode.fromTypeString(encType) == EncryptionMode.AES256_GCM_SIV
 
-        val issues = if (!isGcmSiv) emptyList() else metadata.mapNotNull { device ->
+        val encIssues = if (!isGcmSiv) emptyList() else metadata.mapNotNull { device ->
             if (device.deviceId == syncSettings.deviceId) return@mapNotNull null
             if (device.deviceId in dataDeviceIds) return@mapNotNull null
             val addedAt = device.addedAt ?: return@mapNotNull null
@@ -269,6 +269,18 @@ class OctiServerConnector @AssistedInject constructor(
             )
         }
 
+        val blobIssues = if (!isGcmSiv) {
+            listOf(
+                OctiServerIssue.BlobEncryptionUnsupported(
+                    connectorId = identifier,
+                    deviceId = syncSettings.deviceId,
+                )
+            )
+        } else {
+            emptyList()
+        }
+
+        val issues = encIssues + blobIssues
         log(TAG) { "computeEncryptionIssues(): ${issues.size} issues" }
         _state.updateBlocking { copy(issues = issues) }
     }

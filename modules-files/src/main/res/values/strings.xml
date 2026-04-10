@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_files_label">File Sharing</string>
+    <string name="module_files_tile_empty">No files</string>
+    <string name="module_files_tile_count">%1$d file(s) shared</string>
+    <string name="module_files_list_title">Shared Files</string>
+    <string name="module_files_share_action">Share file</string>
+    <string name="module_files_save_action">Save</string>
+    <string name="module_files_delete_action">Delete</string>
+    <string name="module_files_unavailable">Not available yet</string>
+    <string name="module_files_expired">Expired</string>
+    <string name="module_files_upload_success">File shared successfully</string>
+    <string name="module_files_upload_partial">File shared to some devices. Retry in progress\u2026</string>
+    <string name="module_files_upload_failed">Failed to share file</string>
+    <string name="module_files_upload_no_connectors">No sync service available for file sharing</string>
+    <string name="module_files_save_success">File saved</string>
+    <string name="module_files_save_not_available">File is not available on any of your connected services</string>
+    <string name="module_files_save_failed">Failed to save file</string>
+    <string name="module_files_checksum_mismatch">File integrity check failed</string>
+    <string name="module_files_delete_success">File deleted</string>
+    <string name="module_files_time_remaining">%1$s remaining</string>
+</resources>

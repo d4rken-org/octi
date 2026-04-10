@@ -227,7 +227,7 @@ class OctiServerWebSocketEventTest : BaseTest() {
                 action = SyncEvent.BlobChanged.Action.ADDED,
             )
             event.action shouldBe SyncEvent.BlobChanged.Action.ADDED
-            event.blobKey.key shouldBe "key-1"
+            event.blobKey.id shouldBe "key-1"
         }
 
         @Test

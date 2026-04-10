@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.twotone.Apps
 import androidx.compose.material.icons.twotone.BatteryFull
+import androidx.compose.material.icons.automirrored.twotone.InsertDriveFile
 import androidx.compose.material.icons.twotone.ContentPaste
 import androidx.compose.material.icons.twotone.Public
 import androidx.compose.material.icons.twotone.Stars
@@ -27,6 +28,7 @@ import eu.darken.octi.R
 import eu.darken.octi.modules.apps.R as AppsR
 import eu.darken.octi.modules.clipboard.R as ClipboardR
 import eu.darken.octi.modules.connectivity.R as ConnectivityR
+import eu.darken.octi.modules.files.R as FilesR
 import eu.darken.octi.modules.power.R as PowerR
 import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.common.compose.Preview2
@@ -55,6 +57,7 @@ fun ModuleSettingsScreenHost(vm: ModuleSettingsVM = hiltViewModel()) {
             onAppsInstallerEnabledChanged = { enabled -> vm.setAppsInstallerEnabled(enabled) },
             onUpgrade = { vm.goUpgrade() },
             onClipboardEnabledChanged = { enabled -> vm.setClipboardEnabled(enabled) },
+            onFilesEnabledChanged = { enabled -> vm.setFilesEnabled(enabled) },
         )
     }
 }
@@ -70,6 +73,7 @@ fun ModuleSettingsScreen(
     onAppsInstallerEnabledChanged: (Boolean) -> Unit,
     onUpgrade: () -> Unit,
     onClipboardEnabledChanged: (Boolean) -> Unit,
+    onFilesEnabledChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -173,6 +177,15 @@ fun ModuleSettingsScreen(
                     onCheckedChange = onClipboardEnabledChanged,
                 )
             }
+            item {
+                SettingsSwitchItem(
+                    icon = Icons.AutoMirrored.TwoTone.InsertDriveFile,
+                    title = stringResource(FilesR.string.module_files_label),
+                    subtitle = stringResource(FilesR.string.module_files_share_action),
+                    checked = state.isFilesEnabled,
+                    onCheckedChange = onFilesEnabledChanged,
+                )
+            }
         }
     }
 }
@@ -189,6 +202,7 @@ private fun ModuleSettingsScreenPreview() = PreviewWrapper {
             isAppsEnabled = true,
             isAppsInstallerEnabled = false,
             isClipboardEnabled = true,
+            isFilesEnabled = true,
         ),
         onNavigateUp = {},
         onPowerEnabledChanged = {},
@@ -198,5 +212,6 @@ private fun ModuleSettingsScreenPreview() = PreviewWrapper {
         onAppsInstallerEnabledChanged = {},
         onUpgrade = {},
         onClipboardEnabledChanged = {},
+        onFilesEnabledChanged = {},
     )
 }

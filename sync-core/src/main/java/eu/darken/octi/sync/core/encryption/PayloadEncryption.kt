@@ -10,6 +10,7 @@ import com.google.crypto.tink.TinkProtoKeysetFormat
 import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.aead.AesGcmSivKeyManager
 import com.google.crypto.tink.daead.DeterministicAeadConfig
+import com.google.crypto.tink.streamingaead.StreamingAeadConfig
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -107,7 +108,8 @@ class PayloadEncryption constructor(
             DeterministicAeadConfig.register()
             AeadConfig.register()
             AesGcmSivKeyManager.register(true)
-            log(TAG) { "DeterministicAeadConfig + AeadConfig + AesGcmSiv registered" }
+            StreamingAeadConfig.register()
+            log(TAG) { "DeterministicAeadConfig + AeadConfig + AesGcmSiv + StreamingAead registered" }
         }
     }
 }

@@ -324,6 +324,7 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             onClearClipboard = { vm.clearClipboard() },
             onShareClipboard = { vm.shareCurrentClipboard() },
             onCopyClipboard = { vm.setOsClipboard(it) },
+            onFileShareClicked = { vm.goToFileShareList(it) },
             onWifiPermissionGrant = { vm.requestPermission(it) },
             onSaveTileLayout = { deviceId, config -> vm.saveTileLayout(deviceId, config) },
             onSaveAsDefaultTileLayout = { vm.saveAsDefaultTileLayout(it) },
@@ -361,6 +362,7 @@ fun DashboardScreen(
     onClearClipboard: () -> Unit,
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
+    onFileShareClicked: (DeviceId) -> Unit,
     onWifiPermissionGrant: (Permission) -> Unit,
     onSaveTileLayout: (String, TileLayoutConfig) -> Unit = { _, _ -> },
     onSaveAsDefaultTileLayout: (TileLayoutConfig) -> Unit = {},
@@ -407,7 +409,8 @@ fun DashboardScreen(
             is DashboardVM.ModuleItem.Connectivity -> showConnectivityDetail = target
             is DashboardVM.ModuleItem.Clipboard -> showClipboardDetail = target
             is DashboardVM.ModuleItem.Wifi,
-            is DashboardVM.ModuleItem.Apps -> {
+            is DashboardVM.ModuleItem.Apps,
+            is DashboardVM.ModuleItem.FileShare -> {
                 // Not reachable from widgets today; no-op.
             }
         }
@@ -556,6 +559,7 @@ fun DashboardScreen(
                     onClearClipboard = onClearClipboard,
                     onShareClipboard = onShareClipboard,
                     onCopyClipboard = onCopyClipboard,
+                    onFileShareClicked = onFileShareClicked,
                     showMessage = showMessage,
                     onDoneEditing = { deviceId, config ->
                         onSaveTileLayout(deviceId, config)
@@ -606,6 +610,7 @@ fun DashboardScreen(
                         onClearClipboard = onClearClipboard,
                         onShareClipboard = onShareClipboard,
                         onCopyClipboard = onCopyClipboard,
+                        onFileShareClicked = onFileShareClicked,
                         showMessage = showMessage,
                         onDoneEditing = { deviceId, config ->
                             onSaveTileLayout(deviceId, config)
@@ -1471,6 +1476,7 @@ private fun DashboardDeviceCard(
     onClearClipboard: () -> Unit,
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
+    onFileShareClicked: (DeviceId) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     val meta = device.meta?.data
@@ -1649,6 +1655,7 @@ private fun DashboardDeviceCard(
                 onClearClipboard = onClearClipboard,
                 onShareClipboard = onShareClipboard,
                 onCopyClipboard = onCopyClipboard,
+                onFileShareClicked = onFileShareClicked,
                 showMessage = showMessage,
             )
         }
@@ -1677,6 +1684,7 @@ private fun DeviceCardOrEditor(
     onClearClipboard: () -> Unit,
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
+    onFileShareClicked: (DeviceId) -> Unit,
     showMessage: (String) -> Unit,
     onDoneEditing: (String, TileLayoutConfig) -> Unit,
     onCancelEditing: () -> Unit,
@@ -1718,6 +1726,7 @@ private fun DeviceCardOrEditor(
             onClearClipboard = onClearClipboard,
             onShareClipboard = onShareClipboard,
             onCopyClipboard = onCopyClipboard,
+            onFileShareClicked = onFileShareClicked,
             showMessage = showMessage,
         )
     }
@@ -1731,6 +1740,7 @@ private fun buildAvailableModuleIds(moduleItems: List<DashboardVM.ModuleItem>): 
             is DashboardVM.ModuleItem.Connectivity -> "eu.darken.octi.module.core.connectivity"
             is DashboardVM.ModuleItem.Apps -> "eu.darken.octi.module.core.apps"
             is DashboardVM.ModuleItem.Clipboard -> "eu.darken.octi.module.core.clipboard"
+            is DashboardVM.ModuleItem.FileShare -> "eu.darken.octi.module.core.files"
         }
     }.toSet()
 }
@@ -1837,6 +1847,7 @@ private fun DashboardScreenEmptyPreview() = PreviewWrapper {
         onClearClipboard = {},
         onShareClipboard = {},
         onCopyClipboard = {},
+        onFileShareClicked = {},
         onWifiPermissionGrant = {},
     )
 }
@@ -1939,6 +1950,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
         onClearClipboard = {},
         onShareClipboard = {},
         onCopyClipboard = {},
+        onFileShareClicked = {},
         onWifiPermissionGrant = {},
     )
 }
@@ -2040,6 +2052,7 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
         onClearClipboard = {},
         onShareClipboard = {},
         onCopyClipboard = {},
+        onFileShareClicked = {},
         onWifiPermissionGrant = {},
     )
 }

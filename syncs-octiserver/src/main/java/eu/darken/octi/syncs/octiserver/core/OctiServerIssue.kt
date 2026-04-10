@@ -19,4 +19,13 @@ sealed interface OctiServerIssue : ConnectorIssue {
         override val label: CaString = caString { it.getString(R.string.sync_octiserver_issues_type_encryption_error) }
         override val description: CaString = caString { it.getString(R.string.sync_octiserver_device_encryption_incompatible) }
     }
+
+    data class BlobEncryptionUnsupported(
+        override val connectorId: ConnectorId,
+        override val deviceId: DeviceId,
+    ) : OctiServerIssue {
+        override val severity: IssueSeverity = IssueSeverity.WARNING
+        override val label: CaString = caString { it.getString(R.string.sync_octiserver_issues_type_encryption_error) }
+        override val description: CaString = caString { "File sharing requires updated encryption. Re-link this account to enable file sharing." }
+    }
 }

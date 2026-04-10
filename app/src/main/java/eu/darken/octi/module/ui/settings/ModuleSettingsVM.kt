@@ -10,6 +10,7 @@ import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.modules.apps.core.AppsSettings
 import eu.darken.octi.modules.clipboard.ClipboardSettings
 import eu.darken.octi.modules.connectivity.core.ConnectivitySettings
+import eu.darken.octi.modules.files.core.FileShareSettings
 import eu.darken.octi.modules.power.core.PowerSettings
 import eu.darken.octi.modules.wifi.core.WifiSettings
 import kotlinx.coroutines.flow.combine
@@ -24,6 +25,7 @@ class ModuleSettingsVM @Inject constructor(
     private val wifiSettings: WifiSettings,
     private val appsSettings: AppsSettings,
     private val clipboardSettings: ClipboardSettings,
+    private val fileShareSettings: FileShareSettings,
 ) : ViewModel4(dispatcherProvider) {
 
     data class State(
@@ -34,6 +36,7 @@ class ModuleSettingsVM @Inject constructor(
         val isAppsEnabled: Boolean,
         val isAppsInstallerEnabled: Boolean,
         val isClipboardEnabled: Boolean,
+        val isFilesEnabled: Boolean,
     )
 
     val state = combine(
@@ -48,11 +51,12 @@ class ModuleSettingsVM @Inject constructor(
         combine(
             appsSettings.isEnabled.flow,
             appsSettings.includeInstaller.flow,
-            clipboardSettings.isEnabled.flow,
-        ) { apps, installer, clipboard ->
-            Triple(apps, installer, clipboard)
+        ) { apps, installer ->
+            apps to installer
         },
-    ) { upgradeInfo, (power, connectivity, wifi), (apps, installer, clipboard) ->
+        clipboardSettings.isEnabled.flow,
+        fileShareSettings.isEnabled.flow,
+    ) { upgradeInfo, (power, connectivity, wifi), (apps, installer), clipboard, files ->
         State(
             isPro = upgradeInfo.isPro,
             isPowerEnabled = power,
@@ -61,6 +65,7 @@ class ModuleSettingsVM @Inject constructor(
             isAppsEnabled = apps,
             isAppsInstallerEnabled = installer,
             isClipboardEnabled = clipboard,
+            isFilesEnabled = files,
         )
     }.asStateFlow()
 
@@ -86,6 +91,10 @@ class ModuleSettingsVM @Inject constructor(
 
     fun setClipboardEnabled(enabled: Boolean) = launch {
         clipboardSettings.isEnabled.value(enabled)
+    }
+
+    fun setFilesEnabled(enabled: Boolean) = launch {
+        fileShareSettings.isEnabled.value(enabled)
     }
 
     fun goUpgrade() = navTo(Nav.Main.Upgrade())

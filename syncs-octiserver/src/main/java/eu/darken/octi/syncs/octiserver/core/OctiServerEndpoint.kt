@@ -11,13 +11,21 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.serialization.RetrofitJson
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.BlobKey
+import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
+import eu.darken.octi.sync.core.blob.BlobMetadata
+import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
+import eu.darken.octi.sync.core.blob.BlobStoreConstraints
+import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.ByteString
 import retrofit2.HttpException
@@ -215,6 +223,118 @@ class OctiServerEndpoint @AssistedInject constructor(
                 moduleId = moduleId.id,
                 targetDeviceId = ourDeviceIdString,
                 payload = payload.toRequestBody(),
+            )
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
+        }
+    }
+
+    // --- Blob operations ---
+
+    suspend fun putBlob(
+        connectorId: ConnectorId,
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        blobKey: BlobKey,
+        body: RequestBody,
+        sizeBytes: Long,
+        checksum: String,
+    ) = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "putBlob(key=${blobKey.id}, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
+        try {
+            api.putBlob(
+                blobKey = blobKey.id,
+                callerDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
+                moduleId = moduleId.id,
+                sizeBytes = sizeBytes,
+                checksum = checksum,
+                body = body,
+            )
+        } catch (e: HttpException) {
+            when (e.code()) {
+                413 -> throw BlobFileTooLargeException(
+                    connectorId = connectorId,
+                    constraints = BlobStoreConstraints(maxFileBytes = sizeBytes),
+                    requestedBytes = sizeBytes,
+                )
+
+                507 -> throw BlobQuotaExceededException(
+                    quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 0, totalBytes = 0),
+                    requestedBytes = sizeBytes,
+                )
+
+                else -> throw OctiServerHttpException(e)
+            }
+        }
+    }
+
+    suspend fun getBlob(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        blobKey: BlobKey,
+    ): okhttp3.ResponseBody? = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "getBlob(key=${blobKey.id}, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
+        try {
+            val response = api.getBlob(
+                blobKey = blobKey.id,
+                callerDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
+                moduleId = moduleId.id,
+            )
+            if (!response.isSuccessful) throw OctiServerHttpException(HttpException(response))
+            response.body()
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
+        }
+    }
+
+    suspend fun deleteBlob(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        blobKey: BlobKey,
+    ) = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "deleteBlob(key=${blobKey.id})" }
+        try {
+            api.deleteBlob(
+                blobKey = blobKey.id,
+                callerDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
+                moduleId = moduleId.id,
+            )
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
+        }
+    }
+
+    suspend fun listBlobs(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+    ): List<OctiServerApi.BlobListResponse.BlobEntry> = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "listBlobs(device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
+        try {
+            api.listBlobs(
+                callerDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
+                moduleId = moduleId.id,
+            ).blobs
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
+        }
+    }
+
+    suspend fun getBlobQuota(): BlobStoreQuota? = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "getBlobQuota()" }
+        try {
+            val response = api.getBlobQuota(callerDeviceId = ourDeviceIdString)
+            BlobStoreQuota(
+                connectorId = ConnectorId(
+                    type = eu.darken.octi.sync.core.ConnectorType.OCTISERVER,
+                    subtype = credentials?.serverAdress?.domain ?: "unknown",
+                    account = credentials?.accountId?.id ?: "unknown",
+                ),
+                usedBytes = response.usedBytes,
+                totalBytes = response.totalBytes,
             )
         } catch (e: HttpException) {
             throw OctiServerHttpException(e)

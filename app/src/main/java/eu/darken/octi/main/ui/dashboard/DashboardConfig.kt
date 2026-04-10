@@ -14,8 +14,9 @@ data class TileLayoutConfig(
             "eu.darken.octi.module.core.power",
             "eu.darken.octi.module.core.wifi",
             "eu.darken.octi.module.core.connectivity",
-            "eu.darken.octi.module.core.apps",
             "eu.darken.octi.module.core.clipboard",
+            "eu.darken.octi.module.core.files",
+            "eu.darken.octi.module.core.apps",
         )
         val DEFAULT_WIDE = setOf("eu.darken.octi.module.core.power")
     }
@@ -23,8 +24,31 @@ data class TileLayoutConfig(
     fun normalize(allModuleIds: Set<String>): TileLayoutConfig {
         val knownOrder = order.filter { it in allModuleIds }.distinct()
         val missing = allModuleIds - knownOrder.toSet()
+
+        // Insert missing IDs at their DEFAULT_ORDER-relative position rather than appending sorted.
+        // This ensures new modules (e.g., "files") appear between their natural neighbors
+        // even when the user has a saved custom order.
+        val result = knownOrder.toMutableList()
+        for (newId in DEFAULT_ORDER.filter { it in missing }) {
+            val defaultIdx = DEFAULT_ORDER.indexOf(newId)
+            // Find the last existing item whose default position precedes this new item
+            var insertAt = result.size
+            for (i in result.indices.reversed()) {
+                val existingDefaultIdx = DEFAULT_ORDER.indexOf(result[i])
+                if (existingDefaultIdx >= 0 && existingDefaultIdx < defaultIdx) {
+                    insertAt = i + 1
+                    break
+                }
+                if (i == 0) insertAt = 0
+            }
+            result.add(insertAt, newId)
+        }
+        // Append any remaining IDs not in DEFAULT_ORDER (shouldn't happen, but safety)
+        val stillMissing = missing - DEFAULT_ORDER.toSet()
+        result.addAll(stillMissing.sorted())
+
         return copy(
-            order = knownOrder + missing.sorted(),
+            order = result,
             wideModules = wideModules.filter { it in allModuleIds }.toSet(),
             hiddenModules = hiddenModules.filter { it in allModuleIds }.toSet(),
         )

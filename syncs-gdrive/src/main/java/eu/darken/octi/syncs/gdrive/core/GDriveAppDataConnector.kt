@@ -200,11 +200,15 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 }
 
                 val moduleId = ModuleId(file.name)
-                if (moduleId in supportedModuleIds) {
-                    val cacheKey = DeviceId(parentName) to moduleId
-                    fileIdCache[cacheKey] = file.id
-                    fileIdReverseCache[file.id] = cacheKey
+                if (moduleId !in supportedModuleIds) {
+                    // Skip files that aren't known modules (e.g. blob-store files, metadata files).
+                    // Without this guard, blob writes would emit bogus ModuleChanged events.
+                    return@mapNotNull null
                 }
+
+                val cacheKey = DeviceId(parentName) to moduleId
+                fileIdCache[cacheKey] = file.id
+                fileIdReverseCache[file.id] = cacheKey
 
                 SyncEvent.ModuleChanged(
                     connectorId = identifier,

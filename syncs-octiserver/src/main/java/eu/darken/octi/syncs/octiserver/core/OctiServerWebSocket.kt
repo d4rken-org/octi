@@ -8,6 +8,7 @@ import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncEvent
@@ -52,6 +53,7 @@ class OctiServerWebSocket(
             @SerialName("moduleId") val moduleId: String,
             @SerialName("modifiedAt") val modifiedAt: String? = null,
             @SerialName("action") val action: String = "updated",
+            @SerialName("blobKey") val blobKey: String? = null,
         )
     }
 
@@ -147,6 +149,26 @@ class OctiServerWebSocket(
                 else -> SyncEvent.ModuleChanged.Action.UPDATED
             },
         )
+
+        "blob_changed" -> {
+            val key = blobKey
+            if (key == null) {
+                log(TAG, WARN) { "blob_changed event missing blobKey" }
+                null
+            } else {
+                SyncEvent.BlobChanged(
+                    connectorId = connectorId,
+                    deviceId = DeviceId(deviceId),
+                    moduleId = ModuleId(moduleId),
+                    blobKey = BlobKey(key),
+                    action = when (action) {
+                        "added" -> SyncEvent.BlobChanged.Action.ADDED
+                        "deleted" -> SyncEvent.BlobChanged.Action.DELETED
+                        else -> SyncEvent.BlobChanged.Action.MODIFIED
+                    },
+                )
+            }
+        }
 
         else -> {
             log(TAG, WARN) { "Unknown event type: $type" }

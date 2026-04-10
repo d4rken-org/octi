@@ -1,0 +1,55 @@
+plugins {
+    id("com.android.library")
+    id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jetbrains.kotlin.plugin.compose")
+}
+
+apply(plugin = "dagger.hilt.android.plugin")
+
+android {
+    namespace = "eu.darken.octi.modules.files"
+    compileSdk = ProjectConfig.compileSdk
+
+    defaultConfig {
+        minSdk = ProjectConfig.minSdk
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    setupModuleBuildTypes()
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+        tasks.withType<Test> {
+            useJUnitPlatform()
+        }
+    }
+}
+
+setupModule()
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.Desugar.core}")
+
+    implementation(project(":app-common"))
+    testImplementation(project(":app-common-test"))
+    implementation(project(":module-core"))
+    implementation(project(":sync-core"))
+    implementation(project(":modules-meta"))
+
+    addAndroidCore()
+    addDI()
+    addCoroutines()
+    addSerialization()
+    addIO()
+    addCompose()
+    addAndroidUI()
+    addNavigation3()
+    addTesting()
+}

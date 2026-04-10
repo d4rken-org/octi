@@ -111,6 +111,36 @@ interface GDriveEnvironment {
         }
     }
 
+    suspend fun GDriveFile.writeStreamed(
+        input: java.io.InputStream,
+        sizeBytes: Long,
+        mimeType: String,
+        properties: Map<String, String> = emptyMap(),
+    ) {
+        log(TAG, VERBOSE) { "writeStreamed($name, $sizeBytes bytes, $mimeType)" }
+        val content = com.google.api.client.http.InputStreamContent(mimeType, input).apply {
+            length = sizeBytes
+        }
+        val metadata = GDriveFile().apply {
+            this.mimeType = mimeType
+            modifiedTime = DateTime(Clock.System.now().toEpochMilliseconds())
+            if (properties.isNotEmpty()) {
+                this.properties = properties
+            }
+        }
+        drive.files().update(id, metadata, content).execute()
+    }
+
+    suspend fun GDriveFile.readStreamedTo(output: java.io.OutputStream) {
+        log(TAG, VERBOSE) { "readStreamedTo($name)" }
+        drive.files().get(id).executeMediaAndDownloadTo(output)
+    }
+
+    suspend fun GDriveFile.fetchProperties(): Map<String, String>? {
+        val file = drive.files().get(id).setFields("properties").execute()
+        return file.properties
+    }
+
     companion object {
         internal const val APPDATAFOLDER = "appDataFolder"
         private const val MIME_FOLDER = "application/vnd.google-apps.folder"

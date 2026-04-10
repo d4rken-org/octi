@@ -167,6 +167,7 @@ dependencies {
     implementation(project(":modules-connectivity"))
     implementation(project(":modules-apps"))
     implementation(project(":modules-clipboard"))
+    implementation(project(":modules-files"))
 
     addDI()
     addCoroutines()

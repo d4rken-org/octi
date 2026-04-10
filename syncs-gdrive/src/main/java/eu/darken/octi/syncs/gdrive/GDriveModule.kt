@@ -6,6 +6,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import eu.darken.octi.sync.core.ConnectorHub
+import eu.darken.octi.sync.core.blob.BlobStoreHub
+import eu.darken.octi.syncs.gdrive.core.GDriveBlobStoreHub
 import eu.darken.octi.syncs.gdrive.core.GDriveHub
 
 @InstallIn(SingletonComponent::class)
@@ -15,4 +17,8 @@ abstract class GDriveModule {
     @Binds
     @IntoSet
     abstract fun hub(hub: GDriveHub): ConnectorHub
+
+    @Binds
+    @IntoSet
+    abstract fun blobHub(hub: GDriveBlobStoreHub): BlobStoreHub
 }
