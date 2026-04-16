@@ -25,7 +25,10 @@ abstract class ViewModel2(
     private val dispatcherProvider: DispatcherProvider = DefaultDispatcherProvider(),
 ) : ViewModel1() {
 
-    val vmScope = viewModelScope + dispatcherProvider.Default
+    val vmScope: CoroutineScope
+        get() = launchErrorHandler
+            ?.let { viewModelScope + dispatcherProvider.Default + it }
+            ?: (viewModelScope + dispatcherProvider.Default)
 
     var launchErrorHandler: CoroutineExceptionHandler? = null
 
