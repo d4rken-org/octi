@@ -15,6 +15,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import dagger.hilt.android.AndroidEntryPoint
+import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.debug.recording.core.DebugSessionManager
@@ -43,6 +44,12 @@ class MainActivity : Activity2() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         enableEdgeToEdge()
+
+        if (BuildConfigWrap.DEBUG) {
+            check(connectorContributions.isNotEmpty()) {
+                "No ConnectorUiContribution registered — check @IntoMap wiring in syncs-* modules"
+            }
+        }
 
         setContent {
             val themeState by vm.themeState.collectAsState()
