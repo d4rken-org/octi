@@ -31,6 +31,8 @@ import eu.darken.octi.modules.clipboard.ClipboardHandler
 import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 import eu.darken.octi.modules.files.core.FileShareInfo
+import eu.darken.octi.modules.files.core.FileShareRepo
+import eu.darken.octi.syncs.octiserver.core.OctiServerIssue
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.alert.BatteryHighAlertRule
@@ -86,6 +88,7 @@ class DashboardVM @Inject constructor(
     private val syncExecutor: SyncExecutor,
     private val syncOrchestrator: SyncOrchestrator,
     private val issueAggregator: ConnectorIssueAggregator,
+    private val fileShareRepo: FileShareRepo,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -268,6 +271,14 @@ class DashboardVM @Inject constructor(
         ) : SyncStatus
     }
 
+    private val filteredIssues: Flow<List<ConnectorIssue>> = kotlinx.coroutines.flow.combine(
+        issueAggregator.issues,
+        fileShareRepo.isEnabled,
+    ) { issues, fileShareEnabled ->
+        if (fileShareEnabled) issues
+        else issues.filterNot { it is OctiServerIssue.BlobEncryptionUnsupported }
+    }
+
     val state: Flow<State> = combine(
         tickerUiRefresh,
         networkStateProvider.networkState,
@@ -278,7 +289,7 @@ class DashboardVM @Inject constructor(
         upgradeRepo.upgradeInfo,
         updateService.availableUpdate.onStart { emit(null) },
         generalSettings.dashboardConfig.flow,
-        issueAggregator.issues,
+        filteredIssues,
         syncSettings.pausedConnectors.flow,
     ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig, allIssues, pausedIds ->
 

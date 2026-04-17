@@ -73,10 +73,11 @@ class FileShareListVM @Inject constructor(
         .flatMapLatest { targetDeviceId ->
             combine(
                 fileShareRepo.state,
+                fileShareRepo.isEnabled,
                 moduleManager.byDevice,
                 blobManager.quotas(),
                 fileShareService.transfers,
-            ) { repoState, byDevice, quotas, transfers ->
+            ) { repoState, moduleEnabled, byDevice, quotas, transfers ->
                 val isOurDevice = targetDeviceId == syncSettings.deviceId
                 val configuredConnectorIds = quotas.keys.map { it.idString }.toSet()
 
@@ -135,7 +136,7 @@ class FileShareListVM @Inject constructor(
                 State(
                     deviceLabel = deviceLabel,
                     isOurDevice = isOurDevice,
-                    isSharingAvailable = configuredConnectorIds.isNotEmpty(),
+                    isSharingAvailable = moduleEnabled && configuredConnectorIds.isNotEmpty(),
                     quotaItems = quotaItems,
                     files = files,
                     uploadProgress = uploadProgress,

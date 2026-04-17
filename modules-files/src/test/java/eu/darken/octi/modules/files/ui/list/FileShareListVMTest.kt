@@ -74,6 +74,7 @@ class FileShareListVMTest : BaseTest() {
                 ),
             )
         )
+        every { fileShareRepo.isEnabled } returns flowOf(true)
         every { moduleManager.byDevice } returns flowOf(
             ModuleManager.ByDevice(
                 devices = mapOf(
