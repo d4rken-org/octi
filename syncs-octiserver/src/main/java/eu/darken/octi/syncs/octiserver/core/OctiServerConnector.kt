@@ -58,6 +58,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okio.ByteString
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
@@ -114,6 +115,49 @@ class OctiServerConnector @AssistedInject constructor(
     // TODO: Consider removing lock — concurrent syncs may be safe since each module is an independent endpoint
     private val serverLock = Mutex()
 
+    /**
+     * In-memory (deviceId, moduleId) → ETag cache populated on successful commits. Callers can
+     * skip a HEAD lookup before the next commit to the same module. Invalidated on 412 (server
+     * saw a different ETag than we had) and cleared when the connector is deleted.
+     *
+     * Not persisted — process death forces a fresh HEAD on the next commit, which is correct.
+     */
+    private val etagCache = ConcurrentHashMap<Pair<DeviceId, ModuleId>, OctiServerEndpoint.ModuleEtagResult>()
+
+    /**
+     * Returns the ETag to send with a commit — cached value if present, otherwise fetches from
+     * the server and caches the result. Silent on failure: a null here means "no precondition",
+     * the commit will behave as a best-effort write and 412 (if any) drives the retry path.
+     */
+    private suspend fun resolveCachedEtag(deviceId: DeviceId, moduleId: ModuleId): String? {
+        etagCache[deviceId to moduleId]?.let {
+            return (it as? OctiServerEndpoint.ModuleEtagResult.Present)?.etag
+        }
+        return try {
+            fetchEtagFromServer(deviceId, moduleId)
+        } catch (e: Exception) {
+            log(TAG, WARN) { "resolveCachedEtag(): Failed for ${moduleId.logLabel}: ${e.message}" }
+            null
+        }
+    }
+
+    private suspend fun fetchEtagFromServer(deviceId: DeviceId, moduleId: ModuleId): String? {
+        val result = endpoint.readModuleEtag(deviceId, moduleId)
+        etagCache[deviceId to moduleId] = result
+        return when (result) {
+            is OctiServerEndpoint.ModuleEtagResult.Absent -> null
+            is OctiServerEndpoint.ModuleEtagResult.Present -> result.etag
+        }
+    }
+
+    private fun cacheEtag(deviceId: DeviceId, moduleId: ModuleId, etag: String) {
+        if (etag.isEmpty()) {
+            etagCache.remove(deviceId to moduleId)
+            return
+        }
+        etagCache[deviceId to moduleId] = OctiServerEndpoint.ModuleEtagResult.Present(etag)
+    }
+
     override val accountLabel: String get() = credentials.serverAdress.domain
 
     override val identifier: ConnectorId = ConnectorId(
@@ -155,6 +199,7 @@ class OctiServerConnector @AssistedInject constructor(
         log(TAG, INFO) { "resetData()" }
         runServerAction("reset-devices") {
             endpoint.resetDevices()
+            etagCache.clear()
         }
     }
 
@@ -162,6 +207,7 @@ class OctiServerConnector @AssistedInject constructor(
         log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
         runServerAction("delete-device-$deviceId") {
             endpoint.deleteDevice(deviceId)
+            etagCache.keys.removeAll { it.first == deviceId }
         }
     }
 
@@ -397,24 +443,17 @@ class OctiServerConnector @AssistedInject constructor(
                             log(TAG) { "writeServer(): ${module.moduleId} — committing ${serverBlobIds.size}/${attachments.size} blobs ($missing not hosted here)" }
                         }
 
-                        val etag = try {
-                            when (val result = endpoint.readModuleEtag(data.deviceId, module.moduleId)) {
-                                is OctiServerEndpoint.ModuleEtagResult.Absent -> null
-                                is OctiServerEndpoint.ModuleEtagResult.Present -> result.etag
-                            }
-                        } catch (e: Exception) {
-                            log(TAG, WARN) { "writeServer(): Failed to read ETag for ${module.moduleId}: ${e.message}" }
-                            null
-                        }
+                        val etag = resolveCachedEtag(data.deviceId, module.moduleId)
 
                         try {
-                            endpoint.commitModule(
+                            val newEtag = endpoint.commitModule(
                                 deviceId = data.deviceId,
                                 moduleId = module.moduleId,
                                 etag = etag,
                                 documentBase64 = encryptedPayload.base64(),
                                 serverBlobIds = serverBlobIds,
                             )
+                            cacheEtag(data.deviceId, module.moduleId, newEtag)
                             log(TAG) { "writeServer(): Committed ${module.moduleId} via PUT (${serverBlobIds.size} blob refs)" }
                         } catch (e: OctiServerHttpException) {
                             when (e.httpCode) {
@@ -424,30 +463,34 @@ class OctiServerConnector @AssistedInject constructor(
                                         identifier,
                                         OctiServerCapabilities(blobSupport = OctiServerCapabilities.BlobSupport.LEGACY),
                                     )
+                                    etagCache.remove(data.deviceId to module.moduleId)
                                     endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
                                 }
                                 412 -> {
-                                    // Precondition failed: stale ETag. Re-read and retry once with fresh ETag.
+                                    // Precondition failed: stale ETag. Drop the cache entry (which may
+                                    // have been stale), re-read from the server and retry once.
                                     log(TAG, WARN) { "writeServer(): 412 conflict on ${module.moduleId}, refreshing ETag and retrying" }
+                                    etagCache.remove(data.deviceId to module.moduleId)
                                     val freshEtag = try {
-                                        when (val result = endpoint.readModuleEtag(data.deviceId, module.moduleId)) {
-                                            is OctiServerEndpoint.ModuleEtagResult.Absent -> null
-                                            is OctiServerEndpoint.ModuleEtagResult.Present -> result.etag
-                                        }
+                                        fetchEtagFromServer(data.deviceId, module.moduleId)
                                     } catch (readE: Exception) {
                                         log(TAG, ERROR) { "writeServer(): ETag refresh failed: ${readE.message}" }
                                         throw e
                                     }
-                                    endpoint.commitModule(
+                                    val newEtag = endpoint.commitModule(
                                         deviceId = data.deviceId,
                                         moduleId = module.moduleId,
                                         etag = freshEtag,
                                         documentBase64 = encryptedPayload.base64(),
                                         serverBlobIds = serverBlobIds,
                                     )
+                                    cacheEtag(data.deviceId, module.moduleId, newEtag)
                                     log(TAG) { "writeServer(): Retry succeeded for ${module.moduleId}" }
                                 }
-                                else -> throw e
+                                else -> {
+                                    etagCache.remove(data.deviceId to module.moduleId)
+                                    throw e
+                                }
                             }
                         }
                     }

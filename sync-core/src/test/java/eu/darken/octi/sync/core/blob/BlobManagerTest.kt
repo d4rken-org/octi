@@ -64,6 +64,40 @@ class BlobManagerTest : BaseTest() {
     }
 
     @Test
+    fun `put failure records backoff and success clears it`() = runTest2 {
+        val store = FakeBlobStore(
+            connectorId = connectorId,
+            constraints = BlobStoreConstraints(),
+            quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 0, totalBytes = 1_000),
+            failOnPut = true,
+        )
+        val manager = createManager(backgroundScope, store)
+
+        manager.isBackedOff(connectorId, blobKey) shouldBe false
+
+        manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = blobKey,
+            openSource = { Buffer().writeUtf8("p") },
+            metadata = metadata,
+        )
+
+        manager.isBackedOff(connectorId, blobKey) shouldBe true
+
+        store.failOnPut = false
+        manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = blobKey,
+            openSource = { Buffer().writeUtf8("p") },
+            metadata = metadata,
+        )
+
+        manager.isBackedOff(connectorId, blobKey) shouldBe false
+    }
+
+    @Test
     fun `quotas emits immediate placeholder before network quota resolves`() = runTest2 {
         val quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 10, totalBytes = 100)
         val store = FakeBlobStore(
@@ -97,6 +131,7 @@ class BlobManagerTest : BaseTest() {
         private val constraints: BlobStoreConstraints,
         private val quota: BlobStoreQuota?,
         private val quotaDelayMs: Long = 0,
+        var failOnPut: Boolean = false,
     ) : BlobStore {
         var putCalls: Int = 0
 
@@ -109,6 +144,7 @@ class BlobManagerTest : BaseTest() {
             onProgress: BlobProgressCallback?,
         ): RemoteBlobRef {
             putCalls += 1
+            if (failOnPut) throw RuntimeException("put() failed (test)")
             return RemoteBlobRef(key.id)
         }
 

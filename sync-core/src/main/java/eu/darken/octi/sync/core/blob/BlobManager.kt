@@ -36,6 +36,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @Singleton
@@ -51,7 +52,14 @@ class BlobManager @Inject constructor(
         val remoteRefs: Map<ConnectorId, RemoteBlobRef> = emptyMap(),
     )
 
-    private val retryBackoff = ConcurrentHashMap<Pair<ConnectorId, BlobKey>, Instant>()
+    /**
+     * Per-(connector, blob) exponential backoff record. Advances through [BACKOFF_SCHEDULE]
+     * on each failure, resets on success. Clock.System.now is called lazily inside the hot
+     * put() loop so the map never holds timestamps older than the current wall-clock.
+     */
+    private data class BackoffState(val failureCount: Int, val nextAttemptAt: Instant)
+
+    private val retryBackoff = ConcurrentHashMap<Pair<ConnectorId, BlobKey>, BackoffState>()
     private val quotaRefreshTrigger = MutableStateFlow(0)
 
     private val allStores: Flow<List<BlobStore>> = if (blobStoreHubs.isEmpty()) {
@@ -152,7 +160,7 @@ class BlobManager @Inject constructor(
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "put(${blobKey.id}): Failed on ${store.connectorId}: ${e.asLog()}" }
                     errors[store.connectorId] = e
-                    retryBackoff[store.connectorId to blobKey] = Clock.System.now() + RETRY_BACKOFF
+                    recordFailure(store.connectorId, blobKey)
                 }
             }
         }.awaitAll()
@@ -318,12 +326,35 @@ class BlobManager @Inject constructor(
      * Check if a retry for this connector+blob combination should be backed off.
      */
     fun isBackedOff(connectorId: ConnectorId, blobKey: BlobKey): Boolean {
-        val backoffUntil = retryBackoff[connectorId to blobKey] ?: return false
-        return Clock.System.now() < backoffUntil
+        val state = retryBackoff[connectorId to blobKey] ?: return false
+        return Clock.System.now() < state.nextAttemptAt
+    }
+
+    /**
+     * Advances the failure count for [connectorId] x [blobKey] and sets the next attempt time
+     * per [BACKOFF_SCHEDULE]. Called from the put() exception path.
+     */
+    private fun recordFailure(connectorId: ConnectorId, blobKey: BlobKey) {
+        val key = connectorId to blobKey
+        val prevCount = retryBackoff[key]?.failureCount ?: 0
+        val newCount = prevCount + 1
+        val delay = BACKOFF_SCHEDULE[(newCount - 1).coerceIn(0, BACKOFF_SCHEDULE.lastIndex)]
+        retryBackoff[key] = BackoffState(
+            failureCount = newCount,
+            nextAttemptAt = Clock.System.now() + delay,
+        )
     }
 
     companion object {
         private val TAG = logTag("Sync", "Blob", "Manager")
-        private val RETRY_BACKOFF = 5.minutes
+        // Failure N → BACKOFF_SCHEDULE[N-1] (clamped at the last entry).
+        // Short first retry so transient blips (brief connectivity loss) recover quickly; longer
+        // later delays so a persistently-broken connector isn't hammered.
+        private val BACKOFF_SCHEDULE = listOf(
+            30.seconds,
+            2.minutes,
+            10.minutes,
+            30.minutes,
+        )
     }
 }
