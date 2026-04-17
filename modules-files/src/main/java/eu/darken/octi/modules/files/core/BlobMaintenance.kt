@@ -1,7 +1,5 @@
 package eu.darken.octi.modules.files.core
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.coroutine.DispatcherProvider
@@ -42,7 +40,6 @@ import kotlin.time.Duration.Companion.seconds
  */
 @Singleton
 class BlobMaintenance @Inject constructor(
-    @ApplicationContext private val context: Context,
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val blobManager: BlobManager,
@@ -50,10 +47,11 @@ class BlobMaintenance @Inject constructor(
     private val fileShareCache: FileShareCache,
     private val fileShareSettings: FileShareSettings,
     private val syncSettings: SyncSettings,
+    private val blobCacheDirs: BlobCacheDirs,
 ) {
 
     private val stagingDir: File
-        get() = BlobCacheDirs.dir(context, BlobCacheDirs.MAINTENANCE)
+        get() = blobCacheDirs.maintenance
 
     fun start() {
         log(TAG, INFO) { "start(): first maintenance run in $STARTUP_DELAY" }
@@ -88,9 +86,7 @@ class BlobMaintenance @Inject constructor(
      */
     private fun cleanupStaleTempFiles() {
         val staleCutoffMs = System.currentTimeMillis() - 1.hours.inWholeMilliseconds
-        BlobCacheDirs.ALL.forEach { dirName ->
-            val dir = File(context.cacheDir, dirName)
-            if (!dir.isDirectory) return@forEach
+        blobCacheDirs.forEachExistingDir { dir ->
             dir.listFiles()?.forEach { file ->
                 if (file.lastModified() < staleCutoffMs) {
                     if (file.delete()) log(TAG) { "cleanupStaleTempFiles(): deleted ${file.path}" }
@@ -126,7 +122,7 @@ class BlobMaintenance @Inject constructor(
 
             log(TAG) { "retryMirrorUploads(): Retrying ${file.name} for ${missingTargets.size} missing connectors" }
 
-            val stagedFile = BlobCacheDirs.tempFile(stagingDir)
+            val stagedFile = blobCacheDirs.tempFile(stagingDir)
             val stagedPath = stagedFile.absolutePath.toPath()
             try {
                 try {

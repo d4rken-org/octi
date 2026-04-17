@@ -41,6 +41,7 @@ class FileShareService @Inject constructor(
     private val fileShareSettings: FileShareSettings,
     private val blobManager: BlobManager,
     private val syncSettings: SyncSettings,
+    private val blobCacheDirs: BlobCacheDirs,
 ) {
 
     sealed class ShareResult {
@@ -67,10 +68,10 @@ class FileShareService @Inject constructor(
     }
 
     private val stagingDir: File
-        get() = BlobCacheDirs.dir(context, BlobCacheDirs.STAGING)
+        get() = blobCacheDirs.staging
 
     private val downloadDir: File
-        get() = BlobCacheDirs.dir(context, BlobCacheDirs.DOWNLOAD)
+        get() = blobCacheDirs.download
 
     suspend fun shareFile(uri: android.net.Uri): ShareResult = withContext(dispatcherProvider.IO) {
         log(TAG, INFO) { "shareFile(uri=$uri)" }
@@ -80,7 +81,7 @@ class FileShareService @Inject constructor(
         val (displayName, mimeType) = queryFileMetadata(contentResolver, uri)
 
         // 2. Stage to temp file + compute checksum + size
-        val stagedFile = BlobCacheDirs.tempFile(stagingDir)
+        val stagedFile = blobCacheDirs.tempFile(stagingDir)
         val stagedPath = stagedFile.absolutePath.toPath()
         try {
             val digest = MessageDigest.getInstance("SHA-256")
@@ -179,7 +180,7 @@ class FileShareService @Inject constructor(
             return@withContext SaveResult.NotAvailable
         }
 
-        val downloadFile = BlobCacheDirs.tempFile(downloadDir)
+        val downloadFile = blobCacheDirs.tempFile(downloadDir)
         val downloadPath = downloadFile.absolutePath.toPath()
         try {
             blobManager.get(

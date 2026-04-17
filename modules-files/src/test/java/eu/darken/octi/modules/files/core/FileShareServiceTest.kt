@@ -10,6 +10,7 @@ import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobManager
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -34,13 +35,14 @@ class FileShareServiceTest : BaseTest() {
     private val pendingDeletes = mockk<DataStoreValue<Map<String, PendingDelete>>>()
     private val blobManager = mockk<BlobManager>()
     private val syncSettings = mockk<SyncSettings>()
-    private val service = FileShareService(
+    private fun createService() = FileShareService(
         context = context,
         dispatcherProvider = dispatcherProvider,
         fileShareHandler = handler,
         fileShareSettings = fileShareSettings,
         blobManager = blobManager,
         syncSettings = syncSettings,
+        blobCacheDirs = BlobCacheDirs(context),
     )
 
     @Test
@@ -77,7 +79,7 @@ class FileShareServiceTest : BaseTest() {
             )
         } returns setOf(activeConnector)
 
-        val result = service.deleteOwnFile(file.blobKey)
+        val result = createService().deleteOwnFile(file.blobKey)
 
         result shouldBe FileShareService.DeleteResult.Deleted
         coVerify(exactly = 1) { handler.removeFile(file.blobKey) }
@@ -122,7 +124,7 @@ class FileShareServiceTest : BaseTest() {
             )
         } returns setOf(activeConnector)
 
-        val result = service.deleteOwnFile(file.blobKey)
+        val result = createService().deleteOwnFile(file.blobKey)
 
         result shouldBe FileShareService.DeleteResult.Partial(setOf("stale-connector"))
         coVerify(exactly = 0) { handler.removeFile(file.blobKey) }
@@ -155,7 +157,7 @@ class FileShareServiceTest : BaseTest() {
         coEvery { blobManager.configuredConnectorsByIdString() } returns emptyMap()
         coEvery { pendingDeletes.update(any()) } returns DataStoreValue.Updated(emptyMap(), emptyMap())
 
-        val result = service.deleteOwnFile(file.blobKey)
+        val result = createService().deleteOwnFile(file.blobKey)
 
         result shouldBe FileShareService.DeleteResult.Partial(setOf("stale-connector"))
         coVerify(exactly = 0) { handler.removeFile(file.blobKey) }
@@ -209,7 +211,7 @@ class FileShareServiceTest : BaseTest() {
             DataStoreValue.Updated(emptyMap(), result)
         }
 
-        val result = service.deleteOwnFile(file.blobKey)
+        val result = createService().deleteOwnFile(file.blobKey)
 
         result shouldBe FileShareService.DeleteResult.Partial(setOf("stale-connector"))
         capturedValue!!["blob-1"]!!.remainingConnectors shouldBe setOf("stale-connector")

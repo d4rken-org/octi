@@ -1,10 +1,8 @@
 package eu.darken.octi.syncs.octiserver.core
 
-import android.content.Context
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
@@ -49,7 +47,7 @@ import kotlin.time.Clock
  * references them. [delete] is a no-op.
  */
 class OctiServerBlobStore @AssistedInject constructor(
-    @ApplicationContext private val context: Context,
+    private val blobCacheDirs: BlobCacheDirs,
     @Assisted private val credentials: OctiServer.Credentials,
     @Assisted private val endpoint: OctiServerEndpoint,
 ) : BlobStore {
@@ -75,8 +73,7 @@ class OctiServerBlobStore @AssistedInject constructor(
         log(TAG, VERBOSE) { "put(key=${key.id}, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
 
         // 1. Pre-encrypt to staging file so we know ciphertext size + hash
-        val cipherDir = BlobCacheDirs.dir(context, BlobCacheDirs.ENCRYPTION)
-        val cipherFile = BlobCacheDirs.tempFile(cipherDir)
+        val cipherFile = blobCacheDirs.tempFile(blobCacheDirs.encryption)
         var sessionId: String? = null
 
         try {

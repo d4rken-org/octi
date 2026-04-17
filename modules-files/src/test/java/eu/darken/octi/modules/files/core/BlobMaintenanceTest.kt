@@ -12,6 +12,7 @@ import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import io.kotest.matchers.shouldBe
@@ -60,7 +61,6 @@ class BlobMaintenanceTest : BaseTest() {
 
     private fun createBlobMaintenance(testScope: kotlinx.coroutines.test.TestScope): BlobMaintenance {
         return BlobMaintenance(
-            context = context,
             scope = testScope.backgroundScope,
             dispatcherProvider = dispatcherProvider,
             blobManager = blobManager,
@@ -68,6 +68,7 @@ class BlobMaintenanceTest : BaseTest() {
             fileShareCache = fileShareCache,
             fileShareSettings = fileShareSettings,
             syncSettings = syncSettings,
+            blobCacheDirs = BlobCacheDirs(context),
         )
     }
 
