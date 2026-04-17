@@ -1,7 +1,7 @@
 # File Sharing Module — Design Brainstorm (Consolidated)
 
-**Status**: Draft — architecture decisions made, implementation not started
-**Date**: 2026-03-05 (updated 2026-03-26)
+**Status**: Implemented (pending commit). Hardening + supervisor review applied 2026-04-16; see `plan-file-sharing-hardening.md` for the review layer. Open-items list below tracks explicit deferrals.
+**Date**: 2026-03-05 (updated 2026-04-16)
 
 ## Goal
 
@@ -295,15 +295,20 @@ Before upload:
 
 ---
 
-## Open Items (to resolve during implementation)
+## Open Items
 
-1. **Mirror read preference**: fixed default ordering, user-selectable connector priority, or both?
-2. **Retry policy**: backoff strategy and persistence for failed mirror uploads/deletes
-3. **Notifications for incoming files**: notify when another device shares a file, or only surface on next dashboard visit?
-4. **Progress indication**: streaming enables progress tracking (bytes written / total). Wire to UI?
-5. **OctiServer API details**: auth, rate limiting, content-type headers for blob endpoints
-6. **Streaming cipher choice**: exact vetted primitive/library that fits existing key material best
-7. **Module ordering**: where does file share tile appear in dashboard order?
+Items still to resolve in follow-up work. Everything not listed here is resolved or covered by the hardening/review layer.
+
+1. **Mirror read preference**: currently fixed iteration order over `candidates: Map<ConnectorId, RemoteBlobRef>` in `BlobManager.get`. User-selectable connector priority is not wired up — add if feedback shows the fixed order is wrong.
+2. **Retry policy**: `BlobManager.retryBackoff` uses a static 5-minute backoff. Configurable backoff curve and persistence across process restarts are not implemented.
+3. **Notifications for incoming files**: no push/system notification when another device shares a file. Files surface on next dashboard visit only.
+4. **Progress indication**: streaming enables bytes-written / total tracking, but no UI surface for it yet. Add a progress channel on `FileShareService.shareFile` / `saveFile` when building the progress UI.
+5. **Module ordering**: placement of the file-share tile on the dashboard is whatever falls out of the default injection order; intentional ordering TBD.
+
+Resolved during implementation:
+
+- **OctiServer API details** — basic auth via `Authorization` header, target device via `?device-id=`, content negotiation via kotlinx.serialization Json + `application/octet-stream` for raw blob body; rate-limiting handled server-side.
+- **Streaming cipher choice** — Tink `AesGcmHkdfStreaming` with HKDF-SHA256 derivation from the existing sync keyset, AAD bound to `(deviceId, moduleId, blobKey)`. See `sync-core/.../blob/StreamingPayloadCipher.kt`.
 
 ---
 

@@ -65,7 +65,7 @@ class MetaInfoSource @Inject constructor(
                 }
             }
         }
-        .setupCommonEventHandlers(TAG) { "self" }
+        .setupCommonEventHandlers(TAG, logValues = false) { "self" }
         .replayingShare(scope + dispatcherProvider.Default)
 
     companion object {

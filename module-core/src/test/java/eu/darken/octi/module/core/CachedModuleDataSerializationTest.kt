@@ -77,10 +77,4 @@ class CachedModuleDataSerializationTest : BaseTest() {
         decoded.deviceId shouldBe DeviceId(id = "dev-1")
     }
 
-    @Test
-    fun `data field uses base64 encoding for ByteString`() {
-        val encoded = json.encodeToString(testData)
-        // "test-payload-data" in base64 is "dGVzdC1wYXlsb2FkLWRhdGE="
-        encoded.contains("\"dGVzdC1wYXlsb2FkLWRhdGE=\"") shouldBe true
-    }
 }

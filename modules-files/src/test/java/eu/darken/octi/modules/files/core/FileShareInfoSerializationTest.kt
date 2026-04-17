@@ -1,11 +1,14 @@
 package eu.darken.octi.modules.files.core
 
+import eu.darken.octi.sync.core.RemoteBlobRef
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
+import testhelpers.json.toComparableJson
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 class FileShareInfoSerializationTest : BaseTest() {
 
@@ -13,6 +16,48 @@ class FileShareInfoSerializationTest : BaseTest() {
         ignoreUnknownKeys = true
         explicitNulls = false
         encodeDefaults = true
+    }
+
+    @Test
+    fun `wire format stability`() {
+        val sharedAt = Instant.parse("2026-01-01T00:00:00Z")
+        val expiresAt = Instant.parse("2026-01-03T00:00:00Z")
+        val info = FileShareInfo(
+            files = listOf(
+                FileShareInfo.SharedFile(
+                    name = "document.pdf",
+                    mimeType = "application/pdf",
+                    size = 1024,
+                    blobKey = "key-1",
+                    checksum = "abc",
+                    sharedAt = sharedAt,
+                    expiresAt = expiresAt,
+                    availableOn = setOf("server-a", "gdrive-b"),
+                    connectorRefs = mapOf(
+                        "server-a" to RemoteBlobRef("srv-blob-id"),
+                        "gdrive-b" to RemoteBlobRef("key-1"),
+                    ),
+                ),
+            ),
+        )
+        val encoded = json.encodeToString(FileShareInfo.serializer(), info)
+        encoded.toComparableJson() shouldBe """
+            {
+                "files": [
+                    {
+                        "name": "document.pdf",
+                        "mimeType": "application/pdf",
+                        "size": 1024,
+                        "blobKey": "key-1",
+                        "checksum": "abc",
+                        "sharedAt": "2026-01-01T00:00:00Z",
+                        "expiresAt": "2026-01-03T00:00:00Z",
+                        "availableOn": ["server-a", "gdrive-b"],
+                        "connectorRefs": {"server-a": "srv-blob-id", "gdrive-b": "key-1"}
+                    }
+                ]
+            }
+        """.toComparableJson()
     }
 
     @Test
@@ -102,5 +147,82 @@ class FileShareInfoSerializationTest : BaseTest() {
         """
         val deserialized = json.decodeFromString(FileShareInfo.serializer(), jsonString)
         deserialized.files[0].availableOn shouldBe emptySet()
+    }
+
+    @Test
+    fun `connectorRefs round-trips correctly`() {
+        val now = Clock.System.now()
+        val original = FileShareInfo(
+            files = listOf(
+                FileShareInfo.SharedFile(
+                    name = "test.pdf",
+                    mimeType = "application/pdf",
+                    size = 1024,
+                    blobKey = "key-1",
+                    checksum = "abc",
+                    sharedAt = now,
+                    expiresAt = now + 48.hours,
+                    availableOn = setOf("server-a", "gdrive-b"),
+                    connectorRefs = mapOf(
+                        "server-a" to RemoteBlobRef("srv-blob-id-1"),
+                        "gdrive-b" to RemoteBlobRef("key-1"),
+                    ),
+                ),
+            ),
+        )
+        val serialized = json.encodeToString(FileShareInfo.serializer(), original)
+        val deserialized = json.decodeFromString(FileShareInfo.serializer(), serialized)
+        deserialized shouldBe original
+        deserialized.files[0].connectorRefs shouldBe mapOf(
+            "server-a" to RemoteBlobRef("srv-blob-id-1"),
+            "gdrive-b" to RemoteBlobRef("key-1"),
+        )
+    }
+
+    @Test
+    fun `connectorRefs wire format unchanged after RemoteBlobRef migration`() {
+        // Regression guard: a pre-migration JSON payload with bare-string refs must still
+        // decode cleanly, and the resulting RemoteBlobRef values must equal the wire strings.
+        val jsonString = """
+            {
+                "files": [
+                    {
+                        "name": "legacy.pdf",
+                        "mimeType": "application/pdf",
+                        "size": 42,
+                        "blobKey": "logical-1",
+                        "checksum": "abc",
+                        "sharedAt": "2026-01-01T00:00:00Z",
+                        "expiresAt": "2026-01-03T00:00:00Z",
+                        "availableOn": ["server-a"],
+                        "connectorRefs": {"server-a": "srv-blob-id-1"}
+                    }
+                ]
+            }
+        """
+        val deserialized = json.decodeFromString(FileShareInfo.serializer(), jsonString)
+        deserialized.files[0].connectorRefs shouldBe mapOf("server-a" to RemoteBlobRef("srv-blob-id-1"))
+    }
+
+    @Test
+    fun `missing connectorRefs deserializes with empty map - backward compat`() {
+        val jsonString = """
+            {
+                "files": [
+                    {
+                        "name": "old-file.txt",
+                        "mimeType": "text/plain",
+                        "size": 100,
+                        "blobKey": "key-old",
+                        "checksum": "xyz",
+                        "sharedAt": "2026-01-01T00:00:00Z",
+                        "expiresAt": "2026-01-03T00:00:00Z",
+                        "availableOn": ["conn-1"]
+                    }
+                ]
+            }
+        """
+        val deserialized = json.decodeFromString(FileShareInfo.serializer(), jsonString)
+        deserialized.files[0].connectorRefs shouldBe emptyMap()
     }
 }

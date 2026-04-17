@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
+import testhelpers.json.toComparableJson
 import kotlin.time.Instant
 
 class CachedSyncReadSerializationTest : BaseTest() {
@@ -83,10 +84,28 @@ class CachedSyncReadSerializationTest : BaseTest() {
     }
 
     @Test
-    fun `wire format uses accountId not connectorId`() {
+    fun `wire format stability`() {
         val encoded = json.encodeToString(fullRead)
-        encoded.contains("\"accountId\"") shouldBe true
-        encoded.contains("\"connectorId\"") shouldBe false
+        // Wire key "accountId" maps to ConnectorId (legacy Moshi name) at both outer and nested Module level.
+        encoded.toComparableJson() shouldBe """
+            {
+                "accountId": {"type": "kserver", "subtype": "prod", "account": "acc-123"},
+                "devices": [
+                    {
+                        "deviceId": {"id": "device-abc"},
+                        "modules": [
+                            {
+                                "accountId": {"type": "kserver", "subtype": "prod", "account": "acc-123"},
+                                "deviceId": {"id": "device-abc"},
+                                "moduleId": {"id": "eu.darken.octi.module.power"},
+                                "modifiedAt": "2024-06-15T12:00:00Z",
+                                "payload": "dGVzdC1wYXlsb2Fk"
+                            }
+                        ]
+                    }
+                ]
+            }
+        """.toComparableJson()
     }
 
     @Test

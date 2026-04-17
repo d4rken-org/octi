@@ -44,7 +44,7 @@ class SyncCache @Inject constructor(
             if (!cacheFile.exists()) return@guard null
 
             json.decodeFromString<CachedSyncRead>(cacheFile.readText()).also {
-                log(TAG, VERBOSE) { "load(id=$id): $it" }
+                log(TAG, VERBOSE) { "load(id=$id): ${it.devices.size} devices" }
             }
         } catch (e: Exception) {
             log(TAG, ERROR) { "Failed to load cache sync data: ${e.asLog()}" }

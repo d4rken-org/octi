@@ -16,10 +16,13 @@ import eu.darken.octi.modules.files.FileShareModule
 import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobChecksumMismatchException
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobMetadata
+import okio.FileSystem
 import kotlinx.coroutines.withContext
 import okio.Path.Companion.toPath
 import java.io.File
@@ -35,7 +38,7 @@ class FileShareService @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatcherProvider: DispatcherProvider,
     private val fileShareHandler: FileShareHandler,
-    private val fileShareRepo: FileShareRepo,
+    private val fileShareSettings: FileShareSettings,
     private val blobManager: BlobManager,
     private val syncSettings: SyncSettings,
 ) {
@@ -57,11 +60,17 @@ class FileShareService @Inject constructor(
         data class Failed(val cause: Throwable) : SaveResult()
     }
 
+    sealed class DeleteResult {
+        data object Deleted : DeleteResult()
+        data object NotFound : DeleteResult()
+        data class Partial(val remainingConnectors: Set<String>) : DeleteResult()
+    }
+
     private val stagingDir: File
-        get() = File(context.cacheDir, "blob-staging").also { it.mkdirs() }
+        get() = BlobCacheDirs.dir(context, BlobCacheDirs.STAGING)
 
     private val downloadDir: File
-        get() = File(context.cacheDir, "blob-download").also { it.mkdirs() }
+        get() = BlobCacheDirs.dir(context, BlobCacheDirs.DOWNLOAD)
 
     suspend fun shareFile(uri: android.net.Uri): ShareResult = withContext(dispatcherProvider.IO) {
         log(TAG, INFO) { "shareFile(uri=$uri)" }
@@ -71,7 +80,7 @@ class FileShareService @Inject constructor(
         val (displayName, mimeType) = queryFileMetadata(contentResolver, uri)
 
         // 2. Stage to temp file + compute checksum + size
-        val stagedFile = File(stagingDir, "${UUID.randomUUID()}.tmp")
+        val stagedFile = BlobCacheDirs.tempFile(stagingDir)
         val stagedPath = stagedFile.absolutePath.toPath()
         try {
             val digest = MessageDigest.getInstance("SHA-256")
@@ -87,7 +96,10 @@ class FileShareService @Inject constructor(
                         size += read
                     }
                 }
-            } ?: return@withContext ShareResult.AllConnectorsFailed(emptyMap())
+            } ?: run {
+                log(TAG, WARN) { "shareFile(): Failed to open input stream for URI" }
+                return@withContext ShareResult.AllConnectorsFailed(emptyMap())
+            }
 
             val checksum = digest.digest().joinToString("") { "%02x".format(it) }
             log(TAG, VERBOSE) { "Staged file: name=$displayName, size=$size, checksum=$checksum" }
@@ -105,7 +117,7 @@ class FileShareService @Inject constructor(
                 deviceId = syncSettings.deviceId,
                 moduleId = FileShareModule.MODULE_ID,
                 blobKey = blobKey,
-                payloadFile = stagedPath,
+                openSource = { FileSystem.SYSTEM.source(stagedPath) },
                 metadata = metadata,
             )
 
@@ -128,6 +140,7 @@ class FileShareService @Inject constructor(
                 sharedAt = Clock.System.now(),
                 expiresAt = Clock.System.now() + DEFAULT_EXPIRY,
                 availableOn = putResult.successful.map { it.idString }.toSet(),
+                connectorRefs = putResult.remoteRefs.mapKeys { (connectorId, _) -> connectorId.idString },
             )
             fileShareHandler.upsertFile(sharedFile)
 
@@ -148,18 +161,25 @@ class FileShareService @Inject constructor(
     ): SaveResult = withContext(dispatcherProvider.IO) {
         log(TAG, INFO) { "saveFile(blobKey=${sharedFile.blobKey}, owner=$ownerDeviceId)" }
 
-        val configuredIds = blobManager.configuredConnectorIds()
-        val candidates = sharedFile.availableOn
-            .filter { idStr -> configuredIds.any { it.idString == idStr } }
-            .mapNotNull { idStr -> configuredIds.find { it.idString == idStr } }
-            .toSet()
+        val configuredById = blobManager.configuredConnectorsByIdString()
+        // A connector listed in `availableOn` but missing from `connectorRefs` is treated as
+        // unreachable. `shareFile` always writes both fields together from `PutResult.remoteRefs`,
+        // so a missing entry means the ref was never recorded (or lost) — there is no safe
+        // fallback since OctiServer's ref differs from the logical BlobKey.
+        val candidates: Map<ConnectorId, RemoteBlobRef> = sharedFile.availableOn
+            .mapNotNull { idStr ->
+                val connectorId = configuredById[idStr] ?: return@mapNotNull null
+                val ref = sharedFile.connectorRefs[idStr] ?: return@mapNotNull null
+                connectorId to ref
+            }
+            .toMap()
 
         if (candidates.isEmpty()) {
-            log(TAG, WARN) { "saveFile(): No available connectors overlap with configured" }
+            log(TAG, WARN) { "saveFile(): No available connectors overlap with configured+resolvable" }
             return@withContext SaveResult.NotAvailable
         }
 
-        val downloadFile = File(downloadDir, "${UUID.randomUUID()}.tmp")
+        val downloadFile = BlobCacheDirs.tempFile(downloadDir)
         val downloadPath = downloadFile.absolutePath.toPath()
         try {
             blobManager.get(
@@ -167,7 +187,7 @@ class FileShareService @Inject constructor(
                 moduleId = FileShareModule.MODULE_ID,
                 blobKey = BlobKey(sharedFile.blobKey),
                 candidates = candidates,
-                destinationFile = downloadPath,
+                openSink = { FileSystem.SYSTEM.sink(downloadPath) },
             )
 
             // Verify checksum against synced metadata
@@ -180,7 +200,9 @@ class FileShareService @Inject constructor(
                 }
             }
             val actualChecksum = digest.digest().joinToString("") { "%02x".format(it) }
-            if (sharedFile.checksum.isNotEmpty() && actualChecksum != sharedFile.checksum) {
+            if (sharedFile.checksum.isEmpty()) {
+                log(TAG, WARN) { "saveFile(): No checksum available for ${sharedFile.blobKey}, skipping integrity check" }
+            } else if (actualChecksum != sharedFile.checksum) {
                 return@withContext SaveResult.Failed(
                     BlobChecksumMismatchException(
                         blobKey = BlobKey(sharedFile.blobKey),
@@ -191,7 +213,10 @@ class FileShareService @Inject constructor(
             }
 
             // Copy to SAF destination
-            context.contentResolver.openOutputStream(destinationUri)?.use { output ->
+            val outputStream = context.contentResolver.openOutputStream(destinationUri)
+                ?: return@withContext SaveResult.Failed(IllegalStateException("Failed to open destination output stream"))
+
+            outputStream.use { output ->
                 downloadFile.inputStream().use { input ->
                     input.copyTo(output)
                 }
@@ -206,28 +231,56 @@ class FileShareService @Inject constructor(
         }
     }
 
-    suspend fun deleteOwnFile(blobKey: String) = withContext(dispatcherProvider.IO) {
+    suspend fun deleteOwnFile(blobKey: String): DeleteResult = withContext(dispatcherProvider.IO) {
         log(TAG, INFO) { "deleteOwnFile(blobKey=$blobKey)" }
         val currentState = fileShareHandler.currentOwn()
-        val sharedFile = currentState.files.find { it.blobKey == blobKey } ?: return@withContext
+        val sharedFile = currentState.files.find { it.blobKey == blobKey } ?: run {
+            fileShareSettings.pendingDeletes.update { it - blobKey }
+            return@withContext DeleteResult.NotFound
+        }
 
-        val configuredIds = blobManager.configuredConnectorIds()
-        val candidates = sharedFile.availableOn
-            .mapNotNull { idStr -> configuredIds.find { it.idString == idStr } }
-            .toSet()
+        val configuredById = blobManager.configuredConnectorsByIdString()
+        val targets: Map<ConnectorId, RemoteBlobRef> = sharedFile.availableOn
+            .mapNotNull { idStr ->
+                val connectorId = configuredById[idStr] ?: return@mapNotNull null
+                val ref = sharedFile.connectorRefs[idStr] ?: return@mapNotNull null
+                connectorId to ref
+            }
+            .toMap()
+
+        if (targets.isEmpty()) {
+            val tombstone = PendingDelete(
+                blobKey = blobKey,
+                remainingConnectors = sharedFile.availableOn,
+                createdAt = Clock.System.now(),
+            )
+            fileShareSettings.pendingDeletes.update { it + (blobKey to tombstone) }
+            return@withContext DeleteResult.Partial(sharedFile.availableOn)
+        }
 
         val successfulDeletes = blobManager.delete(
             deviceId = syncSettings.deviceId,
             moduleId = FileShareModule.MODULE_ID,
             blobKey = BlobKey(blobKey),
-            candidates = candidates,
+            targets = targets,
         )
 
-        val newAvailableOn = sharedFile.availableOn - successfulDeletes.map { it.idString }.toSet()
+        val deletedIds = successfulDeletes.map { it.idString }.toSet()
+        val newAvailableOn = sharedFile.availableOn - deletedIds
+        val newConnectorRefs = sharedFile.connectorRefs - deletedIds
         if (newAvailableOn.isEmpty()) {
             fileShareHandler.removeFile(blobKey)
+            fileShareSettings.pendingDeletes.update { it - blobKey }
+            DeleteResult.Deleted
         } else {
-            fileShareHandler.patchAvailableOn(blobKey, newAvailableOn)
+            fileShareHandler.updateLocations(blobKey, newAvailableOn, newConnectorRefs)
+            val tombstone = PendingDelete(
+                blobKey = blobKey,
+                remainingConnectors = newAvailableOn,
+                createdAt = Clock.System.now(),
+            )
+            fileShareSettings.pendingDeletes.update { it + (blobKey to tombstone) }
+            DeleteResult.Partial(newAvailableOn)
         }
     }
 

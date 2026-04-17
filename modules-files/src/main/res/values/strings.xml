@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_files_label">File Sharing</string>
+    <string name="module_files_desc">Share small files between your linked devices</string>
     <string name="module_files_tile_empty">No files</string>
     <string name="module_files_tile_count">%1$d file(s) shared</string>
     <string name="module_files_list_title">Shared Files</string>
@@ -18,5 +19,9 @@
     <string name="module_files_save_failed">Failed to save file</string>
     <string name="module_files_checksum_mismatch">File integrity check failed</string>
     <string name="module_files_delete_success">File deleted</string>
+    <string name="module_files_delete_partial">File partially deleted. Cleanup will continue in the background.</string>
+    <string name="module_files_delete_failed">Failed to delete file</string>
+    <string name="module_files_quota_header">Storage</string>
+    <string name="module_files_quota_item">%1$s: %2$s / %3$s used</string>
     <string name="module_files_time_remaining">%1$s remaining</string>
 </resources>

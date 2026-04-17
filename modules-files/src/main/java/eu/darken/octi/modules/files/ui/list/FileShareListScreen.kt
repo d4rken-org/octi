@@ -1,5 +1,6 @@
 package eu.darken.octi.modules.files.ui.list
 
+import android.content.Intent
 import android.text.format.Formatter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -57,7 +58,7 @@ fun FileShareListScreenHost(
     deviceId: String,
     vm: FileShareListVM = hiltViewModel(),
 ) {
-    LaunchedEffect(Unit) { vm.initialize(deviceId) }
+    LaunchedEffect(deviceId) { vm.initialize(deviceId) }
 
     ErrorEventHandler(vm)
     NavigationEventHandler(vm)
@@ -68,7 +69,7 @@ fun FileShareListScreenHost(
     LaunchedEffect(vm.uiEvents) {
         vm.uiEvents.collect { event ->
             when (event) {
-                is FileShareListVM.UiEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
+                is FileShareListVM.UiEvent.ShowMessage -> snackbarHostState.showSnackbar(context.getString(event.messageRes))
             }
         }
     }
@@ -81,13 +82,11 @@ fun FileShareListScreenHost(
 
     var pendingSave by remember { mutableStateOf<FileShareInfo.SharedFile?>(null) }
     val createDocLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument(
-            pendingSave?.mimeType ?: "application/octet-stream",
-        ),
-    ) { uri ->
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
         val target = pendingSave ?: return@rememberLauncherForActivityResult
         pendingSave = null
-        uri?.let { vm.onSaveFile(target, it) }
+        result.data?.data?.let { vm.onSaveFile(target, it) }
     }
 
     val state by vm.state.collectAsState(initial = null)
@@ -100,7 +99,13 @@ fun FileShareListScreenHost(
             onShareClick = { openDocLauncher.launch(arrayOf("*/*")) },
             onSaveClick = { file ->
                 pendingSave = file
-                createDocLauncher.launch(file.name)
+                createDocLauncher.launch(
+                    Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                        addCategory(Intent.CATEGORY_OPENABLE)
+                        type = file.mimeType.ifBlank { "application/octet-stream" }
+                        putExtra(Intent.EXTRA_TITLE, file.name)
+                    }
+                )
             },
             onDeleteClick = { file -> vm.onDeleteFile(file) },
         )
@@ -150,17 +155,26 @@ fun FileShareListScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .padding(padding),
             ) {
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = stringResource(R.string.module_files_tile_empty),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(modifier = Modifier.weight(1f))
+                if (state.isOurDevice && state.quotaItems.isNotEmpty()) {
+                    QuotaSummary(state = state)
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = stringResource(R.string.module_files_tile_empty),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                }
             }
         } else {
             LazyColumn(
@@ -168,6 +182,11 @@ fun FileShareListScreen(
                     .fillMaxSize()
                     .padding(padding),
             ) {
+                if (state.isOurDevice && state.quotaItems.isNotEmpty()) {
+                    item {
+                        QuotaSummary(state = state)
+                    }
+                }
                 items(
                     items = state.files,
                     key = { it.sharedFile.blobKey },
@@ -185,6 +204,30 @@ fun FileShareListScreen(
 }
 
 @Composable
+private fun QuotaSummary(state: FileShareListVM.State) {
+    val context = LocalContext.current
+
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+        Text(
+            text = stringResource(R.string.module_files_quota_header),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        state.quotaItems.forEach { quota ->
+            Text(
+                text = stringResource(
+                    R.string.module_files_quota_item,
+                    quota.label,
+                    Formatter.formatFileSize(context, quota.usedBytes),
+                    Formatter.formatFileSize(context, quota.totalBytes),
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
+
+@Composable
 private fun FileItemRow(
     item: FileShareListVM.FileItem,
     isOurDevice: Boolean,
@@ -194,7 +237,7 @@ private fun FileItemRow(
     val context = LocalContext.current
     Row(
         modifier = Modifier
-            .clickable(enabled = item.isAvailable && !item.isExpired) { onSaveClick() }
+            .clickable(enabled = !isOurDevice && item.isAvailable) { onSaveClick() }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -202,11 +245,7 @@ private fun FileItemRow(
             imageVector = Icons.AutoMirrored.TwoTone.InsertDriveFile,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = if (item.isExpired) {
-                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
-            } else {
-                MaterialTheme.colorScheme.onSurface
-            },
+            tint = MaterialTheme.colorScheme.onSurface,
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
@@ -215,19 +254,12 @@ private fun FileItemRow(
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = if (item.isExpired) {
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = buildString {
                     append(Formatter.formatFileSize(context, item.sharedFile.size))
-                    if (item.isExpired) {
-                        append(" \u2022 ")
-                        append(context.getString(R.string.module_files_expired))
-                    } else if (!item.isAvailable) {
+                    if (!item.isAvailable) {
                         append(" \u2022 ")
                         append(context.getString(R.string.module_files_unavailable))
                     }
@@ -236,7 +268,7 @@ private fun FileItemRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        if (!item.isExpired && item.isAvailable && !isOurDevice) {
+        if (item.isAvailable && !isOurDevice) {
             IconButton(onClick = onSaveClick) {
                 Icon(Icons.TwoTone.SaveAlt, contentDescription = stringResource(R.string.module_files_save_action))
             }
@@ -256,6 +288,13 @@ private fun FileShareListScreenPreview() = PreviewWrapper {
         state = FileShareListVM.State(
             deviceLabel = "Pixel 8",
             isOurDevice = true,
+            quotaItems = listOf(
+                FileShareListVM.QuotaItem(
+                    label = "octi.example.com",
+                    usedBytes = 12 * 1024 * 1024,
+                    totalBytes = 25 * 1024 * 1024,
+                )
+            ),
             files = listOf(
                 FileShareListVM.FileItem(
                     sharedFile = FileShareInfo.SharedFile(
@@ -268,7 +307,6 @@ private fun FileShareListScreenPreview() = PreviewWrapper {
                         expiresAt = Clock.System.now() + 48.hours,
                         availableOn = setOf("conn-1"),
                     ),
-                    isExpired = false,
                     isAvailable = true,
                 ),
                 FileShareListVM.FileItem(
@@ -282,7 +320,6 @@ private fun FileShareListScreenPreview() = PreviewWrapper {
                         expiresAt = Clock.System.now() + 24.hours,
                         availableOn = setOf("conn-1", "conn-2"),
                     ),
-                    isExpired = false,
                     isAvailable = true,
                 ),
             ),

@@ -141,6 +141,10 @@ interface GDriveEnvironment {
         return file.properties
     }
 
+    suspend fun GDriveFile.fetchBlobMetadata(): GDriveFile {
+        return drive.files().get(id).setFields("size,createdTime,properties").execute()
+    }
+
     companion object {
         internal const val APPDATAFOLDER = "appDataFolder"
         private const val MIME_FOLDER = "application/vnd.google-apps.folder"

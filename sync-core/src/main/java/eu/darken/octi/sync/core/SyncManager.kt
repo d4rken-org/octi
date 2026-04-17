@@ -99,7 +99,7 @@ class SyncManager @Inject constructor(
             if (hs.isEmpty()) flowOf(emptyList())
             else combine(hs.map { it.state }) { it.toList() }
         }
-        .setupCommonEventHandlers(TAG) { "allStates" }
+        .setupCommonEventHandlers(TAG, logValues = false) { "allStates" }
         .shareLatest(scope + dispatcherProvider.Default)
 
     /** States from active (non-paused) connectors. Default view. */
@@ -108,7 +108,7 @@ class SyncManager @Inject constructor(
             if (hs.isEmpty()) flowOf(emptyList())
             else combine(hs.map { it.state }) { it.toList() }
         }
-        .setupCommonEventHandlers(TAG) { "states" }
+        .setupCommonEventHandlers(TAG, logValues = false) { "states" }
         .shareLatest(scope + dispatcherProvider.Default)
 
     val syncEvents: Flow<SyncEvent> = connectors

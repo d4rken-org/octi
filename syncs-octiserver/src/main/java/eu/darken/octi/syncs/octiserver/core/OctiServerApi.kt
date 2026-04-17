@@ -11,9 +11,11 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Streaming
 import kotlin.time.Instant
 
 interface OctiServerApi {
@@ -97,72 +99,150 @@ interface OctiServerApi {
         @Body payload: RequestBody,
     )
 
-    // --- Blob endpoints ---
+    // --- Resumable upload sessions ---
 
-    @retrofit2.http.Streaming
-    @retrofit2.http.PUT("blob/{blobKey}")
-    suspend fun putBlob(
-        @Path("blobKey") blobKey: String,
-        @Header("X-Device-ID") callerDeviceId: String,
-        @Query("device-id") targetDeviceId: String,
-        @Query("module-id") moduleId: String,
-        @Header("X-Blob-Size") sizeBytes: Long,
-        @Header("X-Blob-Checksum") checksum: String,
-        @Body body: RequestBody,
-    )
-
-    @retrofit2.http.Streaming
-    @GET("blob/{blobKey}")
-    suspend fun getBlob(
-        @Path("blobKey") blobKey: String,
-        @Header("X-Device-ID") callerDeviceId: String,
-        @Query("device-id") targetDeviceId: String,
-        @Query("module-id") moduleId: String,
-    ): Response<ResponseBody>
-
-    @DELETE("blob/{blobKey}")
-    suspend fun deleteBlob(
-        @Path("blobKey") blobKey: String,
-        @Header("X-Device-ID") callerDeviceId: String,
-        @Query("device-id") targetDeviceId: String,
-        @Query("module-id") moduleId: String,
+    @Serializable
+    data class CreateSessionRequest(
+        @SerialName("sizeBytes") val sizeBytes: Long,
+        @SerialName("hashAlgorithm") val hashAlgorithm: String? = null,
+        @SerialName("hashHex") val hashHex: String? = null,
     )
 
     @Serializable
+    data class CreateSessionResponse(
+        @SerialName("blobId") val blobId: String,
+        @SerialName("sessionId") val sessionId: String,
+        @SerialName("offsetBytes") val offsetBytes: Long,
+        @Serializable(with = InstantSerializer::class) @SerialName("expiresAt") val expiresAt: Instant,
+        @SerialName("state") val state: String,
+    )
+
+    @POST("module/{moduleId}/blob-sessions")
+    suspend fun createBlobSession(
+        @Path("moduleId") moduleId: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
+        @Body request: CreateSessionRequest,
+    ): CreateSessionResponse
+
+    // Note: the server supports `HEAD /module/{moduleId}/blob-sessions/{sessionId}` for
+    // resumable-upload clients. This client currently uses chunked (not resumable) upload —
+    // sessions don't survive process restart — so the HEAD probe is intentionally not wired up.
+    // Add it back here when the client starts persisting session state across restarts.
+
+    @Streaming
+    @PATCH("module/{moduleId}/blob-sessions/{sessionId}")
+    suspend fun appendBlobSession(
+        @Path("moduleId") moduleId: String,
+        @Path("sessionId") sessionId: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Header("Upload-Offset") offset: Long,
+        @Body body: RequestBody,
+    ): Response<Unit>
+
+    @Serializable
+    data class FinalizeSessionRequest(
+        @SerialName("hashAlgorithm") val hashAlgorithm: String,
+        @SerialName("hashHex") val hashHex: String,
+    )
+
+    @Serializable
+    data class FinalizeSessionResponse(
+        @SerialName("blobId") val blobId: String,
+        @SerialName("sessionId") val sessionId: String,
+        @SerialName("sizeBytes") val sizeBytes: Long,
+        @SerialName("state") val state: String,
+    )
+
+    @POST("module/{moduleId}/blob-sessions/{sessionId}/finalize")
+    suspend fun finalizeBlobSession(
+        @Path("moduleId") moduleId: String,
+        @Path("sessionId") sessionId: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Body request: FinalizeSessionRequest,
+    ): FinalizeSessionResponse
+
+    @DELETE("module/{moduleId}/blob-sessions/{sessionId}")
+    suspend fun abortBlobSession(
+        @Path("moduleId") moduleId: String,
+        @Path("sessionId") sessionId: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+    )
+
+    // --- Blob download + list ---
+
+    @Streaming
+    @GET("module/{moduleId}/blobs/{blobId}")
+    suspend fun getBlob(
+        @Path("moduleId") moduleId: String,
+        @Path("blobId") blobId: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
+    ): Response<ResponseBody>
+
+    @Serializable
     data class BlobListResponse(
+        @SerialName("moduleEtag") val moduleEtag: String,
         @SerialName("blobs") val blobs: List<BlobEntry>,
     ) {
         @Serializable
         data class BlobEntry(
-            @SerialName("key") val key: String,
-            @SerialName("size") val size: Long,
-            @Serializable(with = InstantSerializer::class) @SerialName("createdAt") val createdAt: Instant,
-            @SerialName("checksum") val checksum: String,
+            @SerialName("blobId") val blobId: String,
+            @SerialName("sizeBytes") val sizeBytes: Long,
+            @SerialName("hashAlgorithm") val hashAlgorithm: String? = null,
+            @SerialName("hashHex") val hashHex: String? = null,
         )
     }
 
-    @GET("blobs")
+    @GET("module/{moduleId}/blobs")
     suspend fun listBlobs(
-        @Header("X-Device-ID") callerDeviceId: String,
-        @Query("device-id") targetDeviceId: String? = null,
-        @Query("module-id") moduleId: String? = null,
-    ): BlobListResponse
-
-    @DELETE("blobs")
-    suspend fun bulkDeleteBlobs(
+        @Path("moduleId") moduleId: String,
         @Header("X-Device-ID") callerDeviceId: String,
         @Query("device-id") targetDeviceId: String,
-    )
+    ): BlobListResponse
+
+    // --- Module commit (blob-aware PUT) ---
 
     @Serializable
-    data class BlobQuotaResponse(
+    data class ModuleCommitRequest(
+        @SerialName("documentBase64") val documentBase64: String,
+        @SerialName("blobRefs") val blobRefs: List<BlobRef>,
+    ) {
+        @Serializable
+        data class BlobRef(
+            @SerialName("blobId") val blobId: String,
+        )
+    }
+
+    @retrofit2.http.PUT("module/{moduleId}")
+    suspend fun commitModule(
+        @Path("moduleId") moduleId: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
+        @Header("If-Match") ifMatch: String?,
+        @Header("If-None-Match") ifNoneMatch: String?,
+        @Body request: ModuleCommitRequest,
+    ): Response<Unit>
+
+    // --- Account storage (replaces blob-quota) ---
+
+    @Serializable
+    data class AccountStorageResponse(
+        @SerialName("storageApiVersion") val storageApiVersion: Int,
+        @SerialName("accountQuotaBytes") val accountQuotaBytes: Long,
         @SerialName("usedBytes") val usedBytes: Long,
-        @SerialName("totalBytes") val totalBytes: Long,
+        @SerialName("reservedBytes") val reservedBytes: Long,
+        @SerialName("availableBytes") val availableBytes: Long,
+        @SerialName("maxBlobBytes") val maxBlobBytes: Long,
+        @SerialName("maxModuleDocumentBytes") val maxModuleDocumentBytes: Long,
+        @SerialName("maxActiveUploadSessionsPerDevice") val maxActiveUploadSessionsPerDevice: Int,
+        @SerialName("idleSessionTtlSeconds") val idleSessionTtlSeconds: Long? = null,
+        @SerialName("absoluteSessionTtlSeconds") val absoluteSessionTtlSeconds: Long? = null,
     )
 
-    @GET("blob-quota")
-    suspend fun getBlobQuota(
+    @GET("account/storage")
+    suspend fun getAccountStorage(
         @Header("X-Device-ID") callerDeviceId: String,
-    ): BlobQuotaResponse
+    ): AccountStorageResponse
 
 }

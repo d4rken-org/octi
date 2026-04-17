@@ -19,22 +19,20 @@ class Hash(
         .formatHash(format)
         .let { Result(it) }
 
-    fun calc(file: File) {
-        MessageDigest
-            .getInstance(type.code)
-            .let { md ->
-                file.inputStream().use { stream ->
-                    val buffer = ByteArray(8192)
-                    var read: Int
-                    while (stream.read(buffer).also { read = it } > 0) {
-                        md.update(buffer, 0, read)
-                    }
+    fun calc(file: File): Result = MessageDigest
+        .getInstance(type.code)
+        .let { md ->
+            file.inputStream().use { stream ->
+                val buffer = ByteArray(8192)
+                var read: Int
+                while (stream.read(buffer).also { read = it } > 0) {
+                    md.update(buffer, 0, read)
                 }
-                md.digest()
             }
-            .formatHash(format)
-            .let { Result(it) }
-    }
+            md.digest()
+        }
+        .formatHash(format)
+        .let { Result(it) }
 
 
     private fun ByteArray.formatHash(format: Format): String = when (format) {
@@ -66,4 +64,9 @@ fun ByteArray.toHash(
 fun String.toHash(
     type: Hash.Algo,
     format: Hash.Format = HEX
+): String = Hash(type, format).calc(this).hash
+
+fun File.toHash(
+    type: Hash.Algo,
+    format: Hash.Format = HEX,
 ): String = Hash(type, format).calc(this).hash

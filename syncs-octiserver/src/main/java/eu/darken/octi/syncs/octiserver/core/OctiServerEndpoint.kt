@@ -11,15 +11,8 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.serialization.RetrofitJson
 import eu.darken.octi.module.core.ModuleId
-import eu.darken.octi.sync.core.BlobKey
-import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
-import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
-import eu.darken.octi.sync.core.blob.BlobMetadata
-import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
-import eu.darken.octi.sync.core.blob.BlobStoreConstraints
-import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -231,56 +224,109 @@ class OctiServerEndpoint @AssistedInject constructor(
 
     // --- Blob operations ---
 
-    suspend fun putBlob(
-        connectorId: ConnectorId,
+    // --- Resumable upload sessions ---
+
+    suspend fun createBlobSession(
         deviceId: DeviceId,
         moduleId: ModuleId,
-        blobKey: BlobKey,
-        body: RequestBody,
         sizeBytes: Long,
-        checksum: String,
-    ) = withContext(dispatcherProvider.IO) {
-        log(TAG, VERBOSE) { "putBlob(key=${blobKey.id}, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
+        checksum: String?,
+    ): OctiServerApi.CreateSessionResponse = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "createBlobSession(module=${moduleId.logLabel}, size=$sizeBytes)" }
         try {
-            api.putBlob(
-                blobKey = blobKey.id,
+            api.createBlobSession(
+                moduleId = moduleId.id,
                 callerDeviceId = ourDeviceIdString,
                 targetDeviceId = deviceId.id,
+                request = OctiServerApi.CreateSessionRequest(
+                    sizeBytes = sizeBytes,
+                    hashAlgorithm = if (checksum != null) "sha256" else null,
+                    hashHex = checksum,
+                ),
+            )
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
+        }
+    }
+
+    /**
+     * Append chunk to upload session.
+     * @return new Upload-Offset from the response header
+     */
+    suspend fun appendBlobSession(
+        moduleId: ModuleId,
+        sessionId: String,
+        offset: Long,
+        body: RequestBody,
+    ): Long = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "appendBlobSession(session=$sessionId, offset=$offset)" }
+        val response = try {
+            api.appendBlobSession(
                 moduleId = moduleId.id,
-                sizeBytes = sizeBytes,
-                checksum = checksum,
+                sessionId = sessionId,
+                callerDeviceId = ourDeviceIdString,
+                offset = offset,
                 body = body,
             )
         } catch (e: HttpException) {
-            when (e.code()) {
-                413 -> throw BlobFileTooLargeException(
-                    connectorId = connectorId,
-                    constraints = BlobStoreConstraints(maxFileBytes = sizeBytes),
-                    requestedBytes = sizeBytes,
-                )
+            throw OctiServerHttpException(e)
+        }
+        if (!response.isSuccessful) throw OctiServerHttpException(HttpException(response))
+        response.headers()["Upload-Offset"]?.toLongOrNull()
+            ?: throw IllegalStateException("Server did not return Upload-Offset header")
+    }
 
-                507 -> throw BlobQuotaExceededException(
-                    quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 0, totalBytes = 0),
-                    requestedBytes = sizeBytes,
-                )
-
-                else -> throw OctiServerHttpException(e)
-            }
+    suspend fun finalizeBlobSession(
+        moduleId: ModuleId,
+        sessionId: String,
+        checksum: String,
+    ): OctiServerApi.FinalizeSessionResponse = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "finalizeBlobSession(session=$sessionId)" }
+        try {
+            api.finalizeBlobSession(
+                moduleId = moduleId.id,
+                sessionId = sessionId,
+                callerDeviceId = ourDeviceIdString,
+                request = OctiServerApi.FinalizeSessionRequest(
+                    hashAlgorithm = "sha256",
+                    hashHex = checksum,
+                ),
+            )
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
         }
     }
+
+    suspend fun abortBlobSession(
+        moduleId: ModuleId,
+        sessionId: String,
+    ) = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "abortBlobSession(session=$sessionId)" }
+        try {
+            api.abortBlobSession(
+                moduleId = moduleId.id,
+                sessionId = sessionId,
+                callerDeviceId = ourDeviceIdString,
+            )
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
+        }
+    }
+
+    // --- Blob download + list ---
 
     suspend fun getBlob(
         deviceId: DeviceId,
         moduleId: ModuleId,
-        blobKey: BlobKey,
+        serverBlobId: String,
     ): okhttp3.ResponseBody? = withContext(dispatcherProvider.IO) {
-        log(TAG, VERBOSE) { "getBlob(key=${blobKey.id}, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
+        log(TAG, VERBOSE) { "getBlob(blobId=$serverBlobId, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
         try {
             val response = api.getBlob(
-                blobKey = blobKey.id,
+                moduleId = moduleId.id,
+                blobId = serverBlobId,
                 callerDeviceId = ourDeviceIdString,
                 targetDeviceId = deviceId.id,
-                moduleId = moduleId.id,
             )
             if (!response.isSuccessful) throw OctiServerHttpException(HttpException(response))
             response.body()
@@ -289,55 +335,113 @@ class OctiServerEndpoint @AssistedInject constructor(
         }
     }
 
-    suspend fun deleteBlob(
-        deviceId: DeviceId,
-        moduleId: ModuleId,
-        blobKey: BlobKey,
-    ) = withContext(dispatcherProvider.IO) {
-        log(TAG, VERBOSE) { "deleteBlob(key=${blobKey.id})" }
-        try {
-            api.deleteBlob(
-                blobKey = blobKey.id,
-                callerDeviceId = ourDeviceIdString,
-                targetDeviceId = deviceId.id,
-                moduleId = moduleId.id,
-            )
-        } catch (e: HttpException) {
-            throw OctiServerHttpException(e)
-        }
-    }
-
     suspend fun listBlobs(
         deviceId: DeviceId,
         moduleId: ModuleId,
-    ): List<OctiServerApi.BlobListResponse.BlobEntry> = withContext(dispatcherProvider.IO) {
+    ): OctiServerApi.BlobListResponse = withContext(dispatcherProvider.IO) {
         log(TAG, VERBOSE) { "listBlobs(device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
         try {
             api.listBlobs(
+                moduleId = moduleId.id,
                 callerDeviceId = ourDeviceIdString,
                 targetDeviceId = deviceId.id,
-                moduleId = moduleId.id,
-            ).blobs
+            )
         } catch (e: HttpException) {
             throw OctiServerHttpException(e)
         }
     }
 
-    suspend fun getBlobQuota(): BlobStoreQuota? = withContext(dispatcherProvider.IO) {
-        log(TAG, VERBOSE) { "getBlobQuota()" }
-        try {
-            val response = api.getBlobQuota(callerDeviceId = ourDeviceIdString)
-            BlobStoreQuota(
-                connectorId = ConnectorId(
-                    type = eu.darken.octi.sync.core.ConnectorType.OCTISERVER,
-                    subtype = credentials?.serverAdress?.domain ?: "unknown",
-                    account = credentials?.accountId?.id ?: "unknown",
+    // --- Module commit ---
+
+    /**
+     * Commit a module with blob references using If-Match/If-None-Match preconditions.
+     * @param etag raw ETag header from [readModuleEtag]; null = module doesn't exist (If-None-Match: *)
+     * @return raw ETag header from response
+     */
+    suspend fun commitModule(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        etag: String?,
+        documentBase64: String,
+        serverBlobIds: List<String>,
+    ): String = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "commitModule(module=${moduleId.logLabel}, etag=$etag, blobs=${serverBlobIds.size})" }
+        val response = try {
+            api.commitModule(
+                moduleId = moduleId.id,
+                callerDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
+                ifMatch = etag,
+                ifNoneMatch = if (etag == null) "*" else null,
+                request = OctiServerApi.ModuleCommitRequest(
+                    documentBase64 = documentBase64,
+                    blobRefs = serverBlobIds.map { OctiServerApi.ModuleCommitRequest.BlobRef(it) },
                 ),
-                usedBytes = response.usedBytes,
-                totalBytes = response.totalBytes,
             )
         } catch (e: HttpException) {
             throw OctiServerHttpException(e)
+        }
+        if (!response.isSuccessful) throw OctiServerHttpException(HttpException(response))
+        response.headers()["ETag"] ?: ""
+    }
+
+    sealed class ModuleEtagResult {
+        data object Absent : ModuleEtagResult()
+        data class Present(val etag: String) : ModuleEtagResult()
+    }
+
+    suspend fun readModuleEtag(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+    ): ModuleEtagResult = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "readModuleEtag(device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
+        val response = try {
+            api.readModule(
+                moduleId = moduleId.id,
+                callerDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
+            )
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
+        }
+        when {
+            response.code() == 204 -> ModuleEtagResult.Absent
+            response.isSuccessful -> {
+                val etag = response.headers()["ETag"]
+                if (etag != null) ModuleEtagResult.Present(etag) else ModuleEtagResult.Absent
+            }
+            else -> throw OctiServerHttpException(HttpException(response))
+        }
+    }
+
+    // --- Account storage ---
+
+    suspend fun getAccountStorage(): OctiServerApi.AccountStorageResponse = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "getAccountStorage()" }
+        try {
+            api.getAccountStorage(callerDeviceId = ourDeviceIdString)
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
+        }
+    }
+
+    suspend fun resolveCapabilities(): OctiServerCapabilities = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "resolveCapabilities()" }
+        try {
+            val storage = getAccountStorage()
+            OctiServerCapabilities(
+                blobSupport = if (storage.storageApiVersion >= 1) {
+                    OctiServerCapabilities.BlobSupport.SUPPORTED
+                } else {
+                    OctiServerCapabilities.BlobSupport.LEGACY
+                },
+                storageApiVersion = storage.storageApiVersion,
+            )
+        } catch (e: OctiServerHttpException) {
+            when (e.httpCode) {
+                404, 405 -> OctiServerCapabilities(blobSupport = OctiServerCapabilities.BlobSupport.LEGACY)
+                else -> OctiServerCapabilities(blobSupport = OctiServerCapabilities.BlobSupport.UNKNOWN)
+            }
         }
     }
 

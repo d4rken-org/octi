@@ -4,37 +4,47 @@ import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
-import okio.Path
+import eu.darken.octi.sync.core.RemoteBlobRef
+import okio.Sink
+import okio.Source
 
 interface BlobStore {
     val connectorId: ConnectorId
 
     /**
-     * Upload a blob from [payloadFile] (streaming, scoped to device + module).
-     * @param payloadFile caller-owned temp file with the plaintext (or pre-encrypted for backends that handle their own crypto)
+     * Upload a blob from [source].
+     * @param key stable client-side logical identity (also used as AAD input for encryption where applicable).
+     * @return the connector-specific remote reference that locates the uploaded blob.
+     *         The caller persists this in `SharedFile.connectorRefs[connectorId]` so future reads
+     *         address the blob via [get] / [delete] without needing a local key cache.
      */
-    suspend fun put(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey, payloadFile: Path, metadata: BlobMetadata)
+    suspend fun put(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey, source: Source, metadata: BlobMetadata): RemoteBlobRef
 
     /**
-     * Download a blob to [destinationFile] (streaming).
+     * Download a blob to [sink].
+     * @param key stable client-side logical identity — required because encrypting stores bind AAD
+     *        to `(deviceId, moduleId, blobKey)`. GDrive ignores [key] but it must still be supplied
+     *        so callers can use [BlobStore] polymorphically.
+     * @param remoteRef the value returned from [put], read back from `SharedFile.connectorRefs`.
      * @return metadata of the actually-downloaded blob
      */
-    suspend fun get(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey, destinationFile: Path): BlobMetadata
+    suspend fun get(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey, remoteRef: RemoteBlobRef, sink: Sink): BlobMetadata
 
     /**
-     * Get blob metadata without downloading content.
+     * Get blob metadata without downloading content. Returns null if the blob is not present.
      */
-    suspend fun getMetadata(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey): BlobMetadata?
+    suspend fun getMetadata(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef): BlobMetadata?
 
     /**
-     * Delete a single blob.
+     * Delete a single blob identified by its remote reference. Silent no-op if absent.
      */
-    suspend fun delete(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey)
+    suspend fun delete(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef)
 
     /**
-     * List all blob keys for a device+module.
+     * List all remote references currently present for a device+module namespace.
+     * Used for listings where remote refs happen to match logical keys (GDrive) or for diagnostic listings.
      */
-    suspend fun list(deviceId: DeviceId, moduleId: ModuleId): Set<BlobKey>
+    suspend fun list(deviceId: DeviceId, moduleId: ModuleId): Set<RemoteBlobRef>
 
     /**
      * Connector-specific constraints/caps.

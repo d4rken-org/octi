@@ -40,7 +40,7 @@ class OctiServerSerializationTest : BaseTest() {
     }
 
     @Test
-    fun `Credentials wire key uses serverAdress typo`() {
+    fun `Credentials wire format stability`() {
         val credentials = OctiServer.Credentials(
             serverAdress = OctiServer.Address(domain = "example.com"),
             accountId = OctiServer.Credentials.AccountId(id = "acc-1"),
@@ -52,8 +52,23 @@ class OctiServerSerializationTest : BaseTest() {
             createdAt = Instant.parse("2024-06-15T12:00:00Z"),
         )
         val encoded = json.encodeToString(credentials)
-        encoded.contains("\"serverAdress\"") shouldBe true
-        encoded.contains("\"serverAddress\"") shouldBe false
+        // Note: uses "serverAdress" typo (legacy Moshi name), unlike LinkingData's "serverAddress".
+        encoded.toComparableJson() shouldBe """
+            {
+                "serverAdress": {
+                    "domain": "example.com",
+                    "protocol": "https",
+                    "port": 443
+                },
+                "accountId": {"id": "acc-1"},
+                "devicePassword": {"password": "secret"},
+                "encryptionKeyset": {
+                    "type": "AES256_SIV",
+                    "key": "dGVzdGtleQ=="
+                },
+                "createdAt": "2024-06-15T12:00:00Z"
+            }
+        """.toComparableJson()
     }
 
     @Test

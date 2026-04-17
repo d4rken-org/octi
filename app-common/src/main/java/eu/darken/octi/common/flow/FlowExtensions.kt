@@ -60,9 +60,15 @@ fun <T> Flow<T>.takeUntilAfter(predicate: suspend (T) -> Boolean) = transformWhi
     !fullfilled // We keep emitting until condition is fullfilled = true
 }
 
-fun <T> Flow<T>.setupCommonEventHandlers(tag: String, identifier: () -> String) = this
+fun <T> Flow<T>.setupCommonEventHandlers(
+    tag: String,
+    logValues: Boolean = true,
+    identifier: () -> String,
+) = this
     .onStart { log(tag, VERBOSE) { "${identifier()}.onStart()" } }
-    .onEach { log(tag, VERBOSE) { "${identifier()}.onEach(): $it" } }
+    .let { flow ->
+        if (logValues) flow.onEach { log(tag, VERBOSE) { "${identifier()}.onEach(): $it" } } else flow
+    }
     .onCompletion { log(tag, VERBOSE) { "${identifier()}.onCompletion()" } }
     .catch {
         if (it.hasCause(CancellationException::class)) {

@@ -70,6 +70,7 @@ class OctiServerConnector @AssistedInject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val endpointFactory: OctiServerEndpoint.Factory,
+    private val blobStoreHub: OctiServerBlobStoreHub,
     private val networkStateProvider: NetworkStateProvider,
     private val syncSettings: SyncSettings,
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
@@ -373,10 +374,91 @@ class OctiServerConnector @AssistedInject constructor(
         }
 
         data.modules.forEach { module ->
-            endpoint.writeModule(
-                moduleId = module.moduleId,
-                payload = crypti.encrypt(module.payload.toGzip(), buildAssociatedData(data.deviceId, module.moduleId)),
+            val encryptedPayload = crypti.encrypt(
+                module.payload.toGzip(),
+                buildAssociatedData(data.deviceId, module.moduleId),
             )
+
+            val attachments = module.blobs
+            if (attachments != null) {
+                val capabilities = blobStoreHub.getCapabilities(identifier)
+                    ?: endpoint.resolveCapabilities().also { blobStoreHub.memoizeCapabilities(identifier, it) }
+
+                when (capabilities.blobSupport) {
+                    OctiServerCapabilities.BlobSupport.LEGACY -> {
+                        log(TAG, WARN) { "writeServer(): Server is legacy, stripping blobs from ${module.moduleId}" }
+                        endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
+                    }
+                    OctiServerCapabilities.BlobSupport.SUPPORTED,
+                    OctiServerCapabilities.BlobSupport.UNKNOWN -> {
+                        val serverBlobIds = filterResidentBlobs(attachments, identifier.idString)
+                        val missing = attachments.size - serverBlobIds.size
+                        if (missing > 0) {
+                            log(TAG) { "writeServer(): ${module.moduleId} — committing ${serverBlobIds.size}/${attachments.size} blobs ($missing not hosted here)" }
+                        }
+
+                        val etag = try {
+                            when (val result = endpoint.readModuleEtag(data.deviceId, module.moduleId)) {
+                                is OctiServerEndpoint.ModuleEtagResult.Absent -> null
+                                is OctiServerEndpoint.ModuleEtagResult.Present -> result.etag
+                            }
+                        } catch (e: Exception) {
+                            log(TAG, WARN) { "writeServer(): Failed to read ETag for ${module.moduleId}: ${e.message}" }
+                            null
+                        }
+
+                        try {
+                            endpoint.commitModule(
+                                deviceId = data.deviceId,
+                                moduleId = module.moduleId,
+                                etag = etag,
+                                documentBase64 = encryptedPayload.base64(),
+                                serverBlobIds = serverBlobIds,
+                            )
+                            log(TAG) { "writeServer(): Committed ${module.moduleId} via PUT (${serverBlobIds.size} blob refs)" }
+                        } catch (e: OctiServerHttpException) {
+                            when (e.httpCode) {
+                                404, 405 -> {
+                                    log(TAG, WARN) { "writeServer(): PUT commit rejected (${e.httpCode}), falling back to POST" }
+                                    blobStoreHub.memoizeCapabilities(
+                                        identifier,
+                                        OctiServerCapabilities(blobSupport = OctiServerCapabilities.BlobSupport.LEGACY),
+                                    )
+                                    endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
+                                }
+                                412 -> {
+                                    // Precondition failed: stale ETag. Re-read and retry once with fresh ETag.
+                                    log(TAG, WARN) { "writeServer(): 412 conflict on ${module.moduleId}, refreshing ETag and retrying" }
+                                    val freshEtag = try {
+                                        when (val result = endpoint.readModuleEtag(data.deviceId, module.moduleId)) {
+                                            is OctiServerEndpoint.ModuleEtagResult.Absent -> null
+                                            is OctiServerEndpoint.ModuleEtagResult.Present -> result.etag
+                                        }
+                                    } catch (readE: Exception) {
+                                        log(TAG, ERROR) { "writeServer(): ETag refresh failed: ${readE.message}" }
+                                        throw e
+                                    }
+                                    endpoint.commitModule(
+                                        deviceId = data.deviceId,
+                                        moduleId = module.moduleId,
+                                        etag = freshEtag,
+                                        documentBase64 = encryptedPayload.base64(),
+                                        serverBlobIds = serverBlobIds,
+                                    )
+                                    log(TAG) { "writeServer(): Retry succeeded for ${module.moduleId}" }
+                                }
+                                else -> throw e
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Legacy module → POST (unchanged)
+                endpoint.writeModule(
+                    moduleId = module.moduleId,
+                    payload = encryptedPayload,
+                )
+            }
         }
         log(TAG, VERBOSE) { "writeServer(): Done" }
     }
@@ -471,4 +553,24 @@ class OctiServerConnector @AssistedInject constructor(
     companion object {
         private val TAG = logTag("Sync", "OctiServer", "Connector")
     }
+}
+
+/**
+ * Residency filter: picks the server-scoped blob IDs this connector should commit.
+ *
+ * Only commit blobs this connector actually hosts — a blob mirrored only to GDrive
+ * (absent from `connectorRefs[connectorIdString]`) is silently omitted from this commit's
+ * `blobRefs`; the module metadata still syncs.
+ *
+ * When [SyncWrite.BlobAttachment.availableOn] is populated, also filter out refs whose
+ * connector has been removed from `availableOn` — defense-in-depth against stale
+ * `connectorRefs` entries where the two fields drifted out of sync. Empty `availableOn`
+ * means "no filter" (legacy attachments from producers that don't populate it).
+ */
+internal fun filterResidentBlobs(
+    attachments: List<SyncWrite.BlobAttachment>,
+    connectorIdString: String,
+): List<String> = attachments.mapNotNull { att ->
+    if (att.availableOn.isNotEmpty() && connectorIdString !in att.availableOn) return@mapNotNull null
+    att.connectorRefs[connectorIdString]?.value
 }

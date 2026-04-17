@@ -93,7 +93,6 @@ class ClockAnalyzer @Inject constructor(
 
             // No skewed devices AND no significant offset → no discrepancy
             if (skewedDeviceIds.isEmpty() && !offsetExceedsThreshold) {
-                log(TAG, VERBOSE) { "analyze(): no discrepancy (skewed=${skewedDeviceIds.size}, offset=$localClockOffset, exceedsThreshold=$offsetExceedsThreshold, threshold=$threshold)" }
                 return null
             }
 

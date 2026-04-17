@@ -93,7 +93,7 @@ abstract class BaseModuleSync<T : Any> constructor(
         }
     }
 
-    private fun serialize(item: T): SyncWrite.Device.Module {
+    protected open fun serialize(item: T): SyncWrite.Device.Module {
         val serialized = try {
             moduleSerializer.serialize(item)
         } catch (e: Exception) {

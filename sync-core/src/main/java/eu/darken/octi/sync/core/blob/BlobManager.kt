@@ -15,21 +15,22 @@ import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.RemoteBlobRef
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.withContext
-import okio.FileSystem
-import okio.Path
+import kotlinx.coroutines.flow.first
+import okio.Sink
+import okio.Source
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,9 +48,11 @@ class BlobManager @Inject constructor(
     data class PutResult(
         val successful: Set<ConnectorId>,
         val perConnectorErrors: Map<ConnectorId, Throwable>,
+        val remoteRefs: Map<ConnectorId, RemoteBlobRef> = emptyMap(),
     )
 
     private val retryBackoff = ConcurrentHashMap<Pair<ConnectorId, BlobKey>, Instant>()
+    private val quotaRefreshTrigger = MutableStateFlow(0)
 
     private val allStores: Flow<List<BlobStore>> = if (blobStoreHubs.isEmpty()) {
         flowOf(emptyList())
@@ -65,20 +68,30 @@ class BlobManager @Inject constructor(
         .setupCommonEventHandlers(TAG) { "allStores" }
         .shareLatest(scope + dispatcherProvider.Default)
 
+    private val quotasFlow: Flow<Map<ConnectorId, BlobStoreQuota?>> = allStores
+        .combine(quotaRefreshTrigger) { stores, _ -> stores }
+        .flatMapLatest { stores ->
+            flow {
+                emit(stores.associate { it.connectorId to null })
+                emit(fetchQuotas(stores))
+            }
+        }
+        .setupCommonEventHandlers(TAG) { "quotas" }
+        .shareLatest(scope + dispatcherProvider.Default)
+
     /**
-     * Upload blob from [payloadFile] to all eligible connectors. Each backend opens
-     * its own fresh read from the file — the file must exist for the duration of this call.
+     * Upload blob from a fresh [openSource] to all eligible connectors.
      * @param eligibleConnectors if null, use all currently configured stores
-     * @return which connectors succeeded and which failed
+     * @return which connectors succeeded, per-connector errors, and per-connector remote refs
      */
     suspend fun put(
         deviceId: DeviceId,
         moduleId: ModuleId,
         blobKey: BlobKey,
-        payloadFile: Path,
+        openSource: () -> Source,
         metadata: BlobMetadata,
         eligibleConnectors: Set<ConnectorId>? = null,
-    ): PutResult = withContext(dispatcherProvider.IO) {
+    ): PutResult = kotlinx.coroutines.withContext(dispatcherProvider.IO) {
         val stores = allStores.first()
         val candidates = if (eligibleConnectors != null) {
             stores.filter { it.connectorId in eligibleConnectors }
@@ -90,6 +103,7 @@ class BlobManager @Inject constructor(
 
         val successful = ConcurrentHashMap.newKeySet<ConnectorId>()
         val errors = ConcurrentHashMap<ConnectorId, Throwable>()
+        val remoteRefs = ConcurrentHashMap<ConnectorId, RemoteBlobRef>()
 
         candidates.map { store ->
             async {
@@ -103,14 +117,26 @@ class BlobManager @Inject constructor(
                     }
 
                     val quota = store.getQuota()
-                    if (quota != null && constraints.maxTotalBytes != null && quota.usedBytes + metadata.size > constraints.maxTotalBytes) {
+                    val maxTotalBytes = quota?.totalBytes ?: constraints.maxTotalBytes
+                    val usedBytes = quota?.usedBytes ?: 0
+                    if (maxTotalBytes != null && usedBytes + metadata.size > maxTotalBytes) {
                         log(TAG, INFO) { "put(${blobKey.id}): Skipping ${store.connectorId} — quota exceeded" }
-                        errors[store.connectorId] = BlobQuotaExceededException(quota, metadata.size)
+                        errors[store.connectorId] = BlobQuotaExceededException(
+                            quota ?: BlobStoreQuota(
+                                connectorId = store.connectorId,
+                                usedBytes = usedBytes,
+                                totalBytes = maxTotalBytes,
+                            ),
+                            metadata.size,
+                        )
                         return@async
                     }
 
-                    store.put(deviceId, moduleId, blobKey, payloadFile, metadata)
+                    val remoteRef = openSource().use { source ->
+                        store.put(deviceId, moduleId, blobKey, source, metadata)
+                    }
                     successful.add(store.connectorId)
+                    remoteRefs[store.connectorId] = remoteRef
                     retryBackoff.remove(store.connectorId to blobKey)
                     log(TAG, INFO) { "put(${blobKey.id}): Success on ${store.connectorId}" }
                 } catch (e: Exception) {
@@ -121,41 +147,46 @@ class BlobManager @Inject constructor(
             }
         }.awaitAll()
 
-        PutResult(successful = successful, perConnectorErrors = errors)
+        if (successful.isNotEmpty()) {
+            quotaRefreshTrigger.update { it + 1 }
+        }
+
+        PutResult(successful = successful, perConnectorErrors = errors, remoteRefs = remoteRefs)
     }
 
     /**
-     * Download blob to [destinationFile] from the first available candidate.
-     * Tries candidates in order; if one fails, truncates and tries the next.
-     * @throws BlobNotFoundException if all candidates fail
+     * Download a blob to a fresh [openSink] from the first reachable candidate.
+     * Iterates candidates in map iteration order; on failure, reopens the sink and tries the next.
+     *
+     * @param candidates per-connector locations: connector id → the remote reference stored for
+     *                   that connector in `SharedFile.connectorRefs`.
+     * @throws BlobNotFoundException if every candidate fails.
      */
     suspend fun get(
         deviceId: DeviceId,
         moduleId: ModuleId,
         blobKey: BlobKey,
-        candidates: Set<ConnectorId>,
-        destinationFile: Path,
-    ): BlobMetadata = withContext(dispatcherProvider.IO) {
+        candidates: Map<ConnectorId, RemoteBlobRef>,
+        openSink: () -> Sink,
+    ): BlobMetadata = kotlinx.coroutines.withContext(dispatcherProvider.IO) {
         val stores = allStores.first()
-        val orderedStores = candidates.mapNotNull { id -> stores.find { it.connectorId == id } }
+        val ordered = candidates.mapNotNull { (id, ref) ->
+            stores.find { it.connectorId == id }?.let { store -> store to ref }
+        }
 
-        log(TAG, DEBUG) { "get(${blobKey.id}): ${orderedStores.size} candidate stores" }
+        log(TAG, DEBUG) { "get(${blobKey.id}): ${ordered.size} candidate stores" }
 
         var lastError: Exception? = null
-        for (store in orderedStores) {
+        for ((store, remoteRef) in ordered) {
             try {
-                val meta = store.get(deviceId, moduleId, blobKey, destinationFile)
+                val meta = openSink().use { sink ->
+                    store.get(deviceId, moduleId, blobKey, remoteRef, sink)
+                }
                 log(TAG, INFO) { "get(${blobKey.id}): Success from ${store.connectorId}" }
                 return@withContext meta
             } catch (e: Exception) {
                 log(TAG, WARN) { "get(${blobKey.id}): Failed from ${store.connectorId}: ${e.message}" }
                 lastError = e
-                // Clean up partial download
-                try {
-                    FileSystem.SYSTEM.delete(destinationFile)
-                } catch (_: Exception) {
-                    // Best effort cleanup
-                }
             }
         }
 
@@ -163,24 +194,27 @@ class BlobManager @Inject constructor(
     }
 
     /**
-     * Delete blob across all candidate connectors. Returns the set that succeeded.
+     * Delete a blob across [targets] (connector id → remote reference). Returns the set of
+     * connectors that reported success.
      */
     suspend fun delete(
         deviceId: DeviceId,
         moduleId: ModuleId,
         blobKey: BlobKey,
-        candidates: Set<ConnectorId>,
-    ): Set<ConnectorId> = withContext(dispatcherProvider.IO) {
+        targets: Map<ConnectorId, RemoteBlobRef>,
+    ): Set<ConnectorId> = kotlinx.coroutines.withContext(dispatcherProvider.IO) {
         val stores = allStores.first()
-        val targetStores = candidates.mapNotNull { id -> stores.find { it.connectorId == id } }
+        val pairs = targets.mapNotNull { (id, ref) ->
+            stores.find { it.connectorId == id }?.let { store -> store to ref }
+        }
 
-        log(TAG, DEBUG) { "delete(${blobKey.id}): ${targetStores.size} target stores" }
+        log(TAG, DEBUG) { "delete(${blobKey.id}): ${pairs.size} target stores" }
 
         val successful = ConcurrentHashMap.newKeySet<ConnectorId>()
-        targetStores.map { store ->
+        pairs.map { (store, remoteRef) ->
             async {
                 try {
-                    store.delete(deviceId, moduleId, blobKey)
+                    store.delete(deviceId, moduleId, remoteRef)
                     successful.add(store.connectorId)
                     log(TAG, INFO) { "delete(${blobKey.id}): Success on ${store.connectorId}" }
                 } catch (e: Exception) {
@@ -189,13 +223,17 @@ class BlobManager @Inject constructor(
             }
         }.awaitAll()
 
+        if (successful.isNotEmpty()) {
+            quotaRefreshTrigger.update { it + 1 }
+        }
+
         successful
     }
 
     /**
-     * List all blob keys across all stores for a device+module.
+     * List all remote refs across all stores for a device+module.
      */
-    suspend fun listAll(deviceId: DeviceId, moduleId: ModuleId): Map<ConnectorId, Set<BlobKey>> {
+    suspend fun listAll(deviceId: DeviceId, moduleId: ModuleId): Map<ConnectorId, Set<RemoteBlobRef>> {
         val stores = allStores.first()
         return stores.associate { store ->
             try {
@@ -214,18 +252,26 @@ class BlobManager @Inject constructor(
         return allStores.first().map { it.connectorId }.toSet()
     }
 
+    suspend fun configuredConnectorsByIdString(): Map<String, ConnectorId> {
+        return allStores.first().associate { it.connectorId.idString to it.connectorId }
+    }
+
     /**
      * Quotas from all configured stores.
      */
-    fun quotas(): Flow<Map<ConnectorId, BlobStoreQuota?>> = allStores.map { stores ->
-        stores.associate { store ->
-            try {
-                store.connectorId to store.getQuota()
-            } catch (e: Exception) {
-                log(TAG, WARN) { "quotas(): Failed on ${store.connectorId}: ${e.message}" }
-                store.connectorId to null
+    fun quotas(): Flow<Map<ConnectorId, BlobStoreQuota?>> = quotasFlow
+
+    private suspend fun fetchQuotas(stores: List<BlobStore>): Map<ConnectorId, BlobStoreQuota?> = coroutineScope {
+        stores.map { store ->
+            async(dispatcherProvider.IO) {
+                try {
+                    store.connectorId to store.getQuota()
+                } catch (e: Exception) {
+                    log(TAG, WARN) { "quotas(): Failed on ${store.connectorId}: ${e.message}" }
+                    store.connectorId to null
+                }
             }
-        }
+        }.awaitAll().toMap()
     }
 
     /**

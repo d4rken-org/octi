@@ -23,14 +23,20 @@ class GDriveBlobStoreHub @Inject constructor(
     private val gDriveHub: GDriveHub,
 ) : BlobStoreHub {
 
-    private val cache = ConcurrentHashMap<ConnectorId, BlobStore>()
+    private val cache = ConcurrentHashMap<ConnectorId, Pair<GDriveAppDataConnector, BlobStore>>()
 
     override val blobStores: Flow<Collection<BlobStore>> = gDriveHub.connectors
         .map { connectors ->
-            connectors.mapNotNull { connector ->
-                val gDriveConnector = connector as GDriveAppDataConnector
-                cache.getOrPut(connector.identifier) {
-                    GDriveBlobStore(gDriveConnector, connector.identifier)
+            val activeIds = connectors.map { it.identifier }.toSet()
+            cache.keys.removeIf { it !in activeIds }
+
+            connectors.map { gDriveConnector ->
+                val id = gDriveConnector.identifier
+
+                cache[id]?.takeIf { (cachedConnector, _) -> cachedConnector === gDriveConnector }?.second ?: run {
+                    GDriveBlobStore(gDriveConnector, id).also { store ->
+                        cache[id] = gDriveConnector to store
+                    }
                 }
             }
         }

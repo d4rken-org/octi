@@ -2,7 +2,6 @@ package eu.darken.octi.module.core
 
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
-import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
@@ -24,7 +23,7 @@ class ModuleManager @Inject constructor(
     private val data = combine(moduleRepos.map { it.state }) {
         it.toList()
     }
-        .setupCommonEventHandlers(TAG) { "data" }
+        .setupCommonEventHandlers(TAG, logValues = false) { "data" }
         .replayingShare(scope + dispatcherProvider.Default)
 
     data class ByModule(
@@ -46,9 +45,6 @@ class ModuleManager @Inject constructor(
             devices = moduleStates.map { it.all }.flatten().groupBy { it.deviceId }
         )
     }
-        .onEach {
-            log(TAG, VERBOSE) { "BYDEVICE: $it" }
-        }
 
     data class ModuleSyncState(
         val moduleId: ModuleId,

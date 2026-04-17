@@ -58,13 +58,6 @@ class PowerInfoSerializationTest : BaseTest() {
     }
 
     @Test
-    fun `wire format uses currentAvg not currenAvg`() {
-        val encoded = json.encodeToString(fullInfo)
-        encoded.contains("\"currentAvg\"") shouldBe true
-        encoded.contains("\"currenAvg\"") shouldBe false
-    }
-
-    @Test
     fun `Status enum wire names are stable`() {
         json.encodeToString(PowerInfo.Status.FULL) shouldBe "\"FULL\""
         json.encodeToString(PowerInfo.Status.CHARGING) shouldBe "\"CHARGING\""

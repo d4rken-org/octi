@@ -1,6 +1,7 @@
 package eu.darken.octi.modules.files.core
 
 import eu.darken.octi.common.serialization.serializer.InstantSerializer
+import eu.darken.octi.sync.core.RemoteBlobRef
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
@@ -21,5 +22,6 @@ data class FileShareInfo(
         @Serializable(with = InstantSerializer::class)
         @SerialName("expiresAt") val expiresAt: Instant,
         @SerialName("availableOn") val availableOn: Set<String> = emptySet(),
+        @SerialName("connectorRefs") val connectorRefs: Map<String, RemoteBlobRef> = emptyMap(),
     )
 }

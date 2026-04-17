@@ -8,6 +8,7 @@ import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.module.core.ModuleInfoSource
+import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -67,12 +68,28 @@ class FileShareHandler @Inject constructor(
         }
     }
 
-    suspend fun patchAvailableOn(blobKey: String, newAvailableOn: Set<String>) {
-        log(TAG, VERBOSE) { "patchAvailableOn(blobKey=$blobKey, availableOn=$newAvailableOn)" }
+    /**
+     * Atomically update both [FileShareInfo.SharedFile.availableOn] and
+     * [FileShareInfo.SharedFile.connectorRefs] for the given [blobKey]. The two fields
+     * must stay consistent — `availableOn` lists which connectors hold the blob, and
+     * `connectorRefs` maps each of those connectors to its backend-specific remote reference.
+     * Updating only one field (as earlier code did in the expiry path) leaves the next
+     * sync referencing blobs that have actually been deleted.
+     */
+    suspend fun updateLocations(
+        blobKey: String,
+        newAvailableOn: Set<String>,
+        newConnectorRefs: Map<String, RemoteBlobRef>,
+    ) {
+        log(TAG, VERBOSE) { "updateLocations(blobKey=$blobKey, availableOn=$newAvailableOn, refs=$newConnectorRefs)" }
         updateOwn { current ->
             current.copy(
                 files = current.files.map {
-                    if (it.blobKey == blobKey) it.copy(availableOn = newAvailableOn) else it
+                    if (it.blobKey == blobKey) {
+                        it.copy(availableOn = newAvailableOn, connectorRefs = newConnectorRefs)
+                    } else {
+                        it
+                    }
                 },
             )
         }

@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
+import testhelpers.json.toComparableJson
 
 class PayloadEncryptionKeySetSerializationTest : BaseTest() {
 
@@ -26,13 +27,18 @@ class PayloadEncryptionKeySetSerializationTest : BaseTest() {
     }
 
     @Test
-    fun `ByteString is serialized as base64`() {
+    fun `wire format stability`() {
         val keyset = PayloadEncryption.KeySet(
             type = "AES256_SIV",
             key = "testkey".encodeUtf8(),
         )
         val encoded = json.encodeToString(keyset)
-        encoded.contains("\"dGVzdGtleQ==\"") shouldBe true
+        encoded.toComparableJson() shouldBe """
+            {
+                "type": "AES256_SIV",
+                "key": "dGVzdGtleQ=="
+            }
+        """.toComparableJson()
     }
 
     @Test

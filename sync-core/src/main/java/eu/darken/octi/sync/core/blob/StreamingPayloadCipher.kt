@@ -6,10 +6,11 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.sync.core.encryption.EncryptionMode
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
-import okio.FileSystem
-import okio.Path
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import okio.BufferedSink
+import okio.Sink
+import okio.Source
+import okio.buffer
+import java.io.OutputStream
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -52,33 +53,29 @@ class StreamingPayloadCipher(keySet: PayloadEncryption.KeySet) {
     }
 
     /**
-     * Encrypt [plainFile] to [cipherFile] with [associatedData] binding.
-     * The caller owns both files and is responsible for cleanup.
+     * Encrypt [source] into [sink] with [associatedData] binding.
      */
-    fun encryptToFile(plainFile: Path, cipherFile: Path, associatedData: ByteArray) {
-        log(TAG, VERBOSE) { "encryptToFile(${plainFile.name} → ${cipherFile.name}, aad=${associatedData.size}B)" }
-        FileInputStream(plainFile.toFile()).use { plainIn ->
-            FileOutputStream(cipherFile.toFile()).use { cipherOut ->
-                streamingAead.newEncryptingStream(cipherOut, associatedData).use { encOut ->
-                    plainIn.copyTo(encOut)
-                }
+    fun encrypt(source: Source, sink: Sink, associatedData: ByteArray) {
+        log(TAG, VERBOSE) { "encrypt(aad=${associatedData.size}B)" }
+        val bufferedSink = sink.buffer()
+        source.buffer().inputStream().use { plainIn ->
+            streamingAead.newEncryptingStream(NoCloseBufferedSinkOutputStream(bufferedSink), associatedData).use { encOut ->
+                plainIn.copyTo(encOut)
             }
         }
+        bufferedSink.emit()
     }
 
     /**
-     * Decrypt [cipherFile] to [plainFile] with [associatedData] binding.
-     * The caller owns both files and is responsible for cleanup.
+     * Decrypt [source] into [sink] with [associatedData] binding.
      */
-    fun decryptToFile(cipherFile: Path, plainFile: Path, associatedData: ByteArray) {
-        log(TAG, VERBOSE) { "decryptToFile(${cipherFile.name} → ${plainFile.name}, aad=${associatedData.size}B)" }
-        FileInputStream(cipherFile.toFile()).use { cipherIn ->
-            streamingAead.newDecryptingStream(cipherIn, associatedData).use { decIn ->
-                FileOutputStream(plainFile.toFile()).use { plainOut ->
-                    decIn.copyTo(plainOut)
-                }
-            }
+    fun decrypt(source: Source, sink: Sink, associatedData: ByteArray) {
+        log(TAG, VERBOSE) { "decrypt(aad=${associatedData.size}B)" }
+        val bufferedSink = sink.buffer()
+        streamingAead.newDecryptingStream(source.buffer().inputStream(), associatedData).use { decIn ->
+            decIn.copyTo(NoCloseBufferedSinkOutputStream(bufferedSink))
         }
+        bufferedSink.emit()
     }
 
     companion object {
@@ -109,6 +106,26 @@ class StreamingPayloadCipher(keySet: PayloadEncryption.KeySet) {
             val okm = expandMac.doFinal()
 
             return okm.copyOf(length)
+        }
+    }
+
+    private class NoCloseBufferedSinkOutputStream(
+        private val sink: BufferedSink,
+    ) : OutputStream() {
+        override fun write(oneByte: Int) {
+            sink.writeByte(oneByte)
+        }
+
+        override fun write(data: ByteArray, offset: Int, byteCount: Int) {
+            sink.write(data, offset, byteCount)
+        }
+
+        override fun flush() {
+            sink.flush()
+        }
+
+        override fun close() {
+            sink.flush()
         }
     }
 }

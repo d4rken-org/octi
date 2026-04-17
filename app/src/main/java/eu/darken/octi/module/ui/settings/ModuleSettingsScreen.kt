@@ -181,7 +181,7 @@ fun ModuleSettingsScreen(
                 SettingsSwitchItem(
                     icon = Icons.AutoMirrored.TwoTone.InsertDriveFile,
                     title = stringResource(FilesR.string.module_files_label),
-                    subtitle = stringResource(FilesR.string.module_files_share_action),
+                    subtitle = stringResource(FilesR.string.module_files_desc),
                     checked = state.isFilesEnabled,
                     onCheckedChange = onFilesEnabledChanged,
                 )

@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
+import testhelpers.json.toComparableJson
 
 class LinkingDataSerializationTest : BaseTest() {
 
@@ -39,10 +40,24 @@ class LinkingDataSerializationTest : BaseTest() {
     }
 
     @Test
-    fun `wire format uses serverAddress not serverAdress`() {
+    fun `wire format stability`() {
         val encoded = json.encodeToString(testData)
-        // Note: LinkingData uses "serverAddress" (correct spelling), unlike OctiServer.Credentials
-        encoded.contains("\"serverAddress\"") shouldBe true
+        // Note: LinkingData uses "serverAddress" (correct spelling), unlike OctiServer.Credentials.
+        // Wire keys "shareCode" and "encryptionKeySet" are legacy Moshi names.
+        encoded.toComparableJson() shouldBe """
+            {
+                "serverAddress": {
+                    "domain": "prod.kserver.octi.darken.eu",
+                    "protocol": "https",
+                    "port": 443
+                },
+                "shareCode": {"code": "ABCD1234"},
+                "encryptionKeySet": {
+                    "type": "AES256_SIV",
+                    "key": "dGVzdGtleQ=="
+                }
+            }
+        """.toComparableJson()
     }
 
     @Test

@@ -21,6 +21,7 @@ import eu.darken.octi.main.core.CurriculumVitae
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.release.ReleaseManager
 import eu.darken.octi.module.core.ModuleManager
+import eu.darken.octi.modules.files.core.BlobMaintenance
 import eu.darken.octi.sync.core.SyncOrchestrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -43,6 +44,7 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var theming: Theming
     @Inject lateinit var curriculumVitae: CurriculumVitae
     @Inject lateinit var releaseManager: ReleaseManager
+    @Inject lateinit var blobMaintenance: BlobMaintenance
 
     override fun onCreate() {
         super.onCreate()
@@ -62,6 +64,7 @@ open class App : Application(), Configuration.Provider {
 
         moduleManager.start()
         syncOrchestrator.start()
+        blobMaintenance.start()
 
         curriculumVitae.updateAppLaunch()
 

@@ -156,7 +156,7 @@ class DashboardVM @Inject constructor(
                 SyncStatus.Idle(lastSync, connectorTypes, syncDetail, orchestratorState, now, totalDevices)
             }
         }
-    }.setupCommonEventHandlers(TAG) { "syncStatus" }
+    }.setupCommonEventHandlers(TAG, logValues = false) { "syncStatus" }
 
     data class State(
         val devices: List<DeviceItem>,
@@ -338,7 +338,7 @@ class DashboardVM @Inject constructor(
             issues = issues,
         )
     }
-        .setupCommonEventHandlers(TAG) { "state" }
+        .setupCommonEventHandlers(TAG, logValues = false) { "state" }
         .asStateFlow()
 
     fun goToSyncServices() = launch {
