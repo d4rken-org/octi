@@ -18,16 +18,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Apps
-import androidx.compose.material.icons.twotone.BatteryFull
-import androidx.compose.material.icons.twotone.CellTower
-import androidx.compose.material.icons.twotone.ContentPaste
 import androidx.compose.material.icons.twotone.DragHandle
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
 import androidx.compose.material.icons.twotone.KeyboardArrowUp
-import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.VisibilityOff
-import androidx.compose.material.icons.twotone.Wifi
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -56,12 +50,8 @@ import eu.darken.octi.R
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
+import eu.darken.octi.main.ui.dashboard.ModuleUiRegistry
 import eu.darken.octi.main.ui.dashboard.TileLayoutConfig
-import eu.darken.octi.modules.apps.R as AppsR
-import eu.darken.octi.modules.clipboard.R as ClipboardR
-import eu.darken.octi.modules.connectivity.R as ConnectivityR
-import eu.darken.octi.modules.power.R as PowerR
-import eu.darken.octi.modules.wifi.R as WifiR
 
 @Composable
 fun TileEditorCard(
@@ -407,24 +397,11 @@ private fun buildEditorRows(visibleModules: List<String>, wideModules: Set<Strin
     return rows
 }
 
-private fun moduleIdToEditorIcon(moduleId: String): ImageVector = when (moduleId) {
-    "eu.darken.octi.module.core.power" -> Icons.TwoTone.BatteryFull
-    "eu.darken.octi.module.core.wifi" -> Icons.TwoTone.Wifi
-    "eu.darken.octi.module.core.apps" -> Icons.TwoTone.Apps
-    "eu.darken.octi.module.core.clipboard" -> Icons.TwoTone.ContentPaste
-    "eu.darken.octi.module.core.connectivity" -> Icons.TwoTone.CellTower
-    else -> Icons.TwoTone.QuestionMark
-}
+private fun moduleIdToEditorIcon(moduleId: String): ImageVector = ModuleUiRegistry.iconForString(moduleId)
 
 @Composable
-private fun moduleIdToEditorLabel(moduleId: String): String = when (moduleId) {
-    "eu.darken.octi.module.core.power" -> stringResource(PowerR.string.module_power_label)
-    "eu.darken.octi.module.core.wifi" -> stringResource(WifiR.string.module_wifi_label)
-    "eu.darken.octi.module.core.apps" -> stringResource(AppsR.string.module_apps_label)
-    "eu.darken.octi.module.core.clipboard" -> stringResource(ClipboardR.string.module_clipboard_label)
-    "eu.darken.octi.module.core.connectivity" -> stringResource(ConnectivityR.string.module_connectivity_label)
-    else -> moduleId
-}
+private fun moduleIdToEditorLabel(moduleId: String): String =
+    ModuleUiRegistry.byIdString(moduleId)?.let { stringResource(it.labelRes) } ?: moduleId
 
 @Preview2
 @Composable

@@ -10,14 +10,7 @@ data class TileLayoutConfig(
     @SerialName("hiddenModules") val hiddenModules: Set<String> = emptySet(),
 ) {
     companion object {
-        val DEFAULT_ORDER = listOf(
-            "eu.darken.octi.module.core.power",
-            "eu.darken.octi.module.core.wifi",
-            "eu.darken.octi.module.core.connectivity",
-            "eu.darken.octi.module.core.clipboard",
-            "eu.darken.octi.module.core.files",
-            "eu.darken.octi.module.core.apps",
-        )
+        val DEFAULT_ORDER: List<String> get() = ModuleUiRegistry.orderedTileIds
         val DEFAULT_WIDE = setOf("eu.darken.octi.module.core.power")
     }
 

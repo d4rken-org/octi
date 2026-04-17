@@ -29,14 +29,11 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Apps
 import androidx.compose.material.icons.twotone.BatteryFull
-import androidx.compose.material.icons.twotone.CellTower
 import androidx.compose.material.icons.twotone.ChevronRight
 import androidx.compose.material.icons.twotone.Schedule
 import androidx.compose.material.icons.twotone.CloudSync
 import androidx.compose.material.icons.twotone.Coffee
-import androidx.compose.material.icons.twotone.ContentPaste
 import androidx.compose.material.icons.twotone.ExpandLess
 import androidx.compose.material.icons.twotone.ExpandMore
 import androidx.compose.material.icons.twotone.Home
@@ -49,7 +46,6 @@ import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material.icons.twotone.Warning
-import androidx.compose.material.icons.twotone.Wifi
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -114,21 +110,15 @@ import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.module.core.ModuleSync
-import eu.darken.octi.modules.apps.AppsModule
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.clipboard.ClipboardInfo
-import eu.darken.octi.modules.clipboard.ClipboardModule
 import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardDetailSheet
-import eu.darken.octi.modules.connectivity.ConnectivityModule
 import eu.darken.octi.modules.connectivity.ui.dashboard.ConnectivityDetailSheet
-import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
-import eu.darken.octi.modules.power.PowerModule
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
 import eu.darken.octi.modules.power.ui.dashboard.PowerDetailSheet
-import eu.darken.octi.modules.wifi.WifiModule
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiDetailSheet
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
@@ -144,12 +134,6 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 import eu.darken.octi.common.R as CommonR
-import eu.darken.octi.modules.apps.R as AppsR
-import eu.darken.octi.modules.clipboard.R as ClipboardR
-import eu.darken.octi.modules.connectivity.R as ConnectivityR
-import eu.darken.octi.modules.meta.R as MetaR
-import eu.darken.octi.modules.power.R as PowerR
-import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.LocalConnectorContributions
@@ -793,9 +777,9 @@ private fun SyncStatusBar(
                             is DashboardVM.SyncStatus.Syncing -> {
                                 val moduleNames = syncStatus.syncingModules
                                     .sortedBy {
-                                        MODULE_DISPLAY_ORDER.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
+                                        ModuleUiRegistry.orderedIds.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
                                     }
-                                    .mapNotNull { moduleIdToStringRes(it) }
+                                    .mapNotNull { ModuleUiRegistry.byId(it)?.labelRes }
                                     .map { stringResource(it) }
                                 val text = if (moduleNames.isNotEmpty()) {
                                     stringResource(
@@ -880,7 +864,7 @@ private fun SyncStatusBar(
                     // Module rows
                     Spacer(modifier = Modifier.height(4.dp))
                     val sortedModules = detail.modules.sortedBy {
-                        MODULE_DISPLAY_ORDER.indexOf(it.moduleId).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
+                        ModuleUiRegistry.orderedIds.indexOf(it.moduleId).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
                     }
                     sortedModules.forEach { moduleState ->
                         SyncDetailModuleRow(moduleState)
@@ -923,17 +907,16 @@ private fun SyncDetailModuleRow(moduleState: ModuleManager.ModuleSyncState) {
             .padding(start = 16.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val icon = moduleIdToIcon(moduleState.moduleId)
+        val spec = ModuleUiRegistry.byId(moduleState.moduleId)
         Icon(
-            imageVector = icon,
+            imageVector = spec?.icon ?: Icons.TwoTone.QuestionMark,
             contentDescription = null,
             modifier = Modifier.size(18.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.width(10.dp))
-        val nameRes = moduleIdToStringRes(moduleState.moduleId)
         Text(
-            text = nameRes?.let { stringResource(it) } ?: moduleState.moduleId.id,
+            text = spec?.let { stringResource(it.labelRes) } ?: moduleState.moduleId.id,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.weight(1f),
         )
@@ -1042,35 +1025,6 @@ private fun SyncDetailConnectorRow(
             )
         }
     }
-}
-
-private val MODULE_DISPLAY_ORDER = listOf(
-    PowerModule.MODULE_ID,
-    ConnectivityModule.MODULE_ID,
-    WifiModule.MODULE_ID,
-    ClipboardModule.MODULE_ID,
-    AppsModule.MODULE_ID,
-    MetaModule.MODULE_ID,
-)
-
-private fun moduleIdToIcon(moduleId: ModuleId): ImageVector = when (moduleId) {
-    PowerModule.MODULE_ID -> Icons.TwoTone.BatteryFull
-    WifiModule.MODULE_ID -> Icons.TwoTone.Wifi
-    AppsModule.MODULE_ID -> Icons.TwoTone.Apps
-    ClipboardModule.MODULE_ID -> Icons.TwoTone.ContentPaste
-    ConnectivityModule.MODULE_ID -> Icons.TwoTone.CellTower
-    MetaModule.MODULE_ID -> Icons.TwoTone.Info
-    else -> Icons.TwoTone.QuestionMark
-}
-
-private fun moduleIdToStringRes(moduleId: ModuleId): Int? = when (moduleId) {
-    PowerModule.MODULE_ID -> PowerR.string.module_power_label
-    WifiModule.MODULE_ID -> WifiR.string.module_wifi_label
-    AppsModule.MODULE_ID -> AppsR.string.module_apps_label
-    ClipboardModule.MODULE_ID -> ClipboardR.string.module_clipboard_label
-    ConnectivityModule.MODULE_ID -> ConnectivityR.string.module_connectivity_label
-    MetaModule.MODULE_ID -> MetaR.string.module_meta_label
-    else -> null
 }
 
 @Composable

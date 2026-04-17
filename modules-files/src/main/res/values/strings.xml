@@ -27,4 +27,6 @@
     <string name="module_files_uploading">Uploading\u2026</string>
     <string name="module_files_notification_channel_label">Incoming Shared Files</string>
     <string name="module_files_notification_incoming_title">%1$s shared a file</string>
+    <string name="module_files_unavailable_title">File sharing unavailable</string>
+    <string name="module_files_unavailable_message">No sync service on this device supports file sharing. Check the warning in the dashboard for details.</string>
 </resources>

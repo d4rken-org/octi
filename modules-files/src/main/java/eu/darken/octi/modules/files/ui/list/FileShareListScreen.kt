@@ -147,7 +147,7 @@ fun FileShareListScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
-            if (state.isOurDevice) {
+            if (state.isOurDevice && state.isSharingAvailable) {
                 FloatingActionButton(onClick = onShareClick) {
                     Icon(Icons.TwoTone.Add, contentDescription = stringResource(R.string.module_files_share_action))
                 }
@@ -172,11 +172,25 @@ fun FileShareListScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = stringResource(R.string.module_files_tile_empty),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    if (state.isOurDevice && !state.isSharingAvailable) {
+                        Text(
+                            text = stringResource(R.string.module_files_unavailable_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = stringResource(R.string.module_files_unavailable_message),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.module_files_tile_empty),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }

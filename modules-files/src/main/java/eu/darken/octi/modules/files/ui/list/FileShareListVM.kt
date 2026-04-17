@@ -43,6 +43,7 @@ class FileShareListVM @Inject constructor(
     data class State(
         val deviceLabel: String = "",
         val isOurDevice: Boolean = false,
+        val isSharingAvailable: Boolean = true,
         val quotaItems: List<QuotaItem> = emptyList(),
         val files: List<FileItem> = emptyList(),
         val uploadProgress: BlobProgress? = null,
@@ -134,6 +135,7 @@ class FileShareListVM @Inject constructor(
                 State(
                     deviceLabel = deviceLabel,
                     isOurDevice = isOurDevice,
+                    isSharingAvailable = configuredConnectorIds.isNotEmpty(),
                     quotaItems = quotaItems,
                     files = files,
                     uploadProgress = uploadProgress,

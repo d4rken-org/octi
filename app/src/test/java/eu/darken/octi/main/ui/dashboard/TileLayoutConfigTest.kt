@@ -11,8 +11,9 @@ class TileLayoutConfigTest : BaseTest() {
         "eu.darken.octi.module.core.power",
         "eu.darken.octi.module.core.wifi",
         "eu.darken.octi.module.core.connectivity",
-        "eu.darken.octi.module.core.apps",
         "eu.darken.octi.module.core.clipboard",
+        "eu.darken.octi.module.core.files",
+        "eu.darken.octi.module.core.apps",
     )
 
     @Nested
@@ -24,7 +25,7 @@ class TileLayoutConfigTest : BaseTest() {
             )
             val normalized = config.normalize(allModules)
             normalized.order.first() shouldBe "eu.darken.octi.module.core.power"
-            normalized.order.size shouldBe 5
+            normalized.order.size shouldBe allModules.size
             normalized.order.containsAll(allModules) shouldBe true
         }
 
