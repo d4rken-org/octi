@@ -24,4 +24,7 @@
     <string name="module_files_quota_header">Storage</string>
     <string name="module_files_quota_item">%1$s: %2$s / %3$s used</string>
     <string name="module_files_time_remaining">%1$s remaining</string>
+    <string name="module_files_uploading">Uploading\u2026</string>
+    <string name="module_files_notification_channel_label">Incoming Shared Files</string>
+    <string name="module_files_notification_incoming_title">%1$s shared a file</string>
 </resources>

@@ -14,11 +14,21 @@ interface BlobStore {
     /**
      * Upload a blob from [source].
      * @param key stable client-side logical identity (also used as AAD input for encryption where applicable).
+     * @param onProgress optional callback fired during the upload. Producers supply
+     *        `bytesTotal` that matches what they're observing (ciphertext size for encrypting
+     *        stores, declared plaintext size otherwise). Always called from the IO dispatcher.
      * @return the connector-specific remote reference that locates the uploaded blob.
      *         The caller persists this in `SharedFile.connectorRefs[connectorId]` so future reads
      *         address the blob via [get] / [delete] without needing a local key cache.
      */
-    suspend fun put(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey, source: Source, metadata: BlobMetadata): RemoteBlobRef
+    suspend fun put(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        key: BlobKey,
+        source: Source,
+        metadata: BlobMetadata,
+        onProgress: BlobProgressCallback? = null,
+    ): RemoteBlobRef
 
     /**
      * Download a blob to [sink].
@@ -26,9 +36,19 @@ interface BlobStore {
      *        to `(deviceId, moduleId, blobKey)`. GDrive ignores [key] but it must still be supplied
      *        so callers can use [BlobStore] polymorphically.
      * @param remoteRef the value returned from [put], read back from `SharedFile.connectorRefs`.
+     * @param onProgress optional callback fired as bytes arrive at [sink]. `bytesTotal` is
+     *        connector-specific — OctiServer reports ciphertext size (from the server blob list),
+     *        GDrive reports the declared size from Drive metadata.
      * @return metadata of the actually-downloaded blob
      */
-    suspend fun get(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey, remoteRef: RemoteBlobRef, sink: Sink): BlobMetadata
+    suspend fun get(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        key: BlobKey,
+        remoteRef: RemoteBlobRef,
+        sink: Sink,
+        onProgress: BlobProgressCallback? = null,
+    ): BlobMetadata
 
     /**
      * Get blob metadata without downloading content. Returns null if the blob is not present.

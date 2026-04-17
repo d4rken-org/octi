@@ -100,7 +100,14 @@ class BlobManagerTest : BaseTest() {
     ) : BlobStore {
         var putCalls: Int = 0
 
-        override suspend fun put(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey, source: Source, metadata: BlobMetadata): RemoteBlobRef {
+        override suspend fun put(
+            deviceId: DeviceId,
+            moduleId: ModuleId,
+            key: BlobKey,
+            source: Source,
+            metadata: BlobMetadata,
+            onProgress: BlobProgressCallback?,
+        ): RemoteBlobRef {
             putCalls += 1
             return RemoteBlobRef(key.id)
         }
@@ -111,6 +118,7 @@ class BlobManagerTest : BaseTest() {
             key: BlobKey,
             remoteRef: RemoteBlobRef,
             sink: Sink,
+            onProgress: BlobProgressCallback?,
         ): BlobMetadata {
             throw UnsupportedOperationException()
         }

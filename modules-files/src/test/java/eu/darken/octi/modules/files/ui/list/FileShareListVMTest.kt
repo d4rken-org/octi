@@ -18,6 +18,7 @@ import eu.darken.octi.sync.core.blob.BlobManager
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Test
@@ -100,6 +101,7 @@ class FileShareListVMTest : BaseTest() {
             )
         )
         every { blobManager.quotas() } returns flowOf(mapOf(connector to null))
+        every { fileShareService.transfers } returns MutableStateFlow(emptyMap())
 
         val vm = FileShareListVM(
             dispatcherProvider = dispatcherProvider,

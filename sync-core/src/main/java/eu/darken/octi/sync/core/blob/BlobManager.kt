@@ -82,6 +82,10 @@ class BlobManager @Inject constructor(
     /**
      * Upload blob from a fresh [openSource] to all eligible connectors.
      * @param eligibleConnectors if null, use all currently configured stores
+     * @param onProgress optional progress callback. Fired per-connector from each store's chunk
+     *        hook. The callback receives the *slowest* connector's progress — two parallel uploads
+     *        appear as a single monotonically advancing bar that only reaches 100% once both
+     *        finish. Safe to call from multiple coroutines concurrently.
      * @return which connectors succeeded, per-connector errors, and per-connector remote refs
      */
     suspend fun put(
@@ -91,6 +95,7 @@ class BlobManager @Inject constructor(
         openSource: () -> Source,
         metadata: BlobMetadata,
         eligibleConnectors: Set<ConnectorId>? = null,
+        onProgress: BlobProgressCallback? = null,
     ): PutResult = kotlinx.coroutines.withContext(dispatcherProvider.IO) {
         val stores = allStores.first()
         val candidates = if (eligibleConnectors != null) {
@@ -104,6 +109,9 @@ class BlobManager @Inject constructor(
         val successful = ConcurrentHashMap.newKeySet<ConnectorId>()
         val errors = ConcurrentHashMap<ConnectorId, Throwable>()
         val remoteRefs = ConcurrentHashMap<ConnectorId, RemoteBlobRef>()
+        val aggregator: ProgressAggregator? = onProgress?.let {
+            ProgressAggregator(expectedConnectors = candidates.size, downstream = it)
+        }
 
         candidates.map { store ->
             async {
@@ -132,8 +140,10 @@ class BlobManager @Inject constructor(
                         return@async
                     }
 
+                    val storeProgress: BlobProgressCallback? = aggregator?.forConnector(store.connectorId)
+
                     val remoteRef = openSource().use { source ->
-                        store.put(deviceId, moduleId, blobKey, source, metadata)
+                        store.put(deviceId, moduleId, blobKey, source, metadata, storeProgress)
                     }
                     successful.add(store.connectorId)
                     remoteRefs[store.connectorId] = remoteRef
@@ -160,6 +170,9 @@ class BlobManager @Inject constructor(
      *
      * @param candidates per-connector locations: connector id → the remote reference stored for
      *                   that connector in `SharedFile.connectorRefs`.
+     * @param onProgress optional progress callback fired as bytes arrive at the sink. Only the
+     *        first successful candidate emits progress; failed candidates that bailed before
+     *        writing leave the callback untouched.
      * @throws BlobNotFoundException if every candidate fails.
      */
     suspend fun get(
@@ -168,6 +181,7 @@ class BlobManager @Inject constructor(
         blobKey: BlobKey,
         candidates: Map<ConnectorId, RemoteBlobRef>,
         openSink: () -> Sink,
+        onProgress: BlobProgressCallback? = null,
     ): BlobMetadata = kotlinx.coroutines.withContext(dispatcherProvider.IO) {
         val stores = allStores.first()
         val ordered = candidates.mapNotNull { (id, ref) ->
@@ -180,7 +194,7 @@ class BlobManager @Inject constructor(
         for ((store, remoteRef) in ordered) {
             try {
                 val meta = openSink().use { sink ->
-                    store.get(deviceId, moduleId, blobKey, remoteRef, sink)
+                    store.get(deviceId, moduleId, blobKey, remoteRef, sink, onProgress)
                 }
                 log(TAG, INFO) { "get(${blobKey.id}): Success from ${store.connectorId}" }
                 return@withContext meta
@@ -191,6 +205,32 @@ class BlobManager @Inject constructor(
         }
 
         throw BlobNotFoundException(blobKey).also { it.initCause(lastError) }
+    }
+
+    /**
+     * Aggregates per-connector upload progress into one downstream callback. The reported
+     * fraction tracks the slowest connector so the bar cannot advance faster than the real
+     * upload completes everywhere. Connectors that haven't reported yet count as 0%.
+     */
+    private class ProgressAggregator(
+        private val expectedConnectors: Int,
+        private val downstream: BlobProgressCallback,
+    ) {
+        private val perConnector = ConcurrentHashMap<ConnectorId, BlobProgress>()
+
+        fun forConnector(connectorId: ConnectorId): BlobProgressCallback = { p ->
+            perConnector[connectorId] = p
+            emit()
+        }
+
+        private fun emit() {
+            if (perConnector.isEmpty()) return
+            val slowestFraction = if (perConnector.size < expectedConnectors) 0f
+            else perConnector.values.minOf { it.fraction }
+            val total = perConnector.values.maxOf { it.bytesTotal }
+            val transferred = (total * slowestFraction).toLong()
+            downstream(BlobProgress(bytesTransferred = transferred, bytesTotal = total))
+        }
     }
 
     /**

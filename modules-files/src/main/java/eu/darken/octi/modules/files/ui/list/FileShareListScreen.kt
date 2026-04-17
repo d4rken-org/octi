@@ -23,6 +23,7 @@ import androidx.compose.material.icons.twotone.SaveAlt
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -49,7 +50,9 @@ import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.files.core.FileShareInfo
+import eu.darken.octi.sync.core.blob.BlobProgress
 import eu.darken.octi.common.R as CommonR
+import androidx.compose.foundation.layout.fillMaxWidth
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
@@ -160,6 +163,7 @@ fun FileShareListScreen(
                 if (state.isOurDevice && state.quotaItems.isNotEmpty()) {
                     QuotaSummary(state = state)
                 }
+                state.uploadProgress?.let { UploadProgressBar(it) }
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -187,6 +191,9 @@ fun FileShareListScreen(
                         QuotaSummary(state = state)
                     }
                 }
+                state.uploadProgress?.let { progress ->
+                    item { UploadProgressBar(progress) }
+                }
                 items(
                     items = state.files,
                     key = { it.sharedFile.blobKey },
@@ -200,6 +207,22 @@ fun FileShareListScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun UploadProgressBar(progress: BlobProgress) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Text(
+            text = stringResource(R.string.module_files_uploading),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.size(4.dp))
+        LinearProgressIndicator(
+            progress = { progress.fraction },
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -235,48 +258,60 @@ private fun FileItemRow(
     onDeleteClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    Row(
+    val isDownloading = item.downloadProgress != null
+    Column(
         modifier = Modifier
-            .clickable(enabled = !isOurDevice && item.isAvailable) { onSaveClick() }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .clickable(enabled = !isOurDevice && item.isAvailable && !isDownloading) { onSaveClick() },
     ) {
-        Icon(
-            imageVector = Icons.AutoMirrored.TwoTone.InsertDriveFile,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onSurface,
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = item.sharedFile.name,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurface,
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.TwoTone.InsertDriveFile,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onSurface,
             )
-            Text(
-                text = buildString {
-                    append(Formatter.formatFileSize(context, item.sharedFile.size))
-                    if (!item.isAvailable) {
-                        append(" \u2022 ")
-                        append(context.getString(R.string.module_files_unavailable))
-                    }
-                },
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        if (item.isAvailable && !isOurDevice) {
-            IconButton(onClick = onSaveClick) {
-                Icon(Icons.TwoTone.SaveAlt, contentDescription = stringResource(R.string.module_files_save_action))
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = item.sharedFile.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                    text = buildString {
+                        append(Formatter.formatFileSize(context, item.sharedFile.size))
+                        if (!item.isAvailable) {
+                            append(" \u2022 ")
+                            append(context.getString(R.string.module_files_unavailable))
+                        }
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            if (item.isAvailable && !isOurDevice && !isDownloading) {
+                IconButton(onClick = onSaveClick) {
+                    Icon(Icons.TwoTone.SaveAlt, contentDescription = stringResource(R.string.module_files_save_action))
+                }
+            }
+            if (isOurDevice) {
+                IconButton(onClick = onDeleteClick) {
+                    Icon(Icons.TwoTone.Delete, contentDescription = stringResource(R.string.module_files_delete_action))
+                }
             }
         }
-        if (isOurDevice) {
-            IconButton(onClick = onDeleteClick) {
-                Icon(Icons.TwoTone.Delete, contentDescription = stringResource(R.string.module_files_delete_action))
-            }
+        item.downloadProgress?.let { progress ->
+            LinearProgressIndicator(
+                progress = { progress.fraction },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+            )
         }
     }
 }

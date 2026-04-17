@@ -22,8 +22,13 @@ import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobChecksumMismatchException
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobMetadata
-import okio.FileSystem
+import eu.darken.octi.sync.core.blob.BlobProgress
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import okio.FileSystem
 import okio.Path.Companion.toPath
 import java.io.File
 import java.security.MessageDigest
@@ -66,6 +71,23 @@ class FileShareService @Inject constructor(
         data object NotFound : DeleteResult()
         data class Partial(val remainingConnectors: Set<String>) : DeleteResult()
     }
+
+    data class Transfer(
+        val blobKey: String,
+        val direction: Direction,
+        val progress: BlobProgress,
+    ) {
+        enum class Direction { UPLOAD, DOWNLOAD }
+    }
+
+    private val _transfers = MutableStateFlow<Map<String, Transfer>>(emptyMap())
+
+    /**
+     * Progress of in-flight blob transfers keyed by blob key string. Upload entries appear while
+     * [shareFile] is running; download entries while [saveFile] is running. Entries are removed
+     * when the operation completes (success or failure).
+     */
+    val transfers: StateFlow<Map<String, Transfer>> = _transfers.asStateFlow()
 
     private val stagingDir: File
         get() = blobCacheDirs.staging
@@ -114,13 +136,30 @@ class FileShareService @Inject constructor(
             )
 
             // 4. Upload to blob stores
-            val putResult = blobManager.put(
-                deviceId = syncSettings.deviceId,
-                moduleId = FileShareModule.MODULE_ID,
-                blobKey = blobKey,
-                openSource = { FileSystem.SYSTEM.source(stagedPath) },
-                metadata = metadata,
-            )
+            val putResult = try {
+                _transfers.update {
+                    it + (blobKey.id to Transfer(
+                        blobKey = blobKey.id,
+                        direction = Transfer.Direction.UPLOAD,
+                        progress = BlobProgress(bytesTransferred = 0L, bytesTotal = size),
+                    ))
+                }
+                blobManager.put(
+                    deviceId = syncSettings.deviceId,
+                    moduleId = FileShareModule.MODULE_ID,
+                    blobKey = blobKey,
+                    openSource = { FileSystem.SYSTEM.source(stagedPath) },
+                    metadata = metadata,
+                    onProgress = { progress ->
+                        _transfers.update {
+                            val prev = it[blobKey.id] ?: return@update it
+                            it + (blobKey.id to prev.copy(progress = progress))
+                        }
+                    },
+                )
+            } finally {
+                _transfers.update { it - blobKey.id }
+            }
 
             if (putResult.successful.isEmpty()) {
                 log(TAG, WARN) { "shareFile(): All connectors failed" }
@@ -183,12 +222,25 @@ class FileShareService @Inject constructor(
         val downloadFile = blobCacheDirs.tempFile(downloadDir)
         val downloadPath = downloadFile.absolutePath.toPath()
         try {
+            _transfers.update {
+                it + (sharedFile.blobKey to Transfer(
+                    blobKey = sharedFile.blobKey,
+                    direction = Transfer.Direction.DOWNLOAD,
+                    progress = BlobProgress(bytesTransferred = 0L, bytesTotal = sharedFile.size),
+                ))
+            }
             blobManager.get(
                 deviceId = ownerDeviceId,
                 moduleId = FileShareModule.MODULE_ID,
                 blobKey = BlobKey(sharedFile.blobKey),
                 candidates = candidates,
                 openSink = { FileSystem.SYSTEM.sink(downloadPath) },
+                onProgress = { progress ->
+                    _transfers.update {
+                        val prev = it[sharedFile.blobKey] ?: return@update it
+                        it + (sharedFile.blobKey to prev.copy(progress = progress))
+                    }
+                },
             )
 
             // Verify checksum against synced metadata
@@ -228,6 +280,7 @@ class FileShareService @Inject constructor(
             log(TAG, ERROR) { "saveFile() failed: ${e.asLog()}" }
             SaveResult.Failed(e)
         } finally {
+            _transfers.update { it - sharedFile.blobKey }
             downloadFile.delete()
         }
     }

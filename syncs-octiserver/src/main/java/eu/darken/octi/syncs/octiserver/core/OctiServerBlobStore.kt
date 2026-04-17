@@ -20,10 +20,13 @@ import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.BlobNotFoundException
+import eu.darken.octi.sync.core.blob.BlobProgress
+import eu.darken.octi.sync.core.blob.BlobProgressCallback
 import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
 import eu.darken.octi.sync.core.blob.BlobStore
 import eu.darken.octi.sync.core.blob.BlobStoreConstraints
 import eu.darken.octi.sync.core.blob.BlobStoreQuota
+import eu.darken.octi.sync.core.blob.CountingSink
 import eu.darken.octi.sync.core.blob.StreamingPayloadCipher
 import eu.darken.octi.sync.core.encryption.EncryptionMode
 import okhttp3.MediaType.Companion.toMediaType
@@ -69,7 +72,14 @@ class OctiServerBlobStore @AssistedInject constructor(
     private fun buildAad(deviceId: DeviceId, moduleId: ModuleId, blobKey: BlobKey): ByteArray =
         "${deviceId.id}:${moduleId.id}:${blobKey.id}".toByteArray()
 
-    override suspend fun put(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey, source: Source, metadata: BlobMetadata): RemoteBlobRef {
+    override suspend fun put(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        key: BlobKey,
+        source: Source,
+        metadata: BlobMetadata,
+        onProgress: BlobProgressCallback?,
+    ): RemoteBlobRef {
         log(TAG, VERBOSE) { "put(key=${key.id}, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
 
         // 1. Pre-encrypt to staging file so we know ciphertext size + hash
@@ -86,6 +96,10 @@ class OctiServerBlobStore @AssistedInject constructor(
             val cipherSize = cipherFile.length()
             val cipherHash = cipherFile.toHash(Hash.Algo.SHA256)
             log(TAG, VERBOSE) { "put(${key.id}): Encrypted ${metadata.size}B → ${cipherSize}B ciphertext" }
+
+            // Report encryption complete — network upload hasn't started yet but the plaintext
+            // has been consumed, so the user sees "preparing → uploading" as a smooth transition.
+            onProgress?.invoke(BlobProgress(bytesTransferred = 0L, bytesTotal = cipherSize))
 
             // 3. Create session with CIPHERTEXT metadata
             val session = endpoint.createBlobSession(
@@ -112,6 +126,7 @@ class OctiServerBlobStore @AssistedInject constructor(
                     }
                     val body = chunk.sliceArray(0 until read).toRequestBody("application/octet-stream".toMediaType())
                     offset = endpoint.appendBlobSession(moduleId, session.sessionId, offset, body)
+                    onProgress?.invoke(BlobProgress(bytesTransferred = offset, bytesTotal = cipherSize))
                 }
             }
 
@@ -157,21 +172,33 @@ class OctiServerBlobStore @AssistedInject constructor(
         key: BlobKey,
         remoteRef: RemoteBlobRef,
         sink: Sink,
+        onProgress: BlobProgressCallback?,
     ): BlobMetadata {
         log(TAG, VERBOSE) { "get(ref=${remoteRef.value}, key=${key.id}, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
+
+        // Fetch ciphertext size up-front so progress has a total to report against. The listBlobs
+        // call is cheap (cached by the endpoint) and we'd be doing it anyway for the return value.
+        val blobList = endpoint.listBlobs(deviceId, moduleId)
+        val entry = blobList.blobs.find { it.blobId == remoteRef.value }
+        val ciphertextTotal = entry?.sizeBytes ?: 0L
 
         val responseBody = endpoint.getBlob(deviceId, moduleId, remoteRef.value)
             ?: throw BlobNotFoundException(remoteRef.value)
 
-        responseBody.use { body ->
-            cipher.decrypt(body.source(), sink, buildAad(deviceId, moduleId, key))
+        val progressingSink = if (onProgress != null) {
+            CountingSink(sink) { written ->
+                onProgress(BlobProgress(bytesTransferred = written, bytesTotal = ciphertextTotal))
+            }
+        } else {
+            sink
         }
 
-        // Return metadata from the blob list for size/checksum
-        val blobList = endpoint.listBlobs(deviceId, moduleId)
-        val entry = blobList.blobs.find { it.blobId == remoteRef.value }
+        responseBody.use { body ->
+            cipher.decrypt(body.source(), progressingSink, buildAad(deviceId, moduleId, key))
+        }
+
         return BlobMetadata(
-            size = entry?.sizeBytes ?: 0,
+            size = ciphertextTotal,
             createdAt = Clock.System.now(),
             checksum = entry?.hashHex ?: "",
         )

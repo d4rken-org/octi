@@ -1,6 +1,6 @@
 package eu.darken.octi.syncs.octiserver.core
 
-import android.content.Context
+import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.mockk
@@ -11,7 +11,7 @@ import testhelpers.BaseTest
 
 class OctiServerBlobStoreTest : BaseTest() {
 
-    private val context = mockk<Context>(relaxed = true)
+    private val blobCacheDirs = mockk<BlobCacheDirs>(relaxed = true)
     private val endpoint = mockk<OctiServerEndpoint>(relaxed = true)
 
     private fun credentialsWith(keyset: PayloadEncryption.KeySet) = OctiServer.Credentials(
@@ -32,7 +32,7 @@ class OctiServerBlobStoreTest : BaseTest() {
         )
 
         shouldThrow<IllegalArgumentException> {
-            OctiServerBlobStore(context, credentialsWith(legacyKeyset), endpoint)
+            OctiServerBlobStore(blobCacheDirs, credentialsWith(legacyKeyset), endpoint)
         }
     }
 
@@ -44,7 +44,7 @@ class OctiServerBlobStoreTest : BaseTest() {
         )
 
         shouldThrow<IllegalArgumentException> {
-            OctiServerBlobStore(context, credentialsWith(unknownKeyset), endpoint)
+            OctiServerBlobStore(blobCacheDirs, credentialsWith(unknownKeyset), endpoint)
         }
     }
 }

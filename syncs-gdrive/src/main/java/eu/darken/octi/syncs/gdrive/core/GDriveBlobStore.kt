@@ -10,9 +10,13 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.BlobNotFoundException
+import eu.darken.octi.sync.core.blob.BlobProgress
+import eu.darken.octi.sync.core.blob.BlobProgressCallback
 import eu.darken.octi.sync.core.blob.BlobStore
 import eu.darken.octi.sync.core.blob.BlobStoreConstraints
 import eu.darken.octi.sync.core.blob.BlobStoreQuota
+import eu.darken.octi.sync.core.blob.CountingSink
+import eu.darken.octi.sync.core.blob.CountingSource
 import okio.Sink
 import okio.Source
 import okio.buffer
@@ -32,15 +36,29 @@ class GDriveBlobStore(
     override val connectorId: ConnectorId,
 ) : BlobStore {
 
-    override suspend fun put(deviceId: DeviceId, moduleId: ModuleId, key: BlobKey, source: Source, metadata: BlobMetadata): RemoteBlobRef {
+    override suspend fun put(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        key: BlobKey,
+        source: Source,
+        metadata: BlobMetadata,
+        onProgress: BlobProgressCallback?,
+    ): RemoteBlobRef {
         log(TAG, VERBOSE) { "put(key=${key.id}, device=$deviceId, module=$moduleId)" }
+        val progressingSource: Source = if (onProgress != null) {
+            CountingSource(source) { read ->
+                onProgress(BlobProgress(bytesTransferred = read, bytesTotal = metadata.size))
+            }
+        } else {
+            source
+        }
         connector.withDrive {
             val blobStoreDir = appDataRoot.child(BLOB_STORE_DIR) ?: appDataRoot.createDir(BLOB_STORE_DIR)
             val deviceDir = blobStoreDir.child(deviceId.id) ?: blobStoreDir.createDir(deviceId.id)
             val moduleDir = deviceDir.child(moduleId.id) ?: deviceDir.createDir(moduleId.id)
             val target = moduleDir.child(key.id) ?: moduleDir.createFile(key.id)
 
-            source.buffer().inputStream().use { input ->
+            progressingSource.buffer().inputStream().use { input ->
                 target.writeStreamed(
                     input = input,
                     sizeBytes = metadata.size,
@@ -58,13 +76,21 @@ class GDriveBlobStore(
         key: BlobKey,
         remoteRef: RemoteBlobRef,
         sink: Sink,
+        onProgress: BlobProgressCallback?,
     ): BlobMetadata {
         log(TAG, VERBOSE) { "get(ref=${remoteRef.value}, device=$deviceId, module=$moduleId)" }
         // [key] is unused — GDrive stores unencrypted blobs so no AAD is needed.
         return connector.withDrive {
             val file = findBlobFile(deviceId, moduleId, remoteRef) ?: throw BlobNotFoundException(remoteRef.value)
             val metadata = file.fetchBlobMetadata().toBlobMetadata(remoteRef)
-            sink.buffer().outputStream().use { output ->
+            val progressingSink: Sink = if (onProgress != null) {
+                CountingSink(sink) { written ->
+                    onProgress(BlobProgress(bytesTransferred = written, bytesTotal = metadata.size))
+                }
+            } else {
+                sink
+            }
+            progressingSink.buffer().outputStream().use { output ->
                 file.readStreamedTo(output)
             }
             metadata

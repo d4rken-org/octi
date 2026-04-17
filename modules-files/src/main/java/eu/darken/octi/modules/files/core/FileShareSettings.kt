@@ -40,6 +40,13 @@ class FileShareSettings @Inject constructor(
     override val isEnabled = dataStore.createValue("module.files.enabled", true)
 
     /**
+     * Post an Android notification when a peer device shares a new file. Per-device diffs are
+     * tracked in memory by [IncomingFileNotifier]; this setting only gates the notification
+     * post — file syncing continues regardless.
+     */
+    val notifyOnIncoming = dataStore.createValue("module.files.notify.incoming", true)
+
+    /**
      * Keyed by blobKey. Each entry is a tombstone recording which connectors still need the blob deleted.
      */
     val pendingDeletes = dataStore.createValue(

@@ -20,6 +20,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobChecksumMismatchException
 import eu.darken.octi.sync.core.blob.BlobManager
+import eu.darken.octi.sync.core.blob.BlobProgress
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -44,6 +45,7 @@ class FileShareListVM @Inject constructor(
         val isOurDevice: Boolean = false,
         val quotaItems: List<QuotaItem> = emptyList(),
         val files: List<FileItem> = emptyList(),
+        val uploadProgress: BlobProgress? = null,
     )
 
     data class QuotaItem(
@@ -55,6 +57,7 @@ class FileShareListVM @Inject constructor(
     data class FileItem(
         val sharedFile: FileShareInfo.SharedFile,
         val isAvailable: Boolean,
+        val downloadProgress: BlobProgress? = null,
     )
 
     sealed interface UiEvent {
@@ -71,7 +74,8 @@ class FileShareListVM @Inject constructor(
                 fileShareRepo.state,
                 moduleManager.byDevice,
                 blobManager.quotas(),
-            ) { repoState, byDevice, quotas ->
+                fileShareService.transfers,
+            ) { repoState, byDevice, quotas, transfers ->
                 val isOurDevice = targetDeviceId == syncSettings.deviceId
                 val configuredConnectorIds = quotas.keys.map { it.idString }.toSet()
 
@@ -95,9 +99,13 @@ class FileShareListVM @Inject constructor(
                 val files = (fileShareData?.files ?: emptyList())
                     .filter { now <= it.expiresAt }
                     .map { sharedFile ->
+                        val download = transfers[sharedFile.blobKey]
+                            ?.takeIf { it.direction == FileShareService.Transfer.Direction.DOWNLOAD }
+                            ?.progress
                         FileItem(
                             sharedFile = sharedFile,
                             isAvailable = isOurDevice || sharedFile.availableOn.any { it in configuredConnectorIds },
+                            downloadProgress = download,
                         )
                     }
                     .sortedByDescending { it.sharedFile.sharedAt }
@@ -117,11 +125,18 @@ class FileShareListVM @Inject constructor(
                     emptyList()
                 }
 
+                // In-flight uploads don't have a row in `files` yet; surface the first one so the
+                // Share screen can show a top-level progress bar while the transfer runs.
+                val uploadProgress = transfers.values
+                    .firstOrNull { it.direction == FileShareService.Transfer.Direction.UPLOAD }
+                    ?.progress
+
                 State(
                     deviceLabel = deviceLabel,
                     isOurDevice = isOurDevice,
                     quotaItems = quotaItems,
                     files = files,
+                    uploadProgress = uploadProgress,
                 )
             }
         }
