@@ -41,7 +41,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import eu.darken.octi.R
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import eu.darken.octi.common.BuildConfigWrap
@@ -109,7 +108,7 @@ fun AddOctiServerScreen(
                 .padding(bottom = 16.dp),
         ) {
             Text(
-                text = stringResource(R.string.general_select_server_label),
+                text = stringResource(OctiServerR.string.sync_octiserver_add_select_server_label),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp),
             )
@@ -132,7 +131,7 @@ fun AddOctiServerScreen(
                 }
 
                 ServerRadioOption(
-                    text = stringResource(R.string.sync_custom_server_label),
+                    text = stringResource(OctiServerR.string.sync_octiserver_add_custom_server_label),
                     selected = state.serverType == null,
                     enabled = !state.isBusy,
                     onClick = { onSelectType(null) },
@@ -190,7 +189,7 @@ fun AddOctiServerScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp),
             ) {
-                Text(text = stringResource(R.string.general_create_account_action))
+                Text(text = stringResource(OctiServerR.string.sync_octiserver_add_create_account_action))
             }
 
             Text(
@@ -211,7 +210,7 @@ fun AddOctiServerScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp),
             ) {
-                Text(text = stringResource(R.string.general_link_existing_action))
+                Text(text = stringResource(OctiServerR.string.sync_octiserver_add_link_existing_action))
             }
 
             Text(

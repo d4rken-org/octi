@@ -11,7 +11,7 @@ import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.sync.core.ConnectorId
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobManager

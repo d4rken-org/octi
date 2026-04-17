@@ -16,6 +16,9 @@
     <string name="general_maybe_later_action">Maybe later</string>
     <string name="general_manage_action">Manage</string>
     <string name="general_quota_label">Quota</string>
+    <string name="general_sync_action">Synchronize</string>
+    <string name="general_reset_action">Reset</string>
+    <string name="general_disconnect_action">Disconnect</string>
     <string name="general_upgrade_action">Upgrade</string>
     <string name="general_update_action">Update</string>
     <string name="general_donate_action">Donate</string>

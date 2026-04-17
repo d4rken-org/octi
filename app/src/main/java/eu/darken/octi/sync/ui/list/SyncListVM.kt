@@ -5,24 +5,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
-import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.withPrevious
 import eu.darken.octi.common.navigation.Nav
+import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.ConnectorIssueAggregator
+import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
-import eu.darken.octi.syncs.gdrive.core.GDriveAppDataConnector
-import eu.darken.octi.syncs.gdrive.core.GoogleAccount
-import eu.darken.octi.syncs.octiserver.core.OctiServer
-import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -56,27 +53,14 @@ class SyncListVM @Inject constructor(
         val deviceId: String = "",
     )
 
-    sealed interface ConnectorItem {
-        val connectorId: ConnectorId
-
-        data class GDrive(
-            override val connectorId: ConnectorId,
-            val account: GoogleAccount,
-            val ourState: SyncConnectorState,
-            val otherStates: Collection<SyncConnectorState>,
-            val isPaused: Boolean,
-            val issues: List<ConnectorIssue> = emptyList(),
-        ) : ConnectorItem
-
-        data class OctiServer(
-            override val connectorId: ConnectorId,
-            val credentials: OctiServer.Credentials,
-            val ourState: SyncConnectorState,
-            val otherStates: Collection<SyncConnectorState>,
-            val isPaused: Boolean,
-            val issues: List<ConnectorIssue> = emptyList(),
-        ) : ConnectorItem
-    }
+    data class ConnectorItem(
+        val connectorId: ConnectorId,
+        val connector: SyncConnector,
+        val ourState: SyncConnectorState,
+        val otherStates: Collection<SyncConnectorState>,
+        val isPaused: Boolean,
+        val issues: List<ConnectorIssue> = emptyList(),
+    )
 
     private val highlightedIds = MutableStateFlow<Set<ConnectorId>>(emptySet())
     private val highlightJobs = mutableMapOf<ConnectorId, Job>()
@@ -116,31 +100,16 @@ class SyncListVM @Inject constructor(
             val withStates = connectors.map { connector ->
                 combineTransform(connector.state, issueAggregator.issues) { state, allIssues ->
                     val connectorIssues = allIssues.filter { it.connectorId == connector.identifier }
-                    val item = when (connector) {
-                        is GDriveAppDataConnector -> ConnectorItem.GDrive(
+                    emit(
+                        ConnectorItem(
                             connectorId = connector.identifier,
-                            account = connector.account,
+                            connector = connector,
                             ourState = state,
                             otherStates = (connectors - connector).map { it.state.first() },
                             isPaused = paused.contains(connector.identifier),
                             issues = connectorIssues,
                         )
-
-                        is OctiServerConnector -> ConnectorItem.OctiServer(
-                            connectorId = connector.identifier,
-                            credentials = connector.credentials,
-                            ourState = state,
-                            otherStates = (connectors - connector).map { it.state.first() },
-                            isPaused = paused.contains(connector.identifier),
-                            issues = connectorIssues,
-                        )
-
-                        else -> {
-                            log(TAG, WARN) { "Unknown connector type: $connector" }
-                            null
-                        }
-                    }
-                    if (item != null) emit(item)
+                    )
                 }
             }
 
@@ -191,9 +160,9 @@ class SyncListVM @Inject constructor(
         navTo(Nav.Sync.Devices(connectorId.idString))
     }
 
-    fun linkNewDevice(connectorId: ConnectorId) {
-        log(TAG) { "linkNewDevice($connectorId)" }
-        navTo(Nav.Sync.OctiServerLinkHost(connectorId.idString))
+    fun linkNewDevice(destination: NavigationDestination) {
+        log(TAG) { "linkNewDevice($destination)" }
+        navTo(destination)
     }
 
     companion object {

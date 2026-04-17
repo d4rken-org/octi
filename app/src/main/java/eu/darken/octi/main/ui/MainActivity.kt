@@ -22,6 +22,9 @@ import eu.darken.octi.common.navigation.LocalNavigationController
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationController
 import eu.darken.octi.common.navigation.NavigationEntry
+import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.ConnectorUiContribution
+import eu.darken.octi.sync.core.LocalConnectorContributions
 import eu.darken.octi.common.theming.OctiTheme
 import eu.darken.octi.common.uix.Activity2
 import javax.inject.Inject
@@ -33,6 +36,7 @@ class MainActivity : Activity2() {
 
     @Inject lateinit var navCtrl: NavigationController
     @Inject lateinit var navigationEntries: Set<@JvmSuppressWildcards NavigationEntry>
+    @Inject lateinit var connectorContributions: Map<ConnectorType, @JvmSuppressWildcards ConnectorUiContribution>
     @Inject lateinit var debugSessionManager: DebugSessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +51,10 @@ class MainActivity : Activity2() {
             navCtrl.setup(backStack)
 
             OctiTheme(state = themeState) {
-                CompositionLocalProvider(LocalNavigationController provides navCtrl) {
+                CompositionLocalProvider(
+                    LocalNavigationController provides navCtrl,
+                    LocalConnectorContributions provides connectorContributions,
+                ) {
                     NavDisplay(
                         backStack = backStack,
                         onBack = {

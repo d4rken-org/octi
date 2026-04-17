@@ -3,7 +3,7 @@ package eu.darken.octi.sync.core.blob
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import io.kotest.matchers.maps.shouldContainKey

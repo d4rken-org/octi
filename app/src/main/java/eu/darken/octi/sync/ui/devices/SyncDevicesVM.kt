@@ -15,8 +15,8 @@ import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.meta.core.MetaSerializer
-import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.ConnectorIssue
@@ -70,7 +70,7 @@ class SyncDevicesVM @Inject constructor(
 
     data class State(
         val items: List<DeviceItem> = emptyList(),
-        val connectorType: ConnectorType? = null,
+        val deviceRemovalPolicy: DeviceRemovalPolicy? = null,
         val isPaused: Boolean = false,
     )
 
@@ -115,7 +115,7 @@ class SyncDevicesVM @Inject constructor(
 
                 State(
                     items = items,
-                    connectorType = connectorId.type,
+                    deviceRemovalPolicy = connector.capabilities.deviceRemovalPolicy,
                     isPaused = pausedIds.contains(connectorId),
                 )
             }

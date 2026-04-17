@@ -8,7 +8,7 @@ import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.files.FileShareModule
 import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings

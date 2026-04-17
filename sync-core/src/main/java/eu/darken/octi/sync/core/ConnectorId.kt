@@ -1,6 +1,7 @@
 package eu.darken.octi.sync.core
 
 import android.os.Parcelable
+import eu.darken.octi.common.sync.ConnectorType
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

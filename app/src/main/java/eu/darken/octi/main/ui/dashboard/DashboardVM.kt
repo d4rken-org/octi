@@ -41,7 +41,7 @@ import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.ConnectorIssueAggregator
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.IssueSeverity
 import eu.darken.octi.sync.core.SyncExecutor

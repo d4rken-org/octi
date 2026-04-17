@@ -26,4 +26,8 @@
     <string name="sync_octiserver_device_encryption_incompatible">This device may not support this account\'s encryption. Update the app on this device or recreate the account with legacy encryption.</string>
     <string name="sync_octiserver_blob_encryption_unsupported">File sharing requires updated encryption. Re-link this account to enable file sharing.</string>
     <string name="sync_octiserver_issues_type_encryption_error">Encryption error</string>
+    <string name="sync_octiserver_add_create_account_action">Create account</string>
+    <string name="sync_octiserver_add_link_existing_action">Link to existing account</string>
+    <string name="sync_octiserver_add_select_server_label">Select server</string>
+    <string name="sync_octiserver_add_custom_server_label">Custom server</string>
 </resources>

@@ -46,7 +46,7 @@ import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.meta.core.MetaInfo
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.IssueSeverity
 import kotlin.time.Clock
@@ -95,7 +95,7 @@ fun SyncDevicesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(R.string.sync_synced_devices_label)) },
+                title = { Text(text = stringResource(SyncR.string.sync_synced_devices_label)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -121,7 +121,7 @@ fun SyncDevicesScreen(
     selectedDevice?.let { device ->
         DeviceActionsSheet(
             device = device,
-            connectorType = state.connectorType,
+            removalPolicy = state.deviceRemovalPolicy,
             isPaused = state.isPaused,
             onDismiss = { selectedDevice = null },
             onDelete = {
@@ -231,7 +231,7 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
     val deviceId2 = DeviceId("device-def-456")
     SyncDevicesScreen(
         state = SyncDevicesVM.State(
-            connectorType = ConnectorType.OCTISERVER,
+            deviceRemovalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE,
             items = listOf(
                 SyncDevicesVM.DeviceItem(
                     deviceId = deviceId1,
@@ -286,7 +286,7 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
 @Composable
 private fun SyncDevicesScreenEmptyPreview() = PreviewWrapper {
     SyncDevicesScreen(
-        state = SyncDevicesVM.State(connectorType = ConnectorType.OCTISERVER),
+        state = SyncDevicesVM.State(deviceRemovalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE),
         onNavigateUp = {},
         onDeleteDevice = {},
     )

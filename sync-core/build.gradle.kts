@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
@@ -17,6 +18,11 @@ android {
 
 
     setupModuleBuildTypes()
+
+    buildFeatures {
+        viewBinding = false
+        compose = true
+    }
 
     testOptions {
         unitTests {
@@ -37,10 +43,13 @@ dependencies {
     testImplementation(project(":app-common-test"))
 
     addAndroidCore()
+    addAndroidUI()
     addDI()
     addCoroutines()
     addSerialization()
     addIO()
+    addCompose()
+    addNavigation3()
     addTesting()
 
     implementation("androidx.security:security-crypto-ktx:1.1.0")

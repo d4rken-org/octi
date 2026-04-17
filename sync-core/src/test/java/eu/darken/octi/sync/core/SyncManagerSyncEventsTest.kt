@@ -1,5 +1,6 @@
 package eu.darken.octi.sync.core
 
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.module.core.ModuleId
 import io.kotest.matchers.shouldBe
 import io.mockk.every

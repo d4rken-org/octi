@@ -21,9 +21,11 @@ import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.ConnectorCapabilities
 import eu.darken.octi.sync.core.ConnectorId
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.DeviceMetadata
@@ -110,6 +112,10 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val driveLock = Mutex()
 
     override val accountLabel: String get() = account.email
+
+    override val capabilities: ConnectorCapabilities = ConnectorCapabilities(
+        deviceRemovalPolicy = DeviceRemovalPolicy.REMOVE_LOCAL_ONLY,
+    )
 
     override val identifier: ConnectorId = ConnectorId(
         type = ConnectorType.GDRIVE,

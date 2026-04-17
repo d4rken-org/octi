@@ -34,9 +34,9 @@ import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.modules.meta.core.MetaInfo
-import eu.darken.octi.sync.core.ConnectorType
-import eu.darken.octi.sync.core.IssueSeverity
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.DeviceRemovalPolicy
+import eu.darken.octi.sync.core.IssueSeverity
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
@@ -44,14 +44,14 @@ import kotlin.time.Instant
 @Composable
 fun DeviceActionsSheet(
     device: SyncDevicesVM.DeviceItem,
-    connectorType: ConnectorType?,
+    removalPolicy: DeviceRemovalPolicy?,
     isPaused: Boolean,
     onDismiss: () -> Unit,
     onDelete: () -> Unit,
 ) {
-    val removeIsRevoke = when (connectorType) {
-        ConnectorType.GDRIVE -> false
-        ConnectorType.OCTISERVER -> true
+    val removeIsRevoke = when (removalPolicy) {
+        DeviceRemovalPolicy.REMOVE_LOCAL_ONLY -> false
+        DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE -> true
         null -> null
     }
 
@@ -212,7 +212,7 @@ private fun DeviceActionsSheetPreview() = PreviewWrapper {
             serverAddedAt = Clock.System.now() - (86400 * 30).seconds,
             serverPlatform = "android",
         ),
-        connectorType = ConnectorType.OCTISERVER,
+        removalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE,
         isPaused = false,
         onDismiss = {},
         onDelete = {},

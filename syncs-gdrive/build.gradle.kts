@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
@@ -16,6 +17,11 @@ android {
     }
 
     setupModuleBuildTypes()
+
+    buildFeatures {
+        viewBinding = false
+        compose = true
+    }
 
     testOptions {
         unitTests {
@@ -42,6 +48,8 @@ dependencies {
     addCoroutines()
     addSerialization()
     addIO()
+    addCompose()
+    addNavigation3()
     addRetrofit()
     addTesting()
 

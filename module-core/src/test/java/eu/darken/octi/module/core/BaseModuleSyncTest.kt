@@ -2,7 +2,7 @@ package eu.darken.octi.module.core
 
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.sync.core.ConnectorId
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncRead

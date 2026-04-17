@@ -18,9 +18,11 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.ConnectorCapabilities
 import eu.darken.octi.sync.core.ConnectorId
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncEvent
@@ -159,6 +161,10 @@ class OctiServerConnector @AssistedInject constructor(
     }
 
     override val accountLabel: String get() = credentials.serverAdress.domain
+
+    override val capabilities: ConnectorCapabilities = ConnectorCapabilities(
+        deviceRemovalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE,
+    )
 
     override val identifier: ConnectorId = ConnectorId(
         type = ConnectorType.OCTISERVER,

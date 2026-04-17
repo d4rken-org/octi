@@ -11,6 +11,7 @@ interface SyncConnector {
 
     val identifier: ConnectorId
     val accountLabel: String
+    val capabilities: ConnectorCapabilities
 
     val state: Flow<SyncConnectorState>
     val data: Flow<SyncRead?>

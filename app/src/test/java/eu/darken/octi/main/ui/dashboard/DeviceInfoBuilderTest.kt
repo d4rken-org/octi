@@ -6,7 +6,7 @@ import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.CommonIssue
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.IssueSeverity
 import io.kotest.matchers.collections.shouldBeEmpty

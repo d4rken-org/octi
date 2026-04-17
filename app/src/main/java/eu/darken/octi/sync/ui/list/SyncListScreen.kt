@@ -6,7 +6,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import eu.darken.octi.syncs.octiserver.ui.OctiServerIcon
 import androidx.compose.material.icons.twotone.PauseCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,34 +39,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
 import eu.darken.octi.common.R as CommonR
-
-import eu.darken.octi.syncs.gdrive.R as GDriveR
-import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.navigation.NavigationEventHandler
+import eu.darken.octi.sync.core.LocalConnectorContributions
+import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
-import eu.darken.octi.sync.core.ConnectorType
 import eu.darken.octi.sync.core.IssueSeverity
-import eu.darken.octi.sync.core.DeviceId
-import eu.darken.octi.sync.core.DeviceMetadata
 import eu.darken.octi.sync.core.SyncConnectorState
-import eu.darken.octi.sync.core.encryption.PayloadEncryption
-import eu.darken.octi.syncs.octiserver.core.OctiServer
-import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
-import okio.ByteString.Companion.encodeUtf8
-import kotlin.time.Clock
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun SyncListScreenHost(vm: SyncListVM = hiltViewModel()) {
@@ -84,7 +75,7 @@ fun SyncListScreenHost(vm: SyncListVM = hiltViewModel()) {
             onTogglePause = { id -> vm.togglePause(id) },
             onForceSync = { id -> vm.forceSync(id) },
             onViewDevices = { id -> vm.viewDevices(id) },
-            onLinkNewDevice = { id -> vm.linkNewDevice(id) },
+            onLinkNewDevice = { dest -> vm.linkNewDevice(dest) },
             onReset = { id -> vm.resetData(id) },
             onDisconnect = { id -> vm.disconnect(id) },
         )
@@ -99,12 +90,13 @@ fun SyncListScreen(
     onTogglePause: (ConnectorId) -> Unit,
     onForceSync: (ConnectorId) -> Unit,
     onViewDevices: (ConnectorId) -> Unit,
-    onLinkNewDevice: (ConnectorId) -> Unit,
+    onLinkNewDevice: (NavigationDestination) -> Unit,
     onReset: (ConnectorId) -> Unit,
     onDisconnect: (ConnectorId) -> Unit,
 ) {
     var showActionsForId by remember { mutableStateOf<ConnectorId?>(null) }
     val showActionsFor = showActionsForId?.let { id -> state.connectors.find { it.connectorId == id } }
+    val contributions = LocalConnectorContributions.current
 
     Scaffold(
         topBar = {
@@ -133,27 +125,19 @@ fun SyncListScreen(
         ) {
             items(
                 items = state.connectors,
-                key = { item ->
-                    when (item) {
-                        is SyncListVM.ConnectorItem.GDrive -> "gdrive-${item.account.id.id}"
-                        is SyncListVM.ConnectorItem.OctiServer -> "octiserver-${item.credentials.accountId.id}"
-                    }
-                },
+                key = { it.connectorId.idString },
             ) { item ->
-                val isHighlighted = state.highlightedConnectorIds.contains(item.connectorId)
-                when (item) {
-                    is SyncListVM.ConnectorItem.GDrive -> GDriveConnectorCard(
-                        item = item,
-                        isHighlighted = isHighlighted,
-                        onClick = { showActionsForId = item.connectorId },
-                    )
-
-                    is SyncListVM.ConnectorItem.OctiServer -> OctiServerConnectorCard(
-                        item = item,
-                        isHighlighted = isHighlighted,
-                        onClick = { showActionsForId = item.connectorId },
-                    )
+                val contribution = contributions[item.connectorId.type] ?: run {
+                    log(TAG, WARN) { "No ConnectorUiContribution for ${item.connectorId.type} — skipping card" }
+                    return@items
                 }
+                val isHighlighted = state.highlightedConnectorIds.contains(item.connectorId)
+                ConnectorCard(
+                    item = item,
+                    contribution = contribution,
+                    isHighlighted = isHighlighted,
+                    onClick = { showActionsForId = item.connectorId },
+                )
             }
 
             item {
@@ -179,68 +163,43 @@ fun SyncListScreen(
     }
 
     showActionsFor?.let { item ->
-        when (item) {
-            is SyncListVM.ConnectorItem.GDrive -> GDriveActionsSheet(
-                item = item,
-                isPro = state.isPro,
-                onDismiss = { showActionsForId = null },
-                onTogglePause = {
-                    onTogglePause(item.connectorId)
-                },
-                onForceSync = {
-                    onForceSync(item.connectorId)
-                    showActionsForId = null
-                },
-                onViewDevices = {
-                    onViewDevices(item.connectorId)
-                    showActionsForId = null
-                },
-                onReset = {
-                    onReset(item.connectorId)
-                    showActionsForId = null
-                },
-                onDisconnect = {
-                    onDisconnect(item.connectorId)
-                    showActionsForId = null
-                },
-            )
-
-            is SyncListVM.ConnectorItem.OctiServer -> OctiServerActionsSheet(
-                item = item,
-                isPro = state.isPro,
-                onDismiss = { showActionsForId = null },
-                onTogglePause = {
-                    onTogglePause(item.connectorId)
-                },
-                onForceSync = {
-                    onForceSync(item.connectorId)
-                    showActionsForId = null
-                },
-                onViewDevices = {
-                    onViewDevices(item.connectorId)
-                    showActionsForId = null
-                },
-                onLinkNewDevice = {
-                    onLinkNewDevice(item.connectorId)
-                    showActionsForId = null
-                },
-                onReset = {
-                    onReset(item.connectorId)
-                    showActionsForId = null
-                },
-                onDisconnect = {
-                    onDisconnect(item.connectorId)
-                    showActionsForId = null
-                },
-            )
-        }
+        val contribution = contributions[item.connectorId.type] ?: return@let
+        contribution.ActionsSheet(
+            connector = item.connector,
+            state = item.ourState,
+            isPaused = item.isPaused,
+            isPro = state.isPro,
+            onDismiss = { showActionsForId = null },
+            onTogglePause = { onTogglePause(item.connectorId) },
+            onForceSync = {
+                onForceSync(item.connectorId)
+                showActionsForId = null
+            },
+            onViewDevices = {
+                onViewDevices(item.connectorId)
+                showActionsForId = null
+            },
+            onLinkNewDevice = {
+                contribution.linkDeviceDestination(item.connector)?.let { onLinkNewDevice(it) }
+                showActionsForId = null
+            },
+            onReset = {
+                onReset(item.connectorId)
+                showActionsForId = null
+            },
+            onDisconnect = {
+                onDisconnect(item.connectorId)
+                showActionsForId = null
+            },
+        )
     }
 }
 
 @Composable
-private fun GDriveConnectorCard(
-    item: SyncListVM.ConnectorItem.GDrive,
-    isHighlighted: Boolean = false,
+private fun ConnectorCard(
+    item: SyncListVM.ConnectorItem,
+    contribution: eu.darken.octi.sync.core.ConnectorUiContribution,
+    isHighlighted: Boolean,
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -262,17 +221,10 @@ private fun GDriveConnectorCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_baseline_gdrive_24),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                )
+                contribution.Icon(modifier = Modifier.size(24.dp))
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = buildString {
-                        append(stringResource(GDriveR.string.sync_gdrive_type_label))
-                        append(" (${stringResource(GDriveR.string.sync_gdrive_appdata_label)})")
-                    },
+                    text = contribution.listCardTitle(item.connector),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )
@@ -283,7 +235,7 @@ private fun GDriveConnectorCard(
 
             LabeledField(
                 label = stringResource(R.string.sync_account_label),
-                value = item.account.email,
+                value = contribution.listCardAccountValue(item.connector),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -303,85 +255,6 @@ private fun GDriveConnectorCard(
                     }
                     ?: stringResource(CommonR.string.general_na_label),
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            DevicesField(state = item.ourState, otherStates = item.otherStates)
-
-            ConnectorIssuesRow(issues = item.issues)
-        }
-    }
-}
-
-@Composable
-private fun OctiServerConnectorCard(
-    item: SyncListVM.ConnectorItem.OctiServer,
-    isHighlighted: Boolean = false,
-    onClick: () -> Unit,
-) {
-    val context = LocalContext.current
-    val borderColor by animateColorAsState(
-        targetValue = if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-        animationSpec = tween(durationMillis = 500),
-        label = "highlightBorder",
-    )
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable(onClick = onClick),
-        border = if (isHighlighted) BorderStroke(2.dp, borderColor) else null,
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                OctiServerIcon(
-                    modifier = Modifier.size(24.dp),
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = when {
-                        item.credentials.serverAdress.domain.endsWith(".darken.eu") -> {
-                            "${stringResource(OctiServerR.string.sync_octiserver_type_label)} (${item.credentials.serverAdress.domain})"
-                        }
-                        else -> {
-                            "${stringResource(OctiServerR.string.sync_octiserver_type_label)} (${item.credentials.serverAdress.address})"
-                        }
-                    },
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                ConnectorStatusIndicators(isBusy = item.ourState.isBusy, isPaused = item.isPaused)
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LabeledField(
-                label = stringResource(R.string.sync_account_label),
-                value = item.credentials.accountId.id,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LastSyncField(state = item.ourState)
-
-            val quota = item.ourState.quota
-            if (quota != null) {
-                Spacer(modifier = Modifier.height(8.dp))
-
-                LabeledField(
-                    label = stringResource(CommonR.string.general_quota_label),
-                    value = quota.let { stats ->
-                        val total = Formatter.formatShortFileSize(context, stats.storageTotal)
-                        val used = Formatter.formatShortFileSize(context, stats.storageUsed)
-                        val free = Formatter.formatShortFileSize(context, stats.storageFree)
-                        stringResource(R.string.sync_quota_storage_msg, free, used, total)
-                    },
-                )
-            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -444,7 +317,7 @@ private fun LastSyncField(state: SyncConnectorState) {
 @Composable
 private fun DevicesField(state: SyncConnectorState, otherStates: Collection<SyncConnectorState>) {
     Text(
-        text = stringResource(R.string.sync_synced_devices_label),
+        text = stringResource(SyncR.string.sync_synced_devices_label),
         style = MaterialTheme.typography.labelMedium,
     )
     val ourDevices = state.deviceMetadata.map { it.deviceId }.toSet()
@@ -501,48 +374,7 @@ private fun ConnectorIssuesRow(issues: List<ConnectorIssue>) {
     }
 }
 
-@Preview2
-@Composable
-private fun SyncListScreenPreview() = PreviewWrapper {
-    SyncListScreen(
-        state = SyncListVM.State(
-            deviceId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-            connectors = listOf(
-                SyncListVM.ConnectorItem.OctiServer(
-                    connectorId = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "default", account = "preview-account"),
-                    credentials = OctiServer.Credentials(
-                        serverAdress = OctiServer.Address("prod.kserver.octi.darken.eu"),
-                        accountId = OctiServer.Credentials.AccountId("preview-account-id"),
-                        devicePassword = OctiServer.Credentials.DevicePassword("preview-password"),
-                        encryptionKeyset = PayloadEncryption.KeySet(
-                            type = "AES256_GCM",
-                            key = "preview-key-data".encodeUtf8(),
-                        ),
-                    ),
-                    ourState = OctiServerConnector.State(
-                        activeActions = 0,
-                        lastActionAt = Clock.System.now() - 300.seconds,
-                        deviceMetadata = listOf(
-                            DeviceMetadata(deviceId = DeviceId("device-1")),
-                            DeviceMetadata(deviceId = DeviceId("device-2")),
-                        ),
-                    ),
-                    otherStates = emptyList(),
-                    isPaused = false,
-                    issues = emptyList(),
-                ),
-            ),
-        ),
-        onNavigateUp = {},
-        onAddConnector = {},
-        onTogglePause = {},
-        onForceSync = {},
-        onViewDevices = {},
-        onLinkNewDevice = {},
-        onReset = {},
-        onDisconnect = {},
-    )
-}
+private val TAG = logTag("Sync", "List", "Screen")
 
 @Preview2
 @Composable

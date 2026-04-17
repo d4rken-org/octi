@@ -1,6 +1,7 @@
 package eu.darken.octi.sync.core
 
 import eu.darken.octi.common.datastore.DataStoreValue
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.cache.SyncCache
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder

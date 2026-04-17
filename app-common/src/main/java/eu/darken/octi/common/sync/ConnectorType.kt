@@ -1,4 +1,4 @@
-package eu.darken.octi.sync.core
+package eu.darken.octi.common.sync
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

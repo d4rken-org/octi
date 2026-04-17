@@ -2,11 +2,7 @@
     <string name="label_settings">Settings</string>
     <string name="label_help">Help</string>
 
-    <string name="general_create_account_action">Create account</string>
-    <string name="general_link_existing_action">Link to existing account</string>
-    <string name="general_sync_action">Synchronize</string>
     <string name="general_manage_devices_action">Manage devices</string>
-    <string name="general_select_server_label">Select server</string>
 
     <string name="onboarding_welcome_subtitle">Your Device Buddy</string>
     <string name="onboarding_welcome_body1">Octi is a tool for people with multiple Android devices.</string>
@@ -95,9 +91,7 @@
     <string name="sync_last_never_label">Never</string>
     <string name="sync_quota_storage_msg">%1$s free (%2$s / %3$s)</string>
 
-    <string name="general_disconnect_action">Disconnect</string>
     <string name="generic_info_action">Info</string>
-    <string name="general_reset_action">Reset</string>
 
     <string name="sync_account_label">Account</string>
     <string name="sync_services_label">Sync services</string>
@@ -105,9 +99,7 @@
     <string name="sync_add_label">Add sync service</string>
     <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
 
-    <string name="sync_synced_devices_label">Synced devices</string>
     <string name="sync_device_id_label">Device ID</string>
-    <string name="sync_connector_paused_label">Pause synchronization</string>
 
     <plurals name="general_devices_count_label">
         <item quantity="one">%d device</item>
@@ -141,8 +133,6 @@
     <string name="sync_setting_interval_label">Sync interval</string>
     <string name="sync_setting_interval_desc">Background synchronization interval (in minutes).</string>
     <string name="sync_setting_category_background_label">Background synchronization</string>
-
-    <string name="sync_custom_server_label">Custom server</string>
 
     <string name="settings_category_ui_label">User interface</string>
 

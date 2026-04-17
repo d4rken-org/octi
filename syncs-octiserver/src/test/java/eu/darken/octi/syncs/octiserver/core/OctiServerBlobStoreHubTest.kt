@@ -1,7 +1,7 @@
 package eu.darken.octi.syncs.octiserver.core
 
 import eu.darken.octi.sync.core.ConnectorId
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import io.kotest.matchers.collections.shouldBeEmpty

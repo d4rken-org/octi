@@ -1,5 +1,6 @@
 package eu.darken.octi.sync.core
 
+import eu.darken.octi.common.sync.ConnectorType
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test

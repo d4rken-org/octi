@@ -151,10 +151,8 @@ import eu.darken.octi.modules.meta.R as MetaR
 import eu.darken.octi.modules.power.R as PowerR
 import eu.darken.octi.modules.wifi.R as WifiR
 import eu.darken.octi.sync.R as SyncR
-import eu.darken.octi.syncs.gdrive.R as GDriveR
-import eu.darken.octi.sync.core.ConnectorType
-import eu.darken.octi.syncs.octiserver.R as OctiServerR
-import eu.darken.octi.syncs.octiserver.ui.OctiServerIcon
+import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.LocalConnectorContributions
 
 /** How long the deeplink collector waits for dashboard state to populate before giving up. */
 private const val DEEPLINK_STATE_WAIT_MS = 5_000L
@@ -724,12 +722,10 @@ private fun connectorTypesLabel(
 ): String? {
     val connectorTypes = syncStatus.connectorTypes
     if (connectorTypes.isEmpty()) return null
+    val contributions = LocalConnectorContributions.current
     val connectorsByType = syncStatus.syncDetail.connectors.groupBy { it.type }
     val names = connectorTypes.map { type ->
-        val typeName = when (type) {
-            ConnectorType.GDRIVE -> stringResource(GDriveR.string.sync_gdrive_type_label)
-            ConnectorType.OCTISERVER -> stringResource(OctiServerR.string.sync_octiserver_type_label)
-        }
+        val typeName = contributions[type]?.let { stringResource(it.labelRes) } ?: type.typeId
         val count = connectorsByType[type]?.size ?: 1
         if (count > 1) {
             stringResource(R.string.dashboard_sync_connector_type_count, typeName, count)
@@ -868,7 +864,7 @@ private fun SyncStatusBar(
                                 IconButton(onClick = onRefresh) {
                                     Icon(
                                         imageVector = Icons.TwoTone.Refresh,
-                                        contentDescription = stringResource(R.string.general_sync_action),
+                                        contentDescription = stringResource(CommonR.string.general_sync_action),
                                     )
                                 }
                             }
@@ -980,20 +976,12 @@ private fun SyncDetailConnectorRow(
             .padding(start = 16.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val name = when (connector.type) {
-            ConnectorType.GDRIVE -> stringResource(GDriveR.string.sync_gdrive_type_label)
-            ConnectorType.OCTISERVER -> stringResource(OctiServerR.string.sync_octiserver_type_label)
-        }
-        when (connector.type) {
-            ConnectorType.GDRIVE -> Icon(
-                painter = painterResource(R.drawable.ic_baseline_gdrive_24),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            ConnectorType.OCTISERVER -> OctiServerIcon(modifier = Modifier.size(18.dp))
-        }
+        val contribution = LocalConnectorContributions.current[connector.type]
+        val name = contribution?.let { stringResource(it.labelRes) } ?: connector.type.typeId
+        contribution?.Icon(
+            modifier = Modifier.size(18.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         Spacer(modifier = Modifier.width(10.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(

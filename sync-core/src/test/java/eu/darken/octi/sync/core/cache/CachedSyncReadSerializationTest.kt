@@ -2,7 +2,7 @@ package eu.darken.octi.sync.core.cache
 
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.ConnectorId
-import eu.darken.octi.sync.core.ConnectorType
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
