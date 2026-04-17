@@ -16,6 +16,7 @@ import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
+import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -44,6 +45,7 @@ class BlobManager @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val blobStoreHubs: Set<@JvmSuppressWildcards BlobStoreHub>,
+    private val syncSettings: SyncSettings,
 ) {
 
     data class PutResult(
@@ -62,7 +64,7 @@ class BlobManager @Inject constructor(
     private val retryBackoff = ConcurrentHashMap<Pair<ConnectorId, BlobKey>, BackoffState>()
     private val quotaRefreshTrigger = MutableStateFlow(0)
 
-    private val allStores: Flow<List<BlobStore>> = if (blobStoreHubs.isEmpty()) {
+    private val rawStores: Flow<List<BlobStore>> = if (blobStoreHubs.isEmpty()) {
         flowOf(emptyList())
     } else {
         flow {
@@ -73,6 +75,11 @@ class BlobManager @Inject constructor(
             else combine(hubs.map { it.blobStores }) { arrays -> arrays.toList().flatten() }
         }
     }
+
+    private val allStores: Flow<List<BlobStore>> = rawStores
+        .combine(syncSettings.pausedConnectors.flow) { stores, paused ->
+            stores.filter { it.connectorId !in paused }
+        }
         .setupCommonEventHandlers(TAG) { "allStores" }
         .shareLatest(scope + dispatcherProvider.Default)
 

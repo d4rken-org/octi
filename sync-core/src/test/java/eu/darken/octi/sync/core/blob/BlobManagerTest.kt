@@ -6,9 +6,12 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
+import eu.darken.octi.sync.core.SyncSettings
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
@@ -119,10 +122,16 @@ class BlobManagerTest : BaseTest() {
             override suspend fun owns(connectorId: ConnectorId): Boolean = stores.any { it.connectorId == connectorId }
         }
 
+        val syncSettings = mockk<SyncSettings>()
+        every { syncSettings.pausedConnectors } returns mockk {
+            every { flow } returns flowOf(emptySet())
+        }
+
         return BlobManager(
             scope = scope,
             dispatcherProvider = TestDispatcherProvider(),
             blobStoreHubs = setOf(hub),
+            syncSettings = syncSettings,
         )
     }
 
