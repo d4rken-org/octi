@@ -55,8 +55,8 @@ class OctiServerBlobStore @AssistedInject constructor(
 ) : BlobStore {
 
     init {
-        require(EncryptionMode.fromTypeString(credentials.encryptionKeyset.type) != EncryptionMode.AES256_SIV) {
-            "Legacy AES256_SIV keysets are not supported for blob storage"
+        require(EncryptionMode.fromTypeString(credentials.encryptionKeyset.type) == EncryptionMode.AES256_GCM_SIV) {
+            "Only AES256_GCM_SIV keysets are supported for blob storage (was: ${credentials.encryptionKeyset.type})"
         }
     }
 

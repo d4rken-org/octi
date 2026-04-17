@@ -30,8 +30,8 @@ class StreamingPayloadCipher(keySet: PayloadEncryption.KeySet) {
 
     init {
         val mode = EncryptionMode.fromTypeString(keySet.type)
-        require(mode != EncryptionMode.AES256_SIV) {
-            "Legacy AES256_SIV keysets are not supported for blob streaming encryption"
+        require(mode == EncryptionMode.AES256_GCM_SIV) {
+            "Only AES256_GCM_SIV keysets are supported for blob streaming encryption (was: ${keySet.type})"
         }
 
         val derivedKey = hkdfSha256(
@@ -68,6 +68,12 @@ class StreamingPayloadCipher(keySet: PayloadEncryption.KeySet) {
 
     /**
      * Decrypt [source] into [sink] with [associatedData] binding.
+     *
+     * Streaming AEAD contract: Tink verifies and emits plaintext one segment at a time
+     * (SEGMENT_SIZE = 1 MB). If a later segment's tag fails, earlier segments' plaintext
+     * has already been written to [sink]. Callers MUST treat [sink] as valid only when
+     * this function returns without throwing — e.g. write to a temp file and re-verify
+     * a full-file checksum before exposing the result, don't expose partial output.
      */
     fun decrypt(source: Source, sink: Sink, associatedData: ByteArray) {
         log(TAG, VERBOSE) { "decrypt(aad=${associatedData.size}B)" }
