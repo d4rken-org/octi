@@ -72,6 +72,13 @@ class SyncManagerSyncWriteTest : BaseTest() {
         syncSettings = mockk(relaxed = true) {
             every { pausedConnectors } returns mockk<DataStoreValue<Set<ConnectorId>>>(relaxed = true) {
                 every { flow } returns pausedConnectorsValue
+                coEvery { update(any()) } coAnswers {
+                    val transform = firstArg<(Set<ConnectorId>) -> Set<ConnectorId>?>()
+                    val old = pausedConnectorsValue.value
+                    val new = transform(old) ?: old
+                    pausedConnectorsValue.value = new
+                    mockk(relaxed = true)
+                }
             }
         }
         every { syncSettings.deviceId } returns deviceId
@@ -407,6 +414,71 @@ class SyncManagerSyncWriteTest : BaseTest() {
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
             coVerify(exactly = 1) { connector1.sync(any()) }
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `togglePause unpause triggers automatic sync`() = runTest2 {
+            connectorsFlow.value = listOf(connector1, connector2)
+            pausedConnectorsValue.value = setOf(connectorId1)
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.togglePause(connectorId1, paused = false)
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { connector1.sync(any()) }
+            coVerify(exactly = 0) { connector2.sync(any()) }
+            pausedConnectorsValue.value shouldBe emptySet()
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `togglePause pause does not trigger sync`() = runTest2 {
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.togglePause(connectorId1, paused = true)
+            advanceUntilIdle()
+
+            coVerify(exactly = 0) { connector1.sync(any()) }
+            pausedConnectorsValue.value shouldBe setOf(connectorId1)
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `togglePause unpause when already unpaused does not trigger sync`() = runTest2 {
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.togglePause(connectorId1, paused = false)
+            advanceUntilIdle()
+
+            coVerify(exactly = 0) { connector1.sync(any()) }
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `togglePause re-pause before launched sync runs is a no-op via guard`() = runTest2 {
+            pausedConnectorsValue.value = setOf(connectorId1)
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.togglePause(connectorId1, paused = false)
+            // Do NOT advance: launched sync is queued but has not yet run.
+            sm.togglePause(connectorId1, paused = true)
+            advanceUntilIdle()
+
+            coVerify(exactly = 0) { connector1.sync(any()) }
+            pausedConnectorsValue.value shouldBe setOf(connectorId1)
 
             job.cancel()
             advanceUntilIdle()

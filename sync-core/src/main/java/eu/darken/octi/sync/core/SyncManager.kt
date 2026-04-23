@@ -254,7 +254,8 @@ class SyncManager @Inject constructor(
 
     suspend fun togglePause(identifier: ConnectorId, paused: Boolean? = null) {
         log(TAG, INFO) { "togglePause($identifier, enabled=$paused)" }
-        val pause = paused ?: !syncSettings.pausedConnectors.value().contains(identifier)
+        val wasPaused = syncSettings.pausedConnectors.value().contains(identifier)
+        val pause = paused ?: !wasPaused
         when (pause) {
             true -> syncSettings.pausedConnectors.update {
                 it + identifier
@@ -262,6 +263,18 @@ class SyncManager @Inject constructor(
 
             false -> syncSettings.pausedConnectors.update {
                 it - identifier
+            }
+        }
+        if (wasPaused && !pause) {
+            log(TAG, INFO) { "togglePause($identifier): unpaused, triggering sync" }
+            scope.launch {
+                try {
+                    sync(identifier)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    log(TAG, ERROR) { "togglePause($identifier): post-unpause sync failed: ${e.asLog()}" }
+                }
             }
         }
     }
