@@ -77,7 +77,10 @@ abstract class BaseModuleCache<T : Any> constructor(
 
         try {
             val cacheFile = deviceId.getCacheFile().also {
-                if (!it.exists()) it.createNewFile()
+                if (!it.exists()) {
+                    it.parentFile?.mkdirs()
+                    it.createNewFile()
+                }
             }
 
             cacheFile.writeText(json.encodeToString(data.toCachedModuleData()))
