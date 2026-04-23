@@ -21,6 +21,8 @@
     <string name="sync_issues_type_clock_skew">Clock issue</string>
     <string name="sync_issues_type_outdated_version">Outdated version</string>
     <string name="sync_connector_paused_label">Pause synchronization</string>
+    <string name="sync_connector_paused_error_label">Connector paused</string>
+    <string name="sync_connector_paused_error_desc">This connector is paused. Resume it to perform this action.</string>
     <string name="sync_synced_devices_label">Synced devices</string>
 
     <plurals name="sync_stale_period_days">

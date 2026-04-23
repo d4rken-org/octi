@@ -114,11 +114,12 @@ class DashboardVM @Inject constructor(
         isManuallyRefreshing,
         syncManager.connectors,
         syncManager.states,
+        syncManager.busyConnectorIds,
         tickerUiRefresh,
         moduleManager.syncingModules,
         moduleManager.moduleSyncStates,
         syncOrchestrator.state,
-    ) { showCard, isRefreshing, activeConnectors, activeStatesCollection, now, syncingModules, moduleSyncStates, orchestratorState ->
+    ) { showCard, isRefreshing, activeConnectors, activeStatesCollection, busyIds, now, syncingModules, moduleSyncStates, orchestratorState ->
         if (!showCard) return@combine null
         if (activeConnectors.isEmpty()) return@combine null
 
@@ -131,7 +132,7 @@ class DashboardVM @Inject constructor(
             ConnectorDetail(
                 connectorId = connector.identifier,
                 type = connector.identifier.type,
-                isBusy = state.isBusy,
+                isBusy = connector.identifier in busyIds,
                 lastSyncAt = state.lastSyncAt,
                 accountLabel = connector.accountLabel,
             )
@@ -145,7 +146,7 @@ class DashboardVM @Inject constructor(
         val totalDevices = activeStates.sumOf { it.deviceMetadata.size }
 
         when {
-            isRefreshing || activeStates.any { it.isBusy } || syncingModules.isNotEmpty() -> {
+            isRefreshing || busyIds.isNotEmpty() || syncingModules.isNotEmpty() -> {
                 SyncStatus.Syncing(connectorTypes, syncingModules, syncDetail, orchestratorState, now, totalDevices)
             }
 

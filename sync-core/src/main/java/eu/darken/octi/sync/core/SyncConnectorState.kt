@@ -5,7 +5,7 @@ import kotlin.time.Duration
 import kotlin.time.Instant
 
 interface SyncConnectorState {
-    val activeActions: Int
+
     val lastActionAt: Instant?
 
     val lastError: Exception?
@@ -20,9 +20,6 @@ interface SyncConnectorState {
     }
 
     val quota: Quota?
-
-    val isBusy: Boolean
-        get() = activeActions > 0
 
     val lastSyncAt: Instant?
         get() = lastActionAt

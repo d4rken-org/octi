@@ -16,6 +16,7 @@ import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.ConnectorIssueAggregator
+import eu.darken.octi.sync.core.ConnectorOperation
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncManager
@@ -25,7 +26,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -59,6 +59,7 @@ class SyncListVM @Inject constructor(
         val ourState: SyncConnectorState,
         val otherStates: Collection<SyncConnectorState>,
         val isPaused: Boolean,
+        val isBusy: Boolean,
         val issues: List<ConnectorIssue> = emptyList(),
     )
 
@@ -98,17 +99,23 @@ class SyncListVM @Inject constructor(
             if (connectors.isEmpty()) return@flatMapLatest flowOf(emptyList())
 
             val withStates = connectors.map { connector ->
-                combineTransform(connector.state, issueAggregator.issues) { state, allIssues ->
+                combine(
+                    connector.state,
+                    connector.operations,
+                    issueAggregator.issues,
+                ) { state, operations, allIssues ->
                     val connectorIssues = allIssues.filter { it.connectorId == connector.identifier }
-                    emit(
-                        ConnectorItem(
-                            connectorId = connector.identifier,
-                            connector = connector,
-                            ourState = state,
-                            otherStates = (connectors - connector).map { it.state.first() },
-                            isPaused = paused.contains(connector.identifier),
-                            issues = connectorIssues,
-                        )
+                    val isBusy = operations.any {
+                        it is ConnectorOperation.Queued || it is ConnectorOperation.Processing
+                    }
+                    ConnectorItem(
+                        connectorId = connector.identifier,
+                        connector = connector,
+                        ourState = state,
+                        otherStates = (connectors - connector).map { it.state.first() },
+                        isPaused = paused.contains(connector.identifier),
+                        isBusy = isBusy,
+                        issues = connectorIssues,
                     )
                 }
             }

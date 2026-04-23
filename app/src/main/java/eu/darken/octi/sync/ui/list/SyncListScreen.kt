@@ -228,7 +228,7 @@ private fun ConnectorCard(
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )
-                ConnectorStatusIndicators(isBusy = item.ourState.isBusy, isPaused = item.isPaused)
+                ConnectorStatusIndicators(isBusy = item.isBusy, isPaused = item.isPaused)
             }
 
             Spacer(modifier = Modifier.height(8.dp))

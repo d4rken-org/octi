@@ -11,9 +11,11 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.withPrevious
 import eu.darken.octi.common.uix.ViewModel4
+import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.execute
 import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import eu.darken.octi.syncs.octiserver.ui.link.OctiServerLinkOption
 import kotlinx.coroutines.Job
@@ -82,7 +84,7 @@ class OctiServerLinkHostVM @Inject constructor(
                         return@collectLatest
                     }
                     while (currentCoroutineContext().isActive) {
-                        connector.sync(SyncOptions(writeData = false))
+                        connector.execute(ConnectorCommand.Sync(SyncOptions(writeData = false)))
                         delay(3.seconds)
                     }
                 }

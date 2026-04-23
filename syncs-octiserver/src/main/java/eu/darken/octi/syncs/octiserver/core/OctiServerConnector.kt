@@ -19,10 +19,15 @@ import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.ConnectorCapabilities
+import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.ConnectorOperation
+import eu.darken.octi.sync.core.ConnectorProcessor
+import eu.darken.octi.sync.core.ConnectorSyncState
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.DeviceRemovalPolicy
+import eu.darken.octi.sync.core.OperationId
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncEvent
@@ -38,12 +43,14 @@ import eu.darken.octi.sync.core.encryption.EncryptionMode
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -76,6 +83,7 @@ class OctiServerConnector @AssistedInject constructor(
     private val blobStoreHub: OctiServerBlobStoreHub,
     private val networkStateProvider: NetworkStateProvider,
     private val syncSettings: SyncSettings,
+    private val syncState: ConnectorSyncState,
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
     private val baseHttpClient: OkHttpClient,
     private val json: Json,
@@ -93,7 +101,6 @@ class OctiServerConnector @AssistedInject constructor(
         "${deviceId.id}:${moduleId.id}".toByteArray()
 
     data class State(
-        override val activeActions: Int = 0,
         override val lastActionAt: Instant? = null,
         override val lastError: Exception? = null,
         override val quota: SyncConnectorState.Quota? = null,
@@ -117,6 +124,32 @@ class OctiServerConnector @AssistedInject constructor(
     // TODO: Consider removing lock — concurrent syncs may be safe since each module is an independent endpoint
     private val serverLock = Mutex()
 
+    override val accountLabel: String get() = credentials.serverAdress.domain
+
+    override val capabilities: ConnectorCapabilities = ConnectorCapabilities(
+        deviceRemovalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE,
+    )
+
+    override val identifier: ConnectorId = ConnectorId(
+        type = ConnectorType.OCTISERVER,
+        subtype = credentials.serverAdress.domain,
+        account = credentials.accountId.id,
+    )
+
+    private val processor = ConnectorProcessor(
+        connectorId = identifier,
+        syncSettings = syncSettings,
+    ) { command -> executeCommand(command) }
+
+    override val operations: StateFlow<List<ConnectorOperation>> get() = processor.operations
+    override val completions: SharedFlow<ConnectorOperation.Terminal> get() = processor.completions
+    override fun submit(command: ConnectorCommand): OperationId = processor.submit(command)
+    override suspend fun await(id: OperationId): ConnectorOperation.Terminal = processor.await(id)
+    override fun dismiss(id: OperationId) = processor.dismiss(id)
+
+    /** Start the processor loop. Called by the hub after construction with a connector-lifetime scope. */
+    fun start(processorScope: CoroutineScope): Job = processor.start(processorScope)
+
     /**
      * In-memory (deviceId, moduleId) → ETag cache populated on successful commits. Callers can
      * skip a HEAD lookup before the next commit to the same module. Invalidated on 412 (server
@@ -126,11 +159,6 @@ class OctiServerConnector @AssistedInject constructor(
      */
     private val etagCache = ConcurrentHashMap<Pair<DeviceId, ModuleId>, OctiServerEndpoint.ModuleEtagResult>()
 
-    /**
-     * Returns the ETag to send with a commit — cached value if present, otherwise fetches from
-     * the server and caches the result. Silent on failure: a null here means "no precondition",
-     * the commit will behave as a best-effort write and 412 (if any) drives the retry path.
-     */
     private suspend fun resolveCachedEtag(deviceId: DeviceId, moduleId: ModuleId): String? {
         etagCache[deviceId to moduleId]?.let {
             return (it as? OctiServerEndpoint.ModuleEtagResult.Present)?.etag
@@ -159,18 +187,6 @@ class OctiServerConnector @AssistedInject constructor(
         }
         etagCache[deviceId to moduleId] = OctiServerEndpoint.ModuleEtagResult.Present(etag)
     }
-
-    override val accountLabel: String get() = credentials.serverAdress.domain
-
-    override val capabilities: ConnectorCapabilities = ConnectorCapabilities(
-        deviceRemovalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE,
-    )
-
-    override val identifier: ConnectorId = ConnectorId(
-        type = ConnectorType.OCTISERVER,
-        subtype = credentials.serverAdress.domain,
-        account = credentials.accountId.id,
-    )
 
     private val _syncEventMode = MutableStateFlow(EventMode.NONE)
     override val syncEventMode: StateFlow<EventMode> = _syncEventMode.asStateFlow()
@@ -201,19 +217,40 @@ class OctiServerConnector @AssistedInject constructor(
 
     private suspend fun isInternetAvailable() = networkStateProvider.networkState.first().isInternetAvailable
 
-    override suspend fun resetData() {
-        log(TAG, INFO) { "resetData()" }
+    private suspend fun executeCommand(command: ConnectorCommand) {
+        when (command) {
+            is ConnectorCommand.Sync -> handleSync(command.options)
+            is ConnectorCommand.DeleteDevice -> handleDeleteDevice(command.deviceId)
+            ConnectorCommand.Reset -> handleReset()
+            ConnectorCommand.Pause -> syncSettings.pausedConnectors.update { it + identifier }
+            ConnectorCommand.Resume -> syncSettings.pausedConnectors.update { it - identifier }
+        }
+    }
+
+    private suspend fun handleReset() {
+        log(TAG, INFO) { "handleReset()" }
         runServerAction("reset-devices") {
             endpoint.resetDevices()
             etagCache.clear()
         }
+        syncState.clearConnector(identifier)
     }
 
-    override suspend fun deleteDevice(deviceId: DeviceId) {
-        log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
+    private suspend fun handleDeleteDevice(deviceId: DeviceId) {
+        log(TAG, INFO) { "handleDeleteDevice(deviceId=$deviceId)" }
         runServerAction("delete-device-$deviceId") {
             endpoint.deleteDevice(deviceId)
             etagCache.keys.removeAll { it.first == deviceId }
+        }
+        // Eager prune: survives VM teardown and is visible immediately to all observers.
+        _state.updateBlocking {
+            copy(deviceMetadata = deviceMetadata.filterNot { it.deviceId == deviceId })
+        }
+        _data.value = _data.value?.let { read ->
+            OctiServerData(
+                connectorId = read.connectorId,
+                devices = read.devices.filterNot { it.deviceId == deviceId },
+            )
         }
     }
 
@@ -228,11 +265,11 @@ class OctiServerConnector @AssistedInject constructor(
         )
     }
 
-    override suspend fun sync(options: SyncOptions) {
-        log(TAG) { "sync(${options.logLabel})" }
+    private suspend fun handleSync(options: SyncOptions) {
+        log(TAG) { "handleSync(${options.logLabel})" }
 
         if (!isInternetAvailable()) {
-            log(TAG, WARN) { "sync(): Skipping, we are offline." }
+            log(TAG, WARN) { "handleSync(): Skipping, we are offline." }
             return
         }
 
@@ -261,16 +298,18 @@ class OctiServerConnector @AssistedInject constructor(
         }
 
         if (options.writeData && options.writePayload.isNotEmpty()) {
-            log(TAG) { "sync(): Writing ${options.writePayload.size} cached modules" }
-            options.writePayload.forEach { module ->
+            log(TAG) { "handleSync(): Writing ${options.writePayload.size} cached modules" }
+            options.writePayload.forEach { mw ->
                 try {
-                    runServerAction("write-cached-${module.moduleId}") {
-                        writeServer(SyncWriteContainer(deviceId = syncSettings.deviceId, modules = listOf(module)))
+                    runServerAction("write-cached-${mw.module.moduleId}") {
+                        writeServer(SyncWriteContainer(deviceId = syncSettings.deviceId, modules = listOf(mw.module)))
                     }
+                    // Succeeded — record hash for this specific module.
+                    syncState.setHash(identifier, mw.module.moduleId, mw.expectedHash)
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
-                    if (handleDeviceUnknown(e, "write cached ${module.moduleId}")) return
+                    if (handleDeviceUnknown(e, "write cached ${mw.module.moduleId}")) return
                     throw e
                 }
             }
@@ -473,8 +512,6 @@ class OctiServerConnector @AssistedInject constructor(
                                     endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
                                 }
                                 412 -> {
-                                    // Precondition failed: stale ETag. Drop the cache entry (which may
-                                    // have been stale), re-read from the server and retry once.
                                     log(TAG, WARN) { "writeServer(): 412 conflict on ${module.moduleId}, refreshing ETag and retrying" }
                                     etagCache.remove(data.deviceId to module.moduleId)
                                     val freshEtag = try {
@@ -512,19 +549,12 @@ class OctiServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeServer(): Done" }
     }
 
-    private suspend fun handleDeviceUnknown(e: Exception, operation: String): Boolean {
+    private fun handleDeviceUnknown(e: Exception, operation: String): Boolean {
         if ((e as? OctiServerHttpException)?.isDeviceUnknown != true) return false
         log(TAG, WARN) { "$operation: device no longer registered, pausing connector" }
-        pauseConnector()
+        // Route through the queue so pause is serialized with the rest of this connector's work.
+        submit(ConnectorCommand.Pause)
         return true
-    }
-
-    private suspend fun pauseConnector() {
-        runCatching {
-            syncSettings.pausedConnectors.update { it + identifier }
-        }.onFailure {
-            log(TAG, ERROR) { "Failed to pause connector: ${it.asLog()}" }
-        }
     }
 
     private suspend fun <R> runServerAction(
@@ -535,8 +565,6 @@ class OctiServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "runServerAction($tag)" }
 
         return try {
-            _state.updateBlocking { copy(activeActions = activeActions + 1) }
-
             serverLock.withLock {
                 withContext(NonCancellable) { block() }
             }.also {
@@ -554,10 +582,6 @@ class OctiServerConnector @AssistedInject constructor(
             _state.updateBlocking { copy(lastError = e) }
             throw e
         } finally {
-            _state.updateBlocking {
-                log(TAG, VERBOSE) { "runServerAction($tag) finished" }
-                copy(activeActions = activeActions - 1)
-            }
             log(TAG, VERBOSE) { "runServerAction($tag) finished after ${start.elapsedNow().inWholeMilliseconds}ms" }
         }
     }

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -46,6 +47,7 @@ fun DeviceActionsSheet(
     device: SyncDevicesVM.DeviceItem,
     removalPolicy: DeviceRemovalPolicy?,
     isPaused: Boolean,
+    isDeleting: Boolean,
     onDismiss: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -153,17 +155,25 @@ fun DeviceActionsSheet(
 
             Button(
                 onClick = onDelete,
-                enabled = !isPaused,
+                enabled = !isPaused && !isDeleting,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
                 ),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Icon(
-                    imageVector = Icons.TwoTone.DeleteSweep,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
+                if (isDeleting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onError,
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.TwoTone.DeleteSweep,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = stringResource(CommonR.string.general_remove_action))
             }
@@ -214,6 +224,41 @@ private fun DeviceActionsSheetPreview() = PreviewWrapper {
         ),
         removalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE,
         isPaused = false,
+        isDeleting = false,
+        onDismiss = {},
+        onDelete = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun DeviceActionsSheetDeletingPreview() = PreviewWrapper {
+    val deviceId = DeviceId("device-abc-123")
+    DeviceActionsSheet(
+        device = SyncDevicesVM.DeviceItem(
+            deviceId = deviceId,
+            metaInfo = MetaInfo(
+                deviceLabel = "Pixel 8",
+                deviceId = deviceId,
+                octiVersionName = "0.14.0",
+                octiGitSha = "abc1234",
+                deviceManufacturer = "Google",
+                deviceName = "Pixel 8",
+                deviceType = MetaInfo.DeviceType.PHONE,
+                deviceBootedAt = Clock.System.now(),
+                androidVersionName = "14",
+                androidApiLevel = 34,
+                androidSecurityPatch = "2024-01-05",
+            ),
+            lastSeen = Clock.System.now(),
+            error = null,
+            serverVersion = "0.14.0",
+            serverAddedAt = Clock.System.now() - (86400 * 30).seconds,
+            serverPlatform = "android",
+        ),
+        removalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE,
+        isPaused = false,
+        isDeleting = true,
         onDismiss = {},
         onDelete = {},
     )

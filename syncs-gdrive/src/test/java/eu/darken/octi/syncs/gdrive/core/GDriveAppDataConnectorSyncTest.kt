@@ -12,9 +12,12 @@ import eu.darken.octi.common.datastore.createValue
 import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.ConnectorCommand
+import eu.darken.octi.sync.core.ConnectorSyncState
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.execute
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -91,6 +94,13 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         )
         every { syncSettings.dataStore } returns testDataStore
         every { syncSettings.deviceId } returns DeviceId("test-device")
+        // Processor's pause guard reads syncSettings.pausedConnectors on every command —
+        // supply an empty flow so guardPauseIfNeeded doesn't NoSuchElementException on flow.first().
+        every {
+            syncSettings.pausedConnectors
+        } returns mockk<eu.darken.octi.common.datastore.DataStoreValue<Set<eu.darken.octi.sync.core.ConnectorId>>>(relaxed = true) {
+            every { flow } returns kotlinx.coroutines.flow.MutableStateFlow(emptySet())
+        }
 
         val testAccount = GoogleAccount(accountId = "test-account", email = "test@example.com")
 
@@ -107,6 +117,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
             networkStateProvider = mockNetworkState,
             supportedModuleIds = setOf(power, wifi),
             syncSettings = syncSettings,
+            syncState = ConnectorSyncState(),
             json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true },
         )
 
@@ -115,8 +126,19 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         field.isAccessible = true
         field.set(connector, lazyOf(mockDrive))
 
+        // Start the processor so submit/execute actually run commands.
+        connector.start(this.backgroundScope)
+
         return connector
     }
+
+    /**
+     * Legacy-shape wrapper for tests: preserves the old `connector.sync(options)` call
+     * semantics by routing through the queue's execute helper. Keeps the large test body
+     * readable without rewriting every call site.
+     */
+    private suspend fun GDriveAppDataConnector.sync(options: SyncOptions) =
+        execute(ConnectorCommand.Sync(options))
 
     private fun setupNoChanges(newToken: String = "token-2") {
         every { mockChangesList.execute() } returns ChangeList().apply {

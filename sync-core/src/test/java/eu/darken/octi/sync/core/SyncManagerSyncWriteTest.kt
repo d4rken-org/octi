@@ -6,20 +6,21 @@ import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.cache.SyncCache
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import io.mockk.CapturingSlot
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.api.BeforeEach
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
+import kotlin.time.Clock
 
 class SyncManagerSyncWriteTest : BaseTest() {
 
@@ -50,12 +52,58 @@ class SyncManagerSyncWriteTest : BaseTest() {
         every { this@mockk.payload } returns payload.encodeUtf8()
     }
 
+    /**
+     * Set up a mocked connector that behaves like a real one for SyncManager's purposes:
+     * submit() returns a fresh OperationId and, for Pause/Resume commands, side-effects the
+     * paused-connectors setting (matching what the real processor would do). await() returns a
+     * Succeeded terminal so execute() returns cleanly.
+     */
+    private fun SyncConnector.wireProcessorSideEffects() {
+        val cid = this.identifier
+        every { submit(any()) } answers {
+            val cmd = firstArg<ConnectorCommand>()
+            when (cmd) {
+                ConnectorCommand.Pause -> pausedConnectorsValue.value = pausedConnectorsValue.value + cid
+                ConnectorCommand.Resume -> pausedConnectorsValue.value = pausedConnectorsValue.value - cid
+                else -> Unit
+            }
+            OperationId.create()
+        }
+        // await() takes a @JvmInline value class (OperationId). MockK unwraps value classes
+        // so firstArg<OperationId>() would cast a String → use a fresh id in the response.
+        coEvery { await(any()) } answers {
+            ConnectorOperation.Succeeded(
+                id = OperationId.create(),
+                command = ConnectorCommand.Sync(),
+                submittedAt = Clock.System.now(),
+                startedAt = Clock.System.now(),
+                finishedAt = Clock.System.now(),
+            )
+        }
+    }
+
+    /** Arrange a submit() that fails with [error] — execute() will rethrow it. */
+    private fun SyncConnector.wireSubmitFailure(error: Throwable) {
+        coEvery { await(any()) } answers {
+            ConnectorOperation.Failed(
+                id = OperationId.create(),
+                command = ConnectorCommand.Sync(),
+                submittedAt = Clock.System.now(),
+                startedAt = Clock.System.now(),
+                finishedAt = Clock.System.now(),
+                error = error,
+            )
+        }
+    }
+
     @BeforeEach
     fun setup() {
         connector1 = mockk(relaxed = true) {
             every { identifier } returns connectorId1
             every { state } returns flowOf()
             every { data } returns flowOf(null)
+            every { operations } returns MutableStateFlow(emptyList())
+            every { completions } returns MutableSharedFlow()
             every { syncEvents } returns flowOf()
             every { syncEventMode } returns MutableStateFlow(SyncConnector.EventMode.NONE)
         }
@@ -63,6 +111,8 @@ class SyncManagerSyncWriteTest : BaseTest() {
             every { identifier } returns connectorId2
             every { state } returns flowOf()
             every { data } returns flowOf(null)
+            every { operations } returns MutableStateFlow(emptyList())
+            every { completions } returns MutableSharedFlow()
             every { syncEvents } returns flowOf()
             every { syncEventMode } returns MutableStateFlow(SyncConnector.EventMode.NONE)
         }
@@ -90,6 +140,9 @@ class SyncManagerSyncWriteTest : BaseTest() {
         }
 
         connectorSyncState = ConnectorSyncState()
+
+        connector1.wireProcessorSideEffects()
+        connector2.wireProcessorSideEffects()
     }
 
     private fun TestScope.createSyncManager(): Pair<SyncManager, Job> {
@@ -107,6 +160,11 @@ class SyncManagerSyncWriteTest : BaseTest() {
         return sm to job
     }
 
+    /** Extract Sync options from a captured ConnectorCommand.Sync — or fail if wrong type. */
+    private fun CapturingSlot<ConnectorCommand>.syncOptions(): SyncOptions {
+        return (captured as ConnectorCommand.Sync).options
+    }
+
     @Nested
     inner class `payload updates` {
         @Test
@@ -118,9 +176,9 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val optionsSlot = slot<SyncOptions>()
-            coVerify { connector1.sync(capture(optionsSlot)) }
-            optionsSlot.captured.writePayload.single().moduleId shouldBe powerModuleId
+            val cmdSlot = slot<ConnectorCommand>()
+            coVerify { connector1.submit(capture(cmdSlot)) }
+            cmdSlot.syncOptions().writePayload.single().module.moduleId shouldBe powerModuleId
 
             job.cancel()
             advanceUntilIdle()
@@ -136,9 +194,9 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val optionsSlot = slot<SyncOptions>()
-            coVerify { connector1.sync(capture(optionsSlot)) }
-            optionsSlot.captured.writePayload.map { it.moduleId } shouldContainExactlyInAnyOrder
+            val cmdSlot = slot<ConnectorCommand>()
+            coVerify { connector1.submit(capture(cmdSlot)) }
+            cmdSlot.syncOptions().writePayload.map { it.module.moduleId } shouldContainExactlyInAnyOrder
                 listOf(powerModuleId, wifiModuleId)
 
             job.cancel()
@@ -155,10 +213,10 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val optionsSlot = slot<SyncOptions>()
-            coVerify { connector1.sync(capture(optionsSlot)) }
-            optionsSlot.captured.writePayload.size shouldBe 1
-            optionsSlot.captured.writePayload.single().payload shouldBe "new-data".encodeUtf8()
+            val cmdSlot = slot<ConnectorCommand>()
+            coVerify { connector1.submit(capture(cmdSlot)) }
+            cmdSlot.syncOptions().writePayload.size shouldBe 1
+            cmdSlot.syncOptions().writePayload.single().module.payload shouldBe "new-data".encodeUtf8()
 
             job.cancel()
             advanceUntilIdle()
@@ -173,9 +231,9 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.sync(connectorId1, SyncOptions(writeData = false, readData = false, stats = false))
 
-            val optionsSlot = slot<SyncOptions>()
-            coVerify { connector1.sync(capture(optionsSlot)) }
-            optionsSlot.captured.writePayload shouldBe emptyList()
+            val cmdSlot = slot<ConnectorCommand>()
+            coVerify { connector1.submit(capture(cmdSlot)) }
+            cmdSlot.syncOptions().writePayload shouldBe emptyList()
 
             job.cancel()
             advanceUntilIdle()
@@ -188,9 +246,9 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val optionsSlot = slot<SyncOptions>()
-            coVerify { connector1.sync(capture(optionsSlot)) }
-            optionsSlot.captured.writePayload shouldBe emptyList()
+            val cmdSlot = slot<ConnectorCommand>()
+            coVerify { connector1.submit(capture(cmdSlot)) }
+            cmdSlot.syncOptions().writePayload shouldBe emptyList()
 
             job.cancel()
             advanceUntilIdle()
@@ -199,24 +257,31 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
     @Nested
     inner class `hash deduplication` {
+        // Hash writes are now the connector's responsibility. Tests seed the hash after a
+        // simulated successful sync and verify SyncManager filters accordingly.
         @Test
         fun `hash match skips module on second sync`() = runTest2 {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            sm.updatePayload(createModule(powerModuleId, "data"))
+            val module = createModule(powerModuleId, "data")
+            sm.updatePayload(module)
 
             // First sync — hash mismatch, module included
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
-            val firstOptions = slot<SyncOptions>()
-            coVerify { connector1.sync(capture(firstOptions)) }
-            firstOptions.captured.writePayload.size shouldBe 1
+            val firstCmds = mutableListOf<ConnectorCommand>()
+            coVerify { connector1.submit(capture(firstCmds)) }
+            (firstCmds.first() as ConnectorCommand.Sync).options.writePayload.size shouldBe 1
+
+            // Simulate connector setting the hash after successful write
+            val hash = module.payload.sha256().hex()
+            connectorSyncState.setHash(connectorId1, powerModuleId, hash)
 
             // Second sync — hash matches, module skipped
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
-            val allOptions = mutableListOf<SyncOptions>()
-            coVerify(exactly = 2) { connector1.sync(capture(allOptions)) }
-            allOptions.last().writePayload shouldBe emptyList()
+            val allCmds = mutableListOf<ConnectorCommand>()
+            coVerify(exactly = 2) { connector1.submit(capture(allCmds)) }
+            (allCmds.last() as ConnectorCommand.Sync).options.writePayload shouldBe emptyList()
 
             job.cancel()
             advanceUntilIdle()
@@ -227,17 +292,22 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            sm.updatePayload(createModule(powerModuleId, "old-data"))
+            val oldModule = createModule(powerModuleId, "old-data")
+            sm.updatePayload(oldModule)
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+
+            // Simulate connector writing old hash
+            connectorSyncState.setHash(connectorId1, powerModuleId, oldModule.payload.sha256().hex())
 
             // Update payload with new data
             sm.updatePayload(createModule(powerModuleId, "new-data"))
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val allOptions = mutableListOf<SyncOptions>()
-            coVerify(exactly = 2) { connector1.sync(capture(allOptions)) }
-            allOptions.last().writePayload.size shouldBe 1
-            allOptions.last().writePayload.single().payload shouldBe "new-data".encodeUtf8()
+            val allCmds = mutableListOf<ConnectorCommand>()
+            coVerify(exactly = 2) { connector1.submit(capture(allCmds)) }
+            val lastOptions = (allCmds.last() as ConnectorCommand.Sync).options
+            lastOptions.writePayload.size shouldBe 1
+            lastOptions.writePayload.single().module.payload shouldBe "new-data".encodeUtf8()
 
             job.cancel()
             advanceUntilIdle()
@@ -249,17 +319,19 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            sm.updatePayload(createModule(powerModuleId, "data"))
+            val module = createModule(powerModuleId, "data")
+            sm.updatePayload(module)
 
             // Sync connector1 first
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+            connectorSyncState.setHash(connectorId1, powerModuleId, module.payload.sha256().hex())
 
             // Connector2 has never synced — should get the module
             sm.sync(connectorId2, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val options2 = slot<SyncOptions>()
-            coVerify { connector2.sync(capture(options2)) }
-            options2.captured.writePayload.size shouldBe 1
+            val cmd2 = slot<ConnectorCommand>()
+            coVerify { connector2.submit(capture(cmd2)) }
+            (cmd2.captured as ConnectorCommand.Sync).options.writePayload.size shouldBe 1
 
             job.cancel()
             advanceUntilIdle()
@@ -271,32 +343,36 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            sm.updatePayload(createModule(powerModuleId, "data"))
+            val module = createModule(powerModuleId, "data")
+            sm.updatePayload(module)
+            val hash = module.payload.sha256().hex()
 
             // Sync both connectors
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+            connectorSyncState.setHash(connectorId1, powerModuleId, hash)
             sm.sync(connectorId2, SyncOptions(writeData = true, readData = false, stats = false))
+            connectorSyncState.setHash(connectorId2, powerModuleId, hash)
 
-            // Both should have received the module
-            val opts1 = slot<SyncOptions>()
-            coVerify { connector1.sync(capture(opts1)) }
-            opts1.captured.writePayload.size shouldBe 1
+            // Both should have received the module on first sync
+            val cmd1 = slot<ConnectorCommand>()
+            coVerify { connector1.submit(capture(cmd1)) }
+            (cmd1.captured as ConnectorCommand.Sync).options.writePayload.size shouldBe 1
 
-            val opts2 = slot<SyncOptions>()
-            coVerify { connector2.sync(capture(opts2)) }
-            opts2.captured.writePayload.size shouldBe 1
+            val cmd2 = slot<ConnectorCommand>()
+            coVerify { connector2.submit(capture(cmd2)) }
+            (cmd2.captured as ConnectorCommand.Sync).options.writePayload.size shouldBe 1
 
             // Second sync for both — hashes match, both empty
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
             sm.sync(connectorId2, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val all1 = mutableListOf<SyncOptions>()
-            coVerify(exactly = 2) { connector1.sync(capture(all1)) }
-            all1.last().writePayload shouldBe emptyList()
+            val all1 = mutableListOf<ConnectorCommand>()
+            coVerify(exactly = 2) { connector1.submit(capture(all1)) }
+            (all1.last() as ConnectorCommand.Sync).options.writePayload shouldBe emptyList()
 
-            val all2 = mutableListOf<SyncOptions>()
-            coVerify(exactly = 2) { connector2.sync(capture(all2)) }
-            all2.last().writePayload shouldBe emptyList()
+            val all2 = mutableListOf<ConnectorCommand>()
+            coVerify(exactly = 2) { connector2.submit(capture(all2)) }
+            (all2.last() as ConnectorCommand.Sync).options.writePayload shouldBe emptyList()
 
             job.cancel()
             advanceUntilIdle()
@@ -312,17 +388,17 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.updatePayload(createModule(powerModuleId, "data"))
 
-            // First sync fails
-            coEvery { connector1.sync(any()) } throws RuntimeException("Network error")
+            // First sync fails — connector reports Failed, execute() throws
+            connector1.wireSubmitFailure(RuntimeException("Network error"))
             runCatching { sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false)) }
 
-            // Second sync succeeds — module should be resent
-            coEvery { connector1.sync(any()) } returns Unit
+            // No hash was set — simulate normal (non-failing) sync
+            connector1.wireProcessorSideEffects()
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val allOptions = mutableListOf<SyncOptions>()
-            coVerify(exactly = 2) { connector1.sync(capture(allOptions)) }
-            allOptions.last().writePayload.size shouldBe 1
+            val all = mutableListOf<ConnectorCommand>()
+            coVerify(exactly = 2) { connector1.submit(capture(all)) }
+            (all.last() as ConnectorCommand.Sync).options.writePayload.size shouldBe 1
 
             job.cancel()
             advanceUntilIdle()
@@ -339,8 +415,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val unknownId = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "unknown", account = "unknown")
             sm.sync(unknownId, SyncOptions(writeData = true, readData = false, stats = false))
 
-            // No connector.sync called at all
-            coVerify(exactly = 0) { connector1.sync(any()) }
+            coVerify(exactly = 0) { connector1.submit(any()) }
 
             job.cancel()
             advanceUntilIdle()
@@ -359,7 +434,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
-            coVerify(exactly = 0) { connector1.sync(any()) }
+            coVerify(exactly = 0) { connector1.submit(match { it is ConnectorCommand.Sync }) }
 
             job.cancel()
             advanceUntilIdle()
@@ -374,7 +449,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.resetData(connectorId1)
 
-            coVerify(exactly = 0) { connector1.resetData() }
+            coVerify(exactly = 0) { connector1.submit(match { it is ConnectorCommand.Reset }) }
 
             job.cancel()
             advanceUntilIdle()
@@ -392,8 +467,8 @@ class SyncManagerSyncWriteTest : BaseTest() {
             sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
             advanceUntilIdle()
 
-            coVerify(exactly = 0) { connector1.sync(any()) }
-            coVerify(exactly = 1) { connector2.sync(any()) }
+            coVerify(exactly = 0) { connector1.submit(match { it is ConnectorCommand.Sync }) }
+            coVerify(exactly = 1) { connector2.submit(match { it is ConnectorCommand.Sync }) }
 
             job.cancel()
             advanceUntilIdle()
@@ -408,20 +483,34 @@ class SyncManagerSyncWriteTest : BaseTest() {
             sm.updatePayload(createModule(powerModuleId, "data"))
 
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
-            coVerify(exactly = 0) { connector1.sync(any()) }
+            coVerify(exactly = 0) { connector1.submit(match { it is ConnectorCommand.Sync }) }
 
             pausedConnectorsValue.value = emptySet()
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
-            coVerify(exactly = 1) { connector1.sync(any()) }
+            coVerify(exactly = 1) { connector1.submit(match { it is ConnectorCommand.Sync }) }
 
             job.cancel()
             advanceUntilIdle()
         }
 
         @Test
-        fun `togglePause unpause triggers automatic sync`() = runTest2 {
-            connectorsFlow.value = listOf(connector1, connector2)
+        fun `togglePause pause submits Pause command and flips setting`() = runTest2 {
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.togglePause(connectorId1, paused = true)
+            advanceUntilIdle()
+
+            coVerify { connector1.submit(ConnectorCommand.Pause) }
+            pausedConnectorsValue.value shouldBe setOf(connectorId1)
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `togglePause unpause submits Resume command and flips setting`() = runTest2 {
             pausedConnectorsValue.value = setOf(connectorId1)
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
@@ -429,8 +518,9 @@ class SyncManagerSyncWriteTest : BaseTest() {
             sm.togglePause(connectorId1, paused = false)
             advanceUntilIdle()
 
-            coVerify(exactly = 1) { connector1.sync(any()) }
-            coVerify(exactly = 0) { connector2.sync(any()) }
+            coVerify { connector1.submit(ConnectorCommand.Resume) }
+            // Processor-side post-resume Sync is covered by ConnectorProcessor tests; here we
+            // only verify SyncManager delegated correctly.
             pausedConnectorsValue.value shouldBe emptySet()
 
             job.cancel()
@@ -438,51 +528,25 @@ class SyncManagerSyncWriteTest : BaseTest() {
         }
 
         @Test
-        fun `togglePause pause does not trigger sync`() = runTest2 {
+        fun `togglePause no-op when already in target state`() = runTest2 {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            sm.togglePause(connectorId1, paused = true)
-            advanceUntilIdle()
-
-            coVerify(exactly = 0) { connector1.sync(any()) }
-            pausedConnectorsValue.value shouldBe setOf(connectorId1)
-
-            job.cancel()
-            advanceUntilIdle()
-        }
-
-        @Test
-        fun `togglePause unpause when already unpaused does not trigger sync`() = runTest2 {
-            val (sm, job) = createSyncManager()
-            advanceUntilIdle()
-
+            // Already unpaused — toggle to unpaused = no-op
             sm.togglePause(connectorId1, paused = false)
             advanceUntilIdle()
 
-            coVerify(exactly = 0) { connector1.sync(any()) }
+            coVerify(exactly = 0) { connector1.submit(any()) }
 
             job.cancel()
             advanceUntilIdle()
         }
 
-        @Test
-        fun `togglePause re-pause before launched sync runs is a no-op via guard`() = runTest2 {
-            pausedConnectorsValue.value = setOf(connectorId1)
-            val (sm, job) = createSyncManager()
-            advanceUntilIdle()
-
-            sm.togglePause(connectorId1, paused = false)
-            // Do NOT advance: launched sync is queued but has not yet run.
-            sm.togglePause(connectorId1, paused = true)
-            advanceUntilIdle()
-
-            coVerify(exactly = 0) { connector1.sync(any()) }
-            pausedConnectorsValue.value shouldBe setOf(connectorId1)
-
-            job.cancel()
-            advanceUntilIdle()
-        }
+        // See plan section "Auto-sync-after-resume" — the sync after Resume is now enqueued as
+        // a side effect of the processor's Resume handling, so it's strictly ordered in the
+        // queue relative to any subsequent Pause. That behavior is covered by
+        // ConnectorProcessorTest; SyncManager no longer launches a separate post-unpause sync.
+        // Therefore there is no SyncManager-level "re-pause races auto-sync" scenario anymore.
 
         @Test
         fun `connectors flow excludes paused entries`() = runTest2 {
@@ -524,17 +588,20 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            sm.updatePayload(createModule(powerModuleId, "v1"))
+            val v1 = createModule(powerModuleId, "v1")
+            sm.updatePayload(v1)
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+            // Simulate connector writing hash after success
+            connectorSyncState.setHash(connectorId1, powerModuleId, v1.payload.sha256().hex())
 
             // Payload updated
             sm.updatePayload(createModule(powerModuleId, "v2"))
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
-            val allOptions = mutableListOf<SyncOptions>()
-            coVerify(exactly = 2) { connector1.sync(capture(allOptions)) }
-            allOptions[0].writePayload.single().payload shouldBe "v1".encodeUtf8()
-            allOptions[1].writePayload.single().payload shouldBe "v2".encodeUtf8()
+            val all = mutableListOf<ConnectorCommand>()
+            coVerify(exactly = 2) { connector1.submit(capture(all)) }
+            (all[0] as ConnectorCommand.Sync).options.writePayload.single().module.payload shouldBe "v1".encodeUtf8()
+            (all[1] as ConnectorCommand.Sync).options.writePayload.single().module.payload shouldBe "v2".encodeUtf8()
 
             job.cancel()
             advanceUntilIdle()
@@ -551,16 +618,16 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.updatePayload(createModule(powerModuleId, "data"))
 
-            // connector1 throws, connector2 should still sync
-            coEvery { connector1.sync(any()) } throws RuntimeException("Network error")
+            // connector1 reports Failed, connector2 should still sync
+            connector1.wireSubmitFailure(RuntimeException("Network error"))
 
             sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
             advanceUntilIdle()
 
             // connector2 should have been called despite connector1 failure
-            val opts2 = slot<SyncOptions>()
-            coVerify { connector2.sync(capture(opts2)) }
-            opts2.captured.writePayload.size shouldBe 1
+            val cmd2 = slot<ConnectorCommand>()
+            coVerify { connector2.submit(capture(cmd2)) }
+            (cmd2.captured as ConnectorCommand.Sync).options.writePayload.size shouldBe 1
 
             job.cancel()
             advanceUntilIdle()
@@ -576,15 +643,22 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
             sm.updatePayload(createModule(powerModuleId, "v1"))
 
-            // Make connector1.sync() block until we release the gate
+            // Make connector1.await() block until we release the gate, simulating a long sync.
             val gate = CompletableDeferred<Unit>()
             var callCount = 0
-            coEvery { connector1.sync(any()) } coAnswers {
+            coEvery { connector1.await(any()) } coAnswers {
                 callCount++
                 if (callCount == 1) gate.await()
+                ConnectorOperation.Succeeded(
+                    id = OperationId.create(),
+                    command = ConnectorCommand.Sync(),
+                    submittedAt = Clock.System.now(),
+                    startedAt = Clock.System.now(),
+                    finishedAt = Clock.System.now(),
+                )
             }
 
-            // First sync acquires lock and blocks inside connector.sync()
+            // First sync acquires lock and blocks inside connector.await()
             val firstSync = launch { sm.sync(SyncOptions(writeData = true, readData = false, stats = false)) }
             advanceUntilIdle()
 
@@ -597,8 +671,8 @@ class SyncManagerSyncWriteTest : BaseTest() {
             advanceUntilIdle()
             firstSync.join()
 
-            // connector.sync should have been called twice: original + pending re-run
-            coVerify(exactly = 2) { connector1.sync(any()) }
+            // connector.submit should have been called twice: original + pending re-run
+            coVerify(exactly = 2) { connector1.submit(match { it is ConnectorCommand.Sync }) }
 
             job.cancel()
             advanceUntilIdle()
@@ -614,8 +688,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
             sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
             advanceUntilIdle()
 
-            // Only called once — no pending flag was set
-            coVerify(exactly = 1) { connector1.sync(any()) }
+            coVerify(exactly = 1) { connector1.submit(match { it is ConnectorCommand.Sync }) }
 
             job.cancel()
             advanceUntilIdle()

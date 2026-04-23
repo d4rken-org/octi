@@ -18,17 +18,21 @@ import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
-import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.ConnectorCapabilities
+import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.ConnectorOperation
+import eu.darken.octi.sync.core.ConnectorProcessor
+import eu.darken.octi.sync.core.ConnectorSyncState
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.DeviceMetadata
+import eu.darken.octi.sync.core.OperationId
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnector.EventMode
 import eu.darken.octi.sync.core.SyncConnectorState
@@ -42,6 +46,7 @@ import eu.darken.octi.syncs.gdrive.core.GDriveEnvironment.Companion.APPDATAFOLDE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -49,13 +54,13 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.plus
@@ -84,11 +89,11 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val networkStateProvider: NetworkStateProvider,
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
     private val syncSettings: SyncSettings,
+    private val syncState: ConnectorSyncState,
     private val json: Json,
 ) : GDriveBaseConnector(dispatcherProvider, context, account), SyncConnector {
 
     data class State(
-        override val activeActions: Int = 0,
         override val lastActionAt: Instant? = null,
         override val lastError: Exception? = null,
         override val quota: SyncConnectorState.Quota? = null,
@@ -123,6 +128,20 @@ class GDriveAppDataConnector @AssistedInject constructor(
         account = account.id.id,
     )
 
+    private val processor = ConnectorProcessor(
+        connectorId = identifier,
+        syncSettings = syncSettings,
+    ) { command -> executeCommand(command) }
+
+    override val operations: StateFlow<List<ConnectorOperation>> get() = processor.operations
+    override val completions: SharedFlow<ConnectorOperation.Terminal> get() = processor.completions
+    override fun submit(command: ConnectorCommand): OperationId = processor.submit(command)
+    override suspend fun await(id: OperationId): ConnectorOperation.Terminal = processor.await(id)
+    override fun dismiss(id: OperationId) = processor.dismiss(id)
+
+    /** Start the processor loop. Called by the hub after construction with a connector-lifetime scope. */
+    fun start(processorScope: CoroutineScope): Job = processor.start(processorScope)
+
     private val pollToken = syncSettings.dataStore.createValue(
         "gdrive.poll_token.${account.id.id}",
         null as String?,
@@ -155,6 +174,16 @@ class GDriveAppDataConnector @AssistedInject constructor(
         .onStart { _syncEventMode.value = EventMode.POLLING }
         .onCompletion { _syncEventMode.value = EventMode.NONE }
         .shareIn(scope, SharingStarted.WhileSubscribed(), replay = 0)
+
+    private suspend fun executeCommand(command: ConnectorCommand) {
+        when (command) {
+            is ConnectorCommand.Sync -> handleSync(command.options)
+            is ConnectorCommand.DeleteDevice -> handleDeleteDevice(command.deviceId)
+            ConnectorCommand.Reset -> handleReset()
+            ConnectorCommand.Pause -> syncSettings.pausedConnectors.update { it + identifier }
+            ConnectorCommand.Resume -> syncSettings.pausedConnectors.update { it - identifier }
+        }
+    }
 
     private suspend fun GDriveEnvironment.checkForChanges(): List<SyncEvent> {
         val token = pollToken.value()
@@ -239,29 +268,30 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     private suspend fun isInternetAvailable() = networkStateProvider.networkState.first().isInternetAvailable
 
-    override suspend fun resetData(): Unit = withContext(NonCancellable) {
-        log(TAG, INFO) { "resetData()" }
+    private suspend fun handleReset(): Unit = withContext(NonCancellable) {
+        log(TAG, INFO) { "handleReset()" }
         clearFileIdCache()
         runDriveAction("reset-data") {
             appDataRoot.child(DEVICE_DATA_DIR_NAME)
                 ?.listFiles()
                 ?.forEach { file: GDriveFile ->
-                    log(TAG, INFO) { "resetData(): Deleting $file" }
+                    log(TAG, INFO) { "handleReset(): Deleting $file" }
                     file.deleteAll()
                 }
         }
+        syncState.clearConnector(identifier)
     }
 
-    override suspend fun deleteDevice(deviceId: DeviceId): Unit = withContext(NonCancellable) {
-        log(TAG, INFO) { "deleteDevice(deviceId=$deviceId)" }
+    private suspend fun handleDeleteDevice(deviceId: DeviceId): Unit = withContext(NonCancellable) {
+        log(TAG, INFO) { "handleDeleteDevice(deviceId=$deviceId)" }
         evictFileIdCache(deviceId)
         runDriveAction("delete-device: $deviceId") {
             appDataRoot.child(DEVICE_DATA_DIR_NAME)
                 ?.listFiles()
-                ?.onEach { log(TAG, DEBUG) { "deleteDevice(): Checking device dir ${it.name}" } }
+                ?.onEach { log(TAG, DEBUG) { "handleDeleteDevice(): Checking device dir ${it.name}" } }
                 ?.singleOrNull { file ->
                     (file.name == deviceId.id).also {
-                        if (it) log(TAG) { "deleteDevice(): Deleting device dir $file" }
+                        if (it) log(TAG) { "handleDeleteDevice(): Deleting device dir $file" }
                     }
                 }
                 ?.deleteAll()
@@ -270,6 +300,16 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 clearFileIdCache()
                 _state.updateBlocking { copy(isDead = true) }
             }
+        }
+        // Eager prune: survives VM teardown and is visible immediately to all observers.
+        _state.updateBlocking {
+            copy(deviceMetadata = deviceMetadata.filterNot { it.deviceId == deviceId })
+        }
+        _data.value = _data.value?.let { read ->
+            GDriveData(
+                connectorId = read.connectorId,
+                devices = read.devices.filterNot { it.deviceId == deviceId },
+            )
         }
     }
 
@@ -528,22 +568,22 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val syncLock = Mutex()
     private var isSyncing = false
 
-    override suspend fun sync(options: SyncOptions) {
-        log(TAG) { "sync(${options.logLabel})" }
+    private suspend fun handleSync(options: SyncOptions) {
+        log(TAG) { "handleSync(${options.logLabel})" }
         val start = TimeSource.Monotonic.markNow()
 
         if (!isInternetAvailable()) {
-            log(TAG, WARN) { "sync(): Skipping, we are offline." }
+            log(TAG, WARN) { "handleSync(): Skipping, we are offline." }
             return
         }
 
         syncLock.withLock {
             if (isSyncing) {
-                log(TAG, WARN) { "sync(): Already syncing, skipping" }
+                log(TAG, WARN) { "handleSync(): Already syncing, skipping" }
                 return
             } else {
                 isSyncing = true
-                log(TAG, VERBOSE) { "sync(): Starting sync, acquiring" }
+                log(TAG, VERBOSE) { "handleSync(): Starting sync, acquiring" }
             }
         }
 
@@ -568,7 +608,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                                     json.decodeFromString<GDriveDeviceInfo>(it.utf8())
                                 }
                             } catch (e: Exception) {
-                                log(TAG, WARN) { "sync(): Failed to read $DEVICE_INFO_FILE for ${dir.name}: ${e.message}" }
+                                log(TAG, WARN) { "handleSync(): Failed to read $DEVICE_INFO_FILE for ${dir.name}: ${e.message}" }
                                 null
                             }
                             val lastSeen = dir.listFiles()
@@ -585,9 +625,9 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
                         _state.updateBlocking { copy(deviceMetadata = metadata) }
                     } catch (e: Exception) {
-                        log(TAG, ERROR) { "sync(): Failed to list of known devices: ${e.asLog()}" }
+                        log(TAG, ERROR) { "handleSync(): Failed to list of known devices: ${e.asLog()}" }
                     }
-                    log(TAG, VERBOSE) { "sync(...): devices finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
+                    log(TAG, VERBOSE) { "handleSync(...): devices finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
                 }.run { jobs.add(this) }
 
                 scope.async(dispatcherProvider.IO) {
@@ -597,18 +637,22 @@ class GDriveAppDataConnector @AssistedInject constructor(
                         val newQuota = getStorageQuota()
                         _state.updateBlocking { copy(quota = newQuota) }
                     } catch (e: Exception) {
-                        log(TAG, ERROR) { "sync(): Failed to update storage quota: ${e.asLog()}" }
+                        log(TAG, ERROR) { "handleSync(): Failed to update storage quota: ${e.asLog()}" }
                     }
-                    log(TAG, VERBOSE) { "sync(...): quota finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
+                    log(TAG, VERBOSE) { "handleSync(...): quota finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
                 }.run { jobs.add(this) }
 
 
                 if (options.writeData && options.writePayload.isNotEmpty()) {
-                    log(TAG) { "sync(): Writing ${options.writePayload.size} cached modules (batched)" }
+                    log(TAG) { "handleSync(): Writing ${options.writePayload.size} cached modules (batched)" }
                     writeDrive(SyncWriteContainer(
                         deviceId = syncSettings.deviceId,
-                        modules = options.writePayload,
+                        modules = options.writePayload.map { it.module },
                     ))
+                    // writeDrive returned without throwing — record hashes for all written modules
+                    options.writePayload.forEach { mw ->
+                        syncState.setHash(identifier, mw.module.moduleId, mw.expectedHash)
+                    }
                 }
 
 
@@ -621,7 +665,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                         if (isTargeted) {
                             val existing = _data.value
                             if (existing == null) {
-                                log(TAG) { "sync(): First sync, forcing full read despite filters" }
+                                log(TAG) { "handleSync(): First sync, forcing full read despite filters" }
                                 _data.value = readDrive()
                                 val startToken = drive.changes().getStartPageToken()
                                     .setSupportsAllDrives(false)
@@ -647,26 +691,26 @@ class GDriveAppDataConnector @AssistedInject constructor(
                                 }
 
                                 is SyncChangeResult.NoChanges -> {
-                                    log(TAG) { "sync(): No changes detected, skipping readDrive()" }
+                                    log(TAG) { "handleSync(): No changes detected, skipping readDrive()" }
                                 }
                             }
                         }
                     } catch (e: Exception) {
-                        log(TAG, ERROR) { "sync(): Failed to read: ${e.asLog()}" }
+                        log(TAG, ERROR) { "handleSync(): Failed to read: ${e.asLog()}" }
                     }
-                    log(TAG, VERBOSE) { "sync(...): readData finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
+                    log(TAG, VERBOSE) { "handleSync(...): readData finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
                 }.run { jobs.add(this) }
 
 
-                log(TAG) { "sync(...): Waiting for jobs to finish..." }
+                log(TAG) { "handleSync(...): Waiting for jobs to finish..." }
                 jobs.awaitAll()
-                log(TAG) { "sync(...): ... jobs finished." }
+                log(TAG) { "handleSync(...): ... jobs finished." }
 
             }
         } finally {
             syncLock.withLock {
                 isSyncing = false
-                log(TAG, VERBOSE) { "sync(): Sync done, releasing (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
+                log(TAG, VERBOSE) { "handleSync(): Sync done, releasing (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
             }
         }
     }
@@ -767,8 +811,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
 
         return try {
-            _state.updateBlocking { copy(activeActions = activeActions + 1) }
-
             withDrive {
                 driveLock.withLock {
                     block()
@@ -788,10 +830,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
             _state.updateBlocking { copy(lastError = e) }
             throw e
         } finally {
-            _state.updateBlocking {
-                log(TAG, VERBOSE) { "runDriveAction($tag) finished" }
-                copy(activeActions = activeActions - 1)
-            }
             log(TAG, VERBOSE) { "runDriveAction($tag) finished after ${start.elapsedNow().inWholeMilliseconds}ms" }
         }
     }

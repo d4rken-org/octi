@@ -6,10 +6,15 @@ data class SyncOptions(
     val stats: Boolean = true,
     val readData: Boolean = true,
     val writeData: Boolean = true,
-    val writePayload: List<SyncWrite.Device.Module> = emptyList(),
+    val writePayload: List<ModuleWrite> = emptyList(),
     val moduleFilter: Set<ModuleId>? = null,
     val deviceFilter: Set<DeviceId>? = null,
 ) {
+
+    data class ModuleWrite(
+        val module: SyncWrite.Device.Module,
+        val expectedHash: String,
+    )
 
     val logLabel: String
         get() = buildString {

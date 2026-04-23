@@ -15,10 +15,11 @@ import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.meta.core.MetaSerializer
+import eu.darken.octi.sync.core.ConnectorCommand
+import eu.darken.octi.sync.core.ConnectorOperation
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.sync.core.SyncManager
-import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.ConnectorIssueAggregator
 import eu.darken.octi.sync.core.SyncSettings
@@ -26,10 +27,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Instant
@@ -57,6 +62,22 @@ class SyncDevicesVM @Inject constructor(
         .catch { if (it is NoSuchElementException) navUp() else throw it }
         .replayingShare(vmScope)
 
+    init {
+        // Bridge Failed DeleteDevice completions into the standard error dialog pipeline,
+        // then dismiss so the operation list stays tidy. Uses the completions flow (every
+        // terminal emitted exactly once) rather than scanning the bounded operations list.
+        connectorFlow
+            .flatMapLatest { it.completions }
+            .filterIsInstance<ConnectorOperation.Failed>()
+            .filter { it.command is ConnectorCommand.DeleteDevice }
+            .onEach { failed ->
+                log(TAG, WARN) { "DeleteDevice failed: ${failed.error.asLog()}" }
+                errorEvents.tryEmit(failed.error)
+                connectorFlow.first().dismiss(failed.id)
+            }
+            .launchIn(vmScope)
+    }
+
     data class DeviceItem(
         val deviceId: DeviceId,
         val metaInfo: MetaInfo?,
@@ -72,6 +93,7 @@ class SyncDevicesVM @Inject constructor(
         val items: List<DeviceItem> = emptyList(),
         val deviceRemovalPolicy: DeviceRemovalPolicy? = null,
         val isPaused: Boolean = false,
+        val deletingDeviceIds: Set<DeviceId> = emptySet(),
     )
 
     val state = connectorFlow
@@ -83,9 +105,10 @@ class SyncDevicesVM @Inject constructor(
                         ?.flatMap { it.modules }
                         ?.filter { it.moduleId == MetaModule.MODULE_ID }
                 },
+                connector.operations,
                 issueAggregator.issues,
                 syncSettings.pausedConnectors.flow,
-            ) { deviceMetadata, metaDatas, allIssues, pausedIds ->
+            ) { deviceMetadata, metaDatas, operations, allIssues, pausedIds ->
                 log(TAG) { "Loading devices, ${deviceMetadata.size} metadata, ${allIssues.size} issues" }
 
                 val connectorId = connector.identifier
@@ -113,10 +136,15 @@ class SyncDevicesVM @Inject constructor(
                     )
                 }.sortedBy { it.metaInfo?.labelOrFallback?.lowercase() }
 
+                val deletingIds = operations
+                    .filter { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing }
+                    .mapNotNullTo(mutableSetOf()) { (it.command as? ConnectorCommand.DeleteDevice)?.deviceId }
+
                 State(
                     items = items,
                     deviceRemovalPolicy = connector.capabilities.deviceRemovalPolicy,
                     isPaused = pausedIds.contains(connectorId),
+                    deletingDeviceIds = deletingIds,
                 )
             }
         }
@@ -129,27 +157,19 @@ class SyncDevicesVM @Inject constructor(
 
     fun deleteDevice(deviceId: DeviceId) = launch {
         log(TAG, INFO) { "Deleting device $deviceId" }
-        appScope.launch {
-            try {
-                val connector = connectorFlow.first()
-                if (syncSettings.deviceId == deviceId) {
-                    log(TAG, WARN) { "We are deleting US, doing disconnect instead of delete" }
-                    manager.disconnect(connector.identifier)
-                } else {
-                    if (syncSettings.pausedConnectors.value().contains(connector.identifier)) {
-                        log(TAG, WARN) { "deleteDevice($deviceId): connector ${connector.identifier} is paused, skipping" }
-                        return@launch
-                    }
-                    connector.apply {
-                        deleteDevice(deviceId)
-                        sync(SyncOptions(writeData = false))
-                    }
-                }
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Failed to delete device $deviceId: ${e.asLog()}" }
-                errorEvents.tryEmit(e)
+        val connector = connectorFlow.first()
+        if (syncSettings.deviceId == deviceId) {
+            log(TAG, WARN) { "Self-delete — routing through manager.disconnect()" }
+            appScope.launch {
+                runCatching { manager.disconnect(connector.identifier) }
+                    .onFailure { errorEvents.tryEmit(it) }
             }
+            return@launch
         }
+        // Non-suspending submit. The processor serializes against Pause/etc. and prunes the
+        // device from connector state + data, which drops the row from state.items — the UI
+        // auto-dismisses the sheet. Failure surfaces via the completions bridge in init.
+        connector.submit(ConnectorCommand.DeleteDevice(deviceId))
     }
 
     companion object {

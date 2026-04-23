@@ -10,30 +10,30 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorHub
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.execute
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class OctiServerHub @Inject constructor(
-    @AppScope private val scope: CoroutineScope,
+    @AppScope private val appScope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     private val accountRepo: OctiServerAccountRepo,
     private val connectorFactory: OctiServerConnector.Factory,
@@ -41,30 +41,45 @@ class OctiServerHub @Inject constructor(
     private val syncSettings: SyncSettings,
 ) : ConnectorHub {
 
-    private val _connectors = accountRepo.accounts
-        .mapLatest { acc ->
-            acc.map { connectorFactory.create(it) }
-        }
+    private data class Live(
+        val connector: OctiServerConnector,
+        val scope: CoroutineScope,
+        val processorJob: Job,
+    )
+
+    private val live = ConcurrentHashMap<OctiServer.Credentials.AccountId, Live>()
+
+    private val _connectors: Flow<Collection<SyncConnector>> = accountRepo.accounts
+        .map { accounts -> reconcile(accounts) }
         .setupCommonEventHandlers(TAG) { "connectors" }
-        .shareLatest(scope + dispatcherProvider.Default)
+        .shareLatest(appScope + dispatcherProvider.Default)
 
     override val connectors: Flow<Collection<SyncConnector>> = _connectors
 
-    init {
-        _connectors
-            .drop(1) // Initial launch
-            .distinctUntilChangedBy { connectors -> connectors.map { it.credentials } }
-            .map { connectors -> connectors.filter { it.data.first() == null } }
-            .onEach { connectors ->
-                // Connectors that have been added and have no data yet
-                connectors.forEach { connector ->
-                    log(TAG, INFO) { "Syncing initial data for ${connector.credentials}" }
-                    connector.sync(SyncOptions(writeData = false))
-                    log(TAG, INFO) { "Initial data sync done for ${connector.credentials}" }
-                }
+    @Synchronized
+    private fun reconcile(accounts: Collection<OctiServer.Credentials>): Collection<SyncConnector> {
+        val currentKeys = accounts.map { it.accountId }.toSet()
+
+        val goneKeys = live.keys - currentKeys
+        goneKeys.forEach { key ->
+            live.remove(key)?.let {
+                log(TAG, INFO) { "Tearing down connector for $key" }
+                it.scope.cancel()
             }
-            .catch { log(TAG, WARN) { "Initial sync flow failed\n${it.asLog()}" } }
-            .launchIn(scope)
+        }
+
+        accounts.forEach { creds ->
+            live.computeIfAbsent(creds.accountId) {
+                log(TAG, INFO) { "Creating connector for ${creds.serverAdress.domain}:${creds.accountId.id}" }
+                val connectorScope = CoroutineScope(appScope.coroutineContext + SupervisorJob())
+                val connector = connectorFactory.create(creds)
+                val job = connector.start(connectorScope)
+                connector.submit(ConnectorCommand.Sync(SyncOptions(writeData = false)))
+                Live(connector, connectorScope, job)
+            }
+        }
+
+        return live.values.map { it.connector }
     }
 
     override suspend fun owns(connectorId: ConnectorId): Boolean {
@@ -73,13 +88,16 @@ class OctiServerHub @Inject constructor(
 
     override suspend fun remove(connectorId: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "remove(id=$connectorId)" }
-        val connector = _connectors.first().single { it.identifier == connectorId }
+        val connector = _connectors.first().singleOrNull { it.identifier == connectorId } ?: run {
+            log(TAG, WARN) { "remove(id=$connectorId): connector not found" }
+            return@withContext
+        }
         try {
-            connector.deleteDevice(syncSettings.deviceId)
+            connector.execute(ConnectorCommand.DeleteDevice(syncSettings.deviceId))
         } catch (e: Exception) {
             log(TAG, ERROR) { "Failed to delete ourselves from $connectorId: ${e.asLog()}" }
         }
-        accountRepo.remove(connector.credentials.accountId)
+        accountRepo.remove((connector as OctiServerConnector).credentials.accountId)
     }
 
     suspend fun linkAcount(linkingData: LinkingData) = withContext(NonCancellable) {

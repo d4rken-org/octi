@@ -81,16 +81,26 @@ fun SyncDevicesScreen(
     onNavigateUp: () -> Unit,
     onDeleteDevice: (DeviceId) -> Unit,
 ) {
-    var selectedDevice by remember { mutableStateOf<SyncDevicesVM.DeviceItem?>(null) }
+    var selectedDeviceId by rememberSaveable { mutableStateOf<String?>(null) }
     var initialConsumed by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(initialDeviceId, state.items) {
         if (!initialConsumed && initialDeviceId != null && state.items.isNotEmpty()) {
             initialConsumed = true
-            val target = state.items.find { it.deviceId.id == initialDeviceId }
-            if (target != null) selectedDevice = target
+            if (state.items.any { it.deviceId.id == initialDeviceId }) {
+                selectedDeviceId = initialDeviceId
+            }
         }
     }
+
+    // Pop back if the connector becomes paused and nothing is in flight — paused connectors
+    // shouldn't have an interactive devices screen. Guarded on deletingDeviceIds so an in-flight
+    // pause-error dialog gets a chance to render before we navigate away.
+    LaunchedEffect(state.isPaused, state.deletingDeviceIds) {
+        if (state.isPaused && state.deletingDeviceIds.isEmpty()) onNavigateUp()
+    }
+
+    val selectedDevice = selectedDeviceId?.let { id -> state.items.find { it.deviceId.id == id } }
 
     Scaffold(
         topBar = {
@@ -112,7 +122,7 @@ fun SyncDevicesScreen(
             items(state.items, key = { it.deviceId.id }) { item ->
                 DeviceRow(
                     item = item,
-                    onClick = { selectedDevice = item },
+                    onClick = { selectedDeviceId = item.deviceId.id },
                 )
             }
         }
@@ -123,11 +133,11 @@ fun SyncDevicesScreen(
             device = device,
             removalPolicy = state.deviceRemovalPolicy,
             isPaused = state.isPaused,
-            onDismiss = { selectedDevice = null },
-            onDelete = {
-                selectedDevice = null
-                onDeleteDevice(device.deviceId)
-            },
+            isDeleting = state.deletingDeviceIds.contains(device.deviceId),
+            onDismiss = { selectedDeviceId = null },
+            // Do NOT null selectedDeviceId here — once the VM's optimistic prune drops the
+            // device from state.items, selectedDevice resolves to null and the sheet unmounts.
+            onDelete = { onDeleteDevice(device.deviceId) },
         )
     }
 }

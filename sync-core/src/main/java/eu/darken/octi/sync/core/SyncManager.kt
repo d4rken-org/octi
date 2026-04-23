@@ -111,6 +111,23 @@ class SyncManager @Inject constructor(
         .setupCommonEventHandlers(TAG, logValues = false) { "states" }
         .shareLatest(scope + dispatcherProvider.Default)
 
+    /**
+     * Identifiers of active connectors that currently have at least one queued or processing
+     * command — derived from each connector's operations flow. Consumers that previously read
+     * `SyncConnectorState.isBusy` should use this instead.
+     */
+    val busyConnectorIds: Flow<Set<ConnectorId>> = connectors
+        .flatMapLatest { cons ->
+            if (cons.isEmpty()) flowOf(emptySet())
+            else combine(
+                cons.map { c -> c.isBusy.map { busy -> c.identifier to busy } }
+            ) { pairs ->
+                pairs.filter { it.second }.map { it.first }.toSet()
+            }
+        }
+        .setupCommonEventHandlers(TAG, logValues = false) { "busyConnectorIds" }
+        .shareLatest(scope + dispatcherProvider.Default)
+
     val syncEvents: Flow<SyncEvent> = connectors
         .flatMapLatest { cons ->
             if (cons.isEmpty()) emptyFlow()
@@ -127,7 +144,6 @@ class SyncManager @Inject constructor(
                 val connectorDataFlows: List<Flow<Pair<ConnectorId, SyncRead?>>> = connectorList.map { con ->
                     con.data.map { syncRead -> con.identifier to syncRead }
                 }
-                // Combine all new emissions
                 combine(connectorDataFlows) { it.toSet() }
             }
         }
@@ -171,6 +187,8 @@ class SyncManager @Inject constructor(
 
     suspend fun sync(connectorId: ConnectorId, options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(${connectorId.logLabel}, ${options.logLabel})" }
+        // Fast-path defense: avoid submitting work we already know the processor will reject.
+        // The processor also enforces the pause guard authoritatively.
         if (syncSettings.pausedConnectors.value().contains(connectorId)) {
             log(TAG, INFO) { "sync(${connectorId.logLabel}): connector is paused, skipping" }
             return
@@ -185,7 +203,11 @@ class SyncManager @Inject constructor(
             modulePayloads.values.mapNotNull { module ->
                 val currentHash = module.payload.sha256().hex()
                 val lastSent = connectorSyncState.getHash(connectorId, module.moduleId)
-                if (currentHash != lastSent) module to currentHash else null
+                if (currentHash != lastSent) {
+                    SyncOptions.ModuleWrite(module = module, expectedHash = currentHash)
+                } else {
+                    null
+                }
             }
         } else {
             emptyList()
@@ -193,16 +215,13 @@ class SyncManager @Inject constructor(
 
         val effectiveOptions = if (changedModules.isNotEmpty()) {
             log(TAG) { "sync(): Passing ${changedModules.size} changed modules to $connectorId" }
-            options.copy(writePayload = changedModules.map { it.first })
+            options.copy(writePayload = changedModules)
         } else {
             options
         }
 
-        connector.sync(effectiveOptions)
-
-        changedModules.forEach { (module, hash) ->
-            connectorSyncState.setHash(connectorId, module.moduleId, hash)
-        }
+        // Connector sets hashes inline for each successfully-written module — no post-call update here.
+        connector.execute(ConnectorCommand.Sync(effectiveOptions))
     }
 
     fun updatePayload(payload: SyncWrite.Device.Module) {
@@ -220,7 +239,7 @@ class SyncManager @Inject constructor(
             log(TAG, INFO) { "resetData($identifier): connector is paused, skipping" }
             return@withContext
         }
-        getConnectorById<SyncConnector>(identifier).first().resetData()
+        getConnectorById<SyncConnector>(identifier).first().execute(ConnectorCommand.Reset)
         log(TAG) { "resetData(identifier=$identifier) done" }
     }
 
@@ -256,27 +275,18 @@ class SyncManager @Inject constructor(
         log(TAG, INFO) { "togglePause($identifier, enabled=$paused)" }
         val wasPaused = syncSettings.pausedConnectors.value().contains(identifier)
         val pause = paused ?: !wasPaused
-        when (pause) {
-            true -> syncSettings.pausedConnectors.update {
-                it + identifier
-            }
-
-            false -> syncSettings.pausedConnectors.update {
-                it - identifier
-            }
+        if (wasPaused == pause) {
+            log(TAG) { "togglePause($identifier): no-op, already in target state" }
+            return
         }
-        if (wasPaused && !pause) {
-            log(TAG, INFO) { "togglePause($identifier): unpaused, triggering sync" }
-            scope.launch {
-                try {
-                    sync(identifier)
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    log(TAG, ERROR) { "togglePause($identifier): post-unpause sync failed: ${e.asLog()}" }
-                }
-            }
+        val connector = allConnectors.first().singleOrNull { it.identifier == identifier } ?: run {
+            log(TAG, WARN) { "togglePause($identifier): connector not found" }
+            return
         }
+        // Route through the queue so the setting write is serialized with the connector's other
+        // work. After a successful Resume, the processor enqueues a Sync on its own queue — no
+        // fire-and-forget launch needed here.
+        connector.execute(if (pause) ConnectorCommand.Pause else ConnectorCommand.Resume)
     }
 
     companion object {
