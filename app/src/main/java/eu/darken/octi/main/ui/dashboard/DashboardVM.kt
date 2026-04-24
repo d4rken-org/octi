@@ -17,6 +17,7 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.permissions.Permission
+import eu.darken.octi.common.permissions.PermissionState
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.main.core.GeneralSettings
@@ -79,6 +80,7 @@ class DashboardVM @Inject constructor(
     private val moduleManager: ModuleManager,
     networkStateProvider: NetworkStateProvider,
     private val permissionTool: PermissionTool,
+    private val permissionState: PermissionState,
     private val syncSettings: SyncSettings,
     private val upgradeRepo: UpgradeRepo,
     private val webpageTool: WebpageTool,
@@ -395,6 +397,7 @@ class DashboardVM @Inject constructor(
     }
 
     fun onPermissionResult(granted: Boolean) {
+        permissionState.recheck()
         if (granted) permissionTool.recheck()
     }
 

@@ -13,6 +13,7 @@
     <string name="module_files_upload_success">File shared successfully</string>
     <string name="module_files_upload_partial">File shared to some devices. Retry in progress\u2026</string>
     <string name="module_files_upload_failed">Failed to share file</string>
+    <string name="module_files_upload_too_large">File is too large to share (max %1$s)</string>
     <string name="module_files_upload_no_connectors">No sync service available for file sharing</string>
     <string name="module_files_save_success">File saved</string>
     <string name="module_files_save_not_available">File is not available on any of your connected services</string>
@@ -29,4 +30,6 @@
     <string name="module_files_notification_incoming_title">%1$s shared a file</string>
     <string name="module_files_unavailable_title">File sharing unavailable</string>
     <string name="module_files_unavailable_message">No sync service on this device supports file sharing. Check the warning in the dashboard for details.</string>
+    <string name="module_files_usage_hint_message">For quick, small files — configs, PDFs, text docs. Not designed for photos, videos, or app installers.</string>
+    <string name="module_files_hint_dismiss_action">Dismiss</string>
 </resources>

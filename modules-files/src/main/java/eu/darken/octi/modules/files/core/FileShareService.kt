@@ -20,6 +20,7 @@ import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobChecksumMismatchException
+import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.BlobProgress
@@ -57,6 +58,7 @@ class FileShareService @Inject constructor(
         ) : ShareResult()
 
         data class AllConnectorsFailed(val errors: Map<ConnectorId, Throwable>) : ShareResult()
+        data class FileTooLarge(val requestedBytes: Long, val maxBytes: Long) : ShareResult()
         data object NoEligibleConnectors : ShareResult()
     }
 
@@ -163,11 +165,19 @@ class FileShareService @Inject constructor(
 
             if (putResult.successful.isEmpty()) {
                 log(TAG, WARN) { "shareFile(): All connectors failed" }
-                return@withContext if (putResult.perConnectorErrors.isEmpty()) {
-                    ShareResult.NoEligibleConnectors
-                } else {
-                    ShareResult.AllConnectorsFailed(putResult.perConnectorErrors)
+                if (putResult.perConnectorErrors.isEmpty()) {
+                    return@withContext ShareResult.NoEligibleConnectors
                 }
+                val tooLargeErrors = putResult.perConnectorErrors.values
+                    .filterIsInstance<BlobFileTooLargeException>()
+                val allTooLarge = tooLargeErrors.size == putResult.perConnectorErrors.size
+                if (allTooLarge) {
+                    val minCap = tooLargeErrors.mapNotNull { it.constraints.maxFileBytes }.minOrNull()
+                    if (minCap != null) {
+                        return@withContext ShareResult.FileTooLarge(requestedBytes = size, maxBytes = minCap)
+                    }
+                }
+                return@withContext ShareResult.AllConnectorsFailed(putResult.perConnectorErrors)
             }
 
             // 5. Create metadata entry

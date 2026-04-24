@@ -1,12 +1,14 @@
 package eu.darken.octi.modules.files.ui.list
 
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.DataStoreValue
 import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.files.FileShareModule
 import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.modules.files.core.FileShareRepo
 import eu.darken.octi.modules.files.core.FileShareService
+import eu.darken.octi.modules.files.core.FileShareSettings
 import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.module.core.ModuleManager
@@ -36,6 +38,11 @@ class FileShareListVMTest : BaseTest() {
     private val moduleManager = mockk<ModuleManager>()
     private val blobManager = mockk<BlobManager>()
     private val syncSettings = mockk<SyncSettings>()
+    private val fileShareSettings = mockk<FileShareSettings>().apply {
+        val hintFlag = mockk<DataStoreValue<Boolean>>()
+        every { hintFlag.flow } returns flowOf(false)
+        every { isUsageHintDismissed } returns hintFlag
+    }
 
     @Test
     fun `state hides expired files and marks unavailable files from non-overlapping connectors`() = runTest2 {
@@ -111,6 +118,7 @@ class FileShareListVMTest : BaseTest() {
             moduleManager = moduleManager,
             blobManager = blobManager,
             syncSettings = syncSettings,
+            fileShareSettings = fileShareSettings,
         )
         vm.initialize(remoteDevice.id)
 

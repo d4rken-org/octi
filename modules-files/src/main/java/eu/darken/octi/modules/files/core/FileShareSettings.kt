@@ -46,6 +46,8 @@ class FileShareSettings @Inject constructor(
      */
     val notifyOnIncoming = dataStore.createValue("module.files.notify.incoming", true)
 
+    val isUsageHintDismissed = dataStore.createValue("module.files.hint.usage.dismissed", false)
+
     /**
      * Keyed by blobKey. Each entry is a tombstone recording which connectors still need the blob deleted.
      */

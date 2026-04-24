@@ -1,6 +1,8 @@
 package eu.darken.octi.modules.files.core
 
+import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.datastore.DataStoreValue
 import eu.darken.octi.modules.files.FileShareModule
@@ -11,8 +13,11 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
+import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
 import eu.darken.octi.sync.core.blob.BlobManager
+import eu.darken.octi.sync.core.blob.BlobStoreConstraints
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -23,6 +28,7 @@ import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
 import testhelpers.coroutine.runTest2
+import java.io.ByteArrayInputStream
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
@@ -162,6 +168,90 @@ class FileShareServiceTest : BaseTest() {
         result shouldBe FileShareService.DeleteResult.Partial(setOf("stale-connector"))
         coVerify(exactly = 0) { handler.removeFile(file.blobKey) }
         coVerify(exactly = 0) { handler.updateLocations(any(), any(), any()) }
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile maps all-too-large errors to FileTooLarge with minimum cap`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val fileBytes = ByteArray(42) { it.toByte() }
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(fileBytes) }
+        every { syncSettings.deviceId } returns ownDeviceId
+
+        val smallerCap = 10L
+        val largerCap = 100L
+        coEvery {
+            blobManager.put(any(), any(), any(), any(), any(), any(), any())
+        } returns BlobManager.PutResult(
+            successful = emptySet(),
+            perConnectorErrors = mapOf(
+                connectorA to BlobFileTooLargeException(
+                    connectorId = connectorA,
+                    constraints = BlobStoreConstraints(maxFileBytes = largerCap, maxTotalBytes = null),
+                    requestedBytes = fileBytes.size.toLong(),
+                ),
+                connectorB to BlobFileTooLargeException(
+                    connectorId = connectorB,
+                    constraints = BlobStoreConstraints(maxFileBytes = smallerCap, maxTotalBytes = null),
+                    requestedBytes = fileBytes.size.toLong(),
+                ),
+            ),
+        )
+
+        val result = createService().shareFile(uri)
+
+        result.shouldBeInstanceOf<FileShareService.ShareResult.FileTooLarge>()
+        (result as FileShareService.ShareResult.FileTooLarge).maxBytes shouldBe smallerCap
+        result.requestedBytes shouldBe fileBytes.size.toLong()
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile with mixed errors falls through to AllConnectorsFailed`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val fileBytes = ByteArray(42) { it.toByte() }
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(fileBytes) }
+        every { syncSettings.deviceId } returns ownDeviceId
+
+        coEvery {
+            blobManager.put(any(), any(), any(), any(), any(), any(), any())
+        } returns BlobManager.PutResult(
+            successful = emptySet(),
+            perConnectorErrors = mapOf(
+                connectorA to BlobFileTooLargeException(
+                    connectorId = connectorA,
+                    constraints = BlobStoreConstraints(maxFileBytes = 10L, maxTotalBytes = null),
+                    requestedBytes = fileBytes.size.toLong(),
+                ),
+                connectorB to java.io.IOException("network down"),
+            ),
+        )
+
+        val result = createService().shareFile(uri)
+
+        result.shouldBeInstanceOf<FileShareService.ShareResult.AllConnectorsFailed>()
 
         cacheDir.deleteRecursively()
     }

@@ -65,7 +65,10 @@ class SyncCache @Inject constructor(
 
             val cacheFile = id.toCacheFile()
 
-            if (!cacheFile.exists()) cacheFile.createNewFile()
+            if (!cacheFile.exists()) {
+                cacheFile.parentFile?.mkdirs()
+                cacheFile.createNewFile()
+            }
             cacheFile.writeText(json.encodeToString(cachedRead))
         } catch (e: Exception) {
             log(TAG, ERROR) { "Failed to cache sync data: ${e.asLog()}" }

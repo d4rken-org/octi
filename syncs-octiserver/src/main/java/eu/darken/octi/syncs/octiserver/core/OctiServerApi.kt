@@ -201,6 +201,15 @@ interface OctiServerApi {
         @Query("device-id") targetDeviceId: String,
     ): BlobListResponse
 
+    @DELETE("module/{moduleId}/blobs/{blobId}")
+    suspend fun deleteBlob(
+        @Path("moduleId") moduleId: String,
+        @Path("blobId") blobId: String,
+        @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
+        @Header("If-Match") ifMatch: String,
+    ): Response<Unit>
+
     // --- Module commit (blob-aware PUT) ---
 
     @Serializable

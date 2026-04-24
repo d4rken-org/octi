@@ -6,7 +6,9 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import eu.darken.octi.common.collections.toByteString
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.serialization.RetrofitJson
@@ -22,6 +24,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.ByteString
 import retrofit2.HttpException
+import retrofit2.Response
 import retrofit2.Retrofit
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -348,6 +351,94 @@ class OctiServerEndpoint @AssistedInject constructor(
             )
         } catch (e: HttpException) {
             throw OctiServerHttpException(e)
+        }
+    }
+
+    /**
+     * Delete a blob explicitly.
+     *
+     * The server requires an `If-Match` header with the current module ETag, since deleting
+     * a blob mutates the module document. We read the ETag first and short-circuit as
+     * idempotent success if the module doesn't exist. On a stale ETag (412), we refresh
+     * once and retry.
+     *
+     * Returns normally on:
+     * - 2xx (delete succeeded; response carries the new module ETag which is discarded —
+     *   [OctiServerConnector]'s own 412-retry-on-commit path handles cache invalidation)
+     * - 404 (blob already gone / module gone / cross-account target — idempotent)
+     * - 405/501 (endpoint not implemented on older servers — falls back to implicit GC)
+     *
+     * Throws [OctiServerHttpException] on 400 (client-side If-Match bug), persistent 412
+     * (2nd retry also stale — indicates concurrent-write churn), or other non-2xx codes.
+     */
+    suspend fun deleteBlob(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        serverBlobId: String,
+    ): Unit = withContext(dispatcherProvider.IO) {
+        log(TAG, VERBOSE) { "deleteBlob(blobId=$serverBlobId, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
+
+        val initialEtag = when (val result = readModuleEtag(deviceId, moduleId)) {
+            is ModuleEtagResult.Absent -> {
+                log(TAG, VERBOSE) { "deleteBlob(): module absent, treating as idempotent no-op" }
+                return@withContext
+            }
+            is ModuleEtagResult.Present -> result.etag
+        }
+
+        try {
+            val firstResponse = callDeleteBlob(deviceId, moduleId, serverBlobId, initialEtag)
+            if (firstResponse.code() == 412) {
+                log(TAG, WARN) { "deleteBlob(): stale ETag, refreshing and retrying once" }
+                val freshEtag = when (val refreshed = readModuleEtag(deviceId, moduleId)) {
+                    is ModuleEtagResult.Absent -> return@withContext
+                    is ModuleEtagResult.Present -> refreshed.etag
+                }
+                val retry = callDeleteBlob(deviceId, moduleId, serverBlobId, freshEtag)
+                handleDeleteBlobResponse(retry, allowRetry = false)
+            } else {
+                handleDeleteBlobResponse(firstResponse, allowRetry = true)
+            }
+        } catch (e: HttpException) {
+            throw OctiServerHttpException(e)
+        }
+    }
+
+    private suspend fun callDeleteBlob(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        serverBlobId: String,
+        etag: String,
+    ) = api.deleteBlob(
+        moduleId = moduleId.id,
+        blobId = serverBlobId,
+        callerDeviceId = ourDeviceIdString,
+        targetDeviceId = deviceId.id,
+        ifMatch = etag,
+    )
+
+    private fun handleDeleteBlobResponse(response: Response<Unit>, allowRetry: Boolean) {
+        when {
+            response.isSuccessful -> {
+                val newEtag = response.headers()["ETag"]
+                log(TAG, VERBOSE) { "deleteBlob(): success (HTTP ${response.code()}, newEtag=$newEtag)" }
+            }
+            response.code() == 404 -> log(TAG, VERBOSE) { "deleteBlob(): 404 — idempotent no-op" }
+            response.code() == 405 || response.code() == 501 -> {
+                log(TAG, WARN) {
+                    "deleteBlob(): server does not support explicit delete (HTTP ${response.code()}); " +
+                        "falling back to implicit GC"
+                }
+            }
+            response.code() == 400 -> {
+                log(TAG, ERROR) { "deleteBlob(): server rejected If-Match as malformed (HTTP 400) — client bug" }
+                throw OctiServerHttpException(HttpException(response))
+            }
+            response.code() == 412 && !allowRetry -> {
+                log(TAG, ERROR) { "deleteBlob(): ETag still stale after refresh, giving up" }
+                throw OctiServerHttpException(HttpException(response))
+            }
+            else -> throw OctiServerHttpException(HttpException(response))
         }
     }
 

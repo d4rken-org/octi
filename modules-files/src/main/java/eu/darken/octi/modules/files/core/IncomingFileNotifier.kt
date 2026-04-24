@@ -14,13 +14,18 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.hasApiLevel
+import eu.darken.octi.common.permissions.Permission
+import eu.darken.octi.common.permissions.PermissionState
+import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.plus
 import java.util.concurrent.ConcurrentHashMap
@@ -37,6 +42,12 @@ import kotlin.math.absoluteValue
  *
  * Lifecycle: [start] is called once from `App.onCreate()`. The observer runs on [AppScope]
  * and drains for the lifetime of the process.
+ *
+ * Known limitation: [seenByDevice] is process-scoped (not persisted). If the app is killed
+ * between receiving a share and the user granting POST_NOTIFICATIONS, the first emission
+ * after restart re-seeds silently and the missed share will not fire a notification (the
+ * file still appears in the in-app share list). A future improvement could persist the seen
+ * set to DataStore; deferred pending evidence that cross-process share-loss is common.
  */
 @Singleton
 class IncomingFileNotifier @Inject constructor(
@@ -47,6 +58,7 @@ class IncomingFileNotifier @Inject constructor(
     private val fileShareSettings: FileShareSettings,
     private val moduleManager: ModuleManager,
     private val notificationManager: NotificationManager,
+    private val permissionState: PermissionState,
 ) {
 
     private val seenByDevice = ConcurrentHashMap<DeviceId, Set<String>>()
@@ -64,27 +76,62 @@ class IncomingFileNotifier @Inject constructor(
 
     fun start() {
         log(TAG, INFO) { "start(): observing incoming file shares" }
+        val systemNotificationsGrantedFlow = permissionState.state
+            .map { it[Permission.POST_NOTIFICATIONS] ?: true }
+            .distinctUntilChanged()
+
         combine(
             fileShareRepo.state,
             fileShareSettings.notifyOnIncoming.flow,
             moduleManager.byDevice,
-        ) { state, notifyEnabled, byDevice -> Triple(state, notifyEnabled, byDevice) }
-            .onEach { (state, notifyEnabled, byDevice) ->
-                for (moduleData in state.others) {
+            systemNotificationsGrantedFlow,
+        ) { state, notifyEnabled, byDevice, systemNotificationsGranted ->
+            Snapshot(state, notifyEnabled, byDevice, systemNotificationsGranted)
+        }
+            .onEach { snap ->
+                for (moduleData in snap.state.others) {
                     val deviceId = moduleData.deviceId
                     val current = moduleData.data.files.map { it.blobKey }.toSet()
-                    val previous = seenByDevice.put(deviceId, current)
+                    val previous = seenByDevice[deviceId]
 
+                    // (a) First time seen for this device: silent seed regardless of permission.
                     if (previous == null) {
+                        seenByDevice[deviceId] = current
                         log(TAG, VERBOSE) { "start(): seeded ${current.size} files for ${deviceId.logLabel}" }
                         continue
                     }
-                    if (!notifyEnabled) continue
+
+                    // (b) User-level opt-out: advance silently (don't flood on opt-in).
+                    if (!snap.notifyEnabled) {
+                        seenByDevice[deviceId] = current
+                        continue
+                    }
 
                     val added = current - previous
-                    if (added.isEmpty()) continue
+                    if (added.isEmpty()) {
+                        // Removals only (or no change) — advance and continue, no notification.
+                        seenByDevice[deviceId] = current
+                        continue
+                    }
 
-                    val deviceLabel = byDevice.devices[deviceId]
+                    // (c) System-level checks before notifying. If delivery would be silently
+                    // dropped, do NOT advance seenByDevice — so once the user enables
+                    // notifications and permissionState re-emits, `added` recomputes against
+                    // the stale `previous` and we notify then.
+                    val channelAllowsDelivery = if (hasApiLevel(26)) {
+                        notificationManager.getNotificationChannel(CHANNEL_ID)?.importance !=
+                            NotificationManager.IMPORTANCE_NONE
+                    } else true
+
+                    if (!snap.systemNotificationsGranted || !channelAllowsDelivery) {
+                        log(TAG, INFO) {
+                            "system notifications unavailable (perm=${snap.systemNotificationsGranted}, " +
+                                "channel=$channelAllowsDelivery), deferring ${added.size} for ${deviceId.logLabel}"
+                        }
+                        continue
+                    }
+
+                    val deviceLabel = snap.byDevice.devices[deviceId]
                         ?.firstNotNullOfOrNull { it.data as? MetaInfo }
                         ?.labelOrFallback
                         ?: deviceId.id.take(8)
@@ -93,10 +140,18 @@ class IncomingFileNotifier @Inject constructor(
                         val sharedFile = moduleData.data.files.find { it.blobKey == blobKey } ?: continue
                         notify(deviceId, deviceLabel, sharedFile)
                     }
+                    seenByDevice[deviceId] = current
                 }
             }
             .launchIn(appScope + dispatcherProvider.Default)
     }
+
+    private data class Snapshot(
+        val state: BaseModuleRepo.State<FileShareInfo>,
+        val notifyEnabled: Boolean,
+        val byDevice: ModuleManager.ByDevice,
+        val systemNotificationsGranted: Boolean,
+    )
 
     private fun notify(deviceId: DeviceId, deviceLabel: String, sharedFile: FileShareInfo.SharedFile) {
         log(TAG) { "notify(device=${deviceId.logLabel}, file=${sharedFile.name})" }

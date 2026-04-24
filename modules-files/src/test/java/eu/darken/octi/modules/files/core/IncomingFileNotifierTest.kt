@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.datastore.DataStoreValue
+import eu.darken.octi.common.permissions.Permission
+import eu.darken.octi.common.permissions.PermissionState
 import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
@@ -35,6 +37,10 @@ class IncomingFileNotifierTest : BaseTest() {
     private val notificationManager = mockk<NotificationManager>(relaxed = true)
     private val packageManager = mockk<PackageManager>(relaxed = true)
     private val notifyOnIncomingValue = mockk<DataStoreValue<Boolean>>()
+    private val permissionState = mockk<PermissionState>()
+    private val permissionStateFlow = MutableStateFlow<Map<Permission, Boolean>>(
+        mapOf(Permission.POST_NOTIFICATIONS to true)
+    )
 
     private val remoteDevice = DeviceId("remote-device")
 
@@ -45,6 +51,7 @@ class IncomingFileNotifierTest : BaseTest() {
         every { packageManager.getLaunchIntentForPackage(any()) } returns android.content.Intent()
         every { fileShareSettings.notifyOnIncoming } returns notifyOnIncomingValue
         every { moduleManager.byDevice } returns flowOf(ModuleManager.ByDevice(devices = emptyMap()))
+        every { permissionState.state } returns permissionStateFlow
     }
 
     private fun makeStateWith(files: List<FileShareInfo.SharedFile>): BaseModuleRepo.State<FileShareInfo> =
@@ -84,6 +91,7 @@ class IncomingFileNotifierTest : BaseTest() {
             fileShareSettings = fileShareSettings,
             moduleManager = moduleManager,
             notificationManager = notificationManager,
+            permissionState = permissionState,
         )
     }
 
@@ -119,6 +127,24 @@ class IncomingFileNotifierTest : BaseTest() {
 
         // Re-emit identical state (StateFlow dedupes, but even if it didn't, diff stays empty)
         states.value = makeStateWith(listOf(makeFile("blob-a")))
+        advanceUntilIdle()
+
+        verify(exactly = 0) { notificationManager.notify(any<Int>(), any()) }
+    }
+
+    @Test
+    fun `POST_NOTIFICATIONS denied suppresses notify on added files`() = runTest2 {
+        permissionStateFlow.value = mapOf(Permission.POST_NOTIFICATIONS to false)
+        val states = MutableStateFlow(makeStateWith(listOf(makeFile("blob-a"))))
+
+        buildNotifier(states).start()
+        advanceUntilIdle()
+
+        // Share arrives while permission is denied — no notify, and internally
+        // seenByDevice is NOT advanced (verified by the "grant re-enables on next change"
+        // story in on-device testing; covering here requires exercising the notify path
+        // which pulls in PendingIntent / NotificationCompat and is skipped in this unit test).
+        states.value = makeStateWith(listOf(makeFile("blob-a"), makeFile("blob-b")))
         advanceUntilIdle()
 
         verify(exactly = 0) { notificationManager.notify(any<Int>(), any()) }

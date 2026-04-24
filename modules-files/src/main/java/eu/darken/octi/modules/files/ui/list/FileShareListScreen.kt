@@ -1,6 +1,7 @@
 package eu.darken.octi.modules.files.ui.list
 
 import android.content.Intent
+import android.text.format.DateUtils
 import android.text.format.Formatter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,13 +20,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.automirrored.twotone.InsertDriveFile
 import androidx.compose.material.icons.twotone.Add
+import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material.icons.twotone.Delete
+import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.SaveAlt
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -52,7 +57,6 @@ import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.sync.core.blob.BlobProgress
 import eu.darken.octi.common.R as CommonR
-import androidx.compose.foundation.layout.fillMaxWidth
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
@@ -72,7 +76,12 @@ fun FileShareListScreenHost(
     LaunchedEffect(vm.uiEvents) {
         vm.uiEvents.collect { event ->
             when (event) {
-                is FileShareListVM.UiEvent.ShowMessage -> snackbarHostState.showSnackbar(context.getString(event.messageRes))
+                is FileShareListVM.UiEvent.ShowMessage ->
+                    snackbarHostState.showSnackbar(context.getString(event.messageRes))
+                is FileShareListVM.UiEvent.ShowMessageWithSize ->
+                    snackbarHostState.showSnackbar(
+                        context.getString(event.messageRes, Formatter.formatFileSize(context, event.bytes))
+                    )
             }
         }
     }
@@ -111,6 +120,7 @@ fun FileShareListScreenHost(
                 )
             },
             onDeleteClick = { file -> vm.onDeleteFile(file) },
+            onDismissHint = { vm.onDismissUsageHint() },
         )
     }
 }
@@ -123,7 +133,9 @@ fun FileShareListScreen(
     onShareClick: () -> Unit = {},
     onSaveClick: (FileShareInfo.SharedFile) -> Unit = {},
     onDeleteClick: (FileShareInfo.SharedFile) -> Unit = {},
+    onDismissHint: () -> Unit = {},
 ) {
+    val showUsageHint = state.isOurDevice && !state.isUsageHintDismissed
     Scaffold(
         topBar = {
             TopAppBar(
@@ -160,6 +172,9 @@ fun FileShareListScreen(
                     .fillMaxSize()
                     .padding(padding),
             ) {
+                if (showUsageHint) {
+                    UsageHintCard(onDismiss = onDismissHint)
+                }
                 if (state.isOurDevice && state.quotaItems.isNotEmpty()) {
                     QuotaSummary(state = state)
                 }
@@ -200,6 +215,11 @@ fun FileShareListScreen(
                     .fillMaxSize()
                     .padding(padding),
             ) {
+                if (showUsageHint) {
+                    item {
+                        UsageHintCard(onDismiss = onDismissHint)
+                    }
+                }
                 if (state.isOurDevice && state.quotaItems.isNotEmpty()) {
                     item {
                         QuotaSummary(state = state)
@@ -225,6 +245,40 @@ fun FileShareListScreen(
 }
 
 @Composable
+private fun UsageHintCard(onDismiss: () -> Unit) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.TwoTone.Info,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp),
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.module_files_usage_hint_message),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+            )
+            IconButton(onClick = onDismiss) {
+                Icon(
+                    imageVector = Icons.TwoTone.Close,
+                    contentDescription = stringResource(R.string.module_files_hint_dismiss_action),
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun UploadProgressBar(progress: BlobProgress) {
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
         Text(
@@ -244,22 +298,28 @@ private fun UploadProgressBar(progress: BlobProgress) {
 private fun QuotaSummary(state: FileShareListVM.State) {
     val context = LocalContext.current
 
-    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-        Text(
-            text = stringResource(R.string.module_files_quota_header),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        state.quotaItems.forEach { quota ->
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)) {
             Text(
-                text = stringResource(
-                    R.string.module_files_quota_item,
-                    quota.label,
-                    Formatter.formatFileSize(context, quota.usedBytes),
-                    Formatter.formatFileSize(context, quota.totalBytes),
-                ),
-                style = MaterialTheme.typography.bodyMedium,
+                text = stringResource(R.string.module_files_quota_header),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            state.quotaItems.forEach { quota ->
+                Text(
+                    text = stringResource(
+                        R.string.module_files_quota_item,
+                        quota.label,
+                        Formatter.formatFileSize(context, quota.usedBytes),
+                        Formatter.formatFileSize(context, quota.totalBytes),
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
         }
     }
 }
@@ -278,7 +338,7 @@ private fun FileItemRow(
             .clickable(enabled = !isOurDevice && item.isAvailable && !isDownloading) { onSaveClick() },
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -291,7 +351,7 @@ private fun FileItemRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = item.sharedFile.name,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -299,6 +359,14 @@ private fun FileItemRow(
                 Text(
                     text = buildString {
                         append(Formatter.formatFileSize(context, item.sharedFile.size))
+                        append(" \u2022 ")
+                        append(
+                            DateUtils.getRelativeTimeSpanString(
+                                item.sharedFile.sharedAt.toEpochMilliseconds(),
+                                System.currentTimeMillis(),
+                                DateUtils.MINUTE_IN_MILLIS,
+                            )
+                        )
                         if (!item.isAvailable) {
                             append(" \u2022 ")
                             append(context.getString(R.string.module_files_unavailable))
@@ -342,7 +410,12 @@ private fun FileShareListScreenPreview() = PreviewWrapper {
                     label = "octi.example.com",
                     usedBytes = 12 * 1024 * 1024,
                     totalBytes = 25 * 1024 * 1024,
-                )
+                ),
+                FileShareListVM.QuotaItem(
+                    label = "drive.google.com",
+                    usedBytes = 850 * 1024 * 1024,
+                    totalBytes = 15L * 1024 * 1024 * 1024,
+                ),
             ),
             files = listOf(
                 FileShareListVM.FileItem(
@@ -381,5 +454,23 @@ private fun FileShareListScreenPreview() = PreviewWrapper {
 private fun FileShareListScreenEmptyPreview() = PreviewWrapper {
     FileShareListScreen(
         state = FileShareListVM.State(deviceLabel = "Pixel 8", isOurDevice = false),
+    )
+}
+
+@Preview2
+@Composable
+private fun FileShareListScreenEmptyOwnDevicePreview() = PreviewWrapper {
+    FileShareListScreen(
+        state = FileShareListVM.State(
+            deviceLabel = "Pixel 8",
+            isOurDevice = true,
+            quotaItems = listOf(
+                FileShareListVM.QuotaItem(
+                    label = "octi.example.com",
+                    usedBytes = 0,
+                    totalBytes = 25 * 1024 * 1024,
+                )
+            ),
+        ),
     )
 }

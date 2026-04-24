@@ -46,8 +46,9 @@ import kotlin.time.Clock
  * device records the ref in `SharedFile.connectorRefs` at upload time, and downstream reads pass
  * it back verbatim.
  *
- * Blob deletion is implicit: blobs are removed by the server when a module commit no longer
- * references them. [delete] is a no-op.
+ * Blob deletion issues an explicit DELETE /blobs/{id}. Servers that return 404 are treated as
+ * idempotent success; servers that return 405/501 fall back to the legacy implicit-GC model
+ * (blob removed when the next module commit omits it from blobRefs).
  */
 class OctiServerBlobStore @AssistedInject constructor(
     private val blobCacheDirs: BlobCacheDirs,
@@ -133,6 +134,9 @@ class OctiServerBlobStore @AssistedInject constructor(
             // 5. Finalize with ciphertext hash
             endpoint.finalizeBlobSession(moduleId, session.sessionId, cipherHash)
 
+            log(TAG, VERBOSE) {
+                "put(${key.id}): Finalized ciphertext=${cipherSize}B, hashPrefix=${cipherHash.take(16)}"
+            }
             log(TAG, INFO) { "put(${key.id}): Finalized, serverBlobId=${session.blobId}" }
             return RemoteBlobRef(session.blobId)
         } catch (e: OctiServerHttpException) {
@@ -215,8 +219,8 @@ class OctiServerBlobStore @AssistedInject constructor(
     }
 
     override suspend fun delete(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef) {
-        // No-op: blobs are deleted implicitly when the next module commit omits them from blobRefs.
-        log(TAG, VERBOSE) { "delete(ref=${remoteRef.value}): No-op (server cleans up on next commit)" }
+        log(TAG, VERBOSE) { "delete(ref=${remoteRef.value})" }
+        endpoint.deleteBlob(deviceId, moduleId, remoteRef.value)
     }
 
     override suspend fun list(deviceId: DeviceId, moduleId: ModuleId): Set<RemoteBlobRef> {
@@ -245,6 +249,10 @@ class OctiServerBlobStore @AssistedInject constructor(
     override suspend fun getQuota(): BlobStoreQuota? {
         return try {
             val storage = endpoint.getAccountStorage()
+            log(TAG, VERBOSE) {
+                "getQuota(): usedBytes=${storage.usedBytes}, quota=${storage.accountQuotaBytes}, " +
+                    "available=${storage.availableBytes}, reserved=${storage.reservedBytes}"
+            }
             BlobStoreQuota(
                 connectorId = connectorId,
                 usedBytes = storage.usedBytes,

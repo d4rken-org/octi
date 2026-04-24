@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.annotation.StringRes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.shareLatest
@@ -14,6 +15,7 @@ import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.modules.files.core.FileShareRepo
 import eu.darken.octi.modules.files.core.FileShareService
+import eu.darken.octi.modules.files.core.FileShareSettings
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.sync.core.DeviceId
@@ -38,6 +40,7 @@ class FileShareListVM @Inject constructor(
     private val moduleManager: ModuleManager,
     private val blobManager: BlobManager,
     private val syncSettings: SyncSettings,
+    private val fileShareSettings: FileShareSettings,
 ) : ViewModel4(dispatcherProvider) {
 
     data class State(
@@ -47,6 +50,7 @@ class FileShareListVM @Inject constructor(
         val quotaItems: List<QuotaItem> = emptyList(),
         val files: List<FileItem> = emptyList(),
         val uploadProgress: BlobProgress? = null,
+        val isUsageHintDismissed: Boolean = false,
     )
 
     data class QuotaItem(
@@ -63,6 +67,7 @@ class FileShareListVM @Inject constructor(
 
     sealed interface UiEvent {
         data class ShowMessage(@StringRes val messageRes: Int) : UiEvent
+        data class ShowMessageWithSize(@StringRes val messageRes: Int, val bytes: Long) : UiEvent
     }
 
     val uiEvents = SingleEventFlow<UiEvent>()
@@ -71,7 +76,7 @@ class FileShareListVM @Inject constructor(
     val state: Flow<State> = deviceIdFlow
         .filterNotNull()
         .flatMapLatest { targetDeviceId ->
-            combine(
+            val baseFlow = combine(
                 fileShareRepo.state,
                 fileShareRepo.isEnabled,
                 moduleManager.byDevice,
@@ -142,6 +147,9 @@ class FileShareListVM @Inject constructor(
                     uploadProgress = uploadProgress,
                 )
             }
+            combine(baseFlow, fileShareSettings.isUsageHintDismissed.flow) { base, hintDismissed ->
+                base.copy(isUsageHintDismissed = hintDismissed)
+            }
         }
         .setupCommonEventHandlers(TAG) { "state" }
         .shareLatest(vmScope)
@@ -158,6 +166,8 @@ class FileShareListVM @Inject constructor(
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_partial))
             is FileShareService.ShareResult.AllConnectorsFailed ->
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_failed))
+            is FileShareService.ShareResult.FileTooLarge ->
+                uiEvents.tryEmit(UiEvent.ShowMessageWithSize(R.string.module_files_upload_too_large, result.maxBytes))
             is FileShareService.ShareResult.NoEligibleConnectors ->
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_no_connectors))
         }
@@ -179,6 +189,10 @@ class FileShareListVM @Inject constructor(
                 uiEvents.tryEmit(UiEvent.ShowMessage(message))
             }
         }
+    }
+
+    fun onDismissUsageHint() = launch {
+        fileShareSettings.isUsageHintDismissed.value(true)
     }
 
     fun onDeleteFile(sharedFile: FileShareInfo.SharedFile) = launch {
