@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Setări</string>
     <string name="label_help">Ajutor</string>
-    <string name="general_create_account_action">Creează cont</string>
-    <string name="general_link_existing_action">Conectează la cont existent</string>
-    <string name="general_sync_action">Sincronizează</string>
     <string name="general_manage_devices_action">Gestionează dispozitive</string>
-    <string name="general_select_server_label">Selectează server</string>
     <string name="onboarding_welcome_subtitle">Partenerul tău de dispozitive</string>
     <string name="onboarding_welcome_body1">Octi este un instrument pentru persoanele cu mai multe dispozitive Android.</string>
     <string name="onboarding_welcome_body2">Te ține la curent cu toate dispozitivele tale. Fie că e telefonul, tableta sau orice alt gadget cu Octi instalat, ai detalii esențiale dintr-o privire.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Ultima acțiune</string>
     <string name="sync_last_never_label">Niciodată</string>
     <string name="sync_quota_storage_msg">%1$s disponibil (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Deconectează</string>
     <string name="generic_info_action">Informații</string>
-    <string name="general_reset_action">Resetează</string>
     <string name="sync_account_label">Cont</string>
     <string name="sync_services_label">Servicii de sincronizare</string>
     <string name="sync_add_label">Adaugă serviciu de sincronizare</string>
     <string name="sync_add_help_desc">Este necesar un serviciu de sincronizare pentru schimbul de informații între instalările Octi.\n\nDispozitivele pot vedea unul pe altul doar dacă au servicii comune de sincronizare!</string>
-    <string name="sync_synced_devices_label">Dispozitive sincronizate</string>
-    <string name="sync_connector_paused_label">Pauză sincronizare</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d dispozitiv</item>
         <item quantity="few">%d dispozitive</item>
@@ -80,7 +72,6 @@
     <string name="sync_setting_interval_label">Interval sincronizare</string>
     <string name="sync_setting_interval_desc">Interval de sincronizare de fundal (în minute).</string>
     <string name="sync_setting_category_background_label">Sincronizare fundal</string>
-    <string name="sync_custom_server_label">Server personalizat</string>
     <string name="settings_category_ui_label">Interfață utilizator</string>
     <string name="permission_required_label">Permisiune necesară</string>
     <string name="permission_grant_action">Acordă permisiunea</string>

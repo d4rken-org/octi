@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Paramètres</string>
     <string name="label_help">Aide</string>
-    <string name="general_create_account_action">Créer un compte</string>
-    <string name="general_link_existing_action">Relier à un compte existant</string>
-    <string name="general_sync_action">Synchroniser</string>
     <string name="general_manage_devices_action">Gérer les appareils</string>
-    <string name="general_select_server_label">Choisir le serveur</string>
     <string name="onboarding_welcome_subtitle">Le compagnon de vos appareils</string>
     <string name="onboarding_welcome_body1">Octi est un outil pour les personnes qui utilisent plusieurs appareils Android.</string>
     <string name="onboarding_welcome_body2">Avec Octi installé sur votre téléphone, votre tablette ou sur tout autre gadget Android, connaissez l’état de vos appareils en un coup d’œil,.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Dernière action</string>
     <string name="sync_last_never_label">Jamais</string>
     <string name="sync_quota_storage_msg">%1$s libre (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Déconnecter</string>
     <string name="generic_info_action">Détails</string>
-    <string name="general_reset_action">Réinitialiser</string>
     <string name="sync_account_label">Compte</string>
     <string name="sync_services_label">Services de synchronisation</string>
     <string name="sync_add_label">Ajouter un service de synchronisation</string>
     <string name="sync_add_help_desc">Un service de synchronisation est nécessaire pour échanger l’information entre les instances d’Octi.\n\nLes appareils ne peuvent se voir que s’ils partagent un service de synchronisation commun.</string>
-    <string name="sync_synced_devices_label">Appareils synchronisés</string>
-    <string name="sync_connector_paused_label">Interrompre la synchronisation</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d appareil</item>
         <item quantity="other">%d appareils</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Intervalle de synchronisation</string>
     <string name="sync_setting_interval_desc">Intervalle de synchronisation en arrière-plan (en minutes).</string>
     <string name="sync_setting_category_background_label">Synchronisation en arrière-plan</string>
-    <string name="sync_custom_server_label">Serveur personnalisé</string>
     <string name="settings_category_ui_label">Interface utilisateur</string>
     <string name="permission_required_label">Une autorisation est nécessaire</string>
     <string name="permission_grant_action">Accorder l’autorisation</string>

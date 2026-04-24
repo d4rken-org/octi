@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">הגדרות</string>
     <string name="label_help">עזרה</string>
-    <string name="general_create_account_action">יצירת חשבון</string>
-    <string name="general_link_existing_action">קישור לחשבון קיים</string>
-    <string name="general_sync_action">סנכרון</string>
     <string name="general_manage_devices_action">נהל מכשירים</string>
-    <string name="general_select_server_label">בחר שרת</string>
     <string name="onboarding_welcome_subtitle">חבר מכשיר שלך</string>
     <string name="onboarding_welcome_body1">Octi הוא כלי עבור אנשים עם מספר מכשירי אנדרואיד.</string>
     <string name="onboarding_welcome_body2">זה שומר אותך בעניינים עם כל המכשירים שלך. בין אם זה הטלפון, הטאבלט או כל גאדג\'ט אחר עם Octi מותקן, תקבלו פרטי מפתח במבט חטוף.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">פעולה אחרונה</string>
     <string name="sync_last_never_label">לעולם לא</string>
     <string name="sync_quota_storage_msg">%1$s חופשי (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">התנתק</string>
     <string name="generic_info_action">מידע</string>
-    <string name="general_reset_action">איפוס</string>
     <string name="sync_account_label">חשבון</string>
     <string name="sync_services_label">שירותי סנכרון</string>
     <string name="sync_add_label">הוסף שירות סנכרון</string>
     <string name="sync_add_help_desc">שירות סנכרון נדרש להחלפת מידע בין התקנות Octi.\n\nמכשירים יכולים לראות זה את זה רק אם יש להם שירות סנכרון משותף!</string>
-    <string name="sync_synced_devices_label">מכשירים מסונכרנים</string>
-    <string name="sync_connector_paused_label">השהה את הסנכרון</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">מכשיר %d</item>
         <item quantity="two">%d מכשירים</item>
@@ -82,7 +74,6 @@
     <string name="sync_setting_interval_label">מרווח סנכרון</string>
     <string name="sync_setting_interval_desc">מרווח סנכרון ברקע (בדקות).</string>
     <string name="sync_setting_category_background_label">סנכרון רקע</string>
-    <string name="sync_custom_server_label">שרת מותאם אישית</string>
     <string name="settings_category_ui_label">ממשק משתמש</string>
     <string name="permission_required_label">דרושה הרשאה</string>
     <string name="permission_grant_action">הענק הרשאה</string>

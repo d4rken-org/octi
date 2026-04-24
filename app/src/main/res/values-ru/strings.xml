@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Настройки</string>
     <string name="label_help">Помощь</string>
-    <string name="general_create_account_action">Создать аккаунт</string>
-    <string name="general_link_existing_action">Привязать к существующему аккаунту</string>
-    <string name="general_sync_action">Синхронизировать</string>
     <string name="general_manage_devices_action">Управление устройствами</string>
-    <string name="general_select_server_label">Выбрать сервер</string>
     <string name="onboarding_welcome_subtitle">Ваш помощник</string>
     <string name="onboarding_welcome_body1">Octi — это инструмент для людей с несколькими Android-устройствами.</string>
     <string name="onboarding_welcome_body2">Он держит вас в курсе всех Ваших устройств. Будь то Ваш телефон, планшет или любой другой гаджет с установленным Octi, Вы сразу получите ключевую информацию.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Последнее действие</string>
     <string name="sync_last_never_label">Никогда</string>
     <string name="sync_quota_storage_msg">%1$s свободно (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Отключить</string>
     <string name="generic_info_action">Информация</string>
-    <string name="general_reset_action">Сбросить</string>
     <string name="sync_account_label">Аккаунт</string>
     <string name="sync_services_label">Сервисы синхронизации</string>
     <string name="sync_add_label">Добавить сервис синхронизации</string>
     <string name="sync_add_help_desc">Сервис синхронизации необходим для обмена информацией между установками Octi.\n\nУстройства могут видеть друг друга только если у них есть общий сервис синхронизации!</string>
-    <string name="sync_synced_devices_label">Синхронизированные устройства</string>
-    <string name="sync_connector_paused_label">Приостановить синхронизацию</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d устройство</item>
         <item quantity="few">%d устр.</item>
@@ -82,7 +74,6 @@
     <string name="sync_setting_interval_label">Интервал синхронизации</string>
     <string name="sync_setting_interval_desc">Интервал фоновой синхронизации (в минутах).</string>
     <string name="sync_setting_category_background_label">Фоновая синхронизация</string>
-    <string name="sync_custom_server_label">Пользовательский сервер</string>
     <string name="settings_category_ui_label">Пользовательский интерфейс</string>
     <string name="permission_required_label">Требуется разрешение</string>
     <string name="permission_grant_action">Предоставить разрешение</string>

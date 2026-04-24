@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Instellingen</string>
     <string name="label_help">Help</string>
-    <string name="general_create_account_action">Account aanmaken</string>
-    <string name="general_link_existing_action">Koppelen aan bestaand account</string>
-    <string name="general_sync_action">Synchroniseren</string>
     <string name="general_manage_devices_action">Apparaten beheren</string>
-    <string name="general_select_server_label">Server selecteren</string>
     <string name="onboarding_welcome_subtitle">Uw apparaat-buddy</string>
     <string name="onboarding_welcome_body1">Octi is een hulpmiddel voor mensen met meerdere Android-apparaten.</string>
     <string name="onboarding_welcome_body2">Het houdt u op de hoogte van al uw apparaten. Of het nu uw telefoon, tablet of een ander apparaat is met Octi geïnstalleerd, u krijgt belangrijke details in één oogopslag.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Laatste actie</string>
     <string name="sync_last_never_label">Nooit</string>
     <string name="sync_quota_storage_msg">%1$s vrij (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Verbinding verbreken</string>
     <string name="generic_info_action">Info</string>
-    <string name="general_reset_action">Resetten</string>
     <string name="sync_account_label">Account</string>
     <string name="sync_services_label">Synchronisatieservices</string>
     <string name="sync_add_label">Synchronisatieservice toevoegen</string>
     <string name="sync_add_help_desc">Een synchronisatieservice is vereist voor informatie-uitwisseling tussen Octi-installaties.\n\nApparaten kunnen elkaar alleen zien als ze een gemeenschappelijke synchronisatieservice hebben!</string>
-    <string name="sync_synced_devices_label">Gesynchroniseerde apparaten</string>
-    <string name="sync_connector_paused_label">Synchronisatie pauzeren</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d apparaat</item>
         <item quantity="other">%d apparaten</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Synchronisatie-interval</string>
     <string name="sync_setting_interval_desc">Achtergrond synchronisatie-interval (in minuten).</string>
     <string name="sync_setting_category_background_label">Achtergrondsynchronisatie</string>
-    <string name="sync_custom_server_label">Aangepaste server</string>
     <string name="settings_category_ui_label">Gebruikersinterface</string>
     <string name="permission_required_label">Toestemming vereist</string>
     <string name="permission_grant_action">Toestemming verlenen</string>

@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Indstillinger</string>
     <string name="label_help">Hjælp</string>
-    <string name="general_create_account_action">Opret konto</string>
-    <string name="general_link_existing_action">Link til eksisterende konto</string>
-    <string name="general_sync_action">Synkronisér</string>
     <string name="general_manage_devices_action">Administrer enheder</string>
-    <string name="general_select_server_label">Vælg server</string>
     <string name="onboarding_welcome_subtitle">Din Enhedsgenbo</string>
     <string name="onboarding_welcome_body1">Octi er et værktøj til folk med flere Android-enheder.</string>
     <string name="onboarding_welcome_body2">Den holder dig opdateret med alle dine enheder. Uanset om det er din telefon, tablet eller en anden Octi-enhed, får du det vigtigste samlet ét sted.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Seneste handling</string>
     <string name="sync_last_never_label">Aldrig</string>
     <string name="sync_quota_storage_msg">%1$s ledig (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Afbryd</string>
     <string name="generic_info_action">Info</string>
-    <string name="general_reset_action">Nulstil</string>
     <string name="sync_account_label">Konto</string>
     <string name="sync_services_label">Synktjenester</string>
     <string name="sync_add_label">Tilføj synktjeneste</string>
     <string name="sync_add_help_desc">En synkroniseringstjeneste er nødvendig for informationsudveksling mellem Octi-installationer.\n\nEnheder kan kun se hinanden hvis de har en fælles synktjeneste!</string>
-    <string name="sync_synced_devices_label">Synkroniserede enheder</string>
-    <string name="sync_connector_paused_label">Pause synkronisering</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d enhed</item>
         <item quantity="other">%d enheder</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Synkroniseringsinterval</string>
     <string name="sync_setting_interval_desc">Baggrundssynkronisering interval (i minutter).</string>
     <string name="sync_setting_category_background_label">Baggrundssynkronisering</string>
-    <string name="sync_custom_server_label">Brugerdefineret server</string>
     <string name="settings_category_ui_label">Brugerflade</string>
     <string name="permission_required_label">Tilladelse påkrævet</string>
     <string name="permission_grant_action">Giv tilladelse</string>

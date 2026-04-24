@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Impostazioni</string>
     <string name="label_help">Aiuto</string>
-    <string name="general_create_account_action">Crea account</string>
-    <string name="general_link_existing_action">Collega un account esistente</string>
-    <string name="general_sync_action">Sincronizza</string>
     <string name="general_manage_devices_action">Gestisci dispositivi</string>
-    <string name="general_select_server_label">Seleziona server</string>
     <string name="onboarding_welcome_subtitle">Il tuo dispositivo</string>
     <string name="onboarding_welcome_body1">Octi è uno strumento per possessori di più dispositivi Android.</string>
     <string name="onboarding_welcome_body2">Ti mantiene aggiornato su tutti i tuoi dispositivi. Che sia un telefono, tablet o qualsiasi altro gadget con Octi installato, potrai avere sott\'occhio le info importanti.</string>
@@ -51,17 +47,13 @@
     <string name="sync_last_action_label">Ultima azione</string>
     <string name="sync_last_never_label">Mai</string>
     <string name="sync_quota_storage_msg">%1$s libera (%2$s/%3$s)</string>
-    <string name="general_disconnect_action">Disconnetti</string>
     <string name="generic_info_action">Informazioni</string>
-    <string name="general_reset_action">Reset</string>
     <string name="sync_account_label">Account</string>
     <string name="sync_services_label">Servizi di sincronizzazione</string>
     <string name="sync_add_label">Aggiungi un servizio di sincronizzazione</string>
     <string name="sync_add_help_desc">È necessario un servizio di sincronizzazione per lo scambio di informazioni tra le installazioni di Octi.
 
 I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comune!</string>
-    <string name="sync_synced_devices_label">Dispositivi sincronizzati</string>
-    <string name="sync_connector_paused_label">Metti in pausa la sincronizzazione</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d dispositivo</item>
         <item quantity="other">%d dispositivi</item>
@@ -80,7 +72,6 @@ I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comu
     <string name="sync_setting_interval_label">Intervallo di sincronizzazione</string>
     <string name="sync_setting_interval_desc">Intervallo di sincronizzazione in background (in minuti)</string>
     <string name="sync_setting_category_background_label">Sincronizzazione in background</string>
-    <string name="sync_custom_server_label">Server personalizzato</string>
     <string name="settings_category_ui_label">Interfaccia utente</string>
     <string name="permission_required_label">Permesso richiesto</string>
     <string name="permission_grant_action">Concedi permesso</string>

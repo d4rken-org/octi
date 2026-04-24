@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Einstellungen</string>
     <string name="label_help">Hilfe</string>
-    <string name="general_create_account_action">Erstelle ein Konto</string>
-    <string name="general_link_existing_action">Verbinde zu vorhandenem Konto</string>
-    <string name="general_sync_action">Synchronisieren</string>
     <string name="general_manage_devices_action">Geräte verwalten</string>
-    <string name="general_select_server_label">Server auswählen</string>
     <string name="onboarding_welcome_subtitle">Dein Geräte Partner</string>
     <string name="onboarding_welcome_body1">Octi ist eine App für Menschen mit mehreren Androidgeräten.</string>
     <string name="onboarding_welcome_body2">Es hält Sie über alle Ihre Geräte auf dem Laufenden. Ob es sich um Ihr Telefon, Tablet oder ein anderes Gerät mit installiertem Octi handelt, Sie erhalten wichtige Details auf einen Blick.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Letzte Aktion</string>
     <string name="sync_last_never_label">Niemals</string>
     <string name="sync_quota_storage_msg">%1$s frei (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Verbindung unterbrochen</string>
     <string name="generic_info_action">Info</string>
-    <string name="general_reset_action">Zurücksetzen</string>
     <string name="sync_account_label">Konto</string>
     <string name="sync_services_label">Synchronisation Angebot</string>
     <string name="sync_add_label">Synchronitations Angebot hinzufügen</string>
     <string name="sync_add_help_desc">Ein Synchronisationsdienst ist für den Informationsaustausch zwischen Octi-Installationen erforderlich.\n\nGeräte können sich nur sehen, wenn sie einen gemeinsamen Synchronisationsdienst haben!</string>
-    <string name="sync_synced_devices_label">Synchronisierte Geräte</string>
-    <string name="sync_connector_paused_label">Synchronisation pausieren</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d Gerät</item>
         <item quantity="other">%d Geräte</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Synchronisationsintervall</string>
     <string name="sync_setting_interval_desc">Hintergrundsynchronisationsintervall (in Minuten).</string>
     <string name="sync_setting_category_background_label">Hintergrundsynchronisation</string>
-    <string name="sync_custom_server_label">Benutzerdefinierter Server</string>
     <string name="settings_category_ui_label">Benutzeroberfläche</string>
     <string name="permission_required_label">Berechtigung erforderlich</string>
     <string name="permission_grant_action">Berechtigung akzeptiert</string>

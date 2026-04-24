@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Inställningar</string>
     <string name="label_help">Hjälp</string>
-    <string name="general_create_account_action">Skapa konto</string>
-    <string name="general_link_existing_action">Länka till befintligt konto</string>
-    <string name="general_sync_action">Synkronisera</string>
     <string name="general_manage_devices_action">Hantera enheter</string>
-    <string name="general_select_server_label">Välj server</string>
     <string name="onboarding_welcome_subtitle">Din enhetskompis</string>
     <string name="onboarding_welcome_body1">Octi är ett verktyg för personer med flera Android-enheter.</string>
     <string name="onboarding_welcome_body2">Håller dig uppdaterad med alla dina enheter. Det gäller din telefon, surfplatta eller vilken annan Octi-enhet som helst – du får viktiga detaljer direkt.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Senaste åtgärd</string>
     <string name="sync_last_never_label">Aldrig</string>
     <string name="sync_quota_storage_msg">%1$s ledigt (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Koppla från</string>
     <string name="generic_info_action">Info</string>
-    <string name="general_reset_action">Återställ</string>
     <string name="sync_account_label">Konto</string>
     <string name="sync_services_label">Synktjänster</string>
     <string name="sync_add_label">Lägg till synktjänst</string>
     <string name="sync_add_help_desc">En synktjänst krävs för informationsutbyte mellan Octi-installationer.\n\nEnheter kan bara se varandra om de har en gemensam synktjänst!</string>
-    <string name="sync_synced_devices_label">Synkroniserade enheter</string>
-    <string name="sync_connector_paused_label">Pausa synkronisering</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d enhet</item>
         <item quantity="other">%d enheter</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Synkroniseringsintervall</string>
     <string name="sync_setting_interval_desc">Intervall för bakgrundssynkronisering (i minuter).</string>
     <string name="sync_setting_category_background_label">Bakgrundssynkronisering</string>
-    <string name="sync_custom_server_label">Anpassad server</string>
     <string name="settings_category_ui_label">Användargränssnitt</string>
     <string name="permission_required_label">Tillstånd krävs</string>
     <string name="permission_grant_action">Bevilja tillstånd</string>

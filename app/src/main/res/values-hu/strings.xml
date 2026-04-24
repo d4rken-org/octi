@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Beállítások</string>
     <string name="label_help">Súgó</string>
-    <string name="general_create_account_action">Fiók létrehozása</string>
-    <string name="general_link_existing_action">Kapcsolódás meglévő fiókhoz</string>
-    <string name="general_sync_action">Szinkronizálás</string>
     <string name="general_manage_devices_action">Eszközök kezelése</string>
-    <string name="general_select_server_label">Szerver kiválasztása</string>
     <string name="onboarding_welcome_subtitle">Készülék-segéded</string>
     <string name="onboarding_welcome_body1">Az Octi több Android-eszközzel rendelkező felhasználóknak készült.</string>
     <string name="onboarding_welcome_body2">Minden eszközödről tájékoztat. Legyen telefon, tablet vagy bármilyen Octival ellátott eszközöd, egy pillantással látod a főbb információkat.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Utolsó művelet</string>
     <string name="sync_last_never_label">Sosem</string>
     <string name="sync_quota_storage_msg">%1$s szabad (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Leválasztás</string>
     <string name="generic_info_action">Infó</string>
-    <string name="general_reset_action">Visszaállítás</string>
     <string name="sync_account_label">Fiók</string>
     <string name="sync_services_label">Szinkronizálási szolgáltatások</string>
     <string name="sync_add_label">Szinkronizálási szolgáltatás hozzáadása</string>
     <string name="sync_add_help_desc">A szinkronizáláshoz szükséges szolgáltatás az Octi telepítések közötti információcseréhez.\n\nAz eszközök csak akkor látják egymást, ha közös szinkronizálási szolgáltatásuk van!</string>
-    <string name="sync_synced_devices_label">Szinkronizált eszközök</string>
-    <string name="sync_connector_paused_label">Szinkronizálás szüneteltetve</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d eszköz</item>
         <item quantity="other">%d eszköz</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Szinkronizálási időköz</string>
     <string name="sync_setting_interval_desc">Szinkronizálás háttérben (percben).</string>
     <string name="sync_setting_category_background_label">Háttérben szinkronizálás</string>
-    <string name="sync_custom_server_label">Egyéni szerver</string>
     <string name="settings_category_ui_label">Felhasználói felület</string>
     <string name="permission_required_label">Engedély szükséges</string>
     <string name="permission_grant_action">Engedély megadása</string>

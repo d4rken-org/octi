@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Ρυθμίσεις</string>
     <string name="label_help">Βοήθεια</string>
-    <string name="general_create_account_action">Δημιουργία λογαριασμού</string>
-    <string name="general_link_existing_action">Σύνδεση με υπάρχοντα λογαριασμό</string>
-    <string name="general_sync_action">Συγχρονισμός</string>
     <string name="general_manage_devices_action">Διαχείριση συσκευών</string>
-    <string name="general_select_server_label">Επιλογή διακομιστή</string>
     <string name="onboarding_welcome_subtitle">Ο Συνοδός της Συσκευής σας</string>
     <string name="onboarding_welcome_body1">Το Octi είναι ένα εργαλείο για άτομα με πολλαπλές συσκευές Android.</string>
     <string name="onboarding_welcome_body2">Σας κρατά ενήμερους για όλες τις συσκευές σας. Είτε είναι το τηλέφωνό σας, το tablet σας ή οποιαδήποτε άλλη συσκευή με εγκατεστημένο το Octi, βλέπετε βασικές πληροφορίες με μια ματιά.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Τελευταία ενέργεια</string>
     <string name="sync_last_never_label">Ποτέ</string>
     <string name="sync_quota_storage_msg">%1$s ελεύθερο (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Αποσύνδεση</string>
     <string name="generic_info_action">Πληροφορίες</string>
-    <string name="general_reset_action">Επαναφορά</string>
     <string name="sync_account_label">Λογαριασμός</string>
     <string name="sync_services_label">Υπηρεσίες συγχρονισμού</string>
     <string name="sync_add_label">Προσθήκη υπηρεσίας συγχρονισμού</string>
     <string name="sync_add_help_desc">Απαιτείται υπηρεσία συγχρονισμού για την ανταλλαγή πληροφοριών μεταξύ εγκαταστάσεων Octi.\n\nΟι συσκευές βλέπουν η μία την άλλη μόνο αν έχουν κοινή υπηρεσία συγχρονισμού!</string>
-    <string name="sync_synced_devices_label">Συγχρονισμένες συσκευές</string>
-    <string name="sync_connector_paused_label">Διακοπή συγχρονισμού</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d συσκευή</item>
         <item quantity="other">%d συσκευές</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Διάστημα συγχρονισμού</string>
     <string name="sync_setting_interval_desc">Διάστημα συγχρονισμού στο παρασκήνιο (σε λεπτά).</string>
     <string name="sync_setting_category_background_label">Συγχρονισμός στο παρασκήνιο</string>
-    <string name="sync_custom_server_label">Προσαρμοσμένος διακομιστής</string>
     <string name="settings_category_ui_label">Διεπαφή χρήστη</string>
     <string name="permission_required_label">Απαιτείται άδεια</string>
     <string name="permission_grant_action">Εκχώρηση δικαιωμάτων</string>

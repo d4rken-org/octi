@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Asetukset</string>
     <string name="label_help">Ohjeet</string>
-    <string name="general_create_account_action">Luo tili</string>
-    <string name="general_link_existing_action">Linkitä olemassa olevaan tiliin</string>
-    <string name="general_sync_action">Synkronoi</string>
     <string name="general_manage_devices_action">Hallitse laitteita</string>
-    <string name="general_select_server_label">Valitse palvelin</string>
     <string name="onboarding_welcome_subtitle">Laitetoverisi</string>
     <string name="onboarding_welcome_body1">Octi on työkalu ihmisille, joilla on useita Android-laitteita.</string>
     <string name="onboarding_welcome_body2">Se pitää sinut ajan tasalla kaikista laitteistasi. Olipa kyse puhelimesta, tabletista tai muusta laitteesta, jossa Octi on asennettuna, näet tärkeimmät tiedot yhdellä silmäyksellä.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Viimeisin toiminto</string>
     <string name="sync_last_never_label">Ei koskaan</string>
     <string name="sync_quota_storage_msg">%1$s vapaana (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Katkaise yhteys</string>
     <string name="generic_info_action">Tietoa</string>
-    <string name="general_reset_action">Palauta</string>
     <string name="sync_account_label">Tili</string>
     <string name="sync_services_label">Synkronointipalvelut</string>
     <string name="sync_add_label">Lisää synkronointipalvelu</string>
     <string name="sync_add_help_desc">Synkronointipalvelu vaaditaan tietojen vaihtamiseen Octi-asennusten välillä.\n\nLaitteet näkevät toisensa vain, jos niillä on yhteinen synkronointipalvelu!</string>
-    <string name="sync_synced_devices_label">Synkronoidut laitteet</string>
-    <string name="sync_connector_paused_label">Keskeytä synkronointi</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d laite</item>
         <item quantity="other">%d laitetta</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Synkronointiväli</string>
     <string name="sync_setting_interval_desc">Taustasynkronoinnin väli (minuuteissa).</string>
     <string name="sync_setting_category_background_label">Taustasynkronointi</string>
-    <string name="sync_custom_server_label">Mukautettu palvelin</string>
     <string name="settings_category_ui_label">Käyttöliittymä</string>
     <string name="permission_required_label">Lupa vaaditaan</string>
     <string name="permission_grant_action">Myönnä lupa</string>

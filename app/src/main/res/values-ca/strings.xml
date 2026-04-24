@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Configuració</string>
     <string name="label_help">Ajuda</string>
-    <string name="general_create_account_action">Crea un compte</string>
-    <string name="general_link_existing_action">Enllaça a un compte ja existent</string>
-    <string name="general_sync_action">Sincronitza</string>
     <string name="general_manage_devices_action">Gestionar dispositius</string>
-    <string name="general_select_server_label">Seleccioneu un servidor</string>
     <string name="onboarding_welcome_subtitle">El teu company del dispositiu</string>
     <string name="onboarding_welcome_body1">L\'Octi és una eina per a persones amb diversos dispositius Android.</string>
     <string name="onboarding_welcome_body2">Us manté al corrent de tots els vostres dispositius. Tant si es tracta del vostre telèfon, tauleta o qualsevol altre giny amb l\'Octi instal·lat, obtindreu els detalls clau d\'un cop d\'ull.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Darrera acció</string>
     <string name="sync_last_never_label">Mai</string>
     <string name="sync_quota_storage_msg">%1$s lliure (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Desconnecta</string>
     <string name="generic_info_action">Informació</string>
-    <string name="general_reset_action">Restableix</string>
     <string name="sync_account_label">Compte</string>
     <string name="sync_services_label">Serveis de sincronització</string>
     <string name="sync_add_label">Afegeix un servei de sincronització</string>
     <string name="sync_add_help_desc">Cal un servei de sincronització per a l\'intercanvi d\'informació entre instal·lacions d\'Octi.\n\nEls dispositius només es poden veure si tenen un servei de sincronització comú!</string>
-    <string name="sync_synced_devices_label">Dispositius sincronitzats</string>
-    <string name="sync_connector_paused_label">Pausa la sincronització</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d dispositiu</item>
         <item quantity="other">%d dispositius</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Interval de sincronització</string>
     <string name="sync_setting_interval_desc">Interval de sincronització de fons (en minuts).</string>
     <string name="sync_setting_category_background_label">Sincronització de fons</string>
-    <string name="sync_custom_server_label">Servidor personalitzat</string>
     <string name="settings_category_ui_label">Interfície d\'usuari</string>
     <string name="permission_required_label">Permís requerit</string>
     <string name="permission_grant_action">Concedeix el permís</string>

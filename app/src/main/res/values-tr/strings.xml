@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Ayarlar</string>
     <string name="label_help">Yardım</string>
-    <string name="general_create_account_action">Hesap Oluştur</string>
-    <string name="general_link_existing_action">Mevcut hesaba bağlantı</string>
-    <string name="general_sync_action">Senkronize et</string>
     <string name="general_manage_devices_action">Cihazları yönet</string>
-    <string name="general_select_server_label">Sunucu seç</string>
     <string name="onboarding_welcome_subtitle">Cihaz Arkadaşınız</string>
     <string name="onboarding_welcome_body1">Octi, birden fazla Android cihazı olan kişiler için bir araçtır.</string>
     <string name="onboarding_welcome_body2">Sizi tüm cihazlarınızla döngü içinde tutar. İster telefonunuz, ister tabletiniz veya Octi yüklü başka bir aygıt olsun, önemli ayrıntıları bir bakışta alırsınız.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Son hareket</string>
     <string name="sync_last_never_label">Asla</string>
     <string name="sync_quota_storage_msg">%1$s boş (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Bağlantıyı kes</string>
     <string name="generic_info_action">Bilgi</string>
-    <string name="general_reset_action">Sıfırla</string>
     <string name="sync_account_label">Hesap</string>
     <string name="sync_services_label">Senkronizasyon hizmetleri</string>
     <string name="sync_add_label">Senkronizasyon hizmeti ekleyin</string>
     <string name="sync_add_help_desc">Octi kurulumları arasında bilgi alışverişi için bir senkronizasyon hizmeti gereklidir.\n\nCihazlar birbirlerini ancak ortak bir senkronizasyon hizmetine sahiplerse görebilirler!</string>
-    <string name="sync_synced_devices_label">Senkronize cihazlar</string>
-    <string name="sync_connector_paused_label">Senkronizasyonu duraklat</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d cihaz</item>
         <item quantity="other">%d cihaz</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Senkronizasyon aralığı</string>
     <string name="sync_setting_interval_desc">Arka plan senkronizasyon aralığı (dakika cinsinden).</string>
     <string name="sync_setting_category_background_label">Arka plan senkronizasyonu</string>
-    <string name="sync_custom_server_label">Özel sunucu</string>
     <string name="settings_category_ui_label">Kullanıcı arayüzü</string>
     <string name="permission_required_label">İzin gerekli</string>
     <string name="permission_grant_action">İzin ver</string>

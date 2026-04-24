@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Cài đặt</string>
     <string name="label_help">Trợ giúp</string>
-    <string name="general_create_account_action">Tạo tài khoản</string>
-    <string name="general_link_existing_action">Liên kết tài khoản hiện có</string>
-    <string name="general_sync_action">Đồng bộ hóa</string>
     <string name="general_manage_devices_action">Quản lý thiết bị</string>
-    <string name="general_select_server_label">Chọn máy chủ</string>
     <string name="onboarding_welcome_subtitle">Người bạn thiết bị của bạn</string>
     <string name="onboarding_welcome_body1">Octi là công cụ dành cho người dùng sở hữu nhiều thiết bị Android.</string>
     <string name="onboarding_welcome_body2">Giúp bạn cập nhật thông tin với tất cả thiết bị của mình. Dù là điện thoại, máy tính bảng hay bất kỳ thiết bị nào có cài Octi, bạn sẽ xem ngay được thông tin quan trọng.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Lần đồng bộ cuối</string>
     <string name="sync_last_never_label">Chưa từng</string>
     <string name="sync_quota_storage_msg">%1$s còn trống (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Ngắt kết nối</string>
     <string name="generic_info_action">Thông tin</string>
-    <string name="general_reset_action">Đặt lại</string>
     <string name="sync_account_label">Tài khoản</string>
     <string name="sync_services_label">Dịch vụ đồng bộ</string>
     <string name="sync_add_label">Thêm dịch vụ đồng bộ</string>
     <string name="sync_add_help_desc">Dịch vụ đồng bộ hóa là cần thiết cho việc trao đổi thông tin giữa các bản cài Octi.\n\nCác thiết bị chỉ thấy nhau khi chúng có dịch vụ đồng bộ hóa chung!</string>
-    <string name="sync_synced_devices_label">Thiết bị đã đồng bộ</string>
-    <string name="sync_connector_paused_label">Tạm dừng đồng bộ</string>
     <plurals name="general_devices_count_label">
         <item quantity="other">%d thiết bị</item>
     </plurals>
@@ -76,7 +68,6 @@
     <string name="sync_setting_interval_label">Khoảng đồng bộ</string>
     <string name="sync_setting_interval_desc">Khoảng thời gian đồng bộ nền (theo phút).</string>
     <string name="sync_setting_category_background_label">Đồng bộ nền</string>
-    <string name="sync_custom_server_label">Máy chủ tùy chỉnh</string>
     <string name="settings_category_ui_label">Giao diện người dùng</string>
     <string name="permission_required_label">Yêu cầu quyền</string>
     <string name="permission_grant_action">Cấp quyền</string>

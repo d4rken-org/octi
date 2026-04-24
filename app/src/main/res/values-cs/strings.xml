@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Nastavení</string>
     <string name="label_help">Nápověda</string>
-    <string name="general_create_account_action">Vytvořit účet</string>
-    <string name="general_link_existing_action">Připojit existující účet</string>
-    <string name="general_sync_action">Synchronizovat</string>
     <string name="general_manage_devices_action">Spravovat zařízení</string>
-    <string name="general_select_server_label">Vybrat server</string>
     <string name="onboarding_welcome_subtitle">Váš kamarád v zařízení</string>
     <string name="onboarding_welcome_body1">Octi je nástroj pro uživatele s více zařízeními se systémem Android.</string>
     <string name="onboarding_welcome_body2">Díky němu budete mít přehled o všech svých zařízeních. Ať už se jedná o telefon, tablet nebo jakýkoli jiný přístroj s nainstalovanou aplikací Octi, na první pohled získáte klíčové informace.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Poslední akce</string>
     <string name="sync_last_never_label">Nikdy</string>
     <string name="sync_quota_storage_msg">%1$s volných (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Odpojit</string>
     <string name="generic_info_action">Informace</string>
-    <string name="general_reset_action">Resetovat</string>
     <string name="sync_account_label">Účet</string>
     <string name="sync_services_label">Synchronizační služby</string>
     <string name="sync_add_label">Přidat synchronizační službu</string>
     <string name="sync_add_help_desc">Synchronizační služba je nutná pro výměnu informací mezi instalacemi v Octi.\n\nZařízení se navzájem vidí, pouze pokud mají společnou synchronizační službu!</string>
-    <string name="sync_synced_devices_label">Synchronizovaná zařízení</string>
-    <string name="sync_connector_paused_label">Pozastavení synchronizace</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d zařízení</item>
         <item quantity="few">%d zařízení</item>
@@ -82,7 +74,6 @@
     <string name="sync_setting_interval_label">Interval synchronizace</string>
     <string name="sync_setting_interval_desc">Interval synchronizace na pozadí (v minutách).</string>
     <string name="sync_setting_category_background_label">Synchronizace na pozadí</string>
-    <string name="sync_custom_server_label">Vlastní server</string>
     <string name="settings_category_ui_label">Uživatelské rozhraní</string>
     <string name="permission_required_label">Vyžadováno oprávnění</string>
     <string name="permission_grant_action">Udělit oprávnění</string>

@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">الإعدادات</string>
     <string name="label_help">المساعدة</string>
-    <string name="general_create_account_action">إنشاء حساب</string>
-    <string name="general_link_existing_action">الربط بحساب موجود</string>
-    <string name="general_sync_action">مزامنة</string>
     <string name="general_manage_devices_action">التحكم في الجهاز</string>
-    <string name="general_select_server_label">اختر الخادم</string>
     <string name="onboarding_welcome_subtitle">رفيق جهازك</string>
     <string name="onboarding_welcome_body1">أوكتي هو أداة للأشخاص الذين يمتلكون أجهزة أندرويد متعددة.</string>
     <string name="onboarding_welcome_body2">يبقيك على اطلاع دائم بجميع أجهزتك. سواء كان هاتفك أو جهازك اللوحي أو أي جهاز آخر مثبت عليه أوكتي، ستحصل على التفاصيل الأساسية بلمحة واحدة.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">آخر إجراء</string>
     <string name="sync_last_never_label">أبداً</string>
     <string name="sync_quota_storage_msg">%1$s متوفر (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">قطع الاتصال</string>
     <string name="generic_info_action">معلومات</string>
-    <string name="general_reset_action">إعادة تعيين</string>
     <string name="sync_account_label">الحساب</string>
     <string name="sync_services_label">خدمات المزامنة</string>
     <string name="sync_add_label">إضافة خدمة مزامنة</string>
     <string name="sync_add_help_desc">خدمة المزامنة مطلوبة لتبادل المعلومات بين تثبيتات أوكتي.\n\nلا يمكن للأجهزة رؤية بعضها البعض إلا إذا كانت لديها خدمة مزامنة مشتركة!</string>
-    <string name="sync_synced_devices_label">الأجهزة المتزامنة</string>
-    <string name="sync_connector_paused_label">إيقاف المزامنة مؤقتاً</string>
     <plurals name="general_devices_count_label">
         <item quantity="zero">%d أجهزة</item>
         <item quantity="one">جهاز %d</item>
@@ -86,7 +78,6 @@
     <string name="sync_setting_interval_label">الفاصل الزمني للمزامنة</string>
     <string name="sync_setting_interval_desc">الفاصل الزمني للمزامنة في الخلفية (بالدقائق).</string>
     <string name="sync_setting_category_background_label">المزامنة في الخلفية</string>
-    <string name="sync_custom_server_label">خادم مخصص</string>
     <string name="settings_category_ui_label">واجهة المستخدم</string>
     <string name="permission_required_label">الإذن مطلوب</string>
     <string name="permission_grant_action">منح الإذن</string>

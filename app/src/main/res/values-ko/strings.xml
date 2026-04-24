@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">설정</string>
     <string name="label_help">도움말</string>
-    <string name="general_create_account_action">계정 만들기</string>
-    <string name="general_link_existing_action">기존 계정에 연결</string>
-    <string name="general_sync_action">동기화</string>
     <string name="general_manage_devices_action">기기 관리</string>
-    <string name="general_select_server_label">서버 선택</string>
     <string name="onboarding_welcome_subtitle">기기의 동반자</string>
     <string name="onboarding_welcome_body1">Octi는 여러 Android 기기를 가진 사람들을 위한 도구입니다.</string>
     <string name="onboarding_welcome_body2">모든 기기의 정보를 한눈에 확인할 수 있습니다. 휴대폰, 태블릿, 기타 Octi가 설치된 기기 등 주요 정보를 쉽게 볼 수 있습니다.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">마지막 동작</string>
     <string name="sync_last_never_label">없음</string>
     <string name="sync_quota_storage_msg">%1$s 사용 가능 (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">연결 해제</string>
     <string name="generic_info_action">정보</string>
-    <string name="general_reset_action">초기화</string>
     <string name="sync_account_label">계정</string>
     <string name="sync_services_label">동기화 서비스</string>
     <string name="sync_add_label">동기화 서비스 추가</string>
     <string name="sync_add_help_desc">Octi 설치 간 정보 교환을 위해 동기화 서비스가 필요합니다.\n\n동일한 동기화 서비스가 있을 때만 기기끼리 서로를 확인할 수 있습니다!</string>
-    <string name="sync_synced_devices_label">동기화된 기기</string>
-    <string name="sync_connector_paused_label">동기화 일시정지</string>
     <plurals name="general_devices_count_label">
         <item quantity="other">%d개 기기</item>
     </plurals>
@@ -76,7 +68,6 @@
     <string name="sync_setting_interval_label">동기화 주기</string>
     <string name="sync_setting_interval_desc">백그라운드 동기화 주기(분 단위).</string>
     <string name="sync_setting_category_background_label">백그라운드 동기화</string>
-    <string name="sync_custom_server_label">사용자 서버</string>
     <string name="settings_category_ui_label">사용자 인터페이스</string>
     <string name="permission_required_label">권한 필요</string>
     <string name="permission_grant_action">권한 허용</string>

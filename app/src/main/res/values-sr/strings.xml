@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Подешавања</string>
     <string name="label_help">Помоћ</string>
-    <string name="general_create_account_action">Креирај налог</string>
-    <string name="general_link_existing_action">Повежи са постојећим налогом</string>
-    <string name="general_sync_action">Синхронизуј</string>
     <string name="general_manage_devices_action">Управљај уређајима</string>
-    <string name="general_select_server_label">Изабери сервер</string>
     <string name="onboarding_welcome_subtitle">Партнер уређаја</string>
     <string name="onboarding_welcome_body1">Octi је алат за људе са више Android уређаја.</string>
     <string name="onboarding_welcome_body2">Држи вас у току са свим вашим уређајима. Без обзира да ли је то ваш телефон, таблет или било који други уређај са инсталираним Octi-јем, добијате кључне детаље на први поглед.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Последња акција</string>
     <string name="sync_last_never_label">Никада</string>
     <string name="sync_quota_storage_msg">%1$s слободно (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Откључи</string>
     <string name="generic_info_action">Инфо</string>
-    <string name="general_reset_action">Ресетуј</string>
     <string name="sync_account_label">Налог</string>
     <string name="sync_services_label">Услуге синхронизације</string>
     <string name="sync_add_label">Додај услугу синхронизације</string>
     <string name="sync_add_help_desc">Услуга синхронизације је потребна за размену података између Octi инсталација.\n\nУређаји могу виде једни друге само ако имају заједничку услугу синхронизације!</string>
-    <string name="sync_synced_devices_label">Синхронизовани уређаји</string>
-    <string name="sync_connector_paused_label">Паузирај синхронизацију</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d уређај</item>
         <item quantity="few">%d уређаја</item>
@@ -80,7 +72,6 @@
     <string name="sync_setting_interval_label">Интервал синхронизације</string>
     <string name="sync_setting_interval_desc">Интервал синхронизације у позадини (у минутима).</string>
     <string name="sync_setting_category_background_label">Синхронизација у позадини</string>
-    <string name="sync_custom_server_label">Прилагођени сервер</string>
     <string name="settings_category_ui_label">Кориснички интерфејс</string>
     <string name="permission_required_label">Потребна дозвола</string>
     <string name="permission_grant_action">Дозволи</string>

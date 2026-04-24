@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Instellings</string>
     <string name="label_help">Hulp</string>
-    <string name="general_create_account_action">Skep rekening</string>
-    <string name="general_link_existing_action">Koppel aan bestaande rekening</string>
-    <string name="general_sync_action">Sinkroniseer</string>
     <string name="general_manage_devices_action">Bestuur toestelle</string>
-    <string name="general_select_server_label">Kies bediener</string>
     <string name="onboarding_welcome_subtitle">Jou Toestelmaat</string>
     <string name="onboarding_welcome_body1">Octi is \'n hulpmiddel vir mense met verskeie Android-toestelle.</string>
     <string name="onboarding_welcome_body2">Dit hou jou op hoogte met al jou toestelle. Of dit nou jou foon, tablet of enige ander toestel met Octi is, jy kry belangrike inligting op \'n oogopslag.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Laaste aksie</string>
     <string name="sync_last_never_label">Nog nooit</string>
     <string name="sync_quota_storage_msg">%1$s vry (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Ontkoppel</string>
     <string name="generic_info_action">Inligting</string>
-    <string name="general_reset_action">Herstel</string>
     <string name="sync_account_label">Rekening</string>
     <string name="sync_services_label">Sinkdienste</string>
     <string name="sync_add_label">Voeg sinkdiens by</string>
     <string name="sync_add_help_desc">\'n Sinkronisasiediens is nodig vir inligtingsuitruil tussen Octi-installasies.\n\nToestelle kan mekaar net sien as hulle \'n gemeenskaplike sinkdiens het!</string>
-    <string name="sync_synced_devices_label">Gesinkroniseerde toestelle</string>
-    <string name="sync_connector_paused_label">Sinkronisasie gepouseer</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d toestel</item>
         <item quantity="other">%d toestelle</item>
@@ -78,7 +70,6 @@
     <string name="sync_setting_interval_label">Sinkinterval</string>
     <string name="sync_setting_interval_desc">Agtergrond sinkronisasie interval (in minute).</string>
     <string name="sync_setting_category_background_label">Agtergrond sinkronisasie</string>
-    <string name="sync_custom_server_label">Persoonlike bediener</string>
     <string name="settings_category_ui_label">Gebruikerskoppelvlak</string>
     <string name="permission_required_label">Toestemming benodig</string>
     <string name="permission_grant_action">Verleen toestemming</string>

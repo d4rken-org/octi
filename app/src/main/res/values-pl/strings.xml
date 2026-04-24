@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">Ustawienia</string>
     <string name="label_help">Pomoc</string>
-    <string name="general_create_account_action">Utwórz konto</string>
-    <string name="general_link_existing_action">Połącz z istniejącym kontem</string>
-    <string name="general_sync_action">Synchronizuj</string>
     <string name="general_manage_devices_action">Zarządzaj urządzeniami</string>
-    <string name="general_select_server_label">Wybierz serwer</string>
     <string name="onboarding_welcome_subtitle">Twój towarzysz urządzenia</string>
     <string name="onboarding_welcome_body1">Octi to narzędzie dla osób z wieloma urządzeniami Android.</string>
     <string name="onboarding_welcome_body2">Utrzymuje cię w pętli ze wszystkimi twoimi urządzeniami. Czy to twój telefon, tablet czy jakikolwiek inny gadżet z zainstalowanym Octi, otrzymasz kluczowe szczegóły na pierwszy rzut oka.</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">Ostatnia akcja</string>
     <string name="sync_last_never_label">Nigdy</string>
     <string name="sync_quota_storage_msg">%1$s wolne (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">Rozłącz</string>
     <string name="generic_info_action">Informacje</string>
-    <string name="general_reset_action">Resetuj</string>
     <string name="sync_account_label">Konto</string>
     <string name="sync_services_label">Usługi synchronizacji</string>
     <string name="sync_add_label">Dodaj usługę synchronizacji</string>
     <string name="sync_add_help_desc">Usługa synchronizacji jest wymagana do wymiany informacji między instalacjami Octi.\n\nUrządzenia mogą widzieć się nawzajem, tylko jeśli mają wspólną usługę synchronizacji!</string>
-    <string name="sync_synced_devices_label">Zsynchronizowane urządzenia</string>
-    <string name="sync_connector_paused_label">Wstrzymaj synchronizację</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d urządzenie</item>
         <item quantity="few">%d urządzenia</item>
@@ -82,7 +74,6 @@
     <string name="sync_setting_interval_label">Częstotliwość synchronizacji</string>
     <string name="sync_setting_interval_desc">Częstotliwość synchronizacji w tle (w minutach).</string>
     <string name="sync_setting_category_background_label">Synchronizacja w tle</string>
-    <string name="sync_custom_server_label">Niestandardowy serwer</string>
     <string name="settings_category_ui_label">Interfejs użytkownika</string>
     <string name="permission_required_label">Wymagane uprawnienie</string>
     <string name="permission_grant_action">Przyznaj uprawnienie</string>

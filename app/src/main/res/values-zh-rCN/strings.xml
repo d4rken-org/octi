@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">设置</string>
     <string name="label_help">帮助</string>
-    <string name="general_create_account_action">创建账户</string>
-    <string name="general_link_existing_action">链接到现有帐户</string>
-    <string name="general_sync_action">同步</string>
     <string name="general_manage_devices_action">管理设备</string>
-    <string name="general_select_server_label">选择服务器</string>
     <string name="onboarding_welcome_subtitle">你的设备助手</string>
     <string name="onboarding_welcome_body1">Octi 是一款为拥有多台 Android 设备的用户提供的工具。</string>
     <string name="onboarding_welcome_body2">它让您随时掌握所有设备的最新动态。无论是手机、平板电脑还是其他安装了 Octi 的设备，您都可以一目了然地了解关键详细信息。</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">最后的动作</string>
     <string name="sync_last_never_label">永不</string>
     <string name="sync_quota_storage_msg">%1$s 免费（%2$s / %3$s）</string>
-    <string name="general_disconnect_action">断开连接</string>
     <string name="generic_info_action">信息</string>
-    <string name="general_reset_action">重置</string>
     <string name="sync_account_label">账号</string>
     <string name="sync_services_label">同步系统</string>
     <string name="sync_add_label">增加同步服务器</string>
     <string name="sync_add_help_desc">在Octi安装之间交换信息需要同步服务。\n\n设备只有在有共同的同步服务时才能看到彼此！</string>
-    <string name="sync_synced_devices_label">同步设备</string>
-    <string name="sync_connector_paused_label">暂停同步</string>
     <plurals name="general_devices_count_label">
         <item quantity="other">%d 设备</item>
     </plurals>
@@ -76,7 +68,6 @@
     <string name="sync_setting_interval_label">同步时间间隔</string>
     <string name="sync_setting_interval_desc">后台同步周期（分钟）。</string>
     <string name="sync_setting_category_background_label">背景同步</string>
-    <string name="sync_custom_server_label">自定义服务器</string>
     <string name="settings_category_ui_label">用户界面</string>
     <string name="permission_required_label">权限要求</string>
     <string name="permission_grant_action">授予许可</string>

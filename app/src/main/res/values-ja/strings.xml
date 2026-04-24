@@ -2,11 +2,7 @@
 <resources>
     <string name="label_settings">設定</string>
     <string name="label_help">ヘルプ</string>
-    <string name="general_create_account_action">アカウントを作成</string>
-    <string name="general_link_existing_action">既存のアカウントへリンク</string>
-    <string name="general_sync_action">同期</string>
     <string name="general_manage_devices_action">デバイスを管理</string>
-    <string name="general_select_server_label">サーバーを選択</string>
     <string name="onboarding_welcome_subtitle">あなたのデバイスの相棒</string>
     <string name="onboarding_welcome_body1">Octi は複数の Android デバイスを持っている人のためのツールです。</string>
     <string name="onboarding_welcome_body2">Octi は、あなたのすべてのデバイスを常に最新の状態に保ちます。Octi がインストールされたスマートフォン、タブレット、その他ガジェットを問わずに主要な情報を一目で把握することができます。</string>
@@ -51,15 +47,11 @@
     <string name="sync_last_action_label">最後のアクション</string>
     <string name="sync_last_never_label">常にしない</string>
     <string name="sync_quota_storage_msg">%1$s の空き (%2$s / %3$s)</string>
-    <string name="general_disconnect_action">切断</string>
     <string name="generic_info_action">情報</string>
-    <string name="general_reset_action">リセット</string>
     <string name="sync_account_label">アカウント</string>
     <string name="sync_services_label">デバイスを同期</string>
     <string name="sync_add_label">同期するデバイスを追加</string>
     <string name="sync_add_help_desc">Octi のインストール環境での情報交換には同期サービスが必要です。\n\nデバイスは共通の同期サービスを使用している場合のみ、相互で確認ができます！</string>
-    <string name="sync_synced_devices_label">同期済みのデバイス</string>
-    <string name="sync_connector_paused_label">同期を一時停止</string>
     <plurals name="general_devices_count_label">
         <item quantity="other">%d 台のデバイス</item>
     </plurals>
@@ -76,7 +68,6 @@
     <string name="sync_setting_interval_label">同期の間隔</string>
     <string name="sync_setting_interval_desc">バックグランド同期の間隔 (分単位) を設定します。</string>
     <string name="sync_setting_category_background_label">バックグラウンド同期</string>
-    <string name="sync_custom_server_label">カスタムサーバー</string>
     <string name="settings_category_ui_label">ユーザーインターフェース</string>
     <string name="permission_required_label">権限の許可が必要です</string>
     <string name="permission_grant_action">権限を付与</string>
