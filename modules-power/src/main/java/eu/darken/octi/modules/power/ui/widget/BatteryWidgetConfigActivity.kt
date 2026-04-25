@@ -49,6 +49,7 @@ import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.common.widget.WidgetConfigDevice
 import eu.darken.octi.common.widget.WidgetConfigScreen
 import eu.darken.octi.common.widget.WidgetInstanceConfig
+import eu.darken.octi.common.widget.WidgetSettings
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.common.widget.applyWidgetConfig
 import eu.darken.octi.common.widget.widgetDefaultColors
@@ -68,6 +69,7 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
     @Inject lateinit var themeSettings: ThemeSettings
     @Inject lateinit var metaRepo: MetaRepo
     @Inject lateinit var powerRepo: PowerRepo
+    @Inject lateinit var widgetSettings: WidgetSettings
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
@@ -87,9 +89,10 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
         }
 
         lifecycleScope.launch {
-            val currentOptions = AppWidgetManager.getInstance(this@BatteryWidgetConfigActivity)
-                .getAppWidgetOptions(appWidgetId)
-            val instanceConfig = WidgetInstanceConfig.parse(currentOptions)
+            val instanceConfig = widgetSettings.configValue(appWidgetId) {
+                AppWidgetManager.getInstance(this@BatteryWidgetConfigActivity)
+                    .getAppWidgetOptions(appWidgetId)
+            }
 
             val availableDevices = withTimeoutOrNull(DEVICE_LOAD_TIMEOUT) {
                 val metaById = metaRepo.state.first().all.associateBy { it.deviceId }
@@ -125,19 +128,22 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
                         onClose = { finish() },
                         onApply = { isMy, preset, bg, accent, ids ->
                             val appContext = applicationContext
-                            applyWidgetConfig(
-                                appWidgetId = appWidgetId,
-                                newConfig = WidgetInstanceConfig(
-                                    isMaterialYou = isMy,
-                                    presetName = preset,
-                                    customBg = bg,
-                                    customAccent = accent,
-                                    allowedDeviceIds = ids,
-                                ),
-                                tag = TAG,
-                            ) {
-                                val glanceId = GlanceAppWidgetManager(appContext).getGlanceIdBy(appWidgetId)
-                                BatteryGlanceWidget().update(appContext, glanceId)
+                            lifecycleScope.launch {
+                                applyWidgetConfig(
+                                    appWidgetId = appWidgetId,
+                                    newConfig = WidgetInstanceConfig(
+                                        isMaterialYou = isMy,
+                                        presetName = preset,
+                                        customBg = bg,
+                                        customAccent = accent,
+                                        allowedDeviceIds = ids,
+                                    ),
+                                    widgetSettings = widgetSettings,
+                                    tag = TAG,
+                                ) {
+                                    val glanceId = GlanceAppWidgetManager(appContext).getGlanceIdBy(appWidgetId)
+                                    BatteryGlanceWidget().update(appContext, glanceId)
+                                }
                             }
                         },
                         previewContent = { colors -> BatteryWidgetPreview(colors = colors) },

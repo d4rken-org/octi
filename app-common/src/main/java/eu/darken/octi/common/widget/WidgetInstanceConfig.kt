@@ -5,13 +5,15 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class WidgetInstanceConfig(
-    val isMaterialYou: Boolean,
-    val presetName: String?,
-    val customBg: Int?,
-    val customAccent: Int?,
-    val allowedDeviceIds: Set<String>,
+    val isMaterialYou: Boolean = true,
+    val presetName: String? = null,
+    val customBg: Int? = null,
+    val customAccent: Int? = null,
+    val allowedDeviceIds: Set<String> = emptySet(),
 ) {
     val themeColors: WidgetTheme.Colors?
         get() = when {
@@ -32,13 +34,7 @@ data class WidgetInstanceConfig(
         const val MODE_MATERIAL_YOU = "material_you"
         const val MODE_CUSTOM = "custom"
 
-        val DEFAULT = WidgetInstanceConfig(
-            isMaterialYou = true,
-            presetName = null,
-            customBg = null,
-            customAccent = null,
-            allowedDeviceIds = emptySet(),
-        )
+        val DEFAULT = WidgetInstanceConfig()
 
         fun parse(options: Bundle): WidgetInstanceConfig = try {
             val mode = options.getString(KEY_THEME_MODE)
@@ -57,27 +53,6 @@ data class WidgetInstanceConfig(
         } catch (e: Exception) {
             log(TAG, WARN) { "Failed to parse: ${e.asLog()}" }
             DEFAULT
-        }
-
-        fun write(options: Bundle, config: WidgetInstanceConfig) {
-            if (config.isMaterialYou) {
-                options.putString(KEY_THEME_MODE, MODE_MATERIAL_YOU)
-                options.putString(KEY_THEME_PRESET, WidgetTheme.MATERIAL_YOU.name)
-                options.remove(KEY_CUSTOM_BG)
-                options.remove(KEY_CUSTOM_ACCENT)
-            } else {
-                options.putString(KEY_THEME_MODE, MODE_CUSTOM)
-                options.putString(KEY_THEME_PRESET, config.presetName ?: "")
-                options.remove(KEY_CUSTOM_BG)
-                options.remove(KEY_CUSTOM_ACCENT)
-                config.customBg?.let { options.putInt(KEY_CUSTOM_BG, it) }
-                config.customAccent?.let { options.putInt(KEY_CUSTOM_ACCENT, it) }
-            }
-            if (config.allowedDeviceIds.isEmpty()) {
-                options.remove(KEY_DEVICE_FILTER_IDS)
-            } else {
-                options.putStringArray(KEY_DEVICE_FILTER_IDS, config.allowedDeviceIds.toTypedArray())
-            }
         }
     }
 }

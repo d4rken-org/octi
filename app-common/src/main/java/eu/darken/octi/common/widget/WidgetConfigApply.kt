@@ -12,10 +12,9 @@ import eu.darken.octi.common.debug.logging.log
 import kotlinx.coroutines.launch
 
 /**
- * Persists [newConfig] into the per-instance options bundle, sets [ComponentActivity.RESULT_OK],
- * finishes the activity immediately, and refreshes the widget via [updateWidget] on the
- * process-level lifecycle scope so the Glance recomposition runs to completion regardless of
- * activity destruction.
+ * Persists [newConfig] via [widgetSettings] before finishing the activity, so a process kill
+ * after `setResult` cannot drop the user's input. The widget refresh ([updateWidget]) runs on
+ * the process-level lifecycle scope so it completes regardless of activity destruction.
  *
  * If [newConfig] is in custom-theme mode but missing colours, the activity is finished
  * without applying — mirrors the existing per-activity guard.
@@ -23,9 +22,10 @@ import kotlinx.coroutines.launch
  * **Important**: [updateWidget] runs on a scope that outlives the activity. Make sure the
  * lambda passed in does not capture the activity (use the application context).
  */
-fun ComponentActivity.applyWidgetConfig(
+suspend fun ComponentActivity.applyWidgetConfig(
     appWidgetId: Int,
     newConfig: WidgetInstanceConfig,
+    widgetSettings: WidgetSettings,
     tag: String,
     updateWidget: suspend () -> Unit,
 ) {
@@ -34,10 +34,13 @@ fun ComponentActivity.applyWidgetConfig(
         return
     }
 
-    val widgetManager = AppWidgetManager.getInstance(this)
-    val options = widgetManager.getAppWidgetOptions(appWidgetId)
-    WidgetInstanceConfig.write(options, newConfig)
-    widgetManager.updateAppWidgetOptions(appWidgetId, options)
+    try {
+        widgetSettings.update(appWidgetId, newConfig)
+    } catch (e: Exception) {
+        log(tag, ERROR) { "Failed to persist widget config: ${e.asLog()}" }
+        finish()
+        return
+    }
 
     setResult(
         RESULT_OK,
