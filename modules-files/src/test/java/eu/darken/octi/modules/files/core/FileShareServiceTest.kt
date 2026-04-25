@@ -40,6 +40,7 @@ class FileShareServiceTest : BaseTest() {
     private val fileShareSettings = mockk<FileShareSettings>()
     private val pendingDeletes = mockk<DataStoreValue<Map<String, PendingDelete>>>()
     private val blobManager = mockk<BlobManager>()
+    private val blobMaintenance = mockk<BlobMaintenance>(relaxed = true)
     private val syncSettings = mockk<SyncSettings>()
     private fun createService() = FileShareService(
         context = context,
@@ -47,6 +48,7 @@ class FileShareServiceTest : BaseTest() {
         fileShareHandler = handler,
         fileShareSettings = fileShareSettings,
         blobManager = blobManager,
+        blobMaintenance = blobMaintenance,
         syncSettings = syncSettings,
         blobCacheDirs = BlobCacheDirs(context),
     )

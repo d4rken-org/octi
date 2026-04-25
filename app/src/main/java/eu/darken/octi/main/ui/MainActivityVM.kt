@@ -8,6 +8,7 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.flow.SingleEventFlow
+import eu.darken.octi.common.navigation.FileShareDeeplink
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.navigation.WidgetDeeplink
@@ -45,26 +46,40 @@ class MainActivityVM @Inject constructor(
      */
     val deeplinkEvents = SingleEventFlow<WidgetDeeplink.OpenModuleDetail>()
 
+    /**
+     * One-shot file-share notification deeplink events. Same buffering semantics as
+     * [deeplinkEvents] — the dashboard reads it and navigates to the unified file-share list
+     * with the sender device pre-filtered.
+     */
+    val fileShareDeeplinkEvents = SingleEventFlow<FileShareDeeplink.OpenFileShare>()
+
     init {
         log(_tag) { "init()" }
     }
 
     /**
-     * Parse a widget-deeplink intent and emit it to [deeplinkEvents].
-     *
-     * Returns `true` if the intent was a valid, accepted deeplink. Returns `false` otherwise
-     * (wrong action, missing extras, invalid module type, or onboarding not done).
+     * Parse a widget or file-share deeplink intent and emit it. Returns `true` if a deeplink was
+     * recognised and accepted. Returns `false` otherwise (wrong action, missing extras, or
+     * onboarding not done).
      */
     fun handleDeeplinkIntent(intent: Intent?): Boolean {
-        val parsed = WidgetDeeplink.parse(intent) ?: return false
+        FileShareDeeplink.parse(intent)?.let { parsed ->
+            if (!generalSettings.isOnboardingDone.valueBlocking) {
+                log(_tag, WARN) { "Dropping file-share deeplink: onboarding not done" }
+                return false
+            }
+            log(_tag, INFO) { "File-share deeplink accepted: device=${parsed.deviceId}" }
+            fileShareDeeplinkEvents.tryEmit(parsed)
+            return true
+        }
 
+        val widget = WidgetDeeplink.parse(intent) ?: return false
         if (!generalSettings.isOnboardingDone.valueBlocking) {
             log(_tag, WARN) { "Dropping widget deeplink: onboarding not done" }
             return false
         }
-
-        log(_tag, INFO) { "Widget deeplink accepted: device=${parsed.deviceId} module=${parsed.moduleType}" }
-        deeplinkEvents.tryEmit(parsed)
+        log(_tag, INFO) { "Widget deeplink accepted: device=${widget.deviceId} module=${widget.moduleType}" }
+        deeplinkEvents.tryEmit(widget)
         return true
     }
 }

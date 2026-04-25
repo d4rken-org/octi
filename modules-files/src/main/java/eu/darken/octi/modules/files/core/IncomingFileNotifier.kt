@@ -9,11 +9,14 @@ import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.hasApiLevel
+import eu.darken.octi.common.navigation.FileShareDeeplink
 import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.PermissionState
 import eu.darken.octi.module.core.BaseModuleRepo
@@ -22,16 +25,17 @@ import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.absoluteValue
+import kotlin.time.Clock
 
 /**
  * Posts Android notifications when a peer device appears with new shared files.
@@ -43,11 +47,9 @@ import kotlin.math.absoluteValue
  * Lifecycle: [start] is called once from `App.onCreate()`. The observer runs on [AppScope]
  * and drains for the lifetime of the process.
  *
- * Known limitation: [seenByDevice] is process-scoped (not persisted). If the app is killed
- * between receiving a share and the user granting POST_NOTIFICATIONS, the first emission
- * after restart re-seeds silently and the missed share will not fire a notification (the
- * file still appears in the in-app share list). A future improvement could persist the seen
- * set to DataStore; deferred pending evidence that cross-process share-loss is common.
+ * The seen set is persisted via [FileShareSettings.seenByDevice] so notifications survive
+ * process death — `current` is computed from non-expired files only and the persisted map is
+ * trimmed to currently-known devices on every emission.
  */
 @Singleton
 class IncomingFileNotifier @Inject constructor(
@@ -80,37 +82,76 @@ class IncomingFileNotifier @Inject constructor(
             .map { it[Permission.POST_NOTIFICATIONS] ?: true }
             .distinctUntilChanged()
 
-        combine(
-            fileShareRepo.state,
-            fileShareSettings.notifyOnIncoming.flow,
-            moduleManager.byDevice,
-            systemNotificationsGrantedFlow,
-        ) { state, notifyEnabled, byDevice, systemNotificationsGranted ->
-            Snapshot(state, notifyEnabled, byDevice, systemNotificationsGranted)
-        }
-            .onEach { snap ->
+        appScope.launch(dispatcherProvider.Default) {
+            // Hydrate persisted seen-set before subscribing so the first emission's diff is
+            // computed against historical state, not against an empty seed.
+            try {
+                val persisted = fileShareSettings.seenByDevice.value()
+                persisted.forEach { (idStr, blobKeys) ->
+                    seenByDevice[DeviceId(idStr)] = blobKeys.toSet()
+                }
+                log(TAG, VERBOSE) { "start(): hydrated ${persisted.size} device entries" }
+            } catch (e: Exception) {
+                log(TAG, WARN) { "start(): hydrate failed, starting fresh: ${e.message}" }
+            }
+
+            combine(
+                fileShareRepo.state,
+                fileShareSettings.notifyOnIncoming.flow,
+                moduleManager.byDevice,
+                systemNotificationsGrantedFlow,
+            ) { state, notifyEnabled, byDevice, systemNotificationsGranted ->
+                Snapshot(state, notifyEnabled, byDevice, systemNotificationsGranted)
+            }.collect { snap ->
+                var dirty = false
+                val now = Clock.System.now()
+                val knownDevices = snap.state.others.map { it.deviceId }.toSet()
+
                 for (moduleData in snap.state.others) {
                     val deviceId = moduleData.deviceId
-                    val current = moduleData.data.files.map { it.blobKey }.toSet()
+                    // Filter expired files so an already-expired share doesn't notify after restart.
+                    val current = moduleData.data.files
+                        .filter { now <= it.expiresAt }
+                        .map { it.blobKey }
+                        .toSet()
                     val previous = seenByDevice[deviceId]
 
                     // (a) First time seen for this device: silent seed regardless of permission.
                     if (previous == null) {
                         seenByDevice[deviceId] = current
+                        dirty = true
                         log(TAG, VERBOSE) { "start(): seeded ${current.size} files for ${deviceId.logLabel}" }
                         continue
                     }
 
+                    // Cancel notifications for files that vanished from the sender (delete or
+                    // expiry). Apply unconditionally — the system cancel call has no permission
+                    // requirement, and we want the shade to clean itself up regardless of the
+                    // user's notify-on-incoming opt-in.
+                    val removed = previous - current
+                    if (removed.isNotEmpty()) {
+                        log(TAG, VERBOSE) { "removed ${removed.size} for ${deviceId.logLabel}" }
+                        removed.forEach { blobKey ->
+                            notificationManager.cancel(notificationIdFor(deviceId, blobKey))
+                        }
+                    }
+
                     // (b) User-level opt-out: advance silently (don't flood on opt-in).
                     if (!snap.notifyEnabled) {
-                        seenByDevice[deviceId] = current
+                        if (previous != current) {
+                            seenByDevice[deviceId] = current
+                            dirty = true
+                        }
                         continue
                     }
 
                     val added = current - previous
                     if (added.isEmpty()) {
-                        // Removals only (or no change) — advance and continue, no notification.
-                        seenByDevice[deviceId] = current
+                        // No additions — advance the seen set so we don't re-notify.
+                        if (previous != current) {
+                            seenByDevice[deviceId] = current
+                            dirty = true
+                        }
                         continue
                     }
 
@@ -138,12 +179,42 @@ class IncomingFileNotifier @Inject constructor(
 
                     for (blobKey in added) {
                         val sharedFile = moduleData.data.files.find { it.blobKey == blobKey } ?: continue
-                        notify(deviceId, deviceLabel, sharedFile)
+                        try {
+                            notify(deviceId, deviceLabel, sharedFile)
+                        } catch (e: Exception) {
+                            log(TAG, WARN) { "notify failed for ${sharedFile.name}: ${e.message}" }
+                        }
                     }
                     seenByDevice[deviceId] = current
+                    dirty = true
+                }
+
+                // Trim entries for devices no longer present in fileShareRepo. Use that flow
+                // (not moduleManager.byDevice) because byDevice has transient holes during sync
+                // reconnects and would otherwise drop a live device's seed. Cancel any
+                // notifications still showing for the purged devices first.
+                val removedDevices = seenByDevice.keys - knownDevices
+                if (removedDevices.isNotEmpty()) {
+                    removedDevices.forEach { deviceId ->
+                        val keys = seenByDevice.remove(deviceId)
+                        keys?.forEach { blobKey ->
+                            notificationManager.cancel(notificationIdFor(deviceId, blobKey))
+                        }
+                    }
+                    dirty = true
+                }
+
+                if (dirty) {
+                    try {
+                        fileShareSettings.seenByDevice.value(
+                            seenByDevice.mapKeys { it.key.id }
+                        )
+                    } catch (e: Exception) {
+                        log(TAG, WARN) { "Failed to persist seenByDevice: ${e.message}" }
+                    }
                 }
             }
-            .launchIn(appScope + dispatcherProvider.Default)
+        }
     }
 
     private data class Snapshot(
@@ -156,17 +227,15 @@ class IncomingFileNotifier @Inject constructor(
     private fun notify(deviceId: DeviceId, deviceLabel: String, sharedFile: FileShareInfo.SharedFile) {
         log(TAG) { "notify(device=${deviceId.logLabel}, file=${sharedFile.name})" }
 
-        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+        val deeplinkIntent = FileShareDeeplink.buildIntent(context, deviceId.id)
             ?: run {
                 log(TAG) { "notify(): no launch intent for package, skipping" }
                 return
             }
         val openPi = PendingIntent.getActivity(
             context,
-            sharedFile.blobKey.hashCode(),
-            launchIntent.apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            },
+            notificationIdFor(deviceId, sharedFile.blobKey),
+            deeplinkIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 

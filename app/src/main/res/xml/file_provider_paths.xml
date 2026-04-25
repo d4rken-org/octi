@@ -6,4 +6,7 @@
     <external-files-path
         name="debug_logs_external"
         path="debug/logs" />
+    <cache-path
+        name="blob_open_cache"
+        path="blob-open" />
 </paths>

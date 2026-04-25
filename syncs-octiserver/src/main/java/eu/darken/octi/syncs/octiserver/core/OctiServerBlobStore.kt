@@ -29,6 +29,8 @@ import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.sync.core.blob.CountingSink
 import eu.darken.octi.sync.core.blob.StreamingPayloadCipher
 import eu.darken.octi.sync.core.encryption.EncryptionMode
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.FileSystem
@@ -96,11 +98,8 @@ class OctiServerBlobStore @AssistedInject constructor(
             // 2. Compute ciphertext size + SHA-256
             val cipherSize = cipherFile.length()
             val cipherHash = cipherFile.toHash(Hash.Algo.SHA256)
-            log(TAG, VERBOSE) { "put(${key.id}): Encrypted ${metadata.size}B → ${cipherSize}B ciphertext" }
-
-            // Report encryption complete — network upload hasn't started yet but the plaintext
-            // has been consumed, so the user sees "preparing → uploading" as a smooth transition.
-            onProgress?.invoke(BlobProgress(bytesTransferred = 0L, bytesTotal = cipherSize))
+            val plaintextSize = metadata.size
+            log(TAG, VERBOSE) { "put(${key.id}): Encrypted ${plaintextSize}B → ${cipherSize}B ciphertext" }
 
             // 3. Create session with CIPHERTEXT metadata
             val session = endpoint.createBlobSession(
@@ -127,7 +126,15 @@ class OctiServerBlobStore @AssistedInject constructor(
                     }
                     val body = chunk.sliceArray(0 until read).toRequestBody("application/octet-stream".toMediaType())
                     offset = endpoint.appendBlobSession(moduleId, session.sessionId, offset, body)
-                    onProgress?.invoke(BlobProgress(bytesTransferred = offset, bytesTotal = cipherSize))
+                    // Scale ciphertext progress to plaintext-equivalent so [BlobProgress] stays
+                    // plaintext-uniform across backends. Cap at plaintextSize for the final chunk
+                    // since ciphertext > plaintext (Tink AEAD framing overhead).
+                    val plaintextDone = if (cipherSize > 0L) {
+                        ((plaintextSize.toDouble() * offset) / cipherSize).toLong().coerceAtMost(plaintextSize)
+                    } else {
+                        plaintextSize
+                    }
+                    onProgress?.invoke(BlobProgress(bytesTransferred = plaintextDone, bytesTotal = plaintextSize))
                 }
             }
 
@@ -163,10 +170,14 @@ class OctiServerBlobStore @AssistedInject constructor(
 
     private suspend fun abortSessionSafely(moduleId: ModuleId, sessionId: String?) {
         sessionId ?: return
-        try {
-            endpoint.abortBlobSession(moduleId, sessionId)
-        } catch (e: Exception) {
-            log(TAG, WARN) { "abortSessionSafely(): Failed to abort session $sessionId: ${e.message}" }
+        // NonCancellable so a user-cancelled upload still issues the session abort — otherwise
+        // the cancelled scope would skip the abort and leave the session lingering until idle GC.
+        withContext(NonCancellable) {
+            try {
+                endpoint.abortBlobSession(moduleId, sessionId)
+            } catch (e: Exception) {
+                log(TAG, WARN) { "abortSessionSafely(): Failed to abort session $sessionId: ${e.message}" }
+            }
         }
     }
 
@@ -176,12 +187,11 @@ class OctiServerBlobStore @AssistedInject constructor(
         key: BlobKey,
         remoteRef: RemoteBlobRef,
         sink: Sink,
+        expectedPlaintextSize: Long,
         onProgress: BlobProgressCallback?,
     ): BlobMetadata {
         log(TAG, VERBOSE) { "get(ref=${remoteRef.value}, key=${key.id}, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
 
-        // Fetch ciphertext size up-front so progress has a total to report against. The listBlobs
-        // call is cheap (cached by the endpoint) and we'd be doing it anyway for the return value.
         val blobList = endpoint.listBlobs(deviceId, moduleId)
         val entry = blobList.blobs.find { it.blobId == remoteRef.value }
         val ciphertextTotal = entry?.sizeBytes ?: 0L
@@ -191,7 +201,7 @@ class OctiServerBlobStore @AssistedInject constructor(
 
         val progressingSink = if (onProgress != null) {
             CountingSink(sink) { written ->
-                onProgress(BlobProgress(bytesTransferred = written, bytesTotal = ciphertextTotal))
+                onProgress(BlobProgress(bytesTransferred = written, bytesTotal = expectedPlaintextSize))
             }
         } else {
             sink

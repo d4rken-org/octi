@@ -1,9 +1,12 @@
 package eu.darken.octi.sync.core.blob
 
 /**
- * Transfer progress for a blob upload or download. `bytesTotal` may be the ciphertext size for
- * uploads (what the network sees) or the plaintext size for downloads (what the caller wrote to
- * the sink) — consumers should treat it as a best-effort total for display.
+ * Transfer progress for a blob upload or download.
+ *
+ * Invariant: [bytesTotal] is always **plaintext** — the size of the original file on the
+ * sender's device. [bytesTransferred] is plaintext-equivalent: encrypting backends scale
+ * their on-the-wire ciphertext progress to the corresponding plaintext fraction so a single
+ * "X / Y MiB" readout matches the file picker.
  *
  * [fraction] is a convenience clamped to 0.0..1.0. When `bytesTotal <= 0` it reports 0.
  */

@@ -57,4 +57,17 @@ class FileShareSettings @Inject constructor(
         json = json,
         onErrorFallbackToDefault = true,
     )
+
+    /**
+     * Per-remote-device set of `blobKey`s the notifier has already observed. Persisted so that
+     * notifications survive process death — without this, an app killed between a sync arrival and
+     * the first emission after restart would silently re-seed and the missed share would never
+     * notify. Keyed by `DeviceId.id`. Mutated only by [IncomingFileNotifier].
+     */
+    val seenByDevice = dataStore.createValue(
+        key = "module.files.notifier.seen_by_device",
+        defaultValue = emptyMap<String, Set<String>>(),
+        json = json,
+        onErrorFallbackToDefault = true,
+    )
 }

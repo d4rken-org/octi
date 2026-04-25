@@ -76,6 +76,7 @@ class GDriveBlobStore(
         key: BlobKey,
         remoteRef: RemoteBlobRef,
         sink: Sink,
+        expectedPlaintextSize: Long,
         onProgress: BlobProgressCallback?,
     ): BlobMetadata {
         log(TAG, VERBOSE) { "get(ref=${remoteRef.value}, device=$deviceId, module=$moduleId)" }
@@ -85,7 +86,7 @@ class GDriveBlobStore(
             val metadata = file.fetchBlobMetadata().toBlobMetadata(remoteRef)
             val progressingSink: Sink = if (onProgress != null) {
                 CountingSink(sink) { written ->
-                    onProgress(BlobProgress(bytesTransferred = written, bytesTotal = metadata.size))
+                    onProgress(BlobProgress(bytesTransferred = written, bytesTotal = expectedPlaintextSize))
                 }
             } else {
                 sink

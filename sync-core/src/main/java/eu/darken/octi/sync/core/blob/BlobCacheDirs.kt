@@ -29,6 +29,10 @@ class BlobCacheDirs @Inject constructor(
     /** Pre-encrypt ciphertext buffer (OctiServerBlobStore.put). */
     val encryption: File get() = subdir(Kind.ENCRYPTION)
 
+    /** Decrypted plaintext for ACTION_VIEW (FileShareService.openFile). Survives until
+     *  [BlobMaintenance] GCs by mtime — see Kind.OPEN_CACHE for retention. */
+    val openCache: File get() = subdir(Kind.OPEN_CACHE)
+
     fun tempFile(dir: File): File = File(dir, "${UUID.randomUUID()}.tmp")
 
     /** Iterate existing blob cache subdirs (skips missing ones) — for maintenance scans. */
@@ -43,10 +47,22 @@ class BlobCacheDirs @Inject constructor(
         check(it.isDirectory || it.mkdirs()) { "Cannot create blob cache dir: $it" }
     }
 
-    private enum class Kind(val dirName: String) {
+    enum class Kind(val dirName: String) {
         STAGING("blob-staging"),
         DOWNLOAD("blob-download"),
         MAINTENANCE("blob-maintenance"),
         ENCRYPTION("blob-enc"),
+
+        /** Decrypted plaintext for external viewers (ACTION_VIEW). Longer retention than the
+         *  short-lived buffers above — see [BlobMaintenance.cleanupStaleTempFiles]. */
+        OPEN_CACHE("blob-open"),
+    }
+
+    /** Iterate every directory paired with its [Kind] (skips missing ones). */
+    fun forEachExistingKindDir(block: (Kind, File) -> Unit) {
+        Kind.entries.forEach { kind ->
+            val dir = File(context.cacheDir, kind.dirName)
+            if (dir.isDirectory) block(kind, dir)
+        }
     }
 }

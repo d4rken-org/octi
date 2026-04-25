@@ -21,12 +21,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.flow.first
@@ -55,13 +57,26 @@ class BlobManager @Inject constructor(
     )
 
     /**
-     * Per-(connector, blob) exponential backoff record. Advances through [BACKOFF_SCHEDULE]
-     * on each failure, resets on success. Clock.System.now is called lazily inside the hot
-     * put() loop so the map never holds timestamps older than the current wall-clock.
+     * Per-(connector, blob) state. For transient failures, [failureCount] advances through
+     * [BACKOFF_SCHEDULE]; once it exceeds the schedule length the entry is marked [terminal] and
+     * the maintenance loop stops retrying until the entry is cleared (pause/resume of the
+     * connector or a user-initiated retry). Pre-flight rejections short-circuit straight to
+     * [terminal] with a [preflight] reason carrying the user-actionable detail.
      */
-    private data class BackoffState(val failureCount: Int, val nextAttemptAt: Instant)
+    private data class BackoffState(
+        val failureCount: Int,
+        val nextAttemptAt: Instant,
+        val terminal: Boolean = false,
+        val preflight: PreflightReason? = null,
+    )
+
+    private sealed interface PreflightReason {
+        data class FileTooLarge(val maxBytes: Long) : PreflightReason
+        data class QuotaExceeded(val usedBytes: Long, val totalBytes: Long) : PreflightReason
+    }
 
     private val retryBackoff = ConcurrentHashMap<Pair<ConnectorId, BlobKey>, BackoffState>()
+    private val retryBackoffVersion = MutableStateFlow(0)
     private val quotaRefreshTrigger = MutableStateFlow(0)
 
     private val rawStores: Flow<List<BlobStore>> = if (blobStoreHubs.isEmpty()) {
@@ -82,6 +97,34 @@ class BlobManager @Inject constructor(
         }
         .setupCommonEventHandlers(TAG) { "allStores" }
         .shareLatest(scope + dispatcherProvider.Default)
+
+    init {
+        // Reset transient/terminal backoff (but NOT preflight reasons) when a connector is
+        // resumed — a paused-then-resumed connector shouldn't carry stale failure caps.
+        // FileTooLarge is structural (file size doesn't change on resume) so preflight entries
+        // survive; QuotaExceeded is similarly preserved because freeing space is the user's job.
+        scope.launch(dispatcherProvider.Default) {
+            var previous = emptySet<ConnectorId>()
+            syncSettings.pausedConnectors.flow.collect { paused ->
+                val resumed = previous - paused
+                if (resumed.isNotEmpty()) {
+                    var changed = false
+                    val keysToClear = retryBackoff.keys.filter { (cid, _) ->
+                        cid in resumed
+                    }
+                    for (key in keysToClear) {
+                        val state = retryBackoff[key] ?: continue
+                        if (state.preflight == null) {
+                            retryBackoff.remove(key)
+                            changed = true
+                        }
+                    }
+                    if (changed) retryBackoffVersion.update { it + 1 }
+                }
+                previous = paused
+            }
+        }
+    }
 
     private val quotasFlow: Flow<Map<ConnectorId, BlobStoreQuota?>> = allStores
         .combine(quotaRefreshTrigger) { stores, _ -> stores }
@@ -136,6 +179,10 @@ class BlobManager @Inject constructor(
                     if (constraints.maxFileBytes != null && metadata.size > constraints.maxFileBytes) {
                         log(TAG, INFO) { "put(${blobKey.id}): Skipping ${store.connectorId} — file too large (${metadata.size} > ${constraints.maxFileBytes})" }
                         errors[store.connectorId] = BlobFileTooLargeException(store.connectorId, constraints, metadata.size)
+                        recordPreflightFailure(
+                            store.connectorId, blobKey,
+                            PreflightReason.FileTooLarge(constraints.maxFileBytes),
+                        )
                         return@async
                     }
 
@@ -152,6 +199,10 @@ class BlobManager @Inject constructor(
                             ),
                             metadata.size,
                         )
+                        recordPreflightFailure(
+                            store.connectorId, blobKey,
+                            PreflightReason.QuotaExceeded(usedBytes, maxTotalBytes),
+                        )
                         return@async
                     }
 
@@ -162,7 +213,9 @@ class BlobManager @Inject constructor(
                     }
                     successful.add(store.connectorId)
                     remoteRefs[store.connectorId] = remoteRef
-                    retryBackoff.remove(store.connectorId to blobKey)
+                    if (retryBackoff.remove(store.connectorId to blobKey) != null) {
+                        retryBackoffVersion.update { it + 1 }
+                    }
                     log(TAG, INFO) { "put(${blobKey.id}): Success on ${store.connectorId}" }
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "put(${blobKey.id}): Failed on ${store.connectorId}: ${e.asLog()}" }
@@ -185,6 +238,9 @@ class BlobManager @Inject constructor(
      *
      * @param candidates per-connector locations: connector id → the remote reference stored for
      *                   that connector in `SharedFile.connectorRefs`.
+     * @param expectedPlaintextSize plaintext size from the synced module metadata, used as
+     *        [BlobProgress.bytesTotal] (the OctiServer backend cannot derive plaintext size on
+     *        its own in an E2EE setting). Pass `0` when no progress is needed.
      * @param onProgress optional progress callback fired as bytes arrive at the sink. Only the
      *        first successful candidate emits progress; failed candidates that bailed before
      *        writing leave the callback untouched.
@@ -195,6 +251,7 @@ class BlobManager @Inject constructor(
         moduleId: ModuleId,
         blobKey: BlobKey,
         candidates: Map<ConnectorId, RemoteBlobRef>,
+        expectedPlaintextSize: Long,
         openSink: () -> Sink,
         onProgress: BlobProgressCallback? = null,
     ): BlobMetadata = kotlinx.coroutines.withContext(dispatcherProvider.IO) {
@@ -209,7 +266,7 @@ class BlobManager @Inject constructor(
         for ((store, remoteRef) in ordered) {
             try {
                 val meta = openSink().use { sink ->
-                    store.get(deviceId, moduleId, blobKey, remoteRef, sink, onProgress)
+                    store.get(deviceId, moduleId, blobKey, remoteRef, sink, expectedPlaintextSize, onProgress)
                 }
                 log(TAG, INFO) { "get(${blobKey.id}): Success from ${store.connectorId}" }
                 return@withContext meta
@@ -330,26 +387,111 @@ class BlobManager @Inject constructor(
     }
 
     /**
-     * Check if a retry for this connector+blob combination should be backed off.
+     * Check if a retry for this connector+blob combination should be backed off. Returns `true`
+     * for transient failures still inside their delay window AND for terminal entries (so the
+     * maintenance loop skips them until cleared by pause/resume or a user retry).
      */
     fun isBackedOff(connectorId: ConnectorId, blobKey: BlobKey): Boolean {
         val state = retryBackoff[connectorId to blobKey] ?: return false
+        if (state.terminal) return true
         return Clock.System.now() < state.nextAttemptAt
     }
 
     /**
-     * Advances the failure count for [connectorId] x [blobKey] and sets the next attempt time
-     * per [BACKOFF_SCHEDULE]. Called from the put() exception path.
+     * Per-(connectorId, blobKey) retry/terminal/preflight state. Absent entries mean
+     * [RetryStatus.Ok]. Recomputed whenever [retryBackoffVersion] ticks.
+     */
+    val retryStatus: Flow<Map<Pair<ConnectorId, BlobKey>, RetryStatus>> = retryBackoffVersion
+        .map {
+            retryBackoff.entries.associate { (key, state) ->
+                key to when {
+                    state.preflight is PreflightReason.FileTooLarge ->
+                        RetryStatus.FileTooLarge(state.preflight.maxBytes)
+                    state.preflight is PreflightReason.QuotaExceeded ->
+                        RetryStatus.QuotaExceeded(state.preflight.usedBytes, state.preflight.totalBytes)
+                    state.terminal -> RetryStatus.Stopped
+                    else -> RetryStatus.RetryingAt(state.nextAttemptAt, state.failureCount)
+                }
+            }
+        }
+        .setupCommonEventHandlers(TAG) { "retryStatus" }
+        .shareLatest(scope + dispatcherProvider.Default)
+
+    /**
+     * Drop the backoff entry for [connectorId] x [blobKey] so the next maintenance pass attempts
+     * the upload immediately. Called by user-initiated "Retry" actions and by the paused→resumed
+     * watcher in [init].
+     */
+    fun clearBackoff(connectorId: ConnectorId, blobKey: BlobKey) {
+        if (retryBackoff.remove(connectorId to blobKey) != null) {
+            retryBackoffVersion.update { it + 1 }
+        }
+    }
+
+    /**
+     * Drop all backoff entries for [blobKey] across every connector. Used by force-retry on a
+     * file row where the user wants to push to all currently-missing connectors.
+     */
+    fun clearBackoff(blobKey: BlobKey) {
+        var changed = false
+        retryBackoff.keys.toList().forEach { key ->
+            if (key.second == blobKey && retryBackoff.remove(key) != null) {
+                changed = true
+            }
+        }
+        if (changed) retryBackoffVersion.update { it + 1 }
+    }
+
+    /**
+     * Drop backoff entries for blobKeys not in [keep]. Called by [BlobMaintenance] during the
+     * periodic prune pass so the map can't grow unbounded across the lifetime of the process.
+     */
+    fun trimBackoff(keep: Set<BlobKey>) {
+        var changed = false
+        retryBackoff.keys.toList().forEach { key ->
+            if (key.second !in keep && retryBackoff.remove(key) != null) {
+                changed = true
+            }
+        }
+        if (changed) retryBackoffVersion.update { it + 1 }
+    }
+
+    /**
+     * Advances the failure count for [connectorId] x [blobKey] and either sets the next attempt
+     * time per [BACKOFF_SCHEDULE] or marks the entry terminal once the schedule is exhausted.
      */
     private fun recordFailure(connectorId: ConnectorId, blobKey: BlobKey) {
         val key = connectorId to blobKey
         val prevCount = retryBackoff[key]?.failureCount ?: 0
         val newCount = prevCount + 1
-        val delay = BACKOFF_SCHEDULE[(newCount - 1).coerceIn(0, BACKOFF_SCHEDULE.lastIndex)]
+        val terminal = newCount > BACKOFF_SCHEDULE.size
+        val delay = if (terminal) BACKOFF_SCHEDULE.last() else BACKOFF_SCHEDULE[newCount - 1]
         retryBackoff[key] = BackoffState(
             failureCount = newCount,
             nextAttemptAt = Clock.System.now() + delay,
+            terminal = terminal,
         )
+        retryBackoffVersion.update { it + 1 }
+    }
+
+    /**
+     * Records a pre-flight rejection for [connectorId] x [blobKey] so it surfaces in [retryStatus]
+     * alongside transient failures. Pre-flight rejections short-circuit straight to terminal —
+     * the maintenance loop will not retry them automatically.
+     */
+    private fun recordPreflightFailure(
+        connectorId: ConnectorId,
+        blobKey: BlobKey,
+        reason: PreflightReason,
+    ) {
+        val key = connectorId to blobKey
+        retryBackoff[key] = BackoffState(
+            failureCount = (retryBackoff[key]?.failureCount ?: 0) + 1,
+            nextAttemptAt = Clock.System.now(),
+            terminal = true,
+            preflight = reason,
+        )
+        retryBackoffVersion.update { it + 1 }
     }
 
     companion object {

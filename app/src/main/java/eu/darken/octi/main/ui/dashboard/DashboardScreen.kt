@@ -98,6 +98,7 @@ import eu.darken.octi.common.compose.OctiMascot
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.error.ErrorEventHandler
+import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.common.navigation.WidgetDeeplink
 import eu.darken.octi.main.ui.MainActivityVM
@@ -155,6 +156,14 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
     // Resolved module item to open as a detail sheet from a widget deeplink.
     // Set by the deeplink collector below and cleared by the Screen after it opens the sheet.
     var externalSheetTarget by remember { mutableStateOf<DashboardVM.ModuleItem?>(null) }
+
+    // File-share notification deeplinks: navigate to the unified list with the sender device
+    // pre-filtered. No data lookup required — the list itself shows the filtered files.
+    LaunchedEffect(Unit) {
+        mainVm.fileShareDeeplinkEvents.collect { event ->
+            vm.navTo(Nav.Main.FileShareList(deviceId = event.deviceId))
+        }
+    }
 
     // Collect widget deeplink events, await populated dashboard state (bounded), resolve the
     // target ModuleItem, and either hand it off to the Screen or show a snackbar if no data.

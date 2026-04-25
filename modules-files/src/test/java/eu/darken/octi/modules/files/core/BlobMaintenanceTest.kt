@@ -57,6 +57,7 @@ class BlobMaintenanceTest : BaseTest() {
         every { context.cacheDir } returns tempDir
         every { syncSettings.deviceId } returns selfDeviceId
         every { fileShareSettings.pendingDeletes } returns pendingDeletes
+        every { blobManager.trimBackoff(any()) } just runs
     }
 
     private fun createBlobMaintenance(testScope: kotlinx.coroutines.test.TestScope): BlobMaintenance {
@@ -129,11 +130,12 @@ class BlobMaintenanceTest : BaseTest() {
                     moduleId = FileShareModule.MODULE_ID,
                     blobKey = BlobKey(file.blobKey),
                     candidates = mapOf(connectorA to RemoteBlobRef("srv-a-blob")),
+                    expectedPlaintextSize = file.size,
                     openSink = any(),
                 )
             } coAnswers {
                 // Invoke the openSink lambda so BlobMaintenance can read the (empty) staged file
-                val openSink = arg<() -> okio.Sink>(4)
+                val openSink = arg<() -> okio.Sink>(5)
                 openSink().close()
                 BlobMetadata(size = 0, createdAt = Clock.System.now(), checksum = "")
             }
@@ -195,7 +197,7 @@ class BlobMaintenanceTest : BaseTest() {
 
             // No downloads or uploads should happen for mirror retry
             coVerify(exactly = 0) {
-                blobManager.get(any(), any(), any(), any(), any())
+                blobManager.get(any(), any(), any(), any(), any(), any())
             }
             coVerify(exactly = 0) {
                 blobManager.put(any(), any(), any(), any(), any(), any())
@@ -226,7 +228,7 @@ class BlobMaintenanceTest : BaseTest() {
             maintenance.runOnce()
 
             coVerify(exactly = 0) {
-                blobManager.get(any(), any(), any(), any(), any())
+                blobManager.get(any(), any(), any(), any(), any(), any())
             }
         }
     }
@@ -536,6 +538,86 @@ class BlobMaintenanceTest : BaseTest() {
             coVerify(exactly = 0) { blobManager.delete(any(), any(), any(), any()) }
             coVerify(exactly = 0) { fileShareHandler.removeFile(any()) }
             coVerify(exactly = 0) { fileShareHandler.updateLocations(any(), any(), any()) }
+        }
+    }
+
+    @Nested
+    inner class `runMirrorUploadsFor` {
+
+        @Test
+        fun `does not run pendingDeletes or pruneExpired or trimBackoff`() = runTest2 {
+            val targetFile = makeFile(
+                blobKey = "blob-target",
+                checksum = "", // empty checksum skips integrity check
+                availableOn = setOf(connectorA.idString),
+                connectorRefs = mapOf(connectorA.idString to RemoteBlobRef("srv-a-blob")),
+            )
+            val unrelatedFile = makeFile(
+                blobKey = "blob-unrelated",
+                checksum = "",
+                availableOn = setOf(connectorA.idString),
+                connectorRefs = mapOf(connectorA.idString to RemoteBlobRef("srv-a-other")),
+                expiresAt = Clock.System.now() - 1.hours, // expired — runOnce would prune it
+            )
+
+            coEvery { fileShareCache.get(selfDeviceId) } returns makeModuleData(listOf(targetFile, unrelatedFile))
+            coEvery { blobManager.configuredConnectorsByIdString() } returns mapOf(
+                connectorA.idString to connectorA,
+                connectorB.idString to connectorB,
+            )
+            every { pendingDeletes.flow } returns flowOf(
+                mapOf("orphan-tombstone" to makeTombstone("orphan-tombstone")),
+            )
+            coEvery { blobManager.isBackedOff(any(), any()) } returns false
+            coEvery { fileShareHandler.updateLocations(any(), any(), any()) } just runs
+            coEvery {
+                blobManager.get(
+                    deviceId = selfDeviceId,
+                    moduleId = FileShareModule.MODULE_ID,
+                    blobKey = BlobKey(targetFile.blobKey),
+                    candidates = mapOf(connectorA to RemoteBlobRef("srv-a-blob")),
+                    expectedPlaintextSize = targetFile.size,
+                    openSink = any(),
+                )
+            } coAnswers {
+                val openSink = arg<() -> okio.Sink>(5)
+                openSink().close()
+                BlobMetadata(size = 0, createdAt = Clock.System.now(), checksum = "")
+            }
+            coEvery {
+                blobManager.put(
+                    deviceId = selfDeviceId,
+                    moduleId = FileShareModule.MODULE_ID,
+                    blobKey = BlobKey(targetFile.blobKey),
+                    openSource = any(),
+                    metadata = any(),
+                    eligibleConnectors = setOf(connectorB),
+                )
+            } returns BlobManager.PutResult(
+                successful = setOf(connectorB),
+                perConnectorErrors = emptyMap(),
+                remoteRefs = mapOf(connectorB to RemoteBlobRef("remote-ref-b")),
+            )
+
+            val maintenance = createBlobMaintenance(this)
+            maintenance.runMirrorUploadsFor(setOf(targetFile.blobKey))
+
+            // Targeted retry must mirror the target row…
+            coVerify(exactly = 1) {
+                fileShareHandler.updateLocations(
+                    blobKey = targetFile.blobKey,
+                    newAvailableOn = setOf(connectorA.idString, connectorB.idString),
+                    newConnectorRefs = mapOf(
+                        connectorA.idString to RemoteBlobRef("srv-a-blob"),
+                        connectorB.idString to RemoteBlobRef("remote-ref-b"),
+                    ),
+                )
+            }
+            // …and absolutely nothing else.
+            coVerify(exactly = 0) { blobManager.delete(any(), any(), any(), any()) }
+            coVerify(exactly = 0) { fileShareHandler.removeFile(any()) }
+            coVerify(exactly = 0) { blobManager.trimBackoff(any()) }
+            coVerify(exactly = 0) { pendingDeletes.update(any()) }
         }
     }
 }

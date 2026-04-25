@@ -15,6 +15,7 @@ import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobManager
+import kotlin.time.Duration
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +23,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import java.io.File
@@ -53,6 +57,12 @@ class BlobMaintenance @Inject constructor(
     private val stagingDir: File
         get() = blobCacheDirs.maintenance
 
+    /**
+     * Serialises [runOnce] and any user-triggered [retryMirrorUploads] call so a Retry tap
+     * can't run a second mirror pass concurrent with the periodic 30-min one.
+     */
+    private val maintenanceLock = Mutex()
+
     fun start() {
         log(TAG, INFO) { "start(): first maintenance run in $STARTUP_DELAY" }
         scope.launch(dispatcherProvider.IO) {
@@ -70,37 +80,65 @@ class BlobMaintenance @Inject constructor(
         }
     }
 
-    internal suspend fun runOnce() {
+    internal suspend fun runOnce() = maintenanceLock.withLock {
         log(TAG) { "runOnce() starting" }
         cleanupStaleTempFiles()
         retryMirrorUploads()
         retryPendingDeletes()
         pruneExpired()
+        trimBackoff()
         log(TAG) { "runOnce() complete" }
     }
 
     /**
-     * Delete leftover temp files older than 1 hour. Stale files are typically from a previous
-     * process that crashed mid-operation. Skipping recent files avoids racing with concurrent
-     * share/save/maintenance operations.
+     * Public entry point for the FileShareService row-level Retry button. Runs only the mirror
+     * pass, scoped to the supplied [only] set of blobKeys, under the same maintenance lock as
+     * the periodic [runOnce]. Does NOT run delete / expiry / cleanup so a Retry on one row
+     * cannot trigger a delete on another that just expired.
+     */
+    suspend fun runMirrorUploadsFor(only: Set<String>) = withContext(dispatcherProvider.IO) {
+        maintenanceLock.withLock {
+            log(TAG, INFO) { "runMirrorUploadsFor(only=$only)" }
+            retryMirrorUploads(only = only)
+        }
+    }
+
+    private suspend fun trimBackoff() {
+        val own = fileShareCache.get(syncSettings.deviceId)?.data ?: return
+        val keep = own.files.map { BlobKey(it.blobKey) }.toSet()
+        blobManager.trimBackoff(keep)
+    }
+
+    /**
+     * Delete leftover cache files past their per-Kind TTL. Short-lived buffers (staging,
+     * download, maintenance, encryption) age out at 1h; the open-cache (decrypted plaintext for
+     * external viewers) keeps for 24h so the user can re-open without redownloading.
      */
     private fun cleanupStaleTempFiles() {
-        val staleCutoffMs = System.currentTimeMillis() - 1.hours.inWholeMilliseconds
-        blobCacheDirs.forEachExistingDir { dir ->
+        val now = System.currentTimeMillis()
+        blobCacheDirs.forEachExistingKindDir { kind, dir ->
+            val ttlMs = ttlFor(kind).inWholeMilliseconds
+            val cutoff = now - ttlMs
             dir.listFiles()?.forEach { file ->
-                if (file.lastModified() < staleCutoffMs) {
+                if (file.lastModified() < cutoff) {
                     if (file.delete()) log(TAG) { "cleanupStaleTempFiles(): deleted ${file.path}" }
                 }
             }
         }
     }
 
-    private suspend fun retryMirrorUploads() {
+    private fun ttlFor(kind: BlobCacheDirs.Kind): Duration = when (kind) {
+        BlobCacheDirs.Kind.OPEN_CACHE -> OPEN_CACHE_TTL
+        else -> SHORT_TTL
+    }
+
+    private suspend fun retryMirrorUploads(only: Set<String>? = null) {
         val own = fileShareCache.get(syncSettings.deviceId)?.data ?: return
         val configuredById = blobManager.configuredConnectorsByIdString()
         val pendingDeletes = fileShareSettings.pendingDeletes.value()
 
         for (file in own.files) {
+            if (only != null && file.blobKey !in only) continue
             if (Clock.System.now() > file.expiresAt) continue
             if (file.blobKey in pendingDeletes) continue
 
@@ -131,6 +169,7 @@ class BlobMaintenance @Inject constructor(
                         moduleId = FileShareModule.MODULE_ID,
                         blobKey = blobKey,
                         candidates = availableCandidates,
+                        expectedPlaintextSize = file.size,
                         openSink = { FileSystem.SYSTEM.sink(stagedPath) },
                     )
 
@@ -308,5 +347,7 @@ class BlobMaintenance @Inject constructor(
         private val STARTUP_DELAY = 60.seconds
         private val MAINTENANCE_INTERVAL = 30.minutes
         private val STALE_FORGET_DELAY = 24.hours
+        private val SHORT_TTL = 1.hours
+        private val OPEN_CACHE_TTL = 24.hours
     }
 }
