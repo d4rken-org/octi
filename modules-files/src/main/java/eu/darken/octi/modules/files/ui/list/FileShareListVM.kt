@@ -13,6 +13,7 @@ import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
+import eu.darken.octi.modules.files.FileShareModule
 import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.files.core.FileKey
 import eu.darken.octi.modules.files.core.FileShareInfo
@@ -24,6 +25,8 @@ import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobChecksumMismatchException
 import eu.darken.octi.sync.core.blob.BlobManager
@@ -46,6 +49,7 @@ class FileShareListVM @Inject constructor(
     private val blobManager: BlobManager,
     private val syncSettings: SyncSettings,
     private val fileShareSettings: FileShareSettings,
+    private val syncManager: SyncManager,
 ) : ViewModel4(dispatcherProvider) {
 
     data class State(
@@ -58,6 +62,7 @@ class FileShareListVM @Inject constructor(
         val quotaItems: List<QuotaItem> = emptyList(),
         val isSharingAvailable: Boolean = true,
         val isUsageHintDismissed: Boolean = false,
+        val isSyncingNow: Boolean = false,
         val sheetTargetKey: FileKey? = null,
     ) {
         val sheetTarget: FileItem? get() = files.firstOrNull { it.key == sheetTargetKey }
@@ -126,6 +131,7 @@ class FileShareListVM @Inject constructor(
     private val _deleting = MutableStateFlow<Set<FileKey>>(emptySet())
     private val _openPreparing = MutableStateFlow<Set<FileKey>>(emptySet())
     private val _sheetTarget = MutableStateFlow<FileKey?>(null)
+    private val _isSyncingNow = MutableStateFlow(false)
 
     private data class RepoSnapshot(
         val repoState: BaseModuleRepo.State<FileShareInfo>,
@@ -177,8 +183,9 @@ class FileShareListVM @Inject constructor(
             fileShareSettings.pendingDeletes.flow,
             fileShareSettings.isUsageHintDismissed.flow,
         ) { pendingDeletes, hint -> SettingsSnapshot(pendingDeletes, hint) },
-    ) { repo, transfer, ui, settings ->
-        buildState(repo, transfer, ui, settings)
+        _isSyncingNow,
+    ) { repo, transfer, ui, settings, syncingNow ->
+        buildState(repo, transfer, ui, settings, syncingNow)
     }
         .setupCommonEventHandlers(TAG) { "state" }
         .shareLatest(vmScope)
@@ -188,6 +195,7 @@ class FileShareListVM @Inject constructor(
         transfer: TransferSnapshot,
         ui: UiSnapshot,
         settings: SettingsSnapshot,
+        isSyncingNow: Boolean,
     ): State {
         val ownDeviceId = syncSettings.deviceId
         val configuredById = transfer.quotas.keys.associateBy { it.idString }
@@ -274,6 +282,7 @@ class FileShareListVM @Inject constructor(
             quotaItems = quotaItems,
             isSharingAvailable = repo.moduleEnabled && configuredById.isNotEmpty(),
             isUsageHintDismissed = settings.isUsageHintDismissed,
+            isSyncingNow = isSyncingNow,
             sheetTargetKey = ui.sheetTarget,
         )
     }
@@ -426,6 +435,24 @@ class FileShareListVM @Inject constructor(
         } else {
             _sortBy.value = key
             _sortDescending.value = true
+        }
+    }
+
+    fun onSyncNow() = launch {
+        if (!_isSyncingNow.compareAndSet(expect = false, update = true)) return@launch
+        try {
+            syncManager.sync(
+                SyncOptions(
+                    stats = false,
+                    readData = true,
+                    writeData = false,
+                    moduleFilter = setOf(FileShareModule.MODULE_ID),
+                ),
+            )
+        } catch (e: Exception) {
+            uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_sync_failed))
+        } finally {
+            _isSyncingNow.value = false
         }
     }
 

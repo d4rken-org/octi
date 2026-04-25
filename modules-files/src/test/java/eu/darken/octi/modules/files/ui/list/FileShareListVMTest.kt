@@ -18,6 +18,7 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
+import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobStoreQuota
@@ -47,6 +48,7 @@ class FileShareListVMTest : BaseTest() {
     private val moduleManager = mockk<ModuleManager>()
     private val blobManager = mockk<BlobManager>()
     private val syncSettings = mockk<SyncSettings>()
+    private val syncManager = mockk<SyncManager>(relaxed = true)
     private val pendingDeletes = mockk<DataStoreValue<Map<String, PendingDelete>>>().apply {
         every { flow } returns flowOf(emptyMap())
     }
@@ -151,6 +153,7 @@ class FileShareListVMTest : BaseTest() {
         blobManager = blobManager,
         syncSettings = syncSettings,
         fileShareSettings = fileShareSettings,
+        syncManager = syncManager,
     )
 
     @Test

@@ -33,6 +33,7 @@ import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.material.icons.twotone.SaveAlt
+import androidx.compose.material.icons.twotone.Sync
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -157,6 +158,7 @@ fun FileShareListScreenHost(
             onAddFilter = { deviceId -> vm.onToggleFilter(deviceId) },
             onRemoveFilter = { deviceId -> vm.onClearFilter(deviceId) },
             onSortChange = { key -> vm.onSortChange(key) },
+            onSyncClick = { vm.onSyncNow() },
             onDismissHint = { vm.onDismissUsageHint() },
             onSheetDismiss = { vm.onSheetDismiss() },
             onSheetOpen = { item -> vm.onOpenFile(item) },
@@ -194,6 +196,7 @@ fun FileShareListScreen(
     onAddFilter: (DeviceId) -> Unit = {},
     onRemoveFilter: (DeviceId) -> Unit = {},
     onSortChange: (FileShareListVM.SortKey) -> Unit = {},
+    onSyncClick: () -> Unit = {},
     onDismissHint: () -> Unit = {},
     onSheetDismiss: () -> Unit = {},
     onSheetOpen: (FileShareListVM.FileItem) -> Unit = {},
@@ -211,6 +214,7 @@ fun FileShareListScreen(
                     }
                 },
                 actions = {
+                    SyncAction(state = state, onClick = onSyncClick)
                     SortMenu(state = state, onSortChange = onSortChange)
                 },
             )
@@ -372,6 +376,23 @@ private fun FilterRow(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun SyncAction(
+    state: FileShareListVM.State,
+    onClick: () -> Unit,
+) {
+    IconButton(onClick = onClick, enabled = !state.isSyncingNow) {
+        if (state.isSyncingNow) {
+            CircularProgressIndicator(modifier = Modifier.size(24.dp))
+        } else {
+            Icon(
+                imageVector = Icons.TwoTone.Sync,
+                contentDescription = stringResource(R.string.module_files_sync_now_action),
+            )
         }
     }
 }

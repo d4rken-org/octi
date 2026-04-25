@@ -45,6 +45,8 @@
     <string name="module_files_filter_add_action">Add device filter</string>
     <string name="module_files_filter_remove_action">Remove filter</string>
     <string name="module_files_sort_action">Sort</string>
+    <string name="module_files_sync_now_action">Sync now</string>
+    <string name="module_files_sync_failed">Sync failed</string>
     <string name="module_files_sort_by_date">Date</string>
     <string name="module_files_sort_by_name">Name</string>
     <string name="module_files_sort_by_size">Size</string>
