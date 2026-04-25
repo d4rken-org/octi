@@ -28,6 +28,7 @@ import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.BlobProgress
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -141,6 +142,11 @@ class FileShareService @Inject constructor(
 
         val stagedFile = blobCacheDirs.tempFile(stagingDir)
         val stagedPath = stagedFile.absolutePath.toPath()
+        // Set after blobManager.put returns successfully and cleared after upsertFile commits.
+        // If the surrounding scope is cancelled while non-null, the just-finalized server-side
+        // sessions are orphans (no module references them) — explicit abortPostFinalize cleans
+        // them in seconds instead of waiting on the server's idle GC.
+        var pendingPostFinalizeCleanup: BlobManager.PutResult? = null
         try {
             val contentResolver = context.contentResolver
             val (displayName, mimeType) = queryFileMetadata(contentResolver, uri)
@@ -215,6 +221,10 @@ class FileShareService @Inject constructor(
                 return@withContext ShareResult.AllConnectorsFailed(putResult.perConnectorErrors)
             }
 
+            // Open the cleanup window — covers the gap between put returning and upsertFile
+            // taking effect. Cancellation in here triggers abortPostFinalize.
+            pendingPostFinalizeCleanup = putResult
+
             val sharedFile = FileShareInfo.SharedFile(
                 name = displayName,
                 mimeType = mimeType,
@@ -227,6 +237,7 @@ class FileShareService @Inject constructor(
                 connectorRefs = putResult.remoteRefs.mapKeys { (connectorId, _) -> connectorId.idString },
             )
             fileShareHandler.upsertFile(sharedFile)
+            pendingPostFinalizeCleanup = null
 
             if (putResult.perConnectorErrors.isEmpty()) {
                 ShareResult.Success
@@ -235,6 +246,19 @@ class FileShareService @Inject constructor(
             }
         } catch (e: CancellationException) {
             log(TAG, INFO) { "shareFile(${blobKey.id}) cancelled" }
+            pendingPostFinalizeCleanup?.let { result ->
+                withContext(NonCancellable) {
+                    try {
+                        blobManager.abortPostFinalize(
+                            deviceId = syncSettings.deviceId,
+                            moduleId = FileShareModule.MODULE_ID,
+                            targets = result.remoteRefs,
+                        )
+                    } catch (e: Exception) {
+                        log(TAG, WARN) { "abortPostFinalize cleanup failed: ${e.message}" }
+                    }
+                }
+            }
             ShareResult.Cancelled
         } finally {
             activeJobs.remove(blobKey.id)

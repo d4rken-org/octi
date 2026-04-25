@@ -343,6 +343,35 @@ class BlobManager @Inject constructor(
     }
 
     /**
+     * Cancel cleanup for the small window between [put] returning a successful [PutResult] and
+     * the caller's containing module write committing. If that window is interrupted, the blob
+     * has been finalized server-side but no module references it. Fans out to each store's
+     * [BlobStore.abortPostFinalize] which is a no-op for backends without a multi-phase upload.
+     *
+     * Should always be invoked from a `withContext(NonCancellable)` block since the caller has
+     * already been cancelled by the time this runs.
+     */
+    suspend fun abortPostFinalize(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        targets: Map<ConnectorId, RemoteBlobRef>,
+    ) = kotlinx.coroutines.withContext(dispatcherProvider.IO) {
+        val stores = allStores.first()
+        val pairs = targets.mapNotNull { (id, ref) ->
+            stores.find { it.connectorId == id }?.let { store -> store to ref }
+        }
+        pairs.map { (store, remoteRef) ->
+            async {
+                try {
+                    store.abortPostFinalize(deviceId, moduleId, remoteRef)
+                } catch (e: Exception) {
+                    log(TAG, WARN) { "abortPostFinalize: ${store.connectorId}: ${e.message}" }
+                }
+            }
+        }.awaitAll()
+    }
+
+    /**
      * List all remote refs across all stores for a device+module.
      */
     suspend fun listAll(deviceId: DeviceId, moduleId: ModuleId): Map<ConnectorId, Set<RemoteBlobRef>> {

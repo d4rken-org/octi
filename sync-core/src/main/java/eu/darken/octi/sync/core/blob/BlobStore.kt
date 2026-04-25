@@ -85,4 +85,16 @@ interface BlobStore {
      * Connector-specific quota, if meaningful.
      */
     suspend fun getQuota(): BlobStoreQuota?
+
+    /**
+     * Cancel cleanup hook for the small window between [put] returning and the caller's containing
+     * module write taking effect. If the caller is cancelled in that window, the blob has been
+     * finalized server-side but no module references it — that's an orphan that the server's
+     * idle GC will eventually reap, but explicit cleanup makes it disappear in seconds.
+     *
+     * Default: no-op. Stores with multi-phase uploads (e.g. OctiServer's session protocol) may
+     * override to issue an explicit session/blob deletion. Implementations must be safe to call
+     * after their identifying handle has been forgotten — silently no-op in that case.
+     */
+    suspend fun abortPostFinalize(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef) {}
 }

@@ -37,8 +37,11 @@ import okio.FileSystem
 import okio.Path.Companion.toOkioPath
 import okio.Sink
 import okio.Source
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.min
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
 /**
  * OctiServer BlobStore using resumable upload sessions and server-generated blob IDs.
@@ -65,6 +68,22 @@ class OctiServerBlobStore @AssistedInject constructor(
     }
 
     private val cipher by lazy { StreamingPayloadCipher(credentials.encryptionKeyset) }
+
+    /**
+     * Tracks `serverBlobId → (sessionId, moduleId, finalizedAt)` for sessions that finalized
+     * during the lifetime of this connector instance. Used by [abortPostFinalize] to clean up
+     * the small window where the caller cancels between [put] returning and the containing
+     * module write committing — without this, the orphan blob waits for the server's idle GC.
+     * Entries are pruned on each access older than [RECENT_SESSION_TTL]; on process death the
+     * entries are lost and the server's idle GC takes over.
+     */
+    private val recentSessions = ConcurrentHashMap<String, RecentSession>()
+
+    private data class RecentSession(
+        val sessionId: String,
+        val moduleId: ModuleId,
+        val finalizedAt: Instant,
+    )
 
     override val connectorId: ConnectorId = ConnectorId(
         type = ConnectorType.OCTISERVER,
@@ -145,6 +164,7 @@ class OctiServerBlobStore @AssistedInject constructor(
                 "put(${key.id}): Finalized ciphertext=${cipherSize}B, hashPrefix=${cipherHash.take(16)}"
             }
             log(TAG, INFO) { "put(${key.id}): Finalized, serverBlobId=${session.blobId}" }
+            recordRecentSession(session.blobId, session.sessionId, moduleId)
             return RemoteBlobRef(session.blobId)
         } catch (e: OctiServerHttpException) {
             abortSessionSafely(moduleId, sessionId)
@@ -179,6 +199,19 @@ class OctiServerBlobStore @AssistedInject constructor(
                 log(TAG, WARN) { "abortSessionSafely(): Failed to abort session $sessionId: ${e.message}" }
             }
         }
+    }
+
+    private fun recordRecentSession(blobId: String, sessionId: String, moduleId: ModuleId) {
+        val now = Clock.System.now()
+        recentSessions[blobId] = RecentSession(sessionId, moduleId, now)
+        // Lazy eviction — keeps memory bounded without a dedicated GC.
+        recentSessions.entries.removeIf { now - it.value.finalizedAt > RECENT_SESSION_TTL }
+    }
+
+    override suspend fun abortPostFinalize(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef) {
+        val entry = recentSessions.remove(remoteRef.value) ?: return
+        log(TAG, INFO) { "abortPostFinalize(${remoteRef.value}): aborting session ${entry.sessionId}" }
+        abortSessionSafely(entry.moduleId, entry.sessionId)
     }
 
     override suspend fun get(
@@ -288,5 +321,10 @@ class OctiServerBlobStore @AssistedInject constructor(
         // Conservative buffer for Tink AesGcmHkdfStreaming overhead (header + per-segment tags).
         // Observed ~192 B for 10 MB with 1 MB segments; 1 KB is plenty of headroom.
         private const val CIPHERTEXT_OVERHEAD_BUFFER = 1024L
+
+        // How long the recent-session map remembers a finalized session for cancel cleanup. A
+        // little above the server's COMPLETE_IDLE_TTL_SECONDS so we always have a useful handle
+        // before the server reaps it on its own.
+        private val RECENT_SESSION_TTL = 15.minutes
     }
 }
