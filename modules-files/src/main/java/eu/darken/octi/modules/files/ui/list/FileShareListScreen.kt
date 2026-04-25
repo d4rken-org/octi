@@ -8,6 +8,7 @@ import android.text.format.Formatter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.automirrored.twotone.InsertDriveFile
@@ -55,6 +57,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,10 +69,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.error.ErrorEventHandler
+import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.files.core.FileKey
@@ -77,6 +82,9 @@ import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.blob.BlobProgress
 import eu.darken.octi.sync.core.blob.RetryStatus
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
@@ -85,6 +93,7 @@ private val TAG = logTag("Module", "Files", "List", "Screen")
 @Composable
 fun FileShareListScreenHost(
     initialDeviceFilter: String?,
+    autoAction: Nav.Main.FileShareList.AutoAction? = null,
     vm: FileShareListVM = hiltViewModel(),
 ) {
     LaunchedEffect(initialDeviceFilter) { vm.initialize(initialDeviceFilter) }
@@ -125,22 +134,91 @@ fun FileShareListScreenHost(
         }
     }
 
+    val state by vm.state.collectAsState(initial = null)
+
+    // Cross-rotation flags for the dashboard-tile auto-action flow. Once the SAF picker is
+    // launched, `autoLaunched` stays true so the LaunchedEffect doesn't double-fire on
+    // recomposition. `autoFiringComplete` flips true after the result handler runs (or when the
+    // download path gives up), guaranteeing any *subsequent* manual launcher event uses the
+    // regular snackbar path. `pendingSaveKey` holds `FileKey.raw` so the live `FileItem` can be
+    // resolved from the latest state when the result returns (snapshot at launch may be stale).
+    var autoLaunched by rememberSaveable { mutableStateOf(false) }
+    var autoFiringComplete by rememberSaveable { mutableStateOf(false) }
+    var pendingSaveKey by rememberSaveable { mutableStateOf<String?>(null) }
+
     val openDocLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
-        uri?.let { vm.onShareFile(it) }
+        val auto = autoAction != null && autoLaunched && !autoFiringComplete
+        if (uri != null) {
+            if (auto) vm.enqueueShareFile(uri) else vm.onShareFile(uri)
+        }
+        if (auto) {
+            autoFiringComplete = true
+            vm.navUp()
+        }
     }
 
-    var pendingSave by remember { mutableStateOf<FileShareListVM.FileItem?>(null) }
     val createDocLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) { result ->
-        val target = pendingSave ?: return@rememberLauncherForActivityResult
-        pendingSave = null
-        result.data?.data?.let { vm.onSaveFile(target, it) }
+        val auto = autoAction != null && autoLaunched && !autoFiringComplete
+        val key = pendingSaveKey
+        pendingSaveKey = null
+        val uri = result.data?.data
+        val target = key?.let { k -> state?.files?.firstOrNull { it.key.raw == k } }
+        if (target != null && uri != null) {
+            if (auto) vm.enqueueSaveFile(target, uri) else vm.onSaveFile(target, uri)
+        } else if (uri != null && key != null) {
+            // The row vanished between launching the picker and the user confirming —
+            // remote deleted it, or expiry passed. The save is dropped; surface it to logs
+            // so a real issue isn't silently swallowed (snackbar isn't reachable on the auto
+            // path because we navUp immediately).
+            log(TAG, WARN) { "save dropped: pending key=$key not in current state" }
+        }
+        if (auto) {
+            autoFiringComplete = true
+            vm.navUp()
+        }
     }
 
-    val state by vm.state.collectAsState(initial = null)
+    LaunchedEffect(autoAction) {
+        if (autoAction == null || autoLaunched || autoFiringComplete) return@LaunchedEffect
+        when (autoAction) {
+            Nav.Main.FileShareList.AutoAction.UPLOAD -> {
+                autoLaunched = true
+                openDocLauncher.launch(arrayOf("*/*"))
+            }
+            Nav.Main.FileShareList.AutoAction.DOWNLOAD_LATEST -> {
+                val target = withTimeoutOrNull(5_000) {
+                    vm.state.mapNotNull { current ->
+                        current.files
+                            .filter {
+                                !it.isOwn &&
+                                    it.ownerDeviceId.id == initialDeviceFilter &&
+                                    it.canOpenOrSave
+                            }
+                            .maxByOrNull { it.sharedFile.sharedAt }
+                    }.first()
+                }
+                if (target != null) {
+                    autoLaunched = true
+                    pendingSaveKey = target.key.raw
+                    createDocLauncher.launch(buildSaveAsIntent(target))
+                } else {
+                    // No eligible file in time — give up silently. User stays on the filtered
+                    // list and can interact normally; result handlers still see auto=false
+                    // because autoLaunched is still false.
+                    autoFiringComplete = true
+                }
+            }
+        }
+    }
+
+    val launchManualSave: (FileShareListVM.FileItem) -> Unit = { item ->
+        pendingSaveKey = item.key.raw
+        createDocLauncher.launch(buildSaveAsIntent(item))
+    }
 
     state?.let { current ->
         FileShareListScreen(
@@ -151,37 +229,28 @@ fun FileShareListScreenHost(
             onRowClick = { item -> vm.onRowClick(item) },
             onRowSecondaryClick = { item ->
                 if (item.isOwn) vm.onDeleteFile(item)
-                else launchSaveAs(createDocLauncher, item) { pendingSave = it }
+                else launchManualSave(item)
             },
             onRetryClick = { item -> vm.onRetryFile(item) },
             onCancelClick = { blobKey -> vm.onCancelTransfer(blobKey) },
-            onAddFilter = { deviceId -> vm.onToggleFilter(deviceId) },
-            onRemoveFilter = { deviceId -> vm.onClearFilter(deviceId) },
+            onToggleFilter = { deviceId -> vm.onToggleFilter(deviceId) },
             onSortChange = { key -> vm.onSortChange(key) },
             onSyncClick = { vm.onSyncNow() },
             onDismissHint = { vm.onDismissUsageHint() },
             onSheetDismiss = { vm.onSheetDismiss() },
             onSheetOpen = { item -> vm.onOpenFile(item) },
-            onSheetSave = { item -> launchSaveAs(createDocLauncher, item) { pendingSave = it } },
+            onSheetSave = { item -> launchManualSave(item) },
             onSheetDelete = { item -> vm.onDeleteFile(item) },
         )
     }
 }
 
-private fun launchSaveAs(
-    launcher: androidx.activity.compose.ManagedActivityResultLauncher<Intent, androidx.activity.result.ActivityResult>,
-    item: FileShareListVM.FileItem,
-    setPending: (FileShareListVM.FileItem) -> Unit,
-) {
-    setPending(item)
-    launcher.launch(
-        Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = item.sharedFile.mimeType.ifBlank { "application/octet-stream" }
-            putExtra(Intent.EXTRA_TITLE, item.sharedFile.name)
-        }
-    )
-}
+private fun buildSaveAsIntent(item: FileShareListVM.FileItem): Intent =
+    Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+        addCategory(Intent.CATEGORY_OPENABLE)
+        type = item.sharedFile.mimeType.ifBlank { "application/octet-stream" }
+        putExtra(Intent.EXTRA_TITLE, item.sharedFile.name)
+    }
 
 @Composable
 fun FileShareListScreen(
@@ -193,8 +262,7 @@ fun FileShareListScreen(
     onRowSecondaryClick: (FileShareListVM.FileItem) -> Unit = {},
     onRetryClick: (FileShareListVM.FileItem) -> Unit = {},
     onCancelClick: (String) -> Unit = {},
-    onAddFilter: (DeviceId) -> Unit = {},
-    onRemoveFilter: (DeviceId) -> Unit = {},
+    onToggleFilter: (DeviceId) -> Unit = {},
     onSortChange: (FileShareListVM.SortKey) -> Unit = {},
     onSyncClick: () -> Unit = {},
     onDismissHint: () -> Unit = {},
@@ -234,10 +302,9 @@ fun FileShareListScreen(
                 .padding(padding),
         ) {
             if (state.availableDevices.size > 1) {
-                FilterRow(
+                DevicesChipRow(
                     state = state,
-                    onAddFilter = onAddFilter,
-                    onRemoveFilter = onRemoveFilter,
+                    onToggleFilter = onToggleFilter,
                 )
             }
             if (state.files.isEmpty() && state.activeUpload == null) {
@@ -310,71 +377,52 @@ fun FileShareListScreen(
     }
 }
 
+/**
+ * Always-visible row of device chips. Empty `activeFilters` is the canonical "all selected"
+ * form, so chips render selected when in the set OR when the set is empty. Tapping a chip
+ * routes through [FileShareListVM.onToggleFilter] which canonicalizes the result back to
+ * empty when appropriate (all selected or last one removed).
+ */
 @Composable
-private fun FilterRow(
+private fun DevicesChipRow(
     state: FileShareListVM.State,
-    onAddFilter: (DeviceId) -> Unit,
-    onRemoveFilter: (DeviceId) -> Unit,
+    onToggleFilter: (DeviceId) -> Unit,
 ) {
-    var pickerOpen by remember { mutableStateOf(false) }
-    Row(
+    val allShown = state.activeFilters.isEmpty()
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (state.activeFilters.isEmpty()) {
-            Text(
-                text = stringResource(R.string.module_files_filter_all_devices),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f),
-            )
-        } else {
-            Row(
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                state.activeFilters.forEach { deviceId ->
-                    val opt = state.availableDevices.firstOrNull { it.deviceId == deviceId }
-                    val label = opt?.label ?: deviceId.id.take(8)
-                    FilterChip(
-                        selected = true,
-                        onClick = { onRemoveFilter(deviceId) },
-                        label = { Text(label) },
-                        trailingIcon = {
+        Text(
+            text = stringResource(R.string.module_files_filter_devices_label),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.size(4.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            state.availableDevices.forEach { opt ->
+                val selected = allShown || opt.deviceId in state.activeFilters
+                FilterChip(
+                    selected = selected,
+                    onClick = { onToggleFilter(opt.deviceId) },
+                    label = { Text(opt.label) },
+                    leadingIcon = if (selected) {
+                        {
                             Icon(
-                                Icons.TwoTone.Close,
-                                contentDescription = stringResource(R.string.module_files_filter_remove_action),
+                                Icons.TwoTone.Check,
+                                contentDescription = null,
                                 modifier = Modifier.size(16.dp),
                             )
-                        },
-                    )
-                }
-            }
-        }
-        Box {
-            IconButton(onClick = { pickerOpen = true }) {
-                Icon(
-                    Icons.TwoTone.Add,
-                    contentDescription = stringResource(R.string.module_files_filter_add_action),
+                        }
+                    } else null,
                 )
-            }
-            DropdownMenu(
-                expanded = pickerOpen,
-                onDismissRequest = { pickerOpen = false },
-            ) {
-                state.availableDevices.forEach { opt ->
-                    val checked = opt.deviceId in state.activeFilters
-                    DropdownMenuItem(
-                        text = { Text(opt.label) },
-                        onClick = { onAddFilter(opt.deviceId) },
-                        leadingIcon = {
-                            if (checked) Icon(Icons.TwoTone.Check, null)
-                            else Spacer(modifier = Modifier.size(24.dp))
-                        },
-                    )
-                }
             }
         }
     }
@@ -584,9 +632,9 @@ private fun FileItemRow(
                 )
                 Text(
                     text = buildString {
-                        append(Formatter.formatFileSize(context, item.sharedFile.size))
-                        append(" • ")
                         append(item.ownerDeviceLabel)
+                        append(" • ")
+                        append(Formatter.formatFileSize(context, item.sharedFile.size))
                         append(" • ")
                         append(
                             DateUtils.getRelativeTimeSpanString(
@@ -605,6 +653,8 @@ private fun FileItemRow(
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 if (item.isOwn) RetryStatusLine(item)
             }

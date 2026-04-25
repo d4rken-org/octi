@@ -41,9 +41,7 @@
     <string name="module_files_upload_cancelled">Upload cancelled</string>
     <string name="module_files_save_cancelled">Save cancelled</string>
     <string name="module_files_upload_progress">Uploading %1$s</string>
-    <string name="module_files_filter_all_devices">All devices</string>
-    <string name="module_files_filter_add_action">Add device filter</string>
-    <string name="module_files_filter_remove_action">Remove filter</string>
+    <string name="module_files_filter_devices_label">Devices</string>
     <string name="module_files_sort_action">Sort</string>
     <string name="module_files_sync_now_action">Sync now</string>
     <string name="module_files_sync_failed">Sync failed</string>

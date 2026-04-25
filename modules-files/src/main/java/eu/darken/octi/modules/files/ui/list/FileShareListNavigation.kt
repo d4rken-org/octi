@@ -14,7 +14,10 @@ import javax.inject.Inject
 class FileShareListNavigation @Inject constructor() : NavigationEntry {
     override fun EntryProviderScope<NavKey>.setup() {
         entry<Nav.Main.FileShareList> { key ->
-            FileShareListScreenHost(initialDeviceFilter = key.deviceId)
+            FileShareListScreenHost(
+                initialDeviceFilter = key.deviceId,
+                autoAction = key.autoAction,
+            )
         }
     }
 

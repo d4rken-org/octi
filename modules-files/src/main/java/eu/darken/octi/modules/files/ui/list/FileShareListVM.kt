@@ -3,8 +3,12 @@ package eu.darken.octi.modules.files.ui.list
 import android.net.Uri
 import androidx.annotation.StringRes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.datastore.value
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.asLog
+import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.shareLatest
@@ -33,16 +37,20 @@ import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobProgress
 import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.sync.core.blob.RetryStatus
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Clock
 
 @HiltViewModel
 class FileShareListVM @Inject constructor(
-    dispatcherProvider: DispatcherProvider,
+    private val dispatcherProvider: DispatcherProvider,
+    @AppScope private val appScope: CoroutineScope,
     private val fileShareRepo: FileShareRepo,
     private val fileShareService: FileShareService,
     private val moduleManager: ModuleManager,
@@ -220,10 +228,12 @@ class FileShareListVM @Inject constructor(
             .sortedWith(compareByDescending<DeviceOption> { it.isOwn }.thenBy { it.label })
 
         val now = Clock.System.now()
-        val filterIsEmpty = ui.filters.isEmpty()
+        val availableSet = availableDevices.map { it.deviceId }.toSet()
+        val effectiveFilters = ui.filters intersect availableSet
+        val filterIsEmpty = effectiveFilters.isEmpty()
 
         val items: List<FileItem> = deviceData.flatMap { (ownerId, info) ->
-            if (!filterIsEmpty && ownerId !in ui.filters) return@flatMap emptyList()
+            if (!filterIsEmpty && ownerId !in effectiveFilters) return@flatMap emptyList()
             val ownerLabel = labelByDevice[ownerId] ?: ownerId.id.take(8)
             val isOwn = ownerId == ownDeviceId
             info.files
@@ -275,7 +285,7 @@ class FileShareListVM @Inject constructor(
         return State(
             files = sortedItems,
             availableDevices = availableDevices,
-            activeFilters = ui.filters,
+            activeFilters = effectiveFilters,
             sortBy = ui.sortBy,
             sortDescending = ui.sortDescending,
             activeUpload = activeUpload,
@@ -330,6 +340,28 @@ class FileShareListVM @Inject constructor(
         if (initialDeviceFilter.isNullOrBlank()) return
         if (_filters.value.isNotEmpty()) return
         _filters.value = setOf(DeviceId(initialDeviceFilter))
+    }
+
+    /**
+     * Fire-and-forget share — used by the dashboard tile auto-action so the upload survives the
+     * subsequent `navUp()`. Snackbar feedback is intentionally dropped (the user is back on the
+     * dashboard); transfer progress remains observable through `FileShareService.transfers`.
+     */
+    fun enqueueShareFile(uri: Uri) {
+        appScope.launch(dispatcherProvider.IO) {
+            runCatching { fileShareService.shareFile(uri) }
+                .onFailure { log(TAG, ERROR) { "enqueueShareFile failed: ${it.asLog()}" } }
+        }
+    }
+
+    /**
+     * Fire-and-forget save — same rationale as [enqueueShareFile].
+     */
+    fun enqueueSaveFile(item: FileItem, uri: Uri) {
+        appScope.launch(dispatcherProvider.IO) {
+            runCatching { fileShareService.saveFile(item.sharedFile, item.ownerDeviceId, uri) }
+                .onFailure { log(TAG, ERROR) { "enqueueSaveFile failed: ${it.asLog()}" } }
+        }
     }
 
     fun onShareFile(uri: Uri) = launch {
@@ -419,14 +451,18 @@ class FileShareListVM @Inject constructor(
         }
     }
 
-    fun onToggleFilter(deviceId: DeviceId) {
+    /**
+     * Toggle a device chip. Empty `_filters` is the canonical "all selected" form, so toggling
+     * a chip from the all-on state demotes that one device, and toggling the last selected chip
+     * (or explicitly selecting all) collapses back to empty.
+     */
+    fun onToggleFilter(deviceId: DeviceId) = launch {
+        val available = state.first().availableDevices.map { it.deviceId }.toSet()
         _filters.update { current ->
-            if (deviceId in current) current - deviceId else current + deviceId
+            val effective = if (current.isEmpty()) available else current
+            val next = if (deviceId in effective) effective - deviceId else effective + deviceId
+            if (next == available || next.isEmpty()) emptySet() else next
         }
-    }
-
-    fun onClearFilter(deviceId: DeviceId) {
-        _filters.update { it - deviceId }
     }
 
     fun onSortChange(key: SortKey) {

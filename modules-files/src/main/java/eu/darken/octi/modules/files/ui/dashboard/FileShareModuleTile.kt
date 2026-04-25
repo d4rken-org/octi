@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.InsertDriveFile
+import androidx.compose.material.icons.twotone.Add
+import androidx.compose.material.icons.twotone.SaveAlt
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,9 +35,21 @@ fun FileShareModuleTile(
     modifier: Modifier = Modifier,
     isWide: Boolean = false,
     onTileClicked: () -> Unit = {},
+    onUploadClicked: () -> Unit = {},
+    onDownloadClicked: () -> Unit = {},
 ) {
     val nonExpiredFiles = state.info.files.filter { it.expiresAt > Clock.System.now() }
     val latestFile = nonExpiredFiles.maxByOrNull { it.sharedAt }
+    // "Latest downloadable" mirrors `FileShareListVM`'s `canOpenOrSave`: a file must be both
+    // listed in `availableOn` AND have a matching `connectorRefs` entry on a configured
+    // connector. Diverges from `latestFile` only when the newest file is mid-mirror.
+    val latestDownloadable = nonExpiredFiles
+        .filter { f ->
+            f.availableOn.any { idStr ->
+                idStr in state.configuredConnectorIds && f.connectorRefs.containsKey(idStr)
+            }
+        }
+        .maxByOrNull { it.sharedAt }
 
     Surface(
         modifier = modifier,
@@ -58,6 +73,29 @@ fun FileShareModuleTile(
                     text = stringResource(R.string.module_files_label),
                     style = MaterialTheme.typography.labelMedium,
                 )
+                Spacer(modifier = Modifier.weight(1f))
+                when {
+                    state.isOurDevice && state.isSharingAvailable -> IconButton(
+                        onClick = onUploadClicked,
+                        modifier = Modifier.size(28.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.TwoTone.Add,
+                            contentDescription = stringResource(R.string.module_files_share_action),
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                    !state.isOurDevice && latestDownloadable != null -> IconButton(
+                        onClick = onDownloadClicked,
+                        modifier = Modifier.size(28.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.TwoTone.SaveAlt,
+                            contentDescription = stringResource(R.string.module_files_save_action),
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -107,6 +145,8 @@ private fun FileShareModuleTilePreview() = PreviewWrapper {
                 ),
             ),
             isOurDevice = true,
+            isSharingAvailable = true,
+            configuredConnectorIds = setOf("connector-1"),
         ),
     )
 }
@@ -118,6 +158,8 @@ private fun FileShareModuleTileEmptyPreview() = PreviewWrapper {
         state = FileShareDashState(
             info = FileShareInfo(),
             isOurDevice = false,
+            isSharingAvailable = false,
+            configuredConnectorIds = emptySet(),
         ),
     )
 }

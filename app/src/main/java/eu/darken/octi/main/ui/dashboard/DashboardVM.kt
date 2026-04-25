@@ -51,6 +51,7 @@ import eu.darken.octi.sync.core.SyncExecutor
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOrchestrator
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.blob.BlobManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -91,6 +92,7 @@ class DashboardVM @Inject constructor(
     private val syncOrchestrator: SyncOrchestrator,
     private val issueAggregator: ConnectorIssueAggregator,
     private val fileShareRepo: FileShareRepo,
+    private val blobManager: BlobManager,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -223,6 +225,8 @@ class DashboardVM @Inject constructor(
         data class FileShare(
             val data: ModuleData<FileShareInfo>,
             val isOurDevice: Boolean,
+            val isSharingAvailable: Boolean,
+            val configuredConnectorIds: Set<String>,
         ) : ModuleItem
     }
 
@@ -281,6 +285,22 @@ class DashboardVM @Inject constructor(
         if (fileShareEnabled) issues
         else issues.filterNot { it is OctiServerIssue.BlobEncryptionUnsupported }
     }
+
+    // NOTE: must be declared before `state` (which references it via `deviceItems()`).
+    // Kotlin initializes properties in declaration order — placing this below `state` would
+    // cause `deviceItems()` to capture a `null` Flow reference.
+    private val fileShareCtx: Flow<FileShareCtx> = kotlinx.coroutines.flow.combine(
+        fileShareRepo.isEnabled,
+        blobManager.quotas(),
+    ) { enabled, quotas ->
+        val ids = quotas.keys.map { it.idString }.toSet()
+        FileShareCtx(isSharingAvailable = enabled && ids.isNotEmpty(), configuredConnectorIds = ids)
+    }
+
+    private data class FileShareCtx(
+        val isSharingAvailable: Boolean,
+        val configuredConnectorIds: Set<String>,
+    )
 
     val state: Flow<State> = combine(
         tickerUiRefresh,
@@ -482,6 +502,14 @@ class DashboardVM @Inject constructor(
         navTo(Nav.Main.FileShareList(deviceId.id))
     }
 
+    fun goToFileShareUpload(deviceId: DeviceId) {
+        navTo(Nav.Main.FileShareList(deviceId.id, Nav.Main.FileShareList.AutoAction.UPLOAD))
+    }
+
+    fun goToFileShareDownload(deviceId: DeviceId) {
+        navTo(Nav.Main.FileShareList(deviceId.id, Nav.Main.FileShareList.AutoAction.DOWNLOAD_LATEST))
+    }
+
     fun onInstallLatestApp(appsInfo: AppsInfo) = launch {
         appsInfo.installedPackages.maxByOrNull { it.installedAt }?.let {
             val (main, fallback) = it.getInstallerIntent()
@@ -524,7 +552,8 @@ class DashboardVM @Inject constructor(
         syncManager.states,
         alertManager.alerts,
         upgradeRepo.upgradeInfo,
-    ) { now, byDevice, missingPermissions, activeConnectors, activeStates, alerts, _ ->
+        fileShareCtx,
+    ) { now, byDevice, missingPermissions, activeConnectors, activeStates, alerts, _, fileShare ->
         val statesList = activeStates.toList()
         val statesMap = activeConnectors.zip(statesList).associate { (c, s) -> c.identifier to s }
 
@@ -573,6 +602,8 @@ class DashboardVM @Inject constructor(
                             is FileShareInfo -> ModuleItem.FileShare(
                                 data = moduleData as ModuleData<FileShareInfo>,
                                 isOurDevice = deviceId == syncSettings.deviceId,
+                                isSharingAvailable = fileShare.isSharingAvailable,
+                                configuredConnectorIds = fileShare.configuredConnectorIds,
                             )
 
                             else -> {

@@ -316,6 +316,8 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             onShareClipboard = { vm.shareCurrentClipboard() },
             onCopyClipboard = { vm.setOsClipboard(it) },
             onFileShareClicked = { vm.goToFileShareList(it) },
+            onFileShareUpload = { vm.goToFileShareUpload(it) },
+            onFileShareDownload = { vm.goToFileShareDownload(it) },
             onWifiPermissionGrant = { vm.requestPermission(it) },
             onSaveTileLayout = { deviceId, config -> vm.saveTileLayout(deviceId, config) },
             onSaveAsDefaultTileLayout = { vm.saveAsDefaultTileLayout(it) },
@@ -354,6 +356,8 @@ fun DashboardScreen(
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
     onFileShareClicked: (DeviceId) -> Unit,
+    onFileShareUpload: (DeviceId) -> Unit = {},
+    onFileShareDownload: (DeviceId) -> Unit = {},
     onWifiPermissionGrant: (Permission) -> Unit,
     onSaveTileLayout: (String, TileLayoutConfig) -> Unit = { _, _ -> },
     onSaveAsDefaultTileLayout: (TileLayoutConfig) -> Unit = {},
@@ -551,6 +555,8 @@ fun DashboardScreen(
                     onShareClipboard = onShareClipboard,
                     onCopyClipboard = onCopyClipboard,
                     onFileShareClicked = onFileShareClicked,
+                    onFileShareUpload = onFileShareUpload,
+                    onFileShareDownload = onFileShareDownload,
                     showMessage = showMessage,
                     onDoneEditing = { deviceId, config ->
                         onSaveTileLayout(deviceId, config)
@@ -602,6 +608,8 @@ fun DashboardScreen(
                         onShareClipboard = onShareClipboard,
                         onCopyClipboard = onCopyClipboard,
                         onFileShareClicked = onFileShareClicked,
+                        onFileShareUpload = onFileShareUpload,
+                        onFileShareDownload = onFileShareDownload,
                         showMessage = showMessage,
                         onDoneEditing = { deviceId, config ->
                             onSaveTileLayout(deviceId, config)
@@ -1428,6 +1436,8 @@ private fun DashboardDeviceCard(
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
     onFileShareClicked: (DeviceId) -> Unit,
+    onFileShareUpload: (DeviceId) -> Unit,
+    onFileShareDownload: (DeviceId) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     val meta = device.meta?.data
@@ -1607,6 +1617,8 @@ private fun DashboardDeviceCard(
                 onShareClipboard = onShareClipboard,
                 onCopyClipboard = onCopyClipboard,
                 onFileShareClicked = onFileShareClicked,
+                onFileShareUpload = onFileShareUpload,
+                onFileShareDownload = onFileShareDownload,
                 showMessage = showMessage,
             )
         }
@@ -1636,6 +1648,8 @@ private fun DeviceCardOrEditor(
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
     onFileShareClicked: (DeviceId) -> Unit,
+    onFileShareUpload: (DeviceId) -> Unit,
+    onFileShareDownload: (DeviceId) -> Unit,
     showMessage: (String) -> Unit,
     onDoneEditing: (String, TileLayoutConfig) -> Unit,
     onCancelEditing: () -> Unit,
@@ -1678,6 +1692,8 @@ private fun DeviceCardOrEditor(
             onShareClipboard = onShareClipboard,
             onCopyClipboard = onCopyClipboard,
             onFileShareClicked = onFileShareClicked,
+            onFileShareUpload = onFileShareUpload,
+            onFileShareDownload = onFileShareDownload,
             showMessage = showMessage,
         )
     }

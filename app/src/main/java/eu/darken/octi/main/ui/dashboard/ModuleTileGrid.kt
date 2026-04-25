@@ -43,6 +43,8 @@ fun ModuleTileGrid(
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
     onFileShareClicked: (DeviceId) -> Unit,
+    onFileShareUpload: (DeviceId) -> Unit,
+    onFileShareDownload: (DeviceId) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     val moduleMap = buildModuleIdMap(moduleItems)
@@ -88,6 +90,8 @@ fun ModuleTileGrid(
                         onShareClipboard = onShareClipboard,
                         onCopyClipboard = onCopyClipboard,
                         onFileShareClicked = onFileShareClicked,
+                        onFileShareUpload = onFileShareUpload,
+                        onFileShareDownload = onFileShareDownload,
                         showMessage = showMessage,
                     )
                 }
@@ -115,6 +119,8 @@ private fun ModuleTileDispatch(
     onShareClipboard: () -> Unit,
     onCopyClipboard: (ClipboardInfo) -> Unit,
     onFileShareClicked: (DeviceId) -> Unit,
+    onFileShareUpload: (DeviceId) -> Unit,
+    onFileShareDownload: (DeviceId) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     when (val item = moduleMap[moduleId]) {
@@ -175,10 +181,14 @@ private fun ModuleTileDispatch(
             state = FileShareDashState(
                 info = item.data.data,
                 isOurDevice = item.isOurDevice,
+                isSharingAvailable = item.isSharingAvailable,
+                configuredConnectorIds = item.configuredConnectorIds,
             ),
             modifier = modifier,
             isWide = isWide,
             onTileClicked = { onFileShareClicked(deviceId) },
+            onUploadClicked = { onFileShareUpload(deviceId) },
+            onDownloadClicked = { onFileShareDownload(deviceId) },
         )
 
         null -> {} // Module not available for this device

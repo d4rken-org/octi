@@ -30,6 +30,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -37,6 +39,7 @@ import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
 import testhelpers.coroutine.runTest2
+import java.io.IOException
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
@@ -147,6 +150,7 @@ class FileShareListVMTest : BaseTest() {
 
     private fun makeVM() = FileShareListVM(
         dispatcherProvider = dispatcherProvider,
+        appScope = CoroutineScope(SupervisorJob()),
         fileShareRepo = fileShareRepo,
         fileShareService = fileShareService,
         moduleManager = moduleManager,
@@ -222,7 +226,7 @@ class FileShareListVMTest : BaseTest() {
     }
 
     @Test
-    fun `onToggleFilter adds and removes per-device filters`() = runTest2 {
+    fun `onToggleFilter from empty deselects that one device`() = runTest2 {
         setupBaseMocks(
             selfFiles = listOf(makeFile(blobKey = "self-1")),
             otherFiles = mapOf(remoteDevice to listOf(makeFile(blobKey = "remote-1"))),
@@ -231,10 +235,95 @@ class FileShareListVMTest : BaseTest() {
         vm.initialize(null)
 
         vm.state.first().activeFilters shouldBe emptySet()
+        // From the "all selected" canonical empty state, tapping remoteDevice should hide just
+        // that device — filters become (available - {remoteDevice}) = {selfDevice}.
         vm.onToggleFilter(remoteDevice)
-        vm.state.first().activeFilters shouldBe setOf(remoteDevice)
+        vm.state.first().activeFilters shouldBe setOf(selfDevice)
+        // Re-adding remoteDevice means everything is selected again → canonicalize to empty.
         vm.onToggleFilter(remoteDevice)
         vm.state.first().activeFilters shouldBe emptySet()
+    }
+
+    @Test
+    fun `onToggleFilter on the last selected chip resets to empty`() = runTest2 {
+        val third = DeviceId("third")
+        setupBaseMocks(
+            selfFiles = listOf(makeFile(blobKey = "self-1")),
+            otherFiles = mapOf(
+                remoteDevice to listOf(makeFile(blobKey = "remote-1")),
+                third to listOf(makeFile(blobKey = "third-1")),
+            ),
+            labels = mapOf(selfDevice to "Self", remoteDevice to "Remote", third to "Third"),
+        )
+        val vm = makeVM()
+        vm.initialize(remoteDevice.id) // start with only remoteDevice selected
+
+        vm.state.first().activeFilters shouldBe setOf(remoteDevice)
+        // Tapping the only selected chip should empty the filter (= back to all-selected).
+        vm.onToggleFilter(remoteDevice)
+        vm.state.first().activeFilters shouldBe emptySet()
+    }
+
+    @Test
+    fun `onToggleFilter canonicalizes all explicitly selected to empty`() = runTest2 {
+        val third = DeviceId("third")
+        setupBaseMocks(
+            selfFiles = listOf(makeFile(blobKey = "self-1")),
+            otherFiles = mapOf(
+                remoteDevice to listOf(makeFile(blobKey = "remote-1")),
+                third to listOf(makeFile(blobKey = "third-1")),
+            ),
+            labels = mapOf(selfDevice to "Self", remoteDevice to "Remote", third to "Third"),
+        )
+        val vm = makeVM()
+        vm.initialize(remoteDevice.id) // start with {remote}
+        vm.onToggleFilter(selfDevice)  // → {remote, self}
+        vm.state.first().activeFilters shouldBe setOf(remoteDevice, selfDevice)
+        vm.onToggleFilter(third)       // → {remote, self, third} == all → canonicalize to empty
+        vm.state.first().activeFilters shouldBe emptySet()
+    }
+
+    @Test
+    fun `stale filters are pruned to currently available devices`() = runTest2 {
+        val ghost = DeviceId("ghost") // not in availableDevices
+        setupBaseMocks(
+            selfFiles = listOf(makeFile(blobKey = "self-1")),
+            otherFiles = mapOf(remoteDevice to listOf(makeFile(blobKey = "remote-1"))),
+        )
+        val vm = makeVM()
+        vm.initialize(ghost.id)
+
+        // Filter set holds 'ghost' which is not in availableDevices — buildState should prune
+        // to empty so the user doesn't end up with a ghost filter that hides every row.
+        val state = vm.state.first()
+        state.activeFilters shouldBe emptySet()
+        state.files.size shouldBe 2
+    }
+
+    @Test
+    fun `enqueueShareFile swallows exception so appScope does not crash`() = runTest2 {
+        setupBaseMocks(selfFiles = listOf(makeFile(blobKey = "self-1")))
+        coEvery { fileShareService.shareFile(any()) } throws IOException("boom")
+
+        val vm = makeVM()
+        vm.initialize(null)
+        val uri = mockk<android.net.Uri>(relaxed = true)
+        // Should not throw — runCatching wraps the failing call.
+        vm.enqueueShareFile(uri)
+    }
+
+    @Test
+    fun `enqueueSaveFile swallows exception so appScope does not crash`() = runTest2 {
+        val sharedByRemote = makeFile(blobKey = "remote-blob")
+        setupBaseMocks(otherFiles = mapOf(remoteDevice to listOf(sharedByRemote)))
+        coEvery { fileShareService.saveFile(any(), any(), any()) } throws IOException("boom")
+
+        val vm = makeVM()
+        vm.initialize(null)
+        val item = vm.state.first().files.single()
+        val uri = mockk<android.net.Uri>(relaxed = true)
+        // Should not throw — runCatching wraps the failing call.
+        vm.enqueueSaveFile(item, uri)
     }
 
     @Test
@@ -327,7 +416,7 @@ class FileShareListVMTest : BaseTest() {
         vm.initialize(remoteDevice.id) // initial filter unrelated to the row's owner
 
         // remoteDevice has no files; clearing the filter exposes 'third's row.
-        vm.onClearFilter(remoteDevice)
+        vm.onToggleFilter(remoteDevice)
         val item = vm.state.first().files.single()
         item.ownerDeviceId shouldBe otherDevice
 

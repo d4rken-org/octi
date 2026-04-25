@@ -5,4 +5,6 @@ import eu.darken.octi.modules.files.core.FileShareInfo
 data class FileShareDashState(
     val info: FileShareInfo,
     val isOurDevice: Boolean,
+    val isSharingAvailable: Boolean,
+    val configuredConnectorIds: Set<String>,
 )

@@ -24,7 +24,13 @@ object Nav {
         data class PowerAlerts(val deviceId: String) : Main
 
         @Serializable
-        data class FileShareList(val deviceId: String? = null) : Main
+        data class FileShareList(
+            val deviceId: String? = null,
+            val autoAction: AutoAction? = null,
+        ) : Main {
+            @Serializable
+            enum class AutoAction { UPLOAD, DOWNLOAD_LATEST }
+        }
     }
 
     sealed interface Sync : NavigationDestination {
