@@ -128,7 +128,7 @@ class GDriveBlobStore(
         maxTotalBytes = null,
     )
 
-    override suspend fun getQuota(): BlobStoreQuota? = null
+    override suspend fun getQuota(): BlobStoreQuota? = connector.fetchBlobStoreQuota()
 
     private suspend fun GDriveEnvironment.findBlobFile(
         deviceId: DeviceId,

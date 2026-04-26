@@ -1,8 +1,9 @@
 package eu.darken.octi.syncs.octiserver.core
 
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Protocol
+import okhttp3.Request
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -12,8 +13,16 @@ import retrofit2.Response
 
 class OctiServerHttpExceptionTest {
 
-    private fun createException(code: Int): OctiServerHttpException {
-        val response = Response.error<Any>(code, "error".toResponseBody())
+    private fun createException(code: Int, octiReason: String? = null): OctiServerHttpException {
+        val rawBuilder = okhttp3.Response.Builder()
+            .request(Request.Builder().url("http://localhost/").build())
+            .protocol(Protocol.HTTP_1_1)
+            .code(code)
+            .message("err")
+            .body("error".toResponseBody("text/plain".toMediaType()))
+        if (octiReason != null) rawBuilder.header(OctiServerHttpException.HEADER_OCTI_REASON, octiReason)
+        val raw = rawBuilder.build()
+        val response = Response.error<Any>("error".toResponseBody("text/plain".toMediaType()), raw)
         return OctiServerHttpException(HttpException(response))
     }
 
@@ -39,5 +48,18 @@ class OctiServerHttpExceptionTest {
         val httpException = HttpException(Response.error<Any>(404, "body".toResponseBody()))
         val exception = OctiServerHttpException(httpException)
         exception.cause shouldBe httpException
+    }
+
+    @Test
+    fun `octiReason captures X-Octi-Reason header value`() {
+        createException(507, OctiServerHttpException.REASON_SERVER_DISK_LOW)
+            .octiReason shouldBe OctiServerHttpException.REASON_SERVER_DISK_LOW
+        createException(507, OctiServerHttpException.REASON_ACCOUNT_QUOTA_EXCEEDED)
+            .octiReason shouldBe OctiServerHttpException.REASON_ACCOUNT_QUOTA_EXCEEDED
+    }
+
+    @Test
+    fun `octiReason is null when header is absent`() {
+        createException(507).octiReason shouldBe null
     }
 }

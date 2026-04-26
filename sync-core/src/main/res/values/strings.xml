@@ -20,6 +20,10 @@
     <string name="sync_issues_type_stale_device">Stale device</string>
     <string name="sync_issues_type_clock_skew">Clock issue</string>
     <string name="sync_issues_type_outdated_version">Outdated version</string>
+    <string name="sync_issues_type_server_storage_low">Server is out of space</string>
+    <string name="sync_server_storage_low_description">The sync server is running low on disk space. Uploads are paused until the server admin frees space.</string>
+    <string name="sync_issues_type_account_quota_full">Account is full</string>
+    <string name="sync_account_quota_full_description">Your account has reached its storage quota on this server. Delete shared files or expired data to free space, then sync again.</string>
     <string name="sync_connector_paused_label">Pause synchronization</string>
     <string name="sync_connector_paused_error_label">Connector paused</string>
     <string name="sync_connector_paused_error_desc">This connector is paused. Resume it to perform this action.</string>

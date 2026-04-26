@@ -8,6 +8,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
 import io.kotest.matchers.maps.shouldContainKey
+import io.kotest.matchers.maps.shouldNotContainKey
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
@@ -213,6 +214,118 @@ class BlobManagerTest : BaseTest() {
     }
 
     @Test
+    fun `runtime BlobQuotaExceededException routes to terminal QuotaExceeded`() = runTest2 {
+        // Pre-flight passes (no quota), then put() throws BlobQuotaExceededException at runtime
+        // (simulates server-side 507 with account_quota_exceeded).
+        val serverQuota = BlobStoreQuota(connectorId = connectorId, usedBytes = 90, totalBytes = 100)
+        val store = FakeBlobStore(
+            connectorId = connectorId,
+            constraints = BlobStoreConstraints(),
+            quota = null, // pre-flight has no info
+            throwOnPut = BlobQuotaExceededException(quota = serverQuota, requestedBytes = 20),
+        )
+        val manager = createManager(backgroundScope, store)
+
+        manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = blobKey,
+            openSource = { Buffer().writeUtf8("p") },
+            metadata = metadata,
+        )
+
+        // Goes straight to terminal QuotaExceeded — NOT through transient backoff.
+        val status = manager.retryStatus.first()[connectorId to blobKey]
+        status.shouldBeInstanceOf<RetryStatus.QuotaExceeded>()
+        status.usedBytes shouldBe 90
+        status.totalBytes shouldBe 100
+        manager.isBackedOff(connectorId, blobKey) shouldBe true
+    }
+
+    @Test
+    fun `runtime BlobServerStorageLowException routes to terminal ServerStorageLow`() = runTest2 {
+        val store = FakeBlobStore(
+            connectorId = connectorId,
+            constraints = BlobStoreConstraints(),
+            quota = null,
+            throwOnPut = BlobServerStorageLowException(connectorId = connectorId),
+        )
+        val manager = createManager(backgroundScope, store)
+
+        manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = blobKey,
+            openSource = { Buffer().writeUtf8("p") },
+            metadata = metadata,
+        )
+
+        manager.retryStatus.first()[connectorId to blobKey] shouldBe RetryStatus.ServerStorageLow
+        manager.isBackedOff(connectorId, blobKey) shouldBe true
+    }
+
+    @Test
+    fun `connectorRejections fires on ServerStorageLow and clears on next success`() = runTest2 {
+        val store = FakeBlobStore(
+            connectorId = connectorId,
+            constraints = BlobStoreConstraints(),
+            quota = null,
+            throwOnPut = BlobServerStorageLowException(connectorId = connectorId),
+        )
+        val manager = createManager(backgroundScope, store)
+
+        manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = blobKey,
+            openSource = { Buffer().writeUtf8("p") },
+            metadata = metadata,
+        )
+
+        manager.connectorRejections.first()[connectorId] shouldBe BlobManager.RejectionReason.ServerStorageLow
+
+        // Server recovers — next put succeeds.
+        store.throwOnPut = null
+        manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = BlobKey("blob-2"),
+            openSource = { Buffer().writeUtf8("p") },
+            metadata = metadata,
+        )
+
+        manager.connectorRejections.first() shouldNotContainKey connectorId
+    }
+
+    @Test
+    fun `connectorRejections fires on AccountQuotaFull and survives clearBackoff`() = runTest2 {
+        val serverQuota = BlobStoreQuota(connectorId = connectorId, usedBytes = 100, totalBytes = 100)
+        val store = FakeBlobStore(
+            connectorId = connectorId,
+            constraints = BlobStoreConstraints(),
+            quota = null,
+            throwOnPut = BlobQuotaExceededException(quota = serverQuota, requestedBytes = 20),
+        )
+        val manager = createManager(backgroundScope, store)
+
+        manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = blobKey,
+            openSource = { Buffer().writeUtf8("p") },
+            metadata = metadata,
+        )
+
+        manager.connectorRejections.first()[connectorId] shouldBe BlobManager.RejectionReason.AccountQuotaFull
+
+        // User taps Retry on the file → clearBackoff is called. The dashboard issue must persist
+        // until an actual successful upload, NOT clear on backoff-clear alone.
+        manager.clearBackoff(blobKey)
+
+        manager.connectorRejections.first()[connectorId] shouldBe BlobManager.RejectionReason.AccountQuotaFull
+    }
+
+    @Test
     fun `paused-then-resumed clears non-preflight terminal but keeps preflight`() = runTest2 {
         val transientStore = FakeBlobStore(
             connectorId = connectorId,
@@ -287,6 +400,7 @@ class BlobManagerTest : BaseTest() {
         private val quota: BlobStoreQuota?,
         private val quotaDelayMs: Long = 0,
         var failOnPut: Boolean = false,
+        var throwOnPut: Throwable? = null,
     ) : BlobStore {
         var putCalls: Int = 0
 
@@ -299,6 +413,7 @@ class BlobManagerTest : BaseTest() {
             onProgress: BlobProgressCallback?,
         ): RemoteBlobRef {
             putCalls += 1
+            throwOnPut?.let { throw it }
             if (failOnPut) throw RuntimeException("put() failed (test)")
             return RemoteBlobRef(key.id)
         }

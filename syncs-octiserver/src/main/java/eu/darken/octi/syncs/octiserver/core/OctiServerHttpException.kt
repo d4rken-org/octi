@@ -14,6 +14,10 @@ class OctiServerHttpException(
 
     val isDeviceUnknown: Boolean get() = httpCode == 401 || httpCode == 404 || httpCode == 410
 
+    /** `X-Octi-Reason` from the response when the server distinguishes 507 sub-cases.
+     *  Captured eagerly because the retrofit response body / headers are one-shot. */
+    val octiReason: String? = cause.response()?.headers()?.get(HEADER_OCTI_REASON)
+
     private var errorMessage: String = cause.response()?.errorBody()?.string() ?: cause.toString()
 
     override fun getLocalizedError(): LocalizedError = LocalizedError(
@@ -24,4 +28,10 @@ class OctiServerHttpException(
             else -> caString { errorMessage }
         },
     )
+
+    companion object {
+        const val HEADER_OCTI_REASON = "X-Octi-Reason"
+        const val REASON_SERVER_DISK_LOW = "server_disk_low"
+        const val REASON_ACCOUNT_QUOTA_EXCEEDED = "account_quota_exceeded"
+    }
 }

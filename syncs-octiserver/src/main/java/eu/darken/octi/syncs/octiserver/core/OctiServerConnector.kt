@@ -34,6 +34,7 @@ import eu.darken.octi.sync.core.SyncEvent
 import eu.darken.octi.sync.core.SyncConnector.EventMode
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncRead
+import eu.darken.octi.sync.core.CommonIssue
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.DeviceMetadata
 import eu.darken.octi.sync.core.SyncSettings
@@ -120,6 +121,12 @@ class OctiServerConnector @AssistedInject constructor(
     override val state: Flow<State> = _state.flow
     private val _data = MutableStateFlow<SyncRead?>(null)
     override val data: Flow<SyncRead?> = _data
+
+    /** Set when [writeServer] sees HTTP 507 with `X-Octi-Reason: server_disk_low` from any
+     *  commit attempt; cleared on the next successful commit. Surfaces in [_state.issues] via
+     *  [computeIssues]. Blob-side rejections are handled separately by [BlobManager]. */
+    private val _commitServerStorageLow = MutableStateFlow(false)
+    private val _commitAccountQuotaFull = MutableStateFlow(false)
 
     // TODO: Consider removing lock — concurrent syncs may be safe since each module is an independent endpoint
     private val serverLock = Mutex()
@@ -295,6 +302,27 @@ class OctiServerConnector @AssistedInject constructor(
                 if (handleDeviceUnknown(e, "list known devices")) return
                 log(TAG, ERROR) { "Failed to list known devices: ${e.asLog()}" }
             }
+
+            try {
+                val storage = runServerAction("read-account-storage") {
+                    endpoint.getAccountStorage()
+                }
+                val fetchedAt = Clock.System.now()
+                _state.updateBlocking {
+                    copy(
+                        quota = SyncConnectorState.Quota(
+                            updatedAt = fetchedAt,
+                            storageUsed = storage.usedBytes,
+                            storageTotal = storage.accountQuotaBytes,
+                        ),
+                    )
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // Quota is supplemental — do not abort the sync via handleDeviceUnknown.
+                log(TAG, ERROR) { "Failed to read account storage: ${e.asLog()}" }
+            }
         }
 
         if (options.writeData && options.writePayload.isNotEmpty()) {
@@ -338,10 +366,42 @@ class OctiServerConnector @AssistedInject constructor(
             }
         }
 
-        computeEncryptionIssues()
+        computeIssues()
     }
 
-    private suspend fun computeEncryptionIssues() {
+    /**
+     * Wrap a single commit-shaped endpoint call (`commitModule` or the legacy `writeModule`).
+     * Translates HTTP 507 with a known `X-Octi-Reason` header into the corresponding
+     * connector-level commit flag and re-throws so the existing error path runs unchanged.
+     * On success, transitions any sticky flag from set→unset and refreshes [_state.issues].
+     */
+    private suspend fun commitWithReasonHandling(block: suspend () -> Unit) {
+        try {
+            block()
+            // Use bitwise `or` so both compareAndSet calls always run.
+            val cleared = _commitServerStorageLow.compareAndSet(true, false) or
+                _commitAccountQuotaFull.compareAndSet(true, false)
+            if (cleared) computeIssues()
+        } catch (e: OctiServerHttpException) {
+            if (e.httpCode == 507) {
+                when (e.octiReason) {
+                    OctiServerHttpException.REASON_SERVER_DISK_LOW -> {
+                        log(TAG, WARN) { "commit: 507 server_disk_low" }
+                        _commitServerStorageLow.value = true
+                    }
+                    OctiServerHttpException.REASON_ACCOUNT_QUOTA_EXCEEDED -> {
+                        log(TAG, WARN) { "commit: 507 account_quota_exceeded" }
+                        _commitAccountQuotaFull.value = true
+                    }
+                    else -> log(TAG, WARN) { "commit: 507 with no/unknown reason header (${e.octiReason})" }
+                }
+                computeIssues()
+            }
+            throw e
+        }
+    }
+
+    private suspend fun computeIssues() {
         val currentState = _state.value()
         val metadata = currentState.deviceMetadata
         val data = _data.value
@@ -372,8 +432,17 @@ class OctiServerConnector @AssistedInject constructor(
             emptyList()
         }
 
-        val issues = encIssues + blobIssues
-        log(TAG) { "computeEncryptionIssues(): ${issues.size} issues" }
+        val commitIssues = buildList<ConnectorIssue> {
+            if (_commitServerStorageLow.value) {
+                add(CommonIssue.ServerStorageLow(connectorId = identifier, deviceId = syncSettings.deviceId))
+            }
+            if (_commitAccountQuotaFull.value) {
+                add(CommonIssue.AccountQuotaFull(connectorId = identifier, deviceId = syncSettings.deviceId))
+            }
+        }
+
+        val issues = encIssues + blobIssues + commitIssues
+        log(TAG) { "computeIssues(): ${issues.size} issues" }
         _state.updateBlocking { copy(issues = issues) }
     }
 
@@ -478,7 +547,9 @@ class OctiServerConnector @AssistedInject constructor(
                 when (capabilities.blobSupport) {
                     OctiServerCapabilities.BlobSupport.LEGACY -> {
                         log(TAG, WARN) { "writeServer(): Server is legacy, stripping blobs from ${module.moduleId}" }
-                        endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
+                        commitWithReasonHandling {
+                            endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
+                        }
                     }
                     OctiServerCapabilities.BlobSupport.SUPPORTED,
                     OctiServerCapabilities.BlobSupport.UNKNOWN -> {
@@ -491,15 +562,17 @@ class OctiServerConnector @AssistedInject constructor(
                         val etag = resolveCachedEtag(data.deviceId, module.moduleId)
 
                         try {
-                            val newEtag = endpoint.commitModule(
-                                deviceId = data.deviceId,
-                                moduleId = module.moduleId,
-                                etag = etag,
-                                documentBase64 = encryptedPayload.base64(),
-                                serverBlobIds = serverBlobIds,
-                            )
-                            cacheEtag(data.deviceId, module.moduleId, newEtag)
-                            log(TAG) { "writeServer(): Committed ${module.moduleId} via PUT (${serverBlobIds.size} blob refs)" }
+                            commitWithReasonHandling {
+                                val newEtag = endpoint.commitModule(
+                                    deviceId = data.deviceId,
+                                    moduleId = module.moduleId,
+                                    etag = etag,
+                                    documentBase64 = encryptedPayload.base64(),
+                                    serverBlobIds = serverBlobIds,
+                                )
+                                cacheEtag(data.deviceId, module.moduleId, newEtag)
+                                log(TAG) { "writeServer(): Committed ${module.moduleId} via PUT (${serverBlobIds.size} blob refs)" }
+                            }
                         } catch (e: OctiServerHttpException) {
                             when (e.httpCode) {
                                 404, 405 -> {
@@ -509,7 +582,9 @@ class OctiServerConnector @AssistedInject constructor(
                                         OctiServerCapabilities(blobSupport = OctiServerCapabilities.BlobSupport.LEGACY),
                                     )
                                     etagCache.remove(data.deviceId to module.moduleId)
-                                    endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
+                                    commitWithReasonHandling {
+                                        endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
+                                    }
                                 }
                                 412 -> {
                                     log(TAG, WARN) { "writeServer(): 412 conflict on ${module.moduleId}, refreshing ETag and retrying" }
@@ -520,15 +595,17 @@ class OctiServerConnector @AssistedInject constructor(
                                         log(TAG, ERROR) { "writeServer(): ETag refresh failed: ${readE.message}" }
                                         throw e
                                     }
-                                    val newEtag = endpoint.commitModule(
-                                        deviceId = data.deviceId,
-                                        moduleId = module.moduleId,
-                                        etag = freshEtag,
-                                        documentBase64 = encryptedPayload.base64(),
-                                        serverBlobIds = serverBlobIds,
-                                    )
-                                    cacheEtag(data.deviceId, module.moduleId, newEtag)
-                                    log(TAG) { "writeServer(): Retry succeeded for ${module.moduleId}" }
+                                    commitWithReasonHandling {
+                                        val newEtag = endpoint.commitModule(
+                                            deviceId = data.deviceId,
+                                            moduleId = module.moduleId,
+                                            etag = freshEtag,
+                                            documentBase64 = encryptedPayload.base64(),
+                                            serverBlobIds = serverBlobIds,
+                                        )
+                                        cacheEtag(data.deviceId, module.moduleId, newEtag)
+                                        log(TAG) { "writeServer(): Retry succeeded for ${module.moduleId}" }
+                                    }
                                 }
                                 else -> {
                                     etagCache.remove(data.deviceId to module.moduleId)
@@ -540,10 +617,12 @@ class OctiServerConnector @AssistedInject constructor(
                 }
             } else {
                 // Legacy module → POST (unchanged)
-                endpoint.writeModule(
-                    moduleId = module.moduleId,
-                    payload = encryptedPayload,
-                )
+                commitWithReasonHandling {
+                    endpoint.writeModule(
+                        moduleId = module.moduleId,
+                        payload = encryptedPayload,
+                    )
+                }
             }
         }
         log(TAG, VERBOSE) { "writeServer(): Done" }

@@ -26,6 +26,8 @@ import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.BlobProgress
+import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
+import eu.darken.octi.sync.core.blob.BlobServerStorageLowException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -70,6 +72,10 @@ class FileShareService @Inject constructor(
         data class FileTooLarge(val requestedBytes: Long, val maxBytes: Long) : ShareResult()
         data object NoEligibleConnectors : ShareResult()
         data object Cancelled : ShareResult()
+        /** Every reachable connector reported `BlobServerStorageLowException`. */
+        data object ServerStorageLow : ShareResult()
+        /** Every reachable connector reported `BlobQuotaExceededException`. */
+        data object AccountQuotaFull : ShareResult()
     }
 
     sealed class SaveResult {
@@ -209,9 +215,15 @@ class FileShareService @Inject constructor(
                 if (putResult.perConnectorErrors.isEmpty()) {
                     return@withContext ShareResult.NoEligibleConnectors
                 }
-                val tooLargeErrors = putResult.perConnectorErrors.values
-                    .filterIsInstance<BlobFileTooLargeException>()
-                val allTooLarge = tooLargeErrors.size == putResult.perConnectorErrors.size
+                val errs = putResult.perConnectorErrors.values
+                if (errs.isNotEmpty() && errs.all { it is BlobServerStorageLowException }) {
+                    return@withContext ShareResult.ServerStorageLow
+                }
+                if (errs.isNotEmpty() && errs.all { it is BlobQuotaExceededException }) {
+                    return@withContext ShareResult.AccountQuotaFull
+                }
+                val tooLargeErrors = errs.filterIsInstance<BlobFileTooLargeException>()
+                val allTooLarge = tooLargeErrors.size == errs.size
                 if (allTooLarge) {
                     val minCap = tooLargeErrors.mapNotNull { it.constraints.maxFileBytes }.minOrNull()
                     if (minCap != null) {

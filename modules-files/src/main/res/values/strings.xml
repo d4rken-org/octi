@@ -24,6 +24,9 @@
     <string name="module_files_delete_failed">Failed to delete file</string>
     <string name="module_files_quota_header">Storage</string>
     <string name="module_files_quota_item">%1$s: %2$s / %3$s used</string>
+    <string name="module_files_quota_label_gdrive">Google Drive</string>
+    <string name="module_files_quota_label_gdrive_with_account">Google Drive (%1$s)</string>
+    <string name="module_files_quota_label_octiserver_with_account">%1$s (%2$s)</string>
     <string name="module_files_time_remaining">%1$s remaining</string>
     <string name="module_files_uploading">Uploading\u2026</string>
     <string name="module_files_notification_channel_label">Incoming Shared Files</string>
@@ -38,6 +41,9 @@
     <string name="module_files_retry_status_stopped">Stopped retrying</string>
     <string name="module_files_retry_status_file_too_large">Too large for %1$s</string>
     <string name="module_files_retry_status_quota">%1$s is full</string>
+    <string name="module_files_retry_status_server_storage_low">Server is out of space</string>
+    <string name="module_files_upload_server_storage_low">Server is out of space — try again later</string>
+    <string name="module_files_upload_account_quota_full">Your account is full — delete shared files first</string>
     <string name="module_files_upload_cancelled">Upload cancelled</string>
     <string name="module_files_save_cancelled">Save cancelled</string>
     <string name="module_files_upload_progress">Uploading %1$s</string>

@@ -480,6 +480,36 @@ class FileShareListVMTest : BaseTest() {
     }
 
     @Test
+    fun `quotaItems filter nulls and pass connectorId and accountLabel through`() = runTest2 {
+        val gdriveId = ConnectorId(ConnectorType.GDRIVE, "appdatascope", "gacc")
+        val gdriveQuota = BlobStoreQuota(
+            connectorId = gdriveId,
+            usedBytes = 1024L,
+            totalBytes = 4096L,
+            accountLabel = "you@gmail.com",
+        )
+        // OctiServer entry returns null (e.g. server unreachable); should be filtered out so the
+        // VM emits exactly one row, not two.
+        setupBaseMocks(
+            otherFiles = mapOf(remoteDevice to listOf(makeFile(blobKey = "remote-1"))),
+            configuredConnectors = mapOf(
+                connector to null,
+                gdriveId to gdriveQuota,
+            ),
+        )
+
+        val vm = makeVM()
+        vm.initialize(null)
+
+        val items = vm.state.first().quotaItems
+        items.size shouldBe 1
+        items.single().connectorId shouldBe gdriveId
+        items.single().accountLabel shouldBe "you@gmail.com"
+        items.single().usedBytes shouldBe 1024L
+        items.single().totalBytes shouldBe 4096L
+    }
+
+    @Test
     fun `FileKey distinguishes same blobKey across devices`() = runTest2 {
         val same = "shared-blob"
         setupBaseMocks(

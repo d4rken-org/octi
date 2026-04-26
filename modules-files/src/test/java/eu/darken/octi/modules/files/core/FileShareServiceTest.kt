@@ -15,7 +15,10 @@ import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
 import eu.darken.octi.sync.core.blob.BlobManager
+import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
+import eu.darken.octi.sync.core.blob.BlobServerStorageLowException
 import eu.darken.octi.sync.core.blob.BlobStoreConstraints
+import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
@@ -216,6 +219,75 @@ class FileShareServiceTest : BaseTest() {
         result.shouldBeInstanceOf<FileShareService.ShareResult.FileTooLarge>()
         (result as FileShareService.ShareResult.FileTooLarge).maxBytes shouldBe smallerCap
         result.requestedBytes shouldBe fileBytes.size.toLong()
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile returns ServerStorageLow when every connector reports BlobServerStorageLowException`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val fileBytes = ByteArray(42) { it.toByte() }
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(fileBytes) }
+        every { syncSettings.deviceId } returns ownDeviceId
+
+        coEvery {
+            blobManager.put(any(), any(), any(), any(), any(), any(), any())
+        } returns BlobManager.PutResult(
+            successful = emptySet(),
+            perConnectorErrors = mapOf(
+                connectorA to BlobServerStorageLowException(connectorA),
+                connectorB to BlobServerStorageLowException(connectorB),
+            ),
+        )
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.ServerStorageLow
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile returns AccountQuotaFull when every connector reports BlobQuotaExceededException`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val fileBytes = ByteArray(42) { it.toByte() }
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(fileBytes) }
+        every { syncSettings.deviceId } returns ownDeviceId
+
+        coEvery {
+            blobManager.put(any(), any(), any(), any(), any(), any(), any())
+        } returns BlobManager.PutResult(
+            successful = emptySet(),
+            perConnectorErrors = mapOf(
+                connectorA to BlobQuotaExceededException(
+                    quota = BlobStoreQuota(connectorId = connectorA, usedBytes = 100, totalBytes = 100),
+                    requestedBytes = fileBytes.size.toLong(),
+                ),
+            ),
+        )
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.AccountQuotaFull
 
         cacheDir.deleteRecursively()
     }

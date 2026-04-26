@@ -67,7 +67,7 @@ class FileShareListVM @Inject constructor(
         val sortBy: SortKey = SortKey.DATE,
         val sortDescending: Boolean = true,
         val activeUpload: ActiveUpload? = null,
-        val quotaItems: List<QuotaItem> = emptyList(),
+        val quotaItems: List<BlobStoreQuota> = emptyList(),
         val isSharingAvailable: Boolean = true,
         val isUsageHintDismissed: Boolean = false,
         val isSyncingNow: Boolean = false,
@@ -94,7 +94,9 @@ class FileShareListVM @Inject constructor(
         val isInFlight: Boolean get() = downloadProgress != null || uploadProgress != null
         val anyRetrying: Boolean get() = missingConnectors.any { it.status is RetryStatus.RetryingAt }
         val canRetry: Boolean get() = missingConnectors.any {
-            it.status is RetryStatus.Stopped || it.status is RetryStatus.QuotaExceeded
+            it.status is RetryStatus.Stopped ||
+                it.status is RetryStatus.QuotaExceeded ||
+                it.status is RetryStatus.ServerStorageLow
         }
     }
 
@@ -109,12 +111,6 @@ class FileShareListVM @Inject constructor(
         val deviceId: DeviceId,
         val label: String,
         val isOwn: Boolean,
-    )
-
-    data class QuotaItem(
-        val label: String,
-        val usedBytes: Long,
-        val totalBytes: Long,
     )
 
     data class MissingConnector(
@@ -275,8 +271,7 @@ class FileShareListVM @Inject constructor(
 
         val quotaItems = transfer.quotas.values
             .filterNotNull()
-            .map { QuotaItem(label = it.connectorId.subtype, usedBytes = it.usedBytes, totalBytes = it.totalBytes) }
-            .sortedBy { it.label }
+            .sortedBy { it.connectorId.idString }
 
         val activeUpload = transfer.transfers.values
             .firstOrNull { it.direction == FileShareService.Transfer.Direction.UPLOAD }
@@ -378,6 +373,10 @@ class FileShareListVM @Inject constructor(
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_no_connectors))
             is FileShareService.ShareResult.Cancelled ->
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_cancelled))
+            is FileShareService.ShareResult.ServerStorageLow ->
+                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_server_storage_low))
+            is FileShareService.ShareResult.AccountQuotaFull ->
+                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_account_quota_full))
         }
     }
 

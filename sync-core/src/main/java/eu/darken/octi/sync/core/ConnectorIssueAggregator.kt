@@ -7,6 +7,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.replayingShare
+import eu.darken.octi.sync.core.blob.BlobManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -22,23 +23,40 @@ class ConnectorIssueAggregator @Inject constructor(
     private val syncManager: SyncManager,
     private val clockAnalyzer: ClockAnalyzer,
     private val syncSettings: SyncSettings,
+    private val blobManager: BlobManager,
 ) {
 
     val issues: Flow<List<ConnectorIssue>> = combine(
         syncManager.allStates,
         syncManager.allConnectors,
         clockAnalyzer.analysis,
-    ) { states, connectors, clockAnalysis ->
+        blobManager.connectorRejections,
+    ) { states, connectors, clockAnalysis, rejections ->
         val connectorIssues = states.flatMap { it.issues }
         val metadataIssues = buildMetadataIssues(connectors, states)
         val clockIssues = buildClockIssues(connectors, states, clockAnalysis)
-        val all = connectorIssues + metadataIssues + clockIssues
-        log(TAG, VERBOSE) { "issues: ${all.size} total (${connectorIssues.size} connector, ${metadataIssues.size} metadata, ${clockIssues.size} clock)" }
+        val blobIssues = buildBlobIssues(rejections)
+        val all = (connectorIssues + metadataIssues + clockIssues + blobIssues).distinct()
+        log(TAG, VERBOSE) {
+            "issues: ${all.size} total (${connectorIssues.size} connector, " +
+                "${metadataIssues.size} metadata, ${clockIssues.size} clock, ${blobIssues.size} blob)"
+        }
         all
     }
         .distinctUntilChanged()
         .setupCommonEventHandlers(TAG) { "issues" }
         .replayingShare(scope + dispatcherProvider.Default)
+
+    private fun buildBlobIssues(
+        rejections: Map<ConnectorId, BlobManager.RejectionReason>,
+    ): List<ConnectorIssue> = rejections.map { (connectorId, reason) ->
+        when (reason) {
+            BlobManager.RejectionReason.ServerStorageLow ->
+                CommonIssue.ServerStorageLow(connectorId = connectorId, deviceId = syncSettings.deviceId)
+            BlobManager.RejectionReason.AccountQuotaFull ->
+                CommonIssue.AccountQuotaFull(connectorId = connectorId, deviceId = syncSettings.deviceId)
+        }
+    }
 
     private fun buildMetadataIssues(
         connectors: List<SyncConnector>,

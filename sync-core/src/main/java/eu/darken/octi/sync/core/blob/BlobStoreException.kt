@@ -17,6 +17,10 @@ class BlobQuotaExceededException(
     val requestedBytes: Long,
 ) : BlobStoreException("Quota exceeded on ${quota.connectorId}: ${quota.usedBytes}/${quota.totalBytes} used, requested $requestedBytes")
 
+class BlobServerStorageLowException(
+    val connectorId: ConnectorId,
+) : BlobStoreException("Server storage low on $connectorId — operator must free disk space")
+
 /**
  * Thrown when a blob cannot be located. [identifier] is typically a [BlobKey.id] or a
  * [eu.darken.octi.sync.core.RemoteBlobRef] value — callers pass whichever identifier

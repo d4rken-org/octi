@@ -17,6 +17,7 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -73,11 +75,23 @@ class BlobManager @Inject constructor(
     private sealed interface PreflightReason {
         data class FileTooLarge(val maxBytes: Long) : PreflightReason
         data class QuotaExceeded(val usedBytes: Long, val totalBytes: Long) : PreflightReason
+        data object ServerStorageLow : PreflightReason
     }
+
+    /**
+     * Connector-wide rejection signals. Set when the server rejects an upload with [HTTP 507];
+     * cleared only by a successful upload (NOT by user-tapped Retry). Surfaces via
+     * [connectorRejections] so [ConnectorIssueAggregator] can render dashboard-level issues
+     * even when no per-blob retry entry exists (initial-share-failed-everywhere case).
+     */
+    enum class RejectionReason { ServerStorageLow, AccountQuotaFull }
 
     private val retryBackoff = ConcurrentHashMap<Pair<ConnectorId, BlobKey>, BackoffState>()
     private val retryBackoffVersion = MutableStateFlow(0)
     private val quotaRefreshTrigger = MutableStateFlow(0)
+
+    private val connectorRejectionState = ConcurrentHashMap<ConnectorId, RejectionReason>()
+    private val connectorRejectionVersion = MutableStateFlow(0)
 
     private val rawStores: Flow<List<BlobStore>> = if (blobStoreHubs.isEmpty()) {
         flowOf(emptyList())
@@ -216,7 +230,31 @@ class BlobManager @Inject constructor(
                     if (retryBackoff.remove(store.connectorId to blobKey) != null) {
                         retryBackoffVersion.update { it + 1 }
                     }
+                    clearConnectorRejection(store.connectorId)
                     log(TAG, INFO) { "put(${blobKey.id}): Success on ${store.connectorId}" }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: BlobServerStorageLowException) {
+                    log(TAG, INFO) { "put(${blobKey.id}): ${store.connectorId} reports server storage low" }
+                    errors[store.connectorId] = e
+                    recordPreflightFailure(store.connectorId, blobKey, PreflightReason.ServerStorageLow)
+                    recordConnectorRejection(store.connectorId, RejectionReason.ServerStorageLow)
+                } catch (e: BlobQuotaExceededException) {
+                    log(TAG, INFO) { "put(${blobKey.id}): ${store.connectorId} reports account quota exceeded" }
+                    errors[store.connectorId] = e
+                    recordPreflightFailure(
+                        store.connectorId, blobKey,
+                        PreflightReason.QuotaExceeded(e.quota.usedBytes, e.quota.totalBytes),
+                    )
+                    recordConnectorRejection(store.connectorId, RejectionReason.AccountQuotaFull)
+                    quotaRefreshTrigger.update { it + 1 }
+                } catch (e: BlobFileTooLargeException) {
+                    log(TAG, INFO) { "put(${blobKey.id}): ${store.connectorId} reports file too large" }
+                    errors[store.connectorId] = e
+                    recordPreflightFailure(
+                        store.connectorId, blobKey,
+                        PreflightReason.FileTooLarge(e.constraints.maxFileBytes ?: 0L),
+                    )
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "put(${blobKey.id}): Failed on ${store.connectorId}: ${e.asLog()}" }
                     errors[store.connectorId] = e
@@ -438,6 +476,8 @@ class BlobManager @Inject constructor(
                         RetryStatus.FileTooLarge(state.preflight.maxBytes)
                     state.preflight is PreflightReason.QuotaExceeded ->
                         RetryStatus.QuotaExceeded(state.preflight.usedBytes, state.preflight.totalBytes)
+                    state.preflight is PreflightReason.ServerStorageLow ->
+                        RetryStatus.ServerStorageLow
                     state.terminal -> RetryStatus.Stopped
                     else -> RetryStatus.RetryingAt(state.nextAttemptAt, state.failureCount)
                 }
@@ -445,6 +485,32 @@ class BlobManager @Inject constructor(
         }
         .setupCommonEventHandlers(TAG) { "retryStatus" }
         .shareLatest(scope + dispatcherProvider.Default)
+
+    /**
+     * Per-connector rejection state, independent of [retryStatus]'s per-blob entries. Survives
+     * [clearBackoff] and connector pause/resume; cleared only by a successful upload (see
+     * [clearConnectorRejection]) or implicit when [put] succeeds. Consumed by
+     * [eu.darken.octi.sync.core.ConnectorIssueAggregator] to surface dashboard issues even
+     * when an initial share fails on every connector and no per-blob entry was created.
+     */
+    val connectorRejections: Flow<Map<ConnectorId, RejectionReason>> = connectorRejectionVersion
+        .map { connectorRejectionState.toMap() }
+        .distinctUntilChanged()
+        .setupCommonEventHandlers(TAG) { "connectorRejections" }
+        .shareLatest(scope + dispatcherProvider.Default)
+
+    private fun recordConnectorRejection(connectorId: ConnectorId, reason: RejectionReason) {
+        if (connectorRejectionState.put(connectorId, reason) != reason) {
+            connectorRejectionVersion.update { it + 1 }
+        }
+    }
+
+    /** Auto-cleared by a successful [put]; exposed for tests / future explicit-clear flows. */
+    internal fun clearConnectorRejection(connectorId: ConnectorId) {
+        if (connectorRejectionState.remove(connectorId) != null) {
+            connectorRejectionVersion.update { it + 1 }
+        }
+    }
 
     /**
      * Drop the backoff entry for [connectorId] x [blobKey] so the next maintenance pass attempts

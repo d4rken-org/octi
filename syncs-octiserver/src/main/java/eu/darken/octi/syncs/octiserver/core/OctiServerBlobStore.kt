@@ -23,6 +23,7 @@ import eu.darken.octi.sync.core.blob.BlobNotFoundException
 import eu.darken.octi.sync.core.blob.BlobProgress
 import eu.darken.octi.sync.core.blob.BlobProgressCallback
 import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
+import eu.darken.octi.sync.core.blob.BlobServerStorageLowException
 import eu.darken.octi.sync.core.blob.BlobStore
 import eu.darken.octi.sync.core.blob.BlobStoreConstraints
 import eu.darken.octi.sync.core.blob.BlobStoreQuota
@@ -174,9 +175,26 @@ class OctiServerBlobStore @AssistedInject constructor(
                     constraints = getConstraints(),
                     requestedBytes = metadata.size,
                 )
-                507 -> {
-                    val quota = getQuota() ?: throw e
-                    throw BlobQuotaExceededException(quota = quota, requestedBytes = metadata.size)
+                507 -> when (e.octiReason) {
+                    OctiServerHttpException.REASON_SERVER_DISK_LOW ->
+                        throw BlobServerStorageLowException(connectorId = connectorId)
+                    OctiServerHttpException.REASON_ACCOUNT_QUOTA_EXCEEDED -> {
+                        // When the server explicitly says quota: synthesize numbers if the probe
+                        // fails so BlobManager.put still routes through the QuotaExceeded catch.
+                        val quota = getQuota() ?: BlobStoreQuota(
+                            connectorId = connectorId,
+                            usedBytes = 0L,
+                            totalBytes = 0L,
+                            accountLabel = credentials.accountId.id.take(8),
+                        )
+                        throw BlobQuotaExceededException(quota = quota, requestedBytes = metadata.size)
+                    }
+                    null -> {
+                        // Older server without reason header — preserve previous behavior.
+                        val quota = getQuota() ?: throw e
+                        throw BlobQuotaExceededException(quota = quota, requestedBytes = metadata.size)
+                    }
+                    else -> throw e
                 }
                 else -> throw e
             }
@@ -300,6 +318,10 @@ class OctiServerBlobStore @AssistedInject constructor(
                 connectorId = connectorId,
                 usedBytes = storage.usedBytes,
                 totalBytes = storage.accountQuotaBytes,
+                // Best-effort multi-account disambiguator — the server doesn't yet expose a
+                // human-readable account name. UUID prefix is opaque but deterministic and
+                // distinct enough that two accounts on the same domain never collide here.
+                accountLabel = credentials.accountId.id.take(8),
             )
         } catch (e: Exception) {
             log(TAG, WARN) { "getQuota() failed: ${e.message}" }

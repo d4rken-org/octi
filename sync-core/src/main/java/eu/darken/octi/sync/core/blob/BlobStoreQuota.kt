@@ -6,4 +6,5 @@ data class BlobStoreQuota(
     val connectorId: ConnectorId,
     val usedBytes: Long,
     val totalBytes: Long,
+    val accountLabel: String? = null,
 )

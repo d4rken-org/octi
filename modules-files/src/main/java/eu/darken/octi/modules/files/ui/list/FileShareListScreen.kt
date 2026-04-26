@@ -79,8 +79,11 @@ import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.files.core.FileKey
 import eu.darken.octi.modules.files.core.FileShareInfo
+import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.blob.BlobProgress
+import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.sync.core.blob.RetryStatus
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
@@ -572,6 +575,16 @@ private fun UploadProgressRow(
 @Composable
 private fun QuotaSummary(state: FileShareListVM.State) {
     val context = LocalContext.current
+    // OctiServer rows disambiguate by accountLabel only when 2+ accounts share the same domain
+    // (subtype). Single-account users get the clean domain row.
+    val collidingOctiSubtypes = remember(state.quotaItems) {
+        state.quotaItems
+            .filter { it.connectorId.type == ConnectorType.OCTISERVER }
+            .groupingBy { it.connectorId.subtype }
+            .eachCount()
+            .filterValues { it > 1 }
+            .keys
+    }
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -584,19 +597,53 @@ private fun QuotaSummary(state: FileShareListVM.State) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             state.quotaItems.forEach { quota ->
+                val label = quotaConnectorLabel(quota, collidingOctiSubtypes)
+                val almostFull = quota.totalBytes > 0 &&
+                    quota.usedBytes.toDouble() / quota.totalBytes > QUOTA_WARN_THRESHOLD
                 Text(
                     text = stringResource(
                         R.string.module_files_quota_item,
-                        quota.label,
+                        label,
                         Formatter.formatFileSize(context, quota.usedBytes),
                         Formatter.formatFileSize(context, quota.totalBytes),
                     ),
                     style = MaterialTheme.typography.bodyMedium,
+                    color = if (almostFull) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
                 )
             }
         }
     }
 }
+
+@Composable
+private fun quotaConnectorLabel(
+    quota: BlobStoreQuota,
+    collidingOctiSubtypes: Set<String>,
+): String = when (quota.connectorId.type) {
+    ConnectorType.GDRIVE -> {
+        val account = quota.accountLabel
+        if (account.isNullOrBlank()) {
+            stringResource(R.string.module_files_quota_label_gdrive)
+        } else {
+            stringResource(R.string.module_files_quota_label_gdrive_with_account, account)
+        }
+    }
+    ConnectorType.OCTISERVER -> {
+        val subtype = quota.connectorId.subtype
+        val account = quota.accountLabel
+        if (subtype in collidingOctiSubtypes && !account.isNullOrBlank()) {
+            stringResource(R.string.module_files_quota_label_octiserver_with_account, subtype, account)
+        } else {
+            subtype
+        }
+    }
+}
+
+private const val QUOTA_WARN_THRESHOLD = 0.9
 
 @Composable
 private fun FileItemRow(
@@ -720,14 +767,17 @@ private fun RetryStatusLine(item: FileShareListVM.FileItem) {
     val terminal = item.missingConnectors.firstOrNull {
         it.status is RetryStatus.Stopped ||
             it.status is RetryStatus.FileTooLarge ||
-            it.status is RetryStatus.QuotaExceeded
+            it.status is RetryStatus.QuotaExceeded ||
+            it.status is RetryStatus.ServerStorageLow
     }
     val text = when {
-        terminal != null -> when (val s = terminal.status) {
+        terminal != null -> when (terminal.status) {
             is RetryStatus.FileTooLarge ->
                 context.getString(R.string.module_files_retry_status_file_too_large, terminal.label)
             is RetryStatus.QuotaExceeded ->
                 context.getString(R.string.module_files_retry_status_quota, terminal.label)
+            is RetryStatus.ServerStorageLow ->
+                context.getString(R.string.module_files_retry_status_server_storage_low)
             is RetryStatus.Stopped ->
                 context.getString(R.string.module_files_retry_status_stopped)
             else -> null
@@ -775,7 +825,12 @@ private fun FileShareListScreenPreview() = PreviewWrapper {
                 FileShareListVM.DeviceOption(DeviceId("other"), "Galaxy S24", isOwn = false),
             ),
             quotaItems = listOf(
-                FileShareListVM.QuotaItem("octi.example.com", 12 * 1024 * 1024, 25 * 1024 * 1024),
+                BlobStoreQuota(
+                    connectorId = ConnectorId(ConnectorType.OCTISERVER, "octi.example.com", "acc-preview"),
+                    usedBytes = 12 * 1024 * 1024,
+                    totalBytes = 25 * 1024 * 1024,
+                    accountLabel = null,
+                ),
             ),
         ),
     )

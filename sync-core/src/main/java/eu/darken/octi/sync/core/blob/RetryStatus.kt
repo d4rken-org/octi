@@ -33,4 +33,11 @@ sealed interface RetryStatus {
      * frees space; user-tapped Retry re-checks.
      */
     data class QuotaExceeded(val usedBytes: Long, val totalBytes: Long) : RetryStatus
+
+    /**
+     * Pre-flight rejection: the server's underlying disk is below the operator's configured
+     * threshold. Out of the user's control — they can only wait or contact the operator.
+     * User-tapped Retry re-checks once the server recovers.
+     */
+    data object ServerStorageLow : RetryStatus
 }
