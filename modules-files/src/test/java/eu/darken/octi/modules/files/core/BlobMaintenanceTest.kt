@@ -39,6 +39,7 @@ class BlobMaintenanceTest : BaseTest() {
     private val context = mockk<Context>()
     private val dispatcherProvider: DispatcherProvider = TestDispatcherProvider()
     private val blobManager = mockk<BlobManager>()
+    private val storageStatusManager = mockk<eu.darken.octi.sync.core.blob.StorageStatusManager>(relaxed = true)
     private val fileShareHandler = mockk<FileShareHandler>()
     private val fileShareCache = mockk<FileShareCache>()
     private val fileShareSettings = mockk<FileShareSettings>()
@@ -65,6 +66,7 @@ class BlobMaintenanceTest : BaseTest() {
             scope = testScope.backgroundScope,
             dispatcherProvider = dispatcherProvider,
             blobManager = blobManager,
+            storageStatusManager = storageStatusManager,
             fileShareHandler = fileShareHandler,
             fileShareCache = fileShareCache,
             fileShareSettings = fileShareSettings,

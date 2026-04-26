@@ -104,7 +104,6 @@ class OctiServerConnector @AssistedInject constructor(
     data class State(
         override val lastActionAt: Instant? = null,
         override val lastError: Exception? = null,
-        override val quota: SyncConnectorState.Quota? = null,
         override val isAvailable: Boolean = true,
         override val clockOffsets: List<SyncConnectorState.ClockOffset> = emptyList(),
         override val issues: List<ConnectorIssue> = emptyList(),
@@ -303,26 +302,6 @@ class OctiServerConnector @AssistedInject constructor(
                 log(TAG, ERROR) { "Failed to list known devices: ${e.asLog()}" }
             }
 
-            try {
-                val storage = runServerAction("read-account-storage") {
-                    endpoint.getAccountStorage()
-                }
-                val fetchedAt = Clock.System.now()
-                _state.updateBlocking {
-                    copy(
-                        quota = SyncConnectorState.Quota(
-                            updatedAt = fetchedAt,
-                            storageUsed = storage.usedBytes,
-                            storageTotal = storage.accountQuotaBytes,
-                        ),
-                    )
-                }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                // Quota is supplemental — do not abort the sync via handleDeviceUnknown.
-                log(TAG, ERROR) { "Failed to read account storage: ${e.asLog()}" }
-            }
         }
 
         if (options.writeData && options.writePayload.isNotEmpty()) {

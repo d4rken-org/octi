@@ -21,7 +21,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,7 +87,6 @@ class BlobManager @Inject constructor(
 
     private val retryBackoff = ConcurrentHashMap<Pair<ConnectorId, BlobKey>, BackoffState>()
     private val retryBackoffVersion = MutableStateFlow(0)
-    private val quotaRefreshTrigger = MutableStateFlow(0)
 
     private val connectorRejectionState = ConcurrentHashMap<ConnectorId, RejectionReason>()
     private val connectorRejectionVersion = MutableStateFlow(0)
@@ -140,17 +138,6 @@ class BlobManager @Inject constructor(
         }
     }
 
-    private val quotasFlow: Flow<Map<ConnectorId, BlobStoreQuota?>> = allStores
-        .combine(quotaRefreshTrigger) { stores, _ -> stores }
-        .flatMapLatest { stores ->
-            flow {
-                emit(stores.associate { it.connectorId to null })
-                emit(fetchQuotas(stores))
-            }
-        }
-        .setupCommonEventHandlers(TAG) { "quotas" }
-        .shareLatest(scope + dispatcherProvider.Default)
-
     /**
      * Upload blob from a fresh [openSource] to all eligible connectors.
      * @param eligibleConnectors if null, use all currently configured stores
@@ -188,37 +175,47 @@ class BlobManager @Inject constructor(
         candidates.map { store ->
             async {
                 try {
-                    // Per-connector constraint check
-                    val constraints = store.getConstraints()
-                    if (constraints.maxFileBytes != null && metadata.size > constraints.maxFileBytes) {
-                        log(TAG, INFO) { "put(${blobKey.id}): Skipping ${store.connectorId} — file too large (${metadata.size} > ${constraints.maxFileBytes})" }
-                        errors[store.connectorId] = BlobFileTooLargeException(store.connectorId, constraints, metadata.size)
-                        recordPreflightFailure(
-                            store.connectorId, blobKey,
-                            PreflightReason.FileTooLarge(constraints.maxFileBytes),
-                        )
-                        return@async
-                    }
+                    // Pre-flight via the storage-status snapshot. Always refresh first — TTL +
+                    // mutex make a fresh-cache call cheap, and "user just freed space and tapped
+                    // retry" requires up-to-date numbers.
+                    refreshStatusBestEffort(store)
+                    val snapshot = store.storageStatus.status.value.lastKnown
 
-                    val quota = store.getQuota()
-                    val maxTotalBytes = quota?.totalBytes ?: constraints.maxTotalBytes
-                    val usedBytes = quota?.usedBytes ?: 0
-                    if (maxTotalBytes != null && usedBytes + metadata.size > maxTotalBytes) {
-                        log(TAG, INFO) { "put(${blobKey.id}): Skipping ${store.connectorId} — quota exceeded" }
-                        errors[store.connectorId] = BlobQuotaExceededException(
-                            quota ?: BlobStoreQuota(
+                    if (snapshot != null) {
+                        val maxFile = snapshot.maxFileBytes
+                        if (maxFile != null && metadata.size > maxFile) {
+                            log(TAG, INFO) { "put(${blobKey.id}): Skipping ${store.connectorId} — file too large (${metadata.size} > $maxFile)" }
+                            errors[store.connectorId] = BlobFileTooLargeException(
                                 connectorId = store.connectorId,
-                                usedBytes = usedBytes,
-                                totalBytes = maxTotalBytes,
-                            ),
-                            metadata.size,
-                        )
-                        recordPreflightFailure(
-                            store.connectorId, blobKey,
-                            PreflightReason.QuotaExceeded(usedBytes, maxTotalBytes),
-                        )
-                        return@async
+                                maxFileBytes = maxFile,
+                                requestedBytes = metadata.size,
+                            )
+                            recordPreflightFailure(
+                                store.connectorId, blobKey,
+                                PreflightReason.FileTooLarge(maxFile),
+                            )
+                            return@async
+                        }
+
+                        val needed = snapshot.requiredStoredBytes(metadata.size)
+                        if (needed > snapshot.availableBytes) {
+                            log(TAG, INFO) { "put(${blobKey.id}): Skipping ${store.connectorId} — quota exceeded (need=$needed available=${snapshot.availableBytes})" }
+                            errors[store.connectorId] = BlobQuotaExceededException(
+                                connectorId = store.connectorId,
+                                usedBytes = snapshot.usedBytes,
+                                totalBytes = snapshot.totalBytes,
+                                accountLabel = snapshot.accountLabel,
+                                requestedBytes = metadata.size,
+                            )
+                            recordPreflightFailure(
+                                store.connectorId, blobKey,
+                                PreflightReason.QuotaExceeded(snapshot.usedBytes, snapshot.totalBytes),
+                            )
+                            return@async
+                        }
                     }
+                    // No snapshot (Unsupported / Unavailable with no last-known): skip the
+                    // pre-flight check and let store.put() fail naturally if the server rejects.
 
                     val storeProgress: BlobProgressCallback? = aggregator?.forConnector(store.connectorId)
 
@@ -244,16 +241,18 @@ class BlobManager @Inject constructor(
                     errors[store.connectorId] = e
                     recordPreflightFailure(
                         store.connectorId, blobKey,
-                        PreflightReason.QuotaExceeded(e.quota.usedBytes, e.quota.totalBytes),
+                        PreflightReason.QuotaExceeded(e.usedBytes, e.totalBytes),
                     )
                     recordConnectorRejection(store.connectorId, RejectionReason.AccountQuotaFull)
-                    quotaRefreshTrigger.update { it + 1 }
+                    // Force-refresh so the next attempt sees the server's updated view. Refresh
+                    // failure must not mask the original error — recorded above.
+                    refreshStatusBestEffort(store, forceFresh = true)
                 } catch (e: BlobFileTooLargeException) {
                     log(TAG, INFO) { "put(${blobKey.id}): ${store.connectorId} reports file too large" }
                     errors[store.connectorId] = e
                     recordPreflightFailure(
                         store.connectorId, blobKey,
-                        PreflightReason.FileTooLarge(e.constraints.maxFileBytes ?: 0L),
+                        PreflightReason.FileTooLarge(e.maxFileBytes ?: 0L),
                     )
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "put(${blobKey.id}): Failed on ${store.connectorId}: ${e.asLog()}" }
@@ -263,11 +262,26 @@ class BlobManager @Inject constructor(
             }
         }.awaitAll()
 
-        if (successful.isNotEmpty()) {
-            quotaRefreshTrigger.update { it + 1 }
-        }
+        // Quota refresh after success is handled by the caller (FileShareService /
+        // BlobMaintenance) AFTER its module commit lands, so the cache reflects committed state
+        // — not the brief window between blob upload and metadata write.
 
         PutResult(successful = successful, perConnectorErrors = errors, remoteRefs = remoteRefs)
+    }
+
+    /**
+     * Refresh a store's storage status without surfacing failure. Used inside [put]'s pre-flight
+     * (must not block uploads on probe failure) and after a server-side quota error (refresh must
+     * not mask the original error).
+     */
+    private suspend fun refreshStatusBestEffort(store: BlobStore, forceFresh: Boolean = false) {
+        try {
+            store.storageStatus.refresh(forceFresh)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            log(TAG, WARN) { "refreshStatusBestEffort(${store.connectorId}): ${e.message}" }
+        }
     }
 
     /**
@@ -373,9 +387,7 @@ class BlobManager @Inject constructor(
             }
         }.awaitAll()
 
-        if (successful.isNotEmpty()) {
-            quotaRefreshTrigger.update { it + 1 }
-        }
+        // Same as put(): the caller invalidates storage status after its commit lands.
 
         successful
     }
@@ -433,24 +445,6 @@ class BlobManager @Inject constructor(
 
     suspend fun configuredConnectorsByIdString(): Map<String, ConnectorId> {
         return allStores.first().associate { it.connectorId.idString to it.connectorId }
-    }
-
-    /**
-     * Quotas from all configured stores.
-     */
-    fun quotas(): Flow<Map<ConnectorId, BlobStoreQuota?>> = quotasFlow
-
-    private suspend fun fetchQuotas(stores: List<BlobStore>): Map<ConnectorId, BlobStoreQuota?> = coroutineScope {
-        stores.map { store ->
-            async(dispatcherProvider.IO) {
-                try {
-                    store.connectorId to store.getQuota()
-                } catch (e: Exception) {
-                    log(TAG, WARN) { "quotas(): Failed on ${store.connectorId}: ${e.message}" }
-                    store.connectorId to null
-                }
-            }
-        }.awaitAll().toMap()
     }
 
     /**

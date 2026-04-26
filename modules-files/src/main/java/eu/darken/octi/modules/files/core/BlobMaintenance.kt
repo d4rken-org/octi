@@ -15,6 +15,7 @@ import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobManager
+import eu.darken.octi.sync.core.blob.StorageStatusManager
 import kotlin.time.Duration
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import kotlinx.coroutines.CancellationException
@@ -47,6 +48,7 @@ class BlobMaintenance @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val blobManager: BlobManager,
+    private val storageStatusManager: StorageStatusManager,
     private val fileShareHandler: FileShareHandler,
     private val fileShareCache: FileShareCache,
     private val fileShareSettings: FileShareSettings,
@@ -136,6 +138,7 @@ class BlobMaintenance @Inject constructor(
         val own = fileShareCache.get(syncSettings.deviceId)?.data ?: return
         val configuredById = blobManager.configuredConnectorsByIdString()
         val pendingDeletes = fileShareSettings.pendingDeletes.value()
+        val touched = mutableSetOf<ConnectorId>()
 
         for (file in own.files) {
             if (only != null && file.blobKey !in only) continue
@@ -209,6 +212,7 @@ class BlobMaintenance @Inject constructor(
                             newAvailableOn = newAvailableOn,
                             newConnectorRefs = newConnectorRefs,
                         )
+                        touched += result.successful
                     }
                 } catch (e: CancellationException) {
                     throw e
@@ -219,12 +223,16 @@ class BlobMaintenance @Inject constructor(
                 stagedFile.delete()
             }
         }
+        // Single batch invalidation after the whole pass — refreshes once per connector even
+        // if multiple files mirrored to the same connector this round.
+        storageStatusManager.invalidateAndRefresh(touched)
     }
 
     private suspend fun pruneExpired() {
         val own = fileShareCache.get(syncSettings.deviceId)?.data ?: return
         val now = Clock.System.now()
         val configuredById = blobManager.configuredConnectorsByIdString()
+        val touched = mutableSetOf<ConnectorId>()
 
         for (file in own.files) {
             if (now <= file.expiresAt) continue
@@ -254,6 +262,7 @@ class BlobMaintenance @Inject constructor(
                     blobKey = blobKey,
                     targets = targets,
                 )
+                touched += successfulDeletes
 
                 val deletedIds = successfulDeletes.map { it.idString }.toSet()
                 val newAvailableOn = file.availableOn - deletedIds
@@ -272,6 +281,7 @@ class BlobMaintenance @Inject constructor(
                 log(TAG, ERROR) { "pruneExpired(): Failed to clean ${file.name}: ${e.asLog()}" }
             }
         }
+        storageStatusManager.invalidateAndRefresh(touched)
     }
 
     private suspend fun retryPendingDeletes() {
@@ -281,6 +291,7 @@ class BlobMaintenance @Inject constructor(
 
         val configuredById = blobManager.configuredConnectorsByIdString()
         var remainingDeletes = pendingDeletes
+        val touched = mutableSetOf<ConnectorId>()
 
         for (tombstone in pendingDeletes.values) {
             val blobKeyStr = tombstone.blobKey
@@ -312,6 +323,7 @@ class BlobMaintenance @Inject constructor(
                     targets = targets,
                 )
 
+                touched += successfulDeletes
                 if (successfulDeletes.isEmpty()) continue
 
                 val deletedIds = successfulDeletes.map { it.idString }.toSet()
@@ -340,6 +352,7 @@ class BlobMaintenance @Inject constructor(
         if (remainingDeletes != pendingDeletes) {
             fileShareSettings.pendingDeletes.value(remainingDeletes)
         }
+        storageStatusManager.invalidateAndRefresh(touched)
     }
 
     companion object {

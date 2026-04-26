@@ -83,8 +83,9 @@ import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.blob.BlobProgress
-import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.sync.core.blob.RetryStatus
+import eu.darken.octi.sync.core.blob.StorageSnapshot
+import eu.darken.octi.sync.core.blob.StorageStatus
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withTimeoutOrNull
@@ -575,8 +576,8 @@ private fun UploadProgressRow(
 @Composable
 private fun QuotaSummary(state: FileShareListVM.State) {
     val context = LocalContext.current
-    // OctiServer rows disambiguate by accountLabel only when 2+ accounts share the same domain
-    // (subtype). Single-account users get the clean domain row.
+    // OctiServer rows disambiguate by accountLabel only when 2+ accounts share the same domain.
+    // Single-account users get the clean domain row.
     val collidingOctiSubtypes = remember(state.quotaItems) {
         state.quotaItems
             .filter { it.connectorId.type == ConnectorType.OCTISERVER }
@@ -596,47 +597,88 @@ private fun QuotaSummary(state: FileShareListVM.State) {
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            state.quotaItems.forEach { quota ->
-                val label = quotaConnectorLabel(quota, collidingOctiSubtypes)
-                val almostFull = quota.totalBytes > 0 &&
-                    quota.usedBytes.toDouble() / quota.totalBytes > QUOTA_WARN_THRESHOLD
-                Text(
-                    text = stringResource(
-                        R.string.module_files_quota_item,
-                        label,
-                        Formatter.formatFileSize(context, quota.usedBytes),
-                        Formatter.formatFileSize(context, quota.totalBytes),
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (almostFull) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    },
-                )
+            state.quotaItems.forEach { status ->
+                QuotaRow(status = status, collidingOctiSubtypes = collidingOctiSubtypes, context = context)
             }
         }
     }
 }
 
 @Composable
-private fun quotaConnectorLabel(
-    quota: BlobStoreQuota,
+private fun QuotaRow(
+    status: StorageStatus,
     collidingOctiSubtypes: Set<String>,
-): String = when (quota.connectorId.type) {
+    context: android.content.Context,
+) {
+    val label = quotaConnectorLabel(status.connectorId, status.lastKnown?.accountLabel, collidingOctiSubtypes)
+    val snapshot: StorageSnapshot? = status.lastKnown
+    val almostFull = snapshot != null && snapshot.totalBytes > 0 &&
+        snapshot.usedBytes.toDouble() / snapshot.totalBytes > QUOTA_WARN_THRESHOLD
+    val isUnavailable = status is StorageStatus.Unavailable
+    val color = when {
+        almostFull -> MaterialTheme.colorScheme.error
+        isUnavailable -> MaterialTheme.colorScheme.onSurfaceVariant
+        else -> MaterialTheme.colorScheme.onSurface
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (status is StorageStatus.Loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(12.dp),
+                strokeWidth = 1.5.dp,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+        if (isUnavailable) {
+            Icon(
+                imageVector = Icons.TwoTone.Info,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(14.dp),
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+        }
+        val text = if (snapshot != null) {
+            stringResource(
+                R.string.module_files_quota_item,
+                label,
+                Formatter.formatFileSize(context, snapshot.usedBytes),
+                Formatter.formatFileSize(context, snapshot.totalBytes),
+            )
+        } else {
+            // Loading-from-cold or Unavailable with no last-known: show just the label so the
+            // card row still anchors visually until data arrives.
+            label
+        }
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = color,
+        )
+    }
+}
+
+@Composable
+private fun quotaConnectorLabel(
+    connectorId: ConnectorId,
+    accountLabel: String?,
+    collidingOctiSubtypes: Set<String>,
+): String = when (connectorId.type) {
     ConnectorType.GDRIVE -> {
-        val account = quota.accountLabel
-        if (account.isNullOrBlank()) {
+        if (accountLabel.isNullOrBlank()) {
             stringResource(R.string.module_files_quota_label_gdrive)
         } else {
-            stringResource(R.string.module_files_quota_label_gdrive_with_account, account)
+            stringResource(R.string.module_files_quota_label_gdrive_with_account, accountLabel)
         }
     }
     ConnectorType.OCTISERVER -> {
-        val subtype = quota.connectorId.subtype
-        val account = quota.accountLabel
-        if (subtype in collidingOctiSubtypes && !account.isNullOrBlank()) {
-            stringResource(R.string.module_files_quota_label_octiserver_with_account, subtype, account)
+        val subtype = connectorId.subtype
+        if (subtype in collidingOctiSubtypes && !accountLabel.isNullOrBlank()) {
+            stringResource(R.string.module_files_quota_label_octiserver_with_account, subtype, accountLabel)
         } else {
             subtype
         }
@@ -825,11 +867,18 @@ private fun FileShareListScreenPreview() = PreviewWrapper {
                 FileShareListVM.DeviceOption(DeviceId("other"), "Galaxy S24", isOwn = false),
             ),
             quotaItems = listOf(
-                BlobStoreQuota(
+                StorageStatus.Ready(
                     connectorId = ConnectorId(ConnectorType.OCTISERVER, "octi.example.com", "acc-preview"),
-                    usedBytes = 12 * 1024 * 1024,
-                    totalBytes = 25 * 1024 * 1024,
-                    accountLabel = null,
+                    snapshot = StorageSnapshot(
+                        connectorId = ConnectorId(ConnectorType.OCTISERVER, "octi.example.com", "acc-preview"),
+                        accountLabel = null,
+                        usedBytes = 12L * 1024 * 1024,
+                        totalBytes = 25L * 1024 * 1024,
+                        availableBytes = 13L * 1024 * 1024,
+                        maxFileBytes = 10L * 1024 * 1024,
+                        perFileOverheadBytes = 1024,
+                        updatedAt = Clock.System.now(),
+                    ),
                 ),
             ),
         ),

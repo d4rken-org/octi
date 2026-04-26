@@ -13,10 +13,9 @@ import eu.darken.octi.sync.core.blob.BlobNotFoundException
 import eu.darken.octi.sync.core.blob.BlobProgress
 import eu.darken.octi.sync.core.blob.BlobProgressCallback
 import eu.darken.octi.sync.core.blob.BlobStore
-import eu.darken.octi.sync.core.blob.BlobStoreConstraints
-import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.sync.core.blob.CountingSink
 import eu.darken.octi.sync.core.blob.CountingSource
+import eu.darken.octi.sync.core.blob.StorageStatusProvider
 import okio.Sink
 import okio.Source
 import okio.buffer
@@ -34,6 +33,7 @@ import kotlin.time.Instant
 class GDriveBlobStore(
     private val connector: GDriveAppDataConnector,
     override val connectorId: ConnectorId,
+    override val storageStatus: StorageStatusProvider,
 ) : BlobStore {
 
     override suspend fun put(
@@ -122,13 +122,6 @@ class GDriveBlobStore(
             moduleDir.listFiles().map { RemoteBlobRef(it.name) }.toSet()
         }
     }
-
-    override suspend fun getConstraints(): BlobStoreConstraints = BlobStoreConstraints(
-        maxFileBytes = null,
-        maxTotalBytes = null,
-    )
-
-    override suspend fun getQuota(): BlobStoreQuota? = connector.fetchBlobStoreQuota()
 
     private suspend fun GDriveEnvironment.findBlobFile(
         deviceId: DeviceId,

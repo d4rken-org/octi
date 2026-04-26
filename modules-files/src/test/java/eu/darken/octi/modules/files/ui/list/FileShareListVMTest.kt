@@ -21,7 +21,9 @@ import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobManager
-import eu.darken.octi.sync.core.blob.BlobStoreQuota
+import eu.darken.octi.sync.core.blob.StorageSnapshot
+import eu.darken.octi.sync.core.blob.StorageStatus
+import eu.darken.octi.sync.core.blob.StorageStatusManager
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -50,6 +52,7 @@ class FileShareListVMTest : BaseTest() {
     private val fileShareService = mockk<FileShareService>(relaxed = true)
     private val moduleManager = mockk<ModuleManager>()
     private val blobManager = mockk<BlobManager>()
+    private val storageStatusManager = mockk<StorageStatusManager>(relaxed = true)
     private val syncSettings = mockk<SyncSettings>()
     private val syncManager = mockk<SyncManager>(relaxed = true)
     private val pendingDeletes = mockk<DataStoreValue<Map<String, PendingDelete>>>().apply {
@@ -111,7 +114,7 @@ class FileShareListVMTest : BaseTest() {
         selfFiles: List<FileShareInfo.SharedFile> = emptyList(),
         otherFiles: Map<DeviceId, List<FileShareInfo.SharedFile>> = emptyMap(),
         labels: Map<DeviceId, String> = mapOf(selfDevice to "Self Pixel", remoteDevice to "Remote Pixel"),
-        configuredConnectors: Map<ConnectorId, BlobStoreQuota?> = mapOf(connector to null),
+        configuredConnectors: Map<ConnectorId, StorageStatus> = mapOf(connector to StorageStatus.Loading(connector, lastKnown = null)),
     ) {
         every { syncSettings.deviceId } returns selfDevice
         val selfData = if (selfFiles.isNotEmpty()) {
@@ -143,7 +146,8 @@ class FileShareListVMTest : BaseTest() {
                 devices = labels.mapValues { (devId, label) -> listOf(metaModuleData(devId, label)) },
             )
         )
-        every { blobManager.quotas() } returns flowOf(configuredConnectors)
+        every { storageStatusManager.statuses } returns flowOf(configuredConnectors)
+        every { storageStatusManager.configuredConnectorIds } returns flowOf(configuredConnectors.keys)
         every { blobManager.retryStatus } returns flowOf(emptyMap())
         every { fileShareService.transfers } returns MutableStateFlow(emptyMap())
     }
@@ -155,6 +159,7 @@ class FileShareListVMTest : BaseTest() {
         fileShareService = fileShareService,
         moduleManager = moduleManager,
         blobManager = blobManager,
+        storageStatusManager = storageStatusManager,
         syncSettings = syncSettings,
         fileShareSettings = fileShareSettings,
         syncManager = syncManager,
@@ -480,21 +485,25 @@ class FileShareListVMTest : BaseTest() {
     }
 
     @Test
-    fun `quotaItems filter nulls and pass connectorId and accountLabel through`() = runTest2 {
+    fun `quotaItems filter Unsupported and pass StorageStatus through with last-known snapshot`() = runTest2 {
         val gdriveId = ConnectorId(ConnectorType.GDRIVE, "appdatascope", "gacc")
-        val gdriveQuota = BlobStoreQuota(
+        val gdriveSnap = StorageSnapshot(
             connectorId = gdriveId,
+            accountLabel = "you@gmail.com",
             usedBytes = 1024L,
             totalBytes = 4096L,
-            accountLabel = "you@gmail.com",
+            availableBytes = 3072L,
+            maxFileBytes = null,
+            perFileOverheadBytes = 0L,
+            updatedAt = now,
         )
-        // OctiServer entry returns null (e.g. server unreachable); should be filtered out so the
-        // VM emits exactly one row, not two.
+        // OctiServer entry returns Unsupported; should be filtered out so the card lists only
+        // the GDrive Ready row.
         setupBaseMocks(
             otherFiles = mapOf(remoteDevice to listOf(makeFile(blobKey = "remote-1"))),
             configuredConnectors = mapOf(
-                connector to null,
-                gdriveId to gdriveQuota,
+                connector to StorageStatus.Unsupported(connector),
+                gdriveId to StorageStatus.Ready(gdriveId, gdriveSnap),
             ),
         )
 
@@ -503,10 +512,12 @@ class FileShareListVMTest : BaseTest() {
 
         val items = vm.state.first().quotaItems
         items.size shouldBe 1
-        items.single().connectorId shouldBe gdriveId
-        items.single().accountLabel shouldBe "you@gmail.com"
-        items.single().usedBytes shouldBe 1024L
-        items.single().totalBytes shouldBe 4096L
+        val ready = items.single()
+        ready.connectorId shouldBe gdriveId
+        ready.lastKnown shouldNotBe null
+        ready.lastKnown!!.accountLabel shouldBe "you@gmail.com"
+        ready.lastKnown!!.usedBytes shouldBe 1024L
+        ready.lastKnown!!.totalBytes shouldBe 4096L
     }
 
     @Test

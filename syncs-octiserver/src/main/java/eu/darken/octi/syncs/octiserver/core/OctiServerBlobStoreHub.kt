@@ -45,6 +45,7 @@ class OctiServerBlobStoreHub @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val octiServerHub: OctiServerHub,
     private val blobStoreFactory: OctiServerBlobStore.Factory,
+    private val storageStatusProviderFactory: OctiServerStorageStatusProvider.Factory,
     private val endpointFactory: OctiServerEndpoint.Factory,
 ) : BlobStoreHub {
 
@@ -98,7 +99,14 @@ class OctiServerBlobStoreHub @Inject constructor(
                     val endpoint = endpointFactory.create(octiConnector.credentials.serverAdress).also {
                         it.setCredentials(octiConnector.credentials)
                     }
-                    blobStoreFactory.create(octiConnector.credentials, endpoint).also { store ->
+                    // accountLabel is best-effort UUID-suffix disambiguation; the server doesn't
+                    // yet expose a human-readable account name. Same shape as before the pivot.
+                    val provider = storageStatusProviderFactory.create(
+                        connectorId = id,
+                        accountLabel = octiConnector.credentials.accountId.id.take(8),
+                        endpoint = endpoint,
+                    )
+                    blobStoreFactory.create(octiConnector.credentials, endpoint, provider).also { store ->
                         storeCache[id] = octiConnector to store
                     }
                 } catch (e: IllegalArgumentException) {

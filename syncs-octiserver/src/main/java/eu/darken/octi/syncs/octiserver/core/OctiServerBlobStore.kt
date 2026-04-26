@@ -25,11 +25,11 @@ import eu.darken.octi.sync.core.blob.BlobProgressCallback
 import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
 import eu.darken.octi.sync.core.blob.BlobServerStorageLowException
 import eu.darken.octi.sync.core.blob.BlobStore
-import eu.darken.octi.sync.core.blob.BlobStoreConstraints
-import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.sync.core.blob.CountingSink
+import eu.darken.octi.sync.core.blob.StorageStatusProvider
 import eu.darken.octi.sync.core.blob.StreamingPayloadCipher
 import eu.darken.octi.sync.core.encryption.EncryptionMode
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -60,6 +60,7 @@ class OctiServerBlobStore @AssistedInject constructor(
     private val blobCacheDirs: BlobCacheDirs,
     @Assisted private val credentials: OctiServer.Credentials,
     @Assisted private val endpoint: OctiServerEndpoint,
+    @Assisted override val storageStatus: StorageStatusProvider,
 ) : BlobStore {
 
     init {
@@ -170,29 +171,45 @@ class OctiServerBlobStore @AssistedInject constructor(
         } catch (e: OctiServerHttpException) {
             abortSessionSafely(moduleId, sessionId)
             when (e.httpCode) {
-                413 -> throw BlobFileTooLargeException(
-                    connectorId = connectorId,
-                    constraints = getConstraints(),
-                    requestedBytes = metadata.size,
-                )
+                413 -> {
+                    // Refresh the snapshot so the exception carries an up-to-date max-file cap;
+                    // a refresh failure must not mask the original 413.
+                    refreshStatusBestEffort()
+                    val maxFile = storageStatus.status.value.lastKnown?.maxFileBytes
+                    throw BlobFileTooLargeException(
+                        connectorId = connectorId,
+                        maxFileBytes = maxFile,
+                        requestedBytes = metadata.size,
+                    )
+                }
                 507 -> when (e.octiReason) {
                     OctiServerHttpException.REASON_SERVER_DISK_LOW ->
                         throw BlobServerStorageLowException(connectorId = connectorId)
                     OctiServerHttpException.REASON_ACCOUNT_QUOTA_EXCEEDED -> {
-                        // When the server explicitly says quota: synthesize numbers if the probe
-                        // fails so BlobManager.put still routes through the QuotaExceeded catch.
-                        val quota = getQuota() ?: BlobStoreQuota(
+                        // Refresh so the surfaced exception reflects the server's current view;
+                        // synthesize zeroes if the probe also fails so BlobManager.put still
+                        // routes through the QuotaExceeded catch.
+                        refreshStatusBestEffort(forceFresh = true)
+                        val snap = storageStatus.status.value.lastKnown
+                        throw BlobQuotaExceededException(
                             connectorId = connectorId,
-                            usedBytes = 0L,
-                            totalBytes = 0L,
-                            accountLabel = credentials.accountId.id.take(8),
+                            usedBytes = snap?.usedBytes ?: 0L,
+                            totalBytes = snap?.totalBytes ?: 0L,
+                            accountLabel = snap?.accountLabel ?: credentials.accountId.id.take(8),
+                            requestedBytes = metadata.size,
                         )
-                        throw BlobQuotaExceededException(quota = quota, requestedBytes = metadata.size)
                     }
                     null -> {
                         // Older server without reason header — preserve previous behavior.
-                        val quota = getQuota() ?: throw e
-                        throw BlobQuotaExceededException(quota = quota, requestedBytes = metadata.size)
+                        refreshStatusBestEffort(forceFresh = true)
+                        val snap = storageStatus.status.value.lastKnown ?: throw e
+                        throw BlobQuotaExceededException(
+                            connectorId = connectorId,
+                            usedBytes = snap.usedBytes,
+                            totalBytes = snap.totalBytes,
+                            accountLabel = snap.accountLabel,
+                            requestedBytes = metadata.size,
+                        )
                     }
                     else -> throw e
                 }
@@ -203,6 +220,20 @@ class OctiServerBlobStore @AssistedInject constructor(
             throw e
         } finally {
             cipherFile.delete()
+        }
+    }
+
+    /**
+     * Refresh the storage snapshot inside the error path. A refresh failure here must not
+     * supplant the original upload error, so all non-cancellation exceptions are absorbed.
+     */
+    private suspend fun refreshStatusBestEffort(forceFresh: Boolean = false) {
+        try {
+            storageStatus.refresh(forceFresh)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            log(TAG, WARN) { "refreshStatusBestEffort() failed: ${e.message}" }
         }
     }
 
@@ -289,60 +320,18 @@ class OctiServerBlobStore @AssistedInject constructor(
         return blobList.blobs.map { RemoteBlobRef(it.blobId) }.toSet()
     }
 
-    override suspend fun getConstraints(): BlobStoreConstraints {
-        return try {
-            val storage = endpoint.getAccountStorage()
-            // Reserve CIPHERTEXT_OVERHEAD_BUFFER so Tink AEAD framing (header + per-segment tags)
-            // doesn't push an otherwise-valid plaintext past the server's hard limit.
-            BlobStoreConstraints(
-                maxFileBytes = (storage.maxBlobBytes - CIPHERTEXT_OVERHEAD_BUFFER).coerceAtLeast(0),
-                maxTotalBytes = storage.accountQuotaBytes,
-            )
-        } catch (e: Exception) {
-            log(TAG, WARN) { "getConstraints() failed, using defaults: ${e.message}" }
-            BlobStoreConstraints(
-                maxFileBytes = DEFAULT_MAX_BLOB_BYTES - CIPHERTEXT_OVERHEAD_BUFFER,
-                maxTotalBytes = DEFAULT_QUOTA_BYTES,
-            )
-        }
-    }
-
-    override suspend fun getQuota(): BlobStoreQuota? {
-        return try {
-            val storage = endpoint.getAccountStorage()
-            log(TAG, VERBOSE) {
-                "getQuota(): usedBytes=${storage.usedBytes}, quota=${storage.accountQuotaBytes}, " +
-                    "available=${storage.availableBytes}, reserved=${storage.reservedBytes}"
-            }
-            BlobStoreQuota(
-                connectorId = connectorId,
-                usedBytes = storage.usedBytes,
-                totalBytes = storage.accountQuotaBytes,
-                // Best-effort multi-account disambiguator — the server doesn't yet expose a
-                // human-readable account name. UUID prefix is opaque but deterministic and
-                // distinct enough that two accounts on the same domain never collide here.
-                accountLabel = credentials.accountId.id.take(8),
-            )
-        } catch (e: Exception) {
-            log(TAG, WARN) { "getQuota() failed: ${e.message}" }
-            null
-        }
-    }
-
     @AssistedFactory
     interface Factory {
-        fun create(credentials: OctiServer.Credentials, endpoint: OctiServerEndpoint): OctiServerBlobStore
+        fun create(
+            credentials: OctiServer.Credentials,
+            endpoint: OctiServerEndpoint,
+            storageStatus: StorageStatusProvider,
+        ): OctiServerBlobStore
     }
 
     companion object {
         private val TAG = logTag("Sync", "OctiServer", "BlobStore")
-        private const val DEFAULT_MAX_BLOB_BYTES = 10L * 1024 * 1024
-        private const val DEFAULT_QUOTA_BYTES = 50L * 1024 * 1024
         private const val MAX_CHUNK_BYTES = 1L * 1024 * 1024
-
-        // Conservative buffer for Tink AesGcmHkdfStreaming overhead (header + per-segment tags).
-        // Observed ~192 B for 10 MB with 1 MB segments; 1 KB is plenty of headroom.
-        private const val CIPHERTEXT_OVERHEAD_BUFFER = 1024L
 
         // How long the recent-session map remembers a finalized session for cancel cleanup. A
         // little above the server's COMPLETE_IDLE_TTL_SECONDS so we always have a useful handle

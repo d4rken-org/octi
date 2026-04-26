@@ -14,11 +14,11 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import okio.Buffer
@@ -46,12 +46,55 @@ class BlobManagerTest : BaseTest() {
         checksum = "abc",
     )
 
+    private fun snap(
+        used: Long,
+        total: Long,
+        available: Long = total - used,
+        maxFile: Long? = null,
+        overhead: Long = 0L,
+        cId: ConnectorId = connectorId,
+    ) = StorageSnapshot(
+        connectorId = cId,
+        accountLabel = null,
+        usedBytes = used,
+        totalBytes = total,
+        availableBytes = available,
+        maxFileBytes = maxFile,
+        perFileOverheadBytes = overhead,
+        updatedAt = Clock.System.now(),
+    )
+
     @Test
-    fun `put uses quota total bytes for preflight`() = runTest2 {
+    fun `put preflight rejects when availableBytes is exceeded`() = runTest2 {
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(maxTotalBytes = 1_000),
-            quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 90, totalBytes = 100),
+            initial = StorageStatus.Ready(connectorId, snap(used = 90, total = 100)),
+        )
+        val manager = createManager(backgroundScope, store)
+
+        val result = manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = blobKey,
+            openSource = { Buffer().writeUtf8("payload") },
+            metadata = metadata, // size = 20, available = 10 → reject
+        )
+
+        result.successful shouldBe emptySet()
+        result.perConnectorErrors shouldContainKey connectorId
+        result.perConnectorErrors.getValue(connectorId).shouldBeInstanceOf<BlobQuotaExceededException>()
+        store.putCalls shouldBe 0
+    }
+
+    @Test
+    fun `put preflight uses requiredStoredBytes including per-file overhead`() = runTest2 {
+        // available = 100, plaintext = 20, overhead = 1024 → required = 1044 > available → reject.
+        val store = FakeBlobStore(
+            connectorId = connectorId,
+            initial = StorageStatus.Ready(
+                connectorId,
+                snap(used = 0, total = 5_000, available = 100, overhead = 1024),
+            ),
         )
         val manager = createManager(backgroundScope, store)
 
@@ -64,17 +107,54 @@ class BlobManagerTest : BaseTest() {
         )
 
         result.successful shouldBe emptySet()
-        result.perConnectorErrors shouldContainKey connectorId
         result.perConnectorErrors.getValue(connectorId).shouldBeInstanceOf<BlobQuotaExceededException>()
         store.putCalls shouldBe 0
+    }
+
+    @Test
+    fun `put preflight allows upload when availableBytes is sufficient`() = runTest2 {
+        val store = FakeBlobStore(
+            connectorId = connectorId,
+            initial = StorageStatus.Ready(connectorId, snap(used = 0, total = 1_000)),
+        )
+        val manager = createManager(backgroundScope, store)
+
+        manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = blobKey,
+            openSource = { Buffer().writeUtf8("p") },
+            metadata = metadata,
+        )
+
+        store.putCalls shouldBe 1
+    }
+
+    @Test
+    fun `put preflight skips quota check when status has no lastKnown`() = runTest2 {
+        // Unsupported / Unavailable(null) — no constraints known, upload proceeds.
+        val store = FakeBlobStore(
+            connectorId = connectorId,
+            initial = StorageStatus.Unsupported(connectorId),
+        )
+        val manager = createManager(backgroundScope, store)
+
+        manager.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            blobKey = blobKey,
+            openSource = { Buffer().writeUtf8("p") },
+            metadata = metadata,
+        )
+
+        store.putCalls shouldBe 1
     }
 
     @Test
     fun `put failure records backoff and success clears it`() = runTest2 {
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 0, totalBytes = 1_000),
+            initial = StorageStatus.Ready(connectorId, snap(used = 0, total = 1_000)),
             failOnPut = true,
         )
         val manager = createManager(backgroundScope, store)
@@ -104,55 +184,14 @@ class BlobManagerTest : BaseTest() {
     }
 
     @Test
-    fun `quotas emits immediate placeholder before network quota resolves`() = runTest2 {
-        val quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 10, totalBytes = 100)
-        val store = FakeBlobStore(
-            connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = quota,
-            quotaDelayMs = 250,
-        )
-        val manager = createManager(backgroundScope, store)
-
-        manager.quotas().first() shouldBe mapOf(connectorId to null)
-        manager.quotas().drop(1).first() shouldBe mapOf(connectorId to quota)
-    }
-
-    private fun createManager(
-        scope: CoroutineScope,
-        vararg stores: BlobStore,
-        pausedConnectorsFlow: Flow<Set<ConnectorId>> = flowOf(emptySet()),
-    ): BlobManager {
-        val hub = object : BlobStoreHub {
-            override val blobStores: Flow<Collection<BlobStore>> = flowOf(stores.toList())
-
-            override suspend fun owns(connectorId: ConnectorId): Boolean = stores.any { it.connectorId == connectorId }
-        }
-
-        val syncSettings = mockk<SyncSettings>()
-        every { syncSettings.pausedConnectors } returns mockk {
-            every { flow } returns pausedConnectorsFlow
-        }
-
-        return BlobManager(
-            scope = scope,
-            dispatcherProvider = TestDispatcherProvider(),
-            blobStoreHubs = setOf(hub),
-            syncSettings = syncSettings,
-        )
-    }
-
-    @Test
     fun `backoff schedule exhaustion marks state terminal`() = runTest2 {
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 0, totalBytes = 1_000),
+            initial = StorageStatus.Ready(connectorId, snap(used = 0, total = 1_000)),
             failOnPut = true,
         )
         val manager = createManager(backgroundScope, store)
 
-        // BACKOFF_SCHEDULE has 4 entries — failure #5 trips the terminal flag.
         repeat(5) {
             manager.put(
                 deviceId = deviceId,
@@ -164,16 +203,14 @@ class BlobManagerTest : BaseTest() {
         }
 
         manager.isBackedOff(connectorId, blobKey) shouldBe true
-        val status = manager.retryStatus.first()[connectorId to blobKey]
-        status shouldBe RetryStatus.Stopped
+        manager.retryStatus.first()[connectorId to blobKey] shouldBe RetryStatus.Stopped
     }
 
     @Test
     fun `preflight FileTooLarge surfaces in retryStatus`() = runTest2 {
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(maxFileBytes = 5),
-            quota = null,
+            initial = StorageStatus.Ready(connectorId, snap(used = 0, total = 1_000, maxFile = 5)),
         )
         val manager = createManager(backgroundScope, store)
 
@@ -194,8 +231,7 @@ class BlobManagerTest : BaseTest() {
     fun `preflight QuotaExceeded surfaces in retryStatus`() = runTest2 {
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 95, totalBytes = 100),
+            initial = StorageStatus.Ready(connectorId, snap(used = 95, total = 100)),
         )
         val manager = createManager(backgroundScope, store)
 
@@ -204,7 +240,7 @@ class BlobManagerTest : BaseTest() {
             moduleId = moduleId,
             blobKey = blobKey,
             openSource = { Buffer().writeUtf8("p") },
-            metadata = metadata, // size = 20, used + size = 115 > 100
+            metadata = metadata, // size = 20, available = 5 → reject
         )
 
         val status = manager.retryStatus.first()[connectorId to blobKey]
@@ -215,14 +251,17 @@ class BlobManagerTest : BaseTest() {
 
     @Test
     fun `runtime BlobQuotaExceededException routes to terminal QuotaExceeded`() = runTest2 {
-        // Pre-flight passes (no quota), then put() throws BlobQuotaExceededException at runtime
-        // (simulates server-side 507 with account_quota_exceeded).
-        val serverQuota = BlobStoreQuota(connectorId = connectorId, usedBytes = 90, totalBytes = 100)
+        val serverException = BlobQuotaExceededException(
+            connectorId = connectorId,
+            usedBytes = 90,
+            totalBytes = 100,
+            accountLabel = null,
+            requestedBytes = 20,
+        )
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = null, // pre-flight has no info
-            throwOnPut = BlobQuotaExceededException(quota = serverQuota, requestedBytes = 20),
+            initial = StorageStatus.Loading(connectorId, lastKnown = null),
+            throwOnPut = serverException,
         )
         val manager = createManager(backgroundScope, store)
 
@@ -234,7 +273,6 @@ class BlobManagerTest : BaseTest() {
             metadata = metadata,
         )
 
-        // Goes straight to terminal QuotaExceeded — NOT through transient backoff.
         val status = manager.retryStatus.first()[connectorId to blobKey]
         status.shouldBeInstanceOf<RetryStatus.QuotaExceeded>()
         status.usedBytes shouldBe 90
@@ -246,8 +284,7 @@ class BlobManagerTest : BaseTest() {
     fun `runtime BlobServerStorageLowException routes to terminal ServerStorageLow`() = runTest2 {
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = null,
+            initial = StorageStatus.Loading(connectorId, lastKnown = null),
             throwOnPut = BlobServerStorageLowException(connectorId = connectorId),
         )
         val manager = createManager(backgroundScope, store)
@@ -268,8 +305,7 @@ class BlobManagerTest : BaseTest() {
     fun `connectorRejections fires on ServerStorageLow and clears on next success`() = runTest2 {
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = null,
+            initial = StorageStatus.Loading(connectorId, lastKnown = null),
             throwOnPut = BlobServerStorageLowException(connectorId = connectorId),
         )
         val manager = createManager(backgroundScope, store)
@@ -284,7 +320,6 @@ class BlobManagerTest : BaseTest() {
 
         manager.connectorRejections.first()[connectorId] shouldBe BlobManager.RejectionReason.ServerStorageLow
 
-        // Server recovers — next put succeeds.
         store.throwOnPut = null
         manager.put(
             deviceId = deviceId,
@@ -299,12 +334,17 @@ class BlobManagerTest : BaseTest() {
 
     @Test
     fun `connectorRejections fires on AccountQuotaFull and survives clearBackoff`() = runTest2 {
-        val serverQuota = BlobStoreQuota(connectorId = connectorId, usedBytes = 100, totalBytes = 100)
+        val serverException = BlobQuotaExceededException(
+            connectorId = connectorId,
+            usedBytes = 100,
+            totalBytes = 100,
+            accountLabel = null,
+            requestedBytes = 20,
+        )
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = null,
-            throwOnPut = BlobQuotaExceededException(quota = serverQuota, requestedBytes = 20),
+            initial = StorageStatus.Loading(connectorId, lastKnown = null),
+            throwOnPut = serverException,
         )
         val manager = createManager(backgroundScope, store)
 
@@ -318,8 +358,6 @@ class BlobManagerTest : BaseTest() {
 
         manager.connectorRejections.first()[connectorId] shouldBe BlobManager.RejectionReason.AccountQuotaFull
 
-        // User taps Retry on the file → clearBackoff is called. The dashboard issue must persist
-        // until an actual successful upload, NOT clear on backoff-clear alone.
         manager.clearBackoff(blobKey)
 
         manager.connectorRejections.first()[connectorId] shouldBe BlobManager.RejectionReason.AccountQuotaFull
@@ -329,15 +367,13 @@ class BlobManagerTest : BaseTest() {
     fun `paused-then-resumed clears non-preflight terminal but keeps preflight`() = runTest2 {
         val transientStore = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 0, totalBytes = 1_000),
+            initial = StorageStatus.Ready(connectorId, snap(used = 0, total = 1_000)),
             failOnPut = true,
         )
         val preflightConnectorId = connectorId.copy(account = "acc-2")
         val preflightStore = FakeBlobStore(
             connectorId = preflightConnectorId,
-            constraints = BlobStoreConstraints(maxFileBytes = 5),
-            quota = null,
+            initial = StorageStatus.Ready(preflightConnectorId, snap(used = 0, total = 1_000, maxFile = 5, cId = preflightConnectorId)),
         )
         val paused = MutableStateFlow<Set<ConnectorId>>(emptySet())
         val manager = createManager(
@@ -347,7 +383,6 @@ class BlobManagerTest : BaseTest() {
             pausedConnectorsFlow = paused,
         )
 
-        // Drive both connectors to terminal: transient = exhaust schedule, preflight = single put.
         repeat(5) {
             manager.put(
                 deviceId = deviceId,
@@ -361,7 +396,6 @@ class BlobManagerTest : BaseTest() {
         manager.retryStatus.first()[connectorId to blobKey] shouldBe RetryStatus.Stopped
         manager.retryStatus.first()[preflightConnectorId to blobKey].shouldBeInstanceOf<RetryStatus.FileTooLarge>()
 
-        // Pause both, then resume both. Non-preflight terminal must clear; preflight must persist.
         paused.value = setOf(connectorId, preflightConnectorId)
         advanceUntilIdle()
         paused.value = emptySet()
@@ -375,8 +409,7 @@ class BlobManagerTest : BaseTest() {
     fun `clearBackoff by blobKey removes all per-connector entries for that blob`() = runTest2 {
         val store = FakeBlobStore(
             connectorId = connectorId,
-            constraints = BlobStoreConstraints(),
-            quota = BlobStoreQuota(connectorId = connectorId, usedBytes = 0, totalBytes = 1_000),
+            initial = StorageStatus.Ready(connectorId, snap(used = 0, total = 1_000)),
             failOnPut = true,
         )
         val manager = createManager(backgroundScope, store)
@@ -394,15 +427,44 @@ class BlobManagerTest : BaseTest() {
         manager.isBackedOff(connectorId, blobKey) shouldBe false
     }
 
+    private fun createManager(
+        scope: CoroutineScope,
+        vararg stores: BlobStore,
+        pausedConnectorsFlow: Flow<Set<ConnectorId>> = flowOf(emptySet()),
+    ): BlobManager {
+        val hub = object : BlobStoreHub {
+            override val blobStores: Flow<Collection<BlobStore>> = flowOf(stores.toList())
+            override suspend fun owns(connectorId: ConnectorId): Boolean = stores.any { it.connectorId == connectorId }
+        }
+
+        val syncSettings = mockk<SyncSettings>()
+        every { syncSettings.pausedConnectors } returns mockk {
+            every { flow } returns pausedConnectorsFlow
+        }
+
+        return BlobManager(
+            scope = scope,
+            dispatcherProvider = TestDispatcherProvider(),
+            blobStoreHubs = setOf(hub),
+            syncSettings = syncSettings,
+        )
+    }
+
     private class FakeBlobStore(
         override val connectorId: ConnectorId,
-        private val constraints: BlobStoreConstraints,
-        private val quota: BlobStoreQuota?,
-        private val quotaDelayMs: Long = 0,
+        initial: StorageStatus,
         var failOnPut: Boolean = false,
         var throwOnPut: Throwable? = null,
     ) : BlobStore {
         var putCalls: Int = 0
+
+        override val storageStatus: StorageStatusProvider = object : StorageStatusProvider {
+            override val connectorId: ConnectorId = this@FakeBlobStore.connectorId
+            private val _status = MutableStateFlow(initial)
+            override val status: StateFlow<StorageStatus> = _status.asStateFlow()
+            override suspend fun refresh(forceFresh: Boolean) = Unit
+            override fun invalidate() = Unit
+        }
 
         override suspend fun put(
             deviceId: DeviceId,
@@ -426,25 +488,13 @@ class BlobManagerTest : BaseTest() {
             sink: Sink,
             expectedPlaintextSize: Long,
             onProgress: BlobProgressCallback?,
-        ): BlobMetadata {
-            throw UnsupportedOperationException()
-        }
+        ): BlobMetadata = throw UnsupportedOperationException()
 
-        override suspend fun getMetadata(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef): BlobMetadata? {
+        override suspend fun getMetadata(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef): BlobMetadata? =
             throw UnsupportedOperationException()
-        }
 
         override suspend fun delete(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef) = Unit
 
         override suspend fun list(deviceId: DeviceId, moduleId: ModuleId): Set<RemoteBlobRef> = emptySet()
-
-        override suspend fun getConstraints(): BlobStoreConstraints = constraints
-
-        override suspend fun getQuota(): BlobStoreQuota? {
-            if (quotaDelayMs > 0) {
-                delay(quotaDelayMs)
-            }
-            return quota
-        }
     }
 }

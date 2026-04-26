@@ -35,8 +35,9 @@ import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobChecksumMismatchException
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobProgress
-import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.sync.core.blob.RetryStatus
+import eu.darken.octi.sync.core.blob.StorageStatus
+import eu.darken.octi.sync.core.blob.StorageStatusManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,6 +56,7 @@ class FileShareListVM @Inject constructor(
     private val fileShareService: FileShareService,
     private val moduleManager: ModuleManager,
     private val blobManager: BlobManager,
+    private val storageStatusManager: StorageStatusManager,
     private val syncSettings: SyncSettings,
     private val fileShareSettings: FileShareSettings,
     private val syncManager: SyncManager,
@@ -67,7 +69,7 @@ class FileShareListVM @Inject constructor(
         val sortBy: SortKey = SortKey.DATE,
         val sortDescending: Boolean = true,
         val activeUpload: ActiveUpload? = null,
-        val quotaItems: List<BlobStoreQuota> = emptyList(),
+        val quotaItems: List<StorageStatus> = emptyList(),
         val isSharingAvailable: Boolean = true,
         val isUsageHintDismissed: Boolean = false,
         val isSyncingNow: Boolean = false,
@@ -146,7 +148,8 @@ class FileShareListVM @Inject constructor(
     private data class TransferSnapshot(
         val transfers: Map<String, FileShareService.Transfer>,
         val retryStatus: Map<Pair<ConnectorId, BlobKey>, RetryStatus>,
-        val quotas: Map<ConnectorId, BlobStoreQuota?>,
+        val storageStatuses: Map<ConnectorId, StorageStatus>,
+        val configuredConnectorIds: Set<ConnectorId>,
     )
 
     private data class UiSnapshot(
@@ -172,8 +175,11 @@ class FileShareListVM @Inject constructor(
         combine(
             fileShareService.transfers,
             blobManager.retryStatus,
-            blobManager.quotas(),
-        ) { transfers, retry, quotas -> TransferSnapshot(transfers, retry, quotas) },
+            storageStatusManager.statuses,
+            storageStatusManager.configuredConnectorIds,
+        ) { transfers, retry, statuses, configuredIds ->
+            TransferSnapshot(transfers, retry, statuses, configuredIds)
+        },
         combine(
             _filters,
             combine(_sortBy, _sortDescending) { by, desc -> by to desc },
@@ -202,7 +208,7 @@ class FileShareListVM @Inject constructor(
         isSyncingNow: Boolean,
     ): State {
         val ownDeviceId = syncSettings.deviceId
-        val configuredById = transfer.quotas.keys.associateBy { it.idString }
+        val configuredById = transfer.configuredConnectorIds.associateBy { it.idString }
 
         val deviceData: List<Pair<DeviceId, FileShareInfo>> = buildList {
             repo.repoState.self?.let { add(it.deviceId to it.data) }
@@ -261,7 +267,7 @@ class FileShareListVM @Inject constructor(
                         downloadProgress = download,
                         uploadProgress = upload,
                         missingConnectors = if (isOwn) {
-                            buildMissingConnectors(sharedFile, transfer.quotas.keys, transfer.retryStatus)
+                            buildMissingConnectors(sharedFile, transfer.configuredConnectorIds, transfer.retryStatus)
                         } else emptyList(),
                     )
                 }
@@ -269,8 +275,10 @@ class FileShareListVM @Inject constructor(
 
         val sortedItems = items.sortedWith(comparatorFor(ui.sortBy, ui.sortDescending))
 
-        val quotaItems = transfer.quotas.values
-            .filterNotNull()
+        // Filter out Unsupported (the row contributes nothing to the UI). Keep Loading/Ready/
+        // Unavailable so the screen can render placeholders / warnings distinctly.
+        val quotaItems: List<StorageStatus> = transfer.storageStatuses.values
+            .filterNot { it is StorageStatus.Unsupported }
             .sortedBy { it.connectorId.idString }
 
         val activeUpload = transfer.transfers.values
@@ -476,6 +484,9 @@ class FileShareListVM @Inject constructor(
     fun onSyncNow() = launch {
         if (!_isSyncingNow.compareAndSet(expect = false, update = true)) return@launch
         try {
+            // Sync the file-share module (existing behavior) AND force-refresh the storage cache
+            // so the quota card reflects current numbers — without this the user-visible "Sync"
+            // button doesn't actually update the quota row.
             syncManager.sync(
                 SyncOptions(
                     stats = false,
@@ -484,6 +495,7 @@ class FileShareListVM @Inject constructor(
                     moduleFilter = setOf(FileShareModule.MODULE_ID),
                 ),
             )
+            storageStatusManager.refreshAll(forceFresh = true)
         } catch (e: Exception) {
             uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_sync_failed))
         } finally {

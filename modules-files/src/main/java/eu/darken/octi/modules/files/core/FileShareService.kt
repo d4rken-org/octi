@@ -28,6 +28,7 @@ import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.BlobProgress
 import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
 import eu.darken.octi.sync.core.blob.BlobServerStorageLowException
+import eu.darken.octi.sync.core.blob.StorageStatusManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -57,6 +58,7 @@ class FileShareService @Inject constructor(
     private val fileShareSettings: FileShareSettings,
     private val blobManager: BlobManager,
     private val blobMaintenance: BlobMaintenance,
+    private val storageStatusManager: StorageStatusManager,
     private val syncSettings: SyncSettings,
     private val blobCacheDirs: BlobCacheDirs,
 ) {
@@ -225,7 +227,7 @@ class FileShareService @Inject constructor(
                 val tooLargeErrors = errs.filterIsInstance<BlobFileTooLargeException>()
                 val allTooLarge = tooLargeErrors.size == errs.size
                 if (allTooLarge) {
-                    val minCap = tooLargeErrors.mapNotNull { it.constraints.maxFileBytes }.minOrNull()
+                    val minCap = tooLargeErrors.mapNotNull { it.maxFileBytes }.minOrNull()
                     if (minCap != null) {
                         return@withContext ShareResult.FileTooLarge(requestedBytes = size, maxBytes = minCap)
                     }
@@ -250,6 +252,10 @@ class FileShareService @Inject constructor(
             )
             fileShareHandler.upsertFile(sharedFile)
             pendingPostFinalizeCleanup = null
+            // Invalidate the storage cache for connectors that received the blob — the server-side
+            // numbers just changed. Done after commit (not inside BlobManager.put) so an aborted
+            // commit doesn't leave us holding a stale "we just used X bytes" snapshot.
+            storageStatusManager.invalidateAndRefresh(putResult.successful)
 
             if (putResult.perConnectorErrors.isEmpty()) {
                 ShareResult.Success
@@ -528,7 +534,7 @@ class FileShareService @Inject constructor(
         val deletedIds = successfulDeletes.map { it.idString }.toSet()
         val newAvailableOn = sharedFile.availableOn - deletedIds
         val newConnectorRefs = sharedFile.connectorRefs - deletedIds
-        if (newAvailableOn.isEmpty()) {
+        val result = if (newAvailableOn.isEmpty()) {
             fileShareHandler.removeFile(blobKey)
             fileShareSettings.pendingDeletes.update { it - blobKey }
             DeleteResult.Deleted
@@ -542,6 +548,10 @@ class FileShareService @Inject constructor(
             fileShareSettings.pendingDeletes.update { it + (blobKey to tombstone) }
             DeleteResult.Partial(newAvailableOn)
         }
+        // Invalidate after the metadata write — the freed bytes only count once the module commit
+        // lands. Keys off `successfulDeletes` so failed-delete connectors don't get a useless probe.
+        storageStatusManager.invalidateAndRefresh(successfulDeletes)
+        result
     }
 
     private fun queryFileMetadata(contentResolver: ContentResolver, uri: android.net.Uri): Pair<String, String> {

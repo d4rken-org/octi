@@ -12,6 +12,13 @@ interface BlobStore {
     val connectorId: ConnectorId
 
     /**
+     * Live storage status for this store. Pre-flight reads `lastKnown` after [StorageStatusProvider.refresh]
+     * (TTL/mutex make it cheap). The store itself, the file-share UI (via [StorageStatusManager]),
+     * and the sync-list UI all project from this single source.
+     */
+    val storageStatus: StorageStatusProvider
+
+    /**
      * Upload a blob from [source].
      * @param key stable client-side logical identity (also used as AAD input for encryption where applicable).
      * @param onProgress optional callback fired during the upload. Always plaintext-bytes per the
@@ -75,16 +82,6 @@ interface BlobStore {
      * Used for listings where remote refs happen to match logical keys (GDrive) or for diagnostic listings.
      */
     suspend fun list(deviceId: DeviceId, moduleId: ModuleId): Set<RemoteBlobRef>
-
-    /**
-     * Connector-specific constraints/caps.
-     */
-    suspend fun getConstraints(): BlobStoreConstraints
-
-    /**
-     * Connector-specific quota, if meaningful.
-     */
-    suspend fun getQuota(): BlobStoreQuota?
 
     /**
      * Cancel cleanup hook for the small window between [put] returning and the caller's containing

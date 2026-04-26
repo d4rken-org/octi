@@ -15,12 +15,11 @@ import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
-import eu.darken.octi.sync.core.ConnectorIssueAggregator
-import eu.darken.octi.sync.core.ConnectorOperation
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.blob.StorageStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -43,7 +42,7 @@ class SyncListVM @Inject constructor(
     private val syncManager: SyncManager,
     private val syncSettings: SyncSettings,
     private val upgradeRepo: UpgradeRepo,
-    private val issueAggregator: ConnectorIssueAggregator,
+    private val connectorOverviewProvider: ConnectorOverviewProvider,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     data class State(
@@ -57,6 +56,7 @@ class SyncListVM @Inject constructor(
         val connectorId: ConnectorId,
         val connector: SyncConnector,
         val ourState: SyncConnectorState,
+        val storageStatus: StorageStatus,
         val otherStates: Collection<SyncConnectorState>,
         val isPaused: Boolean,
         val isBusy: Boolean,
@@ -93,34 +93,23 @@ class SyncListVM @Inject constructor(
             }.launchInViewModel()
     }
 
-    val state = syncSettings.pausedConnectors.flow
-        .combine(syncManager.allConnectors) { paused, connectorList -> paused to connectorList }
-        .flatMapLatest { (paused, connectors) ->
-            if (connectors.isEmpty()) return@flatMapLatest flowOf(emptyList())
-
-            val withStates = connectors.map { connector ->
-                combine(
-                    connector.state,
-                    connector.operations,
-                    issueAggregator.issues,
-                ) { state, operations, allIssues ->
-                    val connectorIssues = allIssues.filter { it.connectorId == connector.identifier }
-                    val isBusy = operations.any {
-                        it is ConnectorOperation.Queued || it is ConnectorOperation.Processing
-                    }
-                    ConnectorItem(
-                        connectorId = connector.identifier,
-                        connector = connector,
-                        ourState = state,
-                        otherStates = (connectors - connector).map { it.state.first() },
-                        isPaused = paused.contains(connector.identifier),
-                        isBusy = isBusy,
-                        issues = connectorIssues,
-                    )
-                }
+    val state = connectorOverviewProvider.cards
+        .map { cards ->
+            // Cross-cutting `otherStates` (used by DevicesField for distinct device counting)
+            // is derived from sibling cards rather than re-fetched per connector.
+            cards.map { card ->
+                ConnectorItem(
+                    connectorId = card.connector.identifier,
+                    connector = card.connector,
+                    ourState = card.syncState,
+                    storageStatus = card.storageStatus,
+                    otherStates = cards.filter { it.connector.identifier != card.connector.identifier }
+                        .map { it.syncState },
+                    isPaused = card.isPaused,
+                    isBusy = card.isBusy,
+                    issues = card.issues,
+                )
             }
-
-            combine(withStates) { it.toList() }
         }
         .combine(highlightedIds) { connectors, highlighted -> connectors to highlighted }
         .combine(upgradeRepo.upgradeInfo) { (connectors, highlighted), upgradeInfo ->

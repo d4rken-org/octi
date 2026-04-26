@@ -3,8 +3,15 @@ package eu.darken.octi.syncs.octiserver.core
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
+import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
+import eu.darken.octi.sync.core.blob.StorageStatus
+import eu.darken.octi.sync.core.blob.StorageStatusProvider
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -27,11 +34,23 @@ class OctiServerBlobStoreTest : BaseTest() {
         encryptionKeyset = keyset,
     )
 
-    private fun validStore(): OctiServerBlobStore = OctiServerBlobStore(
-        blobCacheDirs = blobCacheDirs,
-        credentials = credentialsWith(PayloadEncryption().exportKeyset()),
-        endpoint = endpoint,
-    )
+    private fun fakeStatus(connectorId: ConnectorId): StorageStatusProvider = object : StorageStatusProvider {
+        override val connectorId: ConnectorId = connectorId
+        private val _status = MutableStateFlow<StorageStatus>(StorageStatus.Loading(connectorId, lastKnown = null))
+        override val status: StateFlow<StorageStatus> = _status.asStateFlow()
+        override suspend fun refresh(forceFresh: Boolean) = Unit
+        override fun invalidate() = Unit
+    }
+
+    private fun validStore(): OctiServerBlobStore {
+        val cId = ConnectorId(ConnectorType.OCTISERVER, "example.com", "acc-1")
+        return OctiServerBlobStore(
+            blobCacheDirs = blobCacheDirs,
+            credentials = credentialsWith(PayloadEncryption().exportKeyset()),
+            endpoint = endpoint,
+            storageStatus = fakeStatus(cId),
+        )
+    }
 
     @Test
     fun `constructor rejects legacy AES256_SIV credentials`() {
@@ -44,7 +63,12 @@ class OctiServerBlobStoreTest : BaseTest() {
         )
 
         shouldThrow<IllegalArgumentException> {
-            OctiServerBlobStore(blobCacheDirs, credentialsWith(legacyKeyset), endpoint)
+            OctiServerBlobStore(
+                blobCacheDirs,
+                credentialsWith(legacyKeyset),
+                endpoint,
+                fakeStatus(ConnectorId(ConnectorType.OCTISERVER, "example.com", "acc-1")),
+            )
         }
     }
 
@@ -56,7 +80,12 @@ class OctiServerBlobStoreTest : BaseTest() {
         )
 
         shouldThrow<IllegalArgumentException> {
-            OctiServerBlobStore(blobCacheDirs, credentialsWith(unknownKeyset), endpoint)
+            OctiServerBlobStore(
+                blobCacheDirs,
+                credentialsWith(unknownKeyset),
+                endpoint,
+                fakeStatus(ConnectorId(ConnectorType.OCTISERVER, "example.com", "acc-1")),
+            )
         }
     }
 

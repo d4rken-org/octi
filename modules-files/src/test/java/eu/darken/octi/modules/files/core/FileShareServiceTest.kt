@@ -17,8 +17,7 @@ import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
 import eu.darken.octi.sync.core.blob.BlobServerStorageLowException
-import eu.darken.octi.sync.core.blob.BlobStoreConstraints
-import eu.darken.octi.sync.core.blob.BlobStoreQuota
+import eu.darken.octi.sync.core.blob.StorageStatusManager
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
@@ -44,6 +43,7 @@ class FileShareServiceTest : BaseTest() {
     private val pendingDeletes = mockk<DataStoreValue<Map<String, PendingDelete>>>()
     private val blobManager = mockk<BlobManager>()
     private val blobMaintenance = mockk<BlobMaintenance>(relaxed = true)
+    private val storageStatusManager = mockk<StorageStatusManager>(relaxed = true)
     private val syncSettings = mockk<SyncSettings>()
     private fun createService() = FileShareService(
         context = context,
@@ -52,6 +52,7 @@ class FileShareServiceTest : BaseTest() {
         fileShareSettings = fileShareSettings,
         blobManager = blobManager,
         blobMaintenance = blobMaintenance,
+        storageStatusManager = storageStatusManager,
         syncSettings = syncSettings,
         blobCacheDirs = BlobCacheDirs(context),
     )
@@ -203,12 +204,12 @@ class FileShareServiceTest : BaseTest() {
             perConnectorErrors = mapOf(
                 connectorA to BlobFileTooLargeException(
                     connectorId = connectorA,
-                    constraints = BlobStoreConstraints(maxFileBytes = largerCap, maxTotalBytes = null),
+                    maxFileBytes = largerCap,
                     requestedBytes = fileBytes.size.toLong(),
                 ),
                 connectorB to BlobFileTooLargeException(
                     connectorId = connectorB,
-                    constraints = BlobStoreConstraints(maxFileBytes = smallerCap, maxTotalBytes = null),
+                    maxFileBytes = smallerCap,
                     requestedBytes = fileBytes.size.toLong(),
                 ),
             ),
@@ -217,7 +218,7 @@ class FileShareServiceTest : BaseTest() {
         val result = createService().shareFile(uri)
 
         result.shouldBeInstanceOf<FileShareService.ShareResult.FileTooLarge>()
-        (result as FileShareService.ShareResult.FileTooLarge).maxBytes shouldBe smallerCap
+        result.maxBytes shouldBe smallerCap
         result.requestedBytes shouldBe fileBytes.size.toLong()
 
         cacheDir.deleteRecursively()
@@ -279,7 +280,10 @@ class FileShareServiceTest : BaseTest() {
             successful = emptySet(),
             perConnectorErrors = mapOf(
                 connectorA to BlobQuotaExceededException(
-                    quota = BlobStoreQuota(connectorId = connectorA, usedBytes = 100, totalBytes = 100),
+                    connectorId = connectorA,
+                    usedBytes = 100,
+                    totalBytes = 100,
+                    accountLabel = null,
                     requestedBytes = fileBytes.size.toLong(),
                 ),
             ),
@@ -316,7 +320,7 @@ class FileShareServiceTest : BaseTest() {
             perConnectorErrors = mapOf(
                 connectorA to BlobFileTooLargeException(
                     connectorId = connectorA,
-                    constraints = BlobStoreConstraints(maxFileBytes = 10L, maxTotalBytes = null),
+                    maxFileBytes = 10L,
                     requestedBytes = fileBytes.size.toLong(),
                 ),
                 connectorB to java.io.IOException("network down"),

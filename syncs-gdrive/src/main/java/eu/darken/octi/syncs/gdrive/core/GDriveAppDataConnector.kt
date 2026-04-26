@@ -42,7 +42,6 @@ import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
 import eu.darken.octi.sync.core.SyncWriteContainer
-import eu.darken.octi.sync.core.blob.BlobStoreQuota
 import eu.darken.octi.syncs.gdrive.core.GDriveEnvironment.Companion.APPDATAFOLDER
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -97,7 +96,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
     data class State(
         override val lastActionAt: Instant? = null,
         override val lastError: Exception? = null,
-        override val quota: SyncConnectorState.Quota? = null,
         override val isAvailable: Boolean = true,
         override val issues: List<ConnectorIssue> = emptyList(),
         override val deviceMetadata: List<DeviceMetadata> = emptyList(),
@@ -631,21 +629,6 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     log(TAG, VERBOSE) { "handleSync(...): devices finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
                 }.run { jobs.add(this) }
 
-                scope.async(dispatcherProvider.IO) {
-                    if (!options.stats) return@async
-
-                    try {
-                        val newQuota = getStorageQuota()
-                        if (newQuota != null) {
-                            _state.updateBlocking { copy(quota = newQuota) }
-                        }
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Exception) {
-                        log(TAG, ERROR) { "handleSync(): Failed to update storage quota: ${e.asLog()}" }
-                    }
-                    log(TAG, VERBOSE) { "handleSync(...): quota finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
-                }.run { jobs.add(this) }
 
 
                 if (options.writeData && options.writePayload.isNotEmpty()) {
@@ -784,46 +767,18 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     /**
      * Whole-Drive usage and limit. Every upload competes for the user's full Drive quota, so this
-     * is the meaningful figure for both the sync-status panel and the file-sharing screen.
-     * Returns `null` when Drive doesn't expose a quota (e.g. legacy unlimited Workspace tiers).
-     */
-    private suspend fun GDriveEnvironment.getStorageQuota(): SyncConnectorState.Quota? {
-        log(TAG, VERBOSE) { "getStorageQuota()" }
-        val sq = drive.about().get().setFields("storageQuota").execute().storageQuota ?: return null
-        val limit = sq.limit ?: return null
-        val usage = sq.usage ?: return null
-        return SyncConnectorState.Quota(
-            updatedAt = Clock.System.now(),
-            storageUsed = usage,
-            storageTotal = limit,
-        )
-    }
-
-    /**
-     * Best-effort blob-store quota. Called by [GDriveBlobStore.getQuota] from
-     * [BlobManager.put]'s pre-flight check, so this MUST NOT throw — a hiccup would otherwise
-     * be recorded as an upload failure for this connector. Mirrors `OctiServerBlobStore.getQuota`'s
-     * defensive shape.
+     * is the meaningful figure for the storage status. Returns `null` when Drive doesn't expose a
+     * quota (e.g. legacy unlimited Workspace tiers); the provider then surfaces `Unsupported`.
      *
-     * Bypasses [driveLock] / [runDriveAction] deliberately: this is a read-only call that should
-     * not mutate connector live state, and it must not queue behind in-flight syncs.
+     * Called from [GDriveStorageStatusProvider.refresh]. Bypasses [driveLock] / [runDriveAction]
+     * deliberately — this is a read-only probe that must not queue behind in-flight syncs.
      */
-    internal suspend fun fetchBlobStoreQuota(): BlobStoreQuota? = try {
-        withDrive {
-            getStorageQuota()?.let { quota ->
-                BlobStoreQuota(
-                    connectorId = identifier,
-                    usedBytes = quota.storageUsed,
-                    totalBytes = quota.storageTotal,
-                    accountLabel = accountLabel,
-                )
-            }
-        }
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: Exception) {
-        log(TAG, WARN) { "fetchBlobStoreQuota() failed: ${e.message}" }
-        null
+    internal suspend fun fetchStorageQuotaRaw(): GDriveStorageQuotaRaw? = withDrive {
+        log(TAG, VERBOSE) { "fetchStorageQuotaRaw()" }
+        val sq = drive.about().get().setFields("storageQuota").execute().storageQuota ?: return@withDrive null
+        val limit = sq.limit ?: return@withDrive null
+        val usage = sq.usage ?: return@withDrive null
+        GDriveStorageQuotaRaw(usedBytes = usage, totalBytes = limit)
     }
 
     private suspend fun <R> runDriveAction(

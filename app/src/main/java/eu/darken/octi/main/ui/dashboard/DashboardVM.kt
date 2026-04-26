@@ -52,6 +52,7 @@ import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOrchestrator
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobManager
+import eu.darken.octi.sync.core.blob.StorageStatusManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -93,6 +94,7 @@ class DashboardVM @Inject constructor(
     private val issueAggregator: ConnectorIssueAggregator,
     private val fileShareRepo: FileShareRepo,
     private val blobManager: BlobManager,
+    private val storageStatusManager: StorageStatusManager,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -291,9 +293,12 @@ class DashboardVM @Inject constructor(
     // cause `deviceItems()` to capture a `null` Flow reference.
     private val fileShareCtx: Flow<FileShareCtx> = kotlinx.coroutines.flow.combine(
         fileShareRepo.isEnabled,
-        blobManager.quotas(),
-    ) { enabled, quotas ->
-        val ids = quotas.keys.map { it.idString }.toSet()
+        // configuredConnectorIds covers all StorageStatus phases (Loading/Ready/Unavailable/Unsupported)
+        // — file-share availability turns on the moment a connector is configured, not when its
+        // first quota probe completes.
+        storageStatusManager.configuredConnectorIds,
+    ) { enabled, configuredIds ->
+        val ids = configuredIds.map { it.idString }.toSet()
         FileShareCtx(isSharingAvailable = enabled && ids.isNotEmpty(), configuredConnectorIds = ids)
     }
 

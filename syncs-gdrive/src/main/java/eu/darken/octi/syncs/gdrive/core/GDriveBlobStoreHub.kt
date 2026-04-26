@@ -21,6 +21,7 @@ class GDriveBlobStoreHub @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     private val gDriveHub: GDriveHub,
+    private val storageStatusProviderFactory: GDriveStorageStatusProvider.Factory,
 ) : BlobStoreHub {
 
     private val cache = ConcurrentHashMap<ConnectorId, Pair<GDriveAppDataConnector, BlobStore>>()
@@ -34,7 +35,8 @@ class GDriveBlobStoreHub @Inject constructor(
                 val id = gDriveConnector.identifier
 
                 cache[id]?.takeIf { (cachedConnector, _) -> cachedConnector === gDriveConnector }?.second ?: run {
-                    GDriveBlobStore(gDriveConnector, id).also { store ->
+                    val provider = storageStatusProviderFactory.create(id, gDriveConnector)
+                    GDriveBlobStore(gDriveConnector, id, provider).also { store ->
                         cache[id] = gDriveConnector to store
                     }
                 }

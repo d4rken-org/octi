@@ -8,14 +8,17 @@ sealed class BlobStoreException(message: String, cause: Throwable? = null) : IOE
 
 class BlobFileTooLargeException(
     val connectorId: ConnectorId,
-    val constraints: BlobStoreConstraints,
+    val maxFileBytes: Long?,
     val requestedBytes: Long,
-) : BlobStoreException("File too large ($requestedBytes bytes) for connector $connectorId (max=${constraints.maxFileBytes})")
+) : BlobStoreException("File too large ($requestedBytes bytes) for connector $connectorId (max=$maxFileBytes)")
 
 class BlobQuotaExceededException(
-    val quota: BlobStoreQuota,
+    val connectorId: ConnectorId,
+    val usedBytes: Long,
+    val totalBytes: Long,
+    val accountLabel: String?,
     val requestedBytes: Long,
-) : BlobStoreException("Quota exceeded on ${quota.connectorId}: ${quota.usedBytes}/${quota.totalBytes} used, requested $requestedBytes")
+) : BlobStoreException("Quota exceeded on $connectorId: $usedBytes/$totalBytes used, requested $requestedBytes")
 
 class BlobServerStorageLowException(
     val connectorId: ConnectorId,

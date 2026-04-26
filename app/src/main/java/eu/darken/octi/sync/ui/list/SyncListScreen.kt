@@ -246,11 +246,11 @@ private fun ConnectorCard(
 
             LabeledField(
                 label = stringResource(CommonR.string.general_quota_label),
-                value = item.ourState.quota
-                    ?.let { stats ->
-                        val total = Formatter.formatShortFileSize(context, stats.storageTotal)
-                        val used = Formatter.formatShortFileSize(context, stats.storageUsed)
-                        val free = Formatter.formatShortFileSize(context, stats.storageFree)
+                value = item.storageStatus.lastKnown
+                    ?.let { snap ->
+                        val total = Formatter.formatShortFileSize(context, snap.totalBytes)
+                        val used = Formatter.formatShortFileSize(context, snap.usedBytes)
+                        val free = Formatter.formatShortFileSize(context, snap.availableBytes)
                         stringResource(R.string.sync_quota_storage_msg, free, used, total)
                     }
                     ?: stringResource(CommonR.string.general_na_label),

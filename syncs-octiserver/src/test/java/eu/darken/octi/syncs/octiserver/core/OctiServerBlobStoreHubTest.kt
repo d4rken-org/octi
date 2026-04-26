@@ -24,6 +24,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
 
     private val octiServerHub: OctiServerHub = mockk()
     private val blobStoreFactory: OctiServerBlobStore.Factory = mockk()
+    private val storageStatusProviderFactory: OctiServerStorageStatusProvider.Factory = mockk(relaxed = true)
     private val endpointFactory: OctiServerEndpoint.Factory = mockk()
     private val endpoint: OctiServerEndpoint = mockk()
 
@@ -61,6 +62,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
         dispatcherProvider = TestDispatcherProvider(),
         octiServerHub = octiServerHub,
         blobStoreFactory = blobStoreFactory,
+        storageStatusProviderFactory = storageStatusProviderFactory,
         endpointFactory = endpointFactory,
     )
 
@@ -79,7 +81,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
         val mockStore: OctiServerBlobStore = mockk {
             every { connectorId } returns connector.identifier
         }
-        every { blobStoreFactory.create(credentials, endpoint) } returns mockStore
+        every { blobStoreFactory.create(credentials, endpoint, any()) } returns mockStore
 
         val hub = newHub(backgroundScope)
 
@@ -105,7 +107,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
 
         val result = hub.blobStores.first()
         result.toList().shouldBeEmpty()
-        verify(exactly = 0) { blobStoreFactory.create(any(), any()) }
+        verify(exactly = 0) { blobStoreFactory.create(any(), any(), any()) }
     }
 
     @Test
@@ -119,7 +121,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
         )
 
         val credentials = credentialsWith(legacyKeyset)
-        every { blobStoreFactory.create(credentials, endpoint) } throws
+        every { blobStoreFactory.create(credentials, endpoint, any()) } throws
             IllegalArgumentException("Only AES256_GCM_SIV keysets are supported for blob storage (was: AES256_SIV)")
 
         val hub = newHub(backgroundScope)
@@ -145,7 +147,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
         val mockStore: OctiServerBlobStore = mockk {
             every { connectorId } returns connector.identifier
         }
-        every { blobStoreFactory.create(credentials, endpoint) } returns mockStore
+        every { blobStoreFactory.create(credentials, endpoint, any()) } returns mockStore
 
         val hub = newHub(backgroundScope)
 
