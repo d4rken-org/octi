@@ -59,6 +59,7 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.IssueSeverity
 import eu.darken.octi.sync.core.SyncConnectorState
+import eu.darken.octi.sync.core.blob.StorageStatus
 
 @Composable
 fun SyncListScreenHost(vm: SyncListVM = hiltViewModel()) {
@@ -244,19 +245,21 @@ private fun ConnectorCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LabeledField(
-                label = stringResource(CommonR.string.general_quota_label),
-                value = item.storageStatus.lastKnown
-                    ?.let { snap ->
-                        val total = Formatter.formatShortFileSize(context, snap.totalBytes)
-                        val used = Formatter.formatShortFileSize(context, snap.usedBytes)
-                        val free = Formatter.formatShortFileSize(context, snap.availableBytes)
-                        stringResource(R.string.sync_quota_storage_msg, free, used, total)
-                    }
-                    ?: stringResource(CommonR.string.general_na_label),
-            )
+            if (item.storageStatus !is StorageStatus.Unsupported) {
+                LabeledField(
+                    label = stringResource(CommonR.string.general_quota_label),
+                    value = item.storageStatus.lastKnown
+                        ?.let { snap ->
+                            val total = Formatter.formatShortFileSize(context, snap.totalBytes)
+                            val used = Formatter.formatShortFileSize(context, snap.usedBytes)
+                            val free = Formatter.formatShortFileSize(context, snap.availableBytes)
+                            stringResource(R.string.sync_quota_storage_msg, free, used, total)
+                        }
+                        ?: stringResource(CommonR.string.general_na_label),
+                )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
             DevicesField(state = item.ourState, otherStates = item.otherStates)
 

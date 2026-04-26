@@ -55,7 +55,7 @@ class ConnectorOverviewProvider @Inject constructor(
                     ConnectorCardState(
                         connector = c,
                         syncState = state,
-                        storageStatus = statuses[c.identifier] ?: StorageStatus.Loading(c.identifier, lastKnown = null),
+                        storageStatus = statuses[c.identifier] ?: StorageStatus.Unsupported(c.identifier),
                         isPaused = c.identifier in paused,
                         isBusy = isBusy,
                         issues = issues,
