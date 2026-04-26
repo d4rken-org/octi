@@ -257,6 +257,7 @@ class OctiServerEndpoint @AssistedInject constructor(
      * @return new Upload-Offset from the response header
      */
     suspend fun appendBlobSession(
+        deviceId: DeviceId,
         moduleId: ModuleId,
         sessionId: String,
         offset: Long,
@@ -268,6 +269,7 @@ class OctiServerEndpoint @AssistedInject constructor(
                 moduleId = moduleId.id,
                 sessionId = sessionId,
                 callerDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
                 offset = offset,
                 body = body,
             )
@@ -280,6 +282,7 @@ class OctiServerEndpoint @AssistedInject constructor(
     }
 
     suspend fun finalizeBlobSession(
+        deviceId: DeviceId,
         moduleId: ModuleId,
         sessionId: String,
         checksum: String,
@@ -290,6 +293,7 @@ class OctiServerEndpoint @AssistedInject constructor(
                 moduleId = moduleId.id,
                 sessionId = sessionId,
                 callerDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
                 request = OctiServerApi.FinalizeSessionRequest(
                     hashAlgorithm = "sha256",
                     hashHex = checksum,
@@ -301,6 +305,7 @@ class OctiServerEndpoint @AssistedInject constructor(
     }
 
     suspend fun abortBlobSession(
+        deviceId: DeviceId,
         moduleId: ModuleId,
         sessionId: String,
     ) = withContext(dispatcherProvider.IO) {
@@ -310,6 +315,7 @@ class OctiServerEndpoint @AssistedInject constructor(
                 moduleId = moduleId.id,
                 sessionId = sessionId,
                 callerDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
             )
         } catch (e: HttpException) {
             throw OctiServerHttpException(e)

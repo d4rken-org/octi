@@ -72,7 +72,7 @@ class OctiServerBlobStore @AssistedInject constructor(
     private val cipher by lazy { StreamingPayloadCipher(credentials.encryptionKeyset) }
 
     /**
-     * Tracks `serverBlobId → (sessionId, moduleId, finalizedAt)` for sessions that finalized
+     * Tracks `serverBlobId → (deviceId, sessionId, moduleId, finalizedAt)` for sessions that finalized
      * during the lifetime of this connector instance. Used by [abortPostFinalize] to clean up
      * the small window where the caller cancels between [put] returning and the containing
      * module write committing — without this, the orphan blob waits for the server's idle GC.
@@ -82,6 +82,7 @@ class OctiServerBlobStore @AssistedInject constructor(
     private val recentSessions = ConcurrentHashMap<String, RecentSession>()
 
     private data class RecentSession(
+        val deviceId: DeviceId,
         val sessionId: String,
         val moduleId: ModuleId,
         val finalizedAt: Instant,
@@ -146,7 +147,7 @@ class OctiServerBlobStore @AssistedInject constructor(
                         read += n
                     }
                     val body = chunk.sliceArray(0 until read).toRequestBody("application/octet-stream".toMediaType())
-                    offset = endpoint.appendBlobSession(moduleId, session.sessionId, offset, body)
+                    offset = endpoint.appendBlobSession(deviceId, moduleId, session.sessionId, offset, body)
                     // Scale ciphertext progress to plaintext-equivalent so [BlobProgress] stays
                     // plaintext-uniform across backends. Cap at plaintextSize for the final chunk
                     // since ciphertext > plaintext (Tink AEAD framing overhead).
@@ -160,16 +161,16 @@ class OctiServerBlobStore @AssistedInject constructor(
             }
 
             // 5. Finalize with ciphertext hash
-            endpoint.finalizeBlobSession(moduleId, session.sessionId, cipherHash)
+            endpoint.finalizeBlobSession(deviceId, moduleId, session.sessionId, cipherHash)
 
             log(TAG, VERBOSE) {
                 "put(${key.id}): Finalized ciphertext=${cipherSize}B, hashPrefix=${cipherHash.take(16)}"
             }
             log(TAG, INFO) { "put(${key.id}): Finalized, serverBlobId=${session.blobId}" }
-            recordRecentSession(session.blobId, session.sessionId, moduleId)
+            recordRecentSession(session.blobId, deviceId, session.sessionId, moduleId)
             return RemoteBlobRef(session.blobId)
         } catch (e: OctiServerHttpException) {
-            abortSessionSafely(moduleId, sessionId)
+            abortSessionSafely(deviceId, moduleId, sessionId)
             when (e.httpCode) {
                 413 -> {
                     // Refresh the snapshot so the exception carries an up-to-date max-file cap;
@@ -216,7 +217,7 @@ class OctiServerBlobStore @AssistedInject constructor(
                 else -> throw e
             }
         } catch (e: Exception) {
-            abortSessionSafely(moduleId, sessionId)
+            abortSessionSafely(deviceId, moduleId, sessionId)
             throw e
         } finally {
             cipherFile.delete()
@@ -237,22 +238,22 @@ class OctiServerBlobStore @AssistedInject constructor(
         }
     }
 
-    private suspend fun abortSessionSafely(moduleId: ModuleId, sessionId: String?) {
+    private suspend fun abortSessionSafely(deviceId: DeviceId, moduleId: ModuleId, sessionId: String?) {
         sessionId ?: return
         // NonCancellable so a user-cancelled upload still issues the session abort — otherwise
         // the cancelled scope would skip the abort and leave the session lingering until idle GC.
         withContext(NonCancellable) {
             try {
-                endpoint.abortBlobSession(moduleId, sessionId)
+                endpoint.abortBlobSession(deviceId, moduleId, sessionId)
             } catch (e: Exception) {
                 log(TAG, WARN) { "abortSessionSafely(): Failed to abort session $sessionId: ${e.message}" }
             }
         }
     }
 
-    private fun recordRecentSession(blobId: String, sessionId: String, moduleId: ModuleId) {
+    private fun recordRecentSession(blobId: String, deviceId: DeviceId, sessionId: String, moduleId: ModuleId) {
         val now = Clock.System.now()
-        recentSessions[blobId] = RecentSession(sessionId, moduleId, now)
+        recentSessions[blobId] = RecentSession(deviceId, sessionId, moduleId, now)
         // Lazy eviction — keeps memory bounded without a dedicated GC.
         recentSessions.entries.removeIf { now - it.value.finalizedAt > RECENT_SESSION_TTL }
     }
@@ -260,7 +261,7 @@ class OctiServerBlobStore @AssistedInject constructor(
     override suspend fun abortPostFinalize(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef) {
         val entry = recentSessions.remove(remoteRef.value) ?: return
         log(TAG, INFO) { "abortPostFinalize(${remoteRef.value}): aborting session ${entry.sessionId}" }
-        abortSessionSafely(entry.moduleId, entry.sessionId)
+        abortSessionSafely(entry.deviceId, entry.moduleId, entry.sessionId)
     }
 
     override suspend fun get(

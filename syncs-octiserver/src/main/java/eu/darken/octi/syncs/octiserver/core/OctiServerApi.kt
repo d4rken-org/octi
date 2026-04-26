@@ -136,6 +136,7 @@ interface OctiServerApi {
         @Path("moduleId") moduleId: String,
         @Path("sessionId") sessionId: String,
         @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
         @Header("Upload-Offset") offset: Long,
         @Body body: RequestBody,
     ): Response<Unit>
@@ -159,6 +160,7 @@ interface OctiServerApi {
         @Path("moduleId") moduleId: String,
         @Path("sessionId") sessionId: String,
         @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
         @Body request: FinalizeSessionRequest,
     ): FinalizeSessionResponse
 
@@ -167,6 +169,7 @@ interface OctiServerApi {
         @Path("moduleId") moduleId: String,
         @Path("sessionId") sessionId: String,
         @Header("X-Device-ID") callerDeviceId: String,
+        @Query("device-id") targetDeviceId: String,
     )
 
     // --- Blob download + list ---
