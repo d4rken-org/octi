@@ -1,5 +1,6 @@
 package eu.darken.octi.syncs.octiserver.core
 
+import eu.darken.octi.common.serialization.SerializationModule
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
@@ -17,6 +18,8 @@ class OctiServerSerializationTest : BaseTest() {
         explicitNulls = false
         encodeDefaults = true
     }
+
+    private val retrofitJson = SerializationModule().retrofitJson()
 
     @Test
     fun `Address round-trip`() {
@@ -165,37 +168,27 @@ class OctiServerSerializationTest : BaseTest() {
     }
 
     @Test
-    fun `AccountStorageResponse v1 wire format - new fields default to null`() {
-        val v1Json = """
+    fun `AccountStorageResponse decodes a minimal payload`() {
+        val payload = """
             {
                 "storageApiVersion": 1,
                 "accountQuotaBytes": 52428800,
                 "usedBytes": 1024,
-                "reservedBytes": 0,
                 "availableBytes": 52427776,
-                "maxBlobBytes": 10485760,
-                "maxModuleDocumentBytes": 262144,
-                "maxActiveUploadSessionsPerDevice": 8
+                "maxBlobBytes": 10485760
             }
         """
-        val decoded = json.decodeFromString<OctiServerApi.AccountStorageResponse>(v1Json)
+        val decoded = json.decodeFromString<OctiServerApi.AccountStorageResponse>(payload)
         decoded.storageApiVersion shouldBe 1
         decoded.accountQuotaBytes shouldBe 52428800L
         decoded.usedBytes shouldBe 1024L
-        decoded.idleSessionTtlSeconds shouldBe null
-        decoded.absoluteSessionTtlSeconds shouldBe null
-        decoded.maxDevicesPerAccount shouldBe null
-        decoded.maxModulesPerDevice shouldBe null
-        decoded.maxBlobRefsPerModule shouldBe null
-        decoded.maxActiveUploadSessionsPerAccount shouldBe null
-        decoded.completeIdleTtlSeconds shouldBe null
-        decoded.accountRateLimit shouldBe null
-        decoded.accountRateLimitWindowSeconds shouldBe null
+        decoded.availableBytes shouldBe 52427776L
+        decoded.maxBlobBytes shouldBe 10485760L
     }
 
     @Test
-    fun `AccountStorageResponse v2 wire format - all fields decode`() {
-        val v2Json = """
+    fun `AccountStorageResponse ignores unknown fields from a richer server payload`() {
+        val richPayload = """
             {
                 "storageApiVersion": 2,
                 "accountQuotaBytes": 52428800,
@@ -216,16 +209,11 @@ class OctiServerSerializationTest : BaseTest() {
                 "accountRateLimitWindowSeconds": 60
             }
         """
-        val decoded = json.decodeFromString<OctiServerApi.AccountStorageResponse>(v2Json)
+        val decoded = retrofitJson.decodeFromString<OctiServerApi.AccountStorageResponse>(richPayload)
         decoded.storageApiVersion shouldBe 2
-        decoded.idleSessionTtlSeconds shouldBe 3600L
-        decoded.absoluteSessionTtlSeconds shouldBe 86400L
-        decoded.maxDevicesPerAccount shouldBe 64
-        decoded.maxModulesPerDevice shouldBe 256
-        decoded.maxBlobRefsPerModule shouldBe 64
-        decoded.maxActiveUploadSessionsPerAccount shouldBe 32
-        decoded.completeIdleTtlSeconds shouldBe 600L
-        decoded.accountRateLimit shouldBe 256
-        decoded.accountRateLimitWindowSeconds shouldBe 60L
+        decoded.accountQuotaBytes shouldBe 52428800L
+        decoded.usedBytes shouldBe 1024L
+        decoded.availableBytes shouldBe 52427264L
+        decoded.maxBlobBytes shouldBe 10485760L
     }
 }

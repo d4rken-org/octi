@@ -243,23 +243,8 @@ interface OctiServerApi {
         @SerialName("storageApiVersion") val storageApiVersion: Int,
         @SerialName("accountQuotaBytes") val accountQuotaBytes: Long,
         @SerialName("usedBytes") val usedBytes: Long,
-        @SerialName("reservedBytes") val reservedBytes: Long,
         @SerialName("availableBytes") val availableBytes: Long,
         @SerialName("maxBlobBytes") val maxBlobBytes: Long,
-        @SerialName("maxModuleDocumentBytes") val maxModuleDocumentBytes: Long,
-        @SerialName("maxActiveUploadSessionsPerDevice") val maxActiveUploadSessionsPerDevice: Int,
-        @SerialName("idleSessionTtlSeconds") val idleSessionTtlSeconds: Long? = null,
-        @SerialName("absoluteSessionTtlSeconds") val absoluteSessionTtlSeconds: Long? = null,
-        // v2 (storageApiVersion >= 2). Nullable so v1 servers still parse; consumers must
-        // gate on storageApiVersion >= 2 and treat null v2 fields on a v2-claiming server
-        // as a contract failure rather than a default.
-        @SerialName("maxDevicesPerAccount") val maxDevicesPerAccount: Int? = null,
-        @SerialName("maxModulesPerDevice") val maxModulesPerDevice: Int? = null,
-        @SerialName("maxBlobRefsPerModule") val maxBlobRefsPerModule: Int? = null,
-        @SerialName("maxActiveUploadSessionsPerAccount") val maxActiveUploadSessionsPerAccount: Int? = null,
-        @SerialName("completeIdleTtlSeconds") val completeIdleTtlSeconds: Long? = null,
-        @SerialName("accountRateLimit") val accountRateLimit: Int? = null,
-        @SerialName("accountRateLimitWindowSeconds") val accountRateLimitWindowSeconds: Long? = null,
     )
 
     @GET("account/storage")
