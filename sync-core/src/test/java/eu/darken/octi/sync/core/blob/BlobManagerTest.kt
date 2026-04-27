@@ -13,6 +13,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -427,6 +428,50 @@ class BlobManagerTest : BaseTest() {
         manager.isBackedOff(connectorId, blobKey) shouldBe false
     }
 
+    @Test
+    fun `get propagates CancellationException without falling through to next candidate`() = runTest2 {
+        val connectorIdA = connectorId
+        val connectorIdB = ConnectorId(
+            type = ConnectorType.OCTISERVER,
+            subtype = "second.example.com",
+            account = "acc-1",
+        )
+        val storeA = FakeBlobStore(
+            connectorId = connectorIdA,
+            initial = StorageStatus.Ready(connectorIdA, snap(used = 0, total = 1_000)),
+            throwOnGet = CancellationException("user cancelled"),
+        )
+        val storeB = FakeBlobStore(
+            connectorId = connectorIdB,
+            initial = StorageStatus.Ready(connectorIdB, snap(used = 0, total = 1_000, cId = connectorIdB)),
+            getMetadata = metadata,
+        )
+        val manager = createManager(backgroundScope, storeA, storeB)
+
+        val candidates = mapOf(
+            connectorIdA to RemoteBlobRef(blobKey.id),
+            connectorIdB to RemoteBlobRef(blobKey.id),
+        )
+
+        var thrown: Throwable? = null
+        try {
+            manager.get(
+                deviceId = deviceId,
+                moduleId = moduleId,
+                blobKey = blobKey,
+                candidates = candidates,
+                expectedPlaintextSize = 0,
+                openSink = { Buffer() },
+            )
+        } catch (e: Throwable) {
+            thrown = e
+        }
+
+        thrown.shouldBeInstanceOf<CancellationException>()
+        storeA.getCalls shouldBe 1
+        storeB.getCalls shouldBe 0
+    }
+
     private fun createManager(
         scope: CoroutineScope,
         vararg stores: BlobStore,
@@ -455,8 +500,11 @@ class BlobManagerTest : BaseTest() {
         initial: StorageStatus,
         var failOnPut: Boolean = false,
         var throwOnPut: Throwable? = null,
+        var throwOnGet: Throwable? = null,
+        var getMetadata: BlobMetadata? = null,
     ) : BlobStore {
         var putCalls: Int = 0
+        var getCalls: Int = 0
 
         override val storageStatus: StorageStatusProvider = object : StorageStatusProvider {
             override val connectorId: ConnectorId = this@FakeBlobStore.connectorId
@@ -488,7 +536,11 @@ class BlobManagerTest : BaseTest() {
             sink: Sink,
             expectedPlaintextSize: Long,
             onProgress: BlobProgressCallback?,
-        ): BlobMetadata = throw UnsupportedOperationException()
+        ): BlobMetadata {
+            getCalls += 1
+            throwOnGet?.let { throw it }
+            return getMetadata ?: throw UnsupportedOperationException()
+        }
 
         override suspend fun getMetadata(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef): BlobMetadata? =
             throw UnsupportedOperationException()

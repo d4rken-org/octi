@@ -185,7 +185,10 @@ class BlobMaintenance @Inject constructor(
                         }
                     }
                     val actualChecksum = digest.digest().joinToString("") { "%02x".format(it) }
-                    if (file.checksum.isNotEmpty() && actualChecksum != file.checksum) {
+                    // SharedFile.checksum is required to be non-blank (init contract), so this is
+                    // an unconditional integrity gate against ciphertext tampering or download
+                    // corruption that the streaming AEAD didn't catch.
+                    if (actualChecksum != file.checksum) {
                         log(TAG, ERROR) { "retryMirrorUploads(): Skipping ${file.name}, checksum mismatch" }
                         continue
                     }

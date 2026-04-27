@@ -14,11 +14,14 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.files.FileShareModule
 import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
+import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobChecksumMismatchException
@@ -56,6 +59,8 @@ class FileShareService @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val fileShareHandler: FileShareHandler,
     private val fileShareSettings: FileShareSettings,
+    private val fileShareSync: FileShareSync,
+    private val syncManager: SyncManager,
     private val blobManager: BlobManager,
     private val blobMaintenance: BlobMaintenance,
     private val storageStatusManager: StorageStatusManager,
@@ -251,6 +256,36 @@ class FileShareService @Inject constructor(
                 connectorRefs = putResult.remoteRefs.mapKeys { (connectorId, _) -> connectorId.idString },
             )
             fileShareHandler.upsertFile(sharedFile)
+
+            // Force the just-finalized blob to land in a persisted module revision before we
+            // declare the share done. BaseModuleRepo's writeFLow eventually picks up the
+            // upsertFile change and syncs, but it throttles by 1 s and is fully decoupled —
+            // process death between finalize and that sync would orphan the local row against
+            // a server-side COMPLETE session that the server GCs after `completeIdleTtlSeconds`
+            // (10 min by default). Driving the sync here, awaiting it, then closing the cleanup
+            // window means: success implies the commit hit each receiving connector, which
+            // makes the just-uploaded blob immutable and survives any future app death.
+            //
+            // If a parallel sync already holds the lock, syncManager.sync sets `pendingSync`
+            // and returns early. Acceptable: that other sync was already going to write our
+            // state and will re-iterate to pick up `pendingSync`. The remaining race is short
+            // (the in-flight sync's network round-trip), much smaller than the prior 1 s+
+            // throttle window.
+            val selfData = ModuleData(
+                modifiedAt = Clock.System.now(),
+                deviceId = syncSettings.deviceId,
+                moduleId = FileShareModule.MODULE_ID,
+                data = fileShareHandler.currentOwn(),
+            )
+            fileShareSync.sync(selfData)
+            syncManager.sync(
+                SyncOptions(
+                    stats = false,
+                    readData = false,
+                    writeData = true,
+                    moduleFilter = setOf(FileShareModule.MODULE_ID),
+                ),
+            )
             pendingPostFinalizeCleanup = null
             // Invalidate the storage cache for connectors that received the blob — the server-side
             // numbers just changed. Done after commit (not inside BlobManager.put) so an aborted
@@ -334,9 +369,21 @@ class FileShareService @Inject constructor(
 
         val target = openCacheFileFor(sharedFile)
         if (target.isFile && target.length() == sharedFile.size) {
-            target.setLastModified(System.currentTimeMillis())
-            log(TAG, VERBOSE) { "openFile(): cache hit for ${sharedFile.blobKey}" }
-            return@withContext openResultFor(target, sharedFile)
+            // Size match alone isn't sufficient: a tampered or truncated-then-corrupted cache
+            // entry can preserve byte length while changing contents. Re-hash on every hit so
+            // an open-cache compromise can't yield a payload that mismatches the synced
+            // checksum. ~50 ms on a 10 MB file — acceptable overhead per open.
+            val cachedHash = hashFile(target)
+            if (cachedHash == sharedFile.checksum) {
+                target.setLastModified(System.currentTimeMillis())
+                log(TAG, VERBOSE) { "openFile(): cache hit for ${sharedFile.blobKey}" }
+                return@withContext openResultFor(target, sharedFile)
+            }
+            log(TAG, WARN) {
+                "openFile(): cache file for ${sharedFile.blobKey} failed checksum verification " +
+                    "(expected=${sharedFile.checksum.take(16)}, actual=${cachedHash.take(16)}); re-downloading"
+            }
+            target.delete()
         }
 
         val tempFile = blobCacheDirs.tempFile(openCacheDir)
@@ -382,8 +429,21 @@ class FileShareService @Inject constructor(
             .replace(Regex("[^A-Za-z0-9._-]"), "_")
             .take(96)
             .ifEmpty { "file" }
-        val tag = sharedFile.checksum.take(8).ifEmpty { sharedFile.blobKey.take(8) }
+        val tag = sharedFile.checksum.take(8)
         return File(openCacheDir, "${tag}_$sanitized")
+    }
+
+    /** Lowercase hex SHA-256 of the entire file contents. */
+    private fun hashFile(file: File): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        file.inputStream().use { input ->
+            val buffer = ByteArray(8192)
+            var read: Int
+            while (input.read(buffer).also { read = it } != -1) {
+                digest.update(buffer, 0, read)
+            }
+        }
+        return digest.digest().joinToString("") { "%02x".format(it) }
     }
 
     private suspend fun downloadAndDecryptToCache(
@@ -437,19 +497,10 @@ class FileShareService @Inject constructor(
                 },
             )
 
-            // Verify checksum against synced metadata
-            val digest = MessageDigest.getInstance("SHA-256")
-            target.inputStream().use { input ->
-                val buffer = ByteArray(8192)
-                var read: Int
-                while (input.read(buffer).also { read = it } != -1) {
-                    digest.update(buffer, 0, read)
-                }
-            }
-            val actualChecksum = digest.digest().joinToString("") { "%02x".format(it) }
-            if (sharedFile.checksum.isEmpty()) {
-                log(TAG, WARN) { "downloadAndDecryptToCache(): No checksum available for ${sharedFile.blobKey}, skipping integrity check" }
-            } else if (actualChecksum != sharedFile.checksum) {
+            // Verify checksum against synced metadata. SharedFile.checksum is required to be
+            // non-blank by the data class init, so a checksum is always available here.
+            val actualChecksum = hashFile(target)
+            if (actualChecksum != sharedFile.checksum) {
                 return DownloadResult.Failed(
                     BlobChecksumMismatchException(
                         blobKey = BlobKey(sharedFile.blobKey),

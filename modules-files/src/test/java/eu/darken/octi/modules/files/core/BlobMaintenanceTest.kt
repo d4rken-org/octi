@@ -53,6 +53,13 @@ class BlobMaintenanceTest : BaseTest() {
     private val connectorA = ConnectorId(ConnectorType.OCTISERVER, "server-a.example.com", "acc-1")
     private val connectorB = ConnectorId(ConnectorType.GDRIVE, "gdrive", "acc-2")
 
+    /**
+     * SHA-256 of the empty byte string. Used by mirror-retry tests whose mocked download writes
+     * zero bytes to the staged sink — the file's recorded checksum has to match the hash of what
+     * the mock produces, otherwise BlobMaintenance now (correctly) rejects the upload.
+     */
+    private val sha256OfEmpty = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
     @BeforeEach
     fun setup() {
         every { context.cacheDir } returns tempDir
@@ -114,7 +121,7 @@ class BlobMaintenanceTest : BaseTest() {
         fun `downloads from available, uploads to missing, updates both locations together`() = runTest2 {
             val file = makeFile(
                 blobKey = "blob-mirror",
-                checksum = "", // empty checksum skips integrity check
+                checksum = sha256OfEmpty,
                 availableOn = setOf(connectorA.idString),
                 connectorRefs = mapOf(connectorA.idString to RemoteBlobRef("srv-a-blob")),
             )
@@ -550,13 +557,12 @@ class BlobMaintenanceTest : BaseTest() {
         fun `does not run pendingDeletes or pruneExpired or trimBackoff`() = runTest2 {
             val targetFile = makeFile(
                 blobKey = "blob-target",
-                checksum = "", // empty checksum skips integrity check
+                checksum = sha256OfEmpty,
                 availableOn = setOf(connectorA.idString),
                 connectorRefs = mapOf(connectorA.idString to RemoteBlobRef("srv-a-blob")),
             )
             val unrelatedFile = makeFile(
                 blobKey = "blob-unrelated",
-                checksum = "",
                 availableOn = setOf(connectorA.idString),
                 connectorRefs = mapOf(connectorA.idString to RemoteBlobRef("srv-a-other")),
                 expiresAt = Clock.System.now() - 1.hours, // expired — runOnce would prune it

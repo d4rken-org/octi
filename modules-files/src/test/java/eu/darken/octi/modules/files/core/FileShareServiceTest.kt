@@ -11,6 +11,7 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
+import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
@@ -41,6 +42,8 @@ class FileShareServiceTest : BaseTest() {
     private val handler = mockk<FileShareHandler>()
     private val fileShareSettings = mockk<FileShareSettings>()
     private val pendingDeletes = mockk<DataStoreValue<Map<String, PendingDelete>>>()
+    private val fileShareSync = mockk<FileShareSync>(relaxed = true)
+    private val syncManager = mockk<SyncManager>(relaxed = true)
     private val blobManager = mockk<BlobManager>()
     private val blobMaintenance = mockk<BlobMaintenance>(relaxed = true)
     private val storageStatusManager = mockk<StorageStatusManager>(relaxed = true)
@@ -50,6 +53,8 @@ class FileShareServiceTest : BaseTest() {
         dispatcherProvider = dispatcherProvider,
         fileShareHandler = handler,
         fileShareSettings = fileShareSettings,
+        fileShareSync = fileShareSync,
+        syncManager = syncManager,
         blobManager = blobManager,
         blobMaintenance = blobMaintenance,
         storageStatusManager = storageStatusManager,

@@ -367,7 +367,13 @@ class FileShareListVM @Inject constructor(
         }
     }
 
-    fun onShareFile(uri: Uri) = launch {
+    /**
+     * Run on [appScope] so an in-flight share survives the user navigating away from the file
+     * list — multi-MB uploads routinely outlive a screen visit. UI feedback via [uiEvents] is
+     * best-effort: while the screen is alive the snackbar fires; afterwards the buffered events
+     * are simply not collected, which is acceptable.
+     */
+    fun onShareFile(uri: Uri) = launch(appScope) {
         when (val result = fileShareService.shareFile(uri)) {
             is FileShareService.ShareResult.Success ->
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_success))

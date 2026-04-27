@@ -23,5 +23,12 @@ data class FileShareInfo(
         @SerialName("expiresAt") val expiresAt: Instant,
         @SerialName("availableOn") val availableOn: Set<String> = emptySet(),
         @SerialName("connectorRefs") val connectorRefs: Map<String, RemoteBlobRef> = emptyMap(),
-    )
+    ) {
+        init {
+            // Pre-release contract: every shared file carries a non-blank SHA-256 plaintext
+            // digest so the receive path can verify integrity on download and on cache hit.
+            // No legacy data exists with empty checksum; fail-fast rather than silently skip.
+            require(checksum.isNotBlank()) { "SharedFile.checksum must not be blank (blobKey=$blobKey)" }
+        }
+    }
 }

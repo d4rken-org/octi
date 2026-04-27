@@ -322,6 +322,8 @@ class BlobManager @Inject constructor(
                 }
                 log(TAG, INFO) { "get(${blobKey.id}): Success from ${store.connectorId}" }
                 return@withContext meta
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 log(TAG, WARN) { "get(${blobKey.id}): Failed from ${store.connectorId}: ${e.message}" }
                 lastError = e
@@ -381,6 +383,8 @@ class BlobManager @Inject constructor(
                     store.delete(deviceId, moduleId, remoteRef)
                     successful.add(store.connectorId)
                     log(TAG, INFO) { "delete(${blobKey.id}): Success on ${store.connectorId}" }
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     log(TAG, WARN) { "delete(${blobKey.id}): Failed on ${store.connectorId}: ${e.message}" }
                 }
@@ -429,6 +433,8 @@ class BlobManager @Inject constructor(
         return stores.associate { store ->
             try {
                 store.connectorId to store.list(deviceId, moduleId)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 log(TAG, WARN) { "listAll(): Failed on ${store.connectorId}: ${e.message}" }
                 store.connectorId to emptySet()
