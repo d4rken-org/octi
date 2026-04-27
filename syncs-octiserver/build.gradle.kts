@@ -56,4 +56,5 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     testImplementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
 }

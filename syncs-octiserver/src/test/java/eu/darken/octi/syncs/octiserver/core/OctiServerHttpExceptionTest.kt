@@ -13,7 +13,11 @@ import retrofit2.Response
 
 class OctiServerHttpExceptionTest {
 
-    private fun createException(code: Int, octiReason: String? = null): OctiServerHttpException {
+    private fun createException(
+        code: Int,
+        octiReason: String? = null,
+        retryAfter: String? = null,
+    ): OctiServerHttpException {
         val rawBuilder = okhttp3.Response.Builder()
             .request(Request.Builder().url("http://localhost/").build())
             .protocol(Protocol.HTTP_1_1)
@@ -21,6 +25,7 @@ class OctiServerHttpExceptionTest {
             .message("err")
             .body("error".toResponseBody("text/plain".toMediaType()))
         if (octiReason != null) rawBuilder.header(OctiServerHttpException.HEADER_OCTI_REASON, octiReason)
+        if (retryAfter != null) rawBuilder.header(OctiServerHttpException.HEADER_RETRY_AFTER, retryAfter)
         val raw = rawBuilder.build()
         val response = Response.error<Any>("error".toResponseBody("text/plain".toMediaType()), raw)
         return OctiServerHttpException(HttpException(response))
@@ -61,5 +66,35 @@ class OctiServerHttpExceptionTest {
     @Test
     fun `octiReason is null when header is absent`() {
         createException(507).octiReason shouldBe null
+    }
+
+    @Test
+    fun `retryAfterSeconds parses delta-seconds form`() {
+        createException(429, retryAfter = "30").retryAfterSeconds shouldBe 30L
+    }
+
+    @Test
+    fun `retryAfterSeconds is null when header is absent`() {
+        createException(429).retryAfterSeconds shouldBe null
+    }
+
+    @Test
+    fun `retryAfterSeconds is null for HTTP-date form`() {
+        createException(429, retryAfter = "Wed, 21 Oct 2015 07:28:00 GMT").retryAfterSeconds shouldBe null
+    }
+
+    @Test
+    fun `retryAfterSeconds is null for malformed value`() {
+        createException(429, retryAfter = "notanumber").retryAfterSeconds shouldBe null
+    }
+
+    @Test
+    fun `retryAfterSeconds is null for negative value`() {
+        createException(429, retryAfter = "-5").retryAfterSeconds shouldBe null
+    }
+
+    @Test
+    fun `retryAfterSeconds parses zero as zero`() {
+        createException(429, retryAfter = "0").retryAfterSeconds shouldBe 0L
     }
 }

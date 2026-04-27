@@ -163,4 +163,69 @@ class OctiServerSerializationTest : BaseTest() {
         val decoded = json.decodeFromString<OctiServer.Address>(futureJson)
         decoded.domain shouldBe "example.com"
     }
+
+    @Test
+    fun `AccountStorageResponse v1 wire format - new fields default to null`() {
+        val v1Json = """
+            {
+                "storageApiVersion": 1,
+                "accountQuotaBytes": 52428800,
+                "usedBytes": 1024,
+                "reservedBytes": 0,
+                "availableBytes": 52427776,
+                "maxBlobBytes": 10485760,
+                "maxModuleDocumentBytes": 262144,
+                "maxActiveUploadSessionsPerDevice": 8
+            }
+        """
+        val decoded = json.decodeFromString<OctiServerApi.AccountStorageResponse>(v1Json)
+        decoded.storageApiVersion shouldBe 1
+        decoded.accountQuotaBytes shouldBe 52428800L
+        decoded.usedBytes shouldBe 1024L
+        decoded.idleSessionTtlSeconds shouldBe null
+        decoded.absoluteSessionTtlSeconds shouldBe null
+        decoded.maxDevicesPerAccount shouldBe null
+        decoded.maxModulesPerDevice shouldBe null
+        decoded.maxBlobRefsPerModule shouldBe null
+        decoded.maxActiveUploadSessionsPerAccount shouldBe null
+        decoded.completeIdleTtlSeconds shouldBe null
+        decoded.accountRateLimit shouldBe null
+        decoded.accountRateLimitWindowSeconds shouldBe null
+    }
+
+    @Test
+    fun `AccountStorageResponse v2 wire format - all fields decode`() {
+        val v2Json = """
+            {
+                "storageApiVersion": 2,
+                "accountQuotaBytes": 52428800,
+                "usedBytes": 1024,
+                "reservedBytes": 512,
+                "availableBytes": 52427264,
+                "maxBlobBytes": 10485760,
+                "maxModuleDocumentBytes": 262144,
+                "maxActiveUploadSessionsPerDevice": 8,
+                "idleSessionTtlSeconds": 3600,
+                "absoluteSessionTtlSeconds": 86400,
+                "maxDevicesPerAccount": 64,
+                "maxModulesPerDevice": 256,
+                "maxBlobRefsPerModule": 64,
+                "maxActiveUploadSessionsPerAccount": 32,
+                "completeIdleTtlSeconds": 600,
+                "accountRateLimit": 256,
+                "accountRateLimitWindowSeconds": 60
+            }
+        """
+        val decoded = json.decodeFromString<OctiServerApi.AccountStorageResponse>(v2Json)
+        decoded.storageApiVersion shouldBe 2
+        decoded.idleSessionTtlSeconds shouldBe 3600L
+        decoded.absoluteSessionTtlSeconds shouldBe 86400L
+        decoded.maxDevicesPerAccount shouldBe 64
+        decoded.maxModulesPerDevice shouldBe 256
+        decoded.maxBlobRefsPerModule shouldBe 64
+        decoded.maxActiveUploadSessionsPerAccount shouldBe 32
+        decoded.completeIdleTtlSeconds shouldBe 600L
+        decoded.accountRateLimit shouldBe 256
+        decoded.accountRateLimitWindowSeconds shouldBe 60L
+    }
 }

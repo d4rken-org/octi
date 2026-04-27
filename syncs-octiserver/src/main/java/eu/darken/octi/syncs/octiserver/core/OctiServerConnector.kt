@@ -12,6 +12,7 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
+import eu.darken.octi.common.debug.Bugs
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -512,6 +513,16 @@ class OctiServerConnector @AssistedInject constructor(
             return
         }
 
+        // We only ever push our own device's data — a foreign deviceId would target another
+        // device on the server, which we deliberately don't support. Bail before any HTTP
+        // call so a 404 "Target device not found" can't be misclassified as caller-revocation
+        // by isDeviceUnknown (which would auto-pause the connector).
+        if (data.deviceId != syncSettings.deviceId) {
+            log(TAG, ERROR) { "writeServer(): refusing foreign deviceId=${data.deviceId.logLabel} (ours=${syncSettings.deviceId.logLabel})" }
+            Bugs.report(IllegalStateException("writeServer with foreign deviceId is unsupported"))
+            return
+        }
+
         data.modules.forEach { module ->
             val encryptedPayload = crypti.encrypt(
                 module.payload.toGzip(),
@@ -527,7 +538,11 @@ class OctiServerConnector @AssistedInject constructor(
                     OctiServerCapabilities.BlobSupport.LEGACY -> {
                         log(TAG, WARN) { "writeServer(): Server is legacy, stripping blobs from ${module.moduleId}" }
                         commitWithReasonHandling {
-                            endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
+                            endpoint.writeModule(
+                                deviceId = data.deviceId,
+                                moduleId = module.moduleId,
+                                payload = encryptedPayload,
+                            )
                         }
                     }
                     OctiServerCapabilities.BlobSupport.SUPPORTED,
@@ -562,7 +577,11 @@ class OctiServerConnector @AssistedInject constructor(
                                     )
                                     etagCache.remove(data.deviceId to module.moduleId)
                                     commitWithReasonHandling {
-                                        endpoint.writeModule(moduleId = module.moduleId, payload = encryptedPayload)
+                                        endpoint.writeModule(
+                                            deviceId = data.deviceId,
+                                            moduleId = module.moduleId,
+                                            payload = encryptedPayload,
+                                        )
                                     }
                                 }
                                 412 -> {
@@ -598,6 +617,7 @@ class OctiServerConnector @AssistedInject constructor(
                 // Legacy module → POST (unchanged)
                 commitWithReasonHandling {
                     endpoint.writeModule(
+                        deviceId = data.deviceId,
                         moduleId = module.moduleId,
                         payload = encryptedPayload,
                     )
@@ -624,7 +644,21 @@ class OctiServerConnector @AssistedInject constructor(
 
         return try {
             serverLock.withLock {
-                withContext(NonCancellable) { block() }
+                try {
+                    withContext(NonCancellable) { block() }
+                } catch (e: OctiServerHttpException) {
+                    // Per-account rate limit: hold the lock across the Retry-After delay so
+                    // the next queued caller for this connector waits, not just the current
+                    // one. delay() is outside NonCancellable so a connector pause/cancel
+                    // terminates the wait promptly.
+                    if (e.httpCode == 429) {
+                        e.retryAfterSeconds?.let { secs ->
+                            log(TAG, WARN) { "runServerAction($tag): 429 rate-limited, holding lock for ${secs}s" }
+                            delay(secs.seconds)
+                        }
+                    }
+                    throw e
+                }
             }.also {
                 _state.updateBlocking {
                     copy(

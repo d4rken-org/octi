@@ -18,6 +18,16 @@ class OctiServerHttpException(
      *  Captured eagerly because the retrofit response body / headers are one-shot. */
     val octiReason: String? = cause.response()?.headers()?.get(HEADER_OCTI_REASON)
 
+    /** `Retry-After` delta-seconds when the server emits a 429. Captured eagerly because
+     *  the Retrofit response body/headers are one-shot. The Octi server only emits the
+     *  delta-seconds form (per `HttpExtensions.kt`); HTTP-date form yields null. */
+    val retryAfterSeconds: Long? = cause.response()
+        ?.headers()
+        ?.get(HEADER_RETRY_AFTER)
+        ?.trim()
+        ?.toLongOrNull()
+        ?.takeIf { it >= 0 }
+
     private var errorMessage: String = cause.response()?.errorBody()?.string() ?: cause.toString()
 
     override fun getLocalizedError(): LocalizedError = LocalizedError(
@@ -31,6 +41,7 @@ class OctiServerHttpException(
 
     companion object {
         const val HEADER_OCTI_REASON = "X-Octi-Reason"
+        const val HEADER_RETRY_AFTER = "Retry-After"
         const val REASON_SERVER_DISK_LOW = "server_disk_low"
         const val REASON_ACCOUNT_QUOTA_EXCEEDED = "account_quota_exceeded"
     }

@@ -211,13 +211,17 @@ class OctiServerEndpoint @AssistedInject constructor(
         )
     }
 
-    suspend fun writeModule(moduleId: ModuleId, payload: ByteString) = withContext(dispatcherProvider.IO) {
-        log(TAG) { "writeModule(moduleId=$moduleId, payload=$payload)" }
+    suspend fun writeModule(
+        deviceId: DeviceId,
+        moduleId: ModuleId,
+        payload: ByteString,
+    ) = withContext(dispatcherProvider.IO) {
+        log(TAG) { "writeModule(device=${deviceId.logLabel}, moduleId=$moduleId, payload=$payload)" }
         try {
             api.writeModule(
-                deviceId = ourDeviceIdString,
+                callerDeviceId = ourDeviceIdString,
                 moduleId = moduleId.id,
-                targetDeviceId = ourDeviceIdString,
+                targetDeviceId = deviceId.id,
                 payload = payload.toRequestBody(),
             )
         } catch (e: HttpException) {
