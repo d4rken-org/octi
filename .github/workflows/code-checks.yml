@@ -79,3 +79,45 @@ jobs:
           persist-credentials: false
       - name: Validate metadata lengths
         run: bash fastlane/check_metadata_length.sh
+
+  regression-cross-version-client:
+    name: Cross-version regression (new client × v0.8.1 server)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+    # Pin by digest so the regression test can never silently shift if 0.8.1 is republished.
+    # This is the multi-arch index digest of ghcr.io/d4rken-org/octi-server:0.8.1 captured
+    # while wiring up the test; refresh only when intentionally targeting a different image.
+    services:
+      legacy-server:
+        image: ghcr.io/d4rken-org/octi-server@sha256:3f91787abe11aeeeff70a567c5d7680fefe1b47e0d6f27782106cde7604d6915
+        ports:
+          - 18080:8080
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          persist-credentials: false
+      - name: Setup project and build environment
+        uses: ./.github/actions/common-setup
+      - name: Wait for legacy server
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:18080/v1/status > /dev/null; then
+              echo "legacy server up after ${attempt}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "legacy server did not respond within 30s" >&2
+          exit 1
+      - name: Run cross-version test against v0.8.1 server
+        env:
+          CROSS_VERSION_TEST_SERVER: http://127.0.0.1:18080
+        run: ./gradlew :syncs-octiserver:testDebugUnitTest --tests "eu.darken.octi.syncs.octiserver.regression.CrossVersionLegacyServerTest"
+      - name: Dump legacy server logs on failure
+        if: failure()
+        run: docker logs ${{ job.services.legacy-server.id }} || true
