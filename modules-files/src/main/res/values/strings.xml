@@ -27,6 +27,17 @@
     <string name="module_files_quota_label_gdrive">Google Drive</string>
     <string name="module_files_quota_label_gdrive_with_account">Google Drive (%1$s)</string>
     <string name="module_files_quota_label_octiserver_with_account">%1$s (%2$s)</string>
+    <string name="module_files_quota_action">Storage details</string>
+    <string name="module_files_quota_sheet_title">Storage</string>
+    <string name="module_files_quota_type_octiserver">Octi Server</string>
+    <string name="module_files_quota_item_short">%1$s / %2$s used</string>
+    <string name="module_files_quota_loading">Refreshing storage info…</string>
+    <string name="module_files_quota_unavailable_label">Storage info unavailable</string>
+    <string name="module_files_quota_low_banner_title">Storage running low</string>
+    <plurals name="module_files_quota_low_banner_message">
+        <item quantity="one">A sync connector has less than 10%% free space</item>
+        <item quantity="other">%1$d sync connectors have less than 10%% free space</item>
+    </plurals>
     <string name="module_files_time_remaining">%1$s remaining</string>
     <string name="module_files_uploading">Uploading\u2026</string>
     <string name="module_files_notification_channel_label">Incoming Shared Files</string>

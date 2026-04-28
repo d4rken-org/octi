@@ -56,4 +56,13 @@ sealed interface CommonIssue : ConnectorIssue {
         override val label: CaString = caString { it.getString(R.string.sync_issues_type_account_quota_full) }
         override val description: CaString = caString { it.getString(R.string.sync_account_quota_full_description) }
     }
+
+    data class LowStorage(
+        override val connectorId: ConnectorId,
+        override val deviceId: DeviceId,
+    ) : CommonIssue {
+        override val severity: IssueSeverity = IssueSeverity.WARNING
+        override val label: CaString = caString { it.getString(R.string.sync_issues_type_low_storage) }
+        override val description: CaString = caString { it.getString(R.string.sync_low_storage_description) }
+    }
 }

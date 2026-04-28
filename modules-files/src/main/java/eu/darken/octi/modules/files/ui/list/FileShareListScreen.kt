@@ -30,11 +30,11 @@ import androidx.compose.material.icons.automirrored.twotone.Sort
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.ArrowDownward
 import androidx.compose.material.icons.twotone.ArrowUpward
-import androidx.compose.material.icons.twotone.BugReport
 import androidx.compose.material.icons.twotone.Check
 import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Info
+import androidx.compose.material.icons.twotone.PieChart
 import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.material.icons.twotone.SaveAlt
 import androidx.compose.material.icons.twotone.Sync
@@ -68,7 +68,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
@@ -89,6 +88,7 @@ import eu.darken.octi.sync.core.blob.BlobProgress
 import eu.darken.octi.sync.core.blob.RetryStatus
 import eu.darken.octi.sync.core.blob.StorageSnapshot
 import eu.darken.octi.sync.core.blob.StorageStatus
+import eu.darken.octi.sync.core.blob.isLowStorage
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withTimeoutOrNull
@@ -254,19 +254,9 @@ fun FileShareListScreenHost(
             onSheetOpen = { item -> vm.onOpenFile(item) },
             onSheetSave = { item -> launchManualSave(item) },
             onSheetDelete = { item -> vm.onDeleteFile(item) },
-            onDebugShareTestUri = { variant ->
-                val authority = "${BuildConfigWrap.APPLICATION_ID}.debug.testfixture"
-                val path = when (variant) {
-                    DebugTestUriVariant.UNSIZED -> "unsized"
-                    DebugTestUriVariant.LYING_SIZE -> "lying-size"
-                }
-                vm.onShareFile(Uri.parse("content://$authority/$path"))
-            },
         )
     }
 }
-
-enum class DebugTestUriVariant { UNSIZED, LYING_SIZE }
 
 private fun buildSaveAsIntent(item: FileShareListVM.FileItem): Intent =
     Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
@@ -293,9 +283,9 @@ fun FileShareListScreen(
     onSheetOpen: (FileShareListVM.FileItem) -> Unit = {},
     onSheetSave: (FileShareListVM.FileItem) -> Unit = {},
     onSheetDelete: (FileShareListVM.FileItem) -> Unit = {},
-    onDebugShareTestUri: (DebugTestUriVariant) -> Unit = {},
 ) {
     val showUsageHint = !state.isUsageHintDismissed
+    var showQuotaSheet by rememberSaveable { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -307,10 +297,10 @@ fun FileShareListScreen(
                 },
                 actions = {
                     SyncAction(state = state, onClick = onSyncClick)
-                    SortMenu(state = state, onSortChange = onSortChange)
-                    if (BuildConfigWrap.DEBUG) {
-                        DebugTestUriMenu(onShareTestUri = onDebugShareTestUri)
+                    if (state.quotaItems.isNotEmpty()) {
+                        QuotaAction(onClick = { showQuotaSheet = true })
                     }
+                    SortMenu(state = state, onSortChange = onSortChange)
                 },
             )
         },
@@ -334,10 +324,18 @@ fun FileShareListScreen(
                     onToggleFilter = onToggleFilter,
                 )
             }
+            val lowQuotaItems = state.quotaItems.filter { it.lastKnown?.isLowStorage() == true }
+            val collidingOctiSubtypes = collidingOctiSubtypesFor(state.quotaItems)
             if (state.files.isEmpty() && state.activeUpload == null) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     if (showUsageHint) UsageHintCard(onDismiss = onDismissHint)
-                    if (state.quotaItems.isNotEmpty()) QuotaSummary(state = state)
+                    if (lowQuotaItems.isNotEmpty()) {
+                        QuotaWarningBanner(
+                            lowItems = lowQuotaItems,
+                            collidingOctiSubtypes = collidingOctiSubtypes,
+                            onOpenDetails = { showQuotaSheet = true },
+                        )
+                    }
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -370,7 +368,15 @@ fun FileShareListScreen(
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     if (showUsageHint) item { UsageHintCard(onDismiss = onDismissHint) }
-                    if (state.quotaItems.isNotEmpty()) item { QuotaSummary(state = state) }
+                    if (lowQuotaItems.isNotEmpty()) {
+                        item {
+                            QuotaWarningBanner(
+                                lowItems = lowQuotaItems,
+                                collidingOctiSubtypes = collidingOctiSubtypes,
+                                onOpenDetails = { showQuotaSheet = true },
+                            )
+                        }
+                    }
                     state.activeUpload?.let { upload ->
                         item {
                             UploadProgressRow(
@@ -399,6 +405,13 @@ fun FileShareListScreen(
                 onOpen = { onSheetOpen(target) },
                 onSave = { onSheetSave(target) },
                 onDelete = { onSheetDelete(target) },
+            )
+        }
+
+        if (showQuotaSheet && state.quotaItems.isNotEmpty()) {
+            QuotaDetailsSheet(
+                items = state.quotaItems,
+                onDismiss = { showQuotaSheet = false },
             )
         }
     }
@@ -473,6 +486,16 @@ private fun SyncAction(
 }
 
 @Composable
+private fun QuotaAction(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = Icons.TwoTone.PieChart,
+            contentDescription = stringResource(R.string.module_files_quota_action),
+        )
+    }
+}
+
+@Composable
 private fun SortMenu(
     state: FileShareListVM.State,
     onSortChange: (FileShareListVM.SortKey) -> Unit,
@@ -508,34 +531,6 @@ private fun SortMenu(
                     } else null,
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun DebugTestUriMenu(
-    onShareTestUri: (DebugTestUriVariant) -> Unit,
-) {
-    var open by remember { mutableStateOf(false) }
-    Box {
-        IconButton(onClick = { open = true }) {
-            Icon(Icons.TwoTone.BugReport, contentDescription = "Debug test URIs")
-        }
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            DropdownMenuItem(
-                text = { Text("Share Unsized URI (Tier B′)") },
-                onClick = {
-                    open = false
-                    onShareTestUri(DebugTestUriVariant.UNSIZED)
-                },
-            )
-            DropdownMenuItem(
-                text = { Text("Share Lying-Size URI (Tier B → B′)") },
-                onClick = {
-                    open = false
-                    onShareTestUri(DebugTestUriVariant.LYING_SIZE)
-                },
-            )
         }
     }
 }
@@ -623,120 +618,6 @@ private fun UploadProgressRow(
         )
     }
 }
-
-@Composable
-private fun QuotaSummary(state: FileShareListVM.State) {
-    val context = LocalContext.current
-    // OctiServer rows disambiguate by accountLabel only when 2+ accounts share the same domain.
-    // Single-account users get the clean domain row.
-    val collidingOctiSubtypes = remember(state.quotaItems) {
-        state.quotaItems
-            .filter { it.connectorId.type == ConnectorType.OCTISERVER }
-            .groupingBy { it.connectorId.subtype }
-            .eachCount()
-            .filterValues { it > 1 }
-            .keys
-    }
-    OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-    ) {
-        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)) {
-            Text(
-                text = stringResource(R.string.module_files_quota_header),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            state.quotaItems.forEach { status ->
-                QuotaRow(status = status, collidingOctiSubtypes = collidingOctiSubtypes, context = context)
-            }
-        }
-    }
-}
-
-@Composable
-private fun QuotaRow(
-    status: StorageStatus,
-    collidingOctiSubtypes: Set<String>,
-    context: android.content.Context,
-) {
-    val label = quotaConnectorLabel(status.connectorId, status.lastKnown?.accountLabel, collidingOctiSubtypes)
-    val snapshot: StorageSnapshot? = status.lastKnown
-    val almostFull = snapshot != null && snapshot.totalBytes > 0 &&
-        snapshot.usedBytes.toDouble() / snapshot.totalBytes > QUOTA_WARN_THRESHOLD
-    val isUnavailable = status is StorageStatus.Unavailable
-    val color = when {
-        almostFull -> MaterialTheme.colorScheme.error
-        isUnavailable -> MaterialTheme.colorScheme.onSurfaceVariant
-        else -> MaterialTheme.colorScheme.onSurface
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (status is StorageStatus.Loading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(12.dp),
-                strokeWidth = 1.5.dp,
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-        }
-        if (isUnavailable) {
-            Icon(
-                imageVector = Icons.TwoTone.Info,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(14.dp),
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-        }
-        val text = if (snapshot != null) {
-            stringResource(
-                R.string.module_files_quota_item,
-                label,
-                Formatter.formatFileSize(context, snapshot.usedBytes),
-                Formatter.formatFileSize(context, snapshot.totalBytes),
-            )
-        } else {
-            // Loading-from-cold or Unavailable with no last-known: show just the label so the
-            // card row still anchors visually until data arrives.
-            label
-        }
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = color,
-        )
-    }
-}
-
-@Composable
-private fun quotaConnectorLabel(
-    connectorId: ConnectorId,
-    accountLabel: String?,
-    collidingOctiSubtypes: Set<String>,
-): String = when (connectorId.type) {
-    ConnectorType.GDRIVE -> {
-        if (accountLabel.isNullOrBlank()) {
-            stringResource(R.string.module_files_quota_label_gdrive)
-        } else {
-            stringResource(R.string.module_files_quota_label_gdrive_with_account, accountLabel)
-        }
-    }
-    ConnectorType.OCTISERVER -> {
-        val subtype = connectorId.subtype
-        if (subtype in collidingOctiSubtypes && !accountLabel.isNullOrBlank()) {
-            stringResource(R.string.module_files_quota_label_octiserver_with_account, subtype, accountLabel)
-        } else {
-            subtype
-        }
-    }
-}
-
-private const val QUOTA_WARN_THRESHOLD = 0.9
 
 @Composable
 private fun FileItemRow(

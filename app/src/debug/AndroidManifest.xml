@@ -5,12 +5,6 @@
         <activity
             android:name="eu.darken.octi.HiltTestActivity"
             android:exported="false" />
-
-        <provider
-            android:name="eu.darken.octi.debug.TestUriProvider"
-            android:authorities="${applicationId}.debug.testfixture"
-            android:exported="false"
-            android:grantUriPermissions="true" />
     </application>
 
 </manifest>
