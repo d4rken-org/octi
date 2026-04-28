@@ -6,6 +6,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.blob.BlobConnectorUnsupportedException
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.StorageStatus
 import eu.darken.octi.sync.core.blob.StorageStatusProvider
@@ -19,6 +20,7 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotBeEmpty
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import okhttp3.RequestBody
@@ -41,6 +43,12 @@ class OctiServerBlobStoreTest : BaseTest() {
         encryptionKeyset = keyset,
     )
 
+    private fun fakeHttpException(code: Int): OctiServerHttpException = mockk(relaxed = true) {
+        every { httpCode } returns code
+        every { octiReason } returns null
+        every { errorBody } returns ""
+    }
+
     private fun fakeStatus(connectorId: ConnectorId): StorageStatusProvider = object : StorageStatusProvider {
         override val connectorId: ConnectorId = connectorId
         private val _status = MutableStateFlow<StorageStatus>(StorageStatus.Loading(connectorId, lastKnown = null))
@@ -49,12 +57,15 @@ class OctiServerBlobStoreTest : BaseTest() {
         override fun invalidate() = Unit
     }
 
-    private fun validStore(): OctiServerBlobStore {
+    private fun validStore(
+        capabilityCallback: (ConnectorId, OctiServerCapabilities) -> Unit = { _, _ -> },
+    ): OctiServerBlobStore {
         val cId = ConnectorId(ConnectorType.OCTISERVER, "example.com", "acc-1")
         return OctiServerBlobStore(
             credentials = credentialsWith(PayloadEncryption().exportKeyset()),
             endpoint = endpoint,
             storageStatus = fakeStatus(cId),
+            capabilityCallback = capabilityCallback,
         )
     }
 
@@ -73,6 +84,7 @@ class OctiServerBlobStoreTest : BaseTest() {
                 credentialsWith(legacyKeyset),
                 endpoint,
                 fakeStatus(ConnectorId(ConnectorType.OCTISERVER, "example.com", "acc-1")),
+                capabilityCallback = { _, _ -> },
             )
         }
     }
@@ -89,6 +101,7 @@ class OctiServerBlobStoreTest : BaseTest() {
                 credentialsWith(unknownKeyset),
                 endpoint,
                 fakeStatus(ConnectorId(ConnectorType.OCTISERVER, "example.com", "acc-1")),
+                capabilityCallback = { _, _ -> },
             )
         }
     }
@@ -179,5 +192,62 @@ class OctiServerBlobStoreTest : BaseTest() {
         coVerify(exactly = 1) {
             endpoint.finalizeBlobSession(deviceId, moduleId, sessionResp.sessionId, withArg { it.shouldNotBeEmpty() })
         }
+    }
+
+    @Test
+    fun `put on legacy server demotes capability and throws BlobConnectorUnsupportedException`() = runTest2 {
+        // Self-hosted user paired with a v0.8.1 (or older) server: createBlobSession returns 404.
+        // The store must demote the cached capability so the connector retires from the hub on
+        // the next emission, and surface a typed exception so BlobManager can record it as a
+        // terminal preflight failure rather than letting the maintenance loop hammer the same
+        // 404 every backoff window.
+        val deviceId = DeviceId("dev-1")
+        val moduleId = ModuleId("module.test")
+        val blobKey = BlobKey("blob-legacy")
+
+        coEvery { endpoint.createBlobSession(deviceId, moduleId, any(), any()) } throws fakeHttpException(404)
+
+        val demotions = mutableListOf<Pair<ConnectorId, OctiServerCapabilities>>()
+        val store = validStore(capabilityCallback = { cId, caps -> demotions += cId to caps })
+
+        val thrown = shouldThrow<BlobConnectorUnsupportedException> {
+            store.put(
+                deviceId = deviceId,
+                moduleId = moduleId,
+                key = blobKey,
+                source = Buffer(),
+                metadata = BlobMetadata(size = 0L, createdAt = Clock.System.now(), checksum = ""),
+                onProgress = null,
+            )
+        }
+
+        thrown.connectorId shouldBe store.connectorId
+        demotions.size shouldBe 1
+        demotions.single().first shouldBe store.connectorId
+        demotions.single().second.blobSupport shouldBe OctiServerCapabilities.BlobSupport.LEGACY
+    }
+
+    @Test
+    fun `put on legacy server returning 405 also demotes`() = runTest2 {
+        val deviceId = DeviceId("dev-1")
+        val moduleId = ModuleId("module.test")
+        val blobKey = BlobKey("blob-legacy-405")
+
+        coEvery { endpoint.createBlobSession(deviceId, moduleId, any(), any()) } throws fakeHttpException(405)
+
+        val demotions = mutableListOf<Pair<ConnectorId, OctiServerCapabilities>>()
+        val store = validStore(capabilityCallback = { cId, caps -> demotions += cId to caps })
+
+        shouldThrow<BlobConnectorUnsupportedException> {
+            store.put(
+                deviceId = deviceId,
+                moduleId = moduleId,
+                key = blobKey,
+                source = Buffer(),
+                metadata = BlobMetadata(size = 0L, createdAt = Clock.System.now(), checksum = ""),
+                onProgress = null,
+            )
+        }
+        demotions.single().second.blobSupport shouldBe OctiServerCapabilities.BlobSupport.LEGACY
     }
 }

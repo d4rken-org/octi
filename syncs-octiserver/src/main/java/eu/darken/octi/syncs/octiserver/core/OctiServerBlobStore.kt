@@ -14,6 +14,7 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
+import eu.darken.octi.sync.core.blob.BlobConnectorUnsupportedException
 import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.BlobNotFoundException
@@ -65,6 +66,7 @@ class OctiServerBlobStore @AssistedInject constructor(
     @Assisted private val credentials: OctiServer.Credentials,
     @Assisted private val endpoint: OctiServerEndpoint,
     @Assisted override val storageStatus: StorageStatusProvider,
+    @Assisted private val capabilityCallback: (ConnectorId, OctiServerCapabilities) -> Unit,
 ) : BlobStore {
 
     init {
@@ -163,6 +165,20 @@ class OctiServerBlobStore @AssistedInject constructor(
                 )
             }
             when (e.httpCode) {
+                404, 405 -> {
+                    // Server doesn't expose the blob-session endpoints — old/legacy server. The
+                    // capability probe normally hides this connector from BlobManager before any
+                    // upload starts; this branch only fires in the brief UNKNOWN window before
+                    // the first probe lands. Demote the cached capability so the next refresh
+                    // retires the store, and surface a typed exception so the orchestrator can
+                    // skip this connector cleanly instead of treating it as a transport failure.
+                    log(TAG, WARN) { "put(${key.id}): blob endpoints not available (${e.httpCode}); demoting connector to LEGACY" }
+                    capabilityCallback(
+                        connectorId,
+                        OctiServerCapabilities(blobSupport = OctiServerCapabilities.BlobSupport.LEGACY),
+                    )
+                    throw BlobConnectorUnsupportedException(connectorId = connectorId, cause = e)
+                }
                 413 -> {
                     // Refresh the snapshot so the exception carries an up-to-date max-file cap;
                     // a refresh failure must not mask the original 413.
@@ -439,6 +455,7 @@ class OctiServerBlobStore @AssistedInject constructor(
             credentials: OctiServer.Credentials,
             endpoint: OctiServerEndpoint,
             storageStatus: StorageStatusProvider,
+            capabilityCallback: (ConnectorId, OctiServerCapabilities) -> Unit,
         ): OctiServerBlobStore
     }
 

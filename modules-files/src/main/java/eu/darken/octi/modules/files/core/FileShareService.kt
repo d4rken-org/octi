@@ -26,6 +26,7 @@ import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobChecksumMismatchException
+import eu.darken.octi.sync.core.blob.BlobConnectorUnsupportedException
 import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobMetadata
@@ -517,6 +518,11 @@ class FileShareService @Inject constructor(
             return ShareResult.NoEligibleConnectors
         }
         val errs = putResult.perConnectorErrors.values
+        if (errs.isNotEmpty() && errs.all { it is BlobConnectorUnsupportedException }) {
+            // Every reachable connector pointed at a legacy server. Surface as
+            // "no eligible connectors" — same UX as never having one configured.
+            return ShareResult.NoEligibleConnectors
+        }
         if (errs.isNotEmpty() && errs.all { it is BlobServerStorageLowException }) {
             return ShareResult.ServerStorageLow
         }

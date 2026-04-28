@@ -106,7 +106,12 @@ class OctiServerBlobStoreHub @Inject constructor(
                         accountLabel = octiConnector.credentials.accountId.id.take(8),
                         endpoint = endpoint,
                     )
-                    blobStoreFactory.create(octiConnector.credentials, endpoint, provider).also { store ->
+                    blobStoreFactory.create(
+                        credentials = octiConnector.credentials,
+                        endpoint = endpoint,
+                        storageStatus = provider,
+                        capabilityCallback = { cid, caps -> memoizeCapabilities(cid, caps) },
+                    ).also { store ->
                         storeCache[id] = octiConnector to store
                     }
                 } catch (e: IllegalArgumentException) {

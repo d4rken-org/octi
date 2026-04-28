@@ -75,6 +75,7 @@ class BlobManager @Inject constructor(
         data class FileTooLarge(val maxBytes: Long) : PreflightReason
         data class QuotaExceeded(val usedBytes: Long, val totalBytes: Long) : PreflightReason
         data object ServerStorageLow : PreflightReason
+        data object ConnectorUnsupported : PreflightReason
     }
 
     /**
@@ -253,6 +254,18 @@ class BlobManager @Inject constructor(
                     recordPreflightFailure(
                         store.connectorId, blobKey,
                         PreflightReason.FileTooLarge(e.maxFileBytes ?: 0L),
+                    )
+                } catch (e: BlobConnectorUnsupportedException) {
+                    // Connector points at a server that doesn't speak the blob endpoints (legacy
+                    // server, or self-hosted on an old version). The store demotes its capability
+                    // synchronously; the next blobStores emission drops the connector entirely.
+                    // Mark this blob's attempt as terminal so the maintenance loop doesn't keep
+                    // hammering the same 404 until the capability TTL expires.
+                    log(TAG, INFO) { "put(${blobKey.id}): ${store.connectorId} does not support blob endpoints" }
+                    errors[store.connectorId] = e
+                    recordPreflightFailure(
+                        store.connectorId, blobKey,
+                        PreflightReason.ConnectorUnsupported,
                     )
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "put(${blobKey.id}): Failed on ${store.connectorId}: ${e.asLog()}" }

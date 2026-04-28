@@ -81,7 +81,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
         val mockStore: OctiServerBlobStore = mockk {
             every { connectorId } returns connector.identifier
         }
-        every { blobStoreFactory.create(credentials, endpoint, any()) } returns mockStore
+        every { blobStoreFactory.create(credentials, endpoint, any(), any()) } returns mockStore
 
         val hub = newHub(backgroundScope)
 
@@ -107,7 +107,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
 
         val result = hub.blobStores.first()
         result.toList().shouldBeEmpty()
-        verify(exactly = 0) { blobStoreFactory.create(any(), any(), any()) }
+        verify(exactly = 0) { blobStoreFactory.create(any(), any(), any(), any()) }
     }
 
     @Test
@@ -121,7 +121,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
         )
 
         val credentials = credentialsWith(legacyKeyset)
-        every { blobStoreFactory.create(credentials, endpoint, any()) } throws
+        every { blobStoreFactory.create(credentials, endpoint, any(), any()) } throws
             IllegalArgumentException("Only AES256_GCM_SIV keysets are supported for blob storage (was: AES256_SIV)")
 
         val hub = newHub(backgroundScope)
@@ -147,7 +147,7 @@ class OctiServerBlobStoreHubTest : BaseTest() {
         val mockStore: OctiServerBlobStore = mockk {
             every { connectorId } returns connector.identifier
         }
-        every { blobStoreFactory.create(credentials, endpoint, any()) } returns mockStore
+        every { blobStoreFactory.create(credentials, endpoint, any(), any()) } returns mockStore
 
         val hub = newHub(backgroundScope)
 

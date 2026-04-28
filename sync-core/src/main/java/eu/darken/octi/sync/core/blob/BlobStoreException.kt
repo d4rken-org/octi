@@ -53,3 +53,14 @@ class BlobSizeMismatchException(
     message: String,
     cause: Throwable? = null,
 ) : BlobStoreException(message, cause)
+
+/**
+ * Connector pointed at a server that does not advertise blob support. Surfaced when the store
+ * attempts a blob operation against a server that returns 404/405 for the new endpoints — the
+ * caller should treat the connector as unable to participate in this blob, not as a transient
+ * transport failure.
+ */
+class BlobConnectorUnsupportedException(
+    val connectorId: ConnectorId,
+    cause: Throwable? = null,
+) : BlobStoreException("Connector $connectorId does not support blob operations", cause)
