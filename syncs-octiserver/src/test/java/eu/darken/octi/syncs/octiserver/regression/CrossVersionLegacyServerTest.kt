@@ -50,10 +50,6 @@ class CrossVersionLegacyServerTest : BaseTest() {
 
     private lateinit var serverBaseUrl: String
     private lateinit var endpoint: OctiServerEndpoint
-    private lateinit var basicAuthInterceptor: BasicAuthInterceptor
-    private val syncSettings: SyncSettings = mockk()
-    private val deviceHeaderInterceptor: DeviceHeaderInterceptor = mockk()
-
     private lateinit var testDeviceId: String
 
     @BeforeEach
@@ -67,20 +63,30 @@ class CrossVersionLegacyServerTest : BaseTest() {
         }.trimEnd('/')
 
         testDeviceId = UUID.randomUUID().toString()
-        every { syncSettings.deviceId } returns DeviceId(testDeviceId)
-        // X-Device-ID is added per-call via Retrofit @Header annotations on OctiServerApi.
-        // The production DeviceHeaderInterceptor only adds Octi-Device-* headers and reads
-        // android.os.Build (unavailable in JVM tests). v0.8.1 doesn't enforce those headers
-        // for the routes we test, so a pass-through mock is sufficient.
-        every { deviceHeaderInterceptor.intercept(any()) } answers {
-            val chain = firstArg<Interceptor.Chain>()
-            chain.proceed(chain.request())
+        endpoint = newEndpoint(testDeviceId)
+    }
+
+    /**
+     * Build a fresh [OctiServerEndpoint] pointed at the legacy server, with a stubbed
+     * [SyncSettings] returning [deviceId] and a pass-through [DeviceHeaderInterceptor].
+     *
+     * X-Device-ID is added per-call via Retrofit @Header annotations on OctiServerApi, so the
+     * pass-through interceptor is sufficient. Production [DeviceHeaderInterceptor] reads
+     * `android.os.Build` (unavailable in JVM tests) and v0.8.1 doesn't enforce its headers
+     * for the routes covered here.
+     */
+    private fun newEndpoint(deviceId: String): OctiServerEndpoint {
+        val syncSettings = mockk<SyncSettings>().also {
+            every { it.deviceId } returns DeviceId(deviceId)
         }
-
-        basicAuthInterceptor = BasicAuthInterceptor()
-
+        val deviceHeaderInterceptor = mockk<DeviceHeaderInterceptor>().also {
+            every { it.intercept(any()) } answers {
+                val chain = firstArg<Interceptor.Chain>()
+                chain.proceed(chain.request())
+            }
+        }
         val url = serverBaseUrl.toHttpUrl()
-        endpoint = OctiServerEndpoint(
+        return OctiServerEndpoint(
             serverAdress = OctiServer.Address(domain = url.host, protocol = url.scheme, port = url.port),
             dispatcherProvider = TestDispatcherProvider(),
             syncSettings = syncSettings,
@@ -91,7 +97,7 @@ class CrossVersionLegacyServerTest : BaseTest() {
             // is caught. SerializationModule is a regular `class` with @Provides — directly
             // instantiable without Hilt.
             retrofitJson = SerializationModule().retrofitJson(),
-            basicAuthInterceptor = basicAuthInterceptor,
+            basicAuthInterceptor = BasicAuthInterceptor(),
             deviceHeaderInterceptor = deviceHeaderInterceptor,
         )
     }
@@ -118,6 +124,47 @@ class CrossVersionLegacyServerTest : BaseTest() {
 
         read shouldNotBe null
         read!!.payload shouldBe payload
+    }
+
+    @Test
+    fun `legacy getDeviceList parses cleanly against v0_8_1 response shape`() = runTest2 {
+        // Catches DTO drift: v0.8.1 may not populate `version`/`platform`/`label`/`addedAt`/
+        // `lastSeen`. The new client's DevicesResponse.Device has nullable defaults for those;
+        // this test verifies kotlinx.serialization actually accepts the v0.8.1 response shape
+        // end-to-end. Existing OctiServerSerializationTest only exercises hand-crafted JSON.
+        val creds = endpoint.createNewAccount()
+        endpoint.setCredentials(creds)
+
+        val devices = endpoint.listDevices()
+        devices.size shouldBe 1
+        devices.single().deviceId.id shouldBe testDeviceId
+    }
+
+    @Test
+    fun `legacy account linking flow round-trips on v0_8_1 (createLinkCode + linkToExistingAccount)`() = runTest2 {
+        // Pre-cutover users will pair new clients into existing v0.8.1-server accounts on day
+        // one; this is the wire flow that has to stay working. createShareCode + register?share
+        // are the routes; new client wraps them as createLinkCode + linkToExistingAccount.
+        val credsA = endpoint.createNewAccount()
+        endpoint.setCredentials(credsA)
+
+        val linkCode = endpoint.createLinkCode()
+        linkCode.code shouldNotBe ""
+
+        val deviceBId = UUID.randomUUID().toString()
+        val endpointB = newEndpoint(deviceBId)
+        val linked = endpointB.linkToExistingAccount(linkCode)
+
+        linked.accountId.id shouldBe credsA.accountId.id
+        linked.devicePassword.password shouldNotBe ""
+        // Both devices should now be members of the same account.
+        endpointB.setCredentials(
+            credsA.copy(
+                devicePassword = OctiServer.Credentials.DevicePassword(linked.devicePassword.password),
+            ),
+        )
+        val devicesFromB = endpointB.listDevices()
+        devicesFromB.map { it.deviceId.id }.toSet() shouldBe setOf(testDeviceId, deviceBId)
     }
 
     @Test
