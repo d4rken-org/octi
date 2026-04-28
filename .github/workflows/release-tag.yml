@@ -86,6 +86,8 @@ jobs:
     name: Create Google Play release
     runs-on: ubuntu-22.04
     environment: gplay-production
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/fastlane/Gemfile
     steps:
       - name: Decode Keystore
         env:
@@ -121,6 +123,7 @@ jobs:
         with:
           ruby-version: 3.3.6
           bundler-cache: true
+          working-directory: fastlane
 
       - name: Assemble beta and upload to Google Play
         if: contains(github.ref_name, '-beta') && !(github.event_name == 'workflow_dispatch' && inputs.dry_run)
