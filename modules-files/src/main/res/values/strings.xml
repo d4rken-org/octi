@@ -70,4 +70,6 @@
     <string name="module_files_sheet_property_expires_at">Expires</string>
     <string name="module_files_sheet_property_available_on">Available on</string>
     <string name="module_files_sheet_dismiss_action">Close</string>
+    <string name="module_files_share_unsupported">This share isn\'t a file</string>
+    <string name="module_files_share_module_disabled">File sharing is disabled</string>
 </resources>

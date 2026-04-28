@@ -24,6 +24,7 @@ import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.modules.files.core.FileShareRepo
 import eu.darken.octi.modules.files.core.FileShareService
 import eu.darken.octi.modules.files.core.FileShareSettings
+import eu.darken.octi.modules.files.core.IncomingShareInbox
 import eu.darken.octi.modules.files.core.PendingDelete
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.BlobKey
@@ -60,6 +61,7 @@ class FileShareListVM @Inject constructor(
     private val syncSettings: SyncSettings,
     private val fileShareSettings: FileShareSettings,
     private val syncManager: SyncManager,
+    private val incomingShareInbox: IncomingShareInbox,
 ) : ViewModel4(dispatcherProvider) {
 
     data class State(
@@ -393,6 +395,35 @@ class FileShareListVM @Inject constructor(
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_account_quota_full))
             is FileShareService.ShareResult.LocalStorageLow ->
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_local_storage_low))
+        }
+    }
+
+    /**
+     * Drains the inbox batch identified by [token] and uploads each URI sequentially. Returns
+     * silently if the token is unknown / already drained — drains are idempotent on re-entry
+     * (e.g. screen recomposition after rotation).
+     *
+     * Sequential — not parallel — uploads keep Tier A staging from spiking disk usage when a
+     * user multi-selects a dozen photos. The user can still cancel each upload via the active
+     * upload card.
+     */
+    fun consumeIncomingShare(token: String) {
+        val uris = incomingShareInbox.drain(token) ?: return
+        if (uris.isEmpty()) return
+        log(TAG) { "consumeIncomingShare(token=$token, count=${uris.size})" }
+        onShareFilesSequential(uris)
+    }
+
+    /**
+     * Run on [appScope] so the multi-share survives screen lifecycle. Each `shareFile` call
+     * suspends until completion before the next starts.
+     */
+    fun onShareFilesSequential(uris: List<Uri>) {
+        appScope.launch(dispatcherProvider.IO) {
+            for (uri in uris) {
+                runCatching { fileShareService.shareFile(uri) }
+                    .onFailure { log(TAG, ERROR) { "onShareFilesSequential(uri=$uri) failed: ${it.asLog()}" } }
+            }
         }
     }
 

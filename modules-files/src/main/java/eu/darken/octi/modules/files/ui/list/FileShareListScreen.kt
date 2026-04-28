@@ -3,6 +3,7 @@ package eu.darken.octi.modules.files.ui.list
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.Intent
+import android.net.Uri
 import android.text.format.DateUtils
 import android.text.format.Formatter
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.automirrored.twotone.Sort
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.ArrowDownward
 import androidx.compose.material.icons.twotone.ArrowUpward
+import androidx.compose.material.icons.twotone.BugReport
 import androidx.compose.material.icons.twotone.Check
 import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material.icons.twotone.Delete
@@ -66,6 +68,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
@@ -98,6 +101,7 @@ private val TAG = logTag("Module", "Files", "List", "Screen")
 fun FileShareListScreenHost(
     initialDeviceFilter: String?,
     autoAction: Nav.Main.FileShareList.AutoAction? = null,
+    incomingShareToken: String? = null,
     vm: FileShareListVM = hiltViewModel(),
 ) {
     LaunchedEffect(initialDeviceFilter) { vm.initialize(initialDeviceFilter) }
@@ -193,6 +197,11 @@ fun FileShareListScreenHost(
                 autoLaunched = true
                 openDocLauncher.launch(arrayOf("*/*"))
             }
+            Nav.Main.FileShareList.AutoAction.INCOMING_SHARE -> {
+                autoLaunched = true
+                if (incomingShareToken != null) vm.consumeIncomingShare(incomingShareToken)
+                autoFiringComplete = true
+            }
             Nav.Main.FileShareList.AutoAction.DOWNLOAD_LATEST -> {
                 val target = withTimeoutOrNull(5_000) {
                     vm.state.mapNotNull { current ->
@@ -245,9 +254,19 @@ fun FileShareListScreenHost(
             onSheetOpen = { item -> vm.onOpenFile(item) },
             onSheetSave = { item -> launchManualSave(item) },
             onSheetDelete = { item -> vm.onDeleteFile(item) },
+            onDebugShareTestUri = { variant ->
+                val authority = "${BuildConfigWrap.APPLICATION_ID}.debug.testfixture"
+                val path = when (variant) {
+                    DebugTestUriVariant.UNSIZED -> "unsized"
+                    DebugTestUriVariant.LYING_SIZE -> "lying-size"
+                }
+                vm.onShareFile(Uri.parse("content://$authority/$path"))
+            },
         )
     }
 }
+
+enum class DebugTestUriVariant { UNSIZED, LYING_SIZE }
 
 private fun buildSaveAsIntent(item: FileShareListVM.FileItem): Intent =
     Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
@@ -274,6 +293,7 @@ fun FileShareListScreen(
     onSheetOpen: (FileShareListVM.FileItem) -> Unit = {},
     onSheetSave: (FileShareListVM.FileItem) -> Unit = {},
     onSheetDelete: (FileShareListVM.FileItem) -> Unit = {},
+    onDebugShareTestUri: (DebugTestUriVariant) -> Unit = {},
 ) {
     val showUsageHint = !state.isUsageHintDismissed
     Scaffold(
@@ -288,6 +308,9 @@ fun FileShareListScreen(
                 actions = {
                     SyncAction(state = state, onClick = onSyncClick)
                     SortMenu(state = state, onSortChange = onSortChange)
+                    if (BuildConfigWrap.DEBUG) {
+                        DebugTestUriMenu(onShareTestUri = onDebugShareTestUri)
+                    }
                 },
             )
         },
@@ -485,6 +508,34 @@ private fun SortMenu(
                     } else null,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun DebugTestUriMenu(
+    onShareTestUri: (DebugTestUriVariant) -> Unit,
+) {
+    var open by remember { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { open = true }) {
+            Icon(Icons.TwoTone.BugReport, contentDescription = "Debug test URIs")
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            DropdownMenuItem(
+                text = { Text("Share Unsized URI (Tier B′)") },
+                onClick = {
+                    open = false
+                    onShareTestUri(DebugTestUriVariant.UNSIZED)
+                },
+            )
+            DropdownMenuItem(
+                text = { Text("Share Lying-Size URI (Tier B → B′)") },
+                onClick = {
+                    open = false
+                    onShareTestUri(DebugTestUriVariant.LYING_SIZE)
+                },
+            )
         }
     }
 }

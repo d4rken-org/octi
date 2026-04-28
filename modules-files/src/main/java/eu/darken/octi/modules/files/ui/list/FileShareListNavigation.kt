@@ -17,6 +17,7 @@ class FileShareListNavigation @Inject constructor() : NavigationEntry {
             FileShareListScreenHost(
                 initialDeviceFilter = key.deviceId,
                 autoAction = key.autoAction,
+                incomingShareToken = key.incomingShareToken,
             )
         }
     }

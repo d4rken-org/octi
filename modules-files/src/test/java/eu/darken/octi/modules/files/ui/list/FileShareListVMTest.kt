@@ -11,6 +11,7 @@ import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.modules.files.core.FileShareRepo
 import eu.darken.octi.modules.files.core.FileShareService
 import eu.darken.octi.modules.files.core.FileShareSettings
+import eu.darken.octi.modules.files.core.IncomingShareInbox
 import eu.darken.octi.modules.files.core.PendingDelete
 import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
@@ -152,6 +153,8 @@ class FileShareListVMTest : BaseTest() {
         every { fileShareService.transfers } returns MutableStateFlow(emptyMap())
     }
 
+    private val incomingShareInbox = IncomingShareInbox()
+
     private fun makeVM() = FileShareListVM(
         dispatcherProvider = dispatcherProvider,
         appScope = CoroutineScope(SupervisorJob()),
@@ -163,6 +166,7 @@ class FileShareListVMTest : BaseTest() {
         syncSettings = syncSettings,
         fileShareSettings = fileShareSettings,
         syncManager = syncManager,
+        incomingShareInbox = incomingShareInbox,
     )
 
     @Test
@@ -535,5 +539,48 @@ class FileShareListVMTest : BaseTest() {
         items.map { it.key }.toSet().size shouldBe 2
         items.first { it.isOwn }.key shouldBe FileKey.of(selfDevice, same)
         items.first { !it.isOwn }.key shouldBe FileKey.of(remoteDevice, same)
+    }
+
+    @Test
+    fun `onShareFilesSequential awaits each shareFile before starting the next`() = runTest2 {
+        setupBaseMocks()
+        // Two URIs, two deferreds — until the first one completes, the second shareFile must not
+        // have been invoked. This proves the loop suspends instead of fanning out concurrently.
+        val gateA = kotlinx.coroutines.CompletableDeferred<FileShareService.ShareResult>()
+        val gateB = kotlinx.coroutines.CompletableDeferred<FileShareService.ShareResult>()
+        val uriA = mockk<android.net.Uri>(relaxed = true)
+        val uriB = mockk<android.net.Uri>(relaxed = true)
+        coEvery { fileShareService.shareFile(uriA) } coAnswers { gateA.await() }
+        coEvery { fileShareService.shareFile(uriB) } coAnswers { gateB.await() }
+
+        val vm = makeVM()
+        vm.initialize(null)
+        vm.onShareFilesSequential(listOf(uriA, uriB))
+
+        // Wait until shareFile(uriA) has been invoked but is still suspended on gateA.
+        coVerify(timeout = 1_000) { fileShareService.shareFile(uriA) }
+        // Second URI must not have started yet.
+        coVerify(exactly = 0) { fileShareService.shareFile(uriB) }
+
+        gateA.complete(FileShareService.ShareResult.Success)
+        coVerify(timeout = 1_000) { fileShareService.shareFile(uriB) }
+        gateB.complete(FileShareService.ShareResult.Success)
+    }
+
+    @Test
+    fun `consumeIncomingShare drains the inbox and invokes onShareFilesSequential`() = runTest2 {
+        setupBaseMocks()
+        val uri = mockk<android.net.Uri>(relaxed = true)
+        coEvery { fileShareService.shareFile(uri) } returns FileShareService.ShareResult.Success
+        val token = incomingShareInbox.enqueue(listOf(uri))
+
+        val vm = makeVM()
+        vm.initialize(null)
+        vm.consumeIncomingShare(token)
+
+        coVerify(timeout = 1_000) { fileShareService.shareFile(uri) }
+        // Token consumed: a second consume must be a no-op (no extra shareFile call).
+        vm.consumeIncomingShare(token)
+        coVerify(exactly = 1) { fileShareService.shareFile(uri) }
     }
 }

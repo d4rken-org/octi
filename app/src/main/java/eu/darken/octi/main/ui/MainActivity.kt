@@ -2,10 +2,12 @@ package eu.darken.octi.main.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -28,6 +30,7 @@ import eu.darken.octi.sync.core.ConnectorUiContribution
 import eu.darken.octi.sync.core.LocalConnectorContributions
 import eu.darken.octi.common.theming.OctiTheme
 import eu.darken.octi.common.uix.Activity2
+import eu.darken.octi.modules.files.R as FilesR
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,6 +59,26 @@ class MainActivity : Activity2() {
 
             val backStack = rememberNavBackStack(vm.startDestination)
             navCtrl.setup(backStack)
+
+            LaunchedEffect(Unit) {
+                vm.incomingShareEvents.collect { event ->
+                    when (event) {
+                        is MainActivityVM.IncomingShareEvent.IncomingShare -> {
+                            navCtrl.goTo(
+                                Nav.Main.FileShareList(
+                                    deviceId = event.selfDeviceId,
+                                    autoAction = Nav.Main.FileShareList.AutoAction.INCOMING_SHARE,
+                                    incomingShareToken = event.token,
+                                ),
+                            )
+                        }
+                        MainActivityVM.IncomingShareEvent.Unsupported ->
+                            Toast.makeText(this@MainActivity, FilesR.string.module_files_share_unsupported, Toast.LENGTH_LONG).show()
+                        MainActivityVM.IncomingShareEvent.ModuleDisabled ->
+                            Toast.makeText(this@MainActivity, FilesR.string.module_files_share_module_disabled, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
 
             OctiTheme(state = themeState) {
                 CompositionLocalProvider(

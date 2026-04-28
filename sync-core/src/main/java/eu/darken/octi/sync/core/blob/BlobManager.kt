@@ -266,6 +266,16 @@ class BlobManager @Inject constructor(
         // BlobMaintenance) AFTER its module commit lands, so the cache reflects committed state
         // — not the brief window between blob upload and metadata write.
 
+        // Single-candidate streaming uploads (Tier B) need BlobSizeMismatchException to propagate
+        // so FileShareService can retry with Tier B′ (pre-count + restream). The generic per-store
+        // exception handler swallows it into errors; surface it here when it's the only error and
+        // there are no successes. Multi-candidate puts never hit this — Tier A staging guarantees
+        // the declared size matches what's actually streamed.
+        if (candidates.size == 1 && successful.isEmpty()) {
+            val onlyError = errors.values.firstOrNull()
+            if (onlyError is BlobSizeMismatchException) throw onlyError
+        }
+
         PutResult(successful = successful, perConnectorErrors = errors, remoteRefs = remoteRefs)
     }
 

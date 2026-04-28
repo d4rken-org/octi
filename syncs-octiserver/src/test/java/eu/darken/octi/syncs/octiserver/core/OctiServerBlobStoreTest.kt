@@ -1,10 +1,12 @@
 package eu.darken.octi.syncs.octiserver.core
 
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.StorageStatus
 import eu.darken.octi.sync.core.blob.StorageStatusProvider
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
@@ -12,14 +14,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldNotBeEmpty
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.slot
+import okhttp3.RequestBody
+import okio.Buffer
 import okio.ByteString
 import okio.ByteString.Companion.decodeBase64
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
+import kotlin.time.Clock
 
 class OctiServerBlobStoreTest : BaseTest() {
 
@@ -105,6 +114,70 @@ class OctiServerBlobStoreTest : BaseTest() {
 
         shouldThrow<RuntimeException> {
             validStore().delete(deviceId, moduleId, ref)
+        }
+    }
+
+    @Test
+    fun `put with empty plaintext source emits valid ciphertext to PATCH and finalizes`() = runTest2 {
+        // Tink AES-GCM-SIV streaming wraps zero-byte plaintext in a header + final auth tag —
+        // the on-the-wire ciphertext is non-empty (~120 bytes). A regression where the producer
+        // closed the channel before flushing the trailing buffer would surface here as either
+        // zero PATCH calls or a zero-byte body, and finalize would never run.
+        val deviceId = DeviceId("dev-1")
+        val moduleId = ModuleId("module.test")
+        val blobKey = BlobKey("blob-empty")
+
+        val sessionResp = OctiServerApi.CreateSessionResponse(
+            blobId = "srv-blob-empty",
+            sessionId = "sess-1",
+            offsetBytes = 0L,
+            expiresAt = Clock.System.now(),
+            state = "ACTIVE",
+        )
+        coEvery {
+            endpoint.createBlobSession(deviceId, moduleId, any(), any())
+        } returns sessionResp
+
+        // Capture the ciphertext body actually shipped to the server. The chunk is in pieces
+        // of okhttp's RequestBody — we read its content length to assert non-zero, then capture
+        // bytes by writing into a Buffer through writeTo for content verification.
+        val capturedBody = slot<RequestBody>()
+        val capturedOffset = slot<Long>()
+        coEvery {
+            endpoint.appendBlobSession(deviceId, moduleId, sessionResp.sessionId, capture(capturedOffset), capture(capturedBody))
+        } answers {
+            // Server returns the new offset header value — equal to incoming offset + body length.
+            val body = capturedBody.captured
+            val incomingOffset = capturedOffset.captured
+            incomingOffset + body.contentLength()
+        }
+
+        coEvery {
+            endpoint.finalizeBlobSession(deviceId, moduleId, sessionResp.sessionId, any())
+        } returns OctiServerApi.FinalizeSessionResponse(
+            blobId = sessionResp.blobId,
+            sessionId = sessionResp.sessionId,
+            sizeBytes = 0L,
+            state = "COMPLETE",
+        )
+
+        val emptySource = Buffer() // zero bytes
+        val store = validStore()
+        val ref = store.put(
+            deviceId = deviceId,
+            moduleId = moduleId,
+            key = blobKey,
+            source = emptySource,
+            metadata = BlobMetadata(size = 0L, createdAt = Clock.System.now(), checksum = ""),
+            onProgress = null,
+        )
+
+        ref shouldBe RemoteBlobRef(sessionResp.blobId)
+        // Ciphertext is non-empty for empty plaintext — Tink writes header + auth tag.
+        capturedBody.captured.contentLength() shouldNotBe 0L
+        // Finalize must be called once with the cipher hash hex string.
+        coVerify(exactly = 1) {
+            endpoint.finalizeBlobSession(deviceId, moduleId, sessionResp.sessionId, withArg { it.shouldNotBeEmpty() })
         }
     }
 }

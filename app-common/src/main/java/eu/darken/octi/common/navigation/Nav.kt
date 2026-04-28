@@ -27,9 +27,10 @@ object Nav {
         data class FileShareList(
             val deviceId: String? = null,
             val autoAction: AutoAction? = null,
+            val incomingShareToken: String? = null,
         ) : Main {
             @Serializable
-            enum class AutoAction { UPLOAD, DOWNLOAD_LATEST }
+            enum class AutoAction { UPLOAD, DOWNLOAD_LATEST, INCOMING_SHARE }
         }
     }
 
