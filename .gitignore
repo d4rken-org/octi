@@ -16,3 +16,6 @@
 /fastlane/README.md
 .kotlin
 .codex
+_site/
+.jekyll-cache/
+vendor/bundle/
