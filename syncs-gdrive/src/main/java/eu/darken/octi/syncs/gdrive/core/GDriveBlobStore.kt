@@ -24,7 +24,10 @@ import kotlin.time.Instant
 /**
  * GDrive blob store — stores blobs under `blob-store/{deviceId}/{moduleId}/{blobKey}` in AppData.
  * No encryption (matches existing GDrive module data pattern, trusts Google account security).
- * Metadata uses Drive file fields for size/created time and a custom property for checksum.
+ * Metadata uses Drive file fields for size and created time. Plaintext integrity is verified
+ * via the synced `SharedFile.checksum` on the receive path, not via Drive metadata, so this
+ * store does not stamp the file with a checksum property — that lets the upload run as a pure
+ * stream from the supplied [Source] without needing the plaintext SHA-256 up front.
  *
  * GDrive uses the client-side [BlobKey.id] directly as its filename, so the returned [RemoteBlobRef]
  * equals the logical key string. Callers may therefore omit `connectorRefs[gdrive]` from `SharedFile`
@@ -63,7 +66,6 @@ class GDriveBlobStore(
                     input = input,
                     sizeBytes = metadata.size,
                     mimeType = "application/octet-stream",
-                    properties = buildProperties(metadata),
                 )
             }
         }
@@ -134,25 +136,20 @@ class GDriveBlobStore(
             ?.child(remoteRef.value)
     }
 
-    private fun buildProperties(metadata: BlobMetadata): Map<String, String> = mapOf(
-        PROP_CHECKSUM to metadata.checksum,
-    )
-
     private fun com.google.api.services.drive.model.File.toBlobMetadata(remoteRef: RemoteBlobRef): BlobMetadata {
         val sizeBytes = size?.toLong() ?: throw IllegalStateException("Missing size for blob ${remoteRef.value}")
         val createdTimeValue = createdTime?.value ?: throw IllegalStateException("Missing createdTime for blob ${remoteRef.value}")
-        val checksum = properties?.get(PROP_CHECKSUM).orEmpty()
-
+        // Checksum is intentionally empty — see class doc. Receivers verify against
+        // SharedFile.checksum from the synced module document instead.
         return BlobMetadata(
             size = sizeBytes,
             createdAt = Instant.fromEpochMilliseconds(createdTimeValue),
-            checksum = checksum,
+            checksum = "",
         )
     }
 
     companion object {
         private val TAG = logTag("Sync", "GDrive", "BlobStore")
         private const val BLOB_STORE_DIR = "blob-store"
-        private const val PROP_CHECKSUM = "octi_blob_checksum"
     }
 }

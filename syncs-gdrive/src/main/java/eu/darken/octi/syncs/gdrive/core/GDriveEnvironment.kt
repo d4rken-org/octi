@@ -136,13 +136,8 @@ interface GDriveEnvironment {
         drive.files().get(id).executeMediaAndDownloadTo(output)
     }
 
-    suspend fun GDriveFile.fetchProperties(): Map<String, String>? {
-        val file = drive.files().get(id).setFields("properties").execute()
-        return file.properties
-    }
-
     suspend fun GDriveFile.fetchBlobMetadata(): GDriveFile {
-        return drive.files().get(id).setFields("size,createdTime,properties").execute()
+        return drive.files().get(id).setFields("size,createdTime").execute()
     }
 
     companion object {

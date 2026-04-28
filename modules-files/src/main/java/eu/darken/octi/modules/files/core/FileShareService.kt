@@ -15,7 +15,6 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
-import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.files.FileShareModule
 import eu.darken.octi.sync.core.BlobKey
@@ -185,12 +184,11 @@ class FileShareService @Inject constructor(
             val probe = contentResolver.probeUriForUpload(uri)
             log(TAG, VERBOSE) { "shareFile(): probe=$probe, eligible=${eligible.map { it.idString }}" }
 
-            val singleOctiServer = eligible.size == 1 &&
-                eligible.single().type == ConnectorType.OCTISERVER
+            val singleConnector = eligible.size == 1
 
-            val outcome: UploadOutcome = if (!singleOctiServer) {
-                // Multi-connector or non-OctiServer set — must stage so each connector gets a
-                // stable, re-readable source.
+            val outcome: UploadOutcome = if (!singleConnector) {
+                // Multi-connector — must stage so parallel fan-out gets a stable, re-readable
+                // source. (Single-connector setups for any backend can stream from the URI.)
                 stagedFile = blobCacheDirs.tempFile(stagingDir)
                 runStagedUpload(uri, blobKey, displayName, stagedFile, eligible)
             } else when (probe) {
