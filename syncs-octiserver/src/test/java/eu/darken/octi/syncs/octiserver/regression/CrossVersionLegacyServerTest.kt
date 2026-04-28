@@ -19,8 +19,8 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.ByteString.Companion.encodeUtf8
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
@@ -39,9 +39,13 @@ import java.util.concurrent.TimeUnit
  * scaffolding under `sync-server/regression/`) and points the test at it via
  * `CROSS_VERSION_TEST_SERVER`.
  *
- * Skipped locally when the env var is missing. When `CI=true` it is a hard error so a
- * misconfigured runner cannot silently bypass the regression check.
+ * Tagged `cross-version` and excluded from the regular `:syncs-octiserver:testDebugUnitTest`
+ * task by default — the regression CI job opts in with `-PincludeCrossVersionTests`. Run
+ * locally with the same flag against a docker-compose'd legacy server, e.g.
+ *   `CROSS_VERSION_TEST_SERVER=http://127.0.0.1:18080 ./gradlew :syncs-octiserver:testDebugUnitTest \
+ *     --tests "*CrossVersionLegacyServerTest" -PincludeCrossVersionTests`
  */
+@Tag("cross-version")
 class CrossVersionLegacyServerTest : BaseTest() {
 
     private lateinit var serverBaseUrl: String
@@ -54,14 +58,13 @@ class CrossVersionLegacyServerTest : BaseTest() {
 
     @BeforeEach
     fun setUp() {
-        val target = System.getenv("CROSS_VERSION_TEST_SERVER")
-        if (target.isNullOrBlank()) {
-            check(System.getenv("CI") != "true") {
-                "CROSS_VERSION_TEST_SERVER missing in CI — the legacy-server service container did not boot or the env var is not wired up."
-            }
-            Assumptions.assumeTrue(false, "CROSS_VERSION_TEST_SERVER not set — skipping legacy v0.8.1 cross-version test")
-        }
-        serverBaseUrl = target!!.trimEnd('/')
+        // The @Tag("cross-version") gate already prevents this test from running unless the
+        // regression CI job (or a developer) opts in. If it ran, the env var must be set —
+        // a missing/blank value here means the runner is misconfigured and we want to fail
+        // loudly rather than silently skip.
+        serverBaseUrl = checkNotNull(System.getenv("CROSS_VERSION_TEST_SERVER")?.takeIf { it.isNotBlank() }) {
+            "CROSS_VERSION_TEST_SERVER must be set when running cross-version tests"
+        }.trimEnd('/')
 
         testDeviceId = UUID.randomUUID().toString()
         every { syncSettings.deviceId } returns DeviceId(testDeviceId)

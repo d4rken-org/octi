@@ -117,7 +117,7 @@ jobs:
       - name: Run cross-version test against v0.8.1 server
         env:
           CROSS_VERSION_TEST_SERVER: http://127.0.0.1:18080
-        run: ./gradlew :syncs-octiserver:testDebugUnitTest --tests "eu.darken.octi.syncs.octiserver.regression.CrossVersionLegacyServerTest"
+        run: ./gradlew :syncs-octiserver:testDebugUnitTest --tests "eu.darken.octi.syncs.octiserver.regression.CrossVersionLegacyServerTest" -PincludeCrossVersionTests
       - name: Dump legacy server logs on failure
         if: failure()
         run: docker logs ${{ job.services.legacy-server.id }} || true

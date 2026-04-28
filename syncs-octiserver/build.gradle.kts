@@ -28,7 +28,15 @@ android {
             isIncludeAndroidResources = true
         }
         tasks.withType<Test> {
-            useJUnitPlatform()
+            useJUnitPlatform {
+                // Tests tagged "cross-version" require an external service (legacy v0.8.1 server)
+                // and are only run by the regression-cross-version-client CI job, which opts in
+                // via `-PincludeCrossVersionTests`. The regular `testDebugUnitTest` matrix
+                // excludes them so it doesn't depend on a docker service container.
+                if (!project.hasProperty("includeCrossVersionTests")) {
+                    excludeTags("cross-version")
+                }
+            }
         }
     }
 }
