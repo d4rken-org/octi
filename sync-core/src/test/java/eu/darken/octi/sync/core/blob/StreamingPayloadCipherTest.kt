@@ -250,6 +250,47 @@ class StreamingPayloadCipherTest : BaseTest() {
         }
     }
 
+    @Test
+    fun `ciphertextSize matches actual encrypt output across size boundaries`() {
+        val cipher = StreamingPayloadCipher(PayloadEncryption().exportKeyset())
+        // Sizes deliberately chosen to cover: empty, small, near header-only, around the
+        // 1 MB ciphertext-segment boundary that Tink uses, multi-segment sizes, and the
+        // current per-blob hard cap. The formula is delegated to Tink's
+        // expectedCiphertextSize so this test is the contract that delegate stays correct
+        // across Tink upgrades.
+        val plaintextSizes = longArrayOf(
+            0L,
+            1L,
+            16L,
+            1023L,
+            1024L,
+            1L * 1024 * 1024 - 1,
+            1L * 1024 * 1024,
+            1L * 1024 * 1024 + 1,
+            5L * 1024 * 1024 - 1,
+            5L * 1024 * 1024,
+            5L * 1024 * 1024 + 1,
+            10L * 1024 * 1024,
+        )
+
+        for (size in plaintextSizes) {
+            val plain = ByteArray(size.toInt()) { (it and 0xFF).toByte() }
+            val encrypted = Buffer()
+            cipher.encrypt(Buffer().write(plain), encrypted, aad)
+            val actual = encrypted.size
+            val predicted = cipher.ciphertextSize(size)
+            predicted shouldBe actual
+        }
+    }
+
+    @Test
+    fun `ciphertextSize rejects negative input`() {
+        val cipher = StreamingPayloadCipher(PayloadEncryption().exportKeyset())
+        shouldThrow<IllegalArgumentException> {
+            cipher.ciphertextSize(-1L)
+        }
+    }
+
     private class TrackingSink : Sink {
         val target = Buffer()
         var closeCalls: Int = 0

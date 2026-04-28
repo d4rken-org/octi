@@ -28,7 +28,10 @@ class OctiServerHttpException(
         ?.toLongOrNull()
         ?.takeIf { it >= 0 }
 
-    private var errorMessage: String = cause.response()?.errorBody()?.string() ?: cause.toString()
+    /** Captured eagerly because Retrofit's response body is one-shot. Exposed read-only so
+     *  callers can pattern-match on server-emitted text (e.g. size-mismatch detection). */
+    val errorBody: String = cause.response()?.errorBody()?.string() ?: cause.toString()
+    private val errorMessage: String get() = errorBody
 
     override fun getLocalizedError(): LocalizedError = LocalizedError(
         throwable = this,

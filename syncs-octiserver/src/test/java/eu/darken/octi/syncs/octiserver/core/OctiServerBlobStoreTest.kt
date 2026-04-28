@@ -5,7 +5,6 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
-import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.StorageStatus
 import eu.darken.octi.sync.core.blob.StorageStatusProvider
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
@@ -24,7 +23,6 @@ import testhelpers.coroutine.runTest2
 
 class OctiServerBlobStoreTest : BaseTest() {
 
-    private val blobCacheDirs = mockk<BlobCacheDirs>(relaxed = true)
     private val endpoint = mockk<OctiServerEndpoint>(relaxed = true)
 
     private fun credentialsWith(keyset: PayloadEncryption.KeySet) = OctiServer.Credentials(
@@ -45,7 +43,6 @@ class OctiServerBlobStoreTest : BaseTest() {
     private fun validStore(): OctiServerBlobStore {
         val cId = ConnectorId(ConnectorType.OCTISERVER, "example.com", "acc-1")
         return OctiServerBlobStore(
-            blobCacheDirs = blobCacheDirs,
             credentials = credentialsWith(PayloadEncryption().exportKeyset()),
             endpoint = endpoint,
             storageStatus = fakeStatus(cId),
@@ -64,7 +61,6 @@ class OctiServerBlobStoreTest : BaseTest() {
 
         shouldThrow<IllegalArgumentException> {
             OctiServerBlobStore(
-                blobCacheDirs,
                 credentialsWith(legacyKeyset),
                 endpoint,
                 fakeStatus(ConnectorId(ConnectorType.OCTISERVER, "example.com", "acc-1")),
@@ -81,7 +77,6 @@ class OctiServerBlobStoreTest : BaseTest() {
 
         shouldThrow<IllegalArgumentException> {
             OctiServerBlobStore(
-                blobCacheDirs,
                 credentialsWith(unknownKeyset),
                 endpoint,
                 fakeStatus(ConnectorId(ConnectorType.OCTISERVER, "example.com", "acc-1")),

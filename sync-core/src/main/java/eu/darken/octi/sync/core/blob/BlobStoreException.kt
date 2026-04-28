@@ -40,3 +40,16 @@ class BlobChecksumMismatchException(
     val expected: String,
     val actual: String,
 ) : BlobStoreException("Checksum mismatch for ${blobKey.id}: expected=$expected, actual=$actual")
+
+/**
+ * Server reported that the upload's actual byte count diverged from the size declared at
+ * session-create time — either a PATCH would have exceeded the declared size, or finalize
+ * found the upload short. Surface this as a typed exception so the upload orchestrator can
+ * fall back to a "pre-count + retry" strategy when the source URI is re-readable, instead of
+ * treating it as a generic transport failure.
+ */
+class BlobSizeMismatchException(
+    val connectorId: ConnectorId,
+    message: String,
+    cause: Throwable? = null,
+) : BlobStoreException(message, cause)

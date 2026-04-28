@@ -391,6 +391,8 @@ class FileShareListVM @Inject constructor(
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_server_storage_low))
             is FileShareService.ShareResult.AccountQuotaFull ->
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_account_quota_full))
+            is FileShareService.ShareResult.LocalStorageLow ->
+                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_local_storage_low))
         }
     }
 

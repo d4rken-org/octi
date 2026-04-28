@@ -2,6 +2,7 @@ package eu.darken.octi.modules.files.core
 
 import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.core.content.FileProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,6 +15,7 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.modules.files.FileShareModule
 import eu.darken.octi.sync.core.BlobKey
@@ -29,8 +31,10 @@ import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.BlobProgress
+import eu.darken.octi.sync.core.blob.BlobProgressCallback
 import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
 import eu.darken.octi.sync.core.blob.BlobServerStorageLowException
+import eu.darken.octi.sync.core.blob.BlobSizeMismatchException
 import eu.darken.octi.sync.core.blob.StorageStatusManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -45,7 +49,12 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.coroutineContext
 import okio.FileSystem
 import okio.Path.Companion.toPath
+import okio.Source
+import okio.source
 import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.util.UUID
 import javax.inject.Inject
@@ -83,6 +92,8 @@ class FileShareService @Inject constructor(
         data object ServerStorageLow : ShareResult()
         /** Every reachable connector reported `BlobQuotaExceededException`. */
         data object AccountQuotaFull : ShareResult()
+        /** Tier A staging hit ENOSPC on the device's cache partition. */
+        data class LocalStorageLow(val requestedBytes: Long, val availableBytes: Long) : ShareResult()
     }
 
     sealed class SaveResult {
@@ -146,98 +157,78 @@ class FileShareService @Inject constructor(
     private val openCacheDir: File
         get() = blobCacheDirs.openCache
 
-    suspend fun shareFile(uri: android.net.Uri): ShareResult = withContext(dispatcherProvider.IO) {
+    suspend fun shareFile(uri: Uri): ShareResult = withContext(dispatcherProvider.IO) {
         log(TAG, INFO) { "shareFile(uri=$uri)" }
         val blobKey = BlobKey(UUID.randomUUID().toString())
         val currentJob = coroutineContext[Job]
             ?: error("shareFile must run in a coroutine with a Job")
         activeJobs[blobKey.id] = currentJob
 
-        val stagedFile = blobCacheDirs.tempFile(stagingDir)
-        val stagedPath = stagedFile.absolutePath.toPath()
-        // Set after blobManager.put returns successfully and cleared after upsertFile commits.
-        // If the surrounding scope is cancelled while non-null, the just-finalized server-side
-        // sessions are orphans (no module references them) — explicit abortPostFinalize cleans
-        // them in seconds instead of waiting on the server's idle GC.
+        val contentResolver = context.contentResolver
+
+        // Resolve eligibility once, freeze it, pass the same set into BlobManager.put. Avoids
+        // drift between the orchestrator's tier choice and the actual fan-out target if a
+        // connector pauses mid-share (Codex r2).
+        val eligible = blobManager.configuredConnectorIds()
+        if (eligible.isEmpty()) {
+            log(TAG, WARN) { "shareFile(): no eligible connectors" }
+            activeJobs.remove(blobKey.id)
+            return@withContext ShareResult.NoEligibleConnectors
+        }
+
+        // Tier-A staging file is allocated lazily — Tier B/B′ never touch the disk. `stagedFile`
+        // tracks the chosen path so the outer `finally` can clean up only when staging happened.
+        var stagedFile: File? = null
         var pendingPostFinalizeCleanup: BlobManager.PutResult? = null
         try {
-            val contentResolver = context.contentResolver
             val (displayName, mimeType) = queryFileMetadata(contentResolver, uri)
+            val probe = contentResolver.probeUriForUpload(uri)
+            log(TAG, VERBOSE) { "shareFile(): probe=$probe, eligible=${eligible.map { it.idString }}" }
 
-            val digest = MessageDigest.getInstance("SHA-256")
-            var size = 0L
+            val singleOctiServer = eligible.size == 1 &&
+                eligible.single().type == ConnectorType.OCTISERVER
 
-            contentResolver.openInputStream(uri)?.use { input ->
-                stagedFile.outputStream().use { output ->
-                    val buffer = ByteArray(8192)
-                    var read: Int
-                    while (input.read(buffer).also { read = it } != -1) {
-                        output.write(buffer, 0, read)
-                        digest.update(buffer, 0, read)
-                        size += read
+            val outcome: UploadOutcome = if (!singleOctiServer) {
+                // Multi-connector or non-OctiServer set — must stage so each connector gets a
+                // stable, re-readable source.
+                stagedFile = blobCacheDirs.tempFile(stagingDir)
+                runStagedUpload(uri, blobKey, displayName, stagedFile, eligible)
+            } else when (probe) {
+                is UriProbe.Sized -> {
+                    try {
+                        runStreamingUpload(uri, blobKey, displayName, probe.plaintextSize, eligible)
+                    } catch (e: BlobSizeMismatchException) {
+                        log(TAG, WARN) {
+                            "shareFile(): Tier B size mismatch (${e.message}); retrying with pre-count + Tier B′"
+                        }
+                        try {
+                            runPreCountThenStream(uri, blobKey, displayName, eligible)
+                        } catch (e: UriNotReopenableException) {
+                            log(TAG, WARN) {
+                                "shareFile(): URI not re-openable after Tier B failure; falling back to staging"
+                            }
+                            stagedFile = blobCacheDirs.tempFile(stagingDir)
+                            runStagedUpload(uri, blobKey, displayName, stagedFile, eligible)
+                        }
                     }
                 }
-            } ?: run {
-                log(TAG, WARN) { "shareFile(): Failed to open input stream for URI" }
-                return@withContext ShareResult.AllConnectorsFailed(emptyMap())
-            }
-
-            val checksum = digest.digest().joinToString("") { "%02x".format(it) }
-            log(TAG, VERBOSE) { "Staged file: name=$displayName, size=$size, checksum=$checksum" }
-
-            val metadata = BlobMetadata(
-                size = size,
-                createdAt = Clock.System.now(),
-                checksum = checksum,
-            )
-
-            val putResult = try {
-                _transfers.update {
-                    it + (blobKey.id to Transfer(
-                        blobKey = blobKey.id,
-                        fileName = displayName,
-                        direction = Transfer.Direction.UPLOAD,
-                        progress = BlobProgress(bytesTransferred = 0L, bytesTotal = size),
-                    ))
-                }
-                blobManager.put(
-                    deviceId = syncSettings.deviceId,
-                    moduleId = FileShareModule.MODULE_ID,
-                    blobKey = blobKey,
-                    openSource = { FileSystem.SYSTEM.source(stagedPath) },
-                    metadata = metadata,
-                    onProgress = { progress ->
-                        _transfers.update {
-                            val prev = it[blobKey.id] ?: return@update it
-                            it + (blobKey.id to prev.copy(progress = progress))
+                UriProbe.Unsized -> {
+                    try {
+                        runPreCountThenStream(uri, blobKey, displayName, eligible)
+                    } catch (e: UriNotReopenableException) {
+                        log(TAG, WARN) {
+                            "shareFile(): URI is one-shot; falling back to staging"
                         }
-                    },
-                )
-            } finally {
-                _transfers.update { it - blobKey.id }
+                        stagedFile = blobCacheDirs.tempFile(stagingDir)
+                        runStagedUpload(uri, blobKey, displayName, stagedFile, eligible)
+                    }
+                }
             }
 
+            val putResult = outcome.putResult
             if (putResult.successful.isEmpty()) {
                 log(TAG, WARN) { "shareFile(): All connectors failed" }
-                if (putResult.perConnectorErrors.isEmpty()) {
-                    return@withContext ShareResult.NoEligibleConnectors
-                }
-                val errs = putResult.perConnectorErrors.values
-                if (errs.isNotEmpty() && errs.all { it is BlobServerStorageLowException }) {
-                    return@withContext ShareResult.ServerStorageLow
-                }
-                if (errs.isNotEmpty() && errs.all { it is BlobQuotaExceededException }) {
-                    return@withContext ShareResult.AccountQuotaFull
-                }
-                val tooLargeErrors = errs.filterIsInstance<BlobFileTooLargeException>()
-                val allTooLarge = tooLargeErrors.size == errs.size
-                if (allTooLarge) {
-                    val minCap = tooLargeErrors.mapNotNull { it.maxFileBytes }.minOrNull()
-                    if (minCap != null) {
-                        return@withContext ShareResult.FileTooLarge(requestedBytes = size, maxBytes = minCap)
-                    }
-                }
-                return@withContext ShareResult.AllConnectorsFailed(putResult.perConnectorErrors)
+                return@withContext mapAllFailedToShareResult(outcome.plaintextSize, putResult)
             }
 
             // Open the cleanup window — covers the gap between put returning and upsertFile
@@ -247,9 +238,9 @@ class FileShareService @Inject constructor(
             val sharedFile = FileShareInfo.SharedFile(
                 name = displayName,
                 mimeType = mimeType,
-                size = size,
+                size = outcome.plaintextSize,
                 blobKey = blobKey.id,
-                checksum = checksum,
+                checksum = outcome.plaintextChecksum,
                 sharedAt = Clock.System.now(),
                 expiresAt = Clock.System.now() + DEFAULT_EXPIRY,
                 availableOn = putResult.successful.map { it.idString }.toSet(),
@@ -261,16 +252,7 @@ class FileShareService @Inject constructor(
             // declare the share done. BaseModuleRepo's writeFLow eventually picks up the
             // upsertFile change and syncs, but it throttles by 1 s and is fully decoupled —
             // process death between finalize and that sync would orphan the local row against
-            // a server-side COMPLETE session that the server GCs after `completeIdleTtlSeconds`
-            // (10 min by default). Driving the sync here, awaiting it, then closing the cleanup
-            // window means: success implies the commit hit each receiving connector, which
-            // makes the just-uploaded blob immutable and survives any future app death.
-            //
-            // If a parallel sync already holds the lock, syncManager.sync sets `pendingSync`
-            // and returns early. Acceptable: that other sync was already going to write our
-            // state and will re-iterate to pick up `pendingSync`. The remaining race is short
-            // (the in-flight sync's network round-trip), much smaller than the prior 1 s+
-            // throttle window.
+            // a server-side COMPLETE session that the server GCs after `completeIdleTtlSeconds`.
             val selfData = ModuleData(
                 modifiedAt = Clock.System.now(),
                 deviceId = syncSettings.deviceId,
@@ -313,11 +295,270 @@ class FileShareService @Inject constructor(
                 }
             }
             ShareResult.Cancelled
+        } catch (e: LocalStorageLowException) {
+            log(TAG, WARN) { "shareFile(): local storage exhausted: ${e.message}" }
+            ShareResult.LocalStorageLow(requestedBytes = e.requestedBytes, availableBytes = e.availableBytes)
         } finally {
             activeJobs.remove(blobKey.id)
-            stagedFile.delete()
+            stagedFile?.delete()
         }
     }
+
+    private data class UploadOutcome(
+        val plaintextSize: Long,
+        val plaintextChecksum: String,
+        val putResult: BlobManager.PutResult,
+    )
+
+    /**
+     * Tier A — stage URI bytes to disk, compute plaintext SHA-256 during the stage write, hand
+     * the staged file's `Source` to `BlobManager.put`. Required when fan-out targets ≥2
+     * connectors (parallel reads can't share a single URI source) or when GDrive is in the set
+     * (its plaintext-checksum Drive property must be set with a known checksum at upload time).
+     */
+    private suspend fun runStagedUpload(
+        uri: Uri,
+        blobKey: BlobKey,
+        displayName: String,
+        stagedFile: File,
+        eligible: Set<ConnectorId>,
+    ): UploadOutcome {
+        val digest = MessageDigest.getInstance("SHA-256")
+        var size = 0L
+
+        try {
+            context.contentResolver.openInputStream(uri)?.use { input ->
+                stagedFile.outputStream().use { output ->
+                    val buffer = ByteArray(8192)
+                    var read: Int
+                    while (input.read(buffer).also { read = it } != -1) {
+                        output.write(buffer, 0, read)
+                        digest.update(buffer, 0, read)
+                        size += read
+                    }
+                }
+            } ?: throw IOException("openInputStream returned null for $uri")
+        } catch (e: IOException) {
+            // Local IO during staging is the only place a real ENOSPC fires for shareFile —
+            // distinguish it from generic transport failures so the UI can surface a useful
+            // error. Other IOException causes (provider revoked, permission lost) propagate
+            // as-is and get bucketed into AllConnectorsFailed by the outer `put` flow.
+            if (isNoSpaceOnDevice(e)) {
+                throw LocalStorageLowException(
+                    requestedBytes = size.coerceAtLeast(1L),
+                    availableBytes = stagingDir.usableSpace,
+                    cause = e,
+                )
+            }
+            throw e
+        }
+
+        val checksum = digest.digest().toLowercaseHex()
+        log(TAG, VERBOSE) { "runStagedUpload($displayName): size=$size, checksum=$checksum" }
+
+        val stagedPath = stagedFile.absolutePath.toPath()
+        val metadata = BlobMetadata(size = size, createdAt = Clock.System.now(), checksum = checksum)
+        val putResult = withTransferRow(blobKey, displayName, size) {
+            blobManager.put(
+                deviceId = syncSettings.deviceId,
+                moduleId = FileShareModule.MODULE_ID,
+                blobKey = blobKey,
+                openSource = { FileSystem.SYSTEM.source(stagedPath) },
+                metadata = metadata,
+                eligibleConnectors = eligible,
+                onProgress = transferProgress(blobKey),
+            )
+        }
+        return UploadOutcome(plaintextSize = size, plaintextChecksum = checksum, putResult = putResult)
+    }
+
+    /**
+     * Tier B — single OctiServer connector + URI reports a plaintext size we trust. Open the
+     * URI exactly once, tee the bytes through a SHA-256 digest, hand the resulting `Source` to
+     * `BlobManager.put`. Zero disk temps. Throws [BlobSizeMismatchException] from the OctiServer
+     * store if `OpenableColumns.SIZE` lied — the orchestrator catches and retries as Tier B′.
+     */
+    private suspend fun runStreamingUpload(
+        uri: Uri,
+        blobKey: BlobKey,
+        displayName: String,
+        plaintextSize: Long,
+        eligible: Set<ConnectorId>,
+    ): UploadOutcome {
+        val plaintextDigest = MessageDigest.getInstance("SHA-256")
+        val openSource = singleUseUriSource(uri, plaintextDigest)
+
+        val metadata = BlobMetadata(
+            size = plaintextSize,
+            createdAt = Clock.System.now(),
+            // OctiServer's streaming pipeline computes ciphertext SHA-256 itself and ignores
+            // metadata.checksum — leaving this empty avoids putting a placeholder on the wire.
+            // GDrive isn't in the eligible set for Tier B, so its checksum dependency doesn't
+            // apply here.
+            checksum = "",
+        )
+        val putResult = withTransferRow(blobKey, displayName, plaintextSize) {
+            blobManager.put(
+                deviceId = syncSettings.deviceId,
+                moduleId = FileShareModule.MODULE_ID,
+                blobKey = blobKey,
+                openSource = openSource,
+                metadata = metadata,
+                eligibleConnectors = eligible,
+                onProgress = transferProgress(blobKey),
+            )
+        }
+        val plaintextChecksum = plaintextDigest.digest().toLowercaseHex()
+        return UploadOutcome(
+            plaintextSize = plaintextSize,
+            plaintextChecksum = plaintextChecksum,
+            putResult = putResult,
+        )
+    }
+
+    /**
+     * Tier B′ — single OctiServer connector but `OpenableColumns.SIZE` is missing or proven
+     * wrong. Read the URI once to count bytes + compute plaintext SHA-256, then re-open the
+     * URI for the actual encrypt-and-upload pass via [runStreamingUpload]. Throws
+     * [UriNotReopenableException] if the second open fails (URI is single-shot). The encrypt
+     * pass's plaintext digest is cross-checked against the pre-count digest — divergence
+     * indicates the URI's content changed between reads, which we surface as a hard failure
+     * rather than silently uploading the new content under the old digest.
+     */
+    private suspend fun runPreCountThenStream(
+        uri: Uri,
+        blobKey: BlobKey,
+        displayName: String,
+        eligible: Set<ConnectorId>,
+    ): UploadOutcome {
+        val precountDigest = MessageDigest.getInstance("SHA-256")
+        var precountSize = 0L
+        context.contentResolver.openInputStream(uri)?.use { input ->
+            val buffer = ByteArray(8192)
+            var read: Int
+            while (input.read(buffer).also { read = it } != -1) {
+                precountDigest.update(buffer, 0, read)
+                precountSize += read
+            }
+        } ?: throw UriNotReopenableException("Pre-count open returned null for $uri")
+        val precountChecksum = precountDigest.digest().toLowercaseHex()
+        log(TAG, VERBOSE) { "runPreCountThenStream(): precount size=$precountSize" }
+
+        val outcome = runStreamingUpload(uri, blobKey, displayName, precountSize, eligible)
+        // Cross-check only when at least one connector actually consumed the URI. A put that
+        // preflight-rejected every connector (no bytes flowed through the digest) leaves the
+        // streaming digest as the empty SHA-256, which would falsely flag a URI change. The
+        // share fails on its own merits when `successful` is empty — we don't need to layer a
+        // spurious "URI changed" error on top.
+        if (outcome.putResult.successful.isNotEmpty() && outcome.plaintextChecksum != precountChecksum) {
+            throw IOException(
+                "URI content changed between pre-count and upload: precount=$precountChecksum " +
+                    "encrypt=${outcome.plaintextChecksum}"
+            )
+        }
+        // For the all-failed case, surface the precount digest as the canonical plaintext
+        // checksum — it's the one we actually verified, even though no upload landed.
+        return if (outcome.putResult.successful.isEmpty()) {
+            outcome.copy(plaintextChecksum = precountChecksum)
+        } else {
+            outcome
+        }
+    }
+
+    /**
+     * Build a single-call `() -> Source` factory that opens [uri], wraps the InputStream with a
+     * [DigestInputStream] feeding [plaintextDigest], and returns an okio `Source`. A second call
+     * is a contract violation (Tier B and B′ are single-connector — the factory is invoked
+     * exactly once by `BlobManager.put`). [UriNotReopenableException] propagates when the
+     * provider returns null on open, signalling the orchestrator to drop to Tier A.
+     */
+    private fun singleUseUriSource(uri: Uri, plaintextDigest: MessageDigest): () -> Source {
+        var opened = false
+        return {
+            check(!opened) { "single-use URI source factory invoked twice" }
+            opened = true
+            val input: InputStream = context.contentResolver.openInputStream(uri)
+                ?: throw UriNotReopenableException("openInputStream returned null for $uri")
+            DigestInputStream(input, plaintextDigest).source()
+        }
+    }
+
+    private suspend inline fun <T> withTransferRow(
+        blobKey: BlobKey,
+        fileName: String,
+        bytesTotal: Long,
+        crossinline body: suspend () -> T,
+    ): T {
+        _transfers.update {
+            it + (blobKey.id to Transfer(
+                blobKey = blobKey.id,
+                fileName = fileName,
+                direction = Transfer.Direction.UPLOAD,
+                progress = BlobProgress(bytesTransferred = 0L, bytesTotal = bytesTotal),
+            ))
+        }
+        return try {
+            body()
+        } finally {
+            _transfers.update { it - blobKey.id }
+        }
+    }
+
+    private fun transferProgress(blobKey: BlobKey): BlobProgressCallback = { progress ->
+        _transfers.update {
+            val prev = it[blobKey.id] ?: return@update it
+            it + (blobKey.id to prev.copy(progress = progress))
+        }
+    }
+
+    private fun mapAllFailedToShareResult(
+        plaintextSize: Long,
+        putResult: BlobManager.PutResult,
+    ): ShareResult {
+        if (putResult.perConnectorErrors.isEmpty()) {
+            return ShareResult.NoEligibleConnectors
+        }
+        val errs = putResult.perConnectorErrors.values
+        if (errs.isNotEmpty() && errs.all { it is BlobServerStorageLowException }) {
+            return ShareResult.ServerStorageLow
+        }
+        if (errs.isNotEmpty() && errs.all { it is BlobQuotaExceededException }) {
+            return ShareResult.AccountQuotaFull
+        }
+        val tooLargeErrors = errs.filterIsInstance<BlobFileTooLargeException>()
+        if (tooLargeErrors.size == errs.size) {
+            val minCap = tooLargeErrors.mapNotNull { it.maxFileBytes }.minOrNull()
+            if (minCap != null) {
+                return ShareResult.FileTooLarge(requestedBytes = plaintextSize, maxBytes = minCap)
+            }
+        }
+        return ShareResult.AllConnectorsFailed(putResult.perConnectorErrors)
+    }
+
+    /**
+     * Heuristic ENOSPC detection. Android doesn't expose `errno` for [IOException]; the standard
+     * runtime message on a full filesystem is "No space left on device" (Linux ENOSPC text via
+     * libcore). We match on the substring rather than instantiate a typed exception class.
+     */
+    private fun isNoSpaceOnDevice(e: IOException): Boolean {
+        var current: Throwable? = e
+        while (current != null) {
+            val msg = current.message ?: ""
+            if (msg.contains("No space left on device", ignoreCase = true)) return true
+            current = current.cause
+        }
+        return false
+    }
+
+    private class LocalStorageLowException(
+        val requestedBytes: Long,
+        val availableBytes: Long,
+        cause: Throwable,
+    ) : IOException("Local storage exhausted (requested=$requestedBytes, available=$availableBytes)", cause)
+
+    private class UriNotReopenableException(message: String) : IOException(message)
+
+    private fun ByteArray.toLowercaseHex(): String = joinToString("") { "%02x".format(it) }
 
     suspend fun saveFile(
         sharedFile: FileShareInfo.SharedFile,

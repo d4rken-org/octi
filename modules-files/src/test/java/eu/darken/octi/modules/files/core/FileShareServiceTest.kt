@@ -202,6 +202,7 @@ class FileShareServiceTest : BaseTest() {
 
         val smallerCap = 10L
         val largerCap = 100L
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
         coEvery {
             blobManager.put(any(), any(), any(), any(), any(), any(), any())
         } returns BlobManager.PutResult(
@@ -246,6 +247,7 @@ class FileShareServiceTest : BaseTest() {
         every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(fileBytes) }
         every { syncSettings.deviceId } returns ownDeviceId
 
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
         coEvery {
             blobManager.put(any(), any(), any(), any(), any(), any(), any())
         } returns BlobManager.PutResult(
@@ -279,6 +281,7 @@ class FileShareServiceTest : BaseTest() {
         every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(fileBytes) }
         every { syncSettings.deviceId } returns ownDeviceId
 
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA)
         coEvery {
             blobManager.put(any(), any(), any(), any(), any(), any(), any())
         } returns BlobManager.PutResult(
@@ -318,6 +321,7 @@ class FileShareServiceTest : BaseTest() {
         every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(fileBytes) }
         every { syncSettings.deviceId } returns ownDeviceId
 
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
         coEvery {
             blobManager.put(any(), any(), any(), any(), any(), any(), any())
         } returns BlobManager.PutResult(

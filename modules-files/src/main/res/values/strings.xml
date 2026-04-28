@@ -44,6 +44,7 @@
     <string name="module_files_retry_status_server_storage_low">Server is out of space</string>
     <string name="module_files_upload_server_storage_low">Server is out of space — try again later</string>
     <string name="module_files_upload_account_quota_full">Your account is full — delete shared files first</string>
+    <string name="module_files_upload_local_storage_low">Not enough space on this device — free up some space and try again</string>
     <string name="module_files_upload_cancelled">Upload cancelled</string>
     <string name="module_files_save_cancelled">Save cancelled</string>
     <string name="module_files_upload_progress">Uploading %1$s</string>

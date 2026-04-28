@@ -53,6 +53,20 @@ class StreamingPayloadCipher(keySet: PayloadEncryption.KeySet) {
     }
 
     /**
+     * Returns the number of ciphertext bytes that [encrypt] would produce for a plaintext
+     * of [plaintextBytes] bytes, using the configured streaming-AEAD parameters. Delegates to
+     * Tink's own `expectedCiphertextSize` so the formula stays in lock-step with whatever
+     * header/segment/tag layout the underlying primitive uses.
+     *
+     * Used by the upload pipeline to declare ciphertext size to the server *before* any
+     * bytes have been encrypted, so we don't need to encrypt-to-temp first.
+     */
+    fun ciphertextSize(plaintextBytes: Long): Long {
+        require(plaintextBytes >= 0) { "plaintextBytes must be non-negative (was $plaintextBytes)" }
+        return streamingAead.expectedCiphertextSize(plaintextBytes)
+    }
+
+    /**
      * Encrypt [source] into [sink] with [associatedData] binding.
      */
     fun encrypt(source: Source, sink: Sink, associatedData: ByteArray) {
