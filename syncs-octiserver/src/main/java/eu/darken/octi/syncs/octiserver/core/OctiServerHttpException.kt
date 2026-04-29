@@ -35,7 +35,10 @@ class OctiServerHttpException(
 
     override fun getLocalizedError(): LocalizedError = LocalizedError(
         throwable = this,
-        label = caString { cause.message() },
+        label = when {
+            isDeviceUnknown -> caString { it.getString(R.string.sync_octiserver_issues_type_device_not_registered) }
+            else -> caString { cause.message() }
+        },
         description = when {
             isDeviceUnknown -> caString { it.getString(R.string.sync_octiserver_error_device_not_registered) }
             else -> caString { errorMessage }

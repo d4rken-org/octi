@@ -9,6 +9,7 @@ import eu.darken.octi.sync.core.ConnectorIssueAggregator
 import eu.darken.octi.sync.core.ConnectorOperation
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.reasonFor
 import eu.darken.octi.sync.core.blob.StorageStatus
 import eu.darken.octi.sync.core.blob.StorageStatusManager
 import kotlinx.coroutines.CoroutineScope
@@ -40,23 +41,25 @@ class ConnectorOverviewProvider @Inject constructor(
 
     val cards: Flow<List<ConnectorCardState>> = combine(
         syncManager.allConnectors,
-        syncSettings.pausedConnectors.flow,
+        syncSettings.connectorPauseStates,
         storageStatusManager.statuses,
         issueAggregator.issues,
-    ) { connectors, paused, statuses, allIssues ->
-        Quad(connectors, paused, statuses, allIssues)
+    ) { connectors, pauseStates, statuses, allIssues ->
+        Quad(connectors, pauseStates, statuses, allIssues)
     }
-        .flatMapLatest { (connectors, paused, statuses, allIssues) ->
+        .flatMapLatest { (connectors, pauseStates, statuses, allIssues) ->
             if (connectors.isEmpty()) flowOf(emptyList())
             else combine(connectors.map { c ->
                 combine(c.state, c.operations) { state, ops ->
                     val issues = allIssues.filter { it.connectorId == c.identifier }
                     val isBusy = ops.any { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing }
+                    val pauseReason = pauseStates.reasonFor(c.identifier)
                     ConnectorCardState(
                         connector = c,
                         syncState = state,
                         storageStatus = statuses[c.identifier] ?: StorageStatus.Unsupported(c.identifier),
-                        isPaused = c.identifier in paused,
+                        pauseReason = pauseReason,
+                        isPaused = pauseReason != null,
                         isBusy = isBusy,
                         issues = issues,
                     )

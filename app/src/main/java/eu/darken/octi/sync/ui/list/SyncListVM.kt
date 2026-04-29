@@ -15,6 +15,7 @@ import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
+import eu.darken.octi.sync.core.ConnectorPauseReason
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncManager
@@ -58,6 +59,7 @@ class SyncListVM @Inject constructor(
         val ourState: SyncConnectorState,
         val storageStatus: StorageStatus,
         val otherStates: Collection<SyncConnectorState>,
+        val pauseReason: ConnectorPauseReason?,
         val isPaused: Boolean,
         val isBusy: Boolean,
         val issues: List<ConnectorIssue> = emptyList(),
@@ -105,6 +107,7 @@ class SyncListVM @Inject constructor(
                     storageStatus = card.storageStatus,
                     otherStates = cards.filter { it.connector.identifier != card.connector.identifier }
                         .map { it.syncState },
+                    pauseReason = card.pauseReason,
                     isPaused = card.isPaused,
                     isBusy = card.isBusy,
                     issues = card.issues,
@@ -129,7 +132,9 @@ class SyncListVM @Inject constructor(
 
     fun togglePause(connectorId: ConnectorId) = launch {
         log(TAG) { "togglePause($connectorId)" }
-        if (!upgradeRepo.isPro()) {
+        val pauseReason = syncSettings.pauseReason(connectorId)
+        val isRepairResume = pauseReason == ConnectorPauseReason.AuthIssue
+        if (!upgradeRepo.isPro() && !isRepairResume) {
             navTo(Nav.Main.Upgrade())
             return@launch
         }

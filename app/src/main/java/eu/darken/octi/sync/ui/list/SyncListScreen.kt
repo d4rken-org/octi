@@ -48,6 +48,7 @@ import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.error.ErrorEventHandler
+import eu.darken.octi.common.error.localized
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -169,6 +170,7 @@ fun SyncListScreen(
             connector = item.connector,
             state = item.ourState,
             isPaused = item.isPaused,
+            pauseReason = item.pauseReason,
             isPro = state.isPro,
             onDismiss = { showActionsForId = null },
             onTogglePause = { onTogglePause(item.connectorId) },
@@ -293,6 +295,8 @@ private fun LabeledField(label: String, value: String) {
 
 @Composable
 private fun LastSyncField(state: SyncConnectorState) {
+    val context = LocalContext.current
+    val lastError = state.lastError
     Text(
         text = stringResource(R.string.sync_last_action_label),
         style = MaterialTheme.typography.labelMedium,
@@ -302,15 +306,15 @@ private fun LastSyncField(state: SyncConnectorState) {
             ?.let { DateUtils.getRelativeTimeSpanString(it.toEpochMilliseconds()).toString() }
             ?: stringResource(R.string.sync_last_never_label),
         style = MaterialTheme.typography.bodyMedium,
-        color = if (state.lastError != null) {
+        color = if (lastError != null) {
             MaterialTheme.colorScheme.error
         } else {
             MaterialTheme.colorScheme.onSurface
         },
     )
-    if (state.lastError != null) {
+    if (lastError != null) {
         Text(
-            text = state.lastError.toString(),
+            text = lastError.localized(context).description.get(context),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
         )

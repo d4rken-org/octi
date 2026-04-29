@@ -8,7 +8,7 @@ sealed interface ConnectorCommand {
 
     data object Reset : ConnectorCommand
 
-    data object Pause : ConnectorCommand
+    data class Pause(val reason: ConnectorPauseReason = ConnectorPauseReason.Manual) : ConnectorCommand
 
     data object Resume : ConnectorCommand
 }

@@ -105,7 +105,7 @@ class BlobManager @Inject constructor(
     }
 
     private val allStores: Flow<List<BlobStore>> = rawStores
-        .combine(syncSettings.pausedConnectors.flow) { stores, paused ->
+        .combine(syncSettings.pausedConnectorIds) { stores, paused ->
             stores.filter { it.connectorId !in paused }
         }
         .setupCommonEventHandlers(TAG) { "allStores" }
@@ -118,7 +118,7 @@ class BlobManager @Inject constructor(
         // survive; QuotaExceeded is similarly preserved because freeing space is the user's job.
         scope.launch(dispatcherProvider.Default) {
             var previous = emptySet<ConnectorId>()
-            syncSettings.pausedConnectors.flow.collect { paused ->
+            syncSettings.pausedConnectorIds.collect { paused ->
                 val resumed = previous - paused
                 if (resumed.isNotEmpty()) {
                     var changed = false

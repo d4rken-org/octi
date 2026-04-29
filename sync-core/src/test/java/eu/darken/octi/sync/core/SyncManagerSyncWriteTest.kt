@@ -1,6 +1,5 @@
 package eu.darken.octi.sync.core
 
-import eu.darken.octi.common.datastore.DataStoreValue
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.cache.SyncCache
@@ -18,6 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
@@ -41,7 +41,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
     private lateinit var connector1: SyncConnector
     private lateinit var connector2: SyncConnector
     private lateinit var syncSettings: SyncSettings
-    private lateinit var pausedConnectorsValue: MutableStateFlow<Set<ConnectorId>>
+    private lateinit var pauseStatesValue: MutableStateFlow<Set<ConnectorPauseState>>
     private lateinit var syncCache: SyncCache
     private lateinit var connectorHub: ConnectorHub
     private lateinit var connectorsFlow: MutableStateFlow<List<SyncConnector>>
@@ -51,6 +51,11 @@ class SyncManagerSyncWriteTest : BaseTest() {
         every { this@mockk.moduleId } returns moduleId
         every { this@mockk.payload } returns payload.encodeUtf8()
     }
+
+    private fun pausedState(
+        connectorId: ConnectorId,
+        reason: ConnectorPauseReason = ConnectorPauseReason.Manual,
+    ) = ConnectorPauseState(connectorId = connectorId, reason = reason)
 
     /**
      * Set up a mocked connector that behaves like a real one for SyncManager's purposes:
@@ -63,8 +68,12 @@ class SyncManagerSyncWriteTest : BaseTest() {
         every { submit(any()) } answers {
             val cmd = firstArg<ConnectorCommand>()
             when (cmd) {
-                ConnectorCommand.Pause -> pausedConnectorsValue.value = pausedConnectorsValue.value + cid
-                ConnectorCommand.Resume -> pausedConnectorsValue.value = pausedConnectorsValue.value - cid
+                is ConnectorCommand.Pause -> pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == cid }
+                    .toSet() + ConnectorPauseState(cid, cmd.reason)
+                ConnectorCommand.Resume -> pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == cid }
+                    .toSet()
                 else -> Unit
             }
             OperationId.create()
@@ -118,18 +127,30 @@ class SyncManagerSyncWriteTest : BaseTest() {
         }
         connectorsFlow = MutableStateFlow(listOf(connector1))
 
-        pausedConnectorsValue = MutableStateFlow(emptySet())
+        pauseStatesValue = MutableStateFlow(emptySet())
         syncSettings = mockk(relaxed = true) {
-            every { pausedConnectors } returns mockk<DataStoreValue<Set<ConnectorId>>>(relaxed = true) {
-                every { flow } returns pausedConnectorsValue
-                coEvery { update(any()) } coAnswers {
-                    val transform = firstArg<(Set<ConnectorId>) -> Set<ConnectorId>?>()
-                    val old = pausedConnectorsValue.value
-                    val new = transform(old) ?: old
-                    pausedConnectorsValue.value = new
-                    mockk(relaxed = true)
-                }
+            every { connectorPauseStates } returns pauseStatesValue
+            every { pausedConnectorIds } returns pauseStatesValue.map { it.connectorIds }
+            coEvery { isPaused(any()) } coAnswers {
+                pauseStatesValue.value.reasonFor(firstArg<ConnectorId>()) != null
             }
+            coEvery { pauseReason(any()) } coAnswers {
+                pauseStatesValue.value.reasonFor(firstArg<ConnectorId>())
+            }
+            coEvery { pauseConnector(any(), any()) } coAnswers {
+                val connectorId = firstArg<ConnectorId>()
+                val reason = secondArg<ConnectorPauseReason>()
+                pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == connectorId }
+                    .toSet() + ConnectorPauseState(connectorId, reason)
+            }
+            coEvery { resumeConnector(any()) } coAnswers {
+                val connectorId = firstArg<ConnectorId>()
+                pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == connectorId }
+                    .toSet()
+            }
+            coEvery { migrateLegacyPauseStates() } coAnswers { }
         }
         every { syncSettings.deviceId } returns deviceId
 
@@ -429,7 +450,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            pausedConnectorsValue.value = setOf(connectorId1)
+            pauseStatesValue.value = setOf(pausedState(connectorId1))
             sm.updatePayload(createModule(powerModuleId, "data"))
 
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
@@ -445,7 +466,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            pausedConnectorsValue.value = setOf(connectorId1)
+            pauseStatesValue.value = setOf(pausedState(connectorId1))
 
             sm.resetData(connectorId1)
 
@@ -461,7 +482,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            pausedConnectorsValue.value = setOf(connectorId1)
+            pauseStatesValue.value = setOf(pausedState(connectorId1))
             sm.updatePayload(createModule(powerModuleId, "data"))
 
             sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
@@ -479,13 +500,13 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            pausedConnectorsValue.value = setOf(connectorId1)
+            pauseStatesValue.value = setOf(pausedState(connectorId1))
             sm.updatePayload(createModule(powerModuleId, "data"))
 
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
             coVerify(exactly = 0) { connector1.submit(match { it is ConnectorCommand.Sync }) }
 
-            pausedConnectorsValue.value = emptySet()
+            pauseStatesValue.value = emptySet()
             sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
 
             coVerify(exactly = 1) { connector1.submit(match { it is ConnectorCommand.Sync }) }
@@ -502,8 +523,8 @@ class SyncManagerSyncWriteTest : BaseTest() {
             sm.togglePause(connectorId1, paused = true)
             advanceUntilIdle()
 
-            coVerify { connector1.submit(ConnectorCommand.Pause) }
-            pausedConnectorsValue.value shouldBe setOf(connectorId1)
+            coVerify { connector1.submit(ConnectorCommand.Pause()) }
+            pauseStatesValue.value shouldBe setOf(pausedState(connectorId1))
 
             job.cancel()
             advanceUntilIdle()
@@ -511,7 +532,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
 
         @Test
         fun `togglePause unpause submits Resume command and flips setting`() = runTest2 {
-            pausedConnectorsValue.value = setOf(connectorId1)
+            pauseStatesValue.value = setOf(pausedState(connectorId1))
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
@@ -521,7 +542,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
             coVerify { connector1.submit(ConnectorCommand.Resume) }
             // Processor-side post-resume Sync is covered by ConnectorProcessor tests; here we
             // only verify SyncManager delegated correctly.
-            pausedConnectorsValue.value shouldBe emptySet()
+            pauseStatesValue.value shouldBe emptySet()
 
             job.cancel()
             advanceUntilIdle()
@@ -542,6 +563,21 @@ class SyncManagerSyncWriteTest : BaseTest() {
             advanceUntilIdle()
         }
 
+        @Test
+        fun `disconnect clears pause reason`() = runTest2 {
+            pauseStatesValue.value = setOf(pausedState(connectorId1, ConnectorPauseReason.AuthIssue))
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.disconnect(connectorId1)
+            advanceUntilIdle()
+
+            pauseStatesValue.value shouldBe emptySet()
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
         // See plan section "Auto-sync-after-resume" — the sync after Resume is now enqueued as
         // a side effect of the processor's Resume handling, so it's strictly ordered in the
         // queue relative to any subsequent Pause. That behavior is covered by
@@ -554,7 +590,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            pausedConnectorsValue.value = setOf(connectorId1)
+            pauseStatesValue.value = setOf(pausedState(connectorId1))
             advanceUntilIdle()
 
             val active = sm.connectors.first()
@@ -570,7 +606,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
-            pausedConnectorsValue.value = setOf(connectorId1)
+            pauseStatesValue.value = setOf(pausedState(connectorId1))
             advanceUntilIdle()
 
             val all = sm.allConnectors.first()

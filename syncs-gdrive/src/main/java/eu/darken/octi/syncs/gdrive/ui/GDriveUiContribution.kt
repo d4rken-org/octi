@@ -35,6 +35,7 @@ import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.ConnectorPauseReason
 import eu.darken.octi.sync.core.ConnectorUiContribution
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.sync.core.SyncConnector
@@ -80,6 +81,7 @@ class GDriveUiContribution @Inject constructor() : ConnectorUiContribution {
         connector: SyncConnector,
         state: SyncConnectorState,
         isPaused: Boolean,
+        pauseReason: ConnectorPauseReason?,
         isPro: Boolean,
         onDismiss: () -> Unit,
         onTogglePause: () -> Unit,

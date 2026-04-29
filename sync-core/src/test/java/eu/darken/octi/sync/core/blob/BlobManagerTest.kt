@@ -483,9 +483,7 @@ class BlobManagerTest : BaseTest() {
         }
 
         val syncSettings = mockk<SyncSettings>()
-        every { syncSettings.pausedConnectors } returns mockk {
-            every { flow } returns pausedConnectorsFlow
-        }
+        every { syncSettings.pausedConnectorIds } returns pausedConnectorsFlow
 
         return BlobManager(
             scope = scope,

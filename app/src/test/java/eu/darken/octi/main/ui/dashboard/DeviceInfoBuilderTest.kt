@@ -9,6 +9,7 @@ import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.IssueSeverity
+import eu.darken.octi.syncs.octiserver.core.OctiServerIssue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -132,6 +133,25 @@ class DeviceInfoBuilderTest : BaseTest() {
             infos shouldHaveSize 2
             // StaleDevice is WARNING, ClockSkew is WARNING — both same severity, sorted by class name
             infos.all { it.severity == IssueSeverity.WARNING } shouldBe true
+        }
+    }
+
+    @Nested
+    inner class `dashboard issue filtering` {
+        @Test
+        fun `paused connector issues are hidden unless current device is no longer registered`() {
+            val hiddenIssue = CommonIssue.ClockSkew(connectorId = connectorId, deviceId = currentDeviceId)
+            val visibleIssue = OctiServerIssue.CurrentDeviceNotRegistered(
+                connectorId = connectorId,
+                deviceId = currentDeviceId,
+            )
+
+            val result = DashboardVM.filterDashboardIssues(
+                allIssues = listOf(hiddenIssue, visibleIssue),
+                pausedIds = setOf(connectorId),
+            )
+
+            result shouldBe listOf(visibleIssue)
         }
     }
 

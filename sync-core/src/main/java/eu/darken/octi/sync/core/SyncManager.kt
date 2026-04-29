@@ -3,7 +3,6 @@ package eu.darken.octi.sync.core
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
-import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
@@ -62,6 +61,12 @@ class SyncManager @Inject constructor(
 
     private val disabledConnectors = MutableStateFlow(emptySet<SyncConnector>())
 
+    init {
+        scope.launch(dispatcherProvider.Default) {
+            syncSettings.migrateLegacyPauseStates()
+        }
+    }
+
     private val hubs: Flow<Collection<ConnectorHub>> = flow {
         emit(connectorHubs)
         awaitCancellation()
@@ -87,7 +92,7 @@ class SyncManager @Inject constructor(
      * unless it explicitly needs paused entries too.
      */
     val connectors: Flow<List<SyncConnector>> = allConnectors
-        .combine(syncSettings.pausedConnectors.flow) { conns, paused ->
+        .combine(syncSettings.pausedConnectorIds) { conns, paused ->
             conns.filter { !paused.contains(it.identifier) }
         }
         .setupCommonEventHandlers(TAG) { "connectors" }
@@ -189,7 +194,7 @@ class SyncManager @Inject constructor(
         log(TAG) { "sync(${connectorId.logLabel}, ${options.logLabel})" }
         // Fast-path defense: avoid submitting work we already know the processor will reject.
         // The processor also enforces the pause guard authoritatively.
-        if (syncSettings.pausedConnectors.value().contains(connectorId)) {
+        if (syncSettings.isPaused(connectorId)) {
             log(TAG, INFO) { "sync(${connectorId.logLabel}): connector is paused, skipping" }
             return
         }
@@ -235,7 +240,7 @@ class SyncManager @Inject constructor(
 
     suspend fun resetData(identifier: ConnectorId) = withContext(NonCancellable) {
         log(TAG) { "resetData(identifier=$identifier)" }
-        if (syncSettings.pausedConnectors.value().contains(identifier)) {
+        if (syncSettings.isPaused(identifier)) {
             log(TAG, INFO) { "resetData($identifier): connector is paused, skipping" }
             return@withContext
         }
@@ -252,9 +257,9 @@ class SyncManager @Inject constructor(
 
         disabledConnectors.value += connector
 
-        if (syncSettings.pausedConnectors.value().contains(identifier)) {
+        if (syncSettings.isPaused(identifier)) {
             log(TAG) { "disconnect(...) was paused, clearing it" }
-            syncSettings.pausedConnectors.update { it - identifier }
+            syncSettings.resumeConnector(identifier)
         }
 
         try {
@@ -273,7 +278,7 @@ class SyncManager @Inject constructor(
 
     suspend fun togglePause(identifier: ConnectorId, paused: Boolean? = null) {
         log(TAG, INFO) { "togglePause($identifier, enabled=$paused)" }
-        val wasPaused = syncSettings.pausedConnectors.value().contains(identifier)
+        val wasPaused = syncSettings.isPaused(identifier)
         val pause = paused ?: !wasPaused
         if (wasPaused == pause) {
             log(TAG) { "togglePause($identifier): no-op, already in target state" }
@@ -286,7 +291,7 @@ class SyncManager @Inject constructor(
         // Route through the queue so the setting write is serialized with the connector's other
         // work. After a successful Resume, the processor enqueues a Sync on its own queue — no
         // fire-and-forget launch needed here.
-        connector.execute(if (pause) ConnectorCommand.Pause else ConnectorCommand.Resume)
+        connector.execute(if (pause) ConnectorCommand.Pause() else ConnectorCommand.Resume)
     }
 
     companion object {

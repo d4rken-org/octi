@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
-import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -74,7 +73,7 @@ class OctiServerLinkHostVM @Inject constructor(
 
         launch {
             val connector = connectorFlow.first()
-            syncSettings.pausedConnectors.flow
+            syncSettings.pausedConnectorIds
                 .map { it.contains(connector.identifier) }
                 .distinctUntilChanged()
                 .collectLatest { isPaused ->
@@ -104,7 +103,7 @@ class OctiServerLinkHostVM @Inject constructor(
                 _state.value = _state.value.copy(encodedLinkCode = null)
             }
             val connector = connectorFlow.first()
-            if (syncSettings.pausedConnectors.value().contains(connector.identifier)) {
+            if (syncSettings.isPaused(connector.identifier)) {
                 log(TAG, WARN) { "onScreenVisible(): connector ${connector.identifier} is paused, navigating up" }
                 navUp()
                 return@launch

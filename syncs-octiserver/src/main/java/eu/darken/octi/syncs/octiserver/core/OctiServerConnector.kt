@@ -7,6 +7,7 @@ import eu.darken.octi.common.collections.fromGzip
 import eu.darken.octi.common.collections.toGzip
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.DEBUG
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
@@ -24,6 +25,7 @@ import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.ConnectorOperation
+import eu.darken.octi.sync.core.ConnectorPauseReason
 import eu.darken.octi.sync.core.ConnectorProcessor
 import eu.darken.octi.sync.core.ConnectorSyncState
 import eu.darken.octi.sync.core.DeviceId
@@ -102,6 +104,12 @@ class OctiServerConnector @AssistedInject constructor(
     private fun buildAssociatedData(deviceId: DeviceId, moduleId: ModuleId): ByteArray =
         "${deviceId.id}:${moduleId.id}".toByteArray()
 
+    override val identifier: ConnectorId = ConnectorId(
+        type = ConnectorType.OCTISERVER,
+        subtype = credentials.serverAdress.domain,
+        account = credentials.accountId.id,
+    )
+
     data class State(
         override val lastActionAt: Instant? = null,
         override val lastError: Exception? = null,
@@ -115,7 +123,7 @@ class OctiServerConnector @AssistedInject constructor(
         parentScope = scope + dispatcherProvider.IO,
         loggingTag = TAG,
     ) {
-        State()
+        State(issues = buildCurrentDeviceRegistrationIssues())
     }
 
     override val state: Flow<State> = _state.flow
@@ -135,12 +143,6 @@ class OctiServerConnector @AssistedInject constructor(
 
     override val capabilities: ConnectorCapabilities = ConnectorCapabilities(
         deviceRemovalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE,
-    )
-
-    override val identifier: ConnectorId = ConnectorId(
-        type = ConnectorType.OCTISERVER,
-        subtype = credentials.serverAdress.domain,
-        account = credentials.accountId.id,
     )
 
     private val processor = ConnectorProcessor(
@@ -229,8 +231,14 @@ class OctiServerConnector @AssistedInject constructor(
             is ConnectorCommand.Sync -> handleSync(command.options)
             is ConnectorCommand.DeleteDevice -> handleDeleteDevice(command.deviceId)
             ConnectorCommand.Reset -> handleReset()
-            ConnectorCommand.Pause -> syncSettings.pausedConnectors.update { it + identifier }
-            ConnectorCommand.Resume -> syncSettings.pausedConnectors.update { it - identifier }
+            is ConnectorCommand.Pause -> {
+                syncSettings.pauseConnector(identifier, command.reason)
+                computeIssues()
+            }
+            ConnectorCommand.Resume -> {
+                syncSettings.resumeConnector(identifier)
+                computeIssues()
+            }
         }
     }
 
@@ -388,6 +396,7 @@ class OctiServerConnector @AssistedInject constructor(
         val dataDeviceIds = data?.devices?.filter { it.modules.isNotEmpty() }?.map { it.deviceId }?.toSet() ?: emptySet()
         val encType = credentials.encryptionKeyset.type
         val isGcmSiv = EncryptionMode.fromTypeString(encType) == EncryptionMode.AES256_GCM_SIV
+        val registrationIssues = buildCurrentDeviceRegistrationIssues()
 
         val encIssues = if (!isGcmSiv) emptyList() else metadata.mapNotNull { device ->
             if (device.deviceId == syncSettings.deviceId) return@mapNotNull null
@@ -421,9 +430,23 @@ class OctiServerConnector @AssistedInject constructor(
             }
         }
 
-        val issues = encIssues + blobIssues + commitIssues
+        val issues = registrationIssues + encIssues + blobIssues + commitIssues
         log(TAG) { "computeIssues(): ${issues.size} issues" }
         _state.updateBlocking { copy(issues = issues) }
+    }
+
+    private suspend fun buildCurrentDeviceRegistrationIssues(): List<ConnectorIssue> {
+        val isUnknownDevicePause = syncSettings.pauseReason(identifier) == ConnectorPauseReason.AuthIssue
+        return if (isUnknownDevicePause) {
+            listOf(
+                OctiServerIssue.CurrentDeviceNotRegistered(
+                    connectorId = identifier,
+                    deviceId = syncSettings.deviceId,
+                )
+            )
+        } else {
+            emptyList()
+        }
     }
 
     private suspend fun fetchModule(deviceId: DeviceId, moduleId: ModuleId): OctiServerModuleData? {
@@ -627,11 +650,11 @@ class OctiServerConnector @AssistedInject constructor(
         log(TAG, VERBOSE) { "writeServer(): Done" }
     }
 
-    private fun handleDeviceUnknown(e: Exception, operation: String): Boolean {
+    private suspend fun handleDeviceUnknown(e: Exception, operation: String): Boolean {
         if ((e as? OctiServerHttpException)?.isDeviceUnknown != true) return false
         log(TAG, WARN) { "$operation: device no longer registered, pausing connector" }
         // Route through the queue so pause is serialized with the rest of this connector's work.
-        submit(ConnectorCommand.Pause)
+        submit(ConnectorCommand.Pause(ConnectorPauseReason.AuthIssue))
         return true
     }
 

@@ -52,6 +52,7 @@ interface ConnectorUiContribution {
         connector: SyncConnector,
         state: SyncConnectorState,
         isPaused: Boolean,
+        pauseReason: ConnectorPauseReason?,
         isPro: Boolean,
         onDismiss: () -> Unit,
         onTogglePause: () -> Unit,

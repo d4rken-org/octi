@@ -1,6 +1,5 @@
 package eu.darken.octi.sync.core
 
-import eu.darken.octi.common.datastore.DataStoreValue
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.errors.ConnectorPausedException
 import io.kotest.matchers.collections.shouldContain
@@ -29,21 +28,15 @@ class ConnectorProcessorTest : BaseTest() {
 
     private val connectorId = ConnectorId(type = ConnectorType.OCTISERVER, subtype = "test", account = "acc")
     private lateinit var syncSettings: SyncSettings
-    private lateinit var pausedConnectorsValue: MutableStateFlow<Set<ConnectorId>>
+    private lateinit var pauseStatesValue: MutableStateFlow<Set<ConnectorPauseState>>
 
     @BeforeEach
     fun setup() {
-        pausedConnectorsValue = MutableStateFlow(emptySet())
+        pauseStatesValue = MutableStateFlow(emptySet())
         syncSettings = mockk(relaxed = true) {
-            every { pausedConnectors } returns mockk<DataStoreValue<Set<ConnectorId>>>(relaxed = true) {
-                every { flow } returns pausedConnectorsValue
-                coEvery { update(any()) } coAnswers {
-                    val transform = firstArg<(Set<ConnectorId>) -> Set<ConnectorId>?>()
-                    val old = pausedConnectorsValue.value
-                    val new = transform(old) ?: old
-                    pausedConnectorsValue.value = new
-                    mockk(relaxed = true)
-                }
+            every { connectorPauseStates } returns pauseStatesValue
+            coEvery { isPaused(any()) } coAnswers {
+                pauseStatesValue.value.reasonFor(firstArg<ConnectorId>()) != null
             }
         }
     }
@@ -88,13 +81,17 @@ class ConnectorProcessorTest : BaseTest() {
         val (proc, job) = buildProcessor(executor = { cmd ->
             // Pause/Resume handlers are inline here (not via SyncSettings) so the guard reads it.
             when (cmd) {
-                ConnectorCommand.Pause -> pausedConnectorsValue.value = pausedConnectorsValue.value + connectorId
-                ConnectorCommand.Resume -> pausedConnectorsValue.value = pausedConnectorsValue.value - connectorId
+                is ConnectorCommand.Pause -> pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == connectorId }
+                    .toSet() + ConnectorPauseState(connectorId, cmd.reason)
+                ConnectorCommand.Resume -> pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == connectorId }
+                    .toSet()
                 else -> executed += cmd
             }
         })
 
-        proc.submit(ConnectorCommand.Pause)
+        proc.submit(ConnectorCommand.Pause())
         val syncId = proc.submit(ConnectorCommand.Sync())
         advanceUntilIdle()
 
@@ -113,12 +110,16 @@ class ConnectorProcessorTest : BaseTest() {
         val (proc, job) = buildProcessor(executor = { cmd ->
             executed += cmd
             when (cmd) {
-                ConnectorCommand.Pause -> pausedConnectorsValue.value = pausedConnectorsValue.value + connectorId
-                ConnectorCommand.Resume -> pausedConnectorsValue.value = pausedConnectorsValue.value - connectorId
+                is ConnectorCommand.Pause -> pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == connectorId }
+                    .toSet() + ConnectorPauseState(connectorId, cmd.reason)
+                ConnectorCommand.Resume -> pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == connectorId }
+                    .toSet()
                 else -> Unit
             }
         })
-        pausedConnectorsValue.value = setOf(connectorId)
+        pauseStatesValue.value = setOf(ConnectorPauseState(connectorId, ConnectorPauseReason.Manual))
 
         proc.submit(ConnectorCommand.Resume)
         advanceUntilIdle()
@@ -137,12 +138,16 @@ class ConnectorProcessorTest : BaseTest() {
         val (proc, job) = buildProcessor(executor = { cmd ->
             executed += cmd
             when (cmd) {
-                ConnectorCommand.Pause -> pausedConnectorsValue.value = pausedConnectorsValue.value + connectorId
-                ConnectorCommand.Resume -> pausedConnectorsValue.value = pausedConnectorsValue.value - connectorId
+                is ConnectorCommand.Pause -> pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == connectorId }
+                    .toSet() + ConnectorPauseState(connectorId, cmd.reason)
+                ConnectorCommand.Resume -> pauseStatesValue.value = pauseStatesValue.value
+                    .filterNot { it.connectorId == connectorId }
+                    .toSet()
                 else -> Unit
             }
         })
-        pausedConnectorsValue.value = setOf(connectorId)
+        pauseStatesValue.value = setOf(ConnectorPauseState(connectorId, ConnectorPauseReason.Manual))
 
         // User first awaits Resume (as happens via togglePause → execute(Resume)) — by the time
         // Resume's terminal resolves, the side-effect Sync has already been submitted into the
@@ -151,7 +156,7 @@ class ConnectorProcessorTest : BaseTest() {
         advanceUntilIdle()
         proc.await(resumeId).shouldBeInstanceOf<ConnectorOperation.Succeeded>()
 
-        proc.submit(ConnectorCommand.Pause)
+        proc.submit(ConnectorCommand.Pause())
         advanceUntilIdle()
 
         // Executed order: Resume → Sync → Pause.

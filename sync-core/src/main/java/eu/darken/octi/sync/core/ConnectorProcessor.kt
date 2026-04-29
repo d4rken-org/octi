@@ -1,6 +1,5 @@
 package eu.darken.octi.sync.core
 
-import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
@@ -194,8 +193,8 @@ class ConnectorProcessor(
     }
 
     private suspend fun guardPauseIfNeeded(command: ConnectorCommand) {
-        if (command == ConnectorCommand.Pause || command == ConnectorCommand.Resume) return
-        if (syncSettings.pausedConnectors.value().contains(connectorId)) {
+        if (command is ConnectorCommand.Pause || command == ConnectorCommand.Resume) return
+        if (syncSettings.isPaused(connectorId)) {
             log(TAG, WARN) { "guard($connectorId): paused, rejecting $command" }
             throw ConnectorPausedException(connectorId)
         }

@@ -24,6 +24,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeBlank
 import okio.ByteString.Companion.encodeUtf8
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -94,13 +95,9 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         )
         every { syncSettings.dataStore } returns testDataStore
         every { syncSettings.deviceId } returns DeviceId("test-device")
-        // Processor's pause guard reads syncSettings.pausedConnectors on every command —
+        // Processor's pause guard reads syncSettings.isPaused() on every command —
         // supply an empty flow so guardPauseIfNeeded doesn't NoSuchElementException on flow.first().
-        every {
-            syncSettings.pausedConnectors
-        } returns mockk<eu.darken.octi.common.datastore.DataStoreValue<Set<eu.darken.octi.sync.core.ConnectorId>>>(relaxed = true) {
-            every { flow } returns kotlinx.coroutines.flow.MutableStateFlow(emptySet())
-        }
+        coEvery { syncSettings.isPaused(any()) } returns false
 
         val testAccount = GoogleAccount(accountId = "test-account", email = "test@example.com")
 

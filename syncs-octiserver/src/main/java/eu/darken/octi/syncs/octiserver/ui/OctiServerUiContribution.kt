@@ -27,18 +27,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.ConnectorPauseReason
 import eu.darken.octi.sync.core.ConnectorUiContribution
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.syncs.octiserver.R
 import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
+import eu.darken.octi.syncs.octiserver.core.OctiServerIssue
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -79,6 +82,7 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
         connector: SyncConnector,
         state: SyncConnectorState,
         isPaused: Boolean,
+        pauseReason: ConnectorPauseReason?,
         isPro: Boolean,
         onDismiss: () -> Unit,
         onTogglePause: () -> Unit,
@@ -91,6 +95,9 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
         val octi = connector as? OctiServerConnector ?: return
         var showDisconnectConfirmation by remember { mutableStateOf(false) }
         var showResetConfirmation by remember { mutableStateOf(false) }
+        val unknownDeviceIssue = state.issues.filterIsInstance<OctiServerIssue.CurrentDeviceNotRegistered>().firstOrNull()
+        val context = LocalContext.current
+        val canTogglePause = isPro || pauseReason == ConnectorPauseReason.AuthIssue
 
         ModalBottomSheet(onDismissRequest = onDismiss) {
             Column(modifier = Modifier.padding(horizontal = 24.dp)) {
@@ -105,6 +112,20 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                if (unknownDeviceIssue != null) {
+                    Text(
+                        text = unknownDeviceIssue.label.get(context),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                    Text(
+                        text = unknownDeviceIssue.description.get(context),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -116,7 +137,7 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                         text = stringResource(SyncR.string.sync_connector_paused_label),
                         modifier = Modifier.weight(1f),
                     )
-                    if (isPro) {
+                    if (canTogglePause) {
                         Switch(
                             checked = isPaused,
                             onCheckedChange = null,
@@ -132,6 +153,15 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
+
+                if (unknownDeviceIssue != null && isPaused) {
+                    FilledTonalButton(
+                        onClick = onTogglePause,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(text = stringResource(R.string.sync_octiserver_resume_sync_action))
+                    }
+                }
 
                 Button(
                     onClick = onForceSync,

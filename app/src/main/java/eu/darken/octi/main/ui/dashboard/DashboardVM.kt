@@ -318,13 +318,13 @@ class DashboardVM @Inject constructor(
         updateService.availableUpdate.onStart { emit(null) },
         generalSettings.dashboardConfig.flow,
         filteredIssues,
-        syncSettings.pausedConnectors.flow,
+        syncSettings.pausedConnectorIds,
     ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig, allIssues, pausedIds ->
 
         val connectorCount = syncManager.allConnectors.first().size
         val showSyncSetup = !isSyncSetupDismissed && connectorCount == 0
 
-        val issues = allIssues.filter { it.connectorId !in pausedIds }
+        val issues = filterDashboardIssues(allIssues, pausedIds)
 
         val filteredPermissions = missingPermissions
             .filterNot { WIFI_PERMISSIONS.contains(it) }
@@ -689,6 +689,13 @@ class DashboardVM @Inject constructor(
             return allIssues
                 .filter { it.deviceId == item.deviceId }
                 .sortedWith(compareBy({ if (it.severity == IssueSeverity.ERROR) 0 else 1 }, { it::class.simpleName }))
+        }
+
+        internal fun filterDashboardIssues(
+            allIssues: List<ConnectorIssue>,
+            pausedIds: Set<ConnectorId>,
+        ): List<ConnectorIssue> = allIssues.filter {
+            it.connectorId !in pausedIds || it is OctiServerIssue.CurrentDeviceNotRegistered
         }
 
         private val INFO_ORDER = listOf(

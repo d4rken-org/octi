@@ -179,8 +179,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
             is ConnectorCommand.Sync -> handleSync(command.options)
             is ConnectorCommand.DeleteDevice -> handleDeleteDevice(command.deviceId)
             ConnectorCommand.Reset -> handleReset()
-            ConnectorCommand.Pause -> syncSettings.pausedConnectors.update { it + identifier }
-            ConnectorCommand.Resume -> syncSettings.pausedConnectors.update { it - identifier }
+            is ConnectorCommand.Pause -> syncSettings.pauseConnector(identifier, command.reason)
+            ConnectorCommand.Resume -> syncSettings.resumeConnector(identifier)
         }
     }
 

@@ -3,7 +3,6 @@ package eu.darken.octi.sync.ui.devices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
-import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
@@ -107,7 +106,7 @@ class SyncDevicesVM @Inject constructor(
                 },
                 connector.operations,
                 issueAggregator.issues,
-                syncSettings.pausedConnectors.flow,
+                syncSettings.pausedConnectorIds,
             ) { deviceMetadata, metaDatas, operations, allIssues, pausedIds ->
                 log(TAG) { "Loading devices, ${deviceMetadata.size} metadata, ${allIssues.size} issues" }
 
