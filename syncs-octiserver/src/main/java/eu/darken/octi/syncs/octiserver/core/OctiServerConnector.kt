@@ -400,16 +400,7 @@ class OctiServerConnector @AssistedInject constructor(
         val registrationIssues = buildCurrentDeviceRegistrationIssues()
         val encryptionIssues = buildEncryptionCompatibilityIssues(metadata, dataDeviceIds)
 
-        val legacyIssues = if (!isGcmSiv) {
-            listOf(
-                OctiServerIssue.LegacyEncryptionAccount(
-                    connectorId = identifier,
-                    deviceId = syncSettings.deviceId,
-                )
-            )
-        } else {
-            emptyList()
-        }
+        val legacyIssues = buildLegacyEncryptionIssues(metadata, isGcmSiv)
 
         val commitIssues = buildList<ConnectorIssue> {
             if (_commitServerStorageLow.value) {
@@ -423,6 +414,23 @@ class OctiServerConnector @AssistedInject constructor(
         val issues = registrationIssues + encryptionIssues + legacyIssues + commitIssues
         log(TAG) { "computeIssues(): ${issues.size} issues" }
         _state.updateBlocking { copy(issues = issues) }
+    }
+
+    private fun buildLegacyEncryptionIssues(
+        metadata: List<DeviceMetadata>,
+        isGcmSiv: Boolean,
+    ): List<ConnectorIssue> {
+        if (isGcmSiv) return emptyList()
+        return metadata.mapNotNull { device ->
+            if (!VersionCompat.isAtLeast(device.version, OctiServerEncryptionCompat.MIN_GCM_SIV_CLIENT_VERSION)) {
+                return@mapNotNull null
+            }
+
+            OctiServerIssue.LegacyEncryptionAccount(
+                connectorId = identifier,
+                deviceId = device.deviceId,
+            )
+        }
     }
 
     private fun buildEncryptionCompatibilityIssues(
