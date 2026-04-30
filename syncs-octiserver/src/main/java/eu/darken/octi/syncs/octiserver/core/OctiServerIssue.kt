@@ -19,13 +19,13 @@ sealed interface OctiServerIssue : ConnectorIssue {
         override val description: CaString = caString { it.getString(R.string.sync_octiserver_error_device_not_registered) }
     }
 
-    data class BlobEncryptionUnsupported(
+    data class LegacyEncryptionAccount(
         override val connectorId: ConnectorId,
         override val deviceId: DeviceId,
     ) : OctiServerIssue {
         override val severity: IssueSeverity = IssueSeverity.WARNING
-        override val label: CaString = caString { it.getString(R.string.sync_octiserver_issues_type_file_sharing_unavailable) }
-        override val description: CaString = caString { it.getString(R.string.sync_octiserver_blob_encryption_unsupported) }
+        override val label: CaString = caString { it.getString(R.string.sync_octiserver_issues_type_legacy_encryption) }
+        override val description: CaString = caString { it.getString(R.string.sync_octiserver_legacy_encryption_account) }
     }
 
     data class EncryptionCompatibilityIncompatible(

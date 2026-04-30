@@ -285,7 +285,7 @@ class DashboardVM @Inject constructor(
         fileShareRepo.isEnabled,
     ) { issues, fileShareEnabled ->
         if (fileShareEnabled) issues
-        else issues.filterNot { it is OctiServerIssue.BlobEncryptionUnsupported }
+        else issues.filterNot { it is OctiServerIssue.LegacyEncryptionAccount }
     }
 
     // NOTE: must be declared before `state` (which references it via `deviceItems()`).

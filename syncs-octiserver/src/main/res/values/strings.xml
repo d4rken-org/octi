@@ -26,9 +26,9 @@
     <string name="sync_octiserver_add_create_account_title">Create account?</string>
     <string name="sync_octiserver_add_create_account_desc">A new encrypted sync account will be created on this server.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">This account requires Octi %1$s or newer. Update this device or remove it from the account.</string>
-    <string name="sync_octiserver_blob_encryption_unsupported">File sharing needs updated encryption. Create a new account on an updated device, then link your other devices to it.</string>
+    <string name="sync_octiserver_legacy_encryption_account">This account uses legacy encryption. Newer features like file sharing are unavailable. Create a new account on an updated device and re-link your other devices to enable them.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Incompatible encryption</string>
-    <string name="sync_octiserver_issues_type_file_sharing_unavailable">File sharing unavailable</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Legacy encryption</string>
     <string name="sync_octiserver_add_create_account_action">Create account</string>
     <string name="sync_octiserver_add_link_existing_action">Link to existing account</string>
     <string name="sync_octiserver_add_select_server_label">Select server</string>

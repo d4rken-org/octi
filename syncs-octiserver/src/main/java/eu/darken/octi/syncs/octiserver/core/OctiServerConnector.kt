@@ -400,9 +400,9 @@ class OctiServerConnector @AssistedInject constructor(
         val registrationIssues = buildCurrentDeviceRegistrationIssues()
         val encryptionIssues = buildEncryptionCompatibilityIssues(metadata, dataDeviceIds)
 
-        val blobIssues = if (!isGcmSiv) {
+        val legacyIssues = if (!isGcmSiv) {
             listOf(
-                OctiServerIssue.BlobEncryptionUnsupported(
+                OctiServerIssue.LegacyEncryptionAccount(
                     connectorId = identifier,
                     deviceId = syncSettings.deviceId,
                 )
@@ -420,7 +420,7 @@ class OctiServerConnector @AssistedInject constructor(
             }
         }
 
-        val issues = registrationIssues + encryptionIssues + blobIssues + commitIssues
+        val issues = registrationIssues + encryptionIssues + legacyIssues + commitIssues
         log(TAG) { "computeIssues(): ${issues.size} issues" }
         _state.updateBlocking { copy(issues = issues) }
     }
