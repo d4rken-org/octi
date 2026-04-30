@@ -26,7 +26,6 @@ class AddOctiServerVM @Inject constructor(
 
     data class State(
         val serverType: OctiServer.Official? = OctiServer.Official.PROD,
-        val useLegacyEncryption: Boolean = false,
         val isBusy: Boolean = false,
     )
 
@@ -36,10 +35,6 @@ class AddOctiServerVM @Inject constructor(
     fun selectType(type: OctiServer.Official?) {
         log(TAG) { "selectType(type=$type)" }
         _state.value = _state.value.copy(serverType = type)
-    }
-
-    fun toggleLegacyEncryption() {
-        _state.value = _state.value.copy(useLegacyEncryption = !_state.value.useLegacyEncryption)
     }
 
     private fun parseCustomServer(raw: String): OctiServer.Address {
@@ -64,9 +59,7 @@ class AddOctiServerVM @Inject constructor(
 
             withContext(NonCancellable) {
                 log(TAG) { "Creating account..." }
-                val newCredentials = endpoint.createNewAccount(
-                    useLegacyEncryption = _state.value.useLegacyEncryption,
-                )
+                val newCredentials = endpoint.createNewAccount()
                 log(TAG, INFO) { "New account created: $newCredentials" }
                 kServerAccountRepo.add(newCredentials)
             }

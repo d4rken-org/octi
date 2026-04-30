@@ -43,6 +43,7 @@ import eu.darken.octi.sync.core.DeviceMetadata
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
 import eu.darken.octi.sync.core.SyncWriteContainer
+import eu.darken.octi.sync.core.VersionCompat
 import eu.darken.octi.sync.core.encryption.EncryptionMode
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.coroutines.CancellationException
@@ -397,18 +398,7 @@ class OctiServerConnector @AssistedInject constructor(
         val encType = credentials.encryptionKeyset.type
         val isGcmSiv = EncryptionMode.fromTypeString(encType) == EncryptionMode.AES256_GCM_SIV
         val registrationIssues = buildCurrentDeviceRegistrationIssues()
-
-        val encIssues = if (!isGcmSiv) emptyList() else metadata.mapNotNull { device ->
-            if (device.deviceId == syncSettings.deviceId) return@mapNotNull null
-            if (device.deviceId in dataDeviceIds) return@mapNotNull null
-            val addedAt = device.addedAt ?: return@mapNotNull null
-            if ((Clock.System.now() - addedAt) < SyncSettings.FIRST_SYNC_GRACE_PERIOD) return@mapNotNull null
-            OctiServerIssue.EncryptionIncompatible(
-                connectorId = identifier,
-                deviceId = device.deviceId,
-                deviceLabel = device.label,
-            )
-        }
+        val compatibilityIssues = buildAccountCompatibilityIssues(metadata, dataDeviceIds)
 
         val blobIssues = if (!isGcmSiv) {
             listOf(
@@ -430,9 +420,34 @@ class OctiServerConnector @AssistedInject constructor(
             }
         }
 
-        val issues = registrationIssues + encIssues + blobIssues + commitIssues
+        val issues = registrationIssues + compatibilityIssues + blobIssues + commitIssues
         log(TAG) { "computeIssues(): ${issues.size} issues" }
         _state.updateBlocking { copy(issues = issues) }
+    }
+
+    private fun buildAccountCompatibilityIssues(
+        metadata: List<DeviceMetadata>,
+        dataDeviceIds: Set<DeviceId>,
+    ): List<ConnectorIssue> {
+        val minClientVersion = AccountCompatibility.expectedMinClientVersion(credentials.encryptionKeyset)
+            ?: return emptyList()
+        return metadata.mapNotNull { device ->
+            if (device.deviceId == syncSettings.deviceId) return@mapNotNull null
+
+            val version = device.version
+            val knownTooOld = version != null && !VersionCompat.isAtLeast(version, minClientVersion)
+            val unknownAndNotSyncing = version == null &&
+                device.deviceId !in dataDeviceIds &&
+                device.addedAt?.let { (Clock.System.now() - it) >= SyncSettings.FIRST_SYNC_GRACE_PERIOD } == true
+
+            if (!knownTooOld && !unknownAndNotSyncing) return@mapNotNull null
+
+            OctiServerIssue.AccountCompatibilityIncompatible(
+                connectorId = identifier,
+                deviceId = device.deviceId,
+                minClientVersion = minClientVersion,
+            )
+        }
     }
 
     private suspend fun buildCurrentDeviceRegistrationIssues(): List<ConnectorIssue> {

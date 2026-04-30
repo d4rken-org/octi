@@ -64,10 +64,8 @@ class OctiServerEndpoint @AssistedInject constructor(
         this.credentials = credentials
     }
 
-    suspend fun createNewAccount(
-        useLegacyEncryption: Boolean = false,
-    ): OctiServer.Credentials = withContext(dispatcherProvider.IO) {
-        log(TAG) { "createNewAccount(useLegacyEncryption=$useLegacyEncryption)" }
+    suspend fun createNewAccount(): OctiServer.Credentials = withContext(dispatcherProvider.IO) {
+        log(TAG) { "createNewAccount()" }
         val response = try {
             api.register(deviceID = ourDeviceIdString)
         } catch (e: HttpException) {
@@ -79,7 +77,7 @@ class OctiServerEndpoint @AssistedInject constructor(
             serverAdress = serverAdress,
             accountId = OctiServer.Credentials.AccountId(response.accountID),
             devicePassword = OctiServer.Credentials.DevicePassword(response.password),
-            encryptionKeyset = PayloadEncryption(useLegacyEncryption = useLegacyEncryption).exportKeyset()
+            encryptionKeyset = PayloadEncryption().exportKeyset(),
         )
     }
 

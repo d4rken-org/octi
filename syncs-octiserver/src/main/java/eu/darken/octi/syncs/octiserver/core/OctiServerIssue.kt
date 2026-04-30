@@ -19,16 +19,6 @@ sealed interface OctiServerIssue : ConnectorIssue {
         override val description: CaString = caString { it.getString(R.string.sync_octiserver_error_device_not_registered) }
     }
 
-    data class EncryptionIncompatible(
-        override val connectorId: ConnectorId,
-        override val deviceId: DeviceId,
-        val deviceLabel: String?,
-    ) : OctiServerIssue {
-        override val severity: IssueSeverity = IssueSeverity.ERROR
-        override val label: CaString = caString { it.getString(R.string.sync_octiserver_issues_type_encryption_error) }
-        override val description: CaString = caString { it.getString(R.string.sync_octiserver_device_encryption_incompatible) }
-    }
-
     data class BlobEncryptionUnsupported(
         override val connectorId: ConnectorId,
         override val deviceId: DeviceId,
@@ -36,5 +26,17 @@ sealed interface OctiServerIssue : ConnectorIssue {
         override val severity: IssueSeverity = IssueSeverity.WARNING
         override val label: CaString = caString { it.getString(R.string.sync_octiserver_issues_type_file_sharing_unavailable) }
         override val description: CaString = caString { it.getString(R.string.sync_octiserver_blob_encryption_unsupported) }
+    }
+
+    data class AccountCompatibilityIncompatible(
+        override val connectorId: ConnectorId,
+        override val deviceId: DeviceId,
+        val minClientVersion: String,
+    ) : OctiServerIssue {
+        override val severity: IssueSeverity = IssueSeverity.ERROR
+        override val label: CaString = caString { it.getString(R.string.sync_octiserver_issues_type_account_compatibility) }
+        override val description: CaString = caString {
+            it.getString(R.string.sync_octiserver_account_compatibility_incompatible, minClientVersion)
+        }
     }
 }

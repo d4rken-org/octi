@@ -23,11 +23,11 @@
     <string name="sync_octiserver_issues_type_device_not_registered">Device no longer linked</string>
     <string name="sync_octiserver_error_device_not_registered">This device is no longer registered on the server. Disconnect and re-link from another device, or create a new account.</string>
     <string name="sync_octiserver_resume_sync_action">Resume synchronization</string>
-    <string name="sync_octiserver_add_legacy_encryption_label">Legacy encryption</string>
-    <string name="sync_octiserver_add_legacy_encryption_hint">New accounts use improved encryption. App versions older than %1$s cannot sync with new-style accounts.</string>
-    <string name="sync_octiserver_device_encryption_incompatible">This device may not support this account\'s encryption. Update the app on this device or recreate the account with legacy encryption.</string>
-    <string name="sync_octiserver_blob_encryption_unsupported">File sharing needs updated encryption. Create a new account on one device without Legacy encryption, then link your other devices to it.</string>
-    <string name="sync_octiserver_issues_type_encryption_error">Encryption error</string>
+    <string name="sync_octiserver_add_create_account_title">Create account?</string>
+    <string name="sync_octiserver_add_create_account_desc">A new encrypted sync account will be created on this server.</string>
+    <string name="sync_octiserver_account_compatibility_incompatible">This account requires Octi %1$s or newer. Update this device or remove it from the account.</string>
+    <string name="sync_octiserver_blob_encryption_unsupported">File sharing needs updated encryption. Create a new account on an updated device, then link your other devices to it.</string>
+    <string name="sync_octiserver_issues_type_account_compatibility">Incompatible account</string>
     <string name="sync_octiserver_issues_type_file_sharing_unavailable">File sharing unavailable</string>
     <string name="sync_octiserver_add_create_account_action">Create account</string>
     <string name="sync_octiserver_add_link_existing_action">Link to existing account</string>

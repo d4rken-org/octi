@@ -1,6 +1,7 @@
 package eu.darken.octi.syncs.octiserver.ui.add
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,13 +22,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,15 +41,14 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import eu.darken.octi.common.R as CommonR
-import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import eu.darken.octi.common.BuildConfigWrap
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
+import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import eu.darken.octi.syncs.octiserver.core.OctiServer
 
 @Composable
@@ -63,7 +62,6 @@ fun AddOctiServerScreenHost(vm: AddOctiServerVM = hiltViewModel()) {
             state = it,
             onNavigateUp = { vm.navUp() },
             onSelectType = { type -> vm.selectType(type) },
-            onToggleLegacyEncryption = { vm.toggleLegacyEncryption() },
             onCreateAccount = { customServer -> vm.createAccount(customServer) },
             onLinkAccount = { vm.linkAccount() },
         )
@@ -75,11 +73,11 @@ fun AddOctiServerScreen(
     state: AddOctiServerVM.State,
     onNavigateUp: () -> Unit,
     onSelectType: (OctiServer.Official?) -> Unit,
-    onToggleLegacyEncryption: () -> Unit,
     onCreateAccount: (String?) -> Unit,
     onLinkAccount: () -> Unit,
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
+    var showCreateDialog by remember { mutableStateOf(false) }
     var customServerText by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
 
@@ -150,40 +148,10 @@ fun AddOctiServerScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Switch(
-                    checked = state.useLegacyEncryption,
-                    onCheckedChange = { onToggleLegacyEncryption() },
-                    enabled = !state.isBusy,
-                )
-                Text(
-                    text = stringResource(OctiServerR.string.sync_octiserver_add_legacy_encryption_label),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 8.dp),
-                )
-            }
-
-            Text(
-                text = stringResource(OctiServerR.string.sync_octiserver_add_legacy_encryption_hint, "v1.0.0"),
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-            )
-
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = {
-                    onCreateAccount(if (state.serverType == null) customServerText else null)
-                },
+                onClick = { showCreateDialog = true },
                 enabled = !state.isBusy,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -224,6 +192,16 @@ fun AddOctiServerScreen(
         }
     }
 
+    if (showCreateDialog) {
+        CreateAccountDialog(
+            onDismiss = { showCreateDialog = false },
+            onConfirm = {
+                showCreateDialog = false
+                onCreateAccount(if (state.serverType == null) customServerText else null)
+            },
+        )
+    }
+
     if (showAboutDialog) {
         AlertDialog(
             onDismissRequest = { showAboutDialog = false },
@@ -244,6 +222,28 @@ fun AddOctiServerScreen(
             },
         )
     }
+}
+
+@Composable
+private fun CreateAccountDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(OctiServerR.string.sync_octiserver_add_create_account_title)) },
+        text = { Text(text = stringResource(OctiServerR.string.sync_octiserver_add_create_account_desc)) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(text = stringResource(OctiServerR.string.sync_octiserver_add_create_account_action))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(CommonR.string.general_cancel_action))
+            }
+        },
+    )
 }
 
 @Composable
@@ -285,7 +285,6 @@ private fun AddOctiServerScreenPreview() = PreviewWrapper {
         state = AddOctiServerVM.State(serverType = OctiServer.Official.PROD),
         onNavigateUp = {},
         onSelectType = {},
-        onToggleLegacyEncryption = {},
         onCreateAccount = {},
         onLinkAccount = {},
     )
@@ -298,7 +297,6 @@ private fun AddOctiServerScreenCustomPreview() = PreviewWrapper {
         state = AddOctiServerVM.State(serverType = null),
         onNavigateUp = {},
         onSelectType = {},
-        onToggleLegacyEncryption = {},
         onCreateAccount = {},
         onLinkAccount = {},
     )
@@ -311,7 +309,6 @@ private fun AddOctiServerScreenBusyPreview() = PreviewWrapper {
         state = AddOctiServerVM.State(serverType = OctiServer.Official.PROD, isBusy = true),
         onNavigateUp = {},
         onSelectType = {},
-        onToggleLegacyEncryption = {},
         onCreateAccount = {},
         onLinkAccount = {},
     )

@@ -8,6 +8,11 @@ object VersionCompat {
         return compareVersions(version, MIN_COMPATIBLE_VERSION) < 0
     }
 
+    fun isAtLeast(version: String?, minimum: String?): Boolean {
+        if (version.isNullOrBlank() || minimum.isNullOrBlank()) return false
+        return compareVersions(version, minimum) >= 0
+    }
+
     /**
      * Compares two version strings using major.minor.patch components.
      * Strips any `-rc*`, `-beta*`, or other suffixes before comparing.
