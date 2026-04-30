@@ -398,7 +398,7 @@ class OctiServerConnector @AssistedInject constructor(
         val encType = credentials.encryptionKeyset.type
         val isGcmSiv = EncryptionMode.fromTypeString(encType) == EncryptionMode.AES256_GCM_SIV
         val registrationIssues = buildCurrentDeviceRegistrationIssues()
-        val compatibilityIssues = buildAccountCompatibilityIssues(metadata, dataDeviceIds)
+        val encryptionIssues = buildEncryptionCompatibilityIssues(metadata, dataDeviceIds)
 
         val blobIssues = if (!isGcmSiv) {
             listOf(
@@ -420,16 +420,16 @@ class OctiServerConnector @AssistedInject constructor(
             }
         }
 
-        val issues = registrationIssues + compatibilityIssues + blobIssues + commitIssues
+        val issues = registrationIssues + encryptionIssues + blobIssues + commitIssues
         log(TAG) { "computeIssues(): ${issues.size} issues" }
         _state.updateBlocking { copy(issues = issues) }
     }
 
-    private fun buildAccountCompatibilityIssues(
+    private fun buildEncryptionCompatibilityIssues(
         metadata: List<DeviceMetadata>,
         dataDeviceIds: Set<DeviceId>,
     ): List<ConnectorIssue> {
-        val minClientVersion = AccountCompatibility.expectedMinClientVersion(credentials.encryptionKeyset)
+        val minClientVersion = OctiServerEncryptionCompat.expectedMinClientVersion(credentials.encryptionKeyset)
             ?: return emptyList()
         return metadata.mapNotNull { device ->
             if (device.deviceId == syncSettings.deviceId) return@mapNotNull null
@@ -442,7 +442,7 @@ class OctiServerConnector @AssistedInject constructor(
 
             if (!knownTooOld && !unknownAndNotSyncing) return@mapNotNull null
 
-            OctiServerIssue.AccountCompatibilityIncompatible(
+            OctiServerIssue.EncryptionCompatibilityIncompatible(
                 connectorId = identifier,
                 deviceId = device.deviceId,
                 minClientVersion = minClientVersion,
