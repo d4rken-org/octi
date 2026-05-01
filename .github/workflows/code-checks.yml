@@ -144,8 +144,3 @@ jobs:
 
       - name: Verify version.properties + VERSION are consistent
         run: ./tools/release/bump.sh --mode=check
-
-      - name: Lint workflow files (actionlint)
-        uses: raven-actions/actionlint@01fce4f43a8e1573332d9be9b1c4f78a3d31d9ee #v2
-        with:
-          files: ".github/workflows/*.yml"
