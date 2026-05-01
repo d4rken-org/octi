@@ -12,6 +12,7 @@ import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncManager
+import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
 import eu.darken.octi.sync.core.blob.BlobFileTooLargeException
@@ -48,6 +49,7 @@ class FileShareServiceTest : BaseTest() {
     private val blobMaintenance = mockk<BlobMaintenance>(relaxed = true)
     private val storageStatusManager = mockk<StorageStatusManager>(relaxed = true)
     private val syncSettings = mockk<SyncSettings>()
+    private val publisher = mockk<FileSharePublisher>(relaxed = true)
     private fun createService() = FileShareService(
         context = context,
         dispatcherProvider = dispatcherProvider,
@@ -60,7 +62,46 @@ class FileShareServiceTest : BaseTest() {
         storageStatusManager = storageStatusManager,
         syncSettings = syncSettings,
         blobCacheDirs = BlobCacheDirs(context),
+        publisher = publisher,
     )
+
+    @Test
+    fun `deleteFile for remote owner records delete request without deleting blobs`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val remoteDeviceId = DeviceId("remote")
+        val file = FileShareInfo.SharedFile(
+            name = "doc.pdf",
+            mimeType = "application/pdf",
+            size = 123,
+            blobKey = "blob-remote",
+            checksum = "abc",
+            sharedAt = Clock.System.now(),
+            expiresAt = Clock.System.now() + 1.hours,
+            availableOn = setOf("connector"),
+            connectorRefs = mapOf("connector" to RemoteBlobRef("ref")),
+        )
+        var capturedRequest: FileShareInfo.DeleteRequest? = null
+
+        every { context.cacheDir } returns cacheDir
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { handler.upsertDeleteRequest(any()) } coAnswers {
+            capturedRequest = firstArg()
+        }
+        coEvery { handler.currentOwn() } answers {
+            FileShareInfo(deleteRequests = listOfNotNull(capturedRequest))
+        }
+
+        val result = createService().deleteFile(remoteDeviceId, file)
+
+        result shouldBe FileShareService.DeleteResult.Requested
+        capturedRequest!!.targetDeviceId shouldBe remoteDeviceId.id
+        capturedRequest!!.blobKey shouldBe file.blobKey
+        coVerify(exactly = 1) { publisher.publishNow() }
+        coVerify(exactly = 0) { blobManager.delete(any(), any(), any(), any()) }
+
+        cacheDir.deleteRecursively()
+    }
 
     @Test
     fun `deleteOwnFile returns deleted when every connector delete succeeds`() = runTest2 {

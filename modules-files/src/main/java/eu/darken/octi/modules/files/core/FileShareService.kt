@@ -60,6 +60,7 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 
 @Singleton
@@ -75,6 +76,7 @@ class FileShareService @Inject constructor(
     private val storageStatusManager: StorageStatusManager,
     private val syncSettings: SyncSettings,
     private val blobCacheDirs: BlobCacheDirs,
+    private val publisher: FileSharePublisher,
 ) {
 
     sealed class ShareResult {
@@ -119,6 +121,7 @@ class FileShareService @Inject constructor(
 
     sealed class DeleteResult {
         data object Deleted : DeleteResult()
+        data object Requested : DeleteResult()
         data object NotFound : DeleteResult()
         data class Partial(val remainingConnectors: Set<String>) : DeleteResult()
     }
@@ -793,6 +796,28 @@ class FileShareService @Inject constructor(
         blobMaintenance.runMirrorUploadsFor(setOf(blobKey))
     }
 
+    suspend fun deleteFile(ownerDeviceId: DeviceId, sharedFile: FileShareInfo.SharedFile): DeleteResult =
+        withContext(dispatcherProvider.IO) {
+            log(TAG, INFO) { "deleteFile(owner=${ownerDeviceId.logLabel}, blobKey=${sharedFile.blobKey})" }
+            if (ownerDeviceId == syncSettings.deviceId) {
+                return@withContext deleteOwnFile(sharedFile.blobKey)
+            }
+
+            val now = Clock.System.now()
+            val request = FileShareInfo.DeleteRequest(
+                targetDeviceId = ownerDeviceId.id,
+                blobKey = sharedFile.blobKey,
+                requestedAt = now,
+                retainUntil = minOf(
+                    maxOf(sharedFile.expiresAt + DELETE_REQUEST_RETENTION, now + DELETE_REQUEST_RETENTION),
+                    now + DELETE_REQUEST_MAX_RETENTION,
+                ),
+            )
+            fileShareHandler.upsertDeleteRequest(request)
+            publisher.publishNow()
+            DeleteResult.Requested
+        }
+
     suspend fun deleteOwnFile(blobKey: String): DeleteResult = withContext(dispatcherProvider.IO) {
         log(TAG, INFO) { "deleteOwnFile(blobKey=$blobKey)" }
         val currentState = fileShareHandler.currentOwn()
@@ -878,5 +903,12 @@ class FileShareService @Inject constructor(
     companion object {
         private val TAG = logTag("Module", "Files", "Service")
         private val DEFAULT_EXPIRY = 48.hours
+        /**
+         * How long a delete request is kept after the file's expiry or now, whichever is later.
+         * Kept aligned with [BlobMaintenance.STALE_FORGET_DELAY] so a request never outlives the
+         * file it targets in the owner's cache.
+         */
+        internal val DELETE_REQUEST_RETENTION = 24.hours
+        private val DELETE_REQUEST_MAX_RETENTION = 7.days
     }
 }

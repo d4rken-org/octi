@@ -329,6 +329,61 @@ class IncomingFileNotifierTest : BaseTest() {
     }
 
     @Test
+    fun `self DeleteRequest suppresses incoming notification for the targeted blob`() = runTest2 {
+        // Regression for F10: state.all is used (not state.others) so self's own delete requests
+        // suppress incoming-file notifications on this device for the targeted peer's blob.
+        // Without this behavior, a delete request would not suppress the notification.
+        //
+        // Two-emission sequence:
+        //   1. Remote has file "existing" — first emission seeds seenByDevice silently.
+        //   2. Remote adds file "new-targeted", self has DeleteRequest targeting it — must NOT notify.
+        val selfDevice = DeviceId("self-device")
+        val deleteRequest = FileShareInfo.DeleteRequest(
+            targetDeviceId = remoteDevice.id,
+            blobKey = "new-targeted",
+            requestedAt = Clock.System.now(),
+            retainUntil = Clock.System.now() + 2.hours,
+        )
+
+        fun stateWith(
+            remoteFiles: List<FileShareInfo.SharedFile>,
+            selfDeleteRequests: List<FileShareInfo.DeleteRequest> = emptyList(),
+        ) = BaseModuleRepo.State(
+            moduleId = FileShareModule.MODULE_ID,
+            self = ModuleData(
+                modifiedAt = Clock.System.now(),
+                deviceId = selfDevice,
+                moduleId = FileShareModule.MODULE_ID,
+                data = FileShareInfo(deleteRequests = selfDeleteRequests),
+            ),
+            others = listOf(
+                ModuleData(
+                    modifiedAt = Clock.System.now(),
+                    deviceId = remoteDevice,
+                    moduleId = FileShareModule.MODULE_ID,
+                    data = FileShareInfo(files = remoteFiles),
+                )
+            ),
+        )
+
+        val states = MutableStateFlow(stateWith(listOf(makeFile("existing"))))
+        buildNotifier(states).start()
+        advanceUntilIdle()
+        // First emission: silent seed — no notification
+        verify(exactly = 0) { notificationManager.notify(any<Int>(), any()) }
+
+        // Second emission: remote adds a NEW file that self has a delete request for
+        states.value = stateWith(
+            remoteFiles = listOf(makeFile("existing"), makeFile("new-targeted")),
+            selfDeleteRequests = listOf(deleteRequest),
+        )
+        advanceUntilIdle()
+
+        // The delete request must suppress the notification for "new-targeted"
+        verify(exactly = 0) { notificationManager.notify(any<Int>(), any()) }
+    }
+
+    @Test
     fun `device-purge cancels notifications for that device's blobs`() = runTest2 {
         val otherDevice = DeviceId("other-device")
         // Pre-seed: other-device has blobs that already triggered notifications.

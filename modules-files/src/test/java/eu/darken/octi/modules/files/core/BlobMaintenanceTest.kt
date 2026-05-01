@@ -22,6 +22,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import io.mockk.slot
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -33,6 +34,7 @@ import testhelpers.coroutine.runTest2
 import java.io.File
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 class BlobMaintenanceTest : BaseTest() {
 
@@ -45,6 +47,7 @@ class BlobMaintenanceTest : BaseTest() {
     private val fileShareSettings = mockk<FileShareSettings>()
     private val pendingDeletes = mockk<DataStoreValue<Map<String, PendingDelete>>>()
     private val syncSettings = mockk<SyncSettings>()
+    private val publisher = mockk<FileSharePublisher>(relaxed = true)
 
     @TempDir
     lateinit var tempDir: File
@@ -66,6 +69,7 @@ class BlobMaintenanceTest : BaseTest() {
         every { syncSettings.deviceId } returns selfDeviceId
         every { fileShareSettings.pendingDeletes } returns pendingDeletes
         every { blobManager.trimBackoff(any()) } just runs
+        coEvery { fileShareCache.cachedDevices() } returns setOf(selfDeviceId)
     }
 
     private fun createBlobMaintenance(testScope: kotlinx.coroutines.test.TestScope): BlobMaintenance {
@@ -79,6 +83,7 @@ class BlobMaintenanceTest : BaseTest() {
             fileShareSettings = fileShareSettings,
             syncSettings = syncSettings,
             blobCacheDirs = BlobCacheDirs(context),
+            publisher = publisher,
         )
     }
 
@@ -101,11 +106,26 @@ class BlobMaintenanceTest : BaseTest() {
         connectorRefs = connectorRefs,
     )
 
-    private fun makeModuleData(files: List<FileShareInfo.SharedFile>) = ModuleData(
+    private fun makeModuleData(
+        files: List<FileShareInfo.SharedFile>,
+        deviceId: DeviceId = selfDeviceId,
+        deleteRequests: List<FileShareInfo.DeleteRequest> = emptyList(),
+    ) = ModuleData(
         modifiedAt = Clock.System.now(),
-        deviceId = selfDeviceId,
+        deviceId = deviceId,
         moduleId = FileShareModule.MODULE_ID,
-        data = FileShareInfo(files = files),
+        data = FileShareInfo(files = files, deleteRequests = deleteRequests),
+    )
+
+    private fun makeDeleteRequest(
+        targetDeviceId: DeviceId,
+        blobKey: String,
+        retainUntil: Instant = Clock.System.now() + 2.hours,
+    ) = FileShareInfo.DeleteRequest(
+        targetDeviceId = targetDeviceId.id,
+        blobKey = blobKey,
+        requestedAt = Clock.System.now(),
+        retainUntil = retainUntil,
     )
 
     private fun makeTombstone(blobKey: String, remaining: Set<String> = emptySet()) = PendingDelete(
@@ -113,6 +133,112 @@ class BlobMaintenanceTest : BaseTest() {
         remainingConnectors = remaining,
         createdAt = Clock.System.now(),
     )
+
+    @Nested
+    inner class `remote delete requests` {
+
+        @Test
+        fun `consume request from peer using own device namespace`() = runTest2 {
+            val remoteDeviceId = DeviceId("remote-device")
+            val file = makeFile(
+                blobKey = "requested-blob",
+                availableOn = setOf(connectorA.idString),
+                connectorRefs = mapOf(connectorA.idString to RemoteBlobRef("srv-a")),
+            )
+            val request = makeDeleteRequest(
+                targetDeviceId = selfDeviceId,
+                blobKey = file.blobKey,
+            )
+
+            coEvery { fileShareCache.cachedDevices() } returns setOf(selfDeviceId, remoteDeviceId)
+            coEvery { fileShareCache.get(selfDeviceId) } returns makeModuleData(listOf(file))
+            coEvery {
+                fileShareCache.get(remoteDeviceId)
+            } returns makeModuleData(
+                files = emptyList(),
+                deviceId = remoteDeviceId,
+                deleteRequests = listOf(request),
+            )
+            coEvery { blobManager.configuredConnectorsByIdString() } returns mapOf(connectorA.idString to connectorA)
+            every { pendingDeletes.flow } returns flowOf(emptyMap())
+            coEvery {
+                blobManager.delete(
+                    deviceId = selfDeviceId,
+                    moduleId = FileShareModule.MODULE_ID,
+                    blobKey = BlobKey(file.blobKey),
+                    targets = mapOf(connectorA to RemoteBlobRef("srv-a")),
+                )
+            } returns setOf(connectorA)
+            coEvery { fileShareHandler.removeFile(file.blobKey) } just runs
+            coEvery { pendingDeletes.update(any()) } returns DataStoreValue.Updated(emptyMap(), emptyMap())
+
+            val maintenance = createBlobMaintenance(this)
+            maintenance.runOnce()
+
+            coVerify(exactly = 1) {
+                blobManager.delete(
+                    deviceId = selfDeviceId,
+                    moduleId = FileShareModule.MODULE_ID,
+                    blobKey = BlobKey(file.blobKey),
+                    targets = mapOf(connectorA to RemoteBlobRef("srv-a")),
+                )
+            }
+            coVerify(exactly = 0) {
+                blobManager.delete(
+                    deviceId = remoteDeviceId,
+                    moduleId = any(),
+                    blobKey = any(),
+                    targets = any(),
+                )
+            }
+            coVerify(exactly = 1) { fileShareHandler.removeFile(file.blobKey) }
+        }
+
+        @Test
+        fun `prune own requests after target stops advertising file`() = runTest2 {
+            val remoteDeviceId = DeviceId("remote-device")
+            val offlineDeviceId = DeviceId("offline-device")
+            val stillAdvertised = makeFile(blobKey = "still-advertised")
+            val keepRequest = makeDeleteRequest(
+                targetDeviceId = remoteDeviceId,
+                blobKey = stillAdvertised.blobKey,
+            )
+            val prunedRequest = makeDeleteRequest(
+                targetDeviceId = remoteDeviceId,
+                blobKey = "already-gone",
+            )
+            val offlineRequest = makeDeleteRequest(
+                targetDeviceId = offlineDeviceId,
+                blobKey = "unknown-target",
+            )
+            val expiredRequest = makeDeleteRequest(
+                targetDeviceId = offlineDeviceId,
+                blobKey = "expired-request",
+                retainUntil = Clock.System.now() - 1.hours,
+            )
+
+            coEvery { fileShareCache.get(selfDeviceId) } returns makeModuleData(
+                files = emptyList(),
+                deleteRequests = listOf(keepRequest, prunedRequest, offlineRequest, expiredRequest),
+            )
+            coEvery { fileShareCache.get(remoteDeviceId) } returns makeModuleData(
+                files = listOf(stillAdvertised),
+                deviceId = remoteDeviceId,
+            )
+            coEvery { fileShareCache.get(offlineDeviceId) } returns null
+            coEvery { blobManager.configuredConnectorsByIdString() } returns mapOf(connectorA.idString to connectorA)
+            every { pendingDeletes.flow } returns flowOf(emptyMap())
+            val transformSlot = slot<(List<FileShareInfo.DeleteRequest>) -> List<FileShareInfo.DeleteRequest>>()
+            coEvery { fileShareHandler.mutateDeleteRequests(capture(transformSlot)) } just runs
+
+            val maintenance = createBlobMaintenance(this)
+            maintenance.runOnce()
+
+            coVerify(exactly = 1) { fileShareHandler.mutateDeleteRequests(any()) }
+            val input = listOf(keepRequest, prunedRequest, offlineRequest, expiredRequest)
+            transformSlot.captured(input) shouldBe listOf(keepRequest, offlineRequest)
+        }
+    }
 
     @Nested
     inner class `retryMirrorUploads` {

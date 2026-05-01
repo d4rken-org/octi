@@ -561,6 +561,14 @@ class DashboardVM @Inject constructor(
     ) { now, byDevice, missingPermissions, activeConnectors, activeStates, alerts, _, fileShare ->
         val statesList = activeStates.toList()
         val statesMap = activeConnectors.zip(statesList).associate { (c, s) -> c.identifier to s }
+        val fileDeleteRequests = byDevice.devices.values
+            .flatMap { moduleDatas ->
+                moduleDatas.mapNotNull { it.data as? FileShareInfo }
+            }
+            .flatMap { it.deleteRequests }
+            .filter { now <= it.retainUntil }
+            .map { it.targetDeviceId to it.blobKey }
+            .toSet()
 
         // Build normal device items from module data
         val normalItems = byDevice.devices
@@ -605,7 +613,15 @@ class DashboardVM @Inject constructor(
                             )
 
                             is FileShareInfo -> ModuleItem.FileShare(
-                                data = moduleData as ModuleData<FileShareInfo>,
+                                data = (moduleData as ModuleData<FileShareInfo>).let { fileData ->
+                                    fileData.copy(
+                                        data = fileData.data.copy(
+                                            files = fileData.data.files.filterNot {
+                                                (deviceId.id to it.blobKey) in fileDeleteRequests
+                                            },
+                                        ),
+                                    )
+                                },
                                 isOurDevice = deviceId == syncSettings.deviceId,
                                 isSharingAvailable = fileShare.isSharingAvailable,
                                 configuredConnectorIds = fileShare.configuredConnectorIds,

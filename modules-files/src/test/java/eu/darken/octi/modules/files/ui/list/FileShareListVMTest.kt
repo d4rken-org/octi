@@ -112,9 +112,22 @@ class FileShareListVMTest : BaseTest() {
         ),
     )
 
+    private fun makeDeleteRequest(
+        targetDeviceId: DeviceId,
+        blobKey: String,
+        retainUntil: kotlin.time.Instant = now + 24.hours,
+    ) = FileShareInfo.DeleteRequest(
+        targetDeviceId = targetDeviceId.id,
+        blobKey = blobKey,
+        requestedAt = now,
+        retainUntil = retainUntil,
+    )
+
     private fun setupBaseMocks(
         selfFiles: List<FileShareInfo.SharedFile> = emptyList(),
+        selfDeleteRequests: List<FileShareInfo.DeleteRequest> = emptyList(),
         otherFiles: Map<DeviceId, List<FileShareInfo.SharedFile>> = emptyMap(),
+        otherDeleteRequests: Map<DeviceId, List<FileShareInfo.DeleteRequest>> = emptyMap(),
         labels: Map<DeviceId, String> = mapOf(selfDevice to "Self Pixel", remoteDevice to "Remote Pixel"),
         configuredConnectors: Map<ConnectorId, StorageStatus> = mapOf(connector to StorageStatus.Loading(connector, lastKnown = null)),
     ) {
@@ -124,15 +137,26 @@ class FileShareListVMTest : BaseTest() {
                 modifiedAt = now,
                 deviceId = selfDevice,
                 moduleId = FileShareModule.MODULE_ID,
-                data = FileShareInfo(files = selfFiles),
+                data = FileShareInfo(files = selfFiles, deleteRequests = selfDeleteRequests),
+            )
+        } else if (selfDeleteRequests.isNotEmpty()) {
+            ModuleData(
+                modifiedAt = now,
+                deviceId = selfDevice,
+                moduleId = FileShareModule.MODULE_ID,
+                data = FileShareInfo(deleteRequests = selfDeleteRequests),
             )
         } else null
-        val others = otherFiles.map { (devId, files) ->
+        val otherDeviceIds = otherFiles.keys + otherDeleteRequests.keys
+        val others = otherDeviceIds.map { devId ->
             ModuleData(
                 modifiedAt = now,
                 deviceId = devId,
                 moduleId = FileShareModule.MODULE_ID,
-                data = FileShareInfo(files = files),
+                data = FileShareInfo(
+                    files = otherFiles[devId].orEmpty(),
+                    deleteRequests = otherDeleteRequests[devId].orEmpty(),
+                ),
             )
         }
         every { fileShareRepo.state } returns flowOf(
@@ -221,6 +245,34 @@ class FileShareListVMTest : BaseTest() {
         val vm = makeVM()
         vm.initialize(null)
         vm.state.first().files.map { it.sharedFile.name } shouldBe listOf("live.txt")
+    }
+
+    @Test
+    fun `delete requested remote file remains visible but cannot open or save`() = runTest2 {
+        val remoteFile = makeFile(name = "theirs.txt", blobKey = "blob-theirs")
+        setupBaseMocks(
+            otherFiles = mapOf(remoteDevice to listOf(remoteFile)),
+            selfDeleteRequests = listOf(makeDeleteRequest(remoteDevice, remoteFile.blobKey)),
+        )
+
+        val item = makeVM().state.first().files.single()
+
+        item.isDeleteRequested shouldBe true
+        item.canOpenOrSave shouldBe false
+    }
+
+    @Test
+    fun `expired delete request no longer disables remote file`() = runTest2 {
+        val remoteFile = makeFile(name = "theirs.txt", blobKey = "blob-theirs")
+        setupBaseMocks(
+            otherFiles = mapOf(remoteDevice to listOf(remoteFile)),
+            selfDeleteRequests = listOf(makeDeleteRequest(remoteDevice, remoteFile.blobKey, retainUntil = now - 1.hours)),
+        )
+
+        val item = makeVM().state.first().files.single()
+
+        item.isDeleteRequested shouldBe false
+        item.canOpenOrSave shouldBe true
     }
 
     @Test
@@ -466,15 +518,16 @@ class FileShareListVMTest : BaseTest() {
     }
 
     @Test
-    fun `onDeleteFile clears deletingKeys even on exception`() = runTest2 {
+    fun `confirmDelete clears deletingKeys even on exception`() = runTest2 {
         val ownFile = makeFile(blobKey = "del-fail")
         setupBaseMocks(selfFiles = listOf(ownFile))
-        coEvery { fileShareService.deleteOwnFile(any()) } throws RuntimeException("boom")
+        coEvery { fileShareService.deleteFile(any(), any()) } throws RuntimeException("boom")
 
         val vm = makeVM()
         vm.initialize(null)
         val item = vm.state.first().files.single()
-        vm.onDeleteFile(item)
+        vm.requestDelete(item)
+        vm.confirmDelete()
 
         val event = vm.uiEvents.first()
         event.shouldBeInstanceOf<FileShareListVM.UiEvent.ShowMessage>()
@@ -781,5 +834,55 @@ class FileShareListVMTest : BaseTest() {
 
         val event = vm.uiEvents.first()
         event.shouldBeInstanceOf<FileShareListVM.UiEvent.LaunchPicker>()
+    }
+
+    @Test
+    fun `requestDelete populates deleteConfirmation with correct metadata`() = runTest2 {
+        val ownFile = makeFile(blobKey = "confirm-me")
+        setupBaseMocks(selfFiles = listOf(ownFile))
+
+        val vm = makeVM()
+        vm.initialize(null)
+        val item = vm.state.first().files.single()
+        vm.requestDelete(item)
+
+        val confirmation = vm.deleteConfirmation.value
+        confirmation shouldNotBe null
+        confirmation!!.key shouldBe item.key
+        confirmation.isOwn shouldBe true
+        confirmation.sharedFile.blobKey shouldBe "confirm-me"
+        coVerify(exactly = 0) { fileShareService.deleteFile(any(), any()) }
+    }
+
+    @Test
+    fun `cancelDeleteConfirmation clears state without invoking fileShareService`() = runTest2 {
+        val ownFile = makeFile(blobKey = "cancel-me")
+        setupBaseMocks(selfFiles = listOf(ownFile))
+
+        val vm = makeVM()
+        vm.initialize(null)
+        val item = vm.state.first().files.single()
+        vm.requestDelete(item)
+        vm.cancelDeleteConfirmation()
+
+        vm.deleteConfirmation.value shouldBe null
+        coVerify(exactly = 0) { fileShareService.deleteFile(any(), any()) }
+    }
+
+    @Test
+    fun `confirmDelete clears confirmation and calls fileShareService exactly once`() = runTest2 {
+        val ownFile = makeFile(blobKey = "delete-confirmed")
+        setupBaseMocks(selfFiles = listOf(ownFile))
+        coEvery { fileShareService.deleteFile(any(), any()) } returns FileShareService.DeleteResult.Deleted
+
+        val vm = makeVM()
+        vm.initialize(null)
+        val item = vm.state.first().files.single()
+        vm.requestDelete(item)
+        vm.confirmDelete()
+
+        vm.uiEvents.first().shouldBeInstanceOf<FileShareListVM.UiEvent.ShowMessage>()
+        vm.deleteConfirmation.value shouldBe null
+        coVerify(exactly = 1) { fileShareService.deleteFile(selfDevice, ownFile) }
     }
 }

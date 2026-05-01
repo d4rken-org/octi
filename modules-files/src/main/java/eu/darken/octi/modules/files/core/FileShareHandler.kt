@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
 
 /**
  * Minimal [ModuleInfoSource] for the files module.
@@ -66,6 +67,36 @@ class FileShareHandler @Inject constructor(
         updateOwn { current ->
             current.copy(files = current.files.filter { it.blobKey != blobKey })
         }
+    }
+
+    suspend fun upsertDeleteRequest(request: FileShareInfo.DeleteRequest) {
+        val now = Clock.System.now()
+        if (now > request.retainUntil) {
+            log(TAG, VERBOSE) {
+                "upsertDeleteRequest(): refusing already-expired request blobKey=${request.blobKey}"
+            }
+            return
+        }
+        log(TAG, VERBOSE) {
+            "upsertDeleteRequest(target=${request.targetDeviceId.take(8)}, blobKey=${request.blobKey})"
+        }
+        updateOwn { current ->
+            current.copy(
+                deleteRequests = current.deleteRequests
+                    .filter { now <= it.retainUntil }
+                    .filterNot { it.targetDeviceId == request.targetDeviceId && it.blobKey == request.blobKey } +
+                    request,
+            )
+        }
+    }
+
+    /** Atomically mutate the delete-request list. The [transform] must be pure and non-suspending;
+     * do not call suspend functions (e.g. cache reads) inside it. */
+    suspend fun mutateDeleteRequests(
+        transform: (List<FileShareInfo.DeleteRequest>) -> List<FileShareInfo.DeleteRequest>,
+    ) {
+        log(TAG, VERBOSE) { "mutateDeleteRequests()" }
+        updateOwn { current -> current.copy(deleteRequests = transform(current.deleteRequests)) }
     }
 
     /**

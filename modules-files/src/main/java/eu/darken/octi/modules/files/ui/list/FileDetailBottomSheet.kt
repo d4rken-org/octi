@@ -102,54 +102,62 @@ fun FileDetailBottomSheet(
                     value = item.sharedFile.availableOn.joinToString(", "),
                 )
             }
+            if (item.isDeleteRequested) {
+                DetailRow(
+                    label = stringResource(R.string.module_files_sheet_property_status),
+                    value = stringResource(R.string.module_files_delete_requested_label),
+                )
+            }
 
             Spacer(modifier = Modifier.size(20.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                val openEnabled = item.canOpenOrSave && !item.isInFlight && !item.isOpenPreparing && !item.isDeleting
-                OutlinedButton(
-                    enabled = openEnabled,
-                    onClick = onOpen,
-                    modifier = Modifier.weight(1f),
+            if (!item.isDeleteRequested) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    if (item.isOpenPreparing) {
-                        CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                    val openEnabled = item.canOpenOrSave && !item.isInFlight && !item.isOpenPreparing && !item.isDeleting
+                    OutlinedButton(
+                        enabled = openEnabled,
+                        onClick = onOpen,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        if (item.isOpenPreparing) {
+                            CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.module_files_open_preparing))
+                        } else {
+                            Icon(Icons.AutoMirrored.TwoTone.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.module_files_action_open))
+                        }
+                    }
+                    val saveEnabled = item.canOpenOrSave && !item.isInFlight && !item.isDeleting
+                    OutlinedButton(
+                        enabled = saveEnabled,
+                        onClick = onSave,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Icon(Icons.TwoTone.SaveAlt, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(R.string.module_files_open_preparing))
-                    } else {
-                        Icon(Icons.AutoMirrored.TwoTone.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(R.string.module_files_action_open))
+                        Text(stringResource(R.string.module_files_action_save_as))
                     }
                 }
-                val saveEnabled = item.canOpenOrSave && !item.isInFlight && !item.isDeleting
-                OutlinedButton(
-                    enabled = saveEnabled,
-                    onClick = onSave,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Icon(Icons.TwoTone.SaveAlt, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.module_files_action_save_as))
-                }
-            }
 
-            if (item.isOwn && !item.isPendingDelete) {
-                Spacer(modifier = Modifier.size(8.dp))
-                OutlinedButton(
-                    enabled = !item.isDeleting,
-                    onClick = onDelete,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    if (item.isDeleting) {
-                        CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                    } else {
-                        Icon(Icons.TwoTone.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(R.string.module_files_delete_action))
+                if (!item.isPendingDelete) {
+                    Spacer(modifier = Modifier.size(8.dp))
+                    OutlinedButton(
+                        enabled = !item.isDeleting,
+                        onClick = onDelete,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        if (item.isDeleting) {
+                            CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                        } else {
+                            Icon(Icons.TwoTone.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.module_files_delete_action))
+                        }
                     }
                 }
             }

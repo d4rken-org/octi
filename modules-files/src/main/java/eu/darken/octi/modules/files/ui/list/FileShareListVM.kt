@@ -45,14 +45,19 @@ import eu.darken.octi.sync.core.blob.RetryStatus
 import eu.darken.octi.sync.core.blob.StorageStatus
 import eu.darken.octi.sync.core.blob.StorageStatusManager
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class FileShareListVM @Inject constructor(
@@ -97,6 +102,7 @@ class FileShareListVM @Inject constructor(
         val canOpenOrSave: Boolean,
         val isDeleting: Boolean = false,
         val isPendingDelete: Boolean = false,
+        val isDeleteRequested: Boolean = false,
         val isOpenPreparing: Boolean = false,
         val downloadProgress: BlobProgress? = null,
         val uploadProgress: BlobProgress? = null,
@@ -104,7 +110,7 @@ class FileShareListVM @Inject constructor(
     ) {
         val isInFlight: Boolean get() = downloadProgress != null || uploadProgress != null
         val anyRetrying: Boolean get() = missingConnectors.any { it.status is RetryStatus.RetryingAt }
-        val canRetry: Boolean get() = missingConnectors.any {
+        val canRetry: Boolean get() = !isDeleteRequested && missingConnectors.any {
             it.status is RetryStatus.Stopped ||
                 it.status is RetryStatus.QuotaExceeded ||
                 it.status is RetryStatus.ServerStorageLow
@@ -141,6 +147,14 @@ class FileShareListVM @Inject constructor(
         data class AtLimitDroppedExtras(val droppedCount: Int) : UiEvent
     }
 
+    data class DeleteConfirmation(
+        val key: FileKey,
+        val ownerDeviceId: DeviceId,
+        val sharedFile: FileShareInfo.SharedFile,
+        val isOwn: Boolean,
+        val ownerLabel: String,
+    )
+
     val uiEvents = SingleEventFlow<UiEvent>()
 
     private val _filters = MutableStateFlow<Set<DeviceId>>(emptySet())
@@ -150,6 +164,15 @@ class FileShareListVM @Inject constructor(
     private val _openPreparing = MutableStateFlow<Set<FileKey>>(emptySet())
     private val _sheetTarget = MutableStateFlow<FileKey?>(null)
     private val _isSyncingNow = MutableStateFlow(false)
+    private val _deleteConfirmation = MutableStateFlow<DeleteConfirmation?>(null)
+    val deleteConfirmation: StateFlow<DeleteConfirmation?> = _deleteConfirmation.asStateFlow()
+
+    private val tickerUiRefresh = flow {
+        while (true) {
+            emit(Unit)
+            delay(60.seconds)
+        }
+    }
 
     private data class RepoSnapshot(
         val repoState: BaseModuleRepo.State<FileShareInfo>,
@@ -207,7 +230,7 @@ class FileShareListVM @Inject constructor(
             fileShareSettings.pendingDeletes.flow,
             fileShareSettings.isUsageHintDismissed.flow,
         ) { pendingDeletes, hint -> SettingsSnapshot(pendingDeletes, hint) },
-        _isSyncingNow,
+        combine(_isSyncingNow, tickerUiRefresh) { syncing, _ -> syncing },
     ) { repo, transfer, ui, settings, syncingNow ->
         buildState(repo, transfer, ui, settings, syncingNow)
     }
@@ -244,6 +267,7 @@ class FileShareListVM @Inject constructor(
             .sortedWith(compareByDescending<DeviceOption> { it.isOwn }.thenBy { it.label })
 
         val now = Clock.System.now()
+        val deleteRequestedKeys = activeDeleteRequestKeys(deviceData, now)
         val availableSet = availableDevices.map { it.deviceId }.toSet()
         val effectiveFilters = ui.filters intersect availableSet
         val filterIsEmpty = effectiveFilters.isEmpty()
@@ -256,6 +280,7 @@ class FileShareListVM @Inject constructor(
                 .filter { now <= it.expiresAt }
                 .map { sharedFile ->
                     val key = FileKey.of(ownerId, sharedFile.blobKey)
+                    val isDeleteRequested = key in deleteRequestedKeys
                     val transferEntry = transfer.transfers[sharedFile.blobKey]
                     val download = transferEntry
                         ?.takeIf { it.direction == FileShareService.Transfer.Direction.DOWNLOAD }
@@ -274,9 +299,10 @@ class FileShareListVM @Inject constructor(
                         ownerDeviceId = ownerId,
                         ownerDeviceLabel = ownerLabel,
                         isOwn = isOwn,
-                        canOpenOrSave = candidates.isNotEmpty(),
+                        canOpenOrSave = candidates.isNotEmpty() && !isDeleteRequested,
                         isDeleting = key in ui.deleting,
                         isPendingDelete = sharedFile.blobKey in settings.pendingDeletes,
+                        isDeleteRequested = isDeleteRequested,
                         isOpenPreparing = key in ui.openPreparing,
                         downloadProgress = download,
                         uploadProgress = upload,
@@ -318,6 +344,15 @@ class FileShareListVM @Inject constructor(
             freeLimitReached = freeLimitReached,
         )
     }
+
+    private fun activeDeleteRequestKeys(
+        deviceData: List<Pair<DeviceId, FileShareInfo>>,
+        now: kotlin.time.Instant,
+    ): Set<FileKey> = deviceData
+        .flatMap { (_, info) -> info.deleteRequests }
+        .filter { now <= it.retainUntil }
+        .map { FileKey.of(DeviceId(it.targetDeviceId), it.blobKey) }
+        .toSet()
 
     private fun comparatorFor(by: SortKey, descending: Boolean): Comparator<FileItem> {
         val base: Comparator<FileItem> = when (by) {
@@ -494,6 +529,10 @@ class FileShareListVM @Inject constructor(
     }
 
     fun onSaveFile(item: FileItem, uri: Uri) = launch {
+        if (!item.canOpenOrSave) {
+            uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_save_not_available))
+            return@launch
+        }
         when (val result = fileShareService.saveFile(item.sharedFile, item.ownerDeviceId, uri)) {
             is FileShareService.SaveResult.Success ->
                 uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_save_success))
@@ -513,6 +552,10 @@ class FileShareListVM @Inject constructor(
     }
 
     fun onOpenFile(item: FileItem) = launch {
+        if (!item.canOpenOrSave) {
+            uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_save_not_available))
+            return@launch
+        }
         _openPreparing.update { it + item.key }
         try {
             when (val result = fileShareService.openFile(item.sharedFile, item.ownerDeviceId)) {
@@ -547,19 +590,40 @@ class FileShareListVM @Inject constructor(
         fileShareSettings.isUsageHintDismissed.value(true)
     }
 
-    fun onDeleteFile(item: FileItem) = launch {
-        _deleting.update { it + item.key }
+    fun requestDelete(item: FileItem) {
+        _deleteConfirmation.value = DeleteConfirmation(
+            key = item.key,
+            ownerDeviceId = item.ownerDeviceId,
+            sharedFile = item.sharedFile,
+            isOwn = item.isOwn,
+            ownerLabel = item.ownerDeviceLabel,
+        )
+    }
+
+    fun cancelDeleteConfirmation() {
+        _deleteConfirmation.value = null
+    }
+
+    fun confirmDelete() = launch {
+        val confirmation = _deleteConfirmation.value ?: return@launch
+        _deleteConfirmation.value = null
+        performDelete(confirmation.key, confirmation.ownerDeviceId, confirmation.sharedFile)
+    }
+
+    private suspend fun performDelete(key: FileKey, ownerDeviceId: DeviceId, sharedFile: FileShareInfo.SharedFile) {
+        _deleting.update { it + key }
         try {
-            val result = runCatching { fileShareService.deleteOwnFile(item.sharedFile.blobKey) }
+            val result = runCatching { fileShareService.deleteFile(ownerDeviceId, sharedFile) }
             val message: Int = when (val r = result.getOrNull()) {
                 FileShareService.DeleteResult.Deleted -> R.string.module_files_delete_success
+                FileShareService.DeleteResult.Requested -> R.string.module_files_delete_requested
                 FileShareService.DeleteResult.NotFound -> R.string.module_files_delete_failed
                 is FileShareService.DeleteResult.Partial -> R.string.module_files_delete_partial
                 null -> R.string.module_files_delete_failed
             }
             uiEvents.tryEmit(UiEvent.ShowMessage(message))
         } finally {
-            _deleting.update { it - item.key }
+            _deleting.update { it - key }
         }
     }
 

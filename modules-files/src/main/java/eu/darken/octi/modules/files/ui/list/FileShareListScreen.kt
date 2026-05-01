@@ -40,6 +40,7 @@ import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.material.icons.twotone.SaveAlt
 import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material.icons.twotone.Sync
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -254,6 +255,37 @@ fun FileShareListScreenHost(
         createDocLauncher.launch(buildSaveAsIntent(item))
     }
 
+    val deleteConfirmation by vm.deleteConfirmation.collectAsState()
+    deleteConfirmation?.let { confirmation ->
+        AlertDialog(
+            onDismissRequest = { vm.cancelDeleteConfirmation() },
+            title = { Text(stringResource(R.string.module_files_delete_confirm_title)) },
+            text = {
+                Text(
+                    if (confirmation.isOwn) {
+                        stringResource(R.string.module_files_delete_confirm_own, confirmation.sharedFile.name)
+                    } else {
+                        stringResource(
+                            R.string.module_files_delete_confirm_peer,
+                            confirmation.sharedFile.name,
+                            confirmation.ownerLabel,
+                        )
+                    },
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { vm.confirmDelete() }) {
+                    Text(stringResource(R.string.module_files_delete_confirm_action))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { vm.cancelDeleteConfirmation() }) {
+                    Text(stringResource(R.string.module_files_delete_cancel_action))
+                }
+            },
+        )
+    }
+
     state?.let { current ->
         FileShareListScreen(
             state = current,
@@ -263,7 +295,7 @@ fun FileShareListScreenHost(
             onUpgradeClick = { vm.navToUpgrade() },
             onRowClick = { item -> vm.onRowClick(item) },
             onRowSecondaryClick = { item ->
-                if (item.isOwn) vm.onDeleteFile(item)
+                if (item.isOwn) vm.requestDelete(item)
                 else launchManualSave(item)
             },
             onRetryClick = { item -> vm.onRetryFile(item) },
@@ -275,7 +307,7 @@ fun FileShareListScreenHost(
             onSheetDismiss = { vm.onSheetDismiss() },
             onSheetOpen = { item -> vm.onOpenFile(item) },
             onSheetSave = { item -> launchManualSave(item) },
-            onSheetDelete = { item -> vm.onDeleteFile(item) },
+            onSheetDelete = { item -> vm.requestDelete(item) },
         )
     }
 }
@@ -736,7 +768,10 @@ private fun FileItemRow(
                                 DateUtils.MINUTE_IN_MILLIS,
                             )
                         )
-                        if (item.isPendingDelete) {
+                        if (item.isDeleteRequested) {
+                            append(" • ")
+                            append(context.getString(R.string.module_files_delete_requested_label))
+                        } else if (item.isPendingDelete) {
                             append(" • ")
                             append(context.getString(R.string.module_files_pending_delete_label))
                         } else if (!item.canOpenOrSave && !item.isOwn) {
@@ -768,6 +803,7 @@ private fun FileItemRow(
                         CircularProgressIndicator(modifier = Modifier.size(24.dp))
                     }
                 }
+                item.isDeleteRequested -> Unit
                 item.isOwn && item.canRetry -> {
                     IconButton(onClick = onRetryClick) {
                         Icon(

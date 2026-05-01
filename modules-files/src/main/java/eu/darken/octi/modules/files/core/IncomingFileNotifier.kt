@@ -106,12 +106,18 @@ class IncomingFileNotifier @Inject constructor(
                 var dirty = false
                 val now = Clock.System.now()
                 val knownDevices = snap.state.others.map { it.deviceId }.toSet()
+                val deleteRequested = snap.state.all
+                    .flatMap { it.data.deleteRequests }
+                    .filter { now <= it.retainUntil }
+                    .map { it.targetDeviceId to it.blobKey }
+                    .toSet()
 
                 for (moduleData in snap.state.others) {
                     val deviceId = moduleData.deviceId
                     // Filter expired files so an already-expired share doesn't notify after restart.
                     val current = moduleData.data.files
                         .filter { now <= it.expiresAt }
+                        .filter { (deviceId.id to it.blobKey) !in deleteRequested }
                         .map { it.blobKey }
                         .toSet()
                     val previous = seenByDevice[deviceId]

@@ -9,6 +9,7 @@ import kotlin.time.Instant
 @Serializable
 data class FileShareInfo(
     @SerialName("files") val files: List<SharedFile> = emptyList(),
+    @SerialName("deleteRequests") val deleteRequests: List<DeleteRequest> = emptyList(),
 ) {
     @Serializable
     data class SharedFile(
@@ -31,4 +32,19 @@ data class FileShareInfo(
             require(checksum.isNotBlank()) { "SharedFile.checksum must not be blank (blobKey=$blobKey)" }
         }
     }
+
+    /**
+     * A non-owner's request to have the owner delete a specific blob.
+     * Trust model: all paired devices on the same account are trusted — any peer's DeleteRequest
+     * is honored fleet-wide. [BlobMaintenance] on the owning device consumes this.
+     */
+    @Serializable
+    data class DeleteRequest(
+        @SerialName("targetDeviceId") val targetDeviceId: String,
+        @SerialName("blobKey") val blobKey: String,
+        @Serializable(with = InstantSerializer::class)
+        @SerialName("requestedAt") val requestedAt: Instant,
+        @Serializable(with = InstantSerializer::class)
+        @SerialName("retainUntil") val retainUntil: Instant,
+    )
 }

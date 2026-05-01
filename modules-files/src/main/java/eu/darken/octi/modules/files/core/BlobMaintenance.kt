@@ -11,6 +11,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.modules.files.FileShareModule
 import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorId
+import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobCacheDirs
@@ -54,6 +55,7 @@ class BlobMaintenance @Inject constructor(
     private val fileShareSettings: FileShareSettings,
     private val syncSettings: SyncSettings,
     private val blobCacheDirs: BlobCacheDirs,
+    private val publisher: FileSharePublisher,
 ) {
 
     private val stagingDir: File
@@ -85,9 +87,11 @@ class BlobMaintenance @Inject constructor(
     internal suspend fun runOnce() = maintenanceLock.withLock {
         log(TAG) { "runOnce() starting" }
         cleanupStaleTempFiles()
+        consumeRemoteDeleteRequests()
         retryMirrorUploads()
         retryPendingDeletes()
         pruneExpired()
+        pruneOwnDeleteRequests()
         trimBackoff()
         log(TAG) { "runOnce() complete" }
     }
@@ -231,6 +235,82 @@ class BlobMaintenance @Inject constructor(
         storageStatusManager.invalidateAndRefresh(touched)
     }
 
+    private suspend fun consumeRemoteDeleteRequests() {
+        val own = fileShareCache.get(syncSettings.deviceId)?.data ?: return
+        val now = Clock.System.now()
+        val requestedBlobKeys = fileShareCache.cachedDevices()
+            .filter { it != syncSettings.deviceId }
+            .mapNotNull { fileShareCache.get(it)?.data }
+            .flatMap { it.deleteRequests }
+            .filter { it.targetDeviceId == syncSettings.deviceId.id && now <= it.retainUntil }
+            .map { it.blobKey }
+            .toSet()
+        if (requestedBlobKeys.isEmpty()) return
+
+        val configuredById = blobManager.configuredConnectorsByIdString()
+        val touched = mutableSetOf<ConnectorId>()
+        for (file in own.files.filter { it.blobKey in requestedBlobKeys }) {
+            try {
+                touched += deleteOwnFileForRequest(file, configuredById)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "consumeRemoteDeleteRequests(): Failed for ${file.name}: ${e.asLog()}" }
+            }
+        }
+        if (touched.isEmpty()) return
+        storageStatusManager.invalidateAndRefresh(touched)
+        publisher.publishNow()
+    }
+
+    private suspend fun deleteOwnFileForRequest(
+        file: FileShareInfo.SharedFile,
+        configuredById: Map<String, ConnectorId>,
+    ): Set<ConnectorId> {
+        log(TAG) { "deleteOwnFileForRequest(): ${file.name}" }
+        val targets: Map<ConnectorId, RemoteBlobRef> = file.availableOn
+            .mapNotNull { idStr ->
+                val connectorId = configuredById[idStr] ?: return@mapNotNull null
+                val ref = file.connectorRefs[idStr] ?: return@mapNotNull null
+                connectorId to ref
+            }
+            .toMap()
+
+        if (targets.isEmpty()) {
+            val tombstone = PendingDelete(
+                blobKey = file.blobKey,
+                remainingConnectors = file.availableOn,
+                createdAt = Clock.System.now(),
+            )
+            fileShareSettings.pendingDeletes.update { it + (file.blobKey to tombstone) }
+            return emptySet()
+        }
+
+        val successfulDeletes = blobManager.delete(
+            deviceId = syncSettings.deviceId,
+            moduleId = FileShareModule.MODULE_ID,
+            blobKey = BlobKey(file.blobKey),
+            targets = targets,
+        )
+
+        val deletedIds = successfulDeletes.map { it.idString }.toSet()
+        val newAvailableOn = file.availableOn - deletedIds
+        val newConnectorRefs = file.connectorRefs - deletedIds
+        if (newAvailableOn.isEmpty()) {
+            fileShareHandler.removeFile(file.blobKey)
+            fileShareSettings.pendingDeletes.update { it - file.blobKey }
+        } else if (newAvailableOn != file.availableOn) {
+            fileShareHandler.updateLocations(file.blobKey, newAvailableOn, newConnectorRefs)
+            val tombstone = PendingDelete(
+                blobKey = file.blobKey,
+                remainingConnectors = newAvailableOn,
+                createdAt = Clock.System.now(),
+            )
+            fileShareSettings.pendingDeletes.update { it + (file.blobKey to tombstone) }
+        }
+        return successfulDeletes
+    }
+
     private suspend fun pruneExpired() {
         val own = fileShareCache.get(syncSettings.deviceId)?.data ?: return
         val now = Clock.System.now()
@@ -358,11 +438,39 @@ class BlobMaintenance @Inject constructor(
         storageStatusManager.invalidateAndRefresh(touched)
     }
 
+    private suspend fun pruneOwnDeleteRequests() {
+        val own = fileShareCache.get(syncSettings.deviceId)?.data ?: return
+        if (own.deleteRequests.isEmpty()) return
+
+        val now = Clock.System.now()
+        // Pre-fetch target snapshots OUTSIDE the state-update lock — fileShareCache.get is suspend
+        // and must not be called from inside the DynamicStateFlow mutation.
+        val targetSnapshots: Map<String, FileShareInfo?> = own.deleteRequests
+            .map { it.targetDeviceId }
+            .toSet()
+            .associateWith { fileShareCache.get(DeviceId(it))?.data }
+
+        fileShareHandler.mutateDeleteRequests { requests ->
+            requests.filter { request ->
+                if (now > request.retainUntil) return@filter false
+                val targetData = targetSnapshots[request.targetDeviceId]
+                    ?: return@filter true // null = transient cache miss, keep until retainUntil
+                targetData.files.any { it.blobKey == request.blobKey && now <= it.expiresAt }
+            }
+        }
+    }
+
     companion object {
         private val TAG = logTag("Module", "Files", "BlobMaintenance")
         private val STARTUP_DELAY = 60.seconds
         private val MAINTENANCE_INTERVAL = 30.minutes
-        private val STALE_FORGET_DELAY = 24.hours
+        /**
+         * How long after expiry before a stale file is purged from the owner's own list.
+         * Kept aligned with [FileShareService.DELETE_REQUEST_RETENTION] so a delete request
+         * never outlives its target file in the owner's cache — the two 24-hour windows are
+         * intentionally the same.
+         */
+        internal val STALE_FORGET_DELAY = 24.hours
         private val SHORT_TTL = 1.hours
         private val OPEN_CACHE_TTL = 24.hours
     }

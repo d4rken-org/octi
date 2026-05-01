@@ -39,6 +39,14 @@ class FileShareInfoSerializationTest : BaseTest() {
                     ),
                 ),
             ),
+            deleteRequests = listOf(
+                FileShareInfo.DeleteRequest(
+                    targetDeviceId = "device-b",
+                    blobKey = "key-2",
+                    requestedAt = Instant.parse("2026-01-02T00:00:00Z"),
+                    retainUntil = Instant.parse("2026-01-04T00:00:00Z"),
+                ),
+            ),
         )
         val encoded = json.encodeToString(FileShareInfo.serializer(), info)
         encoded.toComparableJson() shouldBe """
@@ -54,6 +62,14 @@ class FileShareInfoSerializationTest : BaseTest() {
                         "expiresAt": "2026-01-03T00:00:00Z",
                         "availableOn": ["server-a", "gdrive-b"],
                         "connectorRefs": {"server-a": "srv-blob-id", "gdrive-b": "key-1"}
+                    }
+                ],
+                "deleteRequests": [
+                    {
+                        "targetDeviceId": "device-b",
+                        "blobKey": "key-2",
+                        "requestedAt": "2026-01-02T00:00:00Z",
+                        "retainUntil": "2026-01-04T00:00:00Z"
                     }
                 ]
             }
@@ -100,6 +116,24 @@ class FileShareInfoSerializationTest : BaseTest() {
         deserialized shouldBe original
         deserialized.files.size shouldBe 2
         deserialized.files[0].availableOn.size shouldBe 2
+    }
+
+    @Test
+    fun `round-trip FileShareInfo with delete requests`() {
+        val now = Clock.System.now()
+        val original = FileShareInfo(
+            deleteRequests = listOf(
+                FileShareInfo.DeleteRequest(
+                    targetDeviceId = "device-b",
+                    blobKey = "blob-1",
+                    requestedAt = now,
+                    retainUntil = now + 24.hours,
+                ),
+            ),
+        )
+        val serialized = json.encodeToString(FileShareInfo.serializer(), original)
+        val deserialized = json.decodeFromString(FileShareInfo.serializer(), serialized)
+        deserialized shouldBe original
     }
 
     @Test
