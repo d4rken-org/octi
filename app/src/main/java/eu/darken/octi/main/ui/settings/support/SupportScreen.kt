@@ -54,12 +54,12 @@ fun SupportScreenHost(vm: SupportVM = hiltViewModel()) {
     }
 
     val state by vm.state.collectAsState(initial = null)
-    state?.let {
+    state?.let { state ->
         SupportScreen(
-            state = it,
+            state = state,
             onNavigateUp = { vm.navUp() },
             onDocumentation = { vm.openUrl("https://github.com/d4rken-org/octi/wiki") },
-            onIssueTracker = { vm.openUrl("https://github.com/d4rken-org/octi") },
+            onIssueTracker = { vm.openUrl("https://github.com/d4rken-org/octi/issues") },
             onDiscord = { vm.openUrl("https://discord.gg/s7V4C6zuVy") },
             onStartDebugLog = { vm.startDebugLog() },
             onStopDebugLog = { vm.stopDebugLog() },
