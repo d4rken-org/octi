@@ -1055,20 +1055,54 @@ private fun DashboardToolbarTitle(upgradeInfo: UpgradeRepo.Info) {
         upgradeInfo.isPro -> stringResource(R.string.app_name_upgraded)
         else -> appName
     }
+    val showBetaChip = BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.BETA
 
     val titleParts = titleText.split(" ").filter { it.isNotEmpty() }
 
-    if (titleParts.size == 2) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (titleParts.size == 2) {
+            Text(
+                text = buildAnnotatedString {
+                    append("${titleParts[0]} ")
+                    withStyle(SpanStyle(color = colorResource(R.color.colorUpgraded))) {
+                        append(titleParts[1])
+                    }
+                },
+                modifier = Modifier.weight(1f, fill = false),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        } else {
+            Text(
+                text = appName,
+                modifier = Modifier.weight(1f, fill = false),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        if (showBetaChip) {
+            BetaBuildChip()
+        }
+    }
+}
+
+@Composable
+private fun BetaBuildChip() {
+    Surface(
+        shape = MaterialTheme.shapes.small,
+        color = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+    ) {
         Text(
-            text = buildAnnotatedString {
-                append("${titleParts[0]} ")
-                withStyle(SpanStyle(color = colorResource(R.color.colorUpgraded))) {
-                    append(titleParts[1])
-                }
-            },
+            text = "BETA",
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
         )
-    } else {
-        Text(text = appName)
     }
 }
 
