@@ -121,3 +121,31 @@ jobs:
       - name: Dump legacy server logs on failure
         if: failure()
         run: docker logs ${{ job.services.legacy-server.id }} || true
+
+  check-release-tooling:
+    name: Release tooling
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Install bats and shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bats shellcheck
+
+      - name: Shellcheck bump.sh
+        run: shellcheck tools/release/bump.sh
+
+      - name: Run bump.sh unit tests
+        run: bats tools/release/bump.bats
+
+      - name: Verify version.properties + VERSION are consistent
+        run: ./tools/release/bump.sh --mode=check
+
+      - name: Lint workflow files (actionlint)
+        uses: raven-actions/actionlint@01fce4f43a8e1573332d9be9b1c4f78a3d31d9ee #v2
+        with:
+          files: ".github/workflows/*.yml"

@@ -47,7 +47,8 @@
 
 - `version.properties`: Source of truth for version numbers (major.minor.patch.build)
 - `buildSrc/src/main/java/ProjectConfig.kt`: Reads `version.properties`, defines `packageName`, SDK versions
-- Version format: `{major}.{minor}.{patch}-rc{build}`
+- Version format: `{major}.{minor}.{patch}-{type}{build}` where `type ∈ {rc, beta}`
+- Bumping versions: dispatch `.github/workflows/release-prepare.yml` (do NOT run any local script)
 - SDK versions (`minSdk`, `compileSdk`, `targetSdk`) are defined in `buildSrc/src/main/java/ProjectConfig.kt`
 
 ## Dependency Management

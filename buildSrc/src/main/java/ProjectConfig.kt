@@ -33,6 +33,9 @@ object ProjectConfig {
         fun intKey(key: String): Int {
             val raw = props.getProperty(key)
                 ?: error("Missing key '$key' in ${propsPath.absolutePath}")
+            if (raw.length > 1 && raw.startsWith("0")) {
+                error("Key '$key' in ${propsPath.absolutePath} has leading zero: '$raw'")
+            }
             return raw.toIntOrNull()
                 ?: error("Key '$key' in ${propsPath.absolutePath} is not an integer: '$raw'")
         }
@@ -44,11 +47,20 @@ object ProjectConfig {
         require(type in setOf("rc", "beta")) {
             "Invalid 'project.versioning.type'='$type' in ${propsPath.absolutePath}, expected one of: rc, beta"
         }
+        val major = intKey("project.versioning.major")
+        val minor = intKey("project.versioning.minor")
+        val patch = intKey("project.versioning.patch")
+        val build = intKey("project.versioning.build")
+        listOf("major" to major, "minor" to minor, "patch" to patch, "build" to build).forEach { (label, n) ->
+            require(n in 0..99) {
+                "version.properties '$label' out of range 0..99: $n (versionCode formula collapses at >=100)"
+            }
+        }
         return Version(
-            major = intKey("project.versioning.major"),
-            minor = intKey("project.versioning.minor"),
-            patch = intKey("project.versioning.patch"),
-            build = intKey("project.versioning.build"),
+            major = major,
+            minor = minor,
+            patch = patch,
+            build = build,
             type = type,
         )
     }
