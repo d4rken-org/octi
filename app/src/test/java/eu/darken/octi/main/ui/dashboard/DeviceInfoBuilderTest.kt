@@ -8,9 +8,12 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.DeviceMetadata
 import eu.darken.octi.sync.core.IssueSeverity
+import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.syncs.octiserver.core.OctiServerIssue
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -32,6 +35,20 @@ class DeviceInfoBuilderTest : BaseTest() {
         subtype = "test",
         account = "test-account",
     )
+
+    /** Second connector to model the legacy + modern dual-account setup. */
+    private val modernConnectorId = ConnectorId(
+        type = ConnectorType.OCTISERVER,
+        subtype = "test",
+        account = "modern-account",
+    )
+
+    private fun fakeState(devices: List<DeviceId>): SyncConnectorState = object : SyncConnectorState {
+        override val lastActionAt: Instant? = null
+        override val lastError: Exception? = null
+        override val deviceMetadata: List<DeviceMetadata> = devices.map { DeviceMetadata(deviceId = it) }
+        override val isAvailable: Boolean = true
+    }
 
     private fun metaInfo(deviceId: DeviceId = currentDeviceId) = MetaInfo(
         deviceLabel = null,
@@ -146,12 +163,187 @@ class DeviceInfoBuilderTest : BaseTest() {
                 deviceId = currentDeviceId,
             )
 
-            val result = DashboardVM.filterDashboardIssues(
+            val result = DashboardVM.projectDashboardIssues(
                 allIssues = listOf(hiddenIssue, visibleIssue),
+                fileShareEnabled = true,
                 pausedIds = setOf(connectorId),
+                blobReachableDeviceIds = emptySet(),
             )
 
             result shouldBe listOf(visibleIssue)
+        }
+    }
+
+    @Nested
+    inner class `blob-reachable computation` {
+        @Test
+        fun `empty input yields empty set`() {
+            DashboardVM.blobReachableDeviceIds(
+                connectorsAndStates = emptyList(),
+                blobCapableConnectorIds = emptySet(),
+            ).shouldBeEmpty()
+        }
+
+        @Test
+        fun `connector outside the blob-capable set contributes no devices`() {
+            // Legacy connector is present in connectorsAndStates but excluded from
+            // blobCapableConnectorIds — its devices must NOT appear, otherwise the
+            // legacy account itself would suppress its own legacy warning.
+            val state = fakeState(listOf(currentDeviceId, remoteDeviceId))
+
+            DashboardVM.blobReachableDeviceIds(
+                connectorsAndStates = listOf(connectorId to state),
+                blobCapableConnectorIds = emptySet(),
+            ).shouldBeEmpty()
+        }
+
+        @Test
+        fun `blob-capable connector contributes its deviceMetadata`() {
+            val state = fakeState(listOf(currentDeviceId, remoteDeviceId))
+
+            DashboardVM.blobReachableDeviceIds(
+                connectorsAndStates = listOf(modernConnectorId to state),
+                blobCapableConnectorIds = setOf(modernConnectorId),
+            ) shouldContainExactlyInAnyOrder setOf(currentDeviceId, remoteDeviceId)
+        }
+
+        @Test
+        fun `two blob-capable connectors with overlapping devices are unioned and deduped`() {
+            val secondModern = ConnectorId(ConnectorType.OCTISERVER, "test", "modern-2")
+            val a = fakeState(listOf(currentDeviceId, remoteDeviceId))
+            val b = fakeState(listOf(remoteDeviceId, DeviceId("third")))
+
+            val ids = DashboardVM.blobReachableDeviceIds(
+                connectorsAndStates = listOf(modernConnectorId to a, secondModern to b),
+                blobCapableConnectorIds = setOf(modernConnectorId, secondModern),
+            )
+
+            ids shouldContainExactlyInAnyOrder setOf(currentDeviceId, remoteDeviceId, DeviceId("third"))
+        }
+
+        @Test
+        fun `blob-capable connector with empty metadata contributes nothing`() {
+            val empty = fakeState(emptyList())
+
+            DashboardVM.blobReachableDeviceIds(
+                connectorsAndStates = listOf(modernConnectorId to empty),
+                blobCapableConnectorIds = setOf(modernConnectorId),
+            ).shouldBeEmpty()
+        }
+
+        @Test
+        fun `mixed legacy and modern - only modern's devices are reachable`() {
+            // Models the user's bug scenario: same device appears via both connectors.
+            // Only modern's contribution counts toward the reachable set.
+            val legacyState = fakeState(listOf(currentDeviceId, remoteDeviceId))
+            val modernState = fakeState(listOf(currentDeviceId, remoteDeviceId))
+
+            val ids = DashboardVM.blobReachableDeviceIds(
+                connectorsAndStates = listOf(connectorId to legacyState, modernConnectorId to modernState),
+                blobCapableConnectorIds = setOf(modernConnectorId),
+            )
+
+            ids shouldContainExactlyInAnyOrder setOf(currentDeviceId, remoteDeviceId)
+        }
+    }
+
+    @Nested
+    inner class `legacy encryption filtering` {
+        private val legacyForRemote = OctiServerIssue.LegacyEncryptionAccount(
+            connectorId = connectorId,
+            deviceId = remoteDeviceId,
+        )
+        private val legacyForCurrent = OctiServerIssue.LegacyEncryptionAccount(
+            connectorId = connectorId,
+            deviceId = currentDeviceId,
+        )
+
+        @Test
+        fun `legacy warning is dropped for a device covered by a blob-capable connector`() {
+            val result = DashboardVM.projectDashboardIssues(
+                allIssues = listOf(legacyForRemote),
+                fileShareEnabled = true,
+                pausedIds = emptySet(),
+                blobReachableDeviceIds = setOf(remoteDeviceId),
+            )
+
+            result.shouldBeEmpty()
+        }
+
+        @Test
+        fun `legacy warning is kept when the device has no blob-capable coverage`() {
+            // Only-legacy setup: no modern connectors registered, so blobReachable is empty.
+            val result = DashboardVM.projectDashboardIssues(
+                allIssues = listOf(legacyForRemote),
+                fileShareEnabled = true,
+                pausedIds = emptySet(),
+                blobReachableDeviceIds = emptySet(),
+            )
+
+            result shouldBe listOf(legacyForRemote)
+        }
+
+        @Test
+        fun `paused-but-blob-capable modern connector still suppresses the legacy warning`() {
+            // Per the chosen behavior: capability-based, not runtime-availability-based.
+            // A modern connector that has previously seen D and is currently paused
+            // should still keep the legacy warning suppressed for D — pause produces
+            // its own dashboard issues, so the user is not silenced.
+            val result = DashboardVM.projectDashboardIssues(
+                allIssues = listOf(legacyForRemote),
+                fileShareEnabled = true,
+                pausedIds = setOf(modernConnectorId),
+                blobReachableDeviceIds = setOf(remoteDeviceId),
+            )
+
+            result.shouldBeEmpty()
+        }
+
+        @Test
+        fun `legacy warning for the current device is dropped when modern covers self`() {
+            val result = DashboardVM.projectDashboardIssues(
+                allIssues = listOf(legacyForCurrent),
+                fileShareEnabled = true,
+                pausedIds = emptySet(),
+                blobReachableDeviceIds = setOf(currentDeviceId),
+            )
+
+            result.shouldBeEmpty()
+        }
+
+        @Test
+        fun `non-legacy issue with the same deviceId passes through even when blob-reachable`() {
+            // Use EncryptionCompatibilityIncompatible (not CurrentDeviceNotRegistered, which
+            // has its own paused-but-shown special case that would muddle this assertion).
+            val incompat = OctiServerIssue.EncryptionCompatibilityIncompatible(
+                connectorId = connectorId,
+                deviceId = remoteDeviceId,
+                minClientVersion = "1.2.3",
+            )
+
+            val result = DashboardVM.projectDashboardIssues(
+                allIssues = listOf(incompat, legacyForRemote),
+                fileShareEnabled = true,
+                pausedIds = emptySet(),
+                blobReachableDeviceIds = setOf(remoteDeviceId),
+            )
+
+            // Legacy gets dropped, but the compatibility issue must remain.
+            result shouldBe listOf(incompat)
+        }
+
+        @Test
+        fun `file-share globally disabled drops legacy warnings regardless of reachability`() {
+            // Existing behavior preserved: when the file-share module is off entirely,
+            // legacy warnings are noise and get dropped before reachability is even checked.
+            val result = DashboardVM.projectDashboardIssues(
+                allIssues = listOf(legacyForRemote),
+                fileShareEnabled = false,
+                pausedIds = emptySet(),
+                blobReachableDeviceIds = emptySet(),
+            )
+
+            result.shouldBeEmpty()
         }
     }
 

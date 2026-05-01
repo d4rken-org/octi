@@ -47,6 +47,7 @@ import eu.darken.octi.sync.core.ConnectorIssueAggregator
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.IssueSeverity
+import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.SyncExecutor
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOrchestrator
@@ -280,12 +281,34 @@ class DashboardVM @Inject constructor(
         ) : SyncStatus
     }
 
+    /**
+     * Devices known to at least one blob-capable connector. Drives the
+     * legacy-encryption-warning suppression in [filteredIssues]: when device D
+     * is registered with a modern (blob-capable) connector, the legacy account
+     * is no longer the gate for file-sharing-with-D, so the per-device warning
+     * row that claims otherwise gets dropped.
+     */
+    private val blobReachableDevices: Flow<Set<DeviceId>> = kotlinx.coroutines.flow.combine(
+        syncManager.connectors,
+        syncManager.states,
+        storageStatusManager.configuredConnectorIds,
+    ) { connectors, states, configuredIds ->
+        val pairs = connectors.zip(states.toList()).map { (c, s) -> c.identifier to s }
+        blobReachableDeviceIds(pairs, configuredIds)
+    }
+
     private val filteredIssues: Flow<List<ConnectorIssue>> = kotlinx.coroutines.flow.combine(
         issueAggregator.issues,
         fileShareRepo.isEnabled,
-    ) { issues, fileShareEnabled ->
-        if (fileShareEnabled) issues
-        else issues.filterNot { it is OctiServerIssue.LegacyEncryptionAccount }
+        syncSettings.pausedConnectorIds,
+        blobReachableDevices,
+    ) { issues, fileShareEnabled, pausedIds, blobReachable ->
+        projectDashboardIssues(
+            allIssues = issues,
+            fileShareEnabled = fileShareEnabled,
+            pausedIds = pausedIds,
+            blobReachableDeviceIds = blobReachable,
+        )
     }
 
     // NOTE: must be declared before `state` (which references it via `deviceItems()`).
@@ -318,13 +341,10 @@ class DashboardVM @Inject constructor(
         updateService.availableUpdate.onStart { emit(null) },
         generalSettings.dashboardConfig.flow,
         filteredIssues,
-        syncSettings.pausedConnectorIds,
-    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig, allIssues, pausedIds ->
+    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig, issues ->
 
         val connectorCount = syncManager.allConnectors.first().size
         val showSyncSetup = !isSyncSetupDismissed && connectorCount == 0
-
-        val issues = filterDashboardIssues(allIssues, pausedIds)
 
         val filteredPermissions = missingPermissions
             .filterNot { WIFI_PERMISSIONS.contains(it) }
@@ -707,12 +727,47 @@ class DashboardVM @Inject constructor(
                 .sortedWith(compareBy({ if (it.severity == IssueSeverity.ERROR) 0 else 1 }, { it::class.simpleName }))
         }
 
-        internal fun filterDashboardIssues(
+        /**
+         * Single dashboard-issue projection. Folds three rules:
+         * - file-share globally disabled → drop `LegacyEncryptionAccount`
+         * - device reachable via at least one blob-capable connector → drop
+         *   `LegacyEncryptionAccount` for that device (the warning text claims
+         *   "file sharing unavailable on this device", but the modern connector
+         *   makes it available; only the legacy account is the limitation, and
+         *   that account already surfaces its own issue under Sync Services)
+         * - connector paused → drop its issues, EXCEPT
+         *   `CurrentDeviceNotRegistered`, which is the auth-issue pause itself
+         *   and must remain visible to drive recovery
+         */
+        internal fun projectDashboardIssues(
             allIssues: List<ConnectorIssue>,
+            fileShareEnabled: Boolean,
             pausedIds: Set<ConnectorId>,
-        ): List<ConnectorIssue> = allIssues.filter {
-            it.connectorId !in pausedIds || it is OctiServerIssue.CurrentDeviceNotRegistered
-        }
+            blobReachableDeviceIds: Set<DeviceId>,
+        ): List<ConnectorIssue> = allIssues
+            .filterNot { !fileShareEnabled && it is OctiServerIssue.LegacyEncryptionAccount }
+            .filterNot {
+                it is OctiServerIssue.LegacyEncryptionAccount &&
+                    it.deviceId in blobReachableDeviceIds
+            }
+            .filter {
+                it.connectorId !in pausedIds || it is OctiServerIssue.CurrentDeviceNotRegistered
+            }
+
+        /**
+         * Devices known to at least one blob-capable connector, by intersecting
+         * each connector's `deviceMetadata` with `blobCapableConnectorIds`. Used
+         * by the dashboard projection to suppress the legacy-encryption warning
+         * when a modern connector covers the same device.
+         */
+        internal fun blobReachableDeviceIds(
+            connectorsAndStates: List<Pair<ConnectorId, SyncConnectorState>>,
+            blobCapableConnectorIds: Set<ConnectorId>,
+        ): Set<DeviceId> = connectorsAndStates
+            .asSequence()
+            .filter { (id, _) -> id in blobCapableConnectorIds }
+            .flatMap { (_, state) -> state.deviceMetadata.asSequence().map { it.deviceId } }
+            .toSet()
 
         private val INFO_ORDER = listOf(
             PowerInfo::class,
