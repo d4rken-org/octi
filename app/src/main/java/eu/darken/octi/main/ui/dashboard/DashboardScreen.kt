@@ -1055,7 +1055,11 @@ private fun DashboardToolbarTitle(upgradeInfo: UpgradeRepo.Info) {
         upgradeInfo.isPro -> stringResource(R.string.app_name_upgraded)
         else -> appName
     }
-    val showBetaChip = BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.BETA
+    val buildChannelLabel = when (BuildConfigWrap.BUILD_TYPE) {
+        BuildConfigWrap.BuildType.DEV -> "DEV"
+        BuildConfigWrap.BuildType.BETA -> "BETA"
+        BuildConfigWrap.BuildType.RELEASE -> null
+    }
 
     val titleParts = titleText.split(" ").filter { it.isNotEmpty() }
 
@@ -1084,21 +1088,21 @@ private fun DashboardToolbarTitle(upgradeInfo: UpgradeRepo.Info) {
             )
         }
 
-        if (showBetaChip) {
-            BetaBuildChip()
+        if (buildChannelLabel != null) {
+            BuildChannelChip(label = buildChannelLabel)
         }
     }
 }
 
 @Composable
-private fun BetaBuildChip() {
+private fun BuildChannelChip(label: String) {
     Surface(
         shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.tertiaryContainer,
         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
     ) {
         Text(
-            text = "BETA",
+            text = label,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
             style = MaterialTheme.typography.labelSmall,
             maxLines = 1,
