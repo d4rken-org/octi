@@ -2,6 +2,7 @@ package eu.darken.octi.modules.files.ui.list
 
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.datastore.DataStoreValue
+import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
@@ -155,7 +156,20 @@ class FileShareListVMTest : BaseTest() {
 
     private val incomingShareInbox = IncomingShareInbox()
 
-    private fun makeVM() = FileShareListVM(
+    // Existing tests assume unrestricted uploads — default to Pro so the free-tier gate
+    // doesn't accidentally drop files. Free-tier tests build their own fake upgradeRepo.
+    private fun fakeUpgradeRepo(isPro: Boolean): UpgradeRepo {
+        val info = object : UpgradeRepo.Info {
+            override val type = UpgradeRepo.Type.FOSS
+            override val isPro = isPro
+            override val upgradedAt: kotlin.time.Instant? = null
+        }
+        return mockk<UpgradeRepo>(relaxed = true).apply {
+            every { upgradeInfo } returns flowOf(info)
+        }
+    }
+
+    private fun makeVM(upgradeRepo: UpgradeRepo = fakeUpgradeRepo(isPro = true)) = FileShareListVM(
         dispatcherProvider = dispatcherProvider,
         appScope = CoroutineScope(SupervisorJob()),
         fileShareRepo = fileShareRepo,
@@ -167,6 +181,7 @@ class FileShareListVMTest : BaseTest() {
         fileShareSettings = fileShareSettings,
         syncManager = syncManager,
         incomingShareInbox = incomingShareInbox,
+        upgradeRepo = upgradeRepo,
     )
 
     @Test
@@ -209,18 +224,21 @@ class FileShareListVMTest : BaseTest() {
     }
 
     @Test
-    fun `initialize seeds activeFilters with the deviceId once`() = runTest2 {
+    fun `initialize does not seed activeFilters - list opens unfiltered regardless of route deviceId`() = runTest2 {
+        // Previously, opening the list from a peer's dashboard tile pre-filtered to that peer.
+        // That made the screen feel inconsistent depending on entry point. Now `initialize` is
+        // a no-op for filters and the list always opens with all devices visible.
         setupBaseMocks(
             selfFiles = listOf(makeFile(name = "mine.txt", blobKey = "blob-mine")),
             otherFiles = mapOf(remoteDevice to listOf(makeFile(name = "theirs.txt", blobKey = "blob-theirs"))),
         )
 
         val vm = makeVM()
-        vm.initialize(remoteDevice.id)
+        vm.initialize(remoteDevice.id) // would have pre-seeded the filter under the old behavior
 
         val state = vm.state.first()
-        state.activeFilters shouldBe setOf(remoteDevice)
-        state.files.map { it.sharedFile.name } shouldBe listOf("theirs.txt")
+        state.activeFilters shouldBe emptySet()
+        state.files.map { it.sharedFile.name }.toSet() shouldBe setOf("mine.txt", "theirs.txt")
     }
 
     @Test
@@ -265,9 +283,12 @@ class FileShareListVMTest : BaseTest() {
             labels = mapOf(selfDevice to "Self", remoteDevice to "Remote", third to "Third"),
         )
         val vm = makeVM()
-        vm.initialize(remoteDevice.id) // start with only remoteDevice selected
-
+        vm.initialize(null)
+        // Bring filter down to {remote} via the public API (initialize no longer seeds filters).
+        vm.onToggleFilter(selfDevice) // empty → {remote, third}
+        vm.onToggleFilter(third)      // → {remote}
         vm.state.first().activeFilters shouldBe setOf(remoteDevice)
+
         // Tapping the only selected chip should empty the filter (= back to all-selected).
         vm.onToggleFilter(remoteDevice)
         vm.state.first().activeFilters shouldBe emptySet()
@@ -285,28 +306,16 @@ class FileShareListVMTest : BaseTest() {
             labels = mapOf(selfDevice to "Self", remoteDevice to "Remote", third to "Third"),
         )
         val vm = makeVM()
-        vm.initialize(remoteDevice.id) // start with {remote}
-        vm.onToggleFilter(selfDevice)  // → {remote, self}
+        vm.initialize(null)
+        // Reach {remote} via toggles.
+        vm.onToggleFilter(selfDevice)
+        vm.onToggleFilter(third)
+        vm.state.first().activeFilters shouldBe setOf(remoteDevice)
+
+        vm.onToggleFilter(selfDevice) // → {remote, self}
         vm.state.first().activeFilters shouldBe setOf(remoteDevice, selfDevice)
-        vm.onToggleFilter(third)       // → {remote, self, third} == all → canonicalize to empty
+        vm.onToggleFilter(third)      // → {remote, self, third} == all → canonicalize to empty
         vm.state.first().activeFilters shouldBe emptySet()
-    }
-
-    @Test
-    fun `stale filters are pruned to currently available devices`() = runTest2 {
-        val ghost = DeviceId("ghost") // not in availableDevices
-        setupBaseMocks(
-            selfFiles = listOf(makeFile(blobKey = "self-1")),
-            otherFiles = mapOf(remoteDevice to listOf(makeFile(blobKey = "remote-1"))),
-        )
-        val vm = makeVM()
-        vm.initialize(ghost.id)
-
-        // Filter set holds 'ghost' which is not in availableDevices — buildState should prune
-        // to empty so the user doesn't end up with a ghost filter that hides every row.
-        val state = vm.state.first()
-        state.activeFilters shouldBe emptySet()
-        state.files.size shouldBe 2
     }
 
     @Test
@@ -582,5 +591,195 @@ class FileShareListVMTest : BaseTest() {
         // Token consumed: a second consume must be a no-op (no extra shareFile call).
         vm.consumeIncomingShare(token)
         coVerify(exactly = 1) { fileShareService.shareFile(uri) }
+    }
+
+    @Test
+    fun `free user with 0 own files - onShareClick emits LaunchPicker`() = runTest2 {
+        setupBaseMocks()
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+
+        vm.onShareClick(auto = false)
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.LaunchPicker>()
+        event.auto shouldBe false
+    }
+
+    @Test
+    fun `free user with 1 own file - onShareClick emits AtLimit`() = runTest2 {
+        setupBaseMocks(selfFiles = listOf(makeFile(blobKey = "self-1")))
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+
+        vm.onShareClick(auto = true)
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.AtLimit>()
+        event.auto shouldBe true
+    }
+
+    @Test
+    fun `free user with 1 own file - onShareFile emits AtLimit and skips upload`() = runTest2 {
+        setupBaseMocks(selfFiles = listOf(makeFile(blobKey = "self-1")))
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+        val uri = mockk<android.net.Uri>(relaxed = true)
+
+        vm.onShareFile(uri)
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.AtLimit>()
+        coVerify(exactly = 0) { fileShareService.shareFile(any()) }
+    }
+
+    @Test
+    fun `free user batch with 0 own files - first uploads and rest dropped`() = runTest2 {
+        setupBaseMocks()
+        val uriA = mockk<android.net.Uri>(relaxed = true)
+        val uriB = mockk<android.net.Uri>(relaxed = true)
+        val uriC = mockk<android.net.Uri>(relaxed = true)
+        coEvery { fileShareService.shareFile(any()) } returns FileShareService.ShareResult.Success
+
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+        vm.onShareFilesSequential(listOf(uriA, uriB, uriC))
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.AtLimitDroppedExtras>()
+        event.droppedCount shouldBe 2
+        coVerify(timeout = 1_000, exactly = 1) { fileShareService.shareFile(uriA) }
+        coVerify(exactly = 0) { fileShareService.shareFile(uriB) }
+        coVerify(exactly = 0) { fileShareService.shareFile(uriC) }
+    }
+
+    @Test
+    fun `free user batch with 1 own file - all dropped`() = runTest2 {
+        setupBaseMocks(selfFiles = listOf(makeFile(blobKey = "self-1")))
+        val uri = mockk<android.net.Uri>(relaxed = true)
+
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+        vm.onShareFilesSequential(listOf(uri))
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.AtLimit>()
+        coVerify(exactly = 0) { fileShareService.shareFile(any()) }
+    }
+
+    @Test
+    fun `free user consumeIncomingShare always drains the inbox even when at limit`() = runTest2 {
+        setupBaseMocks(selfFiles = listOf(makeFile(blobKey = "self-1")))
+        val uri = mockk<android.net.Uri>(relaxed = true)
+        val token = incomingShareInbox.enqueue(listOf(uri))
+
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+        vm.consumeIncomingShare(token)
+
+        // Token must be drained (a re-consume returns null and is a no-op).
+        incomingShareInbox.drain(token) shouldBe null
+        coVerify(exactly = 0) { fileShareService.shareFile(any()) }
+    }
+
+    @Test
+    fun `free user onRetryFile works regardless of own-file count`() = runTest2 {
+        val ownFile = makeFile(blobKey = "stuck", availableOn = setOf("missing"))
+        setupBaseMocks(selfFiles = listOf(ownFile))
+        coEvery { fileShareService.retryMirror(any()) } returns Unit
+
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+        val item = vm.state.first().files.single()
+        vm.onRetryFile(item)
+
+        coVerify(timeout = 1_000, exactly = 1) { fileShareService.retryMirror("stuck") }
+    }
+
+    @Test
+    fun `pro user - onShareClick emits LaunchPicker even with many own files`() = runTest2 {
+        setupBaseMocks(
+            selfFiles = listOf(
+                makeFile(blobKey = "a"),
+                makeFile(blobKey = "b"),
+                makeFile(blobKey = "c"),
+            )
+        )
+        val vm = makeVM(fakeUpgradeRepo(isPro = true))
+        vm.initialize(null)
+
+        vm.onShareClick(auto = false)
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.LaunchPicker>()
+    }
+
+    @Test
+    fun `lapsed pro with N grandfathered files - upload still blocked`() = runTest2 {
+        // User was Pro and uploaded 5 files, now lapsed to Free. The count is the gate, not the
+        // Pro flag — those existing files block new uploads until they expire or are deleted.
+        setupBaseMocks(
+            selfFiles = listOf(
+                makeFile(blobKey = "a"),
+                makeFile(blobKey = "b"),
+                makeFile(blobKey = "c"),
+                makeFile(blobKey = "d"),
+                makeFile(blobKey = "e"),
+            )
+        )
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+
+        vm.onShareClick(auto = false)
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.AtLimit>()
+    }
+
+    @Test
+    fun `state freeLimitReached is true for free user with 1 own file`() = runTest2 {
+        setupBaseMocks(selfFiles = listOf(makeFile(blobKey = "self-1")))
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+
+        vm.state.first().freeLimitReached shouldBe true
+    }
+
+    @Test
+    fun `state freeLimitReached is false for free user with 0 own files`() = runTest2 {
+        setupBaseMocks()
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+
+        vm.state.first().freeLimitReached shouldBe false
+    }
+
+    @Test
+    fun `state freeLimitReached is false for pro user even with many own files`() = runTest2 {
+        setupBaseMocks(
+            selfFiles = listOf(
+                makeFile(blobKey = "a"),
+                makeFile(blobKey = "b"),
+                makeFile(blobKey = "c"),
+            )
+        )
+        val vm = makeVM(fakeUpgradeRepo(isPro = true))
+        vm.initialize(null)
+
+        vm.state.first().freeLimitReached shouldBe false
+    }
+
+    @Test
+    fun `expired own files do not count toward the free-tier limit`() = runTest2 {
+        // User has 1 expired own file (24h ago) — should NOT block a new upload, since expired
+        // files no longer occupy a connector slot.
+        setupBaseMocks(selfFiles = listOf(makeFile(blobKey = "old", expiresAt = now - 1.hours)))
+        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        vm.initialize(null)
+
+        vm.onShareClick(auto = false)
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.LaunchPicker>()
     }
 }

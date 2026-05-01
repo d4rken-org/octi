@@ -7,19 +7,24 @@ import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.shareLatest
 import eu.darken.octi.common.flow.setupCommonEventHandlers
+import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
+import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.files.FileShareModule
 import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.files.core.FileKey
+import eu.darken.octi.modules.files.core.FileSharePolicy
 import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.modules.files.core.FileShareRepo
 import eu.darken.octi.modules.files.core.FileShareService
@@ -62,6 +67,7 @@ class FileShareListVM @Inject constructor(
     private val fileShareSettings: FileShareSettings,
     private val syncManager: SyncManager,
     private val incomingShareInbox: IncomingShareInbox,
+    private val upgradeRepo: UpgradeRepo,
 ) : ViewModel4(dispatcherProvider) {
 
     data class State(
@@ -76,6 +82,7 @@ class FileShareListVM @Inject constructor(
         val isUsageHintDismissed: Boolean = false,
         val isSyncingNow: Boolean = false,
         val sheetTargetKey: FileKey? = null,
+        val freeLimitReached: Boolean = false,
     ) {
         val sheetTarget: FileItem? get() = files.firstOrNull { it.key == sheetTargetKey }
     }
@@ -129,6 +136,9 @@ class FileShareListVM @Inject constructor(
         data class ShowMessage(@StringRes val messageRes: Int) : UiEvent
         data class ShowMessageWithSize(@StringRes val messageRes: Int, val bytes: Long) : UiEvent
         data class OpenFile(val uri: Uri, val mimeType: String) : UiEvent
+        data class LaunchPicker(val auto: Boolean) : UiEvent
+        data class AtLimit(val auto: Boolean = false) : UiEvent
+        data class AtLimitDroppedExtras(val droppedCount: Int) : UiEvent
     }
 
     val uiEvents = SingleEventFlow<UiEvent>()
@@ -145,6 +155,7 @@ class FileShareListVM @Inject constructor(
         val repoState: BaseModuleRepo.State<FileShareInfo>,
         val moduleEnabled: Boolean,
         val byDevice: ModuleManager.ByDevice,
+        val isPro: Boolean,
     )
 
     private data class TransferSnapshot(
@@ -173,7 +184,8 @@ class FileShareListVM @Inject constructor(
             fileShareRepo.state,
             fileShareRepo.isEnabled,
             moduleManager.byDevice,
-        ) { state, enabled, byDevice -> RepoSnapshot(state, enabled, byDevice) },
+            upgradeRepo.upgradeInfo,
+        ) { state, enabled, byDevice, upgrade -> RepoSnapshot(state, enabled, byDevice, upgrade.isPro) },
         combine(
             fileShareService.transfers,
             blobManager.retryStatus,
@@ -287,6 +299,10 @@ class FileShareListVM @Inject constructor(
             .firstOrNull { it.direction == FileShareService.Transfer.Direction.UPLOAD }
             ?.let { ActiveUpload(blobKey = it.blobKey, fileName = it.fileName, progress = it.progress) }
 
+        val ownActiveCount = repo.repoState.self?.data?.files
+            ?.count { now <= it.expiresAt } ?: 0
+        val freeLimitReached = !repo.isPro && ownActiveCount >= FileSharePolicy.FREE_TIER_OWN_FILE_LIMIT
+
         return State(
             files = sortedItems,
             availableDevices = availableDevices,
@@ -299,6 +315,7 @@ class FileShareListVM @Inject constructor(
             isUsageHintDismissed = settings.isUsageHintDismissed,
             isSyncingNow = isSyncingNow,
             sheetTargetKey = ui.sheetTarget,
+            freeLimitReached = freeLimitReached,
         )
     }
 
@@ -340,20 +357,46 @@ class FileShareListVM @Inject constructor(
             .sortedBy { it.label }
     }
 
-    /** Idempotent — only seeds the initial filter once on cold open. Later filter edits win. */
-    fun initialize(initialDeviceFilter: String?) {
-        if (initialDeviceFilter.isNullOrBlank()) return
-        if (_filters.value.isNotEmpty()) return
-        _filters.value = setOf(DeviceId(initialDeviceFilter))
+    /**
+     * No-op kept for the screen LaunchedEffect's lifecycle hook. The route's `deviceId` param is
+     * still used by auto-actions (e.g. DOWNLOAD_LATEST matches against it directly) — only the
+     * filter pre-seed was removed: the list now always opens unfiltered ("all devices"), so the
+     * user lands on the same view regardless of which tile they tapped.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun initialize(initialDeviceFilter: String?) = Unit
+
+    /**
+     * Pre-action gate for the share entry points (manual FAB tap and the dashboard auto-action).
+     * Avoids opening the SAF picker when we'd just refuse the upload afterwards.
+     */
+    fun onShareClick(auto: Boolean = false) = launch {
+        if (!canUpload()) {
+            uiEvents.tryEmit(UiEvent.AtLimit(auto = auto))
+            return@launch
+        }
+        uiEvents.tryEmit(UiEvent.LaunchPicker(auto = auto))
+    }
+
+    fun navToUpgrade() {
+        navTo(Nav.Main.Upgrade())
     }
 
     /**
      * Fire-and-forget share — used by the dashboard tile auto-action so the upload survives the
      * subsequent `navUp()`. Snackbar feedback is intentionally dropped (the user is back on the
      * dashboard); transfer progress remains observable through `FileShareService.transfers`.
+     *
+     * Defensive guard: this runs on `appScope` without a screen visible, so the gate sits at the
+     * entry point (`onShareClick(auto = true)` → `LaunchPicker` → picker → here). If reached
+     * without a prior gate, log and exit instead of producing a free upload.
      */
     fun enqueueShareFile(uri: Uri) {
         appScope.launch(dispatcherProvider.IO) {
+            if (!canUpload()) {
+                log(TAG, WARN) { "enqueueShareFile: blocked by free-tier limit" }
+                return@launch
+            }
             runCatching { fileShareService.shareFile(uri) }
                 .onFailure { log(TAG, ERROR) { "enqueueShareFile failed: ${it.asLog()}" } }
         }
@@ -370,31 +413,38 @@ class FileShareListVM @Inject constructor(
     }
 
     /**
-     * Run on [appScope] so an in-flight share survives the user navigating away from the file
-     * list — multi-MB uploads routinely outlive a screen visit. UI feedback via [uiEvents] is
-     * best-effort: while the screen is alive the snackbar fires; afterwards the buffered events
-     * are simply not collected, which is acceptable.
+     * Pro-check on VM scope first (so [navTo] / [uiEvents] fire while the screen is alive), then
+     * the actual upload runs on [appScope] so an in-flight share survives the user navigating
+     * away from the file list — multi-MB uploads routinely outlive a screen visit. UI feedback
+     * via [uiEvents] is best-effort: while the screen is alive the snackbar fires; afterwards
+     * the buffered events are simply not collected, which is acceptable.
      */
-    fun onShareFile(uri: Uri) = launch(appScope) {
-        when (val result = fileShareService.shareFile(uri)) {
-            is FileShareService.ShareResult.Success ->
-                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_success))
-            is FileShareService.ShareResult.PartialMirror ->
-                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_partial))
-            is FileShareService.ShareResult.AllConnectorsFailed ->
-                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_failed))
-            is FileShareService.ShareResult.FileTooLarge ->
-                uiEvents.tryEmit(UiEvent.ShowMessageWithSize(R.string.module_files_upload_too_large, result.maxBytes))
-            is FileShareService.ShareResult.NoEligibleConnectors ->
-                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_no_connectors))
-            is FileShareService.ShareResult.Cancelled ->
-                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_cancelled))
-            is FileShareService.ShareResult.ServerStorageLow ->
-                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_server_storage_low))
-            is FileShareService.ShareResult.AccountQuotaFull ->
-                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_account_quota_full))
-            is FileShareService.ShareResult.LocalStorageLow ->
-                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_local_storage_low))
+    fun onShareFile(uri: Uri) = launch {
+        if (!canUpload()) {
+            uiEvents.tryEmit(UiEvent.AtLimit())
+            return@launch
+        }
+        appScope.launch(dispatcherProvider.IO) {
+            when (val result = fileShareService.shareFile(uri)) {
+                is FileShareService.ShareResult.Success ->
+                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_success))
+                is FileShareService.ShareResult.PartialMirror ->
+                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_partial))
+                is FileShareService.ShareResult.AllConnectorsFailed ->
+                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_failed))
+                is FileShareService.ShareResult.FileTooLarge ->
+                    uiEvents.tryEmit(UiEvent.ShowMessageWithSize(R.string.module_files_upload_too_large, result.maxBytes))
+                is FileShareService.ShareResult.NoEligibleConnectors ->
+                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_no_connectors))
+                is FileShareService.ShareResult.Cancelled ->
+                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_cancelled))
+                is FileShareService.ShareResult.ServerStorageLow ->
+                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_server_storage_low))
+                is FileShareService.ShareResult.AccountQuotaFull ->
+                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_account_quota_full))
+                is FileShareService.ShareResult.LocalStorageLow ->
+                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_local_storage_low))
+            }
         }
     }
 
@@ -415,12 +465,28 @@ class FileShareListVM @Inject constructor(
     }
 
     /**
-     * Run on [appScope] so the multi-share survives screen lifecycle. Each `shareFile` call
+     * Pro-check on VM scope first; for free users, slice the batch to the remaining free-tier
+     * slots and emit [UiEvent.AtLimitDroppedExtras] for the dropped tail. The actual upload then
+     * runs on [appScope] so the multi-share survives screen lifecycle. Each `shareFile` call
      * suspends until completion before the next starts.
      */
-    fun onShareFilesSequential(uris: List<Uri>) {
+    fun onShareFilesSequential(uris: List<Uri>) = launch {
+        if (uris.isEmpty()) return@launch
+        val isPro = upgradeRepo.isPro()
+        val remaining = if (isPro) {
+            uris.size
+        } else {
+            (FileSharePolicy.FREE_TIER_OWN_FILE_LIMIT - ownFileCount()).coerceAtLeast(0)
+        }
+        if (remaining == 0) {
+            uiEvents.tryEmit(UiEvent.AtLimit())
+            return@launch
+        }
+        val toUpload = uris.take(remaining)
+        val dropped = uris.size - toUpload.size
+        if (dropped > 0) uiEvents.tryEmit(UiEvent.AtLimitDroppedExtras(dropped))
         appScope.launch(dispatcherProvider.IO) {
-            for (uri in uris) {
+            for (uri in toUpload) {
                 runCatching { fileShareService.shareFile(uri) }
                     .onFailure { log(TAG, ERROR) { "onShareFilesSequential(uri=$uri) failed: ${it.asLog()}" } }
             }
@@ -549,6 +615,15 @@ class FileShareListVM @Inject constructor(
     fun onSheetDismiss() {
         _sheetTarget.value = null
     }
+
+    private suspend fun ownFileCount(): Int {
+        val now = Clock.System.now()
+        return fileShareRepo.state.first().self?.data?.files
+            ?.count { it.expiresAt > now } ?: 0
+    }
+
+    private suspend fun canUpload(): Boolean =
+        upgradeRepo.isPro() || ownFileCount() < FileSharePolicy.FREE_TIER_OWN_FILE_LIMIT
 
     companion object {
         private val TAG = logTag("Module", "Files", "List", "VM")

@@ -33,10 +33,12 @@ import androidx.compose.material.icons.twotone.ArrowUpward
 import androidx.compose.material.icons.twotone.Check
 import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material.icons.twotone.Delete
+import androidx.compose.material.icons.twotone.Home
 import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.PieChart
 import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.material.icons.twotone.SaveAlt
+import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material.icons.twotone.Sync
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -52,6 +54,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,6 +66,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -112,36 +116,6 @@ fun FileShareListScreenHost(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    LaunchedEffect(vm.uiEvents) {
-        vm.uiEvents.collect { event ->
-            when (event) {
-                is FileShareListVM.UiEvent.ShowMessage ->
-                    snackbarHostState.showSnackbar(context.getString(event.messageRes))
-                is FileShareListVM.UiEvent.ShowMessageWithSize ->
-                    snackbarHostState.showSnackbar(
-                        context.getString(event.messageRes, Formatter.formatFileSize(context, event.bytes))
-                    )
-                is FileShareListVM.UiEvent.OpenFile -> {
-                    val viewIntent = Intent(Intent.ACTION_VIEW).apply {
-                        setDataAndType(event.uri, event.mimeType.ifBlank { "application/octet-stream" })
-                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        clipData = ClipData.newRawUri(null, event.uri)
-                    }
-                    try {
-                        context.startActivity(
-                            Intent.createChooser(viewIntent, context.getString(R.string.module_files_open_chooser))
-                        )
-                    } catch (_: ActivityNotFoundException) {
-                        snackbarHostState.showSnackbar(context.getString(R.string.module_files_open_no_app))
-                    } catch (e: SecurityException) {
-                        log(TAG, ERROR) { "open dispatch failed: ${e.asLog()}" }
-                        snackbarHostState.showSnackbar(context.getString(R.string.module_files_open_failed))
-                    }
-                }
-            }
-        }
-    }
-
     val state by vm.state.collectAsState(initial = null)
 
     // Cross-rotation flags for the dashboard-tile auto-action flow. Once the SAF picker is
@@ -190,12 +164,59 @@ fun FileShareListScreenHost(
         }
     }
 
+    LaunchedEffect(vm.uiEvents) {
+        vm.uiEvents.collect { event ->
+            when (event) {
+                is FileShareListVM.UiEvent.ShowMessage ->
+                    snackbarHostState.showSnackbar(context.getString(event.messageRes))
+                is FileShareListVM.UiEvent.ShowMessageWithSize ->
+                    snackbarHostState.showSnackbar(
+                        context.getString(event.messageRes, Formatter.formatFileSize(context, event.bytes))
+                    )
+                is FileShareListVM.UiEvent.OpenFile -> {
+                    val viewIntent = Intent(Intent.ACTION_VIEW).apply {
+                        setDataAndType(event.uri, event.mimeType.ifBlank { "application/octet-stream" })
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        clipData = ClipData.newRawUri(null, event.uri)
+                    }
+                    try {
+                        context.startActivity(
+                            Intent.createChooser(viewIntent, context.getString(R.string.module_files_open_chooser))
+                        )
+                    } catch (_: ActivityNotFoundException) {
+                        snackbarHostState.showSnackbar(context.getString(R.string.module_files_open_no_app))
+                    } catch (e: SecurityException) {
+                        log(TAG, ERROR) { "open dispatch failed: ${e.asLog()}" }
+                        snackbarHostState.showSnackbar(context.getString(R.string.module_files_open_failed))
+                    }
+                }
+                is FileShareListVM.UiEvent.LaunchPicker -> {
+                    if (event.auto) autoLaunched = true
+                    openDocLauncher.launch(arrayOf("*/*"))
+                }
+                is FileShareListVM.UiEvent.AtLimit -> {
+                    // No transient feedback — the in-list banner already communicates the state
+                    // and the FAB is rendered as disabled. We only need the side effect for the
+                    // auto-flow: mark complete so LaunchedEffect(autoAction) doesn't re-fire on
+                    // recomposition (rotation) and replay the gated click.
+                    if (event.auto) autoFiringComplete = true
+                }
+                is FileShareListVM.UiEvent.AtLimitDroppedExtras ->
+                    snackbarHostState.showSnackbar(
+                        context.getString(R.string.module_files_free_limit_dropped_extras, event.droppedCount)
+                    )
+            }
+        }
+    }
+
     LaunchedEffect(autoAction) {
         if (autoAction == null || autoLaunched || autoFiringComplete) return@LaunchedEffect
         when (autoAction) {
             Nav.Main.FileShareList.AutoAction.UPLOAD -> {
-                autoLaunched = true
-                openDocLauncher.launch(arrayOf("*/*"))
+                // Pre-action gate via VM. On pass: emits LaunchPicker(auto=true) → uiEvents
+                // collector sets autoLaunched + launches picker. On fail: emits AtLimit(auto=true)
+                // → collector sets autoFiringComplete + shows snackbar, picker never opens.
+                vm.onShareClick(auto = true)
             }
             Nav.Main.FileShareList.AutoAction.INCOMING_SHARE -> {
                 autoLaunched = true
@@ -238,7 +259,8 @@ fun FileShareListScreenHost(
             state = current,
             snackbarHostState = snackbarHostState,
             onNavigateUp = { vm.navUp() },
-            onShareClick = { openDocLauncher.launch(arrayOf("*/*")) },
+            onShareClick = { vm.onShareClick() },
+            onUpgradeClick = { vm.navToUpgrade() },
             onRowClick = { item -> vm.onRowClick(item) },
             onRowSecondaryClick = { item ->
                 if (item.isOwn) vm.onDeleteFile(item)
@@ -271,6 +293,7 @@ fun FileShareListScreen(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onNavigateUp: () -> Unit = {},
     onShareClick: () -> Unit = {},
+    onUpgradeClick: () -> Unit = {},
     onRowClick: (FileShareListVM.FileItem) -> Unit = {},
     onRowSecondaryClick: (FileShareListVM.FileItem) -> Unit = {},
     onRetryClick: (FileShareListVM.FileItem) -> Unit = {},
@@ -307,7 +330,11 @@ fun FileShareListScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             if (state.isSharingAvailable) {
-                FloatingActionButton(onClick = onShareClick) {
+                val disabled = state.freeLimitReached
+                FloatingActionButton(
+                    onClick = { if (!disabled) onShareClick() },
+                    modifier = if (disabled) Modifier.alpha(0.5f) else Modifier,
+                ) {
                     Icon(Icons.TwoTone.Add, contentDescription = stringResource(R.string.module_files_share_action))
                 }
             }
@@ -328,6 +355,7 @@ fun FileShareListScreen(
             val collidingOctiSubtypes = collidingOctiSubtypesFor(state.quotaItems)
             if (state.files.isEmpty() && state.activeUpload == null) {
                 Column(modifier = Modifier.fillMaxSize()) {
+                    if (state.freeLimitReached) FreeLimitBanner(onUpgradeClick = onUpgradeClick)
                     if (showUsageHint) UsageHintCard(onDismiss = onDismissHint)
                     if (lowQuotaItems.isNotEmpty()) {
                         QuotaWarningBanner(
@@ -367,6 +395,7 @@ fun FileShareListScreen(
                 }
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    if (state.freeLimitReached) item { FreeLimitBanner(onUpgradeClick = onUpgradeClick) }
                     if (showUsageHint) item { UsageHintCard(onDismiss = onDismissHint) }
                     if (lowQuotaItems.isNotEmpty()) {
                         item {
@@ -453,15 +482,27 @@ private fun DevicesChipRow(
                     selected = selected,
                     onClick = { onToggleFilter(opt.deviceId) },
                     label = { Text(opt.label) },
-                    leadingIcon = if (selected) {
-                        {
-                            Icon(
-                                Icons.TwoTone.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                            )
+                    leadingIcon = when {
+                        opt.isOwn -> {
+                            {
+                                Icon(
+                                    Icons.TwoTone.Home,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp),
+                                )
+                            }
                         }
-                    } else null,
+                        selected -> {
+                            {
+                                Icon(
+                                    Icons.TwoTone.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp),
+                                )
+                            }
+                        }
+                        else -> null
+                    },
                 )
             }
         }
@@ -530,6 +571,37 @@ private fun SortMenu(
                         }
                     } else null,
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FreeLimitBanner(onUpgradeClick: () -> Unit) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 8.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.TwoTone.Stars,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp),
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.module_files_free_limit_reached_message),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+            )
+            TextButton(onClick = onUpgradeClick) {
+                Text(stringResource(R.string.module_files_free_limit_action_upgrade))
             }
         }
     }

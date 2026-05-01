@@ -83,4 +83,7 @@
     <string name="module_files_sheet_dismiss_action">Close</string>
     <string name="module_files_share_unsupported">This share isn\'t a file</string>
     <string name="module_files_share_module_disabled">File sharing is disabled</string>
+    <string name="module_files_free_limit_reached_message">Free version is limited to 1 shared file at a time. Delete it to share another, or upgrade for unlimited (within your storage quota).</string>
+    <string name="module_files_free_limit_action_upgrade">Upgrade</string>
+    <string name="module_files_free_limit_dropped_extras">%1$d additional file(s) skipped — free limit is 1.</string>
 </resources>
