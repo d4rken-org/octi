@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Máy chủ đồng bộ hóa mã nguồn mở cho Octi do nhà phát triển ứng dụng này tạo ra. Dữ liệu được mã hóa phía máy khách, chỉ thiết bị của bạn mới có thể giải mã.\n\nVì cả ứng dụng và máy chủ vẫn đang được cải thiện, nó có thể kém ổn định hơn các tùy chọn đồng bộ hóa khác.</string>
+    <string name="sync_octiserver_type_description">Máy chủ đồng bộ mã nguồn mở cho Octi do nhà phát triển ứng dụng này tạo ra. Dữ liệu được mã hóa phía khách, chỉ các thiết bị của bạn mới có thể giải mã.\n\nVì cả ứng dụng và máy chủ đều đang được cải thiện, nó có thể kém ổn định hơn các tùy chọn đồng bộ khác.</string>
     <string name="sync_octiserver_add_create_action_hint">Các tài khoản không hoạt động sẽ bị xóa sau vài tuần.</string>
-    <string name="sync_octiserver_add_subtitle">Thêm Google Drive mới</string>
+    <string name="sync_octiserver_add_subtitle">Thêm tài khoản Octi Server</string>
     <string name="sync_octiserver_add_link_action_hint">Bạn sẽ cần quyền truy cập vào một thiết bị khác đã được liên kết.</string>
     <string name="sync_octiserver_about_title">Giới thiệu về Octi Server</string>
-    <string name="sync_octiserver_about_desc">Octi Server là một máy chủ đồng bộ hóa mã nguồn mở (bằng Kotlin) cho Octi của darken.</string>
+    <string name="sync_octiserver_about_desc">Octi Server là máy chủ đồng bộ mã nguồn mở cho Octi bởi darken.</string>
     <string name="sync_octiserver_about_author_action">Tác giả</string>
     <string name="sync_octiserver_about_source_action">Mã nguồn</string>
     <string name="sync_octiserver_reset_confirmation_desc">Xóa dữ liệu của thiết bị trên tài khoản này. Các thiết bị vẫn được liên kết nhưng dữ liệu đã lưu trữ của chúng sẽ bị xóa.</string>
@@ -15,10 +15,23 @@
     <string name="sync_octiserver_link_code_label">Mã liên kết</string>
     <string name="sync_octiserver_link_host_option_direct">Tạo mã văn bản mà bạn có thể gửi qua các ứng dụng khác</string>
     <string name="sync_octiserver_link_host_option_qrcode">Hiển thị mã QR</string>
+    <string name="sync_octiserver_link_host_waiting_label">Đang chờ thiết bị liên kết…</string>
     <string name="sync_octiserver_link_host_device_linked_message">Một thiết bị mới đã được liên kết với tài khoản của bạn.</string>
-    <string name="sync_octiserver_link_client_option_direct">Sao chép và dán thủ công mã liên kết</string>
+    <string name="sync_octiserver_link_client_option_direct">Sao chép và dán mã liên kết theo cách thủ công</string>
     <string name="sync_octiserver_link_client_option_qrcode">Quét mã QR từ thiết bị khác</string>
     <string name="sync_octiserver_link_client_startcamera_action">Khởi động máy ảnh</string>
     <string name="sync_octiserver_link_client_link_action">Liên kết thiết bị</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Thiết bị không còn được liên kết</string>
     <string name="sync_octiserver_error_device_not_registered">Thiết bị này không còn được đăng ký trên máy chủ. Hãy ngắt kết nối và liên kết lại từ thiết bị khác, hoặc tạo tài khoản mới.</string>
+    <string name="sync_octiserver_resume_sync_action">Tiếp tục đồng bộ</string>
+    <string name="sync_octiserver_add_create_account_title">Tạo tài khoản?</string>
+    <string name="sync_octiserver_add_create_account_desc">Một tài khoản đồng bộ mã hóa mới sẽ được tạo trên máy chủ này.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Tài khoản này yêu cầu Octi %1$s hoặc mới hơn. Hãy cập nhật thiết bị này hoặc xóa nó khỏi tài khoản.</string>
+    <string name="sync_octiserver_legacy_encryption_account">Chia sẻ tệp không khả dụng trên thiết bị này vì tài khoản sử dụng mã hóa cũ. Hãy tạo tài khoản mới trên thiết bị được cập nhật và kết nối lại các thiết bị khác để sử dụng tính năng chia sẻ tệp.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Mã hóa không tương thích</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Chia sẻ tệp không khả dụng</string>
+    <string name="sync_octiserver_add_create_account_action">Tạo tài khoản</string>
+    <string name="sync_octiserver_add_link_existing_action">Liên kết tài khoản hiện có</string>
+    <string name="sync_octiserver_add_select_server_label">Chọn máy chủ</string>
+    <string name="sync_octiserver_add_custom_server_label">Máy chủ tùy chỉnh</string>
 </resources>

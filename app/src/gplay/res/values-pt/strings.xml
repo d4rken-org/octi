@@ -7,6 +7,10 @@
     <string name="upgrades_dashcard_title">Obter Octi Pro</string>
     <string name="upgrades_dashcard_body">Atualize para desbloquear recursos adicionais e apoiar o desenvolvimento!</string>
     <string name="upgrades_dashcard_upgrade_action">Atualizar</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">A versão gratuita está limitada a %1$d dispositivo.</item>
+        <item quantity="other">A versão gratuita está limitada a %1$d dispositivos.</item>
+    </plurals>
     <string name="upgrade_screen_title">Obtenha o Octi Pro</string>
     <string name="upgrade_screen_preamble">O Octi não exibe anúncios e não vende dados do usuário. Meu trabalho é financiado por você ❤️.</string>
     <string name="upgrade_screen_benefits_title">Benefícios</string>

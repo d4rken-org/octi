@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Nhìn thấy lần cuối %1$s</string>
     <string name="sync_device_stale_warning_text">Thiết bị chưa đồng bộ trong %s</string>
+    <string name="sync_device_clock_skew_warning_text">Đồng hồ thiết bị có vẻ không đồng bộ</string>
+    <string name="sync_clock_discrepancy_chip_label">Sai lệch đồng hồ</string>
+    <string name="sync_clock_discrepancy_title">Lệch đồng hồ</string>
+    <string name="sync_clock_discrepancy_uncertain">Đã phát hiện lệch đồng hồ giữa các thiết bị. Với chỉ hai thiết bị, không thể xác định thiết bị nào có giờ sai.\n\nKiểm tra cài đặt thời gian thiết bị của bạn.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Đồng hồ của thiết bị này có vẻ không đồng bộ. Các thiết bị khác đồng ý với một thời gian khác.\n\nKiểm tra cài đặt thời gian của thiết bị này.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Đồng hồ trên %s có vẻ không đồng bộ. Các thiết bị khác đồng ý với thời gian hiện tại.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Đồng hồ thiết bị của bạn đang nhanh hơn máy chủ %s.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Đồng hồ thiết bị của bạn đang chậm hơn máy chủ %s.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="other">%d thiết bị chưa đồng bộ gần đây</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Đang chạy phiên bản cũ %s</string>
+    <string name="sync_issues_type_stale_device">Thiết bị cũ</string>
+    <string name="sync_issues_type_clock_skew">Vấn đề đồng hồ</string>
+    <string name="sync_issues_type_outdated_version">Phiên bản cũ</string>
+    <string name="sync_issues_type_server_storage_low">Máy chủ hết dung lượng</string>
+    <string name="sync_server_storage_low_description">Máy chủ đồng bộ sắp hết dung lượng đĩa. Việc tải lên bị tạm dừng cho đến khi quản trị viên giải phóng dung lượng.</string>
+    <string name="sync_issues_type_account_quota_full">Tài khoản đã đầy</string>
+    <string name="sync_account_quota_full_description">Tài khoản của bạn đã đạt hạn mức dung lượng trên máy chủ này. Hãy xóa các tệp được chia sẻ hoặc dữ liệu hết hạn để giải phóng dung lượng, sau đó đồng bộ lại.</string>
+    <string name="sync_issues_type_low_storage">Lưu trữ thấp</string>
+    <string name="sync_low_storage_description">Còn lại chưa đến 10%% dung lượng lưu trữ. Hãy giải phóng dung lượng sớm để tiếp tục đồng bộ.</string>
+    <string name="sync_connector_paused_label">Tạm dừng đồng bộ</string>
+    <string name="sync_connector_paused_error_label">Kết nối bị tạm dừng</string>
+    <string name="sync_connector_paused_error_desc">Kết nối này đang tạm dừng. Hãy tiếp tục để thực hiện hành động này.</string>
+    <string name="sync_synced_devices_label">Thiết bị đã đồng bộ</string>
     <plurals name="sync_stale_period_days">
         <item quantity="other">%d ngày</item>
     </plurals>

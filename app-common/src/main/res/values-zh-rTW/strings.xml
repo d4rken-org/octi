@@ -12,16 +12,21 @@
     <string name="general_gotit_action">知道了</string>
     <string name="general_na_label">不適用</string>
     <string name="general_empty_label">空</string>
+    <string name="general_delete_action">刪除</string>
     <string name="general_dismiss_action">關閉</string>
     <string name="general_maybe_later_action">也許之後</string>
     <string name="general_manage_action">管理</string>
     <string name="general_quota_label">配額</string>
+    <string name="general_sync_action">同步</string>
+    <string name="general_reset_action">重設</string>
+    <string name="general_disconnect_action">斷開</string>
     <string name="general_upgrade_action">升級</string>
     <string name="general_update_action">更新</string>
     <string name="general_donate_action">捐贈</string>
     <string name="general_check_action">檢查</string>
     <string name="general_internal_not_available_msg">無法使用網路連線</string>
     <string name="general_refresh_action">重新整理</string>
+    <string name="general_close_action">關閉</string>
     <string name="general_continue">繼續</string>
     <string name="general_show_details_action">顯示詳細資訊</string>
     <string name="general_minutes_label">分鐘</string>
@@ -29,7 +34,7 @@
         <item quantity="other">%1$d 分鐘</item>
     </plurals>
     <string name="ui_theme_mode_setting_label">主題模式</string>
-    <string name="ui_theme_mode_setting_explanation">應用主題使用的模式（例如深色或淺色）。</string>
+    <string name="ui_theme_mode_setting_explanation">設定應用程式主題時所用的模式（例：深色或淺色）。</string>
     <string name="ui_theme_mode_dark_label">深色</string>
     <string name="ui_theme_mode_light_label">淺色</string>
     <string name="ui_theme_mode_system_label">系統預設</string>
@@ -37,5 +42,39 @@
     <string name="ui_theme_style_setting_explanation">主題中使用的顏色樣式。</string>
     <string name="ui_theme_style_default_label">預設</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="ui_theme_style_medium_contrast_label">中等對比度</string>
+    <string name="ui_theme_style_high_contrast_label">高對比度</string>
+    <string name="ui_theme_color_setting_label">主題顏色</string>
+    <string name="ui_theme_color_green_label">綠色</string>
+    <string name="ui_theme_color_blue_label">藍色</string>
+    <string name="ui_theme_color_sunset_label">日落</string>
     <string name="device_x_label">設備：%s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material You</string>
+    <string name="widget_theme_classic_green">經典綠</string>
+    <string name="widget_theme_blue">藍色</string>
+    <string name="widget_theme_orange">橙色</string>
+    <string name="widget_theme_red">紅色</string>
+    <string name="widget_theme_dark">深色</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">自訂小工具</string>
+    <string name="widget_config_apply_action">套用</string>
+    <string name="widget_config_presets_label">預設</string>
+    <string name="widget_config_background_label">背景顏色</string>
+    <string name="widget_config_accent_label">強調色</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">預覽</string>
+    <string name="widget_config_custom_label">自訂</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">裝置</string>
+    <string name="widget_config_devices_empty_hint">若未選擇任何裝置，將顯示所有裝置。</string>
+    <string name="widget_config_devices_selected_hint">僅顯示已選擇的裝置。</string>
+    <string name="widget_config_devices_none_known">尚未找到同步裝置。</string>
+    <string name="widget_empty_label">沒有符合的裝置</string>
+    <string name="widget_no_sync_devices_label">尚無同步裝置</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">此裝置沒有 %1$s 資料</string>
+    <string name="widget_deeplink_module_power">電池</string>
+    <string name="widget_deeplink_module_connectivity">網路</string>
+    <string name="widget_deeplink_module_clipboard">剪貼簿</string>
 </resources>

@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Gol</string>
     <string name="module_clipboard_detail_type_text">Text</string>
     <string name="module_clipboard_copy_action">Copiază în clipboard</string>
+    <string name="module_clipboard_widget_description">Afișează conținutul clipboard-ului de pe dispozitivele sincronizate.</string>
+    <string name="module_clipboard_widget_paste_action">Partajează clipboard-ul meu</string>
+    <string name="module_clipboard_widget_share_action">Partajează clipboard-ul meu</string>
+    <string name="module_clipboard_widget_copied_toast">Copiat</string>
+    <string name="module_clipboard_widget_self_label">Tu</string>
+    <string name="module_clipboard_widget_self_empty">Nimic partajat încă</string>
+    <string name="module_clipboard_widget_no_data">Nu există date în clipboard</string>
+    <string name="module_clipboard_widget_share_success">Clipboard partajat</string>
+    <string name="module_clipboard_widget_share_empty">Nimic de partajat</string>
+    <string name="module_clipboard_widget_share_blocked">Acces la clipboard blocat</string>
+    <string name="module_clipboard_widget_share_unsupported">Conținut clipboard neacceptat</string>
+    <string name="module_clipboard_widget_share_failed">Partajarea clipboard-ului a eșuat</string>
 </resources>

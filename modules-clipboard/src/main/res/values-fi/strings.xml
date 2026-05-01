@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Tyhjä</string>
     <string name="module_clipboard_detail_type_text">Teksti</string>
     <string name="module_clipboard_copy_action">Kopioi leikepöydälle</string>
+    <string name="module_clipboard_widget_description">Näytä synkronoitujen laitteidesi leikepöydän sisältö.</string>
+    <string name="module_clipboard_widget_paste_action">Jaa leikepöytäni</string>
+    <string name="module_clipboard_widget_share_action">Jaa leikepöytäni</string>
+    <string name="module_clipboard_widget_copied_toast">Kopioitu</string>
+    <string name="module_clipboard_widget_self_label">Sinä</string>
+    <string name="module_clipboard_widget_self_empty">Ei jaettua vielä</string>
+    <string name="module_clipboard_widget_no_data">Ei leikepöytätietoja</string>
+    <string name="module_clipboard_widget_share_success">Leikepöytä jaettu</string>
+    <string name="module_clipboard_widget_share_empty">Ei jaettavaa</string>
+    <string name="module_clipboard_widget_share_blocked">Leikepöydän käyttö estetty</string>
+    <string name="module_clipboard_widget_share_unsupported">Leikepöydän sisältöä ei tueta</string>
+    <string name="module_clipboard_widget_share_failed">Leikepöydän jakaminen epäonnistui</string>
 </resources>

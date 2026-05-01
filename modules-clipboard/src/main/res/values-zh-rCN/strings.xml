@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">空</string>
     <string name="module_clipboard_detail_type_text">文本</string>
     <string name="module_clipboard_copy_action">复制到剪贴板</string>
+    <string name="module_clipboard_widget_description">显示已同步设备的剪贴板内容。</string>
+    <string name="module_clipboard_widget_paste_action">分享我的剪贴板</string>
+    <string name="module_clipboard_widget_share_action">分享我的剪贴板</string>
+    <string name="module_clipboard_widget_copied_toast">已复制</string>
+    <string name="module_clipboard_widget_self_label">你</string>
+    <string name="module_clipboard_widget_self_empty">尚未分享任何内容</string>
+    <string name="module_clipboard_widget_no_data">无剪贴板数据</string>
+    <string name="module_clipboard_widget_share_success">剪贴板已分享</string>
+    <string name="module_clipboard_widget_share_empty">没有可分享的内容</string>
+    <string name="module_clipboard_widget_share_blocked">剪贴板访问已被阻止</string>
+    <string name="module_clipboard_widget_share_unsupported">剪贴板内容不支持</string>
+    <string name="module_clipboard_widget_share_failed">分享剪贴板失败</string>
 </resources>

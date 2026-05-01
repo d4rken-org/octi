@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Un servidor de sincronització de codi obert per a l\'Octi fet pel desenvolupador d\'aquesta aplicació. Les dades estan xifrades pel costat del client, només els vostres dispositius poden desxifrar-les.\n\nCom que l\'aplicació i el servidor encara s\'estan millorant, pot ser que sigui menys estable que altres opcions de sincronització.</string>
+    <string name="sync_octiserver_type_description">Un servidor de sincronització de codi obert per a l’Octi creat pel desenvolupador d’aquesta aplicació. Les dades es xifren al costat del client, només els vostres dispositius les poden desxifrar.
+
+Com que tant l’aplicació com el servidor encara s’estan millorant, pot ser menys estable que altres opcions de sincronització.</string>
     <string name="sync_octiserver_add_create_action_hint">Els comptes inactius se suprimeixen al cap d\'unes setmanes.</string>
-    <string name="sync_octiserver_add_subtitle">Afegeix un Google Drive nou</string>
+    <string name="sync_octiserver_add_subtitle">Afegeix un compte d’Octi Server</string>
     <string name="sync_octiserver_add_link_action_hint">Necessitareu accedir a un altre dispositiu que ja estigui enllaçat.</string>
-    <string name="sync_octiserver_about_title">Quant al Octi Server</string>
-    <string name="sync_octiserver_about_desc">El Octi Server és un servidor de sincronització de codi obert (en Kotlin) per a l\'Octi pel darken.</string>
+    <string name="sync_octiserver_about_title">Quant a l’Octi Server</string>
+    <string name="sync_octiserver_about_desc">L’Octi Server és un servidor de sincronització de codi obert per a l’Octi pel darken.</string>
     <string name="sync_octiserver_about_author_action">Autor</string>
     <string name="sync_octiserver_about_source_action">Codi font</string>
     <string name="sync_octiserver_reset_confirmation_desc">Esborra les dades del dispositiu en aquest compte. Els dispositius romanen enllaçats, però les seves dades emmagatzemades s\'eliminen.</string>
@@ -15,10 +17,23 @@
     <string name="sync_octiserver_link_code_label">Codi d\'enllaç</string>
     <string name="sync_octiserver_link_host_option_direct">Crea un codi de text que podeu enviar mitjançant altres aplicacions</string>
     <string name="sync_octiserver_link_host_option_qrcode">Mostra un codi QR</string>
+    <string name="sync_octiserver_link_host_waiting_label">S’està esperant que el dispositiu s’enllaça…</string>
     <string name="sync_octiserver_link_host_device_linked_message">S\'ha enllaçat un dispositiu nou al vostre compte.</string>
-    <string name="sync_octiserver_link_client_option_direct">Copieu i enganxeu manualment un codi d\'enllaç</string>
+    <string name="sync_octiserver_link_client_option_direct">Copia i enganxa manualment un codi d’enllaç</string>
     <string name="sync_octiserver_link_client_option_qrcode">Escaneja un codi QR des d\'un altre dispositiu</string>
     <string name="sync_octiserver_link_client_startcamera_action">Inicieu la càmera</string>
     <string name="sync_octiserver_link_client_link_action">Enllaça el dispositiu</string>
-    <string name="sync_octiserver_error_device_not_registered">Aquest dispositiu ja no està registrat al servidor. Desconnecta\'l i torna a vincular-lo des d\'un altre dispositiu, o crea un compte nou.</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">El dispositiu ja no està vinculat</string>
+    <string name="sync_octiserver_error_device_not_registered">Aquest dispositiu ja no està registrat al servidor. Desconnecteu i torneu a enllaçar des d’un altre dispositiu, o creeu un compte nou.</string>
+    <string name="sync_octiserver_resume_sync_action">Reprendre la sincronització</string>
+    <string name="sync_octiserver_add_create_account_title">Crea un compte?</string>
+    <string name="sync_octiserver_add_create_account_desc">Es crearà un nou compte de sincronització xifrat en aquest servidor.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Aquest compte requereix Octi %1$s o posterior. Actualitzeu aquest dispositiu o elimineu-lo del compte.</string>
+    <string name="sync_octiserver_legacy_encryption_account">El recurs compartit de fitxers no està disponible en aquest dispositiu perquè aquest compte utilitza xifratge antic. Creeu un compte nou en un dispositiu actualitzat i torneu a vincular els altres dispositius per poder compartir fitxers.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Xifratge incompatible</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Compartició de fitxers no disponible</string>
+    <string name="sync_octiserver_add_create_account_action">Crea un compte</string>
+    <string name="sync_octiserver_add_link_existing_action">Enllaça a un compte ja existent</string>
+    <string name="sync_octiserver_add_select_server_label">Seleccioneu un servidor</string>
+    <string name="sync_octiserver_add_custom_server_label">Servidor personalitzat</string>
 </resources>

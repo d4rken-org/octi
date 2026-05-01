@@ -7,6 +7,10 @@
     <string name="upgrades_dashcard_title">Obtenir Octi Pro</string>
     <string name="upgrades_dashcard_body">Surclassez Octi pour débloquer des fonctions supplémentaires et financer le développement.</string>
     <string name="upgrades_dashcard_upgrade_action">Surclasser</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">La version gratuite est limitée à %1$d appareil.</item>
+        <item quantity="other">La version gratuite est limitée à %1$d appareils.</item>
+    </plurals>
     <string name="upgrade_screen_title">Obtenir Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi n’affiche pas de publicités et ne vend pas les données des utilisateurs. Vous financez mon travail ❤️.</string>
     <string name="upgrade_screen_benefits_title">Avantages</string>

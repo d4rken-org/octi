@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">最後出現於 %1$s</string>
     <string name="sync_device_stale_warning_text">裝置已 %s 未同步</string>
+    <string name="sync_device_clock_skew_warning_text">裝置時鐘似乎不同步</string>
+    <string name="sync_clock_discrepancy_chip_label">時鐘偏差</string>
+    <string name="sync_clock_discrepancy_title">時鐘差異</string>
+    <string name="sync_clock_discrepancy_uncertain">偵測到您的裝置之間存在時鐘差異。只有兩台裝置時，無法確定哪台裝置的時間不正確。
+
+請檢查您的裝置時間設定。</string>
+    <string name="sync_clock_discrepancy_current_suspect">此裝置的時鐘似乎不同步。您的其他裝置一致顯示不同的時間。
+
+請檢查此裝置的時間設定。</string>
+    <string name="sync_clock_discrepancy_remote_suspect">%s 上的時鐘似乎不同步。您的其他裝置對當前時間達成一致。</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">您的裝置時鐘比伺服器快了 %s。</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">您的裝置時鐘比伺服器慢了 %s。</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="other">%d 台裝置最近未同步</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">正在執行過時版本 %s</string>
+    <string name="sync_issues_type_stale_device">過時的裝置</string>
+    <string name="sync_issues_type_clock_skew">時鐘問題</string>
+    <string name="sync_issues_type_outdated_version">過時版本</string>
+    <string name="sync_issues_type_server_storage_low">伺服器空間已滿</string>
+    <string name="sync_server_storage_low_description">同步伺服器磁碟空間不足。在伺服器管理員釋放空間之前，上傳已暫停。</string>
+    <string name="sync_issues_type_account_quota_full">帳戶已滿</string>
+    <string name="sync_account_quota_full_description">您的帳戶已到達此伺服器的儲存配額。請刪除已共享的檔案或已過期資料以釋放空間，然後再次同步。</string>
+    <string name="sync_issues_type_low_storage">儲存空間不足</string>
+    <string name="sync_low_storage_description">可用儲存空間剩餘不到 10%%，請盡快釋放空間以繼續同步。</string>
+    <string name="sync_connector_paused_label">暫停同步</string>
+    <string name="sync_connector_paused_error_label">連接器已暫停</string>
+    <string name="sync_connector_paused_error_desc">此連接器已暫停。請恢復以執行此操作。</string>
+    <string name="sync_synced_devices_label">已同步設備</string>
     <plurals name="sync_stale_period_days">
         <item quantity="other">%d 天</item>
     </plurals>

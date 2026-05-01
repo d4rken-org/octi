@@ -7,6 +7,11 @@
     <string name="upgrades_dashcard_title">Obține Octi Pro</string>
     <string name="upgrades_dashcard_body">Fă upgrade pentru a debloca funcții suplimentare și a sprijini dezvoltarea!</string>
     <string name="upgrades_dashcard_upgrade_action">Actualizează</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">Versiunea gratuită este limitată la %1$d dispozitiv.</item>
+        <item quantity="few">Versiunea gratuită este limitată la %1$d dispozitive.</item>
+        <item quantity="other">Versiunea gratuită este limitată la %1$d de dispozitive.</item>
+    </plurals>
     <string name="upgrade_screen_title">Obține Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi nu are reclame și nu vinde datele utilizatorilor. Munca mea este finanțată de tine ❤️.</string>
     <string name="upgrade_screen_benefits_title">Beneficii</string>

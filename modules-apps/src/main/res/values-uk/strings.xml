@@ -9,6 +9,14 @@
         <item quantity="other">%d додатків встановлено</item>
     </plurals>
     <string name="module_apps_last_installed_x">Останній встановлений додаток: %s</string>
+    <string name="module_apps_tile_apps_installed_label">встановлених додатків</string>
+    <plurals name="module_apps_tile_count">
+        <item quantity="one">%d застосунок</item>
+        <item quantity="few">%d застосунки</item>
+        <item quantity="many">%d застосунків</item>
+        <item quantity="other">%d застосунків</item>
+    </plurals>
+    <string name="module_apps_tile_last_installed_label">Останнє встановлення</string>
     <string name="module_apps_list_title">Встановлені додатки</string>
     <string name="module_apps_sort_label">Сортування</string>
     <string name="module_apps_sort_name_label">Назва</string>

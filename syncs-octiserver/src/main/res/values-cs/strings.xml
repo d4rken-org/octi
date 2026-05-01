@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_octiserver_type_label">Octi Server</string>
+    <string name="sync_octiserver_type_label">Octi server</string>
     <string name="sync_octiserver_type_description">Synchronizační server s otevřeným zdrojovým kódem pro Octi vytvořený vývojářem této aplikace. Data jsou šifrována na straně klienta, dešifrovat je mohou pouze vaše zařízení.\n\nJelikož se aplikace i server stále vylepšují, může být méně stabilní než jiné možnosti synchronizace.</string>
     <string name="sync_octiserver_add_create_action_hint">Neaktivní účty jsou po několika týdnech smazány.</string>
-    <string name="sync_octiserver_add_subtitle">Přidat nový Disk Google</string>
+    <string name="sync_octiserver_add_subtitle">Přidat účet Octi server</string>
     <string name="sync_octiserver_add_link_action_hint">Budete potřebovat přístup k jinému zařízení, které je již propojeno.</string>
-    <string name="sync_octiserver_about_title">Info o Octi Server</string>
-    <string name="sync_octiserver_about_desc">Octi Server je open-source synchronizační server (v Kotlinu) pro Octi od vývojáře darken.</string>
+    <string name="sync_octiserver_about_title">O Octi serveru</string>
+    <string name="sync_octiserver_about_desc">Octi Server je open-source synchronizační server pro Octi od vývojáře darken.</string>
     <string name="sync_octiserver_about_author_action">Autor</string>
     <string name="sync_octiserver_about_source_action">Zdrojový kód</string>
     <string name="sync_octiserver_reset_confirmation_desc">Vymazání dat zařízení na tomto účtu. Zařízení zůstanou propojena, ale jejich uložená data budou odstraněna.</string>
@@ -15,10 +15,23 @@
     <string name="sync_octiserver_link_code_label">Kód propojení</string>
     <string name="sync_octiserver_link_host_option_direct">Vytvoření textového kódu, který můžete odeslat prostřednictvím jiných aplikací</string>
     <string name="sync_octiserver_link_host_option_qrcode">Zobrazit QRCode</string>
+    <string name="sync_octiserver_link_host_waiting_label">Čekám na připojení zařízení…</string>
     <string name="sync_octiserver_link_host_device_linked_message">S vaším účtem bylo propojeno nové zařízení.</string>
     <string name="sync_octiserver_link_client_option_direct">Ručně kopírovat a vložit kód propojení</string>
     <string name="sync_octiserver_link_client_option_qrcode">Naskenovat QR kód z jiného zařízení</string>
     <string name="sync_octiserver_link_client_startcamera_action">Spustit fotoaparát</string>
     <string name="sync_octiserver_link_client_link_action">Propojit zařížení</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Zařízení již není propojené</string>
     <string name="sync_octiserver_error_device_not_registered">Toto zařízení již není registrováno na serveru. Odpojte se a znovu se připojte z jiného zařízení nebo si vytvořte nový účet.</string>
+    <string name="sync_octiserver_resume_sync_action">Obnovit synchronizaci</string>
+    <string name="sync_octiserver_add_create_account_title">Vytvořit účet?</string>
+    <string name="sync_octiserver_add_create_account_desc">Na tomto serveru bude vytvořen nový šifrovaný synchronizační účet.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Tento účet vyžaduje Octi %1$s nebo novější. Aktualizujte toto zařízení nebo je odeberte z účtu.</string>
+    <string name="sync_octiserver_legacy_encryption_account">Sdílení souborů není na tomto zařízení dostupné, protože tento účet používá starší šifrovaní. Vytvořte nový účet na aktualizovaném zařízení a znovu propojte ostatní zařízení, abyste mohli sdílet soubory.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Nekompatibilní šifrování</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Sdílení souborů není dostupné</string>
+    <string name="sync_octiserver_add_create_account_action">Vytvořit účet</string>
+    <string name="sync_octiserver_add_link_existing_action">Připojit existující účet</string>
+    <string name="sync_octiserver_add_select_server_label">Vybrat server</string>
+    <string name="sync_octiserver_add_custom_server_label">Vlastní server</string>
 </resources>

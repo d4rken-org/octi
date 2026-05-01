@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Alle Octi-data op Google Drive resetten. Uw apparaat blijft aangemeld bij Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Log uit van Google Drive en verwijder gegevens die aan dit apparaat zijn gekoppeld.</string>
     <string name="sync_gdrive_error_no_account_on_device">Dit apparaat is niet aangemeld bij een Google-account.</string>
+    <string name="sync_gdrive_error_account_already_connected">Dit account is al verbonden.</string>
 </resources>

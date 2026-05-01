@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Ένας διακομιστής συγχρονισμού ανοικτού κώδικα για το Octi που κατασκευάστηκε από τον προγραμματιστή αυτής της εφαρμογής. Τα δεδομένα κρυπτογραφούνται από την πλευρά του πελάτη, μόνο οι συσκευές σας μπορούν να τα αποκρυπτογραφήσουν.\n\nΚαθώς τόσο η εφαρμογή όσο και ο διακομιστής εξακολουθούν να βελτιώνονται, μπορεί να είναι λιγότερο σταθερός από άλλες επιλογές συγχρονισμού.</string>
+    <string name="sync_octiserver_type_description">Ένας ανοιχτού κώδικα διακομιστής συγχρονισμού για το Octi από τον δημιουργό της εφαρμογής. Τα δεδομένα είναι κρυπτογραφημένα στην πλευρά του πελάτη, μόνο οι συσκευές σας μπορούν να τα αποκρυπτογραφήσουν.
+
+Καθώς τόσο η εφαρμογή όσο και ο διακομιστής βελτιώνονται συνεχώς, ενδέχεται να είναι λιγότερο σταθερό από άλλες επιλογές συγχρονισμού.</string>
     <string name="sync_octiserver_add_create_action_hint">Οι ανενεργοί λογαριασμοί διαγράφονται μετά από μερικές εβδομάδες.</string>
-    <string name="sync_octiserver_add_subtitle">Προσθήκη νέου Google Drive</string>
+    <string name="sync_octiserver_add_subtitle">Προσθήκη λογαριασμού Octi Server</string>
     <string name="sync_octiserver_add_link_action_hint">Θα χρειαστείτε πρόσβαση σε μια άλλη συσκευή που έχει ήδη συνδεθεί.</string>
     <string name="sync_octiserver_about_title">Σχετικά με το Octi Server</string>
-    <string name="sync_octiserver_about_desc">Το Octi Server είναι ένας διακομιστής συγχρονισμού ανοικτού κώδικα (σε Kotlin) για το Octi από τον darken.</string>
+    <string name="sync_octiserver_about_desc">Το Octi Server είναι ένας ανοιχτού κώδικα διακομιστής συγχρονισμού για το Octi από τον darken.</string>
     <string name="sync_octiserver_about_author_action">Συγγραφέας</string>
     <string name="sync_octiserver_about_source_action">Πηγαίος κώδικας</string>
     <string name="sync_octiserver_reset_confirmation_desc">Διαγραφή των δεδομένων της συσκευής σε αυτό τον λογαριασμό. Οι συσκευές παραμένουν συνδεδεμένες αλλά τα αποθηκευμένα δεδομένα τους διαγράφονται.</string>
@@ -15,10 +17,23 @@
     <string name="sync_octiserver_link_code_label">Κωδικός σύνδεσης</string>
     <string name="sync_octiserver_link_host_option_direct">Δημιουργία κειμενικού κωδικού που μπορείτε να στείλετε με άλλες εφαρμογές</string>
     <string name="sync_octiserver_link_host_option_qrcode">Εμφάνιση QRCode</string>
+    <string name="sync_octiserver_link_host_waiting_label">Αναμονή σύνδεσης συσκευής…</string>
     <string name="sync_octiserver_link_host_device_linked_message">Μια νέα συσκευή συνδέθηκε στον λογαριασμό σας.</string>
     <string name="sync_octiserver_link_client_option_direct">Χειροκίνητη αντιγραφή και επικόλληση κωδικού σύνδεσης</string>
     <string name="sync_octiserver_link_client_option_qrcode">Σάρωση QR κωδικού από άλλη συσκευή</string>
     <string name="sync_octiserver_link_client_startcamera_action">Έναρξη κάμερας</string>
     <string name="sync_octiserver_link_client_link_action">Σύνδεση συσκευής</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Η συσκευή δεν είναι πλέον συνδεδεμένη</string>
     <string name="sync_octiserver_error_device_not_registered">Αυτή η συσκευή δεν είναι πλέον καταχωρημένη στον διακομιστή. Αποσυνδεθείτε και επανασυνδεθείτε από άλλη συσκευή ή δημιουργήστε νέο λογαριασμό.</string>
+    <string name="sync_octiserver_resume_sync_action">Συνέχιση συγχρονισμού</string>
+    <string name="sync_octiserver_add_create_account_title">Δημιουργία λογαριασμού?</string>
+    <string name="sync_octiserver_add_create_account_desc">Θα δημιουργηθεί ένας νέος κρυπτογραφημένος λογαριασμός συγχρονισμού σε αυτόν τον διακομιστή.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Αυτός ο λογαριασμός απαιτεί Octi %1$s ή νεότερη έκδοση. Ενημερώστε αυτή τη συσκευή ή αφαιρέστε την από τον λογαριασμό.</string>
+    <string name="sync_octiserver_legacy_encryption_account">Η κοινή χρήση αρχείων δεν είναι διαθέσιμη σε αυτή τη συσκευή επειδή αυτός ο λογαριασμός χρησιμοποιεί παλαιά κρυπτογράφηση. Δημιουργήστε νέο λογαριασμό σε ενημερωμένη συσκευή και επανασυνδέστε τις άλλες συσκευές σας για να χρησιμοποιήσετε την κοινή χρήση αρχείων.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Μη συμβατή κρυπτογράφηση</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Κοινή χρήση αρχείων μη διαθέσιμη</string>
+    <string name="sync_octiserver_add_create_account_action">Δημιουργία λογαριασμού</string>
+    <string name="sync_octiserver_add_link_existing_action">Σύνδεση με υπάρχοντα λογαριασμό</string>
+    <string name="sync_octiserver_add_select_server_label">Επιλογή διακομιστή</string>
+    <string name="sync_octiserver_add_custom_server_label">Προσαρμοσμένος διακομιστής</string>
 </resources>

@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Buit</string>
     <string name="module_clipboard_detail_type_text">Text</string>
     <string name="module_clipboard_copy_action">Copia al porta-retalls</string>
+    <string name="module_clipboard_widget_description">Mostra el contingut del porta-retalls dels teus dispositius sincronitzats.</string>
+    <string name="module_clipboard_widget_paste_action">Comparteix el meu porta-retalls</string>
+    <string name="module_clipboard_widget_share_action">Comparteix el meu porta-retalls</string>
+    <string name="module_clipboard_widget_copied_toast">Copiat</string>
+    <string name="module_clipboard_widget_self_label">Tu</string>
+    <string name="module_clipboard_widget_self_empty">Encara no s’ha compartit res</string>
+    <string name="module_clipboard_widget_no_data">Cap dada del porta-retalls</string>
+    <string name="module_clipboard_widget_share_success">Porta-retalls compartit</string>
+    <string name="module_clipboard_widget_share_empty">Res per compartir</string>
+    <string name="module_clipboard_widget_share_blocked">Accés al porta-retalls bloquejat</string>
+    <string name="module_clipboard_widget_share_unsupported">Contingut del porta-retalls no compatible</string>
+    <string name="module_clipboard_widget_share_failed">No s’ha pogut compartir el porta-retalls</string>
 </resources>

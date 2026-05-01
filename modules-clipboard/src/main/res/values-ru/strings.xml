@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Пусто</string>
     <string name="module_clipboard_detail_type_text">Текст</string>
     <string name="module_clipboard_copy_action">Копировать в буфер обмена</string>
+    <string name="module_clipboard_widget_description">Отображать содержимое буфера обмена с синхронизированных устройств.</string>
+    <string name="module_clipboard_widget_paste_action">Поделиться буфером обмена</string>
+    <string name="module_clipboard_widget_share_action">Поделиться буфером обмена</string>
+    <string name="module_clipboard_widget_copied_toast">Скопировано</string>
+    <string name="module_clipboard_widget_self_label">Вы</string>
+    <string name="module_clipboard_widget_self_empty">Ничего ещё не отправлено</string>
+    <string name="module_clipboard_widget_no_data">Нет данных буфера обмена</string>
+    <string name="module_clipboard_widget_share_success">Буфер обмена передан</string>
+    <string name="module_clipboard_widget_share_empty">Нечего отправить</string>
+    <string name="module_clipboard_widget_share_blocked">Доступ к буферу обмена заблокирован</string>
+    <string name="module_clipboard_widget_share_unsupported">Содержимое буфера обмена не поддерживается</string>
+    <string name="module_clipboard_widget_share_failed">Не удалось поделиться буфером обмена</string>
 </resources>

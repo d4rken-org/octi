@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Отворени сервер за синхронизацију за Octi који је направио програмер ове апликације. Подаци се шифрују на клијентској страни, само ваши уређаји могу да их дешифрују.\n\nПошто се и апликација и сервер и даље унапређују, може бити мање стабилан од других опција синхронизације.</string>
+    <string name="sync_octiserver_type_description">Сервер за синхронизацију отвореног кода за Octi, направљен од стране програмера ове апликације. Подаци су шифровани на страни клијента, само ваши уређаји могу их дешифровати.\n\nПошто се и апликација и сервер и даље побољшавају, може бити мање стабилан од других опција синхронизације.</string>
     <string name="sync_octiserver_add_create_action_hint">Неактивни налози се бришу након неколико недеља.</string>
-    <string name="sync_octiserver_add_subtitle">Додај нови Google Drive</string>
+    <string name="sync_octiserver_add_subtitle">Додај Octi Server налог</string>
     <string name="sync_octiserver_add_link_action_hint">Потребан вам је приступ другом уређају који је већ повезан.</string>
     <string name="sync_octiserver_about_title">О Octi Server-у</string>
-    <string name="sync_octiserver_about_desc">Octi Server је сервер за синхронизацију отвореног кода (у Kotlin-у) за Octi који је направио darken.</string>
+    <string name="sync_octiserver_about_desc">Octi Server је сервер за синхронизацију отвореног кода за Octi, аутора darken.</string>
     <string name="sync_octiserver_about_author_action">Аутор</string>
     <string name="sync_octiserver_about_source_action">Изворни код</string>
     <string name="sync_octiserver_reset_confirmation_desc">Обриши податке овог уређаја на овом налогу. Уређаји остају повезани, али њихови сачувани подаци се уклањају.</string>
@@ -15,10 +15,23 @@
     <string name="sync_octiserver_link_code_label">Код за повезивање</string>
     <string name="sync_octiserver_link_host_option_direct">Креирај текстуални код који можете послати преко других апликација</string>
     <string name="sync_octiserver_link_host_option_qrcode">Прикажи QR код</string>
+    <string name="sync_octiserver_link_host_waiting_label">Чека се повезивање уређаја…</string>
     <string name="sync_octiserver_link_host_device_linked_message">Нови уређај је повезан са вашим налогом.</string>
-    <string name="sync_octiserver_link_client_option_direct">Ручно копирајте и налепите код за повезивање</string>
+    <string name="sync_octiserver_link_client_option_direct">Ручно копирај и залепи код за повезивање</string>
     <string name="sync_octiserver_link_client_option_qrcode">Скенирај QR код са другог уређаја</string>
     <string name="sync_octiserver_link_client_startcamera_action">Покрени камеру</string>
     <string name="sync_octiserver_link_client_link_action">Повежи уређај</string>
-    <string name="sync_octiserver_error_device_not_registered">Овај уређај више није регистрован на серверу. Прекините везу и поново повежите са другог уређаја, или направите нови налог.</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Уређај више није повезан</string>
+    <string name="sync_octiserver_error_device_not_registered">Овај уређај више није регистрован на серверу. Искључите се и поново повежите са другог уређаја или направите нови налог.</string>
+    <string name="sync_octiserver_resume_sync_action">Настави синхронизацију</string>
+    <string name="sync_octiserver_add_create_account_title">Креирај налог?</string>
+    <string name="sync_octiserver_add_create_account_desc">На овом серверу биће креиран нови шифровани налог за синхронизацију.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Овај налог захтева Octi %1$s или новији. Ажурирајте овај уређај или га уклоните са налога.</string>
+    <string name="sync_octiserver_legacy_encryption_account">Дељење датотека није доступно на овом уређају јер овај налог користи застарело шифровање. Креирајте нови налог на ажурираном уређају и поново повежите остале уређаје да бисте користили дељење датотека.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Неспојиво шифровање</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Дељење датотека није доступно</string>
+    <string name="sync_octiserver_add_create_account_action">Креирај налог</string>
+    <string name="sync_octiserver_add_link_existing_action">Повежи са постојећим налогом</string>
+    <string name="sync_octiserver_add_select_server_label">Изабери сервер</string>
+    <string name="sync_octiserver_add_custom_server_label">Прилагођени сервер</string>
 </resources>

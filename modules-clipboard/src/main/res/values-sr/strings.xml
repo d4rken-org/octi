@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Празно</string>
     <string name="module_clipboard_detail_type_text">Текст</string>
     <string name="module_clipboard_copy_action">Копирај у клипборд</string>
+    <string name="module_clipboard_widget_description">Прикажи садржај клипборда са ваших синхронизованих уређаја.</string>
+    <string name="module_clipboard_widget_paste_action">Подели мој клипборд</string>
+    <string name="module_clipboard_widget_share_action">Подели мој клипборд</string>
+    <string name="module_clipboard_widget_copied_toast">Копирано</string>
+    <string name="module_clipboard_widget_self_label">Ви</string>
+    <string name="module_clipboard_widget_self_empty">Ништа још није подељено</string>
+    <string name="module_clipboard_widget_no_data">Нема података на клипборду</string>
+    <string name="module_clipboard_widget_share_success">Клипборд подељен</string>
+    <string name="module_clipboard_widget_share_empty">Нема шта да се подели</string>
+    <string name="module_clipboard_widget_share_blocked">Приступ клипборду је блокиран</string>
+    <string name="module_clipboard_widget_share_unsupported">Садржај клипборда није подржан</string>
+    <string name="module_clipboard_widget_share_failed">Неуспешно дељење клипборда</string>
 </resources>

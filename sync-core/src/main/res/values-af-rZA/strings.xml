@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Laas gesien %1$s</string>
     <string name="sync_device_stale_warning_text">Toestel het nie in %s gesinkroniseer nie</string>
+    <string name="sync_device_clock_skew_warning_text">Toestelklok lyk buite sinkronisasie</string>
+    <string name="sync_clock_discrepancy_chip_label">Klok-afwyking</string>
+    <string name="sync_clock_discrepancy_title">Klok-verskil</string>
+    <string name="sync_clock_discrepancy_uncertain">\'n Klok-verskil is tussen jou toestelle opgespoor. Met slegs twee toestelle is dit nie moontlik om te bepaal watter een die verkeerde tyd het nie.
+
+Kontroleer jou toestel se tydinstellings.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Hierdie toestel se klok lyk buite sinkronisasie. Jou ander toestelle stem saam oor \'n ander tyd.
+
+Kontroleer hierdie toestel se tydinstellings.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Die klok op %s lyk buite sinkronisasie. Jou ander toestelle stem saam oor die huidige tyd.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Jou toestel se klok is %s voor die bediener.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Jou toestel se klok is %s agter die bediener.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d toestel het nie onlangs gesinkroniseer nie</item>
         <item quantity="other">%d toestelle het nie onlangs gesinkroniseer nie</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Loop verouderde weergawe %s</string>
+    <string name="sync_issues_type_stale_device">Verouderde toestel</string>
+    <string name="sync_issues_type_clock_skew">Klokprobleem</string>
+    <string name="sync_issues_type_outdated_version">Verouderde weergawe</string>
+    <string name="sync_issues_type_server_storage_low">Bediener het geen spasie meer nie</string>
+    <string name="sync_server_storage_low_description">Die sinchronisasiebediener se skyfspasie raak min. Oplaai is gepauseer totdat die bedienerbestuurder spasie vrystel.</string>
+    <string name="sync_issues_type_account_quota_full">Rekening is vol</string>
+    <string name="sync_account_quota_full_description">Jou rekening het sy bergingskwota op hierdie bediener bereik. Vee gedeelde lêers of verloopte data uit om spasie vry te stel, en sinchroniseer dan weer.</string>
+    <string name="sync_issues_type_low_storage">Min bergingsruimte</string>
+    <string name="sync_low_storage_description">Minder as 10%% van beskikbare bergingsruimte bly oor. Maak gou spasie vry om sinchronisasie te hou.</string>
+    <string name="sync_connector_paused_label">Sinkronisasie gepouseer</string>
+    <string name="sync_connector_paused_error_label">Verbinder gepouseer</string>
+    <string name="sync_connector_paused_error_desc">Hierdie verbinder is gepouseer. Hervat dit om hierdie aksie uit te voer.</string>
+    <string name="sync_synced_devices_label">Gesinkroniseerde toestelle</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d dag</item>
         <item quantity="other">%d dae</item>

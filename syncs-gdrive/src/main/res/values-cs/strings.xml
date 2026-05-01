@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Obnovení všech dat Octi uložených na Disku Google. Vaše zařízení zůstane přihlášeno k Disku Google.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Odhlášení z Disku Google a odstranění dat souvisejících s tímto zařízením.</string>
     <string name="sync_gdrive_error_no_account_on_device">Toto zařízení není přihlášeno k žádnému účtu Google.</string>
+    <string name="sync_gdrive_error_account_already_connected">Tento účet je již připojen.</string>
 </resources>

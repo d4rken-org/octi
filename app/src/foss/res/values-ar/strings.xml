@@ -5,6 +5,14 @@
     <string name="upgrades_dashcard_title">احصل على أوكتي احترافي</string>
     <string name="upgrades_dashcard_body">افتح ميزات إضافية وكن راعيًا لدعم التطوير المستمر!</string>
     <string name="upgrades_dashcard_upgrade_action">ترقية</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="zero">النسخة المجانية لا تدعم أي أجهزة.</item>
+        <item quantity="one">النسخة المجانية مقتصرة على جهاز واحد (%1$d).</item>
+        <item quantity="two">النسخة المجانية مقتصرة على جهازَين (%1$d).</item>
+        <item quantity="few">النسخة المجانية مقتصرة على %1$d أجهزة.</item>
+        <item quantity="many">النسخة المجانية مقتصرة على %1$d جهازًا.</item>
+        <item quantity="other">النسخة المجانية مقتصرة على %1$d جهاز.</item>
+    </plurals>
     <string name="upgrade_screen_title">الترقية إلى أوكتي احترافي</string>
     <string name="upgrade_screen_preamble">أوكتي خالٍ من الإعلانات ولا يبيع بيانات المستخدمين. عملي يُموَّل بكم ❤️</string>
     <string name="upgrade_screen_how_title">الخطوات</string>
@@ -14,4 +22,5 @@
     <string name="upgrade_screen_sponsor_action">ادعم التطوير</string>
     <string name="upgrade_screen_sponsor_action_hint">البديل هو الإعلانات والتحليلات و Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">شكرًا لدعمك التطوير مفتوح المصدر ❤️</string>
+    <string name="upgrade_screen_sponsor_too_fast_msg">عدت بالفعل؟ دعمك يُبقي Octi حيًّا!</string>
 </resources>

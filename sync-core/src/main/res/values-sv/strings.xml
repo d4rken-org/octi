@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Senast sedd %1$s</string>
     <string name="sync_device_stale_warning_text">Enheten har inte synkroniserats på %s</string>
+    <string name="sync_device_clock_skew_warning_text">Enhetsklockan verkar vara ur synk</string>
+    <string name="sync_clock_discrepancy_chip_label">Klockavvikelse</string>
+    <string name="sync_clock_discrepancy_title">Klockavstånd</string>
+    <string name="sync_clock_discrepancy_uncertain">En klockavvikelse upptacktes mellan dina enheter. Med bara två enheter är det inte möjligt att avgöra vilken som har fel tid.\n\nKontrollera din enhets tidsinställningar.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Den här enhetens klocka verkar vara ur synk. Dina andra enheter är överens om en annan tid.\n\nKontrollera den här enhetens tidsinställningar.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Klockan på %s verkar vara ur synk. Dina andra enheter är överens om den aktuella tiden.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Din enhets klocka ligger %s före servern.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Din enhets klocka ligger %s efter servern.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d enhet har inte synkroniserats nyligen</item>
         <item quantity="other">%d enheter har inte synkroniserats nyligen</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Kör inaktuell version %s</string>
+    <string name="sync_issues_type_stale_device">Inaktuell enhet</string>
+    <string name="sync_issues_type_clock_skew">Klockproblem</string>
+    <string name="sync_issues_type_outdated_version">Inaktuell version</string>
+    <string name="sync_issues_type_server_storage_low">Servern har slut på utrymme</string>
+    <string name="sync_server_storage_low_description">Synkservern håller på att få slut på diskutrymme. Uppladdningar är pausade tills serveradministratören frigjör utrymme.</string>
+    <string name="sync_issues_type_account_quota_full">Kontot är fullt</string>
+    <string name="sync_account_quota_full_description">Ditt konto har nått sin lagringsgräns på den här servern. Ta bort delade filer eller utgångna data för att frigjöra utrymme och synka sedan igen.</string>
+    <string name="sync_issues_type_low_storage">Lite lagringsutrymme</string>
+    <string name="sync_low_storage_description">Mindre än 10%% av tillgängligt lagringsutrymme återstår. Frigjör utrymme snart för att fortsätta synkronisera.</string>
+    <string name="sync_connector_paused_label">Pausa synkronisering</string>
+    <string name="sync_connector_paused_error_label">Anslutningsprogrammet pausat</string>
+    <string name="sync_connector_paused_error_desc">Det här anslutningsprogrammet är pausat. Återuppta det för att utföra den här åtgärden.</string>
+    <string name="sync_synced_devices_label">Synkroniserade enheter</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d dag</item>
         <item quantity="other">%d dagar</item>

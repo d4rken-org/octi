@@ -7,10 +7,16 @@
     <string name="upgrades_dashcard_title">Uzyskaj Octi Pro</string>
     <string name="upgrades_dashcard_body">Uaktualnij, aby odblokować dodatkowe funkcje i wesprzeć rozwój!</string>
     <string name="upgrades_dashcard_upgrade_action">Uaktualnij</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">Darmowa wersja jest ograniczona do %1$d urządzenia.</item>
+        <item quantity="few">Darmowa wersja jest ograniczona do %1$d urządzeń.</item>
+        <item quantity="many">Darmowa wersja jest ograniczona do %1$d urządzeń.</item>
+        <item quantity="other">Darmowa wersja jest ograniczona do %1$d urządzeń.</item>
+    </plurals>
     <string name="upgrade_screen_title">Uzyskaj Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi nie wyświetla reklam i nie sprzedaje danych użytkowników. Moja praca jest finansowana przez ciebie ❤️.</string>
     <string name="upgrade_screen_benefits_title">Korzyści</string>
-    <string name="upgrade_screen_benefits_body">• Ponad 3 urządzenia 💯\n• Różne motywy 🎨\n• Więcej opcji ⚙️\n• Dodatkowe serwery synchronizacji🖥️️\n• Ciągły rozwój ☕\n• Motywacja programisty 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Ponad 3 urządzenia 💯\n• Różne motywy 🎨\n• Więcej opcji ⚙️\n• Dodatkowe serwery synchronizacji 🖥️️\n• Ciągły rozwój ☕\n• Motywacja programisty 🧙</string>
     <string name="upgrade_screen_how_title">Opcje</string>
     <string name="upgrade_screen_how_body">Możesz wybrać pomiędzy jednorazowym zakupem a tańszą roczną subskrypcją.\nSubskrypcja zaczyna się od 14-dniowego bezpłatnego okresu próbnego, po którym opłata jest pobierana raz w roku. Okres próbny oraz subskrypcja mogą zostać anulowane w każdej chwili.\nTe same funkcje, tylko inne modele cenowe.</string>
     <string name="upgrade_screen_subscription_trial_action">Rozpocznij bezpłatny 14-dniowy okres próbny</string>

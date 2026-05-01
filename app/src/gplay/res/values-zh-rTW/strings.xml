@@ -7,6 +7,9 @@
     <string name="upgrades_dashcard_title">取得 Octi Pro</string>
     <string name="upgrades_dashcard_body">升級以解鎖額外功能並支持開發！</string>
     <string name="upgrades_dashcard_upgrade_action">升級</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="other">免費版限制最多 %1$d 台裝置。</item>
+    </plurals>
     <string name="upgrade_screen_title">取得 Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi 沒有廣告，也不販售使用者資料。我的工作由你贊助 ❤️。</string>
     <string name="upgrade_screen_benefits_title">優勢</string>

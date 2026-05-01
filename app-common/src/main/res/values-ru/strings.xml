@@ -12,16 +12,21 @@
     <string name="general_gotit_action">Понятно</string>
     <string name="general_na_label">Недоступно</string>
     <string name="general_empty_label">Пусто</string>
+    <string name="general_delete_action">Удалить</string>
     <string name="general_dismiss_action">Отклонить</string>
     <string name="general_maybe_later_action">Возможно, позже</string>
     <string name="general_manage_action">Управлeние</string>
     <string name="general_quota_label">Квота</string>
+    <string name="general_sync_action">Синхронизировать</string>
+    <string name="general_reset_action">Сбросить</string>
+    <string name="general_disconnect_action">Отключить</string>
     <string name="general_upgrade_action">Обновить</string>
     <string name="general_update_action">Обновить</string>
     <string name="general_donate_action">Пожертвовать</string>
     <string name="general_check_action">Проверить</string>
     <string name="general_internal_not_available_msg">Интернет-соединение недоступно</string>
     <string name="general_refresh_action">Обновить</string>
+    <string name="general_close_action">Закрыть</string>
     <string name="general_continue">Продолжить</string>
     <string name="general_show_details_action">Показать детали</string>
     <string name="general_minutes_label">Минуты</string>
@@ -40,5 +45,39 @@
     <string name="ui_theme_style_setting_explanation">Цветовой стиль, используемый при оформлении приложения.</string>
     <string name="ui_theme_style_default_label">По умолчанию</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="ui_theme_style_medium_contrast_label">Средний контраст</string>
+    <string name="ui_theme_style_high_contrast_label">Высокий контраст</string>
+    <string name="ui_theme_color_setting_label">Цвет темы</string>
+    <string name="ui_theme_color_green_label">Зелёный</string>
+    <string name="ui_theme_color_blue_label">Синий</string>
+    <string name="ui_theme_color_sunset_label">Закат</string>
     <string name="device_x_label">Устройство: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material You</string>
+    <string name="widget_theme_classic_green">Классический зелёный</string>
+    <string name="widget_theme_blue">Синий</string>
+    <string name="widget_theme_orange">Оранжевый</string>
+    <string name="widget_theme_red">Красный</string>
+    <string name="widget_theme_dark">Тёмный</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">Настроить виджет</string>
+    <string name="widget_config_apply_action">Применить</string>
+    <string name="widget_config_presets_label">Предустановки</string>
+    <string name="widget_config_background_label">Цвет фона</string>
+    <string name="widget_config_accent_label">Цвет акцента</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">Предпросмотр</string>
+    <string name="widget_config_custom_label">Пользовательский</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">Устройства</string>
+    <string name="widget_config_devices_empty_hint">Если устройства не выбраны, будут показаны все устройства.</string>
+    <string name="widget_config_devices_selected_hint">Будут показаны только выбранные устройства.</string>
+    <string name="widget_config_devices_none_known">Синхронизированные устройства ещё не известны.</string>
+    <string name="widget_empty_label">Нет подходящих устройств</string>
+    <string name="widget_no_sync_devices_label">Нет синхронизированных устройств</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">Нет данных %1$s для этого устройства</string>
+    <string name="widget_deeplink_module_power">батарея</string>
+    <string name="widget_deeplink_module_connectivity">сеть</string>
+    <string name="widget_deeplink_module_clipboard">буфер обмена</string>
 </resources>

@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">ריק</string>
     <string name="module_clipboard_detail_type_text">טקסט</string>
     <string name="module_clipboard_copy_action">העתק ללוח</string>
+    <string name="module_clipboard_widget_description">הצג תוכן לוח הגזירים ממכשירים מסונכרנים שלך.</string>
+    <string name="module_clipboard_widget_paste_action">שתף את לוח הגזירים שלי</string>
+    <string name="module_clipboard_widget_share_action">שתף את לוח הגזירים שלי</string>
+    <string name="module_clipboard_widget_copied_toast">הועתק</string>
+    <string name="module_clipboard_widget_self_label">אתה</string>
+    <string name="module_clipboard_widget_self_empty">עדיין לא שותף דבר</string>
+    <string name="module_clipboard_widget_no_data">אין נתוני לוח גזירים</string>
+    <string name="module_clipboard_widget_share_success">לוח הגזירים שותף</string>
+    <string name="module_clipboard_widget_share_empty">אין מה לשתף</string>
+    <string name="module_clipboard_widget_share_blocked">הגישה ללוח הגזירים חסומה</string>
+    <string name="module_clipboard_widget_share_unsupported">תוכן לוח הגזירים אינו נתמך</string>
+    <string name="module_clipboard_widget_share_failed">שיתוף לוח הגזירים נכשל</string>
 </resources>

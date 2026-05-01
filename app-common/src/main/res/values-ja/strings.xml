@@ -12,16 +12,21 @@
     <string name="general_gotit_action">わかりました</string>
     <string name="general_na_label">なし</string>
     <string name="general_empty_label">空</string>
+    <string name="general_delete_action">削除</string>
     <string name="general_dismiss_action">閉じる</string>
     <string name="general_maybe_later_action">また後で</string>
     <string name="general_manage_action">管理</string>
     <string name="general_quota_label">クォータ</string>
+    <string name="general_sync_action">同期</string>
+    <string name="general_reset_action">リセット</string>
+    <string name="general_disconnect_action">切断</string>
     <string name="general_upgrade_action">アップグレード</string>
     <string name="general_update_action">更新</string>
     <string name="general_donate_action">寄付</string>
     <string name="general_check_action">確認</string>
     <string name="general_internal_not_available_msg">インターネット接続が利用できません</string>
     <string name="general_refresh_action">更新</string>
+    <string name="general_close_action">閉じる</string>
     <string name="general_continue">続行</string>
     <string name="general_show_details_action">詳細を表示</string>
     <string name="general_minutes_label">分</string>
@@ -29,7 +34,7 @@
         <item quantity="other">%1$d 分</item>
     </plurals>
     <string name="ui_theme_mode_setting_label">テーマモード</string>
-    <string name="ui_theme_mode_setting_explanation">アプリのテーマ設定に使用されるモード (例: ダークまたはライト) です。</string>
+    <string name="ui_theme_mode_setting_explanation">アプリのテーマ設定に使用するモード（例: ダークまたはライト）。</string>
     <string name="ui_theme_mode_dark_label">ダーク</string>
     <string name="ui_theme_mode_light_label">ライト</string>
     <string name="ui_theme_mode_system_label">システム</string>
@@ -37,5 +42,39 @@
     <string name="ui_theme_style_setting_explanation">アプリのテーマ設定時に使用されるカラースタイルです。</string>
     <string name="ui_theme_style_default_label">デフォルト</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="ui_theme_style_medium_contrast_label">中コントラスト</string>
+    <string name="ui_theme_style_high_contrast_label">高コントラスト</string>
+    <string name="ui_theme_color_setting_label">テーマカラー</string>
+    <string name="ui_theme_color_green_label">緑</string>
+    <string name="ui_theme_color_blue_label">青</string>
+    <string name="ui_theme_color_sunset_label">サンセット</string>
     <string name="device_x_label">デバイス: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material You</string>
+    <string name="widget_theme_classic_green">クラシックグリーン</string>
+    <string name="widget_theme_blue">青</string>
+    <string name="widget_theme_orange">オレンジ</string>
+    <string name="widget_theme_red">赤</string>
+    <string name="widget_theme_dark">ダーク</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">ウィジェットをカスタマイズ</string>
+    <string name="widget_config_apply_action">適用</string>
+    <string name="widget_config_presets_label">プリセット</string>
+    <string name="widget_config_background_label">背景色</string>
+    <string name="widget_config_accent_label">アクセントカラー</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">プレビュー</string>
+    <string name="widget_config_custom_label">カスタム</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">デバイス</string>
+    <string name="widget_config_devices_empty_hint">デバイスが選択されていない場合、すべてのデバイスが表示されます。</string>
+    <string name="widget_config_devices_selected_hint">選択したデバイスのみが表示されます。</string>
+    <string name="widget_config_devices_none_known">同期デバイスはまだ確認されていません。</string>
+    <string name="widget_empty_label">一致するデバイスがありません</string>
+    <string name="widget_no_sync_devices_label">同期デバイスがまだありません</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">このデバイスの%1$sデータがありません</string>
+    <string name="widget_deeplink_module_power">バッテリー</string>
+    <string name="widget_deeplink_module_connectivity">ネットワーク</string>
+    <string name="widget_deeplink_module_clipboard">クリップボード</string>
 </resources>

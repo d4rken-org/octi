@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Az összes, a Google Drive-on tárolt Octi-adat visszaállítása. Az eszköz bejelentkezve marad a Google Drive-ra.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Kijelentkezés a Google Drive-ból és az adott eszközhöz tartozó adatok törlése.</string>
     <string name="sync_gdrive_error_no_account_on_device">Ez az eszköz nincs bejelentkezve egyetlen Google-fiókba sem.</string>
+    <string name="sync_gdrive_error_account_already_connected">Ez a fiók már csatlakoztatva van.</string>
 </resources>

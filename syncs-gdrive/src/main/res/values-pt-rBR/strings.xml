@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Redefinir todos os dados do Octi armazenados no Google Drive. Seu dispositivo permanece conectado ao Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Desconectar do Google Drive e excluir os dados relacionados a este dispositivo.</string>
     <string name="sync_gdrive_error_no_account_on_device">Este dispositivo não está conectado a nenhuma conta Google.</string>
+    <string name="sync_gdrive_error_account_already_connected">Esta conta já está conectada.</string>
 </resources>

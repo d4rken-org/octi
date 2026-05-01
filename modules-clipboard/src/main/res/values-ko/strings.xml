@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">비어 있음</string>
     <string name="module_clipboard_detail_type_text">텍스트</string>
     <string name="module_clipboard_copy_action">클립보드에 복사</string>
+    <string name="module_clipboard_widget_description">동기화된 기기에서 클립보드 내용을 표시합니다.</string>
+    <string name="module_clipboard_widget_paste_action">내 클립보드 공유</string>
+    <string name="module_clipboard_widget_share_action">내 클립보드 공유</string>
+    <string name="module_clipboard_widget_copied_toast">복사됨</string>
+    <string name="module_clipboard_widget_self_label">나</string>
+    <string name="module_clipboard_widget_self_empty">아직 공유된 항목 없음</string>
+    <string name="module_clipboard_widget_no_data">클립보드 데이터 없음</string>
+    <string name="module_clipboard_widget_share_success">클립보드가 공유됨</string>
+    <string name="module_clipboard_widget_share_empty">공유할 항목 없음</string>
+    <string name="module_clipboard_widget_share_blocked">클립보드 액세스가 차단됨</string>
+    <string name="module_clipboard_widget_share_unsupported">클립보드 콘텐츠가 지원되지 않음</string>
+    <string name="module_clipboard_widget_share_failed">클립보드 공유 실패</string>
 </resources>

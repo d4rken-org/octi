@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Zuletzt gesehen %1$s</string>
     <string name="sync_device_stale_warning_text">Gerät wurde seit %s nicht synchronisiert</string>
+    <string name="sync_device_clock_skew_warning_text">Geräteuhr scheint nicht synchronisiert</string>
+    <string name="sync_clock_discrepancy_chip_label">Zeitabweichung</string>
+    <string name="sync_clock_discrepancy_title">Zeitdiskrepanz</string>
+    <string name="sync_clock_discrepancy_uncertain">Eine Zeitdiskrepanz zwischen deinen Geräten wurde erkannt. Mit nur zwei Geräten ist es nicht möglich zu bestimmen, welches die falsche Zeit hat.\n\nÜberprüfe die Zeiteinstellungen deiner Geräte.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Die Uhr dieses Geräts scheint nicht synchronisiert zu sein. Deine anderen Geräte stimmen auf eine andere Zeit überein.\n\nÜberprüfe die Zeiteinstellungen dieses Geräts.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Die Uhr von %s scheint nicht synchronisiert zu sein. Deine anderen Geräte stimmen über die aktuelle Zeit überein.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Die Uhr deines Geräts ist dem Server um %s voraus.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Die Uhr deines Geräts geht dem Server um %s nach.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d Gerät wurde kürzlich nicht synchronisiert</item>
         <item quantity="other">%d Geräte wurden kürzlich nicht synchronisiert</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Veraltete Version %s wird ausgeführt</string>
+    <string name="sync_issues_type_stale_device">Veraltetes Gerät</string>
+    <string name="sync_issues_type_clock_skew">Uhrenproblem</string>
+    <string name="sync_issues_type_outdated_version">Veraltete Version</string>
+    <string name="sync_issues_type_server_storage_low">Server hat keinen Speicherplatz mehr</string>
+    <string name="sync_server_storage_low_description">Der Synchronisierungsserver hat wenig Speicherplatz. Uploads sind pausiert, bis der Server-Administrator Speicherplatz freigibt.</string>
+    <string name="sync_issues_type_account_quota_full">Konto ist voll</string>
+    <string name="sync_account_quota_full_description">Dein Konto hat das Speicherkontingent auf diesem Server erreicht. Lösche freigegebene Dateien oder abgelaufene Daten, um Speicherplatz freizugeben, und synchronisiere dann erneut.</string>
+    <string name="sync_issues_type_low_storage">Wenig Speicherplatz</string>
+    <string name="sync_low_storage_description">Weniger als 10%% des verfügbaren Speicherplatzes verbleibt. Gib bald Speicherplatz frei, um die Synchronisation aufrechtzuerhalten.</string>
+    <string name="sync_connector_paused_label">Synchronisation pausieren</string>
+    <string name="sync_connector_paused_error_label">Verbindung pausiert</string>
+    <string name="sync_connector_paused_error_desc">Diese Verbindung ist pausiert. Setze sie fort, um diese Aktion auszuführen.</string>
+    <string name="sync_synced_devices_label">Synchronisierte Geräte</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d Tag</item>
         <item quantity="other">%d Tage</item>

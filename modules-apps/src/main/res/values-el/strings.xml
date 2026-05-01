@@ -7,6 +7,12 @@
         <item quantity="other">%d εφαρμογές εγκατεστημένες</item>
     </plurals>
     <string name="module_apps_last_installed_x">Τελευταία εγκατεστημένη εφαρμογή: %s</string>
+    <string name="module_apps_tile_apps_installed_label">εφαρμογές εγκατεστημένες</string>
+    <plurals name="module_apps_tile_count">
+        <item quantity="one">%d εφαρμογή</item>
+        <item quantity="other">%d εφαρμογές</item>
+    </plurals>
+    <string name="module_apps_tile_last_installed_label">Τελευταία εγκατάσταση</string>
     <string name="module_apps_list_title">Εγκατεστημένες εφαρμογές</string>
     <string name="module_apps_sort_label">Ταξινόμηση</string>
     <string name="module_apps_sort_name_label">Όνομα</string>

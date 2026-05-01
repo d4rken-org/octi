@@ -12,16 +12,21 @@
     <string name="general_gotit_action">Capito</string>
     <string name="general_na_label">N/A</string>
     <string name="general_empty_label">Vuoto</string>
+    <string name="general_delete_action">Elimina</string>
     <string name="general_dismiss_action">Chiudi</string>
     <string name="general_maybe_later_action">Forse dopo</string>
     <string name="general_manage_action">Gestisci</string>
     <string name="general_quota_label">Percentuale</string>
+    <string name="general_sync_action">Sincronizza</string>
+    <string name="general_reset_action">Reset</string>
+    <string name="general_disconnect_action">Disconnetti</string>
     <string name="general_upgrade_action">Aggiorna</string>
     <string name="general_update_action">Aggiorna</string>
     <string name="general_donate_action">Dona</string>
     <string name="general_check_action">Controlla</string>
     <string name="general_internal_not_available_msg">Connessione internet non disponibile</string>
     <string name="general_refresh_action">Aggiorna</string>
+    <string name="general_close_action">Chiudi</string>
     <string name="general_continue">Continua</string>
     <string name="general_show_details_action">Mostra i dettagli</string>
     <string name="general_minutes_label">Minuti</string>
@@ -38,5 +43,39 @@
     <string name="ui_theme_style_setting_explanation">Lo stile usato per il tema dell\'app.</string>
     <string name="ui_theme_style_default_label">Predefinito</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="ui_theme_style_medium_contrast_label">Contrasto medio</string>
+    <string name="ui_theme_style_high_contrast_label">Contrasto alto</string>
+    <string name="ui_theme_color_setting_label">Colore tema</string>
+    <string name="ui_theme_color_green_label">Verde</string>
+    <string name="ui_theme_color_blue_label">Blu</string>
+    <string name="ui_theme_color_sunset_label">Tramonto</string>
     <string name="device_x_label">Dispositivo: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material You</string>
+    <string name="widget_theme_classic_green">Verde Classico</string>
+    <string name="widget_theme_blue">Blu</string>
+    <string name="widget_theme_orange">Arancione</string>
+    <string name="widget_theme_red">Rosso</string>
+    <string name="widget_theme_dark">Notte</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">Personalizza Widget</string>
+    <string name="widget_config_apply_action">Applica</string>
+    <string name="widget_config_presets_label">Predefiniti</string>
+    <string name="widget_config_background_label">Colore di sfondo</string>
+    <string name="widget_config_accent_label">Colore d’accento</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">Anteprima</string>
+    <string name="widget_config_custom_label">Personalizzato</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">Dispositivi</string>
+    <string name="widget_config_devices_empty_hint">Se non vengono selezionati dispositivi, verranno mostrati tutti i dispositivi.</string>
+    <string name="widget_config_devices_selected_hint">Verranno mostrati solo i dispositivi selezionati.</string>
+    <string name="widget_config_devices_none_known">Nessun dispositivo di sincronizzazione ancora conosciuto.</string>
+    <string name="widget_empty_label">Nessun dispositivo corrispondente</string>
+    <string name="widget_no_sync_devices_label">Nessun dispositivo di sincronizzazione ancora</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">Nessun dato %1$s per questo dispositivo</string>
+    <string name="widget_deeplink_module_power">batteria</string>
+    <string name="widget_deeplink_module_connectivity">rete</string>
+    <string name="widget_deeplink_module_clipboard">appunti</string>
 </resources>

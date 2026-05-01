@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Pusto</string>
     <string name="module_clipboard_detail_type_text">Tekst</string>
     <string name="module_clipboard_copy_action">Kopiuj do schowka</string>
+    <string name="module_clipboard_widget_description">Wyświetl zawartość schowka z Twoich zsynchronizowanych urządzeń.</string>
+    <string name="module_clipboard_widget_paste_action">Udostępnij mój schowek</string>
+    <string name="module_clipboard_widget_share_action">Udostępnij mój schowek</string>
+    <string name="module_clipboard_widget_copied_toast">Skopiowano</string>
+    <string name="module_clipboard_widget_self_label">Ty</string>
+    <string name="module_clipboard_widget_self_empty">Nic jeszcze nie udostępniono</string>
+    <string name="module_clipboard_widget_no_data">Brak danych schowka</string>
+    <string name="module_clipboard_widget_share_success">Schowek udostępniony</string>
+    <string name="module_clipboard_widget_share_empty">Nie ma nic do udostępnienia</string>
+    <string name="module_clipboard_widget_share_blocked">Dostęp do schowka zablokowany</string>
+    <string name="module_clipboard_widget_share_unsupported">Zawartość schowka nie jest obsługiwana</string>
+    <string name="module_clipboard_widget_share_failed">Nie udało się udostępnić schowka</string>
 </resources>

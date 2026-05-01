@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Üres</string>
     <string name="module_clipboard_detail_type_text">Szöveg</string>
     <string name="module_clipboard_copy_action">Másolás a vágólapra</string>
+    <string name="module_clipboard_widget_description">Szinkronizált eszközeid vágólap-tartalmának megjelenítése.</string>
+    <string name="module_clipboard_widget_paste_action">Vágólapom megosztása</string>
+    <string name="module_clipboard_widget_share_action">Vágólapom megosztása</string>
+    <string name="module_clipboard_widget_copied_toast">Másolva</string>
+    <string name="module_clipboard_widget_self_label">Te</string>
+    <string name="module_clipboard_widget_self_empty">Még semmi nem lett megosztva</string>
+    <string name="module_clipboard_widget_no_data">Nincs vágólap-adat</string>
+    <string name="module_clipboard_widget_share_success">Vágólap megosztva</string>
+    <string name="module_clipboard_widget_share_empty">Nincs megosztható tartalom</string>
+    <string name="module_clipboard_widget_share_blocked">Vágólap-hozzáférés letiltva</string>
+    <string name="module_clipboard_widget_share_unsupported">A vágólap tartalma nem támogatott</string>
+    <string name="module_clipboard_widget_share_failed">Nem sikerült megosztani a vágólapot</string>
 </resources>

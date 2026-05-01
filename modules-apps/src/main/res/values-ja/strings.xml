@@ -6,6 +6,11 @@
         <item quantity="other">%d 個のアプリがインストール済み</item>
     </plurals>
     <string name="module_apps_last_installed_x">最後にインストールしたアプリ: %s</string>
+    <string name="module_apps_tile_apps_installed_label">個のアプリがインストール済み</string>
+    <plurals name="module_apps_tile_count">
+        <item quantity="other">%dアプリ</item>
+    </plurals>
+    <string name="module_apps_tile_last_installed_label">最後にインストール</string>
     <string name="module_apps_list_title">インストール済みのアプリ</string>
     <string name="module_apps_sort_label">並べ替え</string>
     <string name="module_apps_sort_name_label">名前</string>

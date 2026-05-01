@@ -7,6 +7,12 @@
     <string name="upgrades_dashcard_title">Получить Octi Pro</string>
     <string name="upgrades_dashcard_body">Обновитесь, чтобы разблокировать дополнительные функции и поддержать развитие!</string>
     <string name="upgrades_dashcard_upgrade_action">Обновить</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">Бесплатная версия ограничена %1$d устройством.</item>
+        <item quantity="few">Бесплатная версия ограничена %1$d устройствами.</item>
+        <item quantity="many">Бесплатная версия ограничена %1$d устройствами.</item>
+        <item quantity="other">Бесплатная версия ограничена %1$d устройствами.</item>
+    </plurals>
     <string name="upgrade_screen_title">Получить Octi Pro</string>
     <string name="upgrade_screen_preamble">В Octi нет рекламы и Ваши пользовательские данные не продаются. Моя работа финансируется Вами ❤️.</string>
     <string name="upgrade_screen_benefits_title">Преимущества</string>

@@ -7,6 +7,9 @@
     <string name="upgrades_dashcard_title">Octi Pro を入手</string>
     <string name="upgrades_dashcard_body">アップグレードで追加機能の入手と開発を支援します！</string>
     <string name="upgrades_dashcard_upgrade_action">アップグレード</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="other">無料版は%1$dデバイスまでに制限されています。</item>
+    </plurals>
     <string name="upgrade_screen_title">Octi Pro を入手</string>
     <string name="upgrade_screen_preamble">Octi は無広告、ユーザーデータの販売もしません。あなたの支援で成り立っています ❤️</string>
     <string name="upgrade_screen_benefits_title">特典</string>

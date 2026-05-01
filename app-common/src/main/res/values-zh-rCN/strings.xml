@@ -12,16 +12,21 @@
     <string name="general_gotit_action">明白</string>
     <string name="general_na_label">无</string>
     <string name="general_empty_label">空</string>
+    <string name="general_delete_action">删除</string>
     <string name="general_dismiss_action">关闭</string>
     <string name="general_maybe_later_action">以后可能</string>
     <string name="general_manage_action">管理</string>
     <string name="general_quota_label">额度</string>
+    <string name="general_sync_action">同步</string>
+    <string name="general_reset_action">重置</string>
+    <string name="general_disconnect_action">断开连接</string>
     <string name="general_upgrade_action">升级</string>
     <string name="general_update_action">更新</string>
     <string name="general_donate_action">捐赠</string>
     <string name="general_check_action">检查</string>
     <string name="general_internal_not_available_msg">网络连接不可用</string>
     <string name="general_refresh_action">刷新</string>
+    <string name="general_close_action">关闭</string>
     <string name="general_continue">继续</string>
     <string name="general_show_details_action">详细信息</string>
     <string name="general_minutes_label">分钟</string>
@@ -29,7 +34,7 @@
         <item quantity="other">%1$d 分钟</item>
     </plurals>
     <string name="ui_theme_mode_setting_label">主题模式</string>
-    <string name="ui_theme_mode_setting_explanation">应用主题使用的模式（例如深色或浅色）。</string>
+    <string name="ui_theme_mode_setting_explanation">设置应用程序主题时使用的模式（例如深色或浅色）。</string>
     <string name="ui_theme_mode_dark_label">黑</string>
     <string name="ui_theme_mode_light_label">白</string>
     <string name="ui_theme_mode_system_label">系统</string>
@@ -37,5 +42,39 @@
     <string name="ui_theme_style_setting_explanation">应用程序主题化时使用的颜色样式。</string>
     <string name="ui_theme_style_default_label">默认</string>
     <string name="ui_theme_style_materialyou_label">动态取色</string>
+    <string name="ui_theme_style_medium_contrast_label">中等对比度</string>
+    <string name="ui_theme_style_high_contrast_label">高对比度</string>
+    <string name="ui_theme_color_setting_label">主题颜色</string>
+    <string name="ui_theme_color_green_label">绿色</string>
+    <string name="ui_theme_color_blue_label">蓝色</string>
+    <string name="ui_theme_color_sunset_label">日落</string>
     <string name="device_x_label">设备: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">动态取色</string>
+    <string name="widget_theme_classic_green">经典绿</string>
+    <string name="widget_theme_blue">蓝色</string>
+    <string name="widget_theme_orange">橙色</string>
+    <string name="widget_theme_red">红色</string>
+    <string name="widget_theme_dark">黑</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">自定义小部件</string>
+    <string name="widget_config_apply_action">应用</string>
+    <string name="widget_config_presets_label">预设</string>
+    <string name="widget_config_background_label">背景颜色</string>
+    <string name="widget_config_accent_label">强调色</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">预览</string>
+    <string name="widget_config_custom_label">自定义</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">设备</string>
+    <string name="widget_config_devices_empty_hint">如果未选择任何设备，将显示所有设备。</string>
+    <string name="widget_config_devices_selected_hint">只显示所选设备。</string>
+    <string name="widget_config_devices_none_known">尚无已知的同步设备。</string>
+    <string name="widget_empty_label">无匹配设备</string>
+    <string name="widget_no_sync_devices_label">尚无同步设备</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">此设备没有 %1$s 数据</string>
+    <string name="widget_deeplink_module_power">电池</string>
+    <string name="widget_deeplink_module_connectivity">网络</string>
+    <string name="widget_deeplink_module_clipboard">剪贴板</string>
 </resources>

@@ -12,16 +12,21 @@
     <string name="general_gotit_action">Зрозумів</string>
     <string name="general_na_label">Н/Д</string>
     <string name="general_empty_label">Порожньо</string>
+    <string name="general_delete_action">Видалити</string>
     <string name="general_dismiss_action">Закрити</string>
     <string name="general_maybe_later_action">Можливо пізніше</string>
     <string name="general_manage_action">Керувати</string>
     <string name="general_quota_label">Квота</string>
+    <string name="general_sync_action">Синхронізувати</string>
+    <string name="general_reset_action">Скинути</string>
+    <string name="general_disconnect_action">Від’єднати</string>
     <string name="general_upgrade_action">Оновити</string>
     <string name="general_update_action">Оновити</string>
     <string name="general_donate_action">Пожертвувати</string>
     <string name="general_check_action">Перевірити</string>
     <string name="general_internal_not_available_msg">Інтернет-з\'єднання недоступне</string>
     <string name="general_refresh_action">Оновити</string>
+    <string name="general_close_action">Закрити</string>
     <string name="general_continue">Продовжити</string>
     <string name="general_show_details_action">Показати деталі</string>
     <string name="general_minutes_label">Хвилини</string>
@@ -31,14 +36,48 @@
         <item quantity="many">%1$d хвилин</item>
         <item quantity="other">%1$d хвилини</item>
     </plurals>
-    <string name="ui_theme_mode_setting_label">Режим теми</string>
-    <string name="ui_theme_mode_setting_explanation">Режим, який використовується для оформлення застосунку (наприклад, темний або світлий).</string>
-    <string name="ui_theme_mode_dark_label">Темний</string>
-    <string name="ui_theme_mode_light_label">Світлий</string>
-    <string name="ui_theme_mode_system_label">Системний</string>
+    <string name="ui_theme_mode_setting_label">Тема додатку</string>
+    <string name="ui_theme_mode_setting_explanation">Режим при темуванні застосунку (наприклад, темний або світлий).</string>
+    <string name="ui_theme_mode_dark_label">Темна</string>
+    <string name="ui_theme_mode_light_label">Світла</string>
+    <string name="ui_theme_mode_system_label">Системна</string>
     <string name="ui_theme_style_setting_label">Стиль теми</string>
-    <string name="ui_theme_style_setting_explanation">Стиль кольорів для теми застосунку.</string>
+    <string name="ui_theme_style_setting_explanation">Колірний стиль, який використовується під час оформлення додатка.</string>
     <string name="ui_theme_style_default_label">За замовчуванням</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="ui_theme_style_medium_contrast_label">Середній контраст</string>
+    <string name="ui_theme_style_high_contrast_label">Високий контраст</string>
+    <string name="ui_theme_color_setting_label">Колір теми</string>
+    <string name="ui_theme_color_green_label">Зелений</string>
+    <string name="ui_theme_color_blue_label">Синій</string>
+    <string name="ui_theme_color_sunset_label">Захід сонця</string>
     <string name="device_x_label">Пристрій: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material You</string>
+    <string name="widget_theme_classic_green">Класичний зелений</string>
+    <string name="widget_theme_blue">Синій</string>
+    <string name="widget_theme_orange">Помаранчевий</string>
+    <string name="widget_theme_red">Червоний</string>
+    <string name="widget_theme_dark">Темний</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">Налаштувати віджет</string>
+    <string name="widget_config_apply_action">Застосувати</string>
+    <string name="widget_config_presets_label">Попередні налаштування</string>
+    <string name="widget_config_background_label">Колір фону</string>
+    <string name="widget_config_accent_label">Акцентний колір</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">Попередній перегляд</string>
+    <string name="widget_config_custom_label">Власний</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">Пристрої</string>
+    <string name="widget_config_devices_empty_hint">Якщо пристрої не вибрані, будуть показані всі пристрої.</string>
+    <string name="widget_config_devices_selected_hint">Будуть показані лише вибрані пристрої.</string>
+    <string name="widget_config_devices_none_known">Пристрої синхронізації ще не відомі.</string>
+    <string name="widget_empty_label">Немає відповідних пристроїв</string>
+    <string name="widget_no_sync_devices_label">Ще немає пристроїв синхронізації</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">Немає даних %1$s для цього пристрою</string>
+    <string name="widget_deeplink_module_power">батарея</string>
+    <string name="widget_deeplink_module_connectivity">мережа</string>
+    <string name="widget_deeplink_module_clipboard">буфер обміну</string>
 </resources>

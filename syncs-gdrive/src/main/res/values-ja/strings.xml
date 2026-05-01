@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Google ドライブに保存されているすべての Octi のデータをリセットします。デバイスは Google ドライブにログインしたままになります。</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Google ドライブからログアウトしてこのデバイスに関連するデータを削除します。</string>
     <string name="sync_gdrive_error_no_account_on_device">このデバイスはどの Google アカウントにもログインしていません。</string>
+    <string name="sync_gdrive_error_account_already_connected">このアカウントは既に接続されています。</string>
 </resources>

@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Leeg</string>
     <string name="module_clipboard_detail_type_text">Teks</string>
     <string name="module_clipboard_copy_action">Kopieer na klipbord</string>
+    <string name="module_clipboard_widget_description">Wys knipbordinhoud van jou gesinchroniseerde toestelle.</string>
+    <string name="module_clipboard_widget_paste_action">Deel my knipbord</string>
+    <string name="module_clipboard_widget_share_action">Deel my knipbord</string>
+    <string name="module_clipboard_widget_copied_toast">Gekopieer</string>
+    <string name="module_clipboard_widget_self_label">Jy</string>
+    <string name="module_clipboard_widget_self_empty">Nog niks gedeel nie</string>
+    <string name="module_clipboard_widget_no_data">Geen knipborddata nie</string>
+    <string name="module_clipboard_widget_share_success">Knipbord gedeel</string>
+    <string name="module_clipboard_widget_share_empty">Niks om te deel nie</string>
+    <string name="module_clipboard_widget_share_blocked">Knipbordtoegang geblokkeer</string>
+    <string name="module_clipboard_widget_share_unsupported">Knipbordinhoud word nie ondersteun nie</string>
+    <string name="module_clipboard_widget_share_failed">Kon nie knipbord deel nie</string>
 </resources>

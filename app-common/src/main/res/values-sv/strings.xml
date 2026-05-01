@@ -12,16 +12,21 @@
     <string name="general_gotit_action">Förstått</string>
     <string name="general_na_label">I/T</string>
     <string name="general_empty_label">Tom</string>
+    <string name="general_delete_action">Radera</string>
     <string name="general_dismiss_action">Stäng</string>
     <string name="general_maybe_later_action">Kanske senare</string>
     <string name="general_manage_action">Hantera</string>
     <string name="general_quota_label">Kvot</string>
+    <string name="general_sync_action">Synkronisera</string>
+    <string name="general_reset_action">Återställ</string>
+    <string name="general_disconnect_action">Koppla från</string>
     <string name="general_upgrade_action">Uppgradera</string>
     <string name="general_update_action">Uppdatera</string>
     <string name="general_donate_action">Donera</string>
     <string name="general_check_action">Kontrollera</string>
     <string name="general_internal_not_available_msg">Internetanslutning ej tillgänglig</string>
     <string name="general_refresh_action">Uppdatera</string>
+    <string name="general_close_action">Stäng</string>
     <string name="general_continue">Fortsätt</string>
     <string name="general_show_details_action">Visa detaljer</string>
     <string name="general_minutes_label">Minuter</string>
@@ -30,7 +35,7 @@
         <item quantity="other">%1$d minuter</item>
     </plurals>
     <string name="ui_theme_mode_setting_label">Temaläge</string>
-    <string name="ui_theme_mode_setting_explanation">Läget som används vid temaläggning av appen (t.ex. mörkt eller ljust).</string>
+    <string name="ui_theme_mode_setting_explanation">Läget som används när appen tematiseras (t.ex. mörkt eller ljust).</string>
     <string name="ui_theme_mode_dark_label">Mörkt</string>
     <string name="ui_theme_mode_light_label">Ljust</string>
     <string name="ui_theme_mode_system_label">System</string>
@@ -38,5 +43,39 @@
     <string name="ui_theme_style_setting_explanation">Färgstilen som används när appen får tema.</string>
     <string name="ui_theme_style_default_label">Standard</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="ui_theme_style_medium_contrast_label">Medelhög kontrast</string>
+    <string name="ui_theme_style_high_contrast_label">Hög kontrast</string>
+    <string name="ui_theme_color_setting_label">Temafärg</string>
+    <string name="ui_theme_color_green_label">Grön</string>
+    <string name="ui_theme_color_blue_label">Blå</string>
+    <string name="ui_theme_color_sunset_label">Solnedgång</string>
     <string name="device_x_label">Enhet: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material You</string>
+    <string name="widget_theme_classic_green">Klassisk grön</string>
+    <string name="widget_theme_blue">Blå</string>
+    <string name="widget_theme_orange">Orange</string>
+    <string name="widget_theme_red">Röd</string>
+    <string name="widget_theme_dark">Mörkt</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">Anpassa widget</string>
+    <string name="widget_config_apply_action">Tillämpa</string>
+    <string name="widget_config_presets_label">Förinställningar</string>
+    <string name="widget_config_background_label">Bakgrundsfärg</string>
+    <string name="widget_config_accent_label">Accentfärg</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">Förhandsgranskning</string>
+    <string name="widget_config_custom_label">Anpassad</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">Enheter</string>
+    <string name="widget_config_devices_empty_hint">Om inga enheter är valda visas alla enheter.</string>
+    <string name="widget_config_devices_selected_hint">Endast valda enheter visas.</string>
+    <string name="widget_config_devices_none_known">Inga synkenheter kända ännu.</string>
+    <string name="widget_empty_label">Inga matchande enheter</string>
+    <string name="widget_no_sync_devices_label">Inga synkenheter ännu</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">Inga %1$s-data för den här enheten</string>
+    <string name="widget_deeplink_module_power">batteri</string>
+    <string name="widget_deeplink_module_connectivity">nätverk</string>
+    <string name="widget_deeplink_module_clipboard">urklipp</string>
 </resources>

@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Порожньо</string>
     <string name="module_clipboard_detail_type_text">Текст</string>
     <string name="module_clipboard_copy_action">Копіювати до буфера обміну</string>
+    <string name="module_clipboard_widget_description">Відображати вміст буфера обміну з ваших синхронізованих пристроїв.</string>
+    <string name="module_clipboard_widget_paste_action">Поділитись моїм буфером обміну</string>
+    <string name="module_clipboard_widget_share_action">Поділитись моїм буфером обміну</string>
+    <string name="module_clipboard_widget_copied_toast">Скопійовано</string>
+    <string name="module_clipboard_widget_self_label">Ви</string>
+    <string name="module_clipboard_widget_self_empty">Ще нічого не було поділено</string>
+    <string name="module_clipboard_widget_no_data">Немає даних буфера обміну</string>
+    <string name="module_clipboard_widget_share_success">Буфер обміну поділено</string>
+    <string name="module_clipboard_widget_share_empty">Нічого немає для поділу</string>
+    <string name="module_clipboard_widget_share_blocked">Доступ до буфера обміну заблоковано</string>
+    <string name="module_clipboard_widget_share_unsupported">Вміст буфера обміну не підтримується</string>
+    <string name="module_clipboard_widget_share_failed">Не вдалось поділитись буфером обміну</string>
 </resources>

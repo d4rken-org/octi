@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="module_meta_label">元数据模块</string>
     <string name="module_meta_android_name_x_label">Android %s</string>
 </resources>

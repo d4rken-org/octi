@@ -12,16 +12,21 @@
     <string name="general_gotit_action">הבנתי</string>
     <string name="general_na_label">לא זמין</string>
     <string name="general_empty_label">ריק</string>
+    <string name="general_delete_action">מחיקה</string>
     <string name="general_dismiss_action">התעלם</string>
     <string name="general_maybe_later_action">אולי מאוחר יותר</string>
     <string name="general_manage_action">ניהול</string>
     <string name="general_quota_label">מיכסה</string>
+    <string name="general_sync_action">סנכרון</string>
+    <string name="general_reset_action">איפוס</string>
+    <string name="general_disconnect_action">התנתק</string>
     <string name="general_upgrade_action">שדרוג</string>
     <string name="general_update_action">עדכון</string>
     <string name="general_donate_action">תרום</string>
     <string name="general_check_action">בדוק</string>
     <string name="general_internal_not_available_msg">החיבור לאינטרנט לא זמין</string>
     <string name="general_refresh_action">רענון</string>
+    <string name="general_close_action">סגור</string>
     <string name="general_continue">המשך</string>
     <string name="general_show_details_action">הצג פרטים</string>
     <string name="general_minutes_label">דקות</string>
@@ -40,5 +45,37 @@
     <string name="ui_theme_style_setting_explanation">הסגנון המשמש לעיצוב האפליקציה.</string>
     <string name="ui_theme_style_default_label">ברירת מחדל</string>
     <string name="ui_theme_style_materialyou_label">Material you</string>
+    <string name="ui_theme_style_medium_contrast_label">ניגודיות בינונית</string>
+    <string name="ui_theme_style_high_contrast_label">ניגודיות גבוהה</string>
+    <string name="ui_theme_color_setting_label">צבע ערכת נושא</string>
+    <string name="ui_theme_color_green_label">ירוק</string>
+    <string name="ui_theme_color_blue_label">כחול</string>
+    <string name="ui_theme_color_sunset_label">שקיעה</string>
     <string name="device_x_label">מכשיר: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material you</string>
+    <string name="widget_theme_orange">כתום</string>
+    <string name="widget_theme_red">אדום</string>
+    <string name="widget_theme_dark">כהה</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">התאם אישית את הווידג\'ט</string>
+    <string name="widget_config_apply_action">החל</string>
+    <string name="widget_config_presets_label">הגדרות קבועות מראש</string>
+    <string name="widget_config_background_label">צבע רקע</string>
+    <string name="widget_config_accent_label">צבע הדגשה</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">תצוגה מקדימה</string>
+    <string name="widget_config_custom_label">מותאם אישית</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">מכשירים</string>
+    <string name="widget_config_devices_empty_hint">אם לא נבחרו מכשירים, כל המכשירים יוצגו.</string>
+    <string name="widget_config_devices_selected_hint">רק המכשירים שנבחרו יוצגו.</string>
+    <string name="widget_config_devices_none_known">עדיין לא ידועים מכשירי סנכרון.</string>
+    <string name="widget_empty_label">אין מכשירים מתאימים</string>
+    <string name="widget_no_sync_devices_label">עדיין אין מכשירי סנכרון</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">אין נתוני %1$s עבור מכשיר זה</string>
+    <string name="widget_deeplink_module_power">סוללה</string>
+    <string name="widget_deeplink_module_connectivity">רשת</string>
+    <string name="widget_deeplink_module_clipboard">לוח</string>
 </resources>

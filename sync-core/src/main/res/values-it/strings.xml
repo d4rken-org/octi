@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Visto l\'ultima volta %1$s</string>
     <string name="sync_device_stale_warning_text">Il dispositivo non si sincronizza da %s</string>
+    <string name="sync_device_clock_skew_warning_text">L\'orologio del dispositivo sembra non sincronizzato</string>
+    <string name="sync_clock_discrepancy_chip_label">Deriva dell\'orologio</string>
+    <string name="sync_clock_discrepancy_title">Discrepanza dell\'orologio</string>
+    <string name="sync_clock_discrepancy_uncertain">È stata rilevata una discrepanza dell\'orologio tra i tuoi dispositivi. Con solo due dispositivi, non è possibile determinare quale abbia l\'ora errata.\n\nVerifica le impostazioni dell\'ora del dispositivo.</string>
+    <string name="sync_clock_discrepancy_current_suspect">L\'orologio di questo dispositivo sembra non sincronizzato. Gli altri tuoi dispositivi concordano su un orario diverso.\n\nVerifica le impostazioni dell\'ora di questo dispositivo.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">L\'orologio di %s sembra non sincronizzato. Gli altri tuoi dispositivi concordano sull\'ora corrente.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">L\'orologio del tuo dispositivo è in anticipo sul server di %s.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">L\'orologio del tuo dispositivo è in ritardo sul server di %s.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d dispositivo non si è sincronizzato di recente</item>
         <item quantity="other">%d dispositivi non si sono sincronizzati di recente</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Versione obsoleta %s in esecuzione</string>
+    <string name="sync_issues_type_stale_device">Dispositivo non aggiornato</string>
+    <string name="sync_issues_type_clock_skew">Problema con l\'orologio</string>
+    <string name="sync_issues_type_outdated_version">Versione obsoleta</string>
+    <string name="sync_issues_type_server_storage_low">Il server ha esaurito lo spazio</string>
+    <string name="sync_server_storage_low_description">Il server di sincronizzazione ha poco spazio su disco. I caricamenti sono in pausa finché l’amministratore del server non libera spazio.</string>
+    <string name="sync_issues_type_account_quota_full">Account pieno</string>
+    <string name="sync_account_quota_full_description">Il tuo account ha raggiunto la quota di archiviazione su questo server. Elimina i file condivisi o i dati scaduti per liberare spazio, poi sincronizza di nuovo.</string>
+    <string name="sync_issues_type_low_storage">Spazio di archiviazione insufficiente</string>
+    <string name="sync_low_storage_description">Rimane meno del 10%% dello spazio di archiviazione disponibile. Libera spazio presto per continuare la sincronizzazione.</string>
+    <string name="sync_connector_paused_label">Metti in pausa la sincronizzazione</string>
+    <string name="sync_connector_paused_error_label">Connettore in pausa</string>
+    <string name="sync_connector_paused_error_desc">Questo connettore è in pausa. Riprendilo per eseguire questa azione.</string>
+    <string name="sync_synced_devices_label">Dispositivi sincronizzati</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d giorno</item>
         <item quantity="other">%d giorni</item>

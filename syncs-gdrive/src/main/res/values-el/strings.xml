@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Επαναφορά όλων των δεδομένων Octi που είναι αποθηκευμένα στο Google Drive. Η συσκευή σας παραμένει συνδεδεμένη στο Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Αποσύνδεση από το Google Drive και διαγραφή δεδομένων που σχετίζονται με αυτήν τη συσκευή.</string>
     <string name="sync_gdrive_error_no_account_on_device">Αυτή η συσκευή δεν είναι συνδεδεμένη σε κανέναν λογαριασμό Google.</string>
+    <string name="sync_gdrive_error_account_already_connected">Αυτός ο λογαριασμός είναι ήδη συνδεδεμένος.</string>
 </resources>

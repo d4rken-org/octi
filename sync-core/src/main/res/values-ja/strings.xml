@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">最後に確認: %1$s</string>
     <string name="sync_device_stale_warning_text">デバイスは%s同期されていません</string>
+    <string name="sync_device_clock_skew_warning_text">デバイスの時計が同期されていないようです</string>
+    <string name="sync_clock_discrepancy_chip_label">時計のずれ</string>
+    <string name="sync_clock_discrepancy_title">時計の不一致</string>
+    <string name="sync_clock_discrepancy_uncertain">デバイス間で時計の不一致が検出されました。2台のデバイスのみでは、どちらの時刻が不正確か判履できません。
+
+デバイスの時刻設定を確認してください。</string>
+    <string name="sync_clock_discrepancy_current_suspect">このデバイスの時計が同期されていないようです。他のデバイスは別の時刻で一致しています。
+
+このデバイスの時刻設定を確認してください。</string>
+    <string name="sync_clock_discrepancy_remote_suspect">%sの時計が同期されていないようです。他のデバイスは現在の時刻で一致しています。</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">デバイスの時計はサーバーより%s進んでいます。</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">デバイスの時計はサーバーより%s遅れています。</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="other">%d台のデバイスが最近同期されていません</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">古いバージョン %s を使用中</string>
+    <string name="sync_issues_type_stale_device">古いデバイス</string>
+    <string name="sync_issues_type_clock_skew">時計の問題</string>
+    <string name="sync_issues_type_outdated_version">古いバージョン</string>
+    <string name="sync_issues_type_server_storage_low">サーバーの空き容量がありません</string>
+    <string name="sync_server_storage_low_description">同期サーバーのディスク容量が不足しています。サーバー管理者が容量を解放するまで、アップロードは一時停止されます。</string>
+    <string name="sync_issues_type_account_quota_full">アカウントがいっぱいです</string>
+    <string name="sync_account_quota_full_description">このサーバーでアカウントのストレージ容量が上限に達しました。共有ファイルまたは期限切れのデータを削除して容量を解放してから、再度同期してください。</string>
+    <string name="sync_issues_type_low_storage">ストレージ残量わずか</string>
+    <string name="sync_low_storage_description">利用可能なストレージの10%%未満しか残っていません。同期を続けるために、早めに容量を解放してください。</string>
+    <string name="sync_connector_paused_label">同期を一時停止</string>
+    <string name="sync_connector_paused_error_label">コネクターが一時停止中</string>
+    <string name="sync_connector_paused_error_desc">このコネクターは一時停止中です。このアクションを実行するには再開してください。</string>
+    <string name="sync_synced_devices_label">同期済みのデバイス</string>
     <plurals name="sync_stale_period_days">
         <item quantity="other">%d日</item>
     </plurals>

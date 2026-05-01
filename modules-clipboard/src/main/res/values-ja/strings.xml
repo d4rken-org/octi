@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">空</string>
     <string name="module_clipboard_detail_type_text">テキスト</string>
     <string name="module_clipboard_copy_action">クリップボードにコピー</string>
+    <string name="module_clipboard_widget_description">同期されたデバイスのクリップボードの内容を表示します。</string>
+    <string name="module_clipboard_widget_paste_action">クリップボードを共有</string>
+    <string name="module_clipboard_widget_share_action">クリップボードを共有</string>
+    <string name="module_clipboard_widget_copied_toast">コピーしました</string>
+    <string name="module_clipboard_widget_self_label">あなた</string>
+    <string name="module_clipboard_widget_self_empty">まだ何も共有されていません</string>
+    <string name="module_clipboard_widget_no_data">クリップボードデータがありません</string>
+    <string name="module_clipboard_widget_share_success">クリップボードを共有しました</string>
+    <string name="module_clipboard_widget_share_empty">共有するものがありません</string>
+    <string name="module_clipboard_widget_share_blocked">クリップボードへのアクセスがブロックされました</string>
+    <string name="module_clipboard_widget_share_unsupported">クリップボードのコンテンツはサポートされていません</string>
+    <string name="module_clipboard_widget_share_failed">クリップボードの共有に失敗しました</string>
 </resources>

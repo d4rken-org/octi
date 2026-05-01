@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">فارغ</string>
     <string name="module_clipboard_detail_type_text">نص</string>
     <string name="module_clipboard_copy_action">نسخ إلى الحافظة</string>
+    <string name="module_clipboard_widget_description">عرض محتوى الحافظة من أجهزتك المزامنة.</string>
+    <string name="module_clipboard_widget_paste_action">مشاركة حافظتي</string>
+    <string name="module_clipboard_widget_share_action">مشاركة حافظتي</string>
+    <string name="module_clipboard_widget_copied_toast">تم النسخ</string>
+    <string name="module_clipboard_widget_self_label">أنت</string>
+    <string name="module_clipboard_widget_self_empty">لم تتم مشاركة أي شيء بعد</string>
+    <string name="module_clipboard_widget_no_data">لا توجد بيانات في الحافظة</string>
+    <string name="module_clipboard_widget_share_success">تمت مشاركة الحافظة</string>
+    <string name="module_clipboard_widget_share_empty">لا يوجد شيء للمشاركة</string>
+    <string name="module_clipboard_widget_share_blocked">تم حظر الوصول إلى الحافظة</string>
+    <string name="module_clipboard_widget_share_unsupported">محتوى الحافظة غير مدعوم</string>
+    <string name="module_clipboard_widget_share_failed">فشل مشاركة الحافظة</string>
 </resources>

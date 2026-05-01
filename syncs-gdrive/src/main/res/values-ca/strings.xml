@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Restableix totes les dades de l\'Octi emmagatzemades al Google Drive. El vostre dispositiu romandrà connectat al Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Tanca la sessió del Google Drive i suprimeix les dades relacionades amb aquest dispositiu.</string>
     <string name="sync_gdrive_error_no_account_on_device">Aquest dispositiu no té la sessió iniciada a cap compte de Google.</string>
+    <string name="sync_gdrive_error_account_already_connected">Aquest compte ja està connectat.</string>
 </resources>

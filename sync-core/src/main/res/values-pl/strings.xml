@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Ostatnio widziane %1$s</string>
     <string name="sync_device_stale_warning_text">Urządzenie nie synchronizowało się od %s</string>
+    <string name="sync_device_clock_skew_warning_text">Zegar urządzenia wydaje się niezsynchronizowany</string>
+    <string name="sync_clock_discrepancy_chip_label">Przesunięcie czasu</string>
+    <string name="sync_clock_discrepancy_title">Rozbieżność zegara</string>
+    <string name="sync_clock_discrepancy_uncertain">Wykryto rozbieżność czasu między twoimi urządzeniami. Przy tylko dwóch urządzeniach nie da się ustalić, które ma nieprawidłowy czas.\n\nSprawdź ustawienia czasu na urządzeniach.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Zegar tego urządzenia wydaje się niezsynchronizowany. Pozostałe urządzenia ustawiają inny czas.\n\nSprawdź ustawienia czasu tego urządzenia.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Zegar na %s wydaje się niezsynchronizowany. Pozostałe urządzenia zgadzają się co do aktualnego czasu.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Zegar twojego urządzenia wyprzedza serwer o %s.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Zegar twojego urządzenia jest opóźniony o %s w stosunku do serwera.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d urządzenie nie synchronizowało się ostatnio</item>
         <item quantity="few">%d urządzenia nie synchronizowały się ostatnio</item>
         <item quantity="many">%d urządzeń nie synchronizowało się ostatnio</item>
         <item quantity="other">%d urządzeń nie synchronizowało się ostatnio</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Uruchomiona nieaktualna wersja %s</string>
+    <string name="sync_issues_type_stale_device">Nieaktywne urządzenie</string>
+    <string name="sync_issues_type_clock_skew">Problem z zegarem</string>
+    <string name="sync_issues_type_outdated_version">Nieaktualna wersja</string>
+    <string name="sync_issues_type_server_storage_low">Na serwerze kończy się miejsce</string>
+    <string name="sync_server_storage_low_description">Na serwerze synchronizacji kończy się miejsce na dysku. Przesłanie danych jest wstrzymane do czasu, gdy administrator serwera zwolni miejsce.</string>
+    <string name="sync_issues_type_account_quota_full">Konto jest pełne</string>
+    <string name="sync_account_quota_full_description">Twoje konto osiągnęło limit przestrzeni dyskowej na tym serwerze. Usuń udostępnione pliki lub wygasłe dane, aby zwolnić miejsce, a następnie zsynchronizuj ponownie.</string>
+    <string name="sync_issues_type_low_storage">Mało miejsca</string>
+    <string name="sync_low_storage_description">Pozostało mniej niż 10%% dostępnego miejsca. Wkrótce zwolnij miejsce, aby kontynuować synchronizację.</string>
+    <string name="sync_connector_paused_label">Wstrzymaj synchronizację</string>
+    <string name="sync_connector_paused_error_label">Konektor wstrzymany</string>
+    <string name="sync_connector_paused_error_desc">Ten konektor jest wstrzymany. Wznowi go, aby wykonać tę czynność.</string>
+    <string name="sync_synced_devices_label">Zsynchronizowane urządzenia</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d dzień</item>
         <item quantity="few">%d dni</item>

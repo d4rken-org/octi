@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Nulstil alle Octi-data gemt på Google Drive. Din enhed forbliver logget ind på Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Log ud af Google Drive og slet data relateret til denne enhed.</string>
     <string name="sync_gdrive_error_no_account_on_device">Denne enhed er ikke logget ind på nogen Google-konto.</string>
+    <string name="sync_gdrive_error_account_already_connected">Denne konto er allerede tilsluttet.</string>
 </resources>

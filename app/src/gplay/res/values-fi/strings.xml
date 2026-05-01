@@ -7,6 +7,10 @@
     <string name="upgrades_dashcard_title">Hanki Octi Pro</string>
     <string name="upgrades_dashcard_body">Päivitä avataksesi lisää ominaisuuksia ja tukeaksesi kehitystä!</string>
     <string name="upgrades_dashcard_upgrade_action">Päivitä</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">Ilmaisversio on rajoitettu %1$d laitteeseen.</item>
+        <item quantity="other">Ilmaisversio on rajoitettu %1$d laitteeseen.</item>
+    </plurals>
     <string name="upgrade_screen_title">Hanki Octi Pro</string>
     <string name="upgrade_screen_preamble">Octissa ei ole mainoksia eikä se myy käyttäjätietoja. Työni rahoitetaan sinun avullasi ❤️.</string>
     <string name="upgrade_screen_benefits_title">Hyödyt</string>

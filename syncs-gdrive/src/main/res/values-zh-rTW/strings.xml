@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">重設所有儲存在 Google 雲端硬碟上的 Octi 資料。您的裝置將維持登入 Google 雲端硬碟。</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">從 Google 雲端硬碟登出並刪除與此裝置相關的資料。</string>
     <string name="sync_gdrive_error_no_account_on_device">此裝置尚未登入任何 Google 帳戶。</string>
+    <string name="sync_gdrive_error_account_already_connected">此帳號已連接。</string>
 </resources>

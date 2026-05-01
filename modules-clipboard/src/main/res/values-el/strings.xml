@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Κενό</string>
     <string name="module_clipboard_detail_type_text">Κείμενο</string>
     <string name="module_clipboard_copy_action">Αντιγραφή στο πρόχειρο</string>
+    <string name="module_clipboard_widget_description">Εμφάνιση περιεχομένου πρόχειρου από τις συγχρονισμένες συσκευές σας.</string>
+    <string name="module_clipboard_widget_paste_action">Κοινοποίηση του πρόχειρού μου</string>
+    <string name="module_clipboard_widget_share_action">Κοινοποίηση του πρόχειρού μου</string>
+    <string name="module_clipboard_widget_copied_toast">Αντιγράφηκε</string>
+    <string name="module_clipboard_widget_self_label">Εσείς</string>
+    <string name="module_clipboard_widget_self_empty">Δεν έχει κοινοποιηθεί τίποτα ακόμη</string>
+    <string name="module_clipboard_widget_no_data">Δεν υπάρχουν δεδομένα πρόχειρου</string>
+    <string name="module_clipboard_widget_share_success">Το πρόχειρο κοινοποιήθηκε</string>
+    <string name="module_clipboard_widget_share_empty">Δεν υπάρχει τίποτα για κοινοποίηση</string>
+    <string name="module_clipboard_widget_share_blocked">Η πρόσβαση στο πρόχειρο αποκλείστηκε</string>
+    <string name="module_clipboard_widget_share_unsupported">Το περιεχόμενο του πρόχειρου δεν υποστηρίζεται</string>
+    <string name="module_clipboard_widget_share_failed">Αποτυχία κοινοποίησης πρόχειρου</string>
 </resources>

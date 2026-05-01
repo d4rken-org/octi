@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Tom</string>
     <string name="module_clipboard_detail_type_text">Tekst</string>
     <string name="module_clipboard_copy_action">Kopier til udklipsholder</string>
+    <string name="module_clipboard_widget_description">Vis udklipsholder-indhold fra dine synkroniserede enheder.</string>
+    <string name="module_clipboard_widget_paste_action">Del min udklipsholder</string>
+    <string name="module_clipboard_widget_share_action">Del min udklipsholder</string>
+    <string name="module_clipboard_widget_copied_toast">Kopieret</string>
+    <string name="module_clipboard_widget_self_label">Dig</string>
+    <string name="module_clipboard_widget_self_empty">Intet delt endnu</string>
+    <string name="module_clipboard_widget_no_data">Ingen udklipsholder-data</string>
+    <string name="module_clipboard_widget_share_success">Udklipsholder delt</string>
+    <string name="module_clipboard_widget_share_empty">Intet at dele</string>
+    <string name="module_clipboard_widget_share_blocked">Udklipsholder-adgang blokeret</string>
+    <string name="module_clipboard_widget_share_unsupported">Udklipsholder-indhold understøttes ikke</string>
+    <string name="module_clipboard_widget_share_failed">Kunne ikke dele udklipsholder</string>
 </resources>

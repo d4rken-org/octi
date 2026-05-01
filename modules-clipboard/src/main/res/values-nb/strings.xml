@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Tom</string>
     <string name="module_clipboard_detail_type_text">Tekst</string>
     <string name="module_clipboard_copy_action">Kopier til utklippstavle</string>
+    <string name="module_clipboard_widget_description">Vis utklippstavleinnhold fra synkroniserte enheter.</string>
+    <string name="module_clipboard_widget_paste_action">Del utklippstavlen min</string>
+    <string name="module_clipboard_widget_share_action">Del utklippstavlen min</string>
+    <string name="module_clipboard_widget_copied_toast">Kopiert</string>
+    <string name="module_clipboard_widget_self_label">Du</string>
+    <string name="module_clipboard_widget_self_empty">Ingenting delt ennå</string>
+    <string name="module_clipboard_widget_no_data">Ingen utklippstavledata</string>
+    <string name="module_clipboard_widget_share_success">Utklippstavle delt</string>
+    <string name="module_clipboard_widget_share_empty">Ingenting å dele</string>
+    <string name="module_clipboard_widget_share_blocked">Utklippstavletilgang blokkert</string>
+    <string name="module_clipboard_widget_share_unsupported">Utklippstavleinnhold støttes ikke</string>
+    <string name="module_clipboard_widget_share_failed">Kunne ikke dele utklippstavle</string>
 </resources>

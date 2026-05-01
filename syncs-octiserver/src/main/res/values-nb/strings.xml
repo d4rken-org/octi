@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">En åpen kildekode synkroniseringsserver for Octi laget av utvikleren av denne appen. Data er kryptert på klientsiden, bare enhetene dine kan dekryptere det.\n\nSiden både appen og serveren fortsatt forbedres, kan den være mindre stabil enn andre synkroniseringsalternativer.</string>
+    <string name="sync_octiserver_type_description">En åpen kildekode synkroniseringsserver for Octi laget av appens utvikler. Data krypteres på klientsiden, og bare enhetene dine kan dekryptere dem.\n\nEttersom både appen og serveren fortsatt forbedres, kan den være mindre stabil enn andre synkroniseringsalternativer.</string>
     <string name="sync_octiserver_add_create_action_hint">Inaktive kontoer slettes etter noen uker.</string>
-    <string name="sync_octiserver_add_subtitle">Legg til ny Google Drive</string>
+    <string name="sync_octiserver_add_subtitle">Legg til Octi Server-konto</string>
     <string name="sync_octiserver_add_link_action_hint">Du må ha tilgang til en annen enhet som allerede er koblet.</string>
     <string name="sync_octiserver_about_title">Om Octi Server</string>
-    <string name="sync_octiserver_about_desc">Octi Server er en åpen kildekode synkroniseringsserver (i Kotlin) for Octi av darken.</string>
+    <string name="sync_octiserver_about_desc">Octi Server er en åpen kildekode synkroniseringsserver for Octi av darken.</string>
     <string name="sync_octiserver_about_author_action">Forfatter</string>
     <string name="sync_octiserver_about_source_action">Kildekode</string>
     <string name="sync_octiserver_reset_confirmation_desc">Slett denne enhetens data på denne kontoen. Enheter forblir koblet, men lagret data fjernes.</string>
@@ -15,10 +15,23 @@
     <string name="sync_octiserver_link_code_label">Koblingskode</string>
     <string name="sync_octiserver_link_host_option_direct">Lag en tekstkode du kan sende via andre apper</string>
     <string name="sync_octiserver_link_host_option_qrcode">Vis en QR-kode</string>
+    <string name="sync_octiserver_link_host_waiting_label">Venter på at enheten skal koble til…</string>
     <string name="sync_octiserver_link_host_device_linked_message">En ny enhet er koblet til kontoen din.</string>
     <string name="sync_octiserver_link_client_option_direct">Kopier og lim inn en koblingskode manuelt</string>
     <string name="sync_octiserver_link_client_option_qrcode">Skann en QR-kode fra en annen enhet</string>
     <string name="sync_octiserver_link_client_startcamera_action">Start kamera</string>
     <string name="sync_octiserver_link_client_link_action">Koble enhet</string>
-    <string name="sync_octiserver_error_device_not_registered">Denne enheten er ikke lenger registrert på serveren. Koble fra og koble til igjen fra en annen enhet, eller opprett en ny konto.</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Enhet ikke lenger koblet til</string>
+    <string name="sync_octiserver_error_device_not_registered">Denne enheten er ikke lenger registrert på serveren. Koble fra og koble til på nytt fra en annen enhet, eller opprett en ny konto.</string>
+    <string name="sync_octiserver_resume_sync_action">Gjenoppta synkronisering</string>
+    <string name="sync_octiserver_add_create_account_title">Opprett konto?</string>
+    <string name="sync_octiserver_add_create_account_desc">En ny kryptert synkroniseringskonto vil bli opprettet på denne serveren.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Denne kontoen krever Octi %1$s eller nyere. Oppdater denne enheten eller fjern den fra kontoen.</string>
+    <string name="sync_octiserver_legacy_encryption_account">Fildeling er ikke tilgjengelig på denne enheten fordi denne kontoen bruker eldre kryptering. Opprett en ny konto på en oppdatert enhet og koble til de andre enhetene på nytt for å bruke fildeling.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Inkompatibel kryptering</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Fildeling ikke tilgjengelig</string>
+    <string name="sync_octiserver_add_create_account_action">Opprett konto</string>
+    <string name="sync_octiserver_add_link_existing_action">Koble til eksisterende konto</string>
+    <string name="sync_octiserver_add_select_server_label">Velg server</string>
+    <string name="sync_octiserver_add_custom_server_label">Egendefinert server</string>
 </resources>

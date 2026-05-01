@@ -5,6 +5,9 @@
     <string name="upgrades_dashcard_title">取得 Octi Pro</string>
     <string name="upgrades_dashcard_body">解鎖額外功能並成為支持者，協助持續開發！</string>
     <string name="upgrades_dashcard_upgrade_action">升級</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="other">免費版限制最多 %1$d 台裝置。</item>
+    </plurals>
     <string name="upgrade_screen_title">升級至 Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi 沒有廣告，也不會販售使用者資料。我的工作由你贊助 ❤️</string>
     <string name="upgrade_screen_how_title">該怎麼做</string>
@@ -14,4 +17,5 @@
     <string name="upgrade_screen_sponsor_action">贊助開發</string>
     <string name="upgrade_screen_sponsor_action_hint">替代方案是廣告、分析和 Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">感謝你支持開源開發 ❤️</string>
+    <string name="upgrade_screen_sponsor_too_fast_msg">這麼快就回來了？您的支持讓 Octi 得以持續運作！</string>
 </resources>

@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Réinitialiser toutes les données Octi stockées sur le Disque Google Drive. Votre appareil reste connecté au Disque Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Vous déconnecter du Disque Google Drive et supprimer les données associées à cet appareil.</string>
     <string name="sync_gdrive_error_no_account_on_device">Cet appareil n’est connecté à aucun compte Google.</string>
+    <string name="sync_gdrive_error_account_already_connected">Ce compte est déjà connecté.</string>
 </resources>

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_octiserver_type_label">كي-سيرفر</string>
-    <string name="sync_octiserver_type_description">خادم مزامنة مفتوح المصدر لأوكتي من تطوير مطور هذا التطبيق. يتم تشفير البيانات من جانب العميل، ولا يمكن فك تشفيرها إلا بواسطة أجهزتك.\n\nنظرًا لأن التطبيق والخادم لا يزالان قيد التحسين، فقد يكون أقل استقرارًا من خيارات المزامنة الأخرى.</string>
+    <string name="sync_octiserver_type_label">Octi Server</string>
+    <string name="sync_octiserver_type_description">خادم مزامنة مفتوح المصدر لـ Octi، صنعه مطوّر هذا التطبيق. البيانات مشفرة على جانب العميل، ولا يمكن فك تشفيرها إلا من خلال أجهزتك.
+
+بما أن كلًا من التطبيق والخادم لا يزالان قيد التحسين، قد يكون أقل استقرارًا من خيارات المزامنة الأخرى.</string>
     <string name="sync_octiserver_add_create_action_hint">تُحذف الحسابات غير النشطة بعد بضعة أسابيع.</string>
-    <string name="sync_octiserver_add_subtitle">إضافة حساب كي-سيرفر جديد</string>
+    <string name="sync_octiserver_add_subtitle">إضافة حساب Octi Server</string>
     <string name="sync_octiserver_add_link_action_hint">ستحتاج إلى الوصول إلى جهاز آخر مرتبط بالفعل.</string>
-    <string name="sync_octiserver_about_title">حول كي-سيرفر</string>
-    <string name="sync_octiserver_about_desc">كي-سيرفر هو خادم مزامنة مفتوح المصدر (بلغة كوتلن) لأوكتي من تطوير darken.</string>
+    <string name="sync_octiserver_about_title">حول Octi Server</string>
+    <string name="sync_octiserver_about_desc">Octi Server هو خادم مزامنة مفتوح المصدر لـ Octi من تطوير darken.</string>
     <string name="sync_octiserver_about_author_action">المطور</string>
     <string name="sync_octiserver_about_source_action">الكود المصدري</string>
     <string name="sync_octiserver_reset_confirmation_desc">مسح بيانات الجهاز على هذا الحساب. تظل الأجهزة مرتبطة ولكن تتم إزالة بياناتها المخزنة.</string>
@@ -15,10 +17,23 @@
     <string name="sync_octiserver_link_code_label">رمز الربط</string>
     <string name="sync_octiserver_link_host_option_direct">إنشاء رمز نصي يمكنك إرساله عبر تطبيقات أخرى</string>
     <string name="sync_octiserver_link_host_option_qrcode">عرض رمز استجابة سريعة (QR)</string>
+    <string name="sync_octiserver_link_host_waiting_label">في انتظار ربط الجهاز…</string>
     <string name="sync_octiserver_link_host_device_linked_message">تم ربط جهاز جديد بحسابك.</string>
-    <string name="sync_octiserver_link_client_option_direct">انسخ والصق رمز الربط يدويًا</string>
+    <string name="sync_octiserver_link_client_option_direct">نسخ ولصق رمز الربط يدويًا</string>
     <string name="sync_octiserver_link_client_option_qrcode">مسح رمز استجابة سريعة (QR) من جهاز آخر</string>
     <string name="sync_octiserver_link_client_startcamera_action">تشغيل الكاميرا</string>
     <string name="sync_octiserver_link_client_link_action">ربط الجهاز</string>
-    <string name="sync_octiserver_error_device_not_registered">لم يعد هذا الجهاز مسجلاً على الخادم. افصل الجهاز وأعد ربطه من جهاز آخر، أو أنشئ حساباً جديداً.</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">الجهاز لم يعد مرتبطاً</string>
+    <string name="sync_octiserver_error_device_not_registered">هذا الجهاز لم يعد مسجلًا على الخادم. افصل وأعد الربط من جهاز آخر، أو أنشئ حسابًا جديدًا.</string>
+    <string name="sync_octiserver_resume_sync_action">استئناف المزامنة</string>
+    <string name="sync_octiserver_add_create_account_title">إنشاء حساب?</string>
+    <string name="sync_octiserver_add_create_account_desc">سيتم إنشاء حساب مزامنة مشفر جديد على هذا الخادم.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">يتطلب هذا الحساب Octi %1$s أو أحدث. حدّث هذا الجهاز أو احذفه من الحساب.</string>
+    <string name="sync_octiserver_legacy_encryption_account">مشاركة الملفات غير متاحة على هذا الجهاز لأن هذا الحساب يستخدم التشفير القديم. أنشئ حساباً جديداً على جهاز محدّث وأعد ربط أجهزتك الأخرى لاستخدام مشاركة الملفات.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">تشفير غير متوافق</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">مشاركة الملفات غير متاحة</string>
+    <string name="sync_octiserver_add_create_account_action">إنشاء حساب</string>
+    <string name="sync_octiserver_add_link_existing_action">الربط بحساب موجود</string>
+    <string name="sync_octiserver_add_select_server_label">اختر الخادم</string>
+    <string name="sync_octiserver_add_custom_server_label">خادم مخصص</string>
 </resources>

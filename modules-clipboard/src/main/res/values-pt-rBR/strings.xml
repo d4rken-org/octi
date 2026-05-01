@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Vazio</string>
     <string name="module_clipboard_detail_type_text">Texto</string>
     <string name="module_clipboard_copy_action">Copiar para a área de transferência</string>
+    <string name="module_clipboard_widget_description">Exibe o conteúdo da área de transferência dos seus dispositivos sincronizados.</string>
+    <string name="module_clipboard_widget_paste_action">Compartilhar minha área de transferência</string>
+    <string name="module_clipboard_widget_share_action">Compartilhar minha área de transferência</string>
+    <string name="module_clipboard_widget_copied_toast">Copiado</string>
+    <string name="module_clipboard_widget_self_label">Você</string>
+    <string name="module_clipboard_widget_self_empty">Nada compartilhado ainda</string>
+    <string name="module_clipboard_widget_no_data">Sem dados de área de transferência</string>
+    <string name="module_clipboard_widget_share_success">Área de transferência compartilhada</string>
+    <string name="module_clipboard_widget_share_empty">Nada para compartilhar</string>
+    <string name="module_clipboard_widget_share_blocked">Acesso à área de transferência bloqueado</string>
+    <string name="module_clipboard_widget_share_unsupported">Conteúdo da área de transferência não suportado</string>
+    <string name="module_clipboard_widget_share_failed">Falha ao compartilhar a área de transferência</string>
 </resources>

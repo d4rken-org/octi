@@ -5,6 +5,10 @@
     <string name="upgrades_dashcard_title">Obtén l\'Octi Pro</string>
     <string name="upgrades_dashcard_body">Desbloquegeu funcions addicionals i convertiu-vos en mecenes per donar suport al desenvolupament continu!</string>
     <string name="upgrades_dashcard_upgrade_action">Millora</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">La versió gratuïta està limitada a %1$d dispositiu.</item>
+        <item quantity="other">La versió gratuïta està limitada a %1$d dispositius.</item>
+    </plurals>
     <string name="upgrade_screen_title">Millora al Octi Pro</string>
     <string name="upgrade_screen_preamble">L\'Octi no té anuncis i no ven dades d\'usuari. El meu treball està finançat per usuaris com vós ❤️</string>
     <string name="upgrade_screen_how_title">Que fer?</string>
@@ -14,4 +18,5 @@
     <string name="upgrade_screen_sponsor_action">Desenvolupament del patrocinador</string>
     <string name="upgrade_screen_sponsor_action_hint">L\'alternativa són els anuncis, les analítiques i el Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Gràcies per donar suport al desenvolupament de codi obert ❤️</string>
+    <string name="upgrade_screen_sponsor_too_fast_msg">Ja heu tornat? El vostre suport manté viu l\'Octi!</string>
 </resources>

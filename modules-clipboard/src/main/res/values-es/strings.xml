@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Vacío</string>
     <string name="module_clipboard_detail_type_text">Texto</string>
     <string name="module_clipboard_copy_action">Copiar al portapapeles</string>
+    <string name="module_clipboard_widget_description">Muestra el contenido del portapapeles de tus dispositivos sincronizados.</string>
+    <string name="module_clipboard_widget_paste_action">Compartir mi portapapeles</string>
+    <string name="module_clipboard_widget_share_action">Compartir mi portapapeles</string>
+    <string name="module_clipboard_widget_copied_toast">Copiado</string>
+    <string name="module_clipboard_widget_self_label">Tú</string>
+    <string name="module_clipboard_widget_self_empty">Aún no se ha compartido nada</string>
+    <string name="module_clipboard_widget_no_data">Sin datos del portapapeles</string>
+    <string name="module_clipboard_widget_share_success">Portapapeles compartido</string>
+    <string name="module_clipboard_widget_share_empty">Nada que compartir</string>
+    <string name="module_clipboard_widget_share_blocked">Acceso al portapapeles bloqueado</string>
+    <string name="module_clipboard_widget_share_unsupported">Contenido del portapapeles no compatible</string>
+    <string name="module_clipboard_widget_share_failed">Error al compartir el portapapeles</string>
 </resources>

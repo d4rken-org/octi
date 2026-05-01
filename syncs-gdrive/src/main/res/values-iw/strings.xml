@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">אפס את כל נתוני Octi המאוחסנים ב-Google Drive. המכשיר שלך ישאר מחובר ל-Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">צא מ-Google Drive ומחק נתונים הקשורים למכשיר זה.</string>
     <string name="sync_gdrive_error_no_account_on_device">מכשיר זה אינו מחובר לשום חשבון Google.</string>
+    <string name="sync_gdrive_error_account_already_connected">חשבון זה כבר מחובר.</string>
 </resources>

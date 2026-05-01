@@ -12,16 +12,21 @@
     <string name="general_gotit_action">Selvä</string>
     <string name="general_na_label">E/T</string>
     <string name="general_empty_label">Tyhjä</string>
+    <string name="general_delete_action">Poista</string>
     <string name="general_dismiss_action">Sulje</string>
     <string name="general_maybe_later_action">Ehkä myöhemmin</string>
     <string name="general_manage_action">Hallinnoi</string>
     <string name="general_quota_label">Kiintiö</string>
+    <string name="general_sync_action">Synkronoi</string>
+    <string name="general_reset_action">Palauta</string>
+    <string name="general_disconnect_action">Katkaise yhteys</string>
     <string name="general_upgrade_action">Päivitä</string>
     <string name="general_update_action">Päivitä</string>
     <string name="general_donate_action">Lahjoita</string>
     <string name="general_check_action">Tarkista</string>
     <string name="general_internal_not_available_msg">Internet-yhteys ei ole käytettävissä</string>
     <string name="general_refresh_action">Päivitä</string>
+    <string name="general_close_action">Sulje</string>
     <string name="general_continue">Jatka</string>
     <string name="general_show_details_action">Näytä tiedot</string>
     <string name="general_minutes_label">Minuutit</string>
@@ -30,7 +35,7 @@
         <item quantity="other">%1$d minuuttia</item>
     </plurals>
     <string name="ui_theme_mode_setting_label">Teematila</string>
-    <string name="ui_theme_mode_setting_explanation">Sovelluksen teemoituksessa käytetty tila (esim. tumma tai vaalea).</string>
+    <string name="ui_theme_mode_setting_explanation">Sovelluksen teemoituksessa käytettävä tila (esim. tumma tai vaalea).</string>
     <string name="ui_theme_mode_dark_label">Tumma</string>
     <string name="ui_theme_mode_light_label">Vaalea</string>
     <string name="ui_theme_mode_system_label">Järjestelmä</string>
@@ -38,5 +43,39 @@
     <string name="ui_theme_style_setting_explanation">Käytetty teemaväri, kun sovelluksessa on teema.</string>
     <string name="ui_theme_style_default_label">Oletus</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="ui_theme_style_medium_contrast_label">Keskikontrasti</string>
+    <string name="ui_theme_style_high_contrast_label">Korkea kontrasti</string>
+    <string name="ui_theme_color_setting_label">Teeman väri</string>
+    <string name="ui_theme_color_green_label">Vihreä</string>
+    <string name="ui_theme_color_blue_label">Sininen</string>
+    <string name="ui_theme_color_sunset_label">Auringonlasku</string>
     <string name="device_x_label">Laite: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material You</string>
+    <string name="widget_theme_classic_green">Klassinen vihreä</string>
+    <string name="widget_theme_blue">Sininen</string>
+    <string name="widget_theme_orange">Oranssi</string>
+    <string name="widget_theme_red">Punainen</string>
+    <string name="widget_theme_dark">Tumma</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">Mukauta widgettiä</string>
+    <string name="widget_config_apply_action">Käytä</string>
+    <string name="widget_config_presets_label">Esiasetukset</string>
+    <string name="widget_config_background_label">Taustaväri</string>
+    <string name="widget_config_accent_label">Korostusväri</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">Esikatselu</string>
+    <string name="widget_config_custom_label">Mukautettu</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">Laitteet</string>
+    <string name="widget_config_devices_empty_hint">Jos yhtään laitetta ei ole valittu, kaikki laitteet näytetään.</string>
+    <string name="widget_config_devices_selected_hint">Vain valitut laitteet näytetään.</string>
+    <string name="widget_config_devices_none_known">Synkronoitavia laitteita ei tunneta vielä.</string>
+    <string name="widget_empty_label">Ei vastaavia laitteita</string>
+    <string name="widget_no_sync_devices_label">Ei synkronoitavia laitteita vielä</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">Ei %1$s-tietoja tältä laitteelta</string>
+    <string name="widget_deeplink_module_power">akku</string>
+    <string name="widget_deeplink_module_connectivity">verkko</string>
+    <string name="widget_deeplink_module_clipboard">leikepöytä</string>
 </resources>

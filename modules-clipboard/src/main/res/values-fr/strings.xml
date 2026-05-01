@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Vide</string>
     <string name="module_clipboard_detail_type_text">Texte</string>
     <string name="module_clipboard_copy_action">Copier dans le presse-papiers</string>
+    <string name="module_clipboard_widget_description">Afficher le contenu du presse-papiers depuis vos appareils synchronisés.</string>
+    <string name="module_clipboard_widget_paste_action">Partager mon presse-papiers</string>
+    <string name="module_clipboard_widget_share_action">Partager mon presse-papiers</string>
+    <string name="module_clipboard_widget_copied_toast">Copié</string>
+    <string name="module_clipboard_widget_self_label">Vous</string>
+    <string name="module_clipboard_widget_self_empty">Rien de partagé pour l’instant</string>
+    <string name="module_clipboard_widget_no_data">Aucune donnée de presse-papiers</string>
+    <string name="module_clipboard_widget_share_success">Presse-papiers partagé</string>
+    <string name="module_clipboard_widget_share_empty">Rien à partager</string>
+    <string name="module_clipboard_widget_share_blocked">Accès au presse-papiers bloqué</string>
+    <string name="module_clipboard_widget_share_unsupported">Contenu du presse-papiers non pris en charge</string>
+    <string name="module_clipboard_widget_share_failed">Impossible de partager le presse-papiers</string>
 </resources>

@@ -6,6 +6,11 @@
         <item quantity="other">%d개 앱 설치됨</item>
     </plurals>
     <string name="module_apps_last_installed_x">마지막으로 설치된 앱: %s</string>
+    <string name="module_apps_tile_apps_installed_label">설치된 앱</string>
+    <plurals name="module_apps_tile_count">
+        <item quantity="other">%d개의 앱</item>
+    </plurals>
+    <string name="module_apps_tile_last_installed_label">마지막 설치</string>
     <string name="module_apps_list_title">설치된 앱</string>
     <string name="module_apps_sort_label">정렬</string>
     <string name="module_apps_sort_name_label">이름</string>

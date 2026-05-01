@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Ресетуј све Octi податке сачуване на Google Drive-у. Ваш уређај остаје пријављен на Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Одјавите се са Google Drive-а и обришите податке који се односе на овај уређај.</string>
     <string name="sync_gdrive_error_no_account_on_device">Овај уређај није пријављен ни на један Google налог.</string>
+    <string name="sync_gdrive_error_account_already_connected">Овај налог је већ повезан.</string>
 </resources>

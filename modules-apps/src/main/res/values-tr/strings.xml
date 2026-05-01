@@ -7,6 +7,12 @@
         <item quantity="other">%d uygulama yüklendi</item>
     </plurals>
     <string name="module_apps_last_installed_x">Son yüklenen uygulama: %s</string>
+    <string name="module_apps_tile_apps_installed_label">uygulama yüklendi</string>
+    <plurals name="module_apps_tile_count">
+        <item quantity="one">%d uygulama</item>
+        <item quantity="other">%d uygulama</item>
+    </plurals>
+    <string name="module_apps_tile_last_installed_label">Son yüklenme</string>
     <string name="module_apps_list_title">Yüklü uygulamalar</string>
     <string name="module_apps_sort_label">Sırala</string>
     <string name="module_apps_sort_name_label">Ad</string>

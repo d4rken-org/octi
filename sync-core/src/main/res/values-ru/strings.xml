@@ -1,12 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Последний раз видели %1$s</string>
     <string name="sync_device_stale_warning_text">Устройство не синхронизировалось %s</string>
+    <string name="sync_device_clock_skew_warning_text">Часы устройства, похоже, не синхронизированы</string>
+    <string name="sync_clock_discrepancy_chip_label">Расхождение часов</string>
+    <string name="sync_clock_discrepancy_title">Несоответствие часов</string>
+    <string name="sync_clock_discrepancy_uncertain">Обнаружено несоответствие часов между Вашими устройствами. При наличии только двух устройств невозможно определить, у какого из них неверное время.
+
+Проверьте настройки времени на устройствах.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Часы этого устройства, похоже, не синхронизированы. Остальные Ваши устройства согласны с другим временем.
+
+Проверьте настройки времени на этом устройстве.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Часы %s, похоже, не синхронизированы. Остальные Ваши устройства согласны с текущим временем.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Часы Вашего устройства опережают сервер на %s.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Часы Вашего устройства отстают от сервера на %s.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d устройство не синхронизировалось недавно</item>
         <item quantity="few">%d устр. не синхронизировались недавно</item>
         <item quantity="many">%d устр. не синхронизировались недавно</item>
         <item quantity="other">%d устр. не синхронизировались недавно</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Запущена устаревшая версия %s</string>
+    <string name="sync_issues_type_stale_device">Устаревшее устройство</string>
+    <string name="sync_issues_type_clock_skew">Проблема с часами</string>
+    <string name="sync_issues_type_outdated_version">Устаревшая версия</string>
+    <string name="sync_issues_type_server_storage_low">На сервере закончилось место</string>
+    <string name="sync_server_storage_low_description">На сервере синхронизации заканчивается место на диске. Загрузка приостановлена до тех пор, пока администратор сервера не освободит место.</string>
+    <string name="sync_issues_type_account_quota_full">Аккаунт заполнен</string>
+    <string name="sync_account_quota_full_description">Ваш аккаунт достиг квоты хранилища на этом сервере. Удалите общие файлы или устаревшие данные, чтобы освободить место, затем синхронизируйтесь снова.</string>
+    <string name="sync_issues_type_low_storage">Мало места</string>
+    <string name="sync_low_storage_description">Осталось менее 10%% доступного хранилища. Освободите место, чтобы продолжить синхронизацию.</string>
+    <string name="sync_connector_paused_label">Приостановить синхронизацию</string>
+    <string name="sync_connector_paused_error_label">Соединитель приостановлен</string>
+    <string name="sync_connector_paused_error_desc">Этот соединитель приостановлен. Возобновите его, чтобы выполнить это действие.</string>
+    <string name="sync_synced_devices_label">Синхронизированные устройства</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d день</item>
         <item quantity="few">%d дн.</item>

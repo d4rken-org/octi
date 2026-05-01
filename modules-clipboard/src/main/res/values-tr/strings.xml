@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Boş</string>
     <string name="module_clipboard_detail_type_text">Metin</string>
     <string name="module_clipboard_copy_action">Panoya kopyala</string>
+    <string name="module_clipboard_widget_description">Eşzamanlanmış cihazlarınızdaki pano içeriğini görüntüleyin.</string>
+    <string name="module_clipboard_widget_paste_action">Panomi paylaş</string>
+    <string name="module_clipboard_widget_share_action">Panomi paylaş</string>
+    <string name="module_clipboard_widget_copied_toast">Kopyalandı</string>
+    <string name="module_clipboard_widget_self_label">Sen</string>
+    <string name="module_clipboard_widget_self_empty">Henüz hiçbir şey paylaşılmadı</string>
+    <string name="module_clipboard_widget_no_data">Pano verisi yok</string>
+    <string name="module_clipboard_widget_share_success">Pano paylaşıldı</string>
+    <string name="module_clipboard_widget_share_empty">Paylaşılacak bir şey yok</string>
+    <string name="module_clipboard_widget_share_blocked">Pano erişimi engellendi</string>
+    <string name="module_clipboard_widget_share_unsupported">Pano içeriği desteklenmiyor</string>
+    <string name="module_clipboard_widget_share_failed">Pano paylaşılamadı</string>
 </resources>

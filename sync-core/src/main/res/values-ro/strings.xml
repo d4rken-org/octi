@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Vazut ultima data %1$s</string>
     <string name="sync_device_stale_warning_text">Dispozitivul nu s-a sincronizat de %s</string>
+    <string name="sync_device_clock_skew_warning_text">Ceasul dispozitivului pare nesincronizat</string>
+    <string name="sync_clock_discrepancy_chip_label">Decalaj ceas</string>
+    <string name="sync_clock_discrepancy_title">Discrepanta ceas</string>
+    <string name="sync_clock_discrepancy_uncertain">S-a detectat o discrepanta de ceas intre dispozitivele dvs. Cu doar doua dispozitive, nu este posibil sa se determine care are ora incorecta.
+
+Verificati setarile de ora ale dispozitivului.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Ceasul acestui dispozitiv pare nesincronizat. Celelalte dispozitive sunt de acord cu o alta ora.
+
+Verificati setarile de ora ale acestui dispozitiv.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Ceasul de pe %s pare nesincronizat. Celelalte dispozitive sunt de acord cu ora curenta.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Ceasul dispozitivului dvs. este inaintea serverului cu %s.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Ceasul dispozitivului dvs. este in urma serverului cu %s.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d dispozitiv nu s-a sincronizat recent</item>
         <item quantity="few">%d dispozitive nu s-au sincronizat recent</item>
         <item quantity="other">%d de dispozitive nu s-au sincronizat recent</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Ruleaza versiunea invechita %s</string>
+    <string name="sync_issues_type_stale_device">Dispozitiv invechit</string>
+    <string name="sync_issues_type_clock_skew">Problema ceas</string>
+    <string name="sync_issues_type_outdated_version">Versiune invechita</string>
+    <string name="sync_issues_type_server_storage_low">Serverul nu mai are spațiu</string>
+    <string name="sync_server_storage_low_description">Serverul de sincronizare are spațiu redus pe disc. Încărcările sunt întrerupte până când administratorul serverului eliberează spațiu.</string>
+    <string name="sync_issues_type_account_quota_full">Contul este plin</string>
+    <string name="sync_account_quota_full_description">Contul tău a atins cota de stocare pe acest server. Şterge fișierele partajate sau datele expirate pentru a elibera spațiu, apoi sincronizează din nou.</string>
+    <string name="sync_issues_type_low_storage">Stocare redusă</string>
+    <string name="sync_low_storage_description">Mai puțin de 10%% din spațiul de stocare disponibil a rămas. Eliberează spațiu curând pentru a continua sincronizarea.</string>
+    <string name="sync_connector_paused_label">Pauză sincronizare</string>
+    <string name="sync_connector_paused_error_label">Conector întrerupt</string>
+    <string name="sync_connector_paused_error_desc">Acest conector este întrerupt. Reactivează-l pentru a efectua această acțiune.</string>
+    <string name="sync_synced_devices_label">Dispozitive sincronizate</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d zi</item>
         <item quantity="few">%d zile</item>

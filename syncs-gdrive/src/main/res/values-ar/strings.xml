@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">إعادة تعيين جميع بيانات أوكتي المخزنة على جوجل درايف. يظل جهازك مسجلاً الدخول إلى جوجل درايف.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">تسجيل الخروج من جوجل درايف وحذف البيانات المتعلقة بهذا الجهاز.</string>
     <string name="sync_gdrive_error_no_account_on_device">هذا الجهاز لم يسجل الدخول إلى أي حساب جوجل.</string>
+    <string name="sync_gdrive_error_account_already_connected">هذا الحساب متصل بالفعل.</string>
 </resources>

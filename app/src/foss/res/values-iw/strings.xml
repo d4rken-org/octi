@@ -14,4 +14,5 @@
     <string name="upgrade_screen_sponsor_action">חסות פיתוח</string>
     <string name="upgrade_screen_sponsor_action_hint">האלטרנטיבה הן מודעות, אנליטיקס ו-Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">תודה שתמכת בפיתוח קוד פתוח ❤️</string>
+    <string name="upgrade_screen_sponsor_too_fast_msg">כבר חזרת? התמיכה שלך שומרת על Octi חי!</string>
 </resources>

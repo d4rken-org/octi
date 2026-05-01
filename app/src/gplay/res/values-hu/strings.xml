@@ -7,6 +7,10 @@
     <string name="upgrades_dashcard_title">Szerezze be az Octi Pro-t</string>
     <string name="upgrades_dashcard_body">Frissíts további funkciók eléréséhez és a fejlesztés támogatásához!</string>
     <string name="upgrades_dashcard_upgrade_action">Frissítés</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">%1$d eszközre korlátozódik az ingyenes verzió.</item>
+        <item quantity="other">%1$d eszközre korlátozódik az ingyenes verzió.</item>
+    </plurals>
     <string name="upgrade_screen_title">Szerezze be az Octi Pro-t</string>
     <string name="upgrade_screen_preamble">Az Octi nem tartalmaz hirdetéseket és nem árul felhasználói adatokat. A munkámat te finanszírozod ❤️.</string>
     <string name="upgrade_screen_benefits_title">Előnyök</string>

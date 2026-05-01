@@ -5,6 +5,10 @@
     <string name="upgrades_dashcard_title">Kry Octi Pro</string>
     <string name="upgrades_dashcard_body">Ontsluit ekstra kenmerke en word \'n ondersteuner om voortdurende ontwikkeling te help!</string>
     <string name="upgrades_dashcard_upgrade_action">Opgradeer</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">Die gratis weergawe is beperk tot %1$d toestel.</item>
+        <item quantity="other">Die gratis weergawe is beperk tot %1$d toestelle.</item>
+    </plurals>
     <string name="upgrade_screen_title">Opgradeer na Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi het geen advertensies en verkoop nie gebruikersdata nie. My werk word deur jou gefinansier ❤️</string>
     <string name="upgrade_screen_how_title">Wat om te doen</string>
@@ -14,4 +18,5 @@
     <string name="upgrade_screen_sponsor_action">Borg ontwikkeling</string>
     <string name="upgrade_screen_sponsor_action_hint">Die alternatief is advertensies, analitika en Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Dankie dat jy oopbron-ontwikkeling ondersteun ❤️</string>
+    <string name="upgrade_screen_sponsor_too_fast_msg">Terug al? Jou ondersteuning hou Octi aan die lewe!</string>
 </resources>

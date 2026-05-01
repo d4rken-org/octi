@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Resetează toate datele Octi stocate pe Google Drive. Dispozitivul tău rămâne conectat la Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Deconectează-te de la Google Drive și șterge datele legate de acest dispozitiv.</string>
     <string name="sync_gdrive_error_no_account_on_device">Acest dispozitiv nu este conectat la niciun cont Google.</string>
+    <string name="sync_gdrive_error_account_already_connected">Acest cont este deja conectat.</string>
 </resources>

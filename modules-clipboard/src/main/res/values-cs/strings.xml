@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Prázdné</string>
     <string name="module_clipboard_detail_type_text">Text</string>
     <string name="module_clipboard_copy_action">Kopírovat do schránky</string>
+    <string name="module_clipboard_widget_description">Zobrazit obsah schránky ze synchronizovaných zařízení.</string>
+    <string name="module_clipboard_widget_paste_action">Sdílet moji schránku</string>
+    <string name="module_clipboard_widget_share_action">Sdílet moji schránku</string>
+    <string name="module_clipboard_widget_copied_toast">Zkopírováno</string>
+    <string name="module_clipboard_widget_self_label">Ty</string>
+    <string name="module_clipboard_widget_self_empty">Zatím nic nenasdíleno</string>
+    <string name="module_clipboard_widget_no_data">Žádná data schránky</string>
+    <string name="module_clipboard_widget_share_success">Schránka sdílena</string>
+    <string name="module_clipboard_widget_share_empty">Nic ke sdílení</string>
+    <string name="module_clipboard_widget_share_blocked">Přístup ke schránce je blokován</string>
+    <string name="module_clipboard_widget_share_unsupported">Obsah schránky není podporován</string>
+    <string name="module_clipboard_widget_share_failed">Nepodařilo se sdílet schránku</string>
 </resources>

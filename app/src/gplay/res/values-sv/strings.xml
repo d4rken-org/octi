@@ -7,6 +7,10 @@
     <string name="upgrades_dashcard_title">Skaffa Octi Pro</string>
     <string name="upgrades_dashcard_body">Uppgradera för att låsa upp fler funktioner och stödja utvecklingen!</string>
     <string name="upgrades_dashcard_upgrade_action">Uppgradera</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">Gratisversionen är begränsad till %1$d enhet.</item>
+        <item quantity="other">Gratisversionen är begränsad till %1$d enheter.</item>
+    </plurals>
     <string name="upgrade_screen_title">Skaffa Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi har inga annonser och säljer inte användardata. Mitt arbete finansieras av dig ❤️.</string>
     <string name="upgrade_screen_benefits_title">Fördelar</string>

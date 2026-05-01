@@ -7,6 +7,11 @@
     <string name="upgrades_dashcard_title">Преузмите Octi Pro</string>
     <string name="upgrades_dashcard_body">Надоградите да бисте откључали додатне функције и подржали развој!</string>
     <string name="upgrades_dashcard_upgrade_action">Надогради</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">Бесплатна верзија је ограничена на %1$d уређај.</item>
+        <item quantity="few">Бесплатна верзија је ограничена на %1$d уређаја.</item>
+        <item quantity="other">Бесплатна верзија је ограничена на %1$d уређаја.</item>
+    </plurals>
     <string name="upgrade_screen_title">Преузмите Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi нема огласе и не продаје корисничке податке. Мој рад финансирате ви ❤️.</string>
     <string name="upgrade_screen_benefits_title">Предности</string>

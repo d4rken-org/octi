@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Trống</string>
     <string name="module_clipboard_detail_type_text">Văn bản</string>
     <string name="module_clipboard_copy_action">Sao chép vào bảng tạm</string>
+    <string name="module_clipboard_widget_description">Hiển thị nội dung bộ nhớ tạm từ các thiết bị được đồng bộ.</string>
+    <string name="module_clipboard_widget_paste_action">Chia sẻ bộ nhớ tạm của tôi</string>
+    <string name="module_clipboard_widget_share_action">Chia sẻ bộ nhớ tạm của tôi</string>
+    <string name="module_clipboard_widget_copied_toast">Đã sao chép</string>
+    <string name="module_clipboard_widget_self_label">Bạn</string>
+    <string name="module_clipboard_widget_self_empty">Chưa chia sẻ gì cả</string>
+    <string name="module_clipboard_widget_no_data">Không có dữ liệu bộ nhớ tạm</string>
+    <string name="module_clipboard_widget_share_success">Đã chia sẻ bộ nhớ tạm</string>
+    <string name="module_clipboard_widget_share_empty">Không có gì để chia sẻ</string>
+    <string name="module_clipboard_widget_share_blocked">Quyền truy cập bộ nhớ tạm bị chặn</string>
+    <string name="module_clipboard_widget_share_unsupported">Nội dung bộ nhớ tạm không được hỗ trợ</string>
+    <string name="module_clipboard_widget_share_failed">Không thể chia sẻ bộ nhớ tạm</string>
 </resources>

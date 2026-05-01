@@ -7,6 +7,10 @@
     <string name="upgrades_dashcard_title">Krijg Octi Pro</string>
     <string name="upgrades_dashcard_body">Upgrade om extra functies te ontgrendelen en de ontwikkeling te steunen!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgraden</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">De gratis versie is beperkt tot %1$d apparaat.</item>
+        <item quantity="other">De gratis versie is beperkt tot %1$d apparaten.</item>
+    </plurals>
     <string name="upgrade_screen_title">Krijg Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi bevat geen advertenties en verkoopt geen gebruikersdata. Mijn werk wordt door jou gefinancierd ❤️.</string>
     <string name="upgrade_screen_benefits_title">Voordelen</string>

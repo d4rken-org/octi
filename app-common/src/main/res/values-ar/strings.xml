@@ -12,16 +12,21 @@
     <string name="general_gotit_action">فهمت</string>
     <string name="general_na_label">غ/م</string>
     <string name="general_empty_label">فارغ</string>
+    <string name="general_delete_action">حذف</string>
     <string name="general_dismiss_action">إغلاق</string>
     <string name="general_maybe_later_action">ربما لاحقًا</string>
     <string name="general_manage_action">إدارة</string>
     <string name="general_quota_label">الحصة</string>
+    <string name="general_sync_action">مزامنة</string>
+    <string name="general_reset_action">إعادة تعيين</string>
+    <string name="general_disconnect_action">قطع الاتصال</string>
     <string name="general_upgrade_action">تحديث النسخة</string>
     <string name="general_update_action">تحديث</string>
     <string name="general_donate_action">تبرع</string>
     <string name="general_check_action">تحقق</string>
     <string name="general_internal_not_available_msg">الاتصال بالإنترنت غير متاح</string>
     <string name="general_refresh_action">تحديث</string>
+    <string name="general_close_action">إغلاق</string>
     <string name="general_continue">استمرار</string>
     <string name="general_show_details_action">إظهار التفاصيل</string>
     <string name="general_minutes_label">دقائق</string>
@@ -34,7 +39,7 @@
         <item quantity="other">%1$d دقيقة</item>
     </plurals>
     <string name="ui_theme_mode_setting_label">وضع السمة</string>
-    <string name="ui_theme_mode_setting_explanation">الوضع المستخدم عند تطبيق سمة التطبيق (مثل الداكن أو الفاتح).</string>
+    <string name="ui_theme_mode_setting_explanation">الوضع المستخدم عند تطبيق سمة التطبيق (مثل داكن أو فاتح).</string>
     <string name="ui_theme_mode_dark_label">داكن</string>
     <string name="ui_theme_mode_light_label">فاتح</string>
     <string name="ui_theme_mode_system_label">النظام</string>
@@ -42,5 +47,39 @@
     <string name="ui_theme_style_setting_explanation">نمط الألوان المستخدم عند تطبيق سمة التطبيق.</string>
     <string name="ui_theme_style_default_label">الافتراضي</string>
     <string name="ui_theme_style_materialyou_label">ماتيريال يو</string>
+    <string name="ui_theme_style_medium_contrast_label">تباين متوسط</string>
+    <string name="ui_theme_style_high_contrast_label">تباين عالٍ</string>
+    <string name="ui_theme_color_setting_label">لون السمة</string>
+    <string name="ui_theme_color_green_label">أخضر</string>
+    <string name="ui_theme_color_blue_label">أزرق</string>
+    <string name="ui_theme_color_sunset_label">غروب الشمس</string>
     <string name="device_x_label">الجهاز: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">ماتيريال يو</string>
+    <string name="widget_theme_classic_green">أخضر كلاسيكي</string>
+    <string name="widget_theme_blue">أزرق</string>
+    <string name="widget_theme_orange">برتقالي</string>
+    <string name="widget_theme_red">أحمر</string>
+    <string name="widget_theme_dark">داكن</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">تخصيص الأداة</string>
+    <string name="widget_config_apply_action">تطبيق</string>
+    <string name="widget_config_presets_label">الإعدادات المسبقة</string>
+    <string name="widget_config_background_label">لون الخلفية</string>
+    <string name="widget_config_accent_label">لون التمييز</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">معاينة</string>
+    <string name="widget_config_custom_label">مخصص</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">الأجهزة</string>
+    <string name="widget_config_devices_empty_hint">إذا لم يتم اختيار أي أجهزة، سيتم عرض جميع الأجهزة.</string>
+    <string name="widget_config_devices_selected_hint">سيتم عرض الأجهزة المحددة فقط.</string>
+    <string name="widget_config_devices_none_known">لا توجد أجهزة مزامنة معروفة بعد.</string>
+    <string name="widget_empty_label">لا توجد أجهزة مطابقة</string>
+    <string name="widget_no_sync_devices_label">لا توجد أجهزة مزامنة بعد</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">لا توجد بيانات %1$s لهذا الجهاز</string>
+    <string name="widget_deeplink_module_power">البطارية</string>
+    <string name="widget_deeplink_module_connectivity">الشبكة</string>
+    <string name="widget_deeplink_module_clipboard">الحافظة</string>
 </resources>

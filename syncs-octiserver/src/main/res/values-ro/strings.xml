@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Un server de sincronizare open source pentru Octi realizat de dezvoltatorul acestei aplicații. Datele sunt criptate pe partea clientului, doar dispozitivele tale le pot decripta.\n\nDeoarece atât aplicația, cât și serverul sunt încă îmbunătățite, poate fi mai puțin stabil decât alte opțiuni de sincronizare.</string>
+    <string name="sync_octiserver_type_description">Un server de sincronizare open-source pentru Octi, realizat de dezvoltatorul acestei aplicatii. Datele sunt criptate pe partea clientului, doar dispozitivele dvs. le pot decripta.
+
+Deoarece atat aplicatia cat si serverul sunt inca in dezvoltare, poate fi mai putin stabil decat alte optiuni de sincronizare.</string>
     <string name="sync_octiserver_add_create_action_hint">Conturile inactive sunt șterse după câteva săptămâni.</string>
-    <string name="sync_octiserver_add_subtitle">Adaugă un Google Drive nou</string>
+    <string name="sync_octiserver_add_subtitle">Adauga cont Octi Server</string>
     <string name="sync_octiserver_add_link_action_hint">Vei avea nevoie de acces la un alt dispozitiv care este deja conectat.</string>
     <string name="sync_octiserver_about_title">Despre Octi Server</string>
-    <string name="sync_octiserver_about_desc">Octi Server este un server de sincronizare open-source (în Kotlin) pentru Octi, realizat de darken.</string>
+    <string name="sync_octiserver_about_desc">Octi Server este un server de sincronizare open-source pentru Octi, realizat de darken.</string>
     <string name="sync_octiserver_about_author_action">Autor</string>
     <string name="sync_octiserver_about_source_action">Cod sursă</string>
     <string name="sync_octiserver_reset_confirmation_desc">Șterge datele dispozitivului pentru acest cont. Dispozitivele rămân conectate, dar datele stocate sunt eliminate.</string>
@@ -15,10 +17,23 @@
     <string name="sync_octiserver_link_code_label">Cod de conectare</string>
     <string name="sync_octiserver_link_host_option_direct">Creează un cod text pe care îl poți trimite prin alte aplicații</string>
     <string name="sync_octiserver_link_host_option_qrcode">Afișează un cod QR</string>
+    <string name="sync_octiserver_link_host_waiting_label">Se asteapta conectarea dispozitivului...</string>
     <string name="sync_octiserver_link_host_device_linked_message">Un dispozitiv nou a fost conectat la contul tău.</string>
-    <string name="sync_octiserver_link_client_option_direct">Copiază și lipește manual un cod de conectare</string>
+    <string name="sync_octiserver_link_client_option_direct">Copiati si lipiti manual un cod de conectare</string>
     <string name="sync_octiserver_link_client_option_qrcode">Scanează un cod QR de pe alt dispozitiv</string>
     <string name="sync_octiserver_link_client_startcamera_action">Pornește camera</string>
     <string name="sync_octiserver_link_client_link_action">Conectează dispozitiv</string>
-    <string name="sync_octiserver_error_device_not_registered">Acest dispozitiv nu mai este înregistrat pe server. Deconectați-vă și reconectați-vă de pe alt dispozitiv sau creați un cont nou.</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Dispozitiv deconectat</string>
+    <string name="sync_octiserver_error_device_not_registered">Acest dispozitiv nu mai este inregistrat pe server. Deconectati si reconectati de pe un alt dispozitiv sau creati un cont nou.</string>
+    <string name="sync_octiserver_resume_sync_action">Reluare sincronizare</string>
+    <string name="sync_octiserver_add_create_account_title">Creează cont?</string>
+    <string name="sync_octiserver_add_create_account_desc">Un nou cont de sincronizare criptat va fi creat pe acest server.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Acest cont necesită Octi %1$s sau mai nou. Actualizează acest dispozitiv sau elimină-l din cont.</string>
+    <string name="sync_octiserver_legacy_encryption_account">Partajarea fișierelor nu este disponibilă pe acest dispozitiv deoarece contul folosește criptare veche. Creează un cont nou pe un dispozitiv actualizat și reconectează celelalte dispozitive pentru a folosi partajarea fișierelor.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Criptare incompatibilă</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Partajarea fișierelor indisponibilă</string>
+    <string name="sync_octiserver_add_create_account_action">Creează cont</string>
+    <string name="sync_octiserver_add_link_existing_action">Conectează la cont existent</string>
+    <string name="sync_octiserver_add_select_server_label">Selectează server</string>
+    <string name="sync_octiserver_add_custom_server_label">Server personalizat</string>
 </resources>

@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">آخر ظهور %1$s</string>
     <string name="sync_device_stale_warning_text">لم تتم مزامنة الجهاز منذ %s</string>
+    <string name="sync_device_clock_skew_warning_text">يبدو أن ساعة الجهاز غير متزامنة</string>
+    <string name="sync_clock_discrepancy_chip_label">انحراف الساعة</string>
+    <string name="sync_clock_discrepancy_title">تعارض في الساعة</string>
+    <string name="sync_clock_discrepancy_uncertain">تم اكتشاف تعارض في الساعة بين أجهزتك. مع جهازَين فقط، لا يمكن تحديد أيهما يحتوي على الوقت غير الصحيح.
+
+تحقق من إعدادات الوقت في جهازك.</string>
+    <string name="sync_clock_discrepancy_current_suspect">يبدو أن ساعة هذا الجهاز غير متزامنة. تتفق أجهزتك الأخرى على وقت مختلف.
+
+تحقق من إعدادات الوقت في هذا الجهاز.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">يبدو أن ساعة %s غير متزامنة. تتفق أجهزتك الأخرى على الوقت الحالي.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">ساعة جهازك متقدمة على الخادم بمقدار %s.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">ساعة جهازك متأخرة عن الخادم بمقدار %s.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="zero">%d أجهزة لم تتم مزامنتها مؤخرًا</item>
         <item quantity="one">جهاز %d لم تتم مزامنته مؤخرًا</item>
@@ -9,6 +22,20 @@
         <item quantity="many">%d جهازًا لم تتم مزامنته مؤخرًا</item>
         <item quantity="other">%d جهاز لم تتم مزامنته مؤخرًا</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">تشغيل إصدار قديم %s</string>
+    <string name="sync_issues_type_stale_device">جهاز قديم</string>
+    <string name="sync_issues_type_clock_skew">مشكلة في الساعة</string>
+    <string name="sync_issues_type_outdated_version">إصدار قديم</string>
+    <string name="sync_issues_type_server_storage_low">مساحة الخادم ممتلئة</string>
+    <string name="sync_server_storage_low_description">مساحة القرص في خادم المزامنة منخفضة. تم إيقاف التحميل مؤقتاً حتى يحرر مسؤول الخادم مساحة.</string>
+    <string name="sync_issues_type_account_quota_full">الحساب ممتلئ</string>
+    <string name="sync_account_quota_full_description">وصل حسابك إلى حصة التخزين على هذا الخادم. احذف الملفات المشتركة أو البيانات المنتهية لتحرير المساحة، ثم زامن مجدداً.</string>
+    <string name="sync_issues_type_low_storage">مساحة التخزين منخفضة</string>
+    <string name="sync_low_storage_description">أقل من 10%% من مساحة التخزين المتاحة متبقية. حرر مساحة قريباً للاستمرار في المزامنة.</string>
+    <string name="sync_connector_paused_label">إيقاف المزامنة مؤقتاً</string>
+    <string name="sync_connector_paused_error_label">الموصل متوقف مؤقتاً</string>
+    <string name="sync_connector_paused_error_desc">هذا الموصل متوقف مؤقتاً. استئنفه لتنفيذ هذا الإجراء.</string>
+    <string name="sync_synced_devices_label">الأجهزة المتزامنة</string>
     <plurals name="sync_stale_period_days">
         <item quantity="zero">%d يوم</item>
         <item quantity="one">يوم %d</item>

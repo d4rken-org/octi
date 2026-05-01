@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Google Drive\'da depolanan tüm Octi verilerini sıfırlayın. Cihazınız Google Drive\'da oturum açmış olarak kalır.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Google Drive\'dan çıkış yapın ve bu cihazla ilgili verileri silin.</string>
     <string name="sync_gdrive_error_no_account_on_device">Bu cihaz herhangi bir Google hesabında oturum açmamıştır.</string>
+    <string name="sync_gdrive_error_account_already_connected">Bu hesap zaten bağlı.</string>
 </resources>

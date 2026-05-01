@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Sidst set %1$s</string>
     <string name="sync_device_stale_warning_text">Enheden har ikke synkroniseret i %s</string>
+    <string name="sync_device_clock_skew_warning_text">Enhedens ur ser ud til at være ude af sync</string>
+    <string name="sync_clock_discrepancy_chip_label">Ur-afvigelse</string>
+    <string name="sync_clock_discrepancy_title">Ur-uoverensstemmelse</string>
+    <string name="sync_clock_discrepancy_uncertain">En ur-uoverensstemmelse blev opdaget mellem dine enheder. Med kun to enheder er det ikke muligt at afgøre, hvilken der har den forkerte tid.\n\nTjek din enheds tidsindstillinger.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Denne enheds ur ser ud til at være ude af sync. Dine andre enheder er enige om et andet tidspunkt.\n\nTjek denne enheds tidsindstillinger.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Uret på %s ser ud til at være ude af sync. Dine andre enheder er enige om den aktuelle tid.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Din enheds ur er %s foran serveren.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Din enheds ur er %s bagud i forhold til serveren.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d enhed har ikke synkroniseret for nylig</item>
         <item quantity="other">%d enheder har ikke synkroniseret for nylig</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Kører forældet version %s</string>
+    <string name="sync_issues_type_stale_device">Forældet enhed</string>
+    <string name="sync_issues_type_clock_skew">Ur-problem</string>
+    <string name="sync_issues_type_outdated_version">Forældet version</string>
+    <string name="sync_issues_type_server_storage_low">Serveren har ikke mere plads</string>
+    <string name="sync_server_storage_low_description">Synkroniseringsserveren er ved at løbe tør for diskplads. Uploads er sat på pause, indtil serveradministratoren frigiver plads.</string>
+    <string name="sync_issues_type_account_quota_full">Konto er fuld</string>
+    <string name="sync_account_quota_full_description">Din konto har nået sin lagerkvote på denne server. Slet delte filer eller udløbne data for at frigive plads, og synkroniser derefter igen.</string>
+    <string name="sync_issues_type_low_storage">Lavt lager</string>
+    <string name="sync_low_storage_description">Mindre end 10%% af det tilgængelige lager er tilbage. Frigiv plads snart for at holde synkroniseringen kørende.</string>
+    <string name="sync_connector_paused_label">Pause synkronisering</string>
+    <string name="sync_connector_paused_error_label">Connector sat på pause</string>
+    <string name="sync_connector_paused_error_desc">Denne connector er sat på pause. Genoptag den for at udføre denne handling.</string>
+    <string name="sync_synced_devices_label">Synkroniserede enheder</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d dag</item>
         <item quantity="other">%d dage</item>

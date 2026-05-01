@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Đặt lại tất cả dữ liệu Octi được lưu trên Google Drive. Thiết bị của bạn vẫn đăng nhập Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Đăng xuất khỏi Google Drive và xóa dữ liệu liên quan đến thiết bị này.</string>
     <string name="sync_gdrive_error_no_account_on_device">Thiết bị này chưa đăng nhập vào bất kỳ tài khoản Google nào.</string>
+    <string name="sync_gdrive_error_account_already_connected">Tài khoản này đã được kết nối.</string>
 </resources>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Egy nyílt forráskódú szinkronizáló szerver Octi-hoz, amit az alkalmazás fejlesztője készített. Az adatok kliens oldalon titkosítva vannak, csak a saját eszközeid tudják visszafejteni.\n\nMivel az alkalmazás és a szerver is folyamatosan fejlődik, kevésbé stabil lehet, mint más szinkronizálási lehetőségek.</string>
+    <string name="sync_octiserver_type_description">Az Octi nyílt forráskódú szinkronizáló szervere, amelyet ennek az alkalmazásnak a fejlesztője készített. Az adatok ügyféldáldalon titkosítottak, csak az Ön eszközei tudják visszafejteni.\n\nMivel mind az alkalmazás, mind a szerver fejlesztbsé alatt áll, esetleg kevesbé stabil, mint a többi szinkronizálási lehetőség.</string>
     <string name="sync_octiserver_add_create_action_hint">Az inaktív fiókok néhány hét után törlődnek.</string>
-    <string name="sync_octiserver_add_subtitle">Új Google Drive hozzáadása</string>
+    <string name="sync_octiserver_add_subtitle">Octi Server fiók hozzáadása</string>
     <string name="sync_octiserver_add_link_action_hint">Szükséged lesz egy már összekapcsolt másik eszköz hozzáférésére.</string>
-    <string name="sync_octiserver_about_title">A Octi Server-ről</string>
-    <string name="sync_octiserver_about_desc">A Octi Server egy nyílt forráskódú szinkronizálási szerver (Kotlin nyelven) Octi-hoz, darken által.</string>
+    <string name="sync_octiserver_about_title">Az Octi Serverről</string>
+    <string name="sync_octiserver_about_desc">Az Octi Server egy nyílt forráskódú szinkronizáló szerver az Octihoz, darken készítésében.</string>
     <string name="sync_octiserver_about_author_action">Szerző</string>
     <string name="sync_octiserver_about_source_action">Forráskód</string>
     <string name="sync_octiserver_reset_confirmation_desc">Az eszköz adatainak törlése erről a fiókról. Az eszközök kapcsolva maradnak, de a tárolt adataik törlődnek.</string>
@@ -15,10 +15,23 @@
     <string name="sync_octiserver_link_code_label">Összekapcsolási kód</string>
     <string name="sync_octiserver_link_host_option_direct">Hozz létre egy szöveges kódot, amit más alkalmazásokon keresztül küldhetsz el</string>
     <string name="sync_octiserver_link_host_option_qrcode">QR kód megjelenítése</string>
+    <string name="sync_octiserver_link_host_waiting_label">Várás az eszköz csatlakozására…</string>
     <string name="sync_octiserver_link_host_device_linked_message">Új eszköz lett kapcsolva a fiókodhoz.</string>
-    <string name="sync_octiserver_link_client_option_direct">Összekapcsolási kód manuális másolása és beillesztése</string>
+    <string name="sync_octiserver_link_client_option_direct">Csatolási kód kézi másolása és beillesztése</string>
     <string name="sync_octiserver_link_client_option_qrcode">QR kód leolvasása másik eszközről</string>
     <string name="sync_octiserver_link_client_startcamera_action">Kamera indítása</string>
     <string name="sync_octiserver_link_client_link_action">Eszköz összekapcsolása</string>
-    <string name="sync_octiserver_error_device_not_registered">Ez az eszköz már nincs regisztrálva a szerveren. Válassz le, majd kapcsold újra egy másik eszközről, vagy hozz létre új fiókot.</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Az eszköz már nincs összekaporcsolva</string>
+    <string name="sync_octiserver_error_device_not_registered">Ez az eszköz többé nincs regisztrálva a szerveren. Csatlakozzon le, és egy másik eszközről csatolja újra, vagy hozzon létre új fiókot.</string>
+    <string name="sync_octiserver_resume_sync_action">Szinkronizáció folytatása</string>
+    <string name="sync_octiserver_add_create_account_title">Fiók létrehozása?</string>
+    <string name="sync_octiserver_add_create_account_desc">Egy új titkosított szinkronizációs fiók jön létre ezen a szerveren.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Ez a fiók Octi %1$s vagy újabb verziót igényel. Frissítsd az eszközt, vagy távolítsd el a fiókból.</string>
+    <string name="sync_octiserver_legacy_encryption_account">A fájlmegosztás nem érhető el ezen az eszközön, mert a fiók örökölt titkosítást használ. Hozz létre egy új fiókot egy frissített eszközön, és kapcsold össze a többi eszközödet a fájlmegosztás használatához.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Inkompatibilis titkosítás</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Fájlmegosztás nem elérhető</string>
+    <string name="sync_octiserver_add_create_account_action">Fiók létrehozása</string>
+    <string name="sync_octiserver_add_link_existing_action">Kapcsolódás meglévő fiókhoz</string>
+    <string name="sync_octiserver_add_select_server_label">Szerver kiválasztása</string>
+    <string name="sync_octiserver_add_custom_server_label">Egyéni szerver</string>
 </resources>

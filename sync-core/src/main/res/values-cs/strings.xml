@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Naposledy spatřeno %1$s</string>
     <string name="sync_device_stale_warning_text">Zařízení nebylo synchronizováno %s</string>
+    <string name="sync_device_clock_skew_warning_text">Hodiny zařízení jsou zřejmě nesynchronizované</string>
+    <string name="sync_clock_discrepancy_chip_label">Odchylka hodin</string>
+    <string name="sync_clock_discrepancy_title">Nesoulad hodin</string>
+    <string name="sync_clock_discrepancy_uncertain">Mezi vašimi zařízeními byl zjištěn nesoulad hodin. Se dvěma zařízeními není možné určit, které má nesprávný čas.\n\nZkontrolujte nastavení času na svých zařízeních.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Hodiny tohoto zařízení jsou zřejmě nesynchronizované. Vaše ostatní zařízení se shodují na jiném čase.\n\nZkontrolujte nastavení času tohoto zařízení.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Hodiny zařízení %s jsou zřejmě nesynchronizované. Vaše ostatní zařízení se shodují na aktuálním čase.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Hodiny vašeho zařízení jsou o %s před serverem.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Hodiny vašeho zařízení jsou o %s za serverem.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d zařízení nebylo v poslední době synchronizováno</item>
         <item quantity="few">%d zařízení nebyla v poslední době synchronizována</item>
         <item quantity="many">%d zařízení nebylo v poslední době synchronizováno</item>
         <item quantity="other">%d zařízení nebylo v poslední době synchronizováno</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Spouštím zastaralou verzi %s</string>
+    <string name="sync_issues_type_stale_device">Zastaralé zařízení</string>
+    <string name="sync_issues_type_clock_skew">Problém s hodinami</string>
+    <string name="sync_issues_type_outdated_version">Zastaralá verze</string>
+    <string name="sync_issues_type_server_storage_low">Serveru došlo místo</string>
+    <string name="sync_server_storage_low_description">Synchronizačnímu serveru dochází místo na disku. Nahrávání je pozastaveno, dokud správce serveru neuvolní místo.</string>
+    <string name="sync_issues_type_account_quota_full">Účet je plný</string>
+    <string name="sync_account_quota_full_description">Váš účet dosáhl limitu úložného prostoru na tomto serveru. Odstraňte sdílené soubory nebo prohlášlá data, abyste uvolnili místo, a pak znovu synchronizujte.</string>
+    <string name="sync_issues_type_low_storage">Málo místa</string>
+    <string name="sync_low_storage_description">Zbývá méně než 10 %% dostupného úložného prostoru. Brzy uvolněte místo, abyste mohli pokračovat v synchronizaci.</string>
+    <string name="sync_connector_paused_label">Pozastavení synchronizace</string>
+    <string name="sync_connector_paused_error_label">Konektor pozastaven</string>
+    <string name="sync_connector_paused_error_desc">Tento konektor je pozastaven. Obnovte jej, abyste mohli tuto akci provést.</string>
+    <string name="sync_synced_devices_label">Synchronizovaná zařízení</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d den</item>
         <item quantity="few">%d dny</item>

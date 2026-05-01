@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Vuoto</string>
     <string name="module_clipboard_detail_type_text">Testo</string>
     <string name="module_clipboard_copy_action">Copia negli appunti</string>
+    <string name="module_clipboard_widget_description">Mostra il contenuto degli appunti dai tuoi dispositivi sincronizzati.</string>
+    <string name="module_clipboard_widget_paste_action">Condividi i miei appunti</string>
+    <string name="module_clipboard_widget_share_action">Condividi i miei appunti</string>
+    <string name="module_clipboard_widget_copied_toast">Copiato</string>
+    <string name="module_clipboard_widget_self_label">Tu</string>
+    <string name="module_clipboard_widget_self_empty">Ancora niente condiviso</string>
+    <string name="module_clipboard_widget_no_data">Nessun dato negli appunti</string>
+    <string name="module_clipboard_widget_share_success">Appunti condivisi</string>
+    <string name="module_clipboard_widget_share_empty">Niente da condividere</string>
+    <string name="module_clipboard_widget_share_blocked">Accesso agli appunti bloccato</string>
+    <string name="module_clipboard_widget_share_unsupported">Contenuto degli appunti non supportato</string>
+    <string name="module_clipboard_widget_share_failed">Impossibile condividere gli appunti</string>
 </resources>

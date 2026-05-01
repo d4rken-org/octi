@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Nollaa kaikki Googlen Drivelle tallennetut Octin tiedot. Laite pysyy kirjautuneena Google Driveen.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Kirjaudu ulos Google Drivesta ja poista tähän laitteeseen liittyvät tiedot.</string>
     <string name="sync_gdrive_error_no_account_on_device">Tämä laite ei ole kirjautuneena mihinkään Google-tiliin.</string>
+    <string name="sync_gdrive_error_account_already_connected">Tämä tili on jo yhdistetty.</string>
 </resources>

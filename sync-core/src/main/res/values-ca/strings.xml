@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Vist per última vegada %1$s</string>
     <string name="sync_device_stale_warning_text">El dispositiu no s\'ha sincronitzat en %s</string>
+    <string name="sync_device_clock_skew_warning_text">El rellotge del dispositiu sembla no estar sincronitzat</string>
+    <string name="sync_clock_discrepancy_chip_label">Desviació del rellotge</string>
+    <string name="sync_clock_discrepancy_title">Discrepància del rellotge</string>
+    <string name="sync_clock_discrepancy_uncertain">S’ha detectat una discrepància del rellotge entre els vostres dispositius. Amb només dos dispositius, no és possible determinar quin té l’hora incorrecta.
+
+Comproveu la configuració de l’hora del dispositiu.</string>
+    <string name="sync_clock_discrepancy_current_suspect">El rellotge d’aquest dispositiu sembla no estar sincronitzat. La resta dels vostres dispositius coincideixen en una hora diferent.
+
+Comproveu la configuració de l’hora d’aquest dispositiu.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">El rellotge de %s sembla no estar sincronitzat. La resta dels vostres dispositius coincideixen en l’hora actual.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">El rellotge del vostre dispositiu va %s per davant del servidor.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">El rellotge del vostre dispositiu va %s per darrere del servidor.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d dispositiu no s\'ha sincronitzat recentment</item>
         <item quantity="other">%d dispositius no s\'han sincronitzat recentment</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">S’executa la versió obsoleta %s</string>
+    <string name="sync_issues_type_stale_device">Dispositiu inactiu</string>
+    <string name="sync_issues_type_clock_skew">Problema del rellotge</string>
+    <string name="sync_issues_type_outdated_version">Versió obsoleta</string>
+    <string name="sync_issues_type_server_storage_low">El servidor no té espai</string>
+    <string name="sync_server_storage_low_description">El servidor de sincronització té poc espai al disc. Les càrregues estan en pausa fins que l’administrador del servidor alliberi espai.</string>
+    <string name="sync_issues_type_account_quota_full">El compte està ple</string>
+    <string name="sync_account_quota_full_description">El vostre compte ha assolit la quota d’emmagatzematge d’aquest servidor. Elimineu fitxers compartits o dades caducades per alliberar espai i torneu a sincronitzar.</string>
+    <string name="sync_issues_type_low_storage">Emmagatzematge baix</string>
+    <string name="sync_low_storage_description">Queda menys del 10%% de l’emmagatzematge disponible. Allibereu espai aviat per continuar sincronitzant.</string>
+    <string name="sync_connector_paused_label">Pausa la sincronització</string>
+    <string name="sync_connector_paused_error_label">Connector en pausa</string>
+    <string name="sync_connector_paused_error_desc">Aquest connector està en pausa. Repreneu-lo per realitzar aquesta acció.</string>
+    <string name="sync_synced_devices_label">Dispositius sincronitzats</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d dia</item>
         <item quantity="other">%d dies</item>

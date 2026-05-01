@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Sist sett %1$s</string>
     <string name="sync_device_stale_warning_text">Enheten har ikke synkronisert på %s</string>
+    <string name="sync_device_clock_skew_warning_text">Enhetens klokke ser ut til å være ute av synk</string>
+    <string name="sync_clock_discrepancy_chip_label">Klokkeavvik</string>
+    <string name="sync_clock_discrepancy_title">Klokkeavvik</string>
+    <string name="sync_clock_discrepancy_uncertain">Et klokkeavvik ble oppdaget mellom enhetene dine. Med bare to enheter er det ikke mulig å avgjøre hvilken enhet som har feil tid.\n\nSjekk tidsinnstillingene på enhetene dine.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Denne enhetens klokke ser ut til å være ute av synk. De andre enhetene dine er enige om et annet tidspunkt.\n\nSjekk tidsinnstillingene på denne enheten.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">Klokken på %s ser ut til å være ute av synk. De andre enhetene dine er enige om det nåværende tidspunktet.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Enhetens klokke er %s foran serveren.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Enhetens klokke er %s bak serveren.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d enhet har ikke synkronisert nylig</item>
         <item quantity="other">%d enheter har ikke synkronisert nylig</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Kjører utdatert versjon %s</string>
+    <string name="sync_issues_type_stale_device">Foreldet enhet</string>
+    <string name="sync_issues_type_clock_skew">Klokkeproblem</string>
+    <string name="sync_issues_type_outdated_version">Utdatert versjon</string>
+    <string name="sync_issues_type_server_storage_low">Serveren har ikke mer lagringsplass</string>
+    <string name="sync_server_storage_low_description">Synkroniseringsserveren har lite diskplass. Opplastinger er pauset til serveradministratoren frigjør plass.</string>
+    <string name="sync_issues_type_account_quota_full">Konto er full</string>
+    <string name="sync_account_quota_full_description">Kontoen din har nådd lagringskvoten på denne serveren. Slett delte filer eller utgåtte data for å frigjøre plass, og synkroniser deretter på nytt.</string>
+    <string name="sync_issues_type_low_storage">Lite lagringsplass</string>
+    <string name="sync_low_storage_description">Mindre enn 10 %% av tilgjengelig lagringsplass gjenstår. Frigjør plass snart for å fortsette synkroniseringen.</string>
+    <string name="sync_connector_paused_label">Paus synkronisering</string>
+    <string name="sync_connector_paused_error_label">Tilkobling pauset</string>
+    <string name="sync_connector_paused_error_desc">Denne tilkoblingen er pauset. Gjenoppta den for å utføre denne handlingen.</string>
+    <string name="sync_synced_devices_label">Synkroniserte enheter</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d dag</item>
         <item quantity="other">%d dager</item>

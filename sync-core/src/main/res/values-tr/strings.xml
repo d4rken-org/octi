@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">Son görülme %1$s</string>
     <string name="sync_device_stale_warning_text">Cihaz %s süredir senkronize edilmedi</string>
+    <string name="sync_device_clock_skew_warning_text">Cihaz saati senkronize dışı görünüyor</string>
+    <string name="sync_clock_discrepancy_chip_label">Saat kayması</string>
+    <string name="sync_clock_discrepancy_title">Saat tutarsızlığı</string>
+    <string name="sync_clock_discrepancy_uncertain">Cihazlarınız arasında saat tutarsızlığı tespit edildi. Yalnızca iki cihazla hangi cihazın hatalı saate sahip olduğunu belirlemek mümkün değildir.\n\nCihaz saat ayarlarınızı kontrol edin.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Bu cihazın saati senkronize dışı görünüyor. Diğer cihazlarınız farklı bir zamanda hemfikir.\n\nBu cihazın saat ayarlarını kontrol edin.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">%s adlı cihazdaki saat senkronize dışı görünüyor. Diğer cihazlarınız geçerli saat konusunda hemfikir.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">Cihazınızın saati sunucudan %s ileride.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">Cihazınızın saati sunucudan %s geride.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">%d cihaz son zamanlarda senkronize edilmedi</item>
         <item quantity="other">%d cihaz son zamanlarda senkronize edilmedi</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">Eski sürüm %s çalışıyor</string>
+    <string name="sync_issues_type_stale_device">Eski cihaz</string>
+    <string name="sync_issues_type_clock_skew">Saat sorunu</string>
+    <string name="sync_issues_type_outdated_version">Eski sürüm</string>
+    <string name="sync_issues_type_server_storage_low">Sunucunun alanı doldu</string>
+    <string name="sync_server_storage_low_description">Eşzamanlama sunucusunun disk alanı azalıyor. Sunucu yöneticisi alan açana kadar yüklemeler duraksatıldı.</string>
+    <string name="sync_issues_type_account_quota_full">Hesap dolu</string>
+    <string name="sync_account_quota_full_description">Hesabınız bu sunucudaki depolama kotasına ulaştı. Alan açmak için paylaşılan dosyaları veya süresi dolmuş verileri silin, ardından tekrar eşzamanlayın.</string>
+    <string name="sync_issues_type_low_storage">Düşük depolama alanı</string>
+    <string name="sync_low_storage_description">Mevcut depolama alanının %%10\'undan azı kaldı. Eşzamanlama işleminin devam etmesi için alan açın.</string>
+    <string name="sync_connector_paused_label">Senkronizasyonu duraklat</string>
+    <string name="sync_connector_paused_error_label">Bağlayıcı duraksatıldı</string>
+    <string name="sync_connector_paused_error_desc">Bu bağlayıcı duraksatılmış. Bu işlemi gerçekleştirmek için devam ettirin.</string>
+    <string name="sync_synced_devices_label">Senkronize cihazlar</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d gün</item>
         <item quantity="other">%d gün</item>

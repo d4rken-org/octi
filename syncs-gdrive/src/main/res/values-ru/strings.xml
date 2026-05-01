@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">Сбросить все данные Octi, хранящиеся на Google Drive. Ваше устройство останется подключенным к Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Выйти из Google Drive и удалить данные, связанные с этим устройством.</string>
     <string name="sync_gdrive_error_no_account_on_device">Это устройство не подключено ни к одному аккаунту Google.</string>
+    <string name="sync_gdrive_error_account_already_connected">Этот аккаунт уже подключён.</string>
 </resources>

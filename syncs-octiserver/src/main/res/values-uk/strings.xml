@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Сервер синхронізації з відкритим вихідним кодом для Octi, створений розробником цього додатка. Дані шифруються на стороні клієнта, розшифрувати їх можуть лише ваші пристрої.\n\nОскільки і додаток, і сервер все ще вдосконалюються, він може бути менш стабільним, ніж інші варіанти синхронізації.</string>
+    <string name="sync_octiserver_type_description">Сервер синхронізації з відкритим кодом для Octi, створений розробником цього застосунку. Дані шифруються на стороні клієнта, лише ваші пристрої можуть їх розшифрувати.
+
+Оскільки і застосунок, і сервер ще вдосконалюються, він може бути менш стабільним, ніж інші варіанти синхронізації.</string>
     <string name="sync_octiserver_add_create_action_hint">Неактивні облікові записи видаляються через кілька тижнів.</string>
-    <string name="sync_octiserver_add_subtitle">Додати новий Google Drive</string>
+    <string name="sync_octiserver_add_subtitle">Додати обліковий запис Octi Server</string>
     <string name="sync_octiserver_add_link_action_hint">Вам знадобиться доступ до іншого пристрою, який уже підключено.</string>
     <string name="sync_octiserver_about_title">Про Octi Server</string>
-    <string name="sync_octiserver_about_desc">Octi Server - це сервер синхронізації з відкритим вихідним кодом (на Kotlin) для Octi від darken.</string>
+    <string name="sync_octiserver_about_desc">Octi Server — це сервер синхронізації з відкритим кодом для Octi від darken.</string>
     <string name="sync_octiserver_about_author_action">Автор</string>
     <string name="sync_octiserver_about_source_action">Вихідний код</string>
     <string name="sync_octiserver_reset_confirmation_desc">Очистити дані пристрою в цьому обліковому записі. Пристрої залишаються пов\'язаними, але їхні збережені дані видаляються.</string>
@@ -15,10 +17,23 @@
     <string name="sync_octiserver_link_code_label">Код зв\'язку</string>
     <string name="sync_octiserver_link_host_option_direct">Створити текстовий код, який можна надіслати через інші додатки</string>
     <string name="sync_octiserver_link_host_option_qrcode">Показати QR-код</string>
+    <string name="sync_octiserver_link_host_waiting_label">Очікування на підключення пристрою…</string>
     <string name="sync_octiserver_link_host_device_linked_message">Новий пристрій було зв\'язано з вашим обліковим записом.</string>
     <string name="sync_octiserver_link_client_option_direct">Вручну скопіювати та вставити код зв\'язку</string>
     <string name="sync_octiserver_link_client_option_qrcode">Сканувати QR-код з іншого пристрою</string>
     <string name="sync_octiserver_link_client_startcamera_action">Запустити камеру</string>
     <string name="sync_octiserver_link_client_link_action">Зв\'язати пристрій</string>
-    <string name="sync_octiserver_error_device_not_registered">Цей пристрій більше не зареєстровано на сервері. Від\'єднайтесь і повторно підключіть з іншого пристрою або створіть новий обліковий запис.</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Пристрій більше не прив’язано</string>
+    <string name="sync_octiserver_error_device_not_registered">Цей пристрій більше не зареєстровано на сервері. Від\'єднайтесь і повторно підключіться з іншого пристрою, або створіть новий обліковий запис.</string>
+    <string name="sync_octiserver_resume_sync_action">Відновити синхронізацію</string>
+    <string name="sync_octiserver_add_create_account_title">Створити акаунт?</string>
+    <string name="sync_octiserver_add_create_account_desc">На цьому сервері буде створено новий зашифрований обліковий запис для синхронізації.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Цей обліковий запис потребує Octi %1$s або новішої версії. Оновіть цей пристрій або видаліть його з облікового запису.</string>
+    <string name="sync_octiserver_legacy_encryption_account">Спільний доступ до файлів недоступний на цьому пристрої, оскільки цей обліковий запис використовує застаріле шифрування. Створіть новий обліковий запис на оновленому пристрої та переприєднайте інші пристрої, щоб використовувати спільний доступ до файлів.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Несумісне шифрування</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Спільний доступ до файлів недоступний</string>
+    <string name="sync_octiserver_add_create_account_action">Створити акаунт</string>
+    <string name="sync_octiserver_add_link_existing_action">Додати існуючий акаунт</string>
+    <string name="sync_octiserver_add_select_server_label">Вибрати сервер</string>
+    <string name="sync_octiserver_add_custom_server_label">Індивідуальний сервер</string>
 </resources>

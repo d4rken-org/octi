@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Um servidor de sincronização open-source para Octi feito pelo desenvolvedor deste app. Os dados são criptografados no lado do cliente, somente seus dispositivos podem descriptografá-los.\n\nComo tanto o app quanto o servidor ainda estão em desenvolvimento, pode ser menos estável que outras opções de sincronização.</string>
+    <string name="sync_octiserver_type_description">Um servidor de sincronização de código aberto para o Octi, feito pelo programador desta aplicação. Os dados são encriptados no lado do cliente, apenas os seus dispositivos podem desencriptá-los.\n\nComo tanto a aplicação como o servidor ainda estão a ser melhorados, pode ser menos estável do que outras opções de sincronização.</string>
     <string name="sync_octiserver_add_create_action_hint">Contas inativas são excluídas após algumas semanas.</string>
-    <string name="sync_octiserver_add_subtitle">Adicionar nova Google Drive</string>
+    <string name="sync_octiserver_add_subtitle">Adicionar conta Octi Server</string>
     <string name="sync_octiserver_add_link_action_hint">Você vai precisar de acesso a outro dispositivo que já esteja vinculado.</string>
     <string name="sync_octiserver_about_title">Sobre o Octi Server</string>
-    <string name="sync_octiserver_about_desc">O Octi Server é um servidor de sincronização open-source (em Kotlin) para Octi por darken.</string>
+    <string name="sync_octiserver_about_desc">O Octi Server é um servidor de sincronização de código aberto para o Octi, criado por darken.</string>
     <string name="sync_octiserver_about_author_action">Autor</string>
     <string name="sync_octiserver_about_source_action">Código fonte</string>
     <string name="sync_octiserver_reset_confirmation_desc">Limpar os dados do dispositivo nesta conta. Os dispositivos permanecem vinculados, mas seus dados armazenados são apagados.</string>
@@ -15,10 +15,23 @@
     <string name="sync_octiserver_link_code_label">Código de vinculação</string>
     <string name="sync_octiserver_link_host_option_direct">Criar um código de texto que você pode enviar por outros aplicativos</string>
     <string name="sync_octiserver_link_host_option_qrcode">Mostrar um QRCode</string>
+    <string name="sync_octiserver_link_host_waiting_label">A aguardar que o dispositivo se ligue…</string>
     <string name="sync_octiserver_link_host_device_linked_message">Um novo dispositivo foi vinculado à sua conta.</string>
-    <string name="sync_octiserver_link_client_option_direct">Copiar e colar manualmente um código de vinculação</string>
+    <string name="sync_octiserver_link_client_option_direct">Copiar e colar manualmente um código de ligação</string>
     <string name="sync_octiserver_link_client_option_qrcode">Escanear um QR code de outro dispositivo</string>
     <string name="sync_octiserver_link_client_startcamera_action">Iniciar câmera</string>
     <string name="sync_octiserver_link_client_link_action">Vincular dispositivo</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Dispositivo já não está ligado</string>
     <string name="sync_octiserver_error_device_not_registered">Este dispositivo já não está registado no servidor. Desconecte e ligue novamente a partir de outro dispositivo, ou crie uma nova conta.</string>
+    <string name="sync_octiserver_resume_sync_action">Retomar sincronização</string>
+    <string name="sync_octiserver_add_create_account_title">Criar conta?</string>
+    <string name="sync_octiserver_add_create_account_desc">Será criada uma nova conta de sincronização encriptada neste servidor.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Esta conta requer o Octi %1$s ou posterior. Atualize este dispositivo ou remova-o da conta.</string>
+    <string name="sync_octiserver_legacy_encryption_account">A partilha de ficheiros não está disponível neste dispositivo porque esta conta utiliza encriptação legada. Crie uma nova conta num dispositivo atualizado e volte a ligar os outros dispositivos para utilizar a partilha de ficheiros.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Encriptação incompatível</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Partilha de ficheiros indisponível</string>
+    <string name="sync_octiserver_add_create_account_action">Criar conta</string>
+    <string name="sync_octiserver_add_link_existing_action">Vincular à conta existente</string>
+    <string name="sync_octiserver_add_select_server_label">Selecionar servidor</string>
+    <string name="sync_octiserver_add_custom_server_label">Servidor personalizado</string>
 </resources>

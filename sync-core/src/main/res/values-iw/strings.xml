@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_device_last_seen_label">נראה לאחרונה %1$s</string>
     <string name="sync_device_stale_warning_text">המכשיר לא הסתנכרן ב-%s</string>
+    <string name="sync_device_clock_skew_warning_text">שעון המכשיר נראה לא מסונכרן</string>
+    <string name="sync_clock_discrepancy_chip_label">סטייה בשעון</string>
+    <string name="sync_clock_discrepancy_title">אי התאמת שעון</string>
+    <string name="sync_clock_discrepancy_uncertain">זוהתה אי התאמת שעון בין המכשירים שלך. עם שני מכשירים בלבד, אי אפשר לקבוע איזה מהם מציג שעה שגויה.\n\nבדוק את הגדרות השעה של המכשיר שלך.</string>
+    <string name="sync_clock_discrepancy_current_suspect">שעון המכשיר הזה נראה לא מסונכרן. המכשירים האחרים שלך מסכימים על שעה שונה.\n\nבדוק את הגדרות השעה של המכשיר הזה.</string>
+    <string name="sync_clock_discrepancy_remote_suspect">שעון %s נראה לא מסונכרן. המכשירים האחרים שלך מסכימים על השעה הנוכחית.</string>
+    <string name="sync_clock_discrepancy_server_offset_ahead">שעון המכשיר שלך מקדים את השרת ב-%s.</string>
+    <string name="sync_clock_discrepancy_server_offset_behind">שעון המכשיר שלך מפגר את השרת ב-%s.</string>
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">מכשיר %d לא הסתנכרן לאחרונה</item>
         <item quantity="two">%d מכשירים לא סונכרנו לאחרונה</item>
         <item quantity="many">%d מכשירים לא סונכרנו לאחרונה</item>
         <item quantity="other">%d מכשירים לא סונכרנו לאחרונה</item>
     </plurals>
+    <string name="sync_device_outdated_version_warning">טוען גרסה מיושנת %s</string>
+    <string name="sync_issues_type_stale_device">מכשיר ישן</string>
+    <string name="sync_issues_type_clock_skew">בעיית שעון</string>
+    <string name="sync_issues_type_outdated_version">גרסה מיושנת</string>
+    <string name="sync_issues_type_server_storage_low">השרת אזל מהמקום</string>
+    <string name="sync_server_storage_low_description">שרת הסנכרון מתקרב לסיום שטח הדיסק. ההעלאות מושהות עד שמנהל השרת ישחרר מקום.</string>
+    <string name="sync_issues_type_account_quota_full">החשבון מלא</string>
+    <string name="sync_account_quota_full_description">החשבון שלך הגיע למכסת האחסון שלו בשרת זה. מחק קבצים משותפים או נתונים שפגה תוקפם כדי לפנות מקום, ולאחר מכן סנכרן שוב.</string>
+    <string name="sync_issues_type_low_storage">אחסון נמוך</string>
+    <string name="sync_low_storage_description">פחות מ-10%% מהאחסון הזמין נותר. פנה מקום בקרוב כדי להמשיך לסנכרן.</string>
+    <string name="sync_connector_paused_label">השהה את הסנכרון</string>
+    <string name="sync_connector_paused_error_label">המחבר מושהה</string>
+    <string name="sync_connector_paused_error_desc">מחבר זה מושהה. המשך אותו כדי לבצע פעולה זו.</string>
+    <string name="sync_synced_devices_label">מכשירים מסונכרנים</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">יום %d</item>
         <item quantity="two">%d ימים</item>

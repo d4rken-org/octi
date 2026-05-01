@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">\'n Oopbron-sinkroniseerbediener vir Octi wat deur hierdie toepassing se ontwikkelaar gemaak is. Data word aan die kliëntkant geïnkripteer, net jou toestelle kan dit dekripteer.\n\nAangesien beide die toepassing en die bediener steeds verbeter word, kan dit minder stabiel wees as ander sinkroniseringsopsies.</string>
+    <string name="sync_octiserver_type_description">\'n Oopbron-sinkroniseerbediener vir Octi gemaak deur hierdie app se ontwikkelaar. Data word aan die kliëntkant versleutel, slegs jou toestelle kan dit ontsleutel.
+
+Aangesien beide die app en die bediener nog verbeter word, kan dit minder stabiel wees as ander sinkronisasiekeuses.</string>
     <string name="sync_octiserver_add_create_action_hint">Onaktiewe rekeninge word na \'n paar weke uitgevee.</string>
-    <string name="sync_octiserver_add_subtitle">Voeg nuwe Google Drive by</string>
+    <string name="sync_octiserver_add_subtitle">Voeg Octi Server-rekening by</string>
     <string name="sync_octiserver_add_link_action_hint">Jy het toegang nodig tot \'n ander toestel wat reeds gekoppel is.</string>
     <string name="sync_octiserver_about_title">Oor Octi Server</string>
-    <string name="sync_octiserver_about_desc">Octi Server is \'n oopbron-sinkroniseerbediener (in Kotlin) vir Octi deur darken.</string>
+    <string name="sync_octiserver_about_desc">Octi Server is \'n oopbron-sinkroniseerbediener vir Octi deur darken.</string>
     <string name="sync_octiserver_about_author_action">Outeur</string>
     <string name="sync_octiserver_about_source_action">Bronkode</string>
     <string name="sync_octiserver_reset_confirmation_desc">Vee hierdie toestel se data op hierdie rekening uit. Toestelle bly gekoppel maar hul gestoor data word verwyder.</string>
@@ -15,10 +17,23 @@
     <string name="sync_octiserver_link_code_label">Koppel kode</string>
     <string name="sync_octiserver_link_host_option_direct">Skep \'n tekskode wat jy via ander programme kan stuur</string>
     <string name="sync_octiserver_link_host_option_qrcode">Wys \'n QR-kode</string>
+    <string name="sync_octiserver_link_host_waiting_label">Wag vir toestel om te koppel…</string>
     <string name="sync_octiserver_link_host_device_linked_message">\'n Nuwe toestel is aan jou rekening gekoppel.</string>
-    <string name="sync_octiserver_link_client_option_direct">Plak \'n koppelkode handmatig</string>
+    <string name="sync_octiserver_link_client_option_direct">Kopieer en plak \'n koppelkode handmatig</string>
     <string name="sync_octiserver_link_client_option_qrcode">Skandeer \'n QR-kode van \'n ander toestel</string>
     <string name="sync_octiserver_link_client_startcamera_action">Begin kamera</string>
     <string name="sync_octiserver_link_client_link_action">Koppel toestel</string>
-    <string name="sync_octiserver_error_device_not_registered">Hierdie toestel is nie meer op die bediener geregistreer nie. Ontkoppel en koppel weer vanaf \'n ander toestel, of skep \'n nuwe rekening.</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Toestel is nie meer gekoppel nie</string>
+    <string name="sync_octiserver_error_device_not_registered">Hierdie toestel is nie meer op die bediener geregistreer nie. Ontkoppel en koppel opnuut vanaf \'n ander toestel, of skep \'n nuwe rekening.</string>
+    <string name="sync_octiserver_resume_sync_action">Hervat sinkronisasie</string>
+    <string name="sync_octiserver_add_create_account_title">Skep rekening?</string>
+    <string name="sync_octiserver_add_create_account_desc">\'n Nuwe geënkripteerde sinkronisasierekening sal op hierdie bediener geskep word.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Hierdie rekening vereis Octi %1$s of nuwer. Werk hierdie toestel op of verwyder dit van die rekening.</string>
+    <string name="sync_octiserver_legacy_encryption_account">Lêerdeling is nie beskikbaar op hierdie toestel nie omdat hierdie rekening ou enkripsie gebruik. Skep \'n nuwe rekening op \'n opgedateerde toestel en koppel jou ander toestelle weer om lêerdeling te gebruik.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Onversoenbare enkripsie</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Lêerdeling nie beskikbaar nie</string>
+    <string name="sync_octiserver_add_create_account_action">Skep rekening</string>
+    <string name="sync_octiserver_add_link_existing_action">Koppel aan bestaande rekening</string>
+    <string name="sync_octiserver_add_select_server_label">Kies bediener</string>
+    <string name="sync_octiserver_add_custom_server_label">Persoonlike bediener</string>
 </resources>

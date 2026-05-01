@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Leeg</string>
     <string name="module_clipboard_detail_type_text">Tekst</string>
     <string name="module_clipboard_copy_action">Kopieer naar klembord</string>
+    <string name="module_clipboard_widget_description">Klembordinhoud van je gesynchroniseerde apparaten weergeven.</string>
+    <string name="module_clipboard_widget_paste_action">Mijn klembord delen</string>
+    <string name="module_clipboard_widget_share_action">Mijn klembord delen</string>
+    <string name="module_clipboard_widget_copied_toast">Gekopieerd</string>
+    <string name="module_clipboard_widget_self_label">Jij</string>
+    <string name="module_clipboard_widget_self_empty">Nog niets gedeeld</string>
+    <string name="module_clipboard_widget_no_data">Geen klembordgegevens</string>
+    <string name="module_clipboard_widget_share_success">Klembord gedeeld</string>
+    <string name="module_clipboard_widget_share_empty">Niets te delen</string>
+    <string name="module_clipboard_widget_share_blocked">Klemboardtoegang geblokkeerd</string>
+    <string name="module_clipboard_widget_share_unsupported">Klembordinhoud niet ondersteund</string>
+    <string name="module_clipboard_widget_share_failed">Klembord delen mislukt</string>
 </resources>

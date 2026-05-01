@@ -7,6 +7,12 @@
         <item quantity="other">%d sovellusta asennettu</item>
     </plurals>
     <string name="module_apps_last_installed_x">Viimeisin asennettu sovellus: %s</string>
+    <string name="module_apps_tile_apps_installed_label">sovellusta asennettu</string>
+    <plurals name="module_apps_tile_count">
+        <item quantity="one">%d sovellusta</item>
+        <item quantity="other">%d sovellusta</item>
+    </plurals>
+    <string name="module_apps_tile_last_installed_label">Viimeksi asennettu</string>
     <string name="module_apps_list_title">Asennetut sovellukset</string>
     <string name="module_apps_sort_label">Lajittele</string>
     <string name="module_apps_sort_name_label">Nimi</string>

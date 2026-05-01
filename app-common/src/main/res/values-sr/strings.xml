@@ -12,16 +12,21 @@
     <string name="general_gotit_action">Разумем</string>
     <string name="general_na_label">Н/Д</string>
     <string name="general_empty_label">Празно</string>
+    <string name="general_delete_action">Обриши</string>
     <string name="general_dismiss_action">Затвори</string>
     <string name="general_maybe_later_action">Можда касније</string>
     <string name="general_manage_action">Управљај</string>
     <string name="general_quota_label">Квота</string>
+    <string name="general_sync_action">Синхронизуј</string>
+    <string name="general_reset_action">Ресетуј</string>
+    <string name="general_disconnect_action">Откључи</string>
     <string name="general_upgrade_action">Надогради</string>
     <string name="general_update_action">Ажурирај</string>
     <string name="general_donate_action">Донирај</string>
     <string name="general_check_action">Провери</string>
     <string name="general_internal_not_available_msg">Интернет веза није доступна</string>
     <string name="general_refresh_action">Освежи</string>
+    <string name="general_close_action">Затвори</string>
     <string name="general_continue">Настави</string>
     <string name="general_show_details_action">Прикажи детаље</string>
     <string name="general_minutes_label">Минути</string>
@@ -31,7 +36,7 @@
         <item quantity="other">%1$d minuta</item>
     </plurals>
     <string name="ui_theme_mode_setting_label">Режим теме</string>
-    <string name="ui_theme_mode_setting_explanation">Режим који се користи за тему апликације (нпр. тамна или светла).</string>
+    <string name="ui_theme_mode_setting_explanation">Режим коришћен за тему апликације (нпр. тамна или светла).</string>
     <string name="ui_theme_mode_dark_label">Тамна</string>
     <string name="ui_theme_mode_light_label">Светла</string>
     <string name="ui_theme_mode_system_label">Систем</string>
@@ -39,5 +44,39 @@
     <string name="ui_theme_style_setting_explanation">Боје које се користе за тему апликације.</string>
     <string name="ui_theme_style_default_label">Подразумевано</string>
     <string name="ui_theme_style_materialyou_label">Material You</string>
+    <string name="ui_theme_style_medium_contrast_label">Средњи контраст</string>
+    <string name="ui_theme_style_high_contrast_label">Висок контраст</string>
+    <string name="ui_theme_color_setting_label">Боја теме</string>
+    <string name="ui_theme_color_green_label">Зелена</string>
+    <string name="ui_theme_color_blue_label">Плава</string>
+    <string name="ui_theme_color_sunset_label">Залазак сунца</string>
     <string name="device_x_label">Уређај: %s</string>
+    <!-- Widget theme presets -->
+    <string name="widget_theme_material_you">Material You</string>
+    <string name="widget_theme_classic_green">Класична зелена</string>
+    <string name="widget_theme_blue">Плава</string>
+    <string name="widget_theme_orange">Наранџаста</string>
+    <string name="widget_theme_red">Црвена</string>
+    <string name="widget_theme_dark">Тамна</string>
+    <!-- Widget config -->
+    <string name="widget_config_title">Прилагоди виџет</string>
+    <string name="widget_config_apply_action">Примени</string>
+    <string name="widget_config_presets_label">Предефинисани изгледи</string>
+    <string name="widget_config_background_label">Боја позадине</string>
+    <string name="widget_config_accent_label">Боја акцента</string>
+    <string name="widget_config_hex_hint">RRGGBB</string>
+    <string name="widget_config_preview_label">Преглед</string>
+    <string name="widget_config_custom_label">Прилагођено</string>
+    <!-- Widget device filter -->
+    <string name="widget_config_devices_label">Уређаји</string>
+    <string name="widget_config_devices_empty_hint">Ако нису одабрани уређаји, приказаће се сви уређаји.</string>
+    <string name="widget_config_devices_selected_hint">Приказаће се само одабрани уређаји.</string>
+    <string name="widget_config_devices_none_known">Још нема познатих уређаја за синхронизацију.</string>
+    <string name="widget_empty_label">Нема уређаја који одговарају</string>
+    <string name="widget_no_sync_devices_label">Још нема уређаја за синхронизацију</string>
+    <!-- Widget deeplink -->
+    <string name="widget_deeplink_no_data_msg">Нема %1$s података за овај уређај</string>
+    <string name="widget_deeplink_module_power">батерија</string>
+    <string name="widget_deeplink_module_connectivity">мрежа</string>
+    <string name="widget_deeplink_module_clipboard">клипборд</string>
 </resources>

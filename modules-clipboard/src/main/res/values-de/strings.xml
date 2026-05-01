@@ -9,4 +9,16 @@
     <string name="module_clipboard_detail_type_empty">Leer</string>
     <string name="module_clipboard_detail_type_text">Text</string>
     <string name="module_clipboard_copy_action">In Zwischenablage kopieren</string>
+    <string name="module_clipboard_widget_description">Zeige den Inhalt der Zwischenablage von synchronisierten Geräten an.</string>
+    <string name="module_clipboard_widget_paste_action">Meine Zwischenablage teilen</string>
+    <string name="module_clipboard_widget_share_action">Meine Zwischenablage teilen</string>
+    <string name="module_clipboard_widget_copied_toast">Kopiert</string>
+    <string name="module_clipboard_widget_self_label">Du</string>
+    <string name="module_clipboard_widget_self_empty">Noch nichts geteilt</string>
+    <string name="module_clipboard_widget_no_data">Keine Zwischenablagedaten</string>
+    <string name="module_clipboard_widget_share_success">Zwischenablage geteilt</string>
+    <string name="module_clipboard_widget_share_empty">Nichts zu teilen</string>
+    <string name="module_clipboard_widget_share_blocked">Zwischenablagezugriff gesperrt</string>
+    <string name="module_clipboard_widget_share_unsupported">Zwischenablageinhalt nicht unterstützt</string>
+    <string name="module_clipboard_widget_share_failed">Zwischenablage konnte nicht geteilt werden</string>
 </resources>

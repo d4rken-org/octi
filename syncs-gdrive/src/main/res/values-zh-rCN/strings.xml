@@ -12,4 +12,5 @@
     <string name="sync_gdrive_reset_confirmation_desc">重置谷歌硬盘上的所有Octi数据。您的设备一直登录到谷歌驱动器。</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">注销谷歌驱动器，并删除与该设备相关的数据。</string>
     <string name="sync_gdrive_error_no_account_on_device">此设备未登录任何谷歌帐户。</string>
+    <string name="sync_gdrive_error_account_already_connected">此账户已连接。</string>
 </resources>

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Avoimen lähdekoodin synkronointipalvelin Octille, jonka on tehnyt tämän sovelluksen kehittäjä. Data salataan asiakaspäässä, vain laitteesi voivat purkaa sen.\n\nKoska sekä sovellusta että palvelinta kehitetään yhä, tämä vaihtoehto voi olla vähemmän vakaa kuin muut synkronointitavat.</string>
+    <string name="sync_octiserver_type_description">Avoimen lähdekoodin synkronointipalvelin Octille, jonka on luonut tämän sovelluksen kehittäjä. Tiedot salataan asiakaspuolella, vain laitteesi voivat purkaa salauksen.
+
+Koska sekä sovellusta että palvelinta parannetaan edelleen, se voi olla epävakaampi kuin muut synkroinointivaihtoehdot.</string>
     <string name="sync_octiserver_add_create_action_hint">Passiiviset tilit poistetaan muutaman viikon kuluttua.</string>
-    <string name="sync_octiserver_add_subtitle">Lisää uusi Google Drive</string>
+    <string name="sync_octiserver_add_subtitle">Lisää Octi Server -tili</string>
     <string name="sync_octiserver_add_link_action_hint">Tarvitset toisen laitteen, joka on jo liitetty.</string>
-    <string name="sync_octiserver_about_title">Tietoa Octi Serveristä</string>
-    <string name="sync_octiserver_about_desc">Octi Server on avoimen lähdekoodin synkronointipalvelin (Kotlinilla) Octille darkenilta.</string>
+    <string name="sync_octiserver_about_title">Tietoja Octi Serveristä</string>
+    <string name="sync_octiserver_about_desc">Octi Server on Octin avoimen lähdekoodin synkronointipalvelin, jonka on kehittänyt darken.</string>
     <string name="sync_octiserver_about_author_action">Tekijä</string>
     <string name="sync_octiserver_about_source_action">Lähdekoodi</string>
     <string name="sync_octiserver_reset_confirmation_desc">Tyhjennä tämän laitteen data tältä tililtä. Laitteet pysyvät liitettynä, mutta tallennettu data poistetaan.</string>
@@ -15,10 +17,23 @@
     <string name="sync_octiserver_link_code_label">Yhdistämiskoodi</string>
     <string name="sync_octiserver_link_host_option_direct">Luo tekstikoodi, jonka voi lähettää muiden sovellusten kautta</string>
     <string name="sync_octiserver_link_host_option_qrcode">Näytä QR-koodi</string>
+    <string name="sync_octiserver_link_host_waiting_label">Odotetaan laitteen yhdistymistä…</string>
     <string name="sync_octiserver_link_host_device_linked_message">Uusi laite yhdistetty tilillesi.</string>
-    <string name="sync_octiserver_link_client_option_direct">Kopioi ja liitä yhdistämiskoodi manuaalisesti</string>
+    <string name="sync_octiserver_link_client_option_direct">Kopioi ja liitä yhteyslinkki manuaalisesti</string>
     <string name="sync_octiserver_link_client_option_qrcode">Skannaa QR-koodi toisesta laitteesta</string>
     <string name="sync_octiserver_link_client_startcamera_action">Käynnistä kamera</string>
     <string name="sync_octiserver_link_client_link_action">Yhdistä laite</string>
-    <string name="sync_octiserver_error_device_not_registered">Tätä laitetta ei ole enää rekisteröity palvelimelle. Katkaise yhteys ja yhdistä uudelleen toiselta laitteelta tai luo uusi tili.</string>
+    <string name="sync_octiserver_issues_type_device_not_registered">Laitetta ei enää ole yhdistetty</string>
+    <string name="sync_octiserver_error_device_not_registered">Tätä laitetta ei enää ole rekisteröity palvelimelle. Katkaise yhteys ja yhdistä uudelleen toiselta laitteelta tai luo uusi tili.</string>
+    <string name="sync_octiserver_resume_sync_action">Jatka synkronointia</string>
+    <string name="sync_octiserver_add_create_account_title">Luo tili?</string>
+    <string name="sync_octiserver_add_create_account_desc">Tälle palvelimelle luodaan uusi salattu synkronointitili.</string>
+    <string name="sync_octiserver_encryption_compatibility_incompatible">Tämä tili vaatii Octi %1$s tai uudemman. Päivitä tämä laite tai poista se tililtä.</string>
+    <string name="sync_octiserver_legacy_encryption_account">Tiedostojen jakaminen ei ole käytettävissä tällä laitteella, koska tämä tili käyttää vanhaa salausta. Luo uusi tili päivitetylle laitteelle ja yhdistä muut laitteesi uudelleen käyttääksesi tiedostojen jakamista.</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Yhteensopimaton salaus</string>
+    <string name="sync_octiserver_issues_type_legacy_encryption">Tiedostojen jakaminen ei ole käytettävissä</string>
+    <string name="sync_octiserver_add_create_account_action">Luo tili</string>
+    <string name="sync_octiserver_add_link_existing_action">Linkitä olemassa olevaan tiliin</string>
+    <string name="sync_octiserver_add_select_server_label">Valitse palvelin</string>
+    <string name="sync_octiserver_add_custom_server_label">Mukautettu palvelin</string>
 </resources>
