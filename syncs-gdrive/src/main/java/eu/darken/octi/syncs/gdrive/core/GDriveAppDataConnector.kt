@@ -43,9 +43,9 @@ import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
 import eu.darken.octi.sync.core.SyncWriteContainer
 import eu.darken.octi.syncs.gdrive.core.GDriveEnvironment.Companion.APPDATAFOLDER
+import eu.darken.octi.syncs.gdrive.core.GDriveEnvironment.Companion.MIME_FOLDER
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
@@ -154,6 +154,9 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val parentCache = mutableMapOf<String, String>()
     private val fileIdCache = ConcurrentHashMap<Pair<DeviceId, ModuleId>, String>()
     private val fileIdReverseCache = ConcurrentHashMap<String, Pair<DeviceId, ModuleId>>()
+    private val rootChildCache = ConcurrentHashMap<String, String>()
+    private val deviceDirCache = ConcurrentHashMap<DeviceId, String>()
+    private val deviceInfoFileIdCache = ConcurrentHashMap<DeviceId, String>()
 
     @Volatile private var lastWrittenDeviceInfo: GDriveDeviceInfo? = null
     private val _syncEventMode = MutableStateFlow(EventMode.NONE)
@@ -255,8 +258,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
             if (e.statusCode == 410) {
                 log(TAG, WARN) { "checkForChanges(): Token invalidated, resetting" }
-                parentCache.clear()
-                clearFileIdCache()
+                clearPathCaches()
                 pollToken.value(null)
             } else {
                 log(TAG, ERROR) { "checkForChanges(): API error: ${e.message}" }
@@ -269,7 +271,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     private suspend fun handleReset(): Unit = withContext(NonCancellable) {
         log(TAG, INFO) { "handleReset()" }
-        clearFileIdCache()
+        clearPathCaches()
         runDriveAction("reset-data") {
             appDataRoot.child(DEVICE_DATA_DIR_NAME)
                 ?.listFiles()
@@ -296,7 +298,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 ?.deleteAll()
             if (deviceId == syncSettings.deviceId) {
                 log(TAG, WARN) { "We just deleted ourselves, this connector is dead now" }
-                clearFileIdCache()
+                clearPathCaches()
                 _state.updateBlocking { copy(isDead = true) }
             }
         }
@@ -312,28 +314,89 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
+    private data class AppDataIndex(
+        val root: GDriveFile,
+        val childrenByParent: Map<String, List<GDriveFile>>,
+    ) {
+        fun children(parent: GDriveFile): List<GDriveFile> = childrenByParent[parent.id].orEmpty()
+
+        fun rootChild(name: String): GDriveFile? {
+            val rootChildren = childrenByParent[root.id].orEmpty() + childrenByParent[APPDATAFOLDER].orEmpty()
+            return rootChildren
+                .distinctBy { it.id }
+                .singleChild(name)
+        }
+
+        fun child(parent: GDriveFile, name: String): GDriveFile? = children(parent).singleChild(name)
+
+        private fun Collection<GDriveFile>.singleChild(name: String): GDriveFile? {
+            val matches = filter { it.name == name }
+            return when {
+                matches.size > 1 -> throw IllegalStateException("Multiple files with the same name: $name")
+                matches.isEmpty() -> null
+                else -> matches.single()
+            }
+        }
+    }
+
+    private suspend fun GDriveEnvironment.readAppDataIndex(): AppDataIndex {
+        val root = GDriveFile().apply {
+            id = APPDATAFOLDER
+            name = APPDATAFOLDER
+            mimeType = MIME_FOLDER
+        }
+        val files = listAppDataFiles()
+        val childrenByParent = buildMap<String, MutableList<GDriveFile>> {
+            files.forEach { file ->
+                file.parents.orEmpty().forEach { parentId ->
+                    getOrPut(parentId) { mutableListOf() }.add(file)
+                }
+            }
+        }
+        log(TAG, VERBOSE) { "readAppDataIndex(): ${files.size} files" }
+        return AppDataIndex(root = root, childrenByParent = childrenByParent)
+    }
+
     private suspend fun GDriveEnvironment.readDrive(
         moduleFilter: Set<ModuleId>? = null,
         deviceFilter: Set<DeviceId>? = null,
+        refreshDeviceMetadata: Boolean = false,
     ): GDriveData {
-        log(TAG, DEBUG) { "readDrive(moduleFilter=$moduleFilter, deviceFilter=$deviceFilter): Starting..." }
+        log(TAG, DEBUG) {
+            "readDrive(moduleFilter=$moduleFilter, deviceFilter=$deviceFilter, refreshDeviceMetadata=$refreshDeviceMetadata): Starting..."
+        }
         val start = TimeSource.Monotonic.markNow()
+        val index = readAppDataIndex()
 
-        val deviceDataDir = appDataRoot.child(DEVICE_DATA_DIR_NAME)
+        val deviceDataDir = index.rootChild(DEVICE_DATA_DIR_NAME)
         log(TAG, VERBOSE) { "readDrive(): userDir=$deviceDataDir" }
 
         if (deviceDataDir?.isDirectory != true) {
             log(TAG, WARN) { "No device data dir found ($deviceDataDir)" }
+            if (refreshDeviceMetadata) {
+                _state.updateBlocking { copy(deviceMetadata = emptyList()) }
+            }
             return GDriveData(
                 connectorId = identifier,
                 devices = emptySet(),
             )
         }
+        rootChildCache[DEVICE_DATA_DIR_NAME] = deviceDataDir.id
 
-        val allDeviceDirs = deviceDataDir.listFiles().filter {
+        val allDeviceDirs = index.children(deviceDataDir).filter {
             val isDir = it.isDirectory
             if (!isDir) log(TAG, WARN) { "Unexpected file in userDir: $it" }
             isDir
+        }
+        allDeviceDirs.forEach { dir ->
+            val deviceId = DeviceId(dir.name)
+            deviceDirCache[deviceId] = dir.id
+            parentCache[dir.id] = dir.name
+        }
+
+        if (refreshDeviceMetadata) {
+            // Stats are updated before payload downloads so a module read failure does not freeze metadata.
+            _state.updateBlocking { copy(deviceMetadata = readDeviceMetadata(index, allDeviceDirs)) }
         }
 
         val validDeviceDirs = if (deviceFilter != null) {
@@ -344,53 +407,99 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         val targetModules = moduleFilter?.let { supportedModuleIds.intersect(it) } ?: supportedModuleIds
 
-        val deviceFetchJobs = validDeviceDirs.map { deviceDir ->
-            scope.async(dispatcherProvider.IO) deviceFetch@{
-                log(TAG, DEBUG) { "readDrive(): Reading module data for device: $deviceDir" }
-                val moduleDirs = deviceDir.listFiles().filter { targetModules.contains(ModuleId(it.name)) }
-                val moduleFetchJobs = moduleDirs.map { moduleFile ->
-                    scope.async(dispatcherProvider.IO) moduleFetch@{
-                        log(TAG, VERBOSE) { "readDrive(): Reading ${moduleFile.name} for ${deviceDir.name}" }
-                        val payload = moduleFile.readData()
+        val devices = coroutineScope {
+            validDeviceDirs.map { deviceDir ->
+                async(dispatcherProvider.IO) deviceFetch@{
+                    log(TAG, DEBUG) { "readDrive(): Reading module data for device: $deviceDir" }
+                    val deviceId = DeviceId(deviceDir.name)
+                    val moduleFiles = index.children(deviceDir).filter { targetModules.contains(ModuleId(it.name)) }
+                    val moduleFetchJobs = moduleFiles.map { moduleFile ->
+                        async(dispatcherProvider.IO) moduleFetch@{
+                            log(TAG, VERBOSE) { "readDrive(): Reading ${moduleFile.name} for ${deviceDir.name}" }
+                            val payload = moduleFile.readData()
 
-                        if (payload == null) {
-                            log(TAG, WARN) { "readDrive(): Module file is empty: ${moduleFile.name}" }
-                            return@moduleFetch null
+                            if (payload == null) {
+                                log(TAG, WARN) { "readDrive(): Module file is empty: ${moduleFile.name}" }
+                                return@moduleFetch null
+                            }
+
+                            val moduleId = ModuleId(moduleFile.name)
+                            cacheModuleFileId(deviceId, moduleId, moduleFile.id)
+
+                            GDriveModuleData(
+                                connectorId = identifier,
+                                deviceId = deviceId,
+                                moduleId = moduleId,
+                                modifiedAt = Instant.fromEpochMilliseconds(moduleFile.modifiedTime.value),
+                                payload = payload,
+                            ).also { log(TAG, VERBOSE) { "readDrive(): Got module data: $it" } }
                         }
-
-                        val deviceId = DeviceId(deviceDir.name)
-                        val moduleId = ModuleId(moduleFile.name)
-                        val cacheKey = deviceId to moduleId
-                        fileIdCache[cacheKey] = moduleFile.id
-                        fileIdReverseCache[moduleFile.id] = cacheKey
-
-                        GDriveModuleData(
-                            connectorId = identifier,
-                            deviceId = deviceId,
-                            moduleId = moduleId,
-                            modifiedAt = Instant.fromEpochMilliseconds(moduleFile.modifiedTime.value),
-                            payload = payload,
-                        ).also { log(TAG, VERBOSE) { "readDrive(): Got module data: $it" } }
                     }
+
+                    val moduleData = moduleFetchJobs.awaitAll().filterNotNull()
+                    log(TAG, DEBUG) { "readDrive(): Finished ${deviceDir.name}" }
+
+                    GDriveDeviceData(
+                        deviceId = deviceId,
+                        modules = moduleData,
+                    )
                 }
-
-                val moduleData = moduleFetchJobs.awaitAll().filterNotNull()
-                log(TAG, DEBUG) { "readDrive(): Finished ${deviceDir.name}" }
-
-                GDriveDeviceData(
-                    deviceId = DeviceId(deviceDir.name),
-                    modules = moduleData,
-                )
-            }
+            }.awaitAll()
         }
-
-        val devices = deviceFetchJobs.awaitAll()
         log(TAG) { "readDrive() took ${start.elapsedNow().inWholeMilliseconds}ms" }
 
         return GDriveData(
             connectorId = identifier,
             devices = devices,
         )
+    }
+
+    private suspend fun GDriveEnvironment.refreshDeviceMetadata() {
+        val index = readAppDataIndex()
+        val deviceDataDir = index.rootChild(DEVICE_DATA_DIR_NAME)
+        if (deviceDataDir?.isDirectory != true) {
+            _state.updateBlocking { copy(deviceMetadata = emptyList()) }
+            return
+        }
+        rootChildCache[DEVICE_DATA_DIR_NAME] = deviceDataDir.id
+        val deviceDirs = index.children(deviceDataDir).filter { it.isDirectory }
+        deviceDirs.forEach { dir ->
+            val deviceId = DeviceId(dir.name)
+            deviceDirCache[deviceId] = dir.id
+            parentCache[dir.id] = dir.name
+        }
+        _state.updateBlocking { copy(deviceMetadata = readDeviceMetadata(index, deviceDirs)) }
+    }
+
+    private suspend fun GDriveEnvironment.readDeviceMetadata(
+        index: AppDataIndex,
+        deviceDirs: List<GDriveFile>,
+    ): List<DeviceMetadata> = coroutineScope {
+        deviceDirs.map { dir ->
+            async(dispatcherProvider.IO) {
+                val deviceId = DeviceId(id = dir.name)
+                val info = try {
+                    index.child(dir, DEVICE_INFO_FILE)?.also {
+                        deviceInfoFileIdCache[deviceId] = it.id
+                    }?.readData()?.let {
+                        json.decodeFromString<GDriveDeviceInfo>(it.utf8())
+                    }
+                } catch (e: Exception) {
+                    log(TAG, WARN) { "readDeviceMetadata(): Failed to read $DEVICE_INFO_FILE for ${dir.name}: ${e.message}" }
+                    null
+                }
+                val lastSeen = index.children(dir)
+                    .filter { it.name != DEVICE_INFO_FILE && !it.isDirectory }
+                    .maxOfOrNull { Instant.fromEpochMilliseconds(it.modifiedTime.value) }
+                DeviceMetadata(
+                    deviceId = deviceId,
+                    version = info?.version,
+                    platform = info?.platform,
+                    label = info?.label,
+                    lastSeen = lastSeen,
+                )
+            }
+        }.awaitAll()
     }
 
     private suspend fun GDriveEnvironment.readDriveByFileIds(
@@ -483,7 +592,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
             if (e.statusCode == 410) {
                 log(TAG, WARN) { "checkSyncChanges(): Token invalidated, resetting" }
-                clearFileIdCache()
+                clearPathCaches()
                 syncToken.value(null)
             }
             SyncChangeResult.ForceFullSync
@@ -527,18 +636,39 @@ class GDriveAppDataConnector @AssistedInject constructor(
         fileIdReverseCache.clear()
     }
 
+    private fun clearPathCaches() {
+        parentCache.clear()
+        clearFileIdCache()
+        rootChildCache.clear()
+        deviceDirCache.clear()
+        deviceInfoFileIdCache.clear()
+    }
+
+    private fun cacheModuleFileId(deviceId: DeviceId, moduleId: ModuleId, fileId: String) {
+        val cacheKey = deviceId to moduleId
+        fileIdCache[cacheKey] = fileId
+        fileIdReverseCache[fileId] = cacheKey
+    }
+
     private fun evictFileIdCache(deviceId: DeviceId) {
         fileIdCache.keys.filter { it.first == deviceId }.forEach { key ->
             fileIdCache.remove(key)?.let { fileIdReverseCache.remove(it) }
         }
+        deviceDirCache.remove(deviceId)
+        deviceInfoFileIdCache.remove(deviceId)
     }
 
     private suspend fun GDriveEnvironment.readTargeted(
         options: SyncOptions,
-        existing: SyncRead,
+        refreshStats: Boolean = false,
     ): GDriveData {
         val mFilter = options.moduleFilter
         val dFilter = options.deviceFilter
+
+        if (refreshStats) {
+            log(TAG) { "readTargeted(): Stats requested, using indexed read to avoid a second appData listing" }
+            return readDrive(mFilter, dFilter, refreshDeviceMetadata = true)
+        }
 
         if (mFilter != null && dFilter != null) {
             val targetModules = mFilter.intersect(supportedModuleIds)
@@ -561,7 +691,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
         }
 
-        return readDrive(mFilter, dFilter)
+        return readDrive(mFilter, dFilter, refreshStats)
     }
 
     private val syncLock = Mutex()
@@ -588,117 +718,90 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         try {
             runDriveAction("sync-sync") {
-                val jobs = mutableSetOf<Deferred<*>>()
-
-
-                scope.async(dispatcherProvider.IO) {
-                    if (!options.stats) return@async
-
-                    try {
-                        val deviceDirs = appDataRoot.child(DEVICE_DATA_DIR_NAME)
-                            ?.listFiles()
-                            ?.filter { it.isDirectory }
-                            ?: emptyList()
-
-                        val metadata = deviceDirs.map { dir ->
-                            val deviceId = DeviceId(id = dir.name)
-                            val info = try {
-                                dir.child(DEVICE_INFO_FILE)?.readData()?.let {
-                                    json.decodeFromString<GDriveDeviceInfo>(it.utf8())
-                                }
-                            } catch (e: Exception) {
-                                log(TAG, WARN) { "handleSync(): Failed to read $DEVICE_INFO_FILE for ${dir.name}: ${e.message}" }
-                                null
-                            }
-                            val lastSeen = dir.listFiles()
-                                .filter { it.name != DEVICE_INFO_FILE && !it.isDirectory }
-                                .maxOfOrNull { Instant.fromEpochMilliseconds(it.modifiedTime.value) }
-                            DeviceMetadata(
-                                deviceId = deviceId,
-                                version = info?.version,
-                                platform = info?.platform,
-                                label = info?.label,
-                                lastSeen = lastSeen,
-                            )
-                        }
-
-                        _state.updateBlocking { copy(deviceMetadata = metadata) }
-                    } catch (e: Exception) {
-                        log(TAG, ERROR) { "handleSync(): Failed to list of known devices: ${e.asLog()}" }
-                    }
-                    log(TAG, VERBOSE) { "handleSync(...): devices finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
-                }.run { jobs.add(this) }
-
-
-
+                var wroteData = false
                 if (options.writeData && options.writePayload.isNotEmpty()) {
                     log(TAG) { "handleSync(): Writing ${options.writePayload.size} cached modules (batched)" }
                     writeDrive(SyncWriteContainer(
                         deviceId = syncSettings.deviceId,
                         modules = options.writePayload.map { it.module },
                     ))
+                    wroteData = true
                     // writeDrive returned without throwing — record hashes for all written modules
                     options.writePayload.forEach { mw ->
                         syncState.setHash(identifier, mw.module.moduleId, mw.expectedHash)
                     }
                 }
 
+                try {
+                    val isTargeted = options.moduleFilter != null || options.deviceFilter != null
 
-                scope.async(dispatcherProvider.IO) {
-                    if (!options.readData) return@async
-
-                    try {
-                        val isTargeted = options.moduleFilter != null || options.deviceFilter != null
-
+                    if (options.readData) {
                         if (isTargeted) {
-                            val existing = _data.value
-                            if (existing == null) {
-                                log(TAG) { "handleSync(): First sync, forcing full read despite filters" }
-                                _data.value = readDrive()
-                                val startToken = drive.changes().getStartPageToken()
-                                    .setSupportsAllDrives(false)
-                                    .execute().startPageToken
-                                syncToken.value(startToken)
-                            } else {
-                                val newData = readTargeted(options, existing)
-                                _data.value = mergeData(existing, newData, options.moduleFilter)
-                            }
+                            handleTargetedRead(options)
                         } else {
-                            when (val result = checkSyncChanges()) {
-                                is SyncChangeResult.HasChanges -> {
-                                    _data.value = readDrive()
-                                    syncToken.value(result.newToken)
-                                }
-
-                                is SyncChangeResult.ForceFullSync -> {
-                                    _data.value = readDrive()
-                                    val startToken = drive.changes().getStartPageToken()
-                                        .setSupportsAllDrives(false)
-                                        .execute().startPageToken
-                                    syncToken.value(startToken)
-                                }
-
-                                is SyncChangeResult.NoChanges -> {
-                                    log(TAG) { "handleSync(): No changes detected, skipping readDrive()" }
-                                }
-                            }
+                            handleFullRead(options, wroteData)
                         }
-                    } catch (e: Exception) {
-                        log(TAG, ERROR) { "handleSync(): Failed to read: ${e.asLog()}" }
+                    } else if (options.stats) {
+                        refreshDeviceMetadataSafely("stats-only")
                     }
-                    log(TAG, VERBOSE) { "handleSync(...): readData finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
-                }.run { jobs.add(this) }
-
-
-                log(TAG) { "handleSync(...): Waiting for jobs to finish..." }
-                jobs.awaitAll()
-                log(TAG) { "handleSync(...): ... jobs finished." }
-
+                } catch (e: Exception) {
+                    log(TAG, ERROR) { "handleSync(): Failed to read/stats: ${e.asLog()}" }
+                }
+                log(TAG, VERBOSE) { "handleSync(...): readData finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
             }
         } finally {
             syncLock.withLock {
                 isSyncing = false
                 log(TAG, VERBOSE) { "handleSync(): Sync done, releasing (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
+            }
+        }
+    }
+
+    private suspend fun GDriveEnvironment.refreshDeviceMetadataSafely(source: String) {
+        try {
+            refreshDeviceMetadata()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "refreshDeviceMetadataSafely($source): Failed: ${e.asLog()}" }
+        }
+    }
+
+    private suspend fun GDriveEnvironment.handleTargetedRead(options: SyncOptions) {
+        val existing = _data.value
+        if (existing == null) {
+            log(TAG) { "handleSync(): First sync, forcing full read despite filters" }
+            _data.value = readDrive(refreshDeviceMetadata = options.stats)
+            val startToken = drive.changes().getStartPageToken()
+                .setSupportsAllDrives(false)
+                .execute().startPageToken
+            syncToken.value(startToken)
+        } else {
+            val newData = readTargeted(options, refreshStats = options.stats)
+            _data.value = mergeData(existing, newData, options.moduleFilter)
+        }
+    }
+
+    private suspend fun GDriveEnvironment.handleFullRead(options: SyncOptions, wroteData: Boolean) {
+        when (val result = checkSyncChanges()) {
+            is SyncChangeResult.HasChanges -> {
+                _data.value = readDrive(refreshDeviceMetadata = options.stats)
+                syncToken.value(result.newToken)
+            }
+
+            is SyncChangeResult.ForceFullSync -> {
+                _data.value = readDrive(refreshDeviceMetadata = options.stats)
+                val startToken = drive.changes().getStartPageToken()
+                    .setSupportsAllDrives(false)
+                    .execute().startPageToken
+                syncToken.value(startToken)
+            }
+
+            is SyncChangeResult.NoChanges -> {
+                log(TAG) { "handleSync(): No changes detected, skipping readDrive()" }
+                if (wroteData && options.stats) {
+                    refreshDeviceMetadataSafely("post-write")
+                }
             }
         }
     }
@@ -712,18 +815,29 @@ class GDriveAppDataConnector @AssistedInject constructor(
             return@withContext
         }
 
-        val userDir = appDataRoot.child(DEVICE_DATA_DIR_NAME)
-            ?.also { if (!it.isDirectory) throw IllegalStateException("devices is not a directory: $it") }
+        val userDir = rootChildCache[DEVICE_DATA_DIR_NAME]?.let { cachedDriveFolder(it, DEVICE_DATA_DIR_NAME) }
             ?: run {
-                appDataRoot.createDir(folderName = DEVICE_DATA_DIR_NAME).also {
-                    log(TAG, INFO) { "write(): Created devices dir $it" }
-                }
+                val root = appDataRoot
+                root.child(DEVICE_DATA_DIR_NAME)
+                    ?.also { if (!it.isDirectory) throw IllegalStateException("devices is not a directory: $it") }
+                    ?.also { rootChildCache[DEVICE_DATA_DIR_NAME] = it.id }
+                    ?: root.createDir(folderName = DEVICE_DATA_DIR_NAME).also {
+                        rootChildCache[DEVICE_DATA_DIR_NAME] = it.id
+                        log(TAG, INFO) { "write(): Created devices dir $it" }
+                    }
             }
 
         val deviceIdRaw = data.deviceId.id
-        val deviceDir = userDir.child(deviceIdRaw) ?: userDir.createDir(deviceIdRaw).also {
-            log(TAG) { "writeDrive(): Created device dir $it" }
-        }
+        val deviceDir = deviceDirCache[data.deviceId]?.let { cachedDriveFolder(it, deviceIdRaw) }
+            ?: userDir.child(deviceIdRaw)?.also {
+                deviceDirCache[data.deviceId] = it.id
+                parentCache[it.id] = it.name
+            }
+            ?: userDir.createDir(deviceIdRaw).also {
+                deviceDirCache[data.deviceId] = it.id
+                parentCache[it.id] = it.name
+                log(TAG) { "writeDrive(): Created device dir $it" }
+            }
 
         val writeSemaphore = Semaphore(3)
         coroutineScope {
@@ -731,10 +845,23 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 async {
                     writeSemaphore.withPermit {
                         log(TAG, VERBOSE) { "writeDrive(): Writing module $module" }
+                        val cacheKey = data.deviceId to module.moduleId
+                        fileIdCache[cacheKey]?.let { cachedId ->
+                            try {
+                                cachedDriveFile(cachedId, module.moduleId.id).writeData(module.payload)
+                                return@withPermit
+                            } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
+                                if (e.statusCode != 404) throw e
+                                fileIdCache.remove(cacheKey)
+                                fileIdReverseCache.remove(cachedId)
+                                log(TAG, WARN) { "writeDrive(): Cached module file missing, falling back: ${module.moduleId}" }
+                            }
+                        }
                         val moduleFile = deviceDir.child(module.moduleId.id)
                             ?: deviceDir.createFile(module.moduleId.id).also {
                                 log(TAG, VERBOSE) { "writeDrive(): Created module file $it" }
                             }
+                        cacheModuleFileId(data.deviceId, module.moduleId, moduleFile.id)
                         moduleFile.writeData(module.payload)
                     }
                 }
@@ -744,16 +871,34 @@ class GDriveAppDataConnector @AssistedInject constructor(
         // Write device info metadata only when changed
         try {
             val deviceInfo = GDriveDeviceInfo(
-                version = BuildConfigWrap.VERSION_NAME,
+                version = deviceInfoVersionName(),
                 platform = "android",
                 label = syncSettings.deviceLabel.value(),
             )
             if (deviceInfo != lastWrittenDeviceInfo) {
                 val infoPayload = json.encodeToString(deviceInfo).encodeToByteArray().toByteString()
-                val infoFile = deviceDir.child(DEVICE_INFO_FILE) ?: deviceDir.createFile(DEVICE_INFO_FILE).also {
-                    log(TAG, VERBOSE) { "writeDrive(): Created device info file $it" }
+                var infoWritten = false
+                val cachedInfoFile = deviceInfoFileIdCache[data.deviceId]?.let { cachedId ->
+                    try {
+                        cachedDriveFile(cachedId, DEVICE_INFO_FILE).also {
+                            it.writeData(infoPayload)
+                            infoWritten = true
+                        }
+                    } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
+                        if (e.statusCode != 404) throw e
+                        deviceInfoFileIdCache.remove(data.deviceId)
+                        log(TAG, WARN) { "writeDrive(): Cached device info file missing, falling back" }
+                        null
+                    }
                 }
-                infoFile.writeData(infoPayload)
+                val infoFile = cachedInfoFile ?: (deviceDir.child(DEVICE_INFO_FILE) ?: deviceDir.createFile(DEVICE_INFO_FILE).also {
+                    log(TAG, VERBOSE) { "writeDrive(): Created device info file $it" }
+                }).also {
+                    deviceInfoFileIdCache[data.deviceId] = it.id
+                }
+                if (!infoWritten) {
+                    infoFile.writeData(infoPayload)
+                }
                 lastWrittenDeviceInfo = deviceInfo
             } else {
                 log(TAG, VERBOSE) { "writeDrive(): Device info unchanged, skipping" }
@@ -763,6 +908,27 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
 
         log(TAG, VERBOSE) { "writeDrive(): Done" }
+    }
+
+    private fun cachedDriveFile(fileId: String, name: String): GDriveFile = GDriveFile().apply {
+        id = fileId
+        this.name = name
+    }
+
+    private fun cachedDriveFolder(fileId: String, name: String): GDriveFile = cachedDriveFile(fileId, name).apply {
+        mimeType = MIME_FOLDER
+    }
+
+    private fun deviceInfoVersionName(): String? {
+        return try {
+            BuildConfigWrap.VERSION_NAME
+        } catch (e: ExceptionInInitializerError) {
+            log(TAG, WARN) { "deviceInfoVersionName(): Failed to read build version: ${e.message}" }
+            null
+        } catch (e: NoClassDefFoundError) {
+            log(TAG, WARN) { "deviceInfoVersionName(): Failed to read build version: ${e.message}" }
+            null
+        }
     }
 
     /**

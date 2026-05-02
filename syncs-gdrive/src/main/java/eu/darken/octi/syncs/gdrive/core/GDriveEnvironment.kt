@@ -16,19 +16,29 @@ interface GDriveEnvironment {
     val drive: Drive
 
     val GDriveEnvironment.appDataRoot: GDriveFile
-        get() = drive.files().get(APPDATAFOLDER).execute()
+        get() = drive.files().get(APPDATAFOLDER)
+            .setFields("id,name,mimeType")
+            .execute()
 
     val GDriveFile.isDirectory: Boolean
         get() = mimeType == MIME_FOLDER
 
     suspend fun GDriveFile.listFiles(): Collection<GDriveFile> {
-        return drive.files()
-            .list().apply {
-                spaces = APPDATAFOLDER
-                q = " '${id}' in parents "
-                fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
-            }
-            .execute().files
+        val files = mutableListOf<GDriveFile>()
+        var pageToken: String? = null
+        do {
+            val result = drive.files()
+                .list().apply {
+                    spaces = APPDATAFOLDER
+                    q = " '${id}' in parents "
+                    fields = FILE_LIST_FIELDS
+                    this.pageToken = pageToken
+                }
+                .execute()
+            files += result.files ?: emptyList()
+            pageToken = result.nextPageToken
+        } while (pageToken != null)
+        return files
     }
 
     suspend fun GDriveFile.child(name: String): GDriveFile? {
@@ -36,9 +46,9 @@ interface GDriveEnvironment {
             .list().apply {
                 spaces = APPDATAFOLDER
                 q = " '${id}' in parents and name = '$name' "
-                fields = "files(id,name,mimeType,createdTime,modifiedTime,size)"
+                fields = "files($FILE_FIELDS)"
             }
-            .execute().files
+            .execute().files.orEmpty()
             .let {
                 when {
                     it.size > 1 -> throw IllegalStateException("Multiple folders with the same name.")
@@ -55,7 +65,9 @@ interface GDriveEnvironment {
             mimeType = MIME_FOLDER
             parents = listOf(this@createDir.id)
         }
-        return drive.files().create(metaData).execute()
+        return drive.files().create(metaData)
+            .setFields(FILE_FIELDS)
+            .execute()
     }
 
     suspend fun GDriveFile.createFile(fileName: String): GDriveFile {
@@ -65,7 +77,9 @@ interface GDriveEnvironment {
             parents = listOf(this@createFile.id)
             modifiedTime = DateTime(Clock.System.now().toEpochMilliseconds())
         }
-        return drive.files().create(metaData).execute()
+        return drive.files().create(metaData)
+            .setFields(FILE_FIELDS)
+            .execute()
     }
 
     suspend fun GDriveFile.writeData(toWrite: ByteString) {
@@ -76,9 +90,27 @@ interface GDriveEnvironment {
             mimeType = "application/octet-stream"
             modifiedTime = DateTime(Clock.System.now().toEpochMilliseconds())
         }
-        drive.files().update(id, writeMetaData, payload).execute().also {
-            log(TAG, VERBOSE) { "writeData($name): done: $it" }
-        }
+        drive.files().update(id, writeMetaData, payload)
+            .setFields(FILE_FIELDS)
+            .execute()
+            .also {
+                log(TAG, VERBOSE) { "writeData($name): done: $it" }
+            }
+    }
+
+    suspend fun listAppDataFiles(): List<GDriveFile> {
+        val files = mutableListOf<GDriveFile>()
+        var pageToken: String? = null
+        do {
+            val result = drive.files().list().apply {
+                spaces = APPDATAFOLDER
+                fields = FILE_LIST_FIELDS
+                this.pageToken = pageToken
+            }.execute()
+            files += result.files ?: emptyList()
+            pageToken = result.nextPageToken
+        } while (pageToken != null)
+        return files
     }
 
     suspend fun getFileMetadata(
@@ -128,7 +160,9 @@ interface GDriveEnvironment {
                 this.properties = properties
             }
         }
-        drive.files().update(id, metadata, content).execute()
+        drive.files().update(id, metadata, content)
+            .setFields(FILE_FIELDS)
+            .execute()
     }
 
     suspend fun GDriveFile.readStreamedTo(output: java.io.OutputStream) {
@@ -142,7 +176,9 @@ interface GDriveEnvironment {
 
     companion object {
         internal const val APPDATAFOLDER = "appDataFolder"
-        private const val MIME_FOLDER = "application/vnd.google-apps.folder"
+        internal const val MIME_FOLDER = "application/vnd.google-apps.folder"
+        private const val FILE_FIELDS = "id,name,mimeType,parents,createdTime,modifiedTime,size"
+        private const val FILE_LIST_FIELDS = "nextPageToken,files($FILE_FIELDS)"
         internal val TAG = logTag("Sync", "GDrive", "Connector", "Env")
     }
 }
