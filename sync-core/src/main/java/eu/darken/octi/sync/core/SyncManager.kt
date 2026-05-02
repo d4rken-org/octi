@@ -245,6 +245,7 @@ class SyncManager @Inject constructor(
             return@withContext
         }
         getConnectorById<SyncConnector>(identifier).first().execute(ConnectorCommand.Reset)
+        syncCache.removeDeviceMetadata(identifier)
         log(TAG) { "resetData(identifier=$identifier) done" }
     }
 
@@ -266,6 +267,7 @@ class SyncManager @Inject constructor(
             hubs.first().filter { it.owns(identifier) }.forEach {
                 it.remove(identifier)
             }
+            syncCache.removeDeviceMetadata(identifier)
         } catch (e: Exception) {
             log(TAG, ERROR) { "disconnect(...) failed: ${e.asLog()}" }
             throw e

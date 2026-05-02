@@ -44,6 +44,7 @@ import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
 import eu.darken.octi.sync.core.SyncWriteContainer
 import eu.darken.octi.sync.core.VersionCompat
+import eu.darken.octi.sync.core.cache.SyncCache
 import eu.darken.octi.sync.core.encryption.EncryptionMode
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.coroutines.CancellationException
@@ -82,6 +83,7 @@ import kotlin.time.TimeSource
 @Suppress("BlockingMethodInNonBlockingContext")
 class OctiServerConnector @AssistedInject constructor(
     @Assisted val credentials: OctiServer.Credentials,
+    @Assisted private val initialDeviceMetadata: List<DeviceMetadata>,
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     private val endpointFactory: OctiServerEndpoint.Factory,
@@ -89,6 +91,7 @@ class OctiServerConnector @AssistedInject constructor(
     private val networkStateProvider: NetworkStateProvider,
     private val syncSettings: SyncSettings,
     private val syncState: ConnectorSyncState,
+    private val syncCache: SyncCache,
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
     private val baseHttpClient: OkHttpClient,
     private val json: Json,
@@ -124,7 +127,10 @@ class OctiServerConnector @AssistedInject constructor(
         parentScope = scope + dispatcherProvider.IO,
         loggingTag = TAG,
     ) {
-        State(issues = buildCurrentDeviceRegistrationIssues())
+        State(
+            issues = buildCurrentDeviceRegistrationIssues(),
+            deviceMetadata = initialDeviceMetadata,
+        )
     }
 
     override val state: Flow<State> = _state.flow
@@ -250,6 +256,8 @@ class OctiServerConnector @AssistedInject constructor(
             etagCache.clear()
         }
         syncState.clearConnector(identifier)
+        _state.updateBlocking { copy(deviceMetadata = emptyList()) }
+        syncCache.removeDeviceMetadata(identifier)
     }
 
     private suspend fun handleDeleteDevice(deviceId: DeviceId) {
@@ -259,9 +267,8 @@ class OctiServerConnector @AssistedInject constructor(
             etagCache.keys.removeAll { it.first == deviceId }
         }
         // Eager prune: survives VM teardown and is visible immediately to all observers.
-        _state.updateBlocking {
-            copy(deviceMetadata = deviceMetadata.filterNot { it.deviceId == deviceId })
-        }
+        val prunedMetadata = _state.value().deviceMetadata.filterNot { it.deviceId == deviceId }
+        updateDeviceMetadata(prunedMetadata)
         _data.value = _data.value?.let { read ->
             OctiServerData(
                 connectorId = read.connectorId,
@@ -304,7 +311,7 @@ class OctiServerConnector @AssistedInject constructor(
                         addedAt = it.addedAt,
                     )
                 }
-                _state.updateBlocking { copy(deviceMetadata = metadata) }
+                updateDeviceMetadata(metadata)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -356,6 +363,11 @@ class OctiServerConnector @AssistedInject constructor(
         }
 
         computeIssues()
+    }
+
+    private suspend fun updateDeviceMetadata(metadata: List<DeviceMetadata>) {
+        _state.updateBlocking { copy(deviceMetadata = metadata) }
+        syncCache.saveDeviceMetadata(identifier, metadata)
     }
 
     /**
@@ -758,7 +770,7 @@ class OctiServerConnector @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(account: OctiServer.Credentials): OctiServerConnector
+        fun create(account: OctiServer.Credentials, initialDeviceMetadata: List<DeviceMetadata>): OctiServerConnector
     }
 
     companion object {

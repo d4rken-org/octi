@@ -42,6 +42,7 @@ import eu.darken.octi.sync.core.SyncRead
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
 import eu.darken.octi.sync.core.SyncWriteContainer
+import eu.darken.octi.sync.core.cache.SyncCache
 import eu.darken.octi.syncs.gdrive.core.GDriveEnvironment.Companion.APPDATAFOLDER
 import eu.darken.octi.syncs.gdrive.core.GDriveEnvironment.Companion.MIME_FOLDER
 import kotlinx.coroutines.CancellationException
@@ -83,6 +84,7 @@ import com.google.api.services.drive.model.File as GDriveFile
 
 class GDriveAppDataConnector @AssistedInject constructor(
     @Assisted account: GoogleAccount,
+    @Assisted private val initialDeviceMetadata: List<DeviceMetadata>,
     @AppScope private val scope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
@@ -90,6 +92,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val supportedModuleIds: Set<@JvmSuppressWildcards ModuleId>,
     private val syncSettings: SyncSettings,
     private val syncState: ConnectorSyncState,
+    private val syncCache: SyncCache,
     private val json: Json,
 ) : GDriveBaseConnector(dispatcherProvider, context, account), SyncConnector {
 
@@ -106,7 +109,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         parentScope = scope + dispatcherProvider.IO,
         loggingTag = TAG,
     ) {
-        State()
+        State(deviceMetadata = initialDeviceMetadata)
     }
 
     override val state: Flow<State> = _state.flow
@@ -281,6 +284,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 }
         }
         syncState.clearConnector(identifier)
+        _state.updateBlocking { copy(deviceMetadata = emptyList()) }
+        syncCache.removeDeviceMetadata(identifier)
     }
 
     private suspend fun handleDeleteDevice(deviceId: DeviceId): Unit = withContext(NonCancellable) {
@@ -303,9 +308,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
         }
         // Eager prune: survives VM teardown and is visible immediately to all observers.
-        _state.updateBlocking {
-            copy(deviceMetadata = deviceMetadata.filterNot { it.deviceId == deviceId })
-        }
+        val prunedMetadata = _state.value().deviceMetadata.filterNot { it.deviceId == deviceId }
+        updateDeviceMetadata(prunedMetadata)
         _data.value = _data.value?.let { read ->
             GDriveData(
                 connectorId = read.connectorId,
@@ -410,7 +414,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         if (deviceDataDir?.isDirectory != true) {
             log(TAG, WARN) { "No device data dir found ($deviceDataDir)" }
             if (refreshDeviceMetadata) {
-                _state.updateBlocking { copy(deviceMetadata = emptyList()) }
+                updateDeviceMetadata(emptyList())
             }
             return GDriveData(
                 connectorId = identifier,
@@ -432,7 +436,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         if (refreshDeviceMetadata) {
             // Stats are updated before payload downloads so a module read failure does not freeze metadata.
-            _state.updateBlocking { copy(deviceMetadata = readDeviceMetadata(index, allDeviceDirs)) }
+            updateDeviceMetadata(readDeviceMetadata(index, allDeviceDirs))
         }
 
         val validDeviceDirs = if (deviceFilter != null) {
@@ -494,7 +498,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         val index = readAppDataIndex()
         val deviceDataDir = index.rootChild(DEVICE_DATA_DIR_NAME)
         if (deviceDataDir?.isDirectory != true) {
-            _state.updateBlocking { copy(deviceMetadata = emptyList()) }
+            updateDeviceMetadata(emptyList())
             return
         }
         rootChildCache[DEVICE_DATA_DIR_NAME] = deviceDataDir.id
@@ -504,7 +508,12 @@ class GDriveAppDataConnector @AssistedInject constructor(
             deviceDirCache[deviceId] = dir.id
             parentCache[dir.id] = dir.name
         }
-        _state.updateBlocking { copy(deviceMetadata = readDeviceMetadata(index, deviceDirs)) }
+        updateDeviceMetadata(readDeviceMetadata(index, deviceDirs))
+    }
+
+    private suspend fun updateDeviceMetadata(metadata: List<DeviceMetadata>) {
+        _state.updateBlocking { copy(deviceMetadata = metadata) }
+        syncCache.saveDeviceMetadata(identifier, metadata)
     }
 
     private suspend fun GDriveEnvironment.readDeviceMetadata(
@@ -1044,7 +1053,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(account: GoogleAccount): GDriveAppDataConnector
+        fun create(account: GoogleAccount, initialDeviceMetadata: List<DeviceMetadata>): GDriveAppDataConnector
     }
 
     companion object {

@@ -11,11 +11,13 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorHub
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.cache.SyncCache
 import eu.darken.octi.sync.core.execute
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -26,6 +28,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -38,6 +42,7 @@ class GDriveHub @Inject constructor(
     private val accountRepo: GoogleAccountRepo,
     private val connectorFactory: GDriveAppDataConnector.Factory,
     private val syncSettings: SyncSettings,
+    private val syncCache: SyncCache,
 ) : ConnectorHub {
 
     private data class Live(
@@ -47,6 +52,7 @@ class GDriveHub @Inject constructor(
     )
 
     private val live = ConcurrentHashMap<GoogleAccount.Id, Live>()
+    private val reconcileLock = Mutex()
 
     private val _connectors: Flow<Collection<GDriveAppDataConnector>> = accountRepo.accounts
         .map { accounts -> reconcile(accounts) }
@@ -55,8 +61,7 @@ class GDriveHub @Inject constructor(
 
     override val connectors: Flow<Collection<GDriveAppDataConnector>> = _connectors
 
-    @Synchronized
-    private fun reconcile(accounts: Collection<GoogleAccount>): Collection<GDriveAppDataConnector> {
+    private suspend fun reconcile(accounts: Collection<GoogleAccount>): Collection<GDriveAppDataConnector> = reconcileLock.withLock {
         val currentKeys = accounts.map { it.id }.toSet()
 
         // Remove gone accounts — cancel their processor scope.
@@ -70,19 +75,27 @@ class GDriveHub @Inject constructor(
 
         // Add new accounts — spin up connector + processor on a connector-lifetime scope.
         accounts.forEach { account ->
-            live.computeIfAbsent(account.id) {
+            if (!live.containsKey(account.id)) {
                 log(TAG, INFO) { "Creating connector for $account" }
+                val connectorId = account.toConnectorId()
+                val initialDeviceMetadata = syncCache.loadDeviceMetadata(connectorId).orEmpty()
                 val connectorScope = CoroutineScope(appScope.coroutineContext + SupervisorJob())
-                val connector = connectorFactory.create(account)
+                val connector = connectorFactory.create(account, initialDeviceMetadata)
                 val job = connector.start(connectorScope)
                 // Kick off an initial read-only sync; fire-and-forget via the queue.
                 connector.submit(ConnectorCommand.Sync(SyncOptions(writeData = false)))
-                Live(connector, connectorScope, job)
+                live[account.id] = Live(connector, connectorScope, job)
             }
         }
 
-        return live.values.map { it.connector }
+        return@withLock live.values.map { it.connector }
     }
+
+    private fun GoogleAccount.toConnectorId() = ConnectorId(
+        type = ConnectorType.GDRIVE,
+        subtype = "appdatascope",
+        account = id.id,
+    )
 
     override suspend fun owns(connectorId: ConnectorId): Boolean {
         return _connectors.first().any { it.identifier == connectorId }

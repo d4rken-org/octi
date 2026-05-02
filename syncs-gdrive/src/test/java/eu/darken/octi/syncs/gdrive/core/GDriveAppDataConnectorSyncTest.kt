@@ -16,12 +16,14 @@ import eu.darken.octi.sync.core.BlobKey
 import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorSyncState
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.DeviceMetadata
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.SyncWrite
 import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.StorageStatusProvider
+import eu.darken.octi.sync.core.cache.SyncCache
 import eu.darken.octi.sync.core.execute
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
@@ -38,6 +40,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
 import okio.Buffer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -94,7 +97,10 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         syncSettings = mockk(relaxed = true)
     }
 
-    private fun TestScope.createConnector(): GDriveAppDataConnector {
+    private fun TestScope.createConnector(
+        initialDeviceMetadata: List<DeviceMetadata> = emptyList(),
+        syncCache: SyncCache? = null,
+    ): GDriveAppDataConnector {
         val testDataStore = PreferenceDataStoreFactory.create(
             scope = this.backgroundScope,
             produceFile = { File(tempDir, "test_sync_${System.nanoTime()}.preferences_pb") },
@@ -107,22 +113,28 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         coEvery { syncSettings.isPaused(any()) } returns false
 
         val testAccount = GoogleAccount(accountId = "test-account", email = "test@example.com")
+        val context = mockk<Context>(relaxed = true)
+        every { context.cacheDir } returns tempDir
+        val json = Json { ignoreUnknownKeys = true }
 
         val mockNetworkState = mockk<NetworkStateProvider>(relaxed = true)
         every { mockNetworkState.networkState } returns flowOf(
             mockk { every { isInternetAvailable } returns true },
         )
+        val cache = syncCache ?: SyncCache(json, testDispatcher, context)
 
         val connector = GDriveAppDataConnector(
             account = testAccount,
+            initialDeviceMetadata = initialDeviceMetadata,
             scope = this.backgroundScope,
             dispatcherProvider = testDispatcher,
-            context = mockk<Context>(relaxed = true),
+            context = context,
             networkStateProvider = mockNetworkState,
             supportedModuleIds = setOf(power, wifi),
             syncSettings = syncSettings,
             syncState = ConnectorSyncState(),
-            json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true },
+            syncCache = cache,
+            json = json,
         )
 
         // Inject mock Drive via reflection, bypassing GDriveBaseConnector's lazy init
@@ -143,6 +155,22 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
      */
     private suspend fun GDriveAppDataConnector.sync(options: SyncOptions) =
         execute(ConnectorCommand.Sync(options))
+
+    @Test
+    fun `starts with initial device metadata`() = runTest {
+        val metadata = listOf(
+            DeviceMetadata(
+                deviceId = DeviceId("cached-device"),
+                version = "1",
+                platform = "android",
+                label = "Cached Device",
+            )
+        )
+
+        val connector = createConnector(initialDeviceMetadata = metadata)
+
+        connector.state.first().deviceMetadata shouldBe metadata
+    }
 
     private fun setupNoChanges(newToken: String = "token-2") {
         every { mockChangesList.execute() } returns ChangeList().apply {
@@ -606,6 +634,23 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
             metadata.platform shouldBe "android"
             metadata.label shouldBe "Device A"
             metadata.lastSeen shouldBe kotlin.time.Instant.fromEpochMilliseconds(1000L)
+        }
+
+        @Test
+        fun `full read with stats persists device metadata cache`() = runTest {
+            val context = mockk<Context>(relaxed = true)
+            every { context.cacheDir } returns tempDir
+            val syncCache = SyncCache(Json { ignoreUnknownKeys = true }, testDispatcher, context)
+            val connector = createConnector(syncCache = syncCache)
+            setupStartPageToken("start-token")
+            setupDriveWithPowerModule("indexed", includeDeviceInfo = true)
+
+            connector.sync(SyncOptions(stats = true, readData = true, writeData = false))
+
+            val cached = syncCache.loadDeviceMetadata(connector.identifier)
+            cached.shouldNotBeNull()
+            cached.single().deviceId shouldBe deviceA
+            cached.single().label shouldBe "Device A"
         }
 
         @Test
