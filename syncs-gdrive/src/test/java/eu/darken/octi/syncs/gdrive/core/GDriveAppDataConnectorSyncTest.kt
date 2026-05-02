@@ -324,6 +324,41 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
                 .value()
             token.shouldNotBeBlank()
         }
+
+        @Test
+        fun `restart with valid token still reads drive when data is uninitialized`() = runTest {
+            val connector = createConnector()
+
+            // Pre-populate sync token, simulating a previous session that left a valid token
+            syncSettings.dataStore
+                .createValue("gdrive.sync_token.test-account", null as String?)
+                .value("pre-existing-token")
+
+            setupEmptyDriveRead()
+            setupNoChanges("pre-existing-token")
+
+            // First sync after restart: _data is null but NoChanges — should still do full read
+            connector.sync(SyncOptions(stats = true, readData = true, writeData = false))
+
+            // Data must be non-null even though the change guard said "no changes"
+            connector.data.first().shouldNotBeNull()
+
+            // Second sync: data already loaded, still no changes — optimization must kick in
+            io.mockk.clearMocks(
+                mockFiles,
+                mockFilesGet,
+                mockFilesList,
+                answers = false,
+                childMocks = false,
+                exclusionRules = false,
+            )
+            setupNoChanges("pre-existing-token")
+
+            connector.sync(SyncOptions(stats = true, readData = true, writeData = false))
+
+            verify(exactly = 0) { mockFiles.get(any()) }
+            verify(exactly = 0) { mockFiles.list() }
+        }
     }
 
     @Nested
@@ -435,9 +470,10 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
             payload: String = "power-data",
             deviceId: DeviceId = deviceA,
             includeDeviceInfo: Boolean = false,
+            appDataRootId: String = "appDataFolder",
         ) {
             val rootFile = GDriveFile().apply {
-                id = "appDataFolder"
+                id = appDataRootId
                 name = "appDataFolder"
                 mimeType = "application/vnd.google-apps.folder"
             }
@@ -445,7 +481,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
                 id = "devices-dir-id"
                 name = "devices"
                 mimeType = "application/vnd.google-apps.folder"
-                parents = listOf("appDataFolder")
+                parents = listOf(appDataRootId)
             }
             val deviceADir = GDriveFile().apply {
                 id = "device-a-dir-id"
@@ -547,15 +583,19 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         }
 
         @Test
-        fun `full read uses one appData metadata listing`() = runTest {
+        fun `full read indexes devices under resolved appData root id`() = runTest {
             val connector = createConnector()
             setupStartPageToken("start-token")
-            setupDriveWithPowerModule("indexed", includeDeviceInfo = true)
+            setupDriveWithPowerModule(
+                payload = "indexed",
+                includeDeviceInfo = true,
+                appDataRootId = "resolved-appdata-root-id",
+            )
 
             connector.sync(SyncOptions(stats = true, readData = true, writeData = false))
 
             verify(exactly = 1) { mockFilesList.execute() }
-            verify(exactly = 0) { mockFiles.get("appDataFolder") }
+            verify(exactly = 1) { mockFiles.get("appDataFolder") }
             val data = connector.data.first()
             data.shouldNotBeNull()
             data.devices.single().modules.single().payload.utf8() shouldBe "indexed"
@@ -616,6 +656,10 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
                 .modules
                 .first { it.moduleId == power }
             module.payload.utf8() shouldBe "updated"
+
+            val metadata = connector.state.first().deviceMetadata.single()
+            metadata.deviceId shouldBe deviceA
+            metadata.lastSeen shouldBe kotlin.time.Instant.fromEpochMilliseconds(2000L)
         }
 
         @Test

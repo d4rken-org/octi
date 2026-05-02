@@ -340,11 +340,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     }
 
     private suspend fun GDriveEnvironment.readAppDataIndex(): AppDataIndex {
-        val root = GDriveFile().apply {
-            id = APPDATAFOLDER
-            name = APPDATAFOLDER
-            mimeType = MIME_FOLDER
-        }
+        val root = appDataRoot
         val files = listAppDataFiles()
         val childrenByParent = buildMap<String, MutableList<GDriveFile>> {
             files.forEach { file ->
@@ -355,6 +351,46 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
         log(TAG, VERBOSE) { "readAppDataIndex(): ${files.size} files" }
         return AppDataIndex(root = root, childrenByParent = childrenByParent)
+    }
+
+    private suspend fun updateDeviceMetadataFromData(data: SyncRead) {
+        val fallbackMetadata = data.devices.map { device ->
+            DeviceMetadata(
+                deviceId = device.deviceId,
+                lastSeen = device.modules.maxOfOrNull { it.modifiedAt },
+            )
+        }
+        if (fallbackMetadata.isEmpty()) return
+
+        _state.updateBlocking {
+            val current = deviceMetadata.associateBy { it.deviceId }.toMutableMap()
+            var changed = false
+            fallbackMetadata.forEach { fallback ->
+                val existing = current[fallback.deviceId]
+                val existingLastSeen = existing?.lastSeen
+                val fallbackLastSeen = fallback.lastSeen
+                when {
+                    existing == null -> {
+                        current[fallback.deviceId] = fallback
+                        changed = true
+                    }
+
+                    fallbackLastSeen != null && (existingLastSeen == null || fallbackLastSeen > existingLastSeen) -> {
+                        current[fallback.deviceId] = existing.copy(lastSeen = fallbackLastSeen)
+                        changed = true
+                    }
+                }
+            }
+            if (changed) copy(deviceMetadata = current.values.toList()) else this
+        }
+    }
+
+    private suspend fun hasMissingDeviceMetadata(): Boolean {
+        val dataDeviceIds = _data.value?.devices.orEmpty().map { it.deviceId }.toSet()
+        if (dataDeviceIds.isEmpty()) return false
+
+        val metadataDeviceIds = _state.value().deviceMetadata.map { it.deviceId }.toSet()
+        return !metadataDeviceIds.containsAll(dataDeviceIds)
     }
 
     private suspend fun GDriveEnvironment.readDrive(
@@ -716,6 +752,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
         }
 
+        var initialReadFailed: Exception? = null
+
         try {
             runDriveAction("sync-sync") {
                 var wroteData = false
@@ -746,6 +784,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     }
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "handleSync(): Failed to read/stats: ${e.asLog()}" }
+                    if (_data.value == null) initialReadFailed = e
                 }
                 log(TAG, VERBOSE) { "handleSync(...): readData finished (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
             }
@@ -755,6 +794,9 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 log(TAG, VERBOSE) { "handleSync(): Sync done, releasing (took ${start.elapsedNow().inWholeMilliseconds}ms)" }
             }
         }
+
+        // runDriveAction clears lastError on success; override when initial hydration failed
+        initialReadFailed?.let { _state.updateBlocking { copy(lastError = it) } }
     }
 
     private suspend fun GDriveEnvironment.refreshDeviceMetadataSafely(source: String) {
@@ -771,26 +813,34 @@ class GDriveAppDataConnector @AssistedInject constructor(
         val existing = _data.value
         if (existing == null) {
             log(TAG) { "handleSync(): First sync, forcing full read despite filters" }
-            _data.value = readDrive(refreshDeviceMetadata = options.stats)
+            val newData = readDrive(refreshDeviceMetadata = options.stats)
+            _data.value = newData
+            updateDeviceMetadataFromData(newData)
             val startToken = drive.changes().getStartPageToken()
                 .setSupportsAllDrives(false)
                 .execute().startPageToken
             syncToken.value(startToken)
         } else {
             val newData = readTargeted(options, refreshStats = options.stats)
-            _data.value = mergeData(existing, newData, options.moduleFilter)
+            val mergedData = mergeData(existing, newData, options.moduleFilter)
+            _data.value = mergedData
+            updateDeviceMetadataFromData(mergedData)
         }
     }
 
     private suspend fun GDriveEnvironment.handleFullRead(options: SyncOptions, wroteData: Boolean) {
         when (val result = checkSyncChanges()) {
             is SyncChangeResult.HasChanges -> {
-                _data.value = readDrive(refreshDeviceMetadata = options.stats)
+                val newData = readDrive(refreshDeviceMetadata = options.stats)
+                _data.value = newData
+                updateDeviceMetadataFromData(newData)
                 syncToken.value(result.newToken)
             }
 
             is SyncChangeResult.ForceFullSync -> {
-                _data.value = readDrive(refreshDeviceMetadata = options.stats)
+                val newData = readDrive(refreshDeviceMetadata = options.stats)
+                _data.value = newData
+                updateDeviceMetadataFromData(newData)
                 val startToken = drive.changes().getStartPageToken()
                     .setSupportsAllDrives(false)
                     .execute().startPageToken
@@ -798,9 +848,18 @@ class GDriveAppDataConnector @AssistedInject constructor(
             }
 
             is SyncChangeResult.NoChanges -> {
-                log(TAG) { "handleSync(): No changes detected, skipping readDrive()" }
-                if (wroteData && options.stats) {
+                if (_data.value == null) {
+                    log(TAG) { "handleSync(): No cached data, forcing initial read" }
+                    val newData = readDrive(refreshDeviceMetadata = options.stats)
+                    _data.value = newData
+                    updateDeviceMetadataFromData(newData)
+                } else if (options.stats && hasMissingDeviceMetadata()) {
+                    log(TAG) { "handleSync(): No changes but device metadata is incomplete, refreshing" }
+                    refreshDeviceMetadataSafely("metadata-missing")
+                } else if (wroteData && options.stats) {
                     refreshDeviceMetadataSafely("post-write")
+                } else {
+                    log(TAG) { "handleSync(): No changes detected, skipping readDrive()" }
                 }
             }
         }
