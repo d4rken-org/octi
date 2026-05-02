@@ -1,54 +1,34 @@
 package eu.darken.octi.sync.ui.devices
 
-import android.text.format.DateUtils
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.twotone.Android
-import androidx.compose.material.icons.twotone.PhoneAndroid
-import androidx.compose.material.icons.twotone.QuestionMark
-import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import eu.darken.octi.R
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.sync.core.DeviceId
-import eu.darken.octi.sync.core.IssueSeverity
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
@@ -142,97 +122,6 @@ fun SyncDevicesScreen(
     }
 }
 
-@Composable
-private fun DeviceRow(
-    item: SyncDevicesVM.DeviceItem,
-    onClick: () -> Unit,
-) {
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(16.dp),
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = when (item.metaInfo?.deviceType) {
-                    MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
-                    MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
-                    else -> Icons.TwoTone.QuestionMark
-                },
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = item.metaInfo?.labelOrFallback ?: "",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f),
-            )
-            Column(horizontalAlignment = Alignment.End) {
-                item.serverVersion?.let { version ->
-                    Text(
-                        text = version,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                }
-                item.serverPlatform?.let { platform ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = when (platform.lowercase()) {
-                                "android" -> Icons.TwoTone.Android
-                                else -> Icons.TwoTone.QuestionMark
-                            },
-                            contentDescription = null,
-                            modifier = Modifier.size(12.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = platform.replaceFirstChar { it.uppercase() },
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-            }
-        }
-
-        item.lastSeen?.let { lastSeen ->
-            Text(
-                text = stringResource(
-                    SyncR.string.sync_device_last_seen_label,
-                    DateUtils.getRelativeTimeSpanString(lastSeen.toEpochMilliseconds()).toString(),
-                ),
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-
-        item.error?.let { error ->
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = error.localizedMessage ?: stringResource(eu.darken.octi.common.R.string.general_error_label),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
-                maxLines = 10,
-            )
-        }
-
-        item.issues.forEach { issue ->
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = issue.label.get(context),
-                style = MaterialTheme.typography.bodySmall,
-                color = when (issue.severity) {
-                    IssueSeverity.ERROR -> MaterialTheme.colorScheme.error
-                    IssueSeverity.WARNING -> MaterialTheme.colorScheme.tertiary
-                },
-            )
-        }
-    }
-}
 
 @Preview2
 @Composable
