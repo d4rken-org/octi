@@ -10,12 +10,14 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.shareLatest
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorHub
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.cache.SyncCache
 import eu.darken.octi.sync.core.execute
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -26,6 +28,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -39,6 +43,7 @@ class OctiServerHub @Inject constructor(
     private val connectorFactory: OctiServerConnector.Factory,
     private val endpointFactory: OctiServerEndpoint.Factory,
     private val syncSettings: SyncSettings,
+    private val syncCache: SyncCache,
 ) : ConnectorHub {
 
     private data class Live(
@@ -48,6 +53,7 @@ class OctiServerHub @Inject constructor(
     )
 
     private val live = ConcurrentHashMap<OctiServer.Credentials.AccountId, Live>()
+    private val reconcileLock = Mutex()
 
     private val _connectors: Flow<Collection<SyncConnector>> = accountRepo.accounts
         .map { accounts -> reconcile(accounts) }
@@ -56,8 +62,7 @@ class OctiServerHub @Inject constructor(
 
     override val connectors: Flow<Collection<SyncConnector>> = _connectors
 
-    @Synchronized
-    private fun reconcile(accounts: Collection<OctiServer.Credentials>): Collection<SyncConnector> {
+    private suspend fun reconcile(accounts: Collection<OctiServer.Credentials>): Collection<SyncConnector> = reconcileLock.withLock {
         val currentKeys = accounts.map { it.accountId }.toSet()
 
         val goneKeys = live.keys - currentKeys
@@ -69,18 +74,26 @@ class OctiServerHub @Inject constructor(
         }
 
         accounts.forEach { creds ->
-            live.computeIfAbsent(creds.accountId) {
+            if (!live.containsKey(creds.accountId)) {
                 log(TAG, INFO) { "Creating connector for ${creds.serverAdress.domain}:${creds.accountId.id}" }
+                val connectorId = creds.toConnectorId()
+                val initialDeviceMetadata = syncCache.loadDeviceMetadata(connectorId).orEmpty()
                 val connectorScope = CoroutineScope(appScope.coroutineContext + SupervisorJob())
-                val connector = connectorFactory.create(creds)
+                val connector = connectorFactory.create(creds, initialDeviceMetadata)
                 val job = connector.start(connectorScope)
                 connector.submit(ConnectorCommand.Sync(SyncOptions(writeData = false)))
-                Live(connector, connectorScope, job)
+                live[creds.accountId] = Live(connector, connectorScope, job)
             }
         }
 
-        return live.values.map { it.connector }
+        return@withLock live.values.map { it.connector }
     }
+
+    private fun OctiServer.Credentials.toConnectorId() = ConnectorId(
+        type = ConnectorType.OCTISERVER,
+        subtype = serverAdress.domain,
+        account = accountId.id,
+    )
 
     override suspend fun owns(connectorId: ConnectorId): Boolean {
         return _connectors.first().any { it.identifier == connectorId }

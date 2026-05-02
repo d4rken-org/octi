@@ -85,6 +85,7 @@ class SyncDevicesVM @Inject constructor(
         val serverVersion: String?,
         val serverAddedAt: Instant?,
         val serverPlatform: String?,
+        val serverLabel: String? = null,
         val issues: List<ConnectorIssue> = emptyList(),
     )
 
@@ -131,9 +132,10 @@ class SyncDevicesVM @Inject constructor(
                         serverVersion = deviceMeta.version,
                         serverAddedAt = deviceMeta.addedAt,
                         serverPlatform = deviceMeta.platform,
+                        serverLabel = deviceMeta.label,
                         issues = allIssues.filter { it.connectorId == connectorId && it.deviceId == deviceId },
                     )
-                }.sortedBy { it.metaInfo?.labelOrFallback?.lowercase() }
+                }.sortedBy { (it.metaInfo?.labelOrFallback ?: it.serverLabel ?: it.deviceId.id).lowercase() }
 
                 val deletingIds = operations
                     .filter { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing }

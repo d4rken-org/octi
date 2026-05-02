@@ -71,7 +71,7 @@ internal fun DeviceRow(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = item.metaInfo?.labelOrFallback ?: item.deviceId.id.take(8),
+                        text = item.metaInfo?.labelOrFallback ?: item.serverLabel ?: item.deviceId.id.take(8),
                         style = MaterialTheme.typography.titleSmall,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
