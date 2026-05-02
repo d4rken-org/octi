@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.automirrored.twotone.Sort
+import androidx.compose.material.icons.twotone.Android
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -154,6 +156,7 @@ fun AppsListScreen(
 @Composable
 private fun AppItem(item: AppsListVM.PkgItem) {
     val pkg = item.pkg
+    val iconFallback = rememberVectorPainter(Icons.TwoTone.Android)
     Row(
         modifier = Modifier
             .clickable { item.onClick() }
@@ -164,6 +167,9 @@ private fun AppItem(item: AppsListVM.PkgItem) {
             model = pkg,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
+            placeholder = iconFallback,
+            error = iconFallback,
+            fallback = iconFallback,
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1f)) {

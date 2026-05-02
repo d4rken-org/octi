@@ -38,9 +38,13 @@ interface ConnectorUiContribution {
      */
     fun linkDeviceDestination(connector: SyncConnector): NavigationDestination? = null
 
-    /** Title rendered in the sync list card header (e.g. "Google Drive (AppData)"). */
+    /** Title rendered in the sync list card header (e.g. "Google Drive"). */
     @Composable
     fun listCardTitle(connector: SyncConnector): String
+
+    /** Optional backend detail rendered below the title (e.g. "App-data scope" or a server URL). */
+    @Composable
+    fun listCardSubtitle(connector: SyncConnector): String? = null
 
     /** Value for the "Account" labeled row in the sync list card. */
     @Composable

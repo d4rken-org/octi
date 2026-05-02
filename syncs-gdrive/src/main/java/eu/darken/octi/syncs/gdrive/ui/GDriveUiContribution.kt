@@ -65,10 +65,10 @@ class GDriveUiContribution @Inject constructor() : ConnectorUiContribution {
     override fun addAccountDestination(): NavigationDestination = Nav.Sync.AddGDrive
 
     @Composable
-    override fun listCardTitle(connector: SyncConnector): String = buildString {
-        append(stringResource(R.string.sync_gdrive_type_label))
-        append(" (${stringResource(R.string.sync_gdrive_appdata_label)})")
-    }
+    override fun listCardTitle(connector: SyncConnector): String = stringResource(R.string.sync_gdrive_type_label)
+
+    @Composable
+    override fun listCardSubtitle(connector: SyncConnector): String = stringResource(R.string.sync_gdrive_appdata_label)
 
     @Composable
     override fun listCardAccountValue(connector: SyncConnector): String {

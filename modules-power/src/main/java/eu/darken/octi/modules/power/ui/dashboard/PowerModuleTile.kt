@@ -23,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +47,9 @@ import eu.darken.octi.modules.power.core.alert.PowerAlert
 import eu.darken.octi.modules.power.ui.PowerEstimationFormatter
 import eu.darken.octi.modules.power.ui.batteryIcon
 import eu.darken.octi.sync.core.DeviceId
+
+val LocalPowerTemperatureUnit =
+    staticCompositionLocalOf<TemperatureFormatter.TemperatureUnit?> { null }
 
 @Composable
 fun PowerModuleTile(
@@ -164,8 +168,11 @@ private fun powerTileStatusText(power: PowerInfo): String = when (power.status) 
 @Composable
 private fun PowerTileSecondaryText(power: PowerInfo) {
     val context = LocalContext.current
+    val temperatureUnit = LocalPowerTemperatureUnit.current
     val estimationFormatter = remember { PowerEstimationFormatter(context) }
-    val temperatureFormatter = remember { TemperatureFormatter(context) }
+    val temperatureFormatter = remember(context, temperatureUnit) {
+        TemperatureFormatter(context, temperatureUnit)
+    }
     val estimationText = estimationFormatter.format(power)
     val temperatureText = power.battery.temp?.let { temperatureFormatter.formatTemperature(it) }
     Text(

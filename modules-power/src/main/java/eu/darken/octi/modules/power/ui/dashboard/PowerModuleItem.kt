@@ -121,8 +121,11 @@ private fun powerStatusText(power: PowerInfo): String = when (power.status) {
 @Composable
 private fun PowerSecondaryText(power: PowerInfo) {
     val context = LocalContext.current
+    val temperatureUnit = LocalPowerTemperatureUnit.current
     val estimationFormatter = remember { PowerEstimationFormatter(context) }
-    val temperatureFormatter = remember { TemperatureFormatter(context) }
+    val temperatureFormatter = remember(context, temperatureUnit) {
+        TemperatureFormatter(context, temperatureUnit)
+    }
     val estimationText = estimationFormatter.format(power)
     val temperatureText = power.battery.temp?.let { temperatureFormatter.formatTemperature(it) }
     Text(

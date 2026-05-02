@@ -30,6 +30,20 @@
 ./gradlew connectedAndroidTest
 ```
 
+## Screenshots
+
+```bash
+# Fast smoke pass: 6 locales x 6 screenshots
+./fastlane/generate_screenshots.sh --smoke --clean
+
+# Full localized Play Store screenshot refresh
+./fastlane/generate_screenshots.sh --clean
+./fastlane/copy_screenshots.sh --clean
+
+# Upload screenshots only
+bundle exec fastlane screenshots_only
+```
+
 ## Code Quality
 
 ```bash

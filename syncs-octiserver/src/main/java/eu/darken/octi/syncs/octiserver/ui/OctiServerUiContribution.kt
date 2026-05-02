@@ -65,10 +65,12 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
     }
 
     @Composable
-    override fun listCardTitle(connector: SyncConnector): String {
+    override fun listCardTitle(connector: SyncConnector): String = stringResource(R.string.sync_octiserver_type_label)
+
+    @Composable
+    override fun listCardSubtitle(connector: SyncConnector): String {
         val octi = connector as? OctiServerConnector ?: return ""
-        val label = stringResource(R.string.sync_octiserver_type_label)
-        return "$label (${octi.serverDisplay()})"
+        return octi.serverDisplay()
     }
 
     @Composable

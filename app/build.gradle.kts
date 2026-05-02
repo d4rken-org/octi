@@ -4,6 +4,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.android.compose.screenshot") version "0.0.1-alpha13"
 }
 apply(plugin = "dagger.hilt.android.plugin")
 
@@ -96,6 +97,8 @@ android {
         buildConfig = true
         compose = true
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
     testOptions {
         unitTests {
@@ -195,4 +198,8 @@ dependencies {
     "gplayImplementation"("com.android.billingclient:billing-ktx:8.0.0")
 
     implementation("io.github.z4kn4fein:semver:1.4.2")
+
+    "screenshotTestImplementation"(platform("androidx.compose:compose-bom:${Versions.Compose.bom}"))
+    "screenshotTestImplementation"("com.android.tools.screenshot:screenshot-validation-api:0.0.1-alpha13")
+    "screenshotTestImplementation"("androidx.compose.ui:ui-tooling")
 }

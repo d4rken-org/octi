@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.twotone.Cloud
 import androidx.compose.material.icons.twotone.PauseCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,9 +40,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
@@ -54,13 +58,31 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.navigation.NavigationEventHandler
-import eu.darken.octi.sync.core.LocalConnectorContributions
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.R as SyncR
+import eu.darken.octi.sync.core.ConnectorCapabilities
+import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
+import eu.darken.octi.sync.core.ConnectorOperation
+import eu.darken.octi.sync.core.ConnectorPauseReason
+import eu.darken.octi.sync.core.ConnectorUiContribution
+import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.DeviceMetadata
 import eu.darken.octi.sync.core.IssueSeverity
+import eu.darken.octi.sync.core.LocalConnectorContributions
+import eu.darken.octi.sync.core.OperationId
+import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
+import eu.darken.octi.sync.core.SyncRead
+import eu.darken.octi.sync.core.blob.StorageSnapshot
 import eu.darken.octi.sync.core.blob.StorageStatus
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlin.time.Instant
 
 @Composable
 fun SyncListScreenHost(vm: SyncListVM = hiltViewModel()) {
@@ -219,18 +241,32 @@ private fun ConnectorCard(
             .clickable(onClick = onClick),
         border = if (isHighlighted) BorderStroke(2.dp, borderColor) else null,
     ) {
+        val subtitle = contribution.listCardSubtitle(item.connector)
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 contribution.Icon(modifier = Modifier.size(24.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = contribution.listCardTitle(item.connector),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = contribution.listCardTitle(item.connector),
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    if (!subtitle.isNullOrBlank()) {
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
                 ConnectorStatusIndicators(isBusy = item.isBusy, isPaused = item.isPaused)
             }
 
@@ -385,16 +421,157 @@ private val TAG = logTag("Sync", "List", "Screen")
 
 @Preview2
 @Composable
-private fun SyncListScreenEmptyPreview() = PreviewWrapper {
-    SyncListScreen(
-        state = SyncListVM.State(deviceId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
-        onNavigateUp = {},
-        onAddConnector = {},
-        onTogglePause = {},
-        onForceSync = {},
-        onViewDevices = {},
-        onLinkNewDevice = {},
-        onReset = {},
-        onDisconnect = {},
+private fun SyncListScreenPreview() = PreviewWrapper {
+    val connectorId = ConnectorId(ConnectorType.GDRIVE, "appdata", "preview@example.com")
+    CompositionLocalProvider(
+        LocalConnectorContributions provides mapOf(
+            ConnectorType.GDRIVE to previewContribution(
+                type = ConnectorType.GDRIVE,
+                label = "Google Drive",
+                subtitle = "App-data scope",
+            ),
+        ),
+    ) {
+        SyncListScreen(
+            state = SyncListVM.State(
+                connectors = listOf(previewConnectorItem(connectorId)),
+                highlightedConnectorIds = setOf(connectorId),
+                isPro = true,
+                deviceId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            ),
+            onNavigateUp = {},
+            onAddConnector = {},
+            onTogglePause = {},
+            onForceSync = {},
+            onViewDevices = {},
+            onLinkNewDevice = {},
+            onReset = {},
+            onDisconnect = {},
+        )
+    }
+}
+
+private fun previewConnectorItem(connectorId: ConnectorId): SyncListVM.ConnectorItem {
+    val connector = PreviewConnector(
+        identifier = connectorId,
+        accountLabel = "preview@example.com",
+    )
+    val state = PreviewConnectorState()
+    return SyncListVM.ConnectorItem(
+        connectorId = connectorId,
+        connector = connector,
+        ourState = state,
+        storageStatus = StorageStatus.Ready(
+            connectorId = connectorId,
+            snapshot = StorageSnapshot(
+                connectorId = connectorId,
+                accountLabel = connector.accountLabel,
+                usedBytes = 63_000_000,
+                totalBytes = 16_000_000_000,
+                availableBytes = 15_937_000_000,
+                maxFileBytes = null,
+                perFileOverheadBytes = 0,
+                updatedAt = PREVIEW_NOW,
+            ),
+        ),
+        otherStates = emptyList(),
+        pauseReason = null,
+        isPaused = true,
+        isBusy = false,
     )
 }
+
+private fun previewContribution(
+    type: ConnectorType,
+    label: String,
+    subtitle: String,
+): ConnectorUiContribution = object : ConnectorUiContribution {
+    override val type = type
+    override val displayOrder = 0
+    override val labelRes = R.string.sync_services_label
+    override val descriptionRes = R.string.sync_services_label
+
+    @Composable
+    override fun Icon(modifier: Modifier, tint: Color) {
+        Icon(
+            imageVector = Icons.TwoTone.Cloud,
+            contentDescription = null,
+            modifier = modifier,
+            tint = tint,
+        )
+    }
+
+    override fun addAccountDestination(): NavigationDestination = object : NavigationDestination {}
+
+    @Composable
+    override fun listCardTitle(connector: SyncConnector): String = label
+
+    @Composable
+    override fun listCardSubtitle(connector: SyncConnector): String = subtitle
+
+    @Composable
+    override fun listCardAccountValue(connector: SyncConnector): String = connector.accountLabel
+
+    @Composable
+    override fun ActionsSheet(
+        connector: SyncConnector,
+        state: SyncConnectorState,
+        isPaused: Boolean,
+        pauseReason: ConnectorPauseReason?,
+        isPro: Boolean,
+        onDismiss: () -> Unit,
+        onTogglePause: () -> Unit,
+        onForceSync: () -> Unit,
+        onViewDevices: () -> Unit,
+        onLinkNewDevice: () -> Unit,
+        onReset: () -> Unit,
+        onDisconnect: () -> Unit,
+    ) = Unit
+}
+
+private class PreviewConnector(
+    override val identifier: ConnectorId,
+    override val accountLabel: String,
+) : SyncConnector {
+    override val capabilities: ConnectorCapabilities = ConnectorCapabilities.DEFAULT_FOR_TEST
+    override val state: Flow<SyncConnectorState> = MutableStateFlow(PreviewConnectorState())
+    override val data: Flow<SyncRead?> = MutableStateFlow(null)
+    override val operations: StateFlow<List<ConnectorOperation>> = MutableStateFlow(emptyList())
+    override val completions: SharedFlow<ConnectorOperation.Terminal> = MutableSharedFlow()
+
+    override fun submit(command: ConnectorCommand): OperationId = OperationId.create()
+
+    override suspend fun await(id: OperationId): ConnectorOperation.Terminal = ConnectorOperation.Succeeded(
+        id = id,
+        command = ConnectorCommand.Sync(),
+        submittedAt = PREVIEW_NOW,
+        startedAt = PREVIEW_NOW,
+        finishedAt = PREVIEW_NOW,
+    )
+
+    override fun dismiss(id: OperationId) = Unit
+}
+
+private class PreviewConnectorState : SyncConnectorState {
+    override val lastActionAt: Instant = PREVIEW_NOW
+    override val lastError: Exception? = null
+    override val isAvailable: Boolean = true
+    override val deviceMetadata: List<DeviceMetadata> = listOf(
+        DeviceMetadata(
+            deviceId = DeviceId("pixel-8"),
+            version = "1.0.0",
+            platform = "Android",
+            label = "Pixel 8",
+            lastSeen = PREVIEW_NOW,
+        ),
+        DeviceMetadata(
+            deviceId = DeviceId("galaxy-tab-s9"),
+            version = "1.0.0",
+            platform = "Android",
+            label = "Galaxy Tab S9",
+            lastSeen = PREVIEW_NOW,
+        ),
+    )
+}
+
+private val PREVIEW_NOW = Instant.parse("2026-05-01T12:00:00Z")

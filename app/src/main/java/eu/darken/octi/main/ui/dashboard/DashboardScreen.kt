@@ -72,6 +72,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -702,11 +703,12 @@ fun DashboardScreen(
 
 @Composable
 private fun dashboardSubtitle(state: DashboardVM.State): String? {
+    val showDebugBuildDetails = LocalDashboardShowDebugBuildDetails.current
     if (state.deviceCount <= 0) {
-        return if (BuildConfigWrap.BUILD_TYPE == BuildConfigWrap.BuildType.RELEASE) {
-            "v${BuildConfigWrap.VERSION_NAME}"
-        } else {
+        return if (showDebugBuildDetails) {
             BuildConfigWrap.VERSION_DESCRIPTION
+        } else {
+            "v${BuildConfigWrap.VERSION_NAME}"
         }
     }
     val deviceQuantity = pluralStringResource(
@@ -714,7 +716,7 @@ private fun dashboardSubtitle(state: DashboardVM.State): String? {
         state.deviceCount,
         state.deviceCount,
     )
-    return if (BuildConfigWrap.DEBUG) {
+    return if (showDebugBuildDetails) {
         "$deviceQuantity ${BuildConfigWrap.GIT_SHA}"
     } else {
         deviceQuantity
@@ -822,7 +824,11 @@ private fun SyncStatusBar(
                                 val primaryText = syncStatus.lastSyncAt?.let {
                                     stringResource(
                                         R.string.dashboard_sync_status_last_synced,
-                                        DateUtils.getRelativeTimeSpanString(it.toEpochMilliseconds()).toString(),
+                                        DateUtils.getRelativeTimeSpanString(
+                                            it.toEpochMilliseconds(),
+                                            syncStatus.now.toEpochMilliseconds(),
+                                            DateUtils.MINUTE_IN_MILLIS,
+                                        ).toString(),
                                     )
                                 } ?: stringResource(R.string.dashboard_sync_status_never)
                                 Text(
@@ -1055,11 +1061,7 @@ private fun DashboardToolbarTitle(upgradeInfo: UpgradeRepo.Info) {
         upgradeInfo.isPro -> stringResource(R.string.app_name_upgraded)
         else -> appName
     }
-    val buildChannelLabel = when (BuildConfigWrap.BUILD_TYPE) {
-        BuildConfigWrap.BuildType.DEV -> "DEV"
-        BuildConfigWrap.BuildType.BETA -> "BETA"
-        BuildConfigWrap.BuildType.RELEASE -> null
-    }
+    val buildChannelLabel = LocalDashboardBuildChannelLabel.current
 
     val titleParts = titleText.split(" ").filter { it.isNotEmpty() }
 
@@ -1108,6 +1110,16 @@ private fun BuildChannelChip(label: String) {
             maxLines = 1,
         )
     }
+}
+
+internal val LocalDashboardShowDebugBuildDetails = staticCompositionLocalOf { BuildConfigWrap.DEBUG }
+
+internal val LocalDashboardBuildChannelLabel = staticCompositionLocalOf { defaultDashboardBuildChannelLabel() }
+
+private fun defaultDashboardBuildChannelLabel(): String? = when (BuildConfigWrap.BUILD_TYPE) {
+    BuildConfigWrap.BuildType.DEV -> "DEV"
+    BuildConfigWrap.BuildType.BETA -> "BETA"
+    BuildConfigWrap.BuildType.RELEASE -> null
 }
 
 @Composable

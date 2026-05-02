@@ -5,9 +5,12 @@ import android.content.Context
 import android.os.Build
 import androidx.core.text.util.LocalePreferences
 
-class TemperatureFormatter(private val context: Context) {
+class TemperatureFormatter(
+    private val context: Context,
+    temperatureUnitOverride: TemperatureUnit? = null,
+) {
 
-    private val temperatureUnit: TemperatureUnit = getTemperatureUnit()
+    private val temperatureUnit: TemperatureUnit = temperatureUnitOverride ?: getTemperatureUnit()
 
     fun formatTemperature(tempCelsius: Float): String = when (temperatureUnit) {
         TemperatureUnit.CELSIUS -> "${tempCelsius.toInt()}°C"

@@ -54,11 +54,26 @@ platform :android do
     sh "bash ./remove_unsupported_languages.sh"
     supply(
       track: 'production',
+      package_name: 'eu.darken.octi',
       skip_upload_apk: 'true',
       skip_upload_images: 'true',
       skip_upload_screenshots: 'true',
       skip_upload_changelogs: true,
       skip_upload_aab: 'true'
+    )
+  end
+
+  lane :screenshots_only do
+    sh "bash ./remove_unsupported_languages.sh"
+    supply(
+      track: 'production',
+      package_name: 'eu.darken.octi',
+      skip_upload_apk: 'true',
+      skip_upload_aab: 'true',
+      skip_upload_metadata: 'true',
+      skip_upload_changelogs: 'true',
+      skip_upload_images: 'true',
+      skip_upload_screenshots: 'false',
     )
   end
 

@@ -16,6 +16,7 @@
 /fastlane/README.md
 .kotlin
 .codex
+app/src/screenshotTest*/reference/
 _site/
 .jekyll-cache/
 vendor/bundle/
