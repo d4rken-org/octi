@@ -15,6 +15,7 @@ import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
+import eu.darken.octi.sync.core.ConnectorOperation
 import eu.darken.octi.sync.core.ConnectorPauseReason
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
@@ -57,6 +58,7 @@ class SyncListVM @Inject constructor(
         val connectorId: ConnectorId,
         val connector: SyncConnector,
         val ourState: SyncConnectorState,
+        val activeOperations: List<ConnectorOperation>,
         val storageStatus: StorageStatus,
         val otherStates: Collection<SyncConnectorState>,
         val pauseReason: ConnectorPauseReason?,
@@ -104,6 +106,7 @@ class SyncListVM @Inject constructor(
                     connectorId = card.connector.identifier,
                     connector = card.connector,
                     ourState = card.syncState,
+                    activeOperations = card.activeOperations,
                     storageStatus = card.storageStatus,
                     otherStates = cards.filter { it.connector.identifier != card.connector.identifier }
                         .map { it.syncState },

@@ -1,20 +1,16 @@
 package eu.darken.octi.syncs.octiserver.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -22,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -31,13 +26,17 @@ import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationDestination
-import eu.darken.octi.common.settings.UpgradeBadge
 import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.ConnectorActionSheetHeader
+import eu.darken.octi.sync.core.ConnectorOperation
+import eu.darken.octi.sync.core.ConnectorOperationProgress
 import eu.darken.octi.sync.core.ConnectorPauseReason
+import eu.darken.octi.sync.core.ConnectorPauseRow
 import eu.darken.octi.sync.core.ConnectorUiContribution
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
+import eu.darken.octi.sync.core.hasActivePauseToggle
 import eu.darken.octi.syncs.octiserver.R
 import eu.darken.octi.syncs.octiserver.core.OctiServerConnector
 import eu.darken.octi.syncs.octiserver.core.OctiServerIssue
@@ -82,6 +81,7 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
     override fun ActionsSheet(
         connector: SyncConnector,
         state: SyncConnectorState,
+        activeOperations: List<ConnectorOperation>,
         isPaused: Boolean,
         pauseReason: ConnectorPauseReason?,
         isPro: Boolean,
@@ -99,19 +99,29 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
         val unknownDeviceIssue = state.issues.filterIsInstance<OctiServerIssue.CurrentDeviceNotRegistered>().firstOrNull()
         val context = LocalContext.current
         val canTogglePause = isPro || pauseReason == ConnectorPauseReason.AuthIssue
+        val isBusy = activeOperations.isNotEmpty()
+        val pauseToggleInProgress = activeOperations.hasActivePauseToggle()
 
         ModalBottomSheet(onDismissRequest = onDismiss) {
-            Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-                Text(
-                    text = "${stringResource(R.string.sync_octiserver_type_label)} (${octi.serverDisplay()})",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = octi.credentials.accountId.id,
-                    style = MaterialTheme.typography.labelMedium,
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 24.dp),
+            ) {
+                ConnectorActionSheetHeader(
+                    contribution = this@OctiServerUiContribution,
+                    title = stringResource(R.string.sync_octiserver_type_label),
+                    subtitle = octi.serverDisplay(),
+                    account = octi.credentials.accountId.id,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                ConnectorOperationProgress(activeOperations = activeOperations)
+                if (activeOperations.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
                 if (unknownDeviceIssue != null) {
                     Text(
@@ -127,33 +137,18 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                     Spacer(modifier = Modifier.height(12.dp))
                 }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onTogglePause)
-                        .padding(vertical = 4.dp),
-                ) {
-                    Text(
-                        text = stringResource(SyncR.string.sync_connector_paused_label),
-                        modifier = Modifier.weight(1f),
-                    )
-                    if (!canTogglePause) {
-                        UpgradeBadge()
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                    Switch(
-                        checked = isPaused,
-                        onCheckedChange = null,
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
+                ConnectorPauseRow(
+                    isPaused = isPaused,
+                    showPauseSwitch = canTogglePause,
+                    isInProgress = pauseToggleInProgress,
+                    onTogglePause = onTogglePause,
+                )
 
                 if (unknownDeviceIssue != null && isPaused) {
                     FilledTonalButton(
                         onClick = onTogglePause,
                         modifier = Modifier.fillMaxWidth(),
+                        enabled = !pauseToggleInProgress,
                     ) {
                         Text(text = stringResource(R.string.sync_octiserver_resume_sync_action))
                     }
@@ -162,7 +157,7 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                 Button(
                     onClick = onForceSync,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isPaused,
+                    enabled = !isPaused && !isBusy,
                 ) {
                     Text(text = stringResource(CommonR.string.general_sync_action))
                 }
@@ -170,7 +165,7 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                 FilledTonalButton(
                     onClick = onViewDevices,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isPaused,
+                    enabled = !isPaused && !isBusy,
                 ) {
                     Text(text = stringResource(SyncR.string.sync_synced_devices_label))
                 }
@@ -178,7 +173,7 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                 FilledTonalButton(
                     onClick = onLinkNewDevice,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isPaused,
+                    enabled = !isPaused && !isBusy,
                 ) {
                     Text(text = stringResource(R.string.sync_octiserver_link_device_action))
                 }
@@ -186,7 +181,7 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                 FilledTonalButton(
                     onClick = { showResetConfirmation = true },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isPaused,
+                    enabled = !isPaused && !isBusy,
                 ) {
                     Text(text = stringResource(CommonR.string.general_reset_action))
                 }
@@ -200,8 +195,6 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                 ) {
                     Text(text = stringResource(CommonR.string.general_disconnect_action))
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
             }
         }
 

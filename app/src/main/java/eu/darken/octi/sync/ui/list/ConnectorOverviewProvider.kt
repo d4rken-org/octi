@@ -52,15 +52,16 @@ class ConnectorOverviewProvider @Inject constructor(
             else combine(connectors.map { c ->
                 combine(c.state, c.operations) { state, ops ->
                     val issues = allIssues.filter { it.connectorId == c.identifier }
-                    val isBusy = ops.any { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing }
+                    val activeOperations = ops.filter { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing }
                     val pauseReason = pauseStates.reasonFor(c.identifier)
                     ConnectorCardState(
                         connector = c,
                         syncState = state,
+                        activeOperations = activeOperations,
                         storageStatus = statuses[c.identifier] ?: StorageStatus.Unsupported(c.identifier),
                         pauseReason = pauseReason,
                         isPaused = pauseReason != null,
-                        isBusy = isBusy,
+                        isBusy = activeOperations.isNotEmpty(),
                         issues = issues,
                     )
                 }

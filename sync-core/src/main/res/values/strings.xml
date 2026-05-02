@@ -29,6 +29,17 @@
     <string name="sync_connector_paused_label">Pause synchronization</string>
     <string name="sync_connector_paused_error_label">Connector paused</string>
     <string name="sync_connector_paused_error_desc">This connector is paused. Resume it to perform this action.</string>
+    <string name="sync_connector_account_label">Account</string>
+    <string name="sync_connector_progress_syncing">Synchronizing...</string>
+    <string name="sync_connector_progress_sync_queued">Synchronization queued...</string>
+    <string name="sync_connector_progress_pausing">Pausing synchronization...</string>
+    <string name="sync_connector_progress_pause_queued">Pause queued...</string>
+    <string name="sync_connector_progress_resuming">Resuming synchronization...</string>
+    <string name="sync_connector_progress_resume_queued">Resume queued...</string>
+    <string name="sync_connector_progress_resetting">Resetting data...</string>
+    <string name="sync_connector_progress_reset_queued">Reset queued...</string>
+    <string name="sync_connector_progress_device_updating">Updating devices...</string>
+    <string name="sync_connector_progress_device_update_queued">Device update queued...</string>
     <string name="sync_synced_devices_label">Synced devices</string>
 
     <plurals name="sync_stale_period_days">
