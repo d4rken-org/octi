@@ -20,7 +20,7 @@ fun SettingsSwitchItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    onDisabledClick: (() -> Unit)? = null,
+    requiresUpgrade: Boolean = false,
 ) {
     SettingsBaseItem(
         icon = icon,
@@ -29,11 +29,11 @@ fun SettingsSwitchItem(
         modifier = modifier,
         subtitle = subtitle,
         enabled = enabled,
-        onDisabledClick = onDisabledClick,
+        requiresUpgrade = requiresUpgrade,
         trailingContent = {
             Switch(
                 checked = checked,
-                onCheckedChange = onCheckedChange,
+                onCheckedChange = if (requiresUpgrade) null else onCheckedChange,
                 enabled = enabled,
                 modifier = Modifier.padding(start = 16.dp),
             )
@@ -62,5 +62,18 @@ private fun SettingsSwitchItemOffPreview() = PreviewWrapper {
         subtitle = "Display connection notifications",
         checked = false,
         onCheckedChange = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun SettingsSwitchItemUpgradePreview() = PreviewWrapper {
+    SettingsSwitchItem(
+        icon = Icons.TwoTone.Notifications,
+        title = "Show notifications",
+        subtitle = "Display connection notifications",
+        checked = false,
+        onCheckedChange = {},
+        requiresUpgrade = true,
     )
 }

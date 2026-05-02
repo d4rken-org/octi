@@ -105,8 +105,8 @@ fun GeneralSettingsScreen(
                     selectedEntry = state.themeMode,
                     onEntrySelected = onThemeModeSelected,
                     entryLabel = { it.label.get(context) },
-                    enabled = state.isPro,
-                    onDisabledClick = onUpgrade,
+                    requiresUpgrade = !state.isPro,
+                    onUpgradeClick = onUpgrade,
                 )
             }
             item {
@@ -117,12 +117,12 @@ fun GeneralSettingsScreen(
                     selectedEntry = state.themeStyle,
                     onEntrySelected = onThemeStyleSelected,
                     entryLabel = { it.label.get(context) },
-                    enabled = state.isPro,
-                    onDisabledClick = onUpgrade,
+                    requiresUpgrade = !state.isPro,
+                    onUpgradeClick = onUpgrade,
                 )
             }
             item {
-                val isColorPickerEnabled = state.isPro &&
+                val isColorPickerApplicable =
                     !(state.themeStyle == ThemeStyle.MATERIAL_YOU && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 SettingsListPreferenceItem(
                     icon = Icons.TwoTone.Palette,
@@ -131,8 +131,9 @@ fun GeneralSettingsScreen(
                     selectedEntry = state.themeColor,
                     onEntrySelected = onThemeColorSelected,
                     entryLabel = { it.label.get(context) },
-                    enabled = isColorPickerEnabled,
-                    onDisabledClick = onUpgrade,
+                    enabled = isColorPickerApplicable,
+                    requiresUpgrade = !state.isPro,
+                    onUpgradeClick = onUpgrade,
                 )
             }
         }
@@ -145,6 +146,27 @@ private fun GeneralSettingsScreenPreview() = PreviewWrapper {
     GeneralSettingsScreen(
         state = GeneralSettingsVM.State(
             isPro = true,
+            isUpdateCheckSupported = true,
+            isUpdateCheckEnabled = true,
+            themeMode = ThemeMode.SYSTEM,
+            themeStyle = ThemeStyle.DEFAULT,
+            themeColor = ThemeColor.GREEN,
+        ),
+        onNavigateUp = {},
+        onThemeModeSelected = {},
+        onThemeStyleSelected = {},
+        onThemeColorSelected = {},
+        onUpdateCheckChanged = {},
+        onUpgrade = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun GeneralSettingsScreenNonProPreview() = PreviewWrapper {
+    GeneralSettingsScreen(
+        state = GeneralSettingsVM.State(
+            isPro = false,
             isUpdateCheckSupported = true,
             isUpdateCheckEnabled = true,
             themeMode = ThemeMode.SYSTEM,

@@ -8,8 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Stars
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationDestination
+import eu.darken.octi.common.settings.UpgradeBadge
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.ConnectorPauseReason
 import eu.darken.octi.sync.core.ConnectorUiContribution
@@ -122,19 +122,14 @@ class GDriveUiContribution @Inject constructor() : ConnectorUiContribution {
                         text = stringResource(SyncR.string.sync_connector_paused_label),
                         modifier = Modifier.weight(1f),
                     )
-                    if (isPro) {
-                        Switch(
-                            checked = isPaused,
-                            onCheckedChange = null,
-                        )
-                    } else {
-                        M3Icon(
-                            imageVector = Icons.TwoTone.Stars,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(start = 16.dp),
-                        )
+                    if (!isPro) {
+                        UpgradeBadge()
+                        Spacer(modifier = Modifier.width(8.dp))
                     }
+                    Switch(
+                        checked = isPaused,
+                        onCheckedChange = null,
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))

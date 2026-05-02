@@ -11,14 +11,12 @@ import androidx.compose.material.icons.automirrored.twotone.Label
 import androidx.compose.material.icons.twotone.BatteryChargingFull
 import androidx.compose.material.icons.twotone.Dashboard
 import androidx.compose.material.icons.twotone.SignalWifi4Bar
-import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material.icons.twotone.Sync
 import androidx.compose.material.icons.twotone.Timer
 import androidx.compose.material.icons.twotone.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -186,31 +184,15 @@ fun SyncSettingsScreen(
                 )
             }
             item {
-                if (state.isPro) {
-                    SettingsSwitchItem(
-                        icon = Icons.TwoTone.BatteryChargingFull,
-                        title = stringResource(R.string.sync_setting_charging_enable_title),
-                        subtitle = stringResource(R.string.sync_setting_charging_enable_desc),
-                        checked = state.backgroundSyncChargingEnabled,
-                        onCheckedChange = onChargingEnabledChanged,
-                        enabled = state.backgroundSyncEnabled,
-                    )
-                } else {
-                    SettingsBaseItem(
-                        icon = Icons.TwoTone.BatteryChargingFull,
-                        title = stringResource(R.string.sync_setting_charging_enable_title),
-                        subtitle = stringResource(R.string.sync_setting_charging_enable_desc),
-                        onClick = { onChargingEnabledChanged(true) },
-                        trailingContent = {
-                            Icon(
-                                imageVector = Icons.TwoTone.Stars,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(start = 16.dp),
-                            )
-                        },
-                    )
-                }
+                SettingsSwitchItem(
+                    icon = Icons.TwoTone.BatteryChargingFull,
+                    title = stringResource(R.string.sync_setting_charging_enable_title),
+                    subtitle = stringResource(R.string.sync_setting_charging_enable_desc),
+                    checked = state.backgroundSyncChargingEnabled,
+                    onCheckedChange = onChargingEnabledChanged,
+                    enabled = state.backgroundSyncEnabled,
+                    requiresUpgrade = !state.isPro,
+                )
             }
             if (state.backgroundSyncChargingEnabled && state.isPro && state.backgroundSyncEnabled) {
                 item {
@@ -386,6 +368,33 @@ private fun SyncSettingsScreenPreview() = PreviewWrapper {
             backgroundSyncInterval = 60,
             backgroundSyncOnMobile = true,
             isPro = true,
+            backgroundSyncChargingEnabled = false,
+            backgroundSyncChargingInterval = 15,
+            foregroundSyncEnabled = false,
+        ),
+        onNavigateUp = {},
+        onShowDashboardCardChanged = {},
+        onDeviceLabelChanged = {},
+        onBackgroundSyncEnabledChanged = {},
+        onBackgroundSyncIntervalChanged = {},
+        onBackgroundSyncOnMobileChanged = {},
+        onChargingEnabledChanged = {},
+        onChargingIntervalChanged = {},
+        onForegroundSyncEnabledChanged = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun SyncSettingsScreenNonProPreview() = PreviewWrapper {
+    SyncSettingsScreen(
+        state = SyncSettingsVM.State(
+            showDashboardCard = true,
+            deviceLabel = null,
+            backgroundSyncEnabled = true,
+            backgroundSyncInterval = 60,
+            backgroundSyncOnMobile = true,
+            isPro = false,
             backgroundSyncChargingEnabled = false,
             backgroundSyncChargingInterval = 15,
             foregroundSyncEnabled = false,

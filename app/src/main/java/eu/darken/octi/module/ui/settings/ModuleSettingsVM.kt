@@ -7,6 +7,7 @@ import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.modules.apps.core.AppsSettings
 import eu.darken.octi.modules.clipboard.ClipboardSettings
 import eu.darken.octi.modules.connectivity.core.ConnectivitySettings
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ModuleSettingsVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
-    upgradeRepo: UpgradeRepo,
+    private val upgradeRepo: UpgradeRepo,
     private val powerSettings: PowerSettings,
     private val connectivitySettings: ConnectivitySettings,
     private val wifiSettings: WifiSettings,
@@ -86,6 +87,7 @@ class ModuleSettingsVM @Inject constructor(
     }
 
     fun setAppsInstallerEnabled(enabled: Boolean) = launch {
+        if (!requirePro()) return@launch
         appsSettings.includeInstaller.value(enabled)
     }
 
@@ -97,7 +99,11 @@ class ModuleSettingsVM @Inject constructor(
         fileShareSettings.isEnabled.value(enabled)
     }
 
-    fun goUpgrade() = navTo(Nav.Main.Upgrade())
+    private suspend fun requirePro(): Boolean {
+        if (upgradeRepo.isPro()) return true
+        navTo(Nav.Main.Upgrade())
+        return false
+    }
 
     companion object {
         private val TAG = logTag("Settings", "Module", "VM")

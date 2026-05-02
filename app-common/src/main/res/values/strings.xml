@@ -20,6 +20,8 @@
     <string name="general_reset_action">Reset</string>
     <string name="general_disconnect_action">Disconnect</string>
     <string name="general_upgrade_action">Upgrade</string>
+    <string name="general_upgrade_required_label">Requires upgrade</string>
+    <string name="upgrade_badge_label" translatable="false">Pro</string>
     <string name="general_update_action">Update</string>
     <string name="general_donate_action">Donate</string>
     <string name="general_check_action">Check</string>

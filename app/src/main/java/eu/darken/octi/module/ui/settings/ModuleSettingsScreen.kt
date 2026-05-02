@@ -9,12 +9,10 @@ import androidx.compose.material.icons.twotone.BatteryFull
 import androidx.compose.material.icons.automirrored.twotone.InsertDriveFile
 import androidx.compose.material.icons.twotone.ContentPaste
 import androidx.compose.material.icons.twotone.Public
-import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material.icons.twotone.Store
 import androidx.compose.material.icons.twotone.Wifi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -22,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
 import eu.darken.octi.modules.apps.R as AppsR
@@ -36,7 +33,6 @@ import eu.darken.octi.common.compose.PreviewWrapper
 import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
-import eu.darken.octi.common.settings.SettingsBaseItem
 import eu.darken.octi.common.settings.SettingsCategoryHeader
 import eu.darken.octi.common.settings.SettingsSwitchItem
 
@@ -55,7 +51,6 @@ fun ModuleSettingsScreenHost(vm: ModuleSettingsVM = hiltViewModel()) {
             onWifiEnabledChanged = { enabled -> vm.setWifiEnabled(enabled) },
             onAppsEnabledChanged = { enabled -> vm.setAppsEnabled(enabled) },
             onAppsInstallerEnabledChanged = { enabled -> vm.setAppsInstallerEnabled(enabled) },
-            onUpgrade = { vm.goUpgrade() },
             onClipboardEnabledChanged = { enabled -> vm.setClipboardEnabled(enabled) },
             onFilesEnabledChanged = { enabled -> vm.setFilesEnabled(enabled) },
         )
@@ -71,7 +66,6 @@ fun ModuleSettingsScreen(
     onWifiEnabledChanged: (Boolean) -> Unit,
     onAppsEnabledChanged: (Boolean) -> Unit,
     onAppsInstallerEnabledChanged: (Boolean) -> Unit,
-    onUpgrade: () -> Unit,
     onClipboardEnabledChanged: (Boolean) -> Unit,
     onFilesEnabledChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -139,31 +133,15 @@ fun ModuleSettingsScreen(
                 )
             }
             item {
-                if (state.isPro) {
-                    SettingsSwitchItem(
-                        icon = Icons.TwoTone.Store,
-                        title = stringResource(AppsR.string.module_apps_installer_label),
-                        subtitle = stringResource(AppsR.string.module_apps_installer_desc),
-                        checked = state.isAppsInstallerEnabled,
-                        onCheckedChange = onAppsInstallerEnabledChanged,
-                        enabled = state.isAppsEnabled,
-                    )
-                } else {
-                    SettingsBaseItem(
-                        icon = Icons.TwoTone.Store,
-                        title = stringResource(AppsR.string.module_apps_installer_label),
-                        subtitle = stringResource(AppsR.string.module_apps_installer_desc),
-                        onClick = onUpgrade,
-                        trailingContent = {
-                            Icon(
-                                imageVector = Icons.TwoTone.Stars,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(start = 16.dp),
-                            )
-                        },
-                    )
-                }
+                SettingsSwitchItem(
+                    icon = Icons.TwoTone.Store,
+                    title = stringResource(AppsR.string.module_apps_installer_label),
+                    subtitle = stringResource(AppsR.string.module_apps_installer_desc),
+                    checked = state.isAppsInstallerEnabled,
+                    onCheckedChange = onAppsInstallerEnabledChanged,
+                    enabled = state.isAppsEnabled,
+                    requiresUpgrade = !state.isPro,
+                )
             }
             item {
                 SettingsCategoryHeader(text = stringResource(R.string.modules_category_misc_label))
@@ -210,7 +188,31 @@ private fun ModuleSettingsScreenPreview() = PreviewWrapper {
         onWifiEnabledChanged = {},
         onAppsEnabledChanged = {},
         onAppsInstallerEnabledChanged = {},
-        onUpgrade = {},
+        onClipboardEnabledChanged = {},
+        onFilesEnabledChanged = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun ModuleSettingsScreenNonProPreview() = PreviewWrapper {
+    ModuleSettingsScreen(
+        state = ModuleSettingsVM.State(
+            isPro = false,
+            isPowerEnabled = true,
+            isConnectivityEnabled = true,
+            isWifiEnabled = true,
+            isAppsEnabled = true,
+            isAppsInstallerEnabled = false,
+            isClipboardEnabled = true,
+            isFilesEnabled = true,
+        ),
+        onNavigateUp = {},
+        onPowerEnabledChanged = {},
+        onConnectivityEnabledChanged = {},
+        onWifiEnabledChanged = {},
+        onAppsEnabledChanged = {},
+        onAppsInstallerEnabledChanged = {},
         onClipboardEnabledChanged = {},
         onFilesEnabledChanged = {},
     )

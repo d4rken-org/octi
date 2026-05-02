@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,6 +42,7 @@ import eu.darken.octi.common.compose.PreviewWrapper
 import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
+import eu.darken.octi.common.settings.UpgradeBadge
 import eu.darken.octi.modules.power.core.alert.BatteryHighAlertRule
 import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
 import eu.darken.octi.modules.power.core.alert.PowerAlert
@@ -65,6 +67,7 @@ fun PowerAlertsScreenHost(
             onNavigateUp = { vm.navUp() },
             onLowBatteryThreshold = { threshold -> vm.setBatteryLowAlert(threshold) },
             onHighBatteryThreshold = { threshold -> vm.setBatteryHighAlert(threshold) },
+            onUpgrade = { vm.goUpgrade() },
         )
     }
 }
@@ -75,6 +78,7 @@ fun PowerAlertsScreen(
     onNavigateUp: () -> Unit,
     onLowBatteryThreshold: (Float) -> Unit,
     onHighBatteryThreshold: (Float) -> Unit,
+    onUpgrade: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -108,7 +112,9 @@ fun PowerAlertsScreen(
             LowBatteryCard(
                 threshold = state.batteryLowAlert?.rule?.threshold ?: 0f,
                 isActive = state.batteryLowAlert != null,
+                isPro = state.isPro,
                 onThresholdChanged = onLowBatteryThreshold,
+                onUpgrade = onUpgrade,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -116,7 +122,9 @@ fun PowerAlertsScreen(
             HighBatteryCard(
                 threshold = state.batteryHighAlert?.rule?.threshold ?: 0f,
                 isActive = state.batteryHighAlert != null,
+                isPro = state.isPro,
                 onThresholdChanged = onHighBatteryThreshold,
+                onUpgrade = onUpgrade,
             )
         }
     }
@@ -126,7 +134,9 @@ fun PowerAlertsScreen(
 private fun LowBatteryCard(
     threshold: Float,
     isActive: Boolean,
+    isPro: Boolean,
     onThresholdChanged: (Float) -> Unit,
+    onUpgrade: () -> Unit,
 ) {
     var sliderValue by remember(threshold) { mutableFloatStateOf(threshold) }
 
@@ -140,7 +150,9 @@ private fun LowBatteryCard(
     }
 
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = !isPro, onClick = onUpgrade),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -156,6 +168,10 @@ private fun LowBatteryCard(
                     fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
+                if (!isPro) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    UpgradeBadge()
+                }
             }
 
             Text(
@@ -170,6 +186,7 @@ private fun LowBatteryCard(
                 onValueChangeFinished = { onThresholdChanged(sliderValue) },
                 valueRange = 0f..0.95f,
                 steps = 18,
+                enabled = isPro,
                 modifier = Modifier.padding(top = 8.dp),
             )
 
@@ -186,7 +203,9 @@ private fun LowBatteryCard(
 private fun HighBatteryCard(
     threshold: Float,
     isActive: Boolean,
+    isPro: Boolean,
     onThresholdChanged: (Float) -> Unit,
+    onUpgrade: () -> Unit,
 ) {
     var sliderValue by remember(threshold) { mutableFloatStateOf(threshold) }
 
@@ -200,7 +219,9 @@ private fun HighBatteryCard(
     }
 
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = !isPro, onClick = onUpgrade),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -216,6 +237,10 @@ private fun HighBatteryCard(
                     fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
+                if (!isPro) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    UpgradeBadge()
+                }
             }
 
             Text(
@@ -230,6 +255,7 @@ private fun HighBatteryCard(
                 onValueChangeFinished = { onThresholdChanged(sliderValue) },
                 valueRange = 0f..1f,
                 steps = 19,
+                enabled = isPro,
                 modifier = Modifier.padding(top = 8.dp),
             )
 
@@ -249,6 +275,7 @@ private fun PowerAlertsScreenActivePreview() = PreviewWrapper {
     PowerAlertsScreen(
         state = PowerAlertsVM.State(
             deviceLabel = "Pixel 8",
+            isPro = true,
             batteryLowAlert = PowerAlert(
                 rule = BatteryLowAlertRule(deviceId = deviceId, threshold = 0.2f),
                 event = null,
@@ -261,6 +288,7 @@ private fun PowerAlertsScreenActivePreview() = PreviewWrapper {
         onNavigateUp = {},
         onLowBatteryThreshold = {},
         onHighBatteryThreshold = {},
+        onUpgrade = {},
     )
 }
 
@@ -268,9 +296,22 @@ private fun PowerAlertsScreenActivePreview() = PreviewWrapper {
 @Composable
 private fun PowerAlertsScreenDisabledPreview() = PreviewWrapper {
     PowerAlertsScreen(
-        state = PowerAlertsVM.State(deviceLabel = "Pixel 8"),
+        state = PowerAlertsVM.State(deviceLabel = "Pixel 8", isPro = true),
         onNavigateUp = {},
         onLowBatteryThreshold = {},
         onHighBatteryThreshold = {},
+        onUpgrade = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun PowerAlertsScreenNonProPreview() = PreviewWrapper {
+    PowerAlertsScreen(
+        state = PowerAlertsVM.State(deviceLabel = "Pixel 8", isPro = false),
+        onNavigateUp = {},
+        onLowBatteryThreshold = {},
+        onHighBatteryThreshold = {},
+        onUpgrade = {},
     )
 }

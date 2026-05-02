@@ -40,6 +40,7 @@ class PowerAlertsVM @Inject constructor(
 
     data class State(
         val deviceLabel: String = "",
+        val isPro: Boolean = false,
         val batteryLowAlert: PowerAlert<BatteryLowAlertRule>? = null,
         val batteryHighAlert: PowerAlert<BatteryHighAlertRule>? = null,
     )
@@ -50,7 +51,8 @@ class PowerAlertsVM @Inject constructor(
             combine(
                 alertsManager.alerts.map { alerts -> alerts.filter { it.deviceId == deviceId } },
                 metaRepo.state,
-            ) { alerts, metaState ->
+                upgradeRepo.upgradeInfo,
+            ) { alerts, metaState, upgradeInfo ->
                 val metaData = metaState.all.firstOrNull { it.deviceId == deviceId }
 
                 if (metaData == null) {
@@ -66,12 +68,15 @@ class PowerAlertsVM @Inject constructor(
 
                 State(
                     deviceLabel = metaData.data.deviceLabel ?: metaData.data.deviceName,
+                    isPro = upgradeInfo.isPro,
                     batteryLowAlert = lowAlert,
                     batteryHighAlert = highAlert,
                 )
             }
         }
         .asStateFlow()
+
+    fun goUpgrade() = navTo(Nav.Main.Upgrade())
 
     fun initialize(deviceId: String) {
         log(TAG) { "initialize($deviceId)" }

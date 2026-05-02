@@ -14,6 +14,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,21 +39,29 @@ fun <T> SettingsListPreferenceItem(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     enabled: Boolean = true,
-    onDisabledClick: (() -> Unit)? = null,
+    requiresUpgrade: Boolean = false,
+    onUpgradeClick: (() -> Unit)? = null,
 ) {
     var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(requiresUpgrade) {
+        if (requiresUpgrade) showDialog = false
+    }
 
     SettingsBaseItem(
         icon = icon,
         title = title,
         subtitle = subtitle ?: entryLabel(selectedEntry),
-        onClick = { if (enabled) showDialog = true },
+        onClick = when {
+            requiresUpgrade -> onUpgradeClick ?: {}
+            else -> { { showDialog = true } }
+        },
         modifier = modifier,
         enabled = enabled,
-        onDisabledClick = onDisabledClick,
+        requiresUpgrade = requiresUpgrade,
     )
 
-    if (showDialog) {
+    if (showDialog && !requiresUpgrade) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text(text = title) },
@@ -106,5 +115,20 @@ private fun SettingsListPreferenceItemPreview() = PreviewWrapper {
         selectedEntry = "Automatic",
         onEntrySelected = {},
         entryLabel = { it },
+    )
+}
+
+@Preview2
+@Composable
+private fun SettingsListPreferenceItemUpgradePreview() = PreviewWrapper {
+    SettingsListPreferenceItem(
+        icon = Icons.TwoTone.Tune,
+        title = "Mode",
+        entries = listOf("Manual", "Automatic", "Always"),
+        selectedEntry = "Automatic",
+        onEntrySelected = {},
+        entryLabel = { it },
+        requiresUpgrade = true,
+        onUpgradeClick = {},
     )
 }

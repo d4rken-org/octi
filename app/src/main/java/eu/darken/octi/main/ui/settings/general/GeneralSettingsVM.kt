@@ -10,6 +10,7 @@ import eu.darken.octi.common.theming.ThemeStyle
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.updater.UpdateChecker
 import kotlinx.coroutines.flow.combine
@@ -20,7 +21,7 @@ import javax.inject.Inject
 class GeneralSettingsVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val generalSettings: GeneralSettings,
-    upgradeRepo: UpgradeRepo,
+    private val upgradeRepo: UpgradeRepo,
     private val updateChecker: UpdateChecker,
 ) : ViewModel4(dispatcherProvider) {
 
@@ -54,14 +55,17 @@ class GeneralSettingsVM @Inject constructor(
     }.asStateFlow()
 
     fun setThemeMode(mode: ThemeMode) = launch {
+        if (!requirePro()) return@launch
         generalSettings.themeMode.value(mode)
     }
 
     fun setThemeStyle(style: ThemeStyle) = launch {
+        if (!requirePro()) return@launch
         generalSettings.themeStyle.value(style)
     }
 
     fun setThemeColor(color: ThemeColor) = launch {
+        if (!requirePro()) return@launch
         generalSettings.themeColor.value(color)
     }
 
@@ -69,6 +73,12 @@ class GeneralSettingsVM @Inject constructor(
 
     fun setUpdateCheckEnabled(enabled: Boolean) = launch {
         generalSettings.isUpdateCheckEnabled.value(enabled)
+    }
+
+    private suspend fun requirePro(): Boolean {
+        if (upgradeRepo.isPro()) return true
+        navTo(Nav.Main.Upgrade())
+        return false
     }
 
     companion object {
