@@ -13,6 +13,7 @@ import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.throttleLatest
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.module.core.device
+import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.meta.core.MetaRepo
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerRepo
@@ -22,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.sync.Mutex
@@ -30,6 +32,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 @Singleton
 class PowerAlertManager @Inject constructor(
@@ -41,6 +44,7 @@ class PowerAlertManager @Inject constructor(
 ) {
 
     private val mutex = Mutex()
+    private val shownNotifications = mutableSetOf<AlertNotificationKey>()
 
     val alerts: Flow<Collection<PowerAlert<*>>> = combine(
         powerSettings.alertRules.flow,
@@ -56,7 +60,9 @@ class PowerAlertManager @Inject constructor(
 
     init {
         combine(
-            powerRepo.state.throttleLatest(1.seconds),
+            powerRepo.state
+                .throttleLatest(1.seconds)
+                .distinctUntilChangedBy { it.alertRelevantStateKey() },
             powerSettings.alertRules.flow,
         ) { powerStates, alertRules ->
             processAlerts(powerStates, alertRules)
@@ -109,11 +115,12 @@ class PowerAlertManager @Inject constructor(
                                 log(TAG, INFO) { "Rule has triggered" }
                                 val newEvent = PowerAlertRule.Event(rule.id)
                                 powerSettings.alertEvents.update { it + newEvent }
-                                notifications.show(rule, powerState.data, metaState.data)
+                                showNotificationIfNeeded(rule, newEvent, powerState.data, metaState.data)
                             }
 
                             event != null && !isTriggered && isRecovered -> {
                                 log(TAG, INFO) { "Rule is no longer triggered" }
+                                shownNotifications.remove(event.notificationKey)
                                 powerSettings.alertEvents.update { it - event }
                                 notifications.dismiss(rule)
                             }
@@ -123,8 +130,8 @@ class PowerAlertManager @Inject constructor(
                             }
 
                             event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
-                                log(TAG, VERBOSE) { "Rule is triggered (not dismissed), updating notification" }
-                                notifications.show(rule, powerState.data, metaState.data)
+                                log(TAG, VERBOSE) { "Rule is triggered (not dismissed)" }
+                                showNotificationIfNeeded(rule, event, powerState.data, metaState.data)
                             }
                         }
                     }
@@ -139,11 +146,12 @@ class PowerAlertManager @Inject constructor(
                                 log(TAG, INFO) { "Rule has triggered" }
                                 val newEvent = PowerAlertRule.Event(rule.id)
                                 powerSettings.alertEvents.update { it + newEvent }
-                                notifications.show(rule, powerState.data, metaState.data)
+                                showNotificationIfNeeded(rule, newEvent, powerState.data, metaState.data)
                             }
 
                             event != null && !isTriggered && isRecovered -> {
                                 log(TAG, INFO) { "Rule is no longer triggered" }
+                                shownNotifications.remove(event.notificationKey)
                                 powerSettings.alertEvents.update { it - event }
                                 notifications.dismiss(rule)
                             }
@@ -153,8 +161,8 @@ class PowerAlertManager @Inject constructor(
                             }
 
                             event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
-                                log(TAG, VERBOSE) { "Rule is triggered (not dismissed), updating notification" }
-                                notifications.show(rule, powerState.data, metaState.data)
+                                log(TAG, VERBOSE) { "Rule is triggered (not dismissed)" }
+                                showNotificationIfNeeded(rule, event, powerState.data, metaState.data)
                             }
                         }
                     }
@@ -162,6 +170,51 @@ class PowerAlertManager @Inject constructor(
             }
         }
     }
+
+    private suspend fun showNotificationIfNeeded(
+        rule: PowerAlertRule,
+        event: PowerAlertRule.Event,
+        power: PowerInfo,
+        meta: MetaInfo,
+    ) {
+        val key = event.notificationKey
+        if (key in shownNotifications) {
+            log(TAG, VERBOSE) { "Notification already shown for $key" }
+            return
+        }
+
+        notifications.show(rule, power, meta)
+        shownNotifications += key
+    }
+
+    private val PowerAlertRule.Event.notificationKey: AlertNotificationKey
+        get() = AlertNotificationKey(
+            alertId = id,
+            triggeredAt = triggeredAt,
+        )
+
+    private fun ModuleRepo.State<PowerInfo>.alertRelevantStateKey(): Set<AlertRelevantPowerState> = all
+        .map {
+            AlertRelevantPowerState(
+                deviceId = it.deviceId,
+                isCharging = it.data.isCharging,
+                batteryLevel = it.data.battery.level,
+                batteryScale = it.data.battery.scale,
+            )
+        }
+        .toSet()
+
+    private data class AlertNotificationKey(
+        val alertId: PowerAlertRuleId,
+        val triggeredAt: Instant,
+    )
+
+    private data class AlertRelevantPowerState(
+        val deviceId: DeviceId,
+        val isCharging: Boolean,
+        val batteryLevel: Int,
+        val batteryScale: Int,
+    )
 
     suspend fun setBatteryLowAlert(deviceId: DeviceId, threshold: Float?): Unit = mutex.withLock {
         log(TAG) { "setBatteryLowAlert($deviceId,$threshold)" }

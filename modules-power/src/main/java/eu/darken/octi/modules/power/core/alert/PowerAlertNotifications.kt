@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.hasApiLevel
@@ -48,7 +47,7 @@ class PowerAlertNotifications @Inject constructor(
 
         val openPi: PendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            alert.pendingIntentRequestCode,
             context.packageManager.getLaunchIntentForPackage(context.packageName)!!.apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 putExtra(ARG_ALERT_ID, alert.id)
@@ -59,7 +58,7 @@ class PowerAlertNotifications @Inject constructor(
 
         val deletePi = PendingIntent.getBroadcast(
             context,
-            0,
+            alert.pendingIntentRequestCode,
             Intent(context, PowerAlertNotificationReceiver::class.java).apply {
                 action = ACTION_DISMISS
                 putExtra(ARG_ALERT_ID, alert.id)
@@ -74,6 +73,9 @@ class PowerAlertNotifications @Inject constructor(
             val hash = (deviceId.toString() + this::class.java.simpleName).hashCode()
             return NOTIFICATION_ID_RANGE_STATE + (hash.absoluteValue % 101)
         }
+
+    private val PowerAlertRule.pendingIntentRequestCode: Int
+        get() = id.hashCode() and Int.MAX_VALUE
 
     suspend fun show(rule: PowerAlertRule, power: PowerInfo, meta: MetaInfo) {
         log(TAG) { "show($rule, $meta)" }
@@ -129,8 +131,8 @@ class PowerAlertNotifications @Inject constructor(
     companion object {
         const val ARG_ALERT_ID = "alertId"
         internal const val NOTIFICATION_ID_RANGE_STATE = 1000
-        val ACTION_DISMISS = "${BuildConfigWrap.APPLICATION_ID}.module.power.alert.NOTIFICATION_DISMISSED"
-        private val CHANNEL_ID = "${BuildConfigWrap.APPLICATION_ID}.notification.channel.module.power.alerts"
+        const val ACTION_DISMISS = "eu.darken.octi.module.power.alert.NOTIFICATION_DISMISSED"
+        private const val CHANNEL_ID = "eu.darken.octi.notification.channel.module.power.alerts"
         val TAG = logTag("Module", "Power", "Alert", "Notifications")
     }
 }
