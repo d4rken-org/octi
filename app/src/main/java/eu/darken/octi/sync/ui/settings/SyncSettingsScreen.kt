@@ -152,30 +152,13 @@ fun SyncSettingsScreen(
                 SettingsCategoryHeader(text = stringResource(R.string.sync_setting_category_foreground_label))
             }
             item {
-                if (state.isPro) {
-                    SettingsSwitchItem(
-                        icon = Icons.TwoTone.Visibility,
-                        title = stringResource(R.string.sync_setting_foreground_enable_title),
-                        subtitle = stringResource(R.string.sync_setting_foreground_enable_desc),
-                        checked = state.foregroundSyncEnabled,
-                        onCheckedChange = onForegroundSyncEnabledChanged,
-                    )
-                } else {
-                    SettingsBaseItem(
-                        icon = Icons.TwoTone.Visibility,
-                        title = stringResource(R.string.sync_setting_foreground_enable_title),
-                        subtitle = stringResource(R.string.sync_setting_foreground_enable_desc),
-                        onClick = { onForegroundSyncEnabledChanged(true) },
-                        trailingContent = {
-                            Icon(
-                                imageVector = Icons.TwoTone.Stars,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(start = 16.dp),
-                            )
-                        },
-                    )
-                }
+                SettingsSwitchItem(
+                    icon = Icons.TwoTone.Visibility,
+                    title = stringResource(R.string.sync_setting_foreground_enable_title),
+                    subtitle = stringResource(R.string.sync_setting_foreground_enable_desc),
+                    checked = state.foregroundSyncEnabled,
+                    onCheckedChange = onForegroundSyncEnabledChanged,
+                )
             }
             // Background sync section
             item {

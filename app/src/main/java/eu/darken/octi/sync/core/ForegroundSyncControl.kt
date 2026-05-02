@@ -14,7 +14,6 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.combine
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.network.NetworkStateProvider
-import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.coroutines.CancellationException
@@ -48,7 +47,6 @@ class ForegroundSyncControl @Inject constructor(
     private val syncManager: SyncManager,
     private val syncExecutor: SyncExecutor,
     private val syncSettings: SyncSettings,
-    private val upgradeRepo: UpgradeRepo,
     private val networkStateProvider: NetworkStateProvider,
 ) {
 
@@ -79,8 +77,9 @@ class ForegroundSyncControl @Inject constructor(
                 backgroundDebounceJob = scope.launch {
                     log(TAG) { "Process backgrounded, debouncing $BACKGROUND_DEBOUNCE..." }
                     delay(BACKGROUND_DEBOUNCE)
+                    lastBackgroundedAt = Clock.System.now()
                     isForeground.value = false
-                    log(TAG) { "Background debounce elapsed, isForeground=false" }
+                    log(TAG) { "Background debounce elapsed, isForeground=false, lastBackgroundedAt=$lastBackgroundedAt" }
                 }
             }
         })
@@ -88,14 +87,12 @@ class ForegroundSyncControl @Inject constructor(
         combine(
             isForeground,
             syncSettings.foregroundSyncEnabled.flow,
-            upgradeRepo.upgradeInfo,
             syncSettings.backgroundSyncOnMobile.flow,
             networkStateProvider.networkState,
-        ) { foreground, enabled, info, syncOnMobile, networkState ->
-            val isPro = info.isPro
+        ) { foreground, enabled, syncOnMobile, networkState ->
             val networkOk = syncOnMobile || !networkState.isMeteredConnection
-            val isActive = foreground && enabled && isPro && networkOk
-            log(TAG) { "combine: foreground=$foreground, enabled=$enabled, isPro=$isPro, networkOk=$networkOk -> isActive=$isActive" }
+            val isActive = computeForegroundSyncActive(foreground, enabled, networkOk)
+            log(TAG) { "combine: foreground=$foreground, enabled=$enabled, networkOk=$networkOk -> isActive=$isActive" }
             isActive
         }
             .distinctUntilChanged()
@@ -242,7 +239,9 @@ class ForegroundSyncControl @Inject constructor(
 
     private fun onBackground() {
         log(TAG, INFO) { "onBackground()" }
-        lastBackgroundedAt = Clock.System.now()
+        // lastBackgroundedAt is set from the lifecycle onStop debounce path,
+        // not here, so transient isActive=false transitions (network/setting flips)
+        // don't trigger spurious catch-up syncs on the next isActive=true.
 
         // Stop collecting events — cancels upstream WebSocket/polling via WhileSubscribed
         eventCollectorJob?.cancel()
@@ -257,3 +256,9 @@ class ForegroundSyncControl @Inject constructor(
         private val TAG = logTag("Sync", "Foreground", "Control")
     }
 }
+
+internal fun computeForegroundSyncActive(
+    foreground: Boolean,
+    syncEnabled: Boolean,
+    networkOk: Boolean,
+): Boolean = foreground && syncEnabled && networkOk

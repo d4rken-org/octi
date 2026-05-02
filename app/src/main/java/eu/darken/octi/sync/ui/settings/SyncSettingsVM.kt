@@ -86,7 +86,6 @@ class SyncSettingsVM @Inject constructor(
     }
 
     fun setForegroundSyncEnabled(enabled: Boolean) = launch {
-        if (!requirePro()) return@launch
         syncSettings.foregroundSyncEnabled.value(enabled)
     }
 
