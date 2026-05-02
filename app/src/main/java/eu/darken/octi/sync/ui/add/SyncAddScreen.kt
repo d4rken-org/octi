@@ -45,6 +45,7 @@ import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import androidx.compose.ui.graphics.Color
 import eu.darken.octi.common.sync.ConnectorType
+import eu.darken.octi.sync.core.ConnectorOperation
 import eu.darken.octi.sync.core.ConnectorPauseReason
 import eu.darken.octi.sync.core.ConnectorUiContribution
 import eu.darken.octi.sync.core.SyncConnector
@@ -191,6 +192,7 @@ private fun previewContribution(
     @Composable override fun ActionsSheet(
         connector: SyncConnector,
         state: SyncConnectorState,
+        activeOperations: List<ConnectorOperation>,
         isPaused: Boolean,
         pauseReason: ConnectorPauseReason?,
         isPro: Boolean,

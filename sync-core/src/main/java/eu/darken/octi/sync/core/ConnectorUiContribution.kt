@@ -55,6 +55,7 @@ interface ConnectorUiContribution {
     fun ActionsSheet(
         connector: SyncConnector,
         state: SyncConnectorState,
+        activeOperations: List<ConnectorOperation>,
         isPaused: Boolean,
         pauseReason: ConnectorPauseReason?,
         isPro: Boolean,

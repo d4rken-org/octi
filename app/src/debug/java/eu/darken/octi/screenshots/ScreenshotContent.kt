@@ -266,6 +266,7 @@ internal fun SyncServicesContent() = PreviewWrapper {
                         connectorId = gdriveId,
                         connector = PreviewConnector(gdriveId, "octi@example.com"),
                         ourState = previewSyncState(lastActionAt = NOW - 5.seconds),
+                        activeOperations = emptyList(),
                         storageStatus = previewStorageStatus(gdriveId, used = 6_000_000, total = 15_000_000_000),
                         otherStates = listOf(previewSyncState(lastActionAt = NOW - 40.seconds)),
                         pauseReason = null,
@@ -276,6 +277,7 @@ internal fun SyncServicesContent() = PreviewWrapper {
                         connectorId = octiServerId,
                         connector = PreviewConnector(octiServerId, "octi.example.com"),
                         ourState = previewSyncState(lastActionAt = NOW - 2.hours),
+                        activeOperations = emptyList(),
                         storageStatus = previewStorageStatus(octiServerId, used = 4_300, total = 50_000_000),
                         otherStates = listOf(previewSyncState(lastActionAt = NOW - 12.minutes)),
                         pauseReason = null,
@@ -683,6 +685,7 @@ private class PreviewContribution(
     override fun ActionsSheet(
         connector: SyncConnector,
         state: SyncConnectorState,
+        activeOperations: List<ConnectorOperation>,
         isPaused: Boolean,
         pauseReason: ConnectorPauseReason?,
         isPro: Boolean,

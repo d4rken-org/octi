@@ -191,6 +191,7 @@ fun SyncListScreen(
         contribution.ActionsSheet(
             connector = item.connector,
             state = item.ourState,
+            activeOperations = item.activeOperations,
             isPaused = item.isPaused,
             pauseReason = item.pauseReason,
             isPro = state.isPro,
@@ -198,7 +199,6 @@ fun SyncListScreen(
             onTogglePause = { onTogglePause(item.connectorId) },
             onForceSync = {
                 onForceSync(item.connectorId)
-                showActionsForId = null
             },
             onViewDevices = {
                 onViewDevices(item.connectorId)
@@ -210,7 +210,6 @@ fun SyncListScreen(
             },
             onReset = {
                 onReset(item.connectorId)
-                showActionsForId = null
             },
             onDisconnect = {
                 onDisconnect(item.connectorId)
@@ -461,6 +460,7 @@ private fun previewConnectorItem(connectorId: ConnectorId): SyncListVM.Connector
         connectorId = connectorId,
         connector = connector,
         ourState = state,
+        activeOperations = emptyList(),
         storageStatus = StorageStatus.Ready(
             connectorId = connectorId,
             snapshot = StorageSnapshot(
@@ -516,6 +516,7 @@ private fun previewContribution(
     override fun ActionsSheet(
         connector: SyncConnector,
         state: SyncConnectorState,
+        activeOperations: List<ConnectorOperation>,
         isPaused: Boolean,
         pauseReason: ConnectorPauseReason?,
         isPro: Boolean,

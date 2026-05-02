@@ -1,6 +1,7 @@
 package eu.darken.octi.sync.ui.list
 
 import eu.darken.octi.sync.core.ConnectorIssue
+import eu.darken.octi.sync.core.ConnectorOperation
 import eu.darken.octi.sync.core.ConnectorPauseReason
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
@@ -14,6 +15,7 @@ import eu.darken.octi.sync.core.blob.StorageStatus
 data class ConnectorCardState(
     val connector: SyncConnector,
     val syncState: SyncConnectorState,
+    val activeOperations: List<ConnectorOperation>,
     val storageStatus: StorageStatus,
     val pauseReason: ConnectorPauseReason?,
     val isPaused: Boolean,
