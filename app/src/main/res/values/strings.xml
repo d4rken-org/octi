@@ -100,6 +100,14 @@
     <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
 
     <string name="sync_device_id_label">Device ID</string>
+    <string name="sync_device_id_copied_toast">Device ID copied</string>
+    <string name="sync_device_model_label">Model</string>
+    <string name="sync_device_android_version_label">Android version</string>
+    <string name="sync_device_security_patch_label">Security patch</string>
+    <string name="sync_device_booted_label">Booted</string>
+    <string name="sync_device_octi_version_label">Octi version</string>
+    <string name="sync_device_added_label">Added</string>
+    <string name="sync_device_last_seen_short_label">Last seen</string>
 
     <plurals name="general_devices_count_label">
         <item quantity="one">%d device</item>

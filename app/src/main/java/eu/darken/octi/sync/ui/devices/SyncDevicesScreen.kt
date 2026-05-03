@@ -16,6 +16,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -23,6 +25,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
@@ -98,6 +103,9 @@ fun SyncDevicesScreen(
 ) {
     var selectedDeviceId by rememberSaveable { mutableStateOf<String?>(null) }
     var initialConsumed by rememberSaveable { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val showMessage: (String) -> Unit = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
 
     LaunchedEffect(initialDeviceId, state.items) {
         if (!initialConsumed && initialDeviceId != null && state.items.isNotEmpty()) {
@@ -125,6 +133,7 @@ fun SyncDevicesScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -200,6 +209,7 @@ fun SyncDevicesScreen(
             // Do NOT null selectedDeviceId here — once the VM's optimistic prune drops the
             // device from state.items, selectedDevice resolves to null and the sheet unmounts.
             onDelete = { onDeleteDevice(device.deviceId) },
+            showMessage = showMessage,
         )
     }
 }
