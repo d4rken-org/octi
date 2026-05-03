@@ -58,6 +58,8 @@ import eu.darken.octi.modules.clipboard.ClipboardRepo
 import eu.darken.octi.modules.clipboard.R
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.meta.core.MetaRepo
+import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -121,7 +123,16 @@ class ClipboardWidgetConfigActivity : androidx.activity.ComponentActivity() {
             }
                 .orEmpty()
                 .distinctBy { it.id }
-                .sortedBy { it.label.lowercase() }
+                .let { devices ->
+                    val labelsByDevice = disambiguateDeviceLabels(devices.associate { DeviceId(it.id) to it.label })
+                    devices.map { device ->
+                        device.copy(label = labelsByDevice[DeviceId(device.id)] ?: device.label)
+                    }
+                }
+                .sortedWith(
+                    compareBy<WidgetConfigDevice, String>(String.CASE_INSENSITIVE_ORDER) { it.label }
+                        .thenBy { it.id }
+                )
 
             setContent {
                 val themeState by themeSettings.themeState.collectAsState(ThemeState())

@@ -24,6 +24,8 @@ import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
+import eu.darken.octi.sync.core.shortLabel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -111,6 +113,9 @@ class IncomingFileNotifier @Inject constructor(
                     .filter { now <= it.retainUntil }
                     .map { it.targetDeviceId to it.blobKey }
                     .toSet()
+                val labelsByDevice = disambiguateDeviceLabels(snap.byDevice.devices.mapValues { (deviceId, moduleDatas) ->
+                    moduleDatas.firstNotNullOfOrNull { it.data as? MetaInfo }?.labelOrFallback ?: deviceId.shortLabel
+                })
 
                 for (moduleData in snap.state.others) {
                     val deviceId = moduleData.deviceId
@@ -178,10 +183,7 @@ class IncomingFileNotifier @Inject constructor(
                         continue
                     }
 
-                    val deviceLabel = snap.byDevice.devices[deviceId]
-                        ?.firstNotNullOfOrNull { it.data as? MetaInfo }
-                        ?.labelOrFallback
-                        ?: deviceId.id.take(8)
+                    val deviceLabel = labelsByDevice[deviceId] ?: deviceId.shortLabel
 
                     for (blobKey in added) {
                         val sharedFile = moduleData.data.files.find { it.blobKey == blobKey } ?: continue

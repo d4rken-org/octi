@@ -35,9 +35,12 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import eu.darken.octi.common.widget.WidgetTheme
+import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.modules.connectivity.R
 import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
+import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import eu.darken.octi.common.R as CommonR
 
 internal object NetworkWidgetSizing {
@@ -170,12 +173,12 @@ private fun buildDeviceTiles(
     if (metaState == null || connectivityState == null) return emptyList()
     if (maxRows <= 0) return emptyList()
 
-    val metaAll = metaState.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>>
+    val metaAll = metaState.all as? Collection<ModuleData<MetaInfo>>
         ?: return emptyList()
-    val connectivityAll = connectivityState.all as? Collection<eu.darken.octi.module.core.ModuleData<ConnectivityInfo>>
+    val connectivityAll = connectivityState.all as? Collection<ModuleData<ConnectivityInfo>>
         ?: return emptyList()
 
-    return connectivityAll
+    val pairs = connectivityAll
         .mapNotNull { connData ->
             val metaData = metaAll.firstOrNull { it.deviceId == connData.deviceId }
             metaData?.let { connData to it }
@@ -184,12 +187,21 @@ private fun buildDeviceTiles(
             if (allowedDeviceIds.isNullOrEmpty()) pairs
             else pairs.filter { (connData, _) -> connData.deviceId.id in allowedDeviceIds }
         }
-        .sortedBy { (_, metaData) -> metaData.data.labelOrFallback.lowercase() }
+    val labelsByDevice = disambiguateDeviceLabels(pairs.associate { (_, metaData) ->
+        metaData.deviceId to metaData.data.labelOrFallback
+    })
+
+    return pairs
+        .sortedWith(
+            compareBy<Pair<ModuleData<ConnectivityInfo>, ModuleData<MetaInfo>>, String>(String.CASE_INSENSITIVE_ORDER) {
+                labelsByDevice[it.second.deviceId] ?: it.second.data.labelOrFallback
+            }.thenBy { it.second.deviceId.id }
+        )
         .take(maxRows)
         .map { (connData, metaData) ->
             NetworkDeviceTile(
                 deviceId = connData.deviceId.id,
-                deviceName = metaData.data.labelOrFallback,
+                deviceName = labelsByDevice[metaData.deviceId] ?: metaData.data.labelOrFallback,
                 lastSeen = DateUtils.getRelativeTimeSpanString(
                     metaData.modifiedAt.toEpochMilliseconds(),
                     System.currentTimeMillis(),

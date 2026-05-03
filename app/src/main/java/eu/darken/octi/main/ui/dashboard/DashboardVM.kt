@@ -54,6 +54,8 @@ import eu.darken.octi.sync.core.SyncOrchestrator
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.StorageStatusManager
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
+import eu.darken.octi.sync.core.shortLabel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -200,9 +202,10 @@ class DashboardVM @Inject constructor(
         val degradedPlatform: String? = null,
         val degradedVersion: String? = null,
         val degradedLastSeen: Instant? = null,
+        val displayLabel: String = meta?.data?.labelOrFallback ?: degradedLabel ?: deviceId.shortLabel,
     ) {
-        val displayLabel: String
-            get() = meta?.data?.labelOrFallback ?: degradedLabel ?: deviceId.id.take(8)
+        val baseLabel: String
+            get() = meta?.data?.labelOrFallback ?: degradedLabel ?: deviceId.shortLabel
     }
 
     sealed interface ModuleItem {
@@ -694,10 +697,17 @@ class DashboardVM @Inject constructor(
                 }
         }
 
-        (normalItems + degradedItems)
-            .sortedBy { it.displayLabel.lowercase() }
-            .sortedByDescending { it.deviceId == syncSettings.deviceId }
-            .sortedBy { it.isDegraded }
+        val items = normalItems + degradedItems
+        val labelsByDevice = disambiguateDeviceLabels(items.associate { it.deviceId to it.baseLabel })
+
+        items
+            .map { item -> item.copy(displayLabel = labelsByDevice[item.deviceId] ?: item.baseLabel) }
+            .sortedWith(
+                compareBy<DashboardVM.DeviceItem> { it.isDegraded }
+                    .thenByDescending { it.deviceId == syncSettings.deviceId }
+                    .thenBy(String.CASE_INSENSITIVE_ORDER) { it.displayLabel }
+                    .thenBy { it.deviceId.id }
+            )
     }
 
     private val ModuleData<out Any>.orderPrio: Int

@@ -22,6 +22,8 @@ import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.ConnectorIssueAggregator
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
+import eu.darken.octi.sync.core.shortLabel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -87,7 +89,11 @@ class SyncDevicesVM @Inject constructor(
         val serverPlatform: String?,
         val serverLabel: String? = null,
         val issues: List<ConnectorIssue> = emptyList(),
-    )
+        val displayLabel: String = metaInfo?.labelOrFallback ?: serverLabel ?: deviceId.shortLabel,
+    ) {
+        val baseLabel: String
+            get() = metaInfo?.labelOrFallback ?: serverLabel ?: deviceId.shortLabel
+    }
 
     data class State(
         val items: List<DeviceItem> = emptyList(),
@@ -135,14 +141,22 @@ class SyncDevicesVM @Inject constructor(
                         serverLabel = deviceMeta.label,
                         issues = allIssues.filter { it.connectorId == connectorId && it.deviceId == deviceId },
                     )
-                }.sortedBy { (it.metaInfo?.labelOrFallback ?: it.serverLabel ?: it.deviceId.id).lowercase() }
+                }
+
+                val labelsByDevice = disambiguateDeviceLabels(items.associate { it.deviceId to it.baseLabel })
+                val displayItems = items.map { item ->
+                    item.copy(displayLabel = labelsByDevice[item.deviceId] ?: item.baseLabel)
+                }.sortedWith(
+                    compareBy<SyncDevicesVM.DeviceItem, String>(String.CASE_INSENSITIVE_ORDER) { it.displayLabel }
+                        .thenBy { it.deviceId.id }
+                )
 
                 val deletingIds = operations
                     .filter { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing }
                     .mapNotNullTo(mutableSetOf()) { (it.command as? ConnectorCommand.DeleteDevice)?.deviceId }
 
                 State(
-                    items = items,
+                    items = displayItems,
                     deviceRemovalPolicy = connector.capabilities.deviceRemovalPolicy,
                     isPaused = pausedIds.contains(connectorId),
                     deletingDeviceIds = deletingIds,

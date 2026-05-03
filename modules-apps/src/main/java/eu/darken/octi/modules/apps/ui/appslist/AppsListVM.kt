@@ -9,6 +9,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.apps.core.AppsRepo
@@ -81,8 +82,12 @@ class AppsListVM @Inject constructor(
                         }
                     }
 
+                val labelsByDevice = disambiguateDeviceLabels(
+                    metaState.all.associate { it.deviceId to it.data.labelOrFallback }
+                )
+
                 State(
-                    deviceLabel = metaData.data.deviceLabel ?: metaData.data.deviceName,
+                    deviceLabel = labelsByDevice[deviceId] ?: metaData.data.labelOrFallback,
                     items = items,
                     sortMode = sortMode,
                 )

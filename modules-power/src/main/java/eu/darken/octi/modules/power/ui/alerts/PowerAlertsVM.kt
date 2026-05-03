@@ -13,6 +13,7 @@ import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.common.upgrade.isPro
 import eu.darken.octi.modules.meta.core.MetaRepo
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import eu.darken.octi.modules.power.core.alert.BatteryHighAlertRule
 import eu.darken.octi.modules.power.core.alert.BatteryLowAlertRule
 import eu.darken.octi.modules.power.core.alert.PowerAlert
@@ -66,8 +67,12 @@ class PowerAlertsVM @Inject constructor(
                 @Suppress("UNCHECKED_CAST")
                 val highAlert = alerts.find { it.rule is BatteryHighAlertRule } as PowerAlert<BatteryHighAlertRule>?
 
+                val labelsByDevice = disambiguateDeviceLabels(
+                    metaState.all.associate { it.deviceId to it.data.labelOrFallback }
+                )
+
                 State(
-                    deviceLabel = metaData.data.deviceLabel ?: metaData.data.deviceName,
+                    deviceLabel = labelsByDevice[deviceId] ?: metaData.data.labelOrFallback,
                     isPro = upgradeInfo.isPro,
                     batteryLowAlert = lowAlert,
                     batteryHighAlert = highAlert,
