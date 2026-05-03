@@ -11,6 +11,7 @@ import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
+import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
@@ -25,6 +26,7 @@ import eu.darken.octi.sync.core.ConnectorIssueAggregator
 import eu.darken.octi.sync.core.SyncDevicesSortMode
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.disambiguateDeviceLabels
+import eu.darken.octi.sync.core.disambiguatedAccountLabel
 import eu.darken.octi.sync.core.shortLabel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -104,6 +106,9 @@ class SyncDevicesVM @Inject constructor(
         val deletingDeviceIds: Set<DeviceId> = emptySet(),
         val sortMode: SyncDevicesSortMode = SyncDevicesSortMode.DATE_ADDED,
         val sortReversed: Boolean = false,
+        val connectorType: ConnectorType? = null,
+        val accountLabel: String? = null,
+        val isBusy: Boolean = false,
     )
 
     private val sortPrefs = combine(
@@ -111,64 +116,78 @@ class SyncDevicesVM @Inject constructor(
         syncSettings.devicesSortReversed.flow,
     ) { mode, reversed -> mode to reversed }
 
-    val state = connectorFlow
-        .flatMapLatest { connector ->
-            combine(
-                connector.state.map { it.deviceMetadata },
-                connector.data.map { data ->
-                    data?.devices
-                        ?.flatMap { it.modules }
-                        ?.filter { it.moduleId == MetaModule.MODULE_ID }
-                },
-                connector.operations,
-                issueAggregator.issues,
-                syncSettings.pausedConnectorIds,
-            ) { deviceMetadata, metaDatas, operations, allIssues, pausedIds ->
-                log(TAG) { "Loading devices, ${deviceMetadata.size} metadata, ${allIssues.size} issues" }
+    val state = combine(connectorFlow, manager.allConnectors) { connector, allConnectors ->
+        connector to allConnectors
+    }.flatMapLatest { (connector, allConnectors) ->
+        combine(
+            connector.state.map { it.deviceMetadata },
+            connector.data.map { data ->
+                data?.devices
+                    ?.flatMap { it.modules }
+                    ?.filter { it.moduleId == MetaModule.MODULE_ID }
+            },
+            connector.operations,
+            issueAggregator.issues,
+            syncSettings.pausedConnectorIds,
+        ) { deviceMetadata, metaDatas, operations, allIssues, pausedIds ->
+            log(TAG) { "Loading devices, ${deviceMetadata.size} metadata, ${allIssues.size} issues" }
 
-                val connectorId = connector.identifier
-                val items = deviceMetadata.map { deviceMeta ->
-                    val deviceId = deviceMeta.deviceId
-                    var error: Exception? = null
-                    val metaInfo = metaDatas?.find { it.deviceId == deviceId }?.let {
-                        try {
-                            metaSerializer.deserialize(it.payload)
-                        } catch (e: Exception) {
-                            log(TAG, ERROR) { "Failed to deserialize MetaInfo:\n${e.asLog()}" }
-                            error = e
-                            null
-                        }
+            val connectorId = connector.identifier
+            val items = deviceMetadata.map { deviceMeta ->
+                val deviceId = deviceMeta.deviceId
+                var error: Exception? = null
+                val metaInfo = metaDatas?.find { it.deviceId == deviceId }?.let {
+                    try {
+                        metaSerializer.deserialize(it.payload)
+                    } catch (e: Exception) {
+                        log(TAG, ERROR) { "Failed to deserialize MetaInfo:\n${e.asLog()}" }
+                        error = e
+                        null
                     }
-                    DeviceItem(
-                        deviceId = deviceId,
-                        metaInfo = metaInfo,
-                        lastSeen = deviceMeta.lastSeen,
-                        error = error,
-                        serverVersion = deviceMeta.version,
-                        serverAddedAt = deviceMeta.addedAt,
-                        serverPlatform = deviceMeta.platform,
-                        serverLabel = deviceMeta.label,
-                        issues = allIssues.filter { it.connectorId == connectorId && it.deviceId == deviceId },
-                    )
                 }
-
-                val labelsByDevice = disambiguateDeviceLabels(items.associate { it.deviceId to it.baseLabel })
-                val displayItems = items.map { item ->
-                    item.copy(displayLabel = labelsByDevice[item.deviceId] ?: item.baseLabel)
-                }
-
-                val deletingIds = operations
-                    .filter { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing }
-                    .mapNotNullTo(mutableSetOf()) { (it.command as? ConnectorCommand.DeleteDevice)?.deviceId }
-
-                State(
-                    items = displayItems,
-                    deviceRemovalPolicy = connector.capabilities.deviceRemovalPolicy,
-                    isPaused = pausedIds.contains(connectorId),
-                    deletingDeviceIds = deletingIds,
+                DeviceItem(
+                    deviceId = deviceId,
+                    metaInfo = metaInfo,
+                    lastSeen = deviceMeta.lastSeen,
+                    error = error,
+                    serverVersion = deviceMeta.version,
+                    serverAddedAt = deviceMeta.addedAt,
+                    serverPlatform = deviceMeta.platform,
+                    serverLabel = deviceMeta.label,
+                    issues = allIssues.filter { it.connectorId == connectorId && it.deviceId == deviceId },
                 )
             }
+
+            val labelsByDevice = disambiguateDeviceLabels(items.associate { it.deviceId to it.baseLabel })
+            val displayItems = items.map { item ->
+                item.copy(displayLabel = labelsByDevice[item.deviceId] ?: item.baseLabel)
+            }
+
+            val activeOperations = operations.filter {
+                it is ConnectorOperation.Queued || it is ConnectorOperation.Processing
+            }
+            val deletingIds = activeOperations
+                .mapNotNullTo(mutableSetOf()) { (it.command as? ConnectorCommand.DeleteDevice)?.deviceId }
+            val isBusy = activeOperations.isNotEmpty()
+
+            val displayedAccountLabel = disambiguatedAccountLabel(
+                type = connectorId.type,
+                account = connectorId.account,
+                accountLabel = connector.accountLabel,
+                peerKeys = allConnectors.map { it.identifier.type to it.accountLabel },
+            )
+
+            State(
+                items = displayItems,
+                deviceRemovalPolicy = connector.capabilities.deviceRemovalPolicy,
+                isPaused = pausedIds.contains(connectorId),
+                deletingDeviceIds = deletingIds,
+                connectorType = connectorId.type,
+                accountLabel = displayedAccountLabel,
+                isBusy = isBusy,
+            )
         }
+    }
         .combine(sortPrefs) { state, (sortMode, reversed) ->
             state.copy(
                 items = state.items.sortedWith(comparatorFor(sortMode, reversed)),
@@ -206,6 +225,20 @@ class SyncDevicesVM @Inject constructor(
         // device from connector state + data, which drops the row from state.items — the UI
         // auto-dismisses the sheet. Failure surfaces via the completions bridge in init.
         connector.submit(ConnectorCommand.DeleteDevice(deviceId))
+    }
+
+    fun refresh() = launch(appScope) {
+        log(TAG, INFO) { "refresh()" }
+        val connector = connectorFlow.first()
+        val syncAlreadyActive = connector.operations.value.any {
+            (it is ConnectorOperation.Queued || it is ConnectorOperation.Processing) &&
+                it.command is ConnectorCommand.Sync
+        }
+        if (syncAlreadyActive) {
+            log(TAG, INFO) { "refresh: Sync already in flight, skipping duplicate" }
+            return@launch
+        }
+        manager.sync(connector.identifier)
     }
 
     companion object {
