@@ -7,16 +7,18 @@ Dostupné informační moduly:
 * Připojení Wi-Fi
 * Nainstalované aplikace
 * Sdílení schránky
+* Sdílení souborů mezi zařízeními
 * a další... pokud máte nějaký dobrý nápad, dejte mi vědět!
 
 Můžete zvolit různé způsoby synchronizace informací:
 
 * Váš Disk Google
-* Bezplatný server hostovaný mnou
-* Vlastní server
-* Více již brzy...
+* Bezplatný server hostovaný mnou (end-to-end šifrovaný)
+* Hostujte svůj vlastní server (end-to-end šifrovaný)
 
 Možnosti synchronizace lze kombinovat.
+
+Widgety domovské obrazovky zobrazují stav baterie, schránky a sítě na první pohled.
 
 Octi je open-source, neobsahuje reklamy a nesleduje vás.
 Nákupem v aplikaci získáte několik dalších funkcí a podpoříte vývoj aplikace.

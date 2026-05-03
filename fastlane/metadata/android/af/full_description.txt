@@ -7,16 +7,18 @@ Beskikbare inligtingsmodules:
 * WiFi-konnektiwiteit
 * Geïnstalleerde programme
 * Knipbord-deling
+* Lêerdeling tussen toestelle
 * en meer... As jy 'n goeie idee het, laat my weet!
 
 Jy kan verskillende maniere kies om die inligting te sinkroniseer:
 
 * Jou Google Drive
-* 'n Gratis bediener wat deur my aangebied word
-* Huisves jou eie bediener
-* Meer binnekort...
+* 'n Gratis bediener deur my aangebied (end-tot-end-geënkripteer)
+* Huisves jou eie bediener self (end-tot-end-geënkripteer)
 
 Sinkronisasie-opsies kan na wense gekombineer word.
+
+Tuisskerm-widgets wys battery-, knipbord- en netwerkstatus met een oogopslag.
 
 Octi is oopbron, het geen advertensies nie en volg jou nie.
 Jy kan 'n in-app-aankoop doen om 'n paar ekstra funksies te kry en die app-ontwikkeling te ondersteun.

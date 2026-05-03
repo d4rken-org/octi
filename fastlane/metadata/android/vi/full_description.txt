@@ -7,16 +7,18 @@ Các mô-đun thông tin khả dụng:
 * Kết nối WiFi
 * Ứng dụng đã cài đặt
 * Chia sẻ bộ nhớ tạm
+* Chia sẻ tệp giữa các thiết bị
 * và nhiều hơn nữa... nếu bạn có ý tưởng hay, hãy cho tôi biết!
 
 Bạn có thể chọn nhiều cách khác nhau để đồng bộ thông tin:
 
 * Google Drive của bạn
-* Máy chủ miễn phí do tôi lưu trữ
-* Tự lưu trữ máy chủ riêng
-* Sắp có thêm...
+* Một máy chủ miễn phí do tôi lưu trữ (mã hóa đầu cuối)
+* Tự lưu trữ máy chủ của riêng bạn (mã hóa đầu cuối)
 
 Các tùy chọn đồng bộ có thể kết hợp linh hoạt.
+
+Widget màn hình chính hiển thị trạng thái pin, clipboard và mạng trong nháy mắt.
 
 Octi là mã nguồn mở, không có quảng cáo và không theo dõi bạn.
 Bạn có thể mua tính năng trong ứng dụng để có thêm một số tính năng và hỗ trợ phát triển ứng dụng.

@@ -7,16 +7,18 @@ Elérhető információs modulok:
 * WiFi-kapcsolat
 * Telepített alkalmazások
 * Vágólap megosztása
+* Fájlmegosztás eszközök között
 * és még több... ha van egy jó ötleted, szólj!
 
 Többféle szinkronizálási módszer közül választhatsz:
 
 * A Google Drive-od
-* Egy általam üzemeltetett ingyenes szerver
-* Saját szerver üzemeltetése
-* Hamarosan még több...
+* Egy általam üzemeltetett ingyenes szerver (végpontok közötti titkosítással)
+* Saját szerver üzemeltetése (végpontok közötti titkosítással)
 
 A szinkronizálási lehetőségek tetszőlegesen kombinálhatók.
+
+A kezdőképernyő widgetek egy pillantásra megmutatják az akkumulátor, a vágólap és a hálózat állapotát.
 
 Az Octi nyílt forráskódú, nincs benne hirdetés, és nem követ téged.
 Vásárolhatsz alkalmazáson belüli kiegészítőt, hogy néhány extra funkciót kapj, és támogasd az alkalmazás fejlesztését.

@@ -7,16 +7,18 @@ Beschikbare informatiemodules:
 * WiFi-connectiviteit
 * Geïnstalleerde applicaties
 * Klembord delen
+* Bestanden delen tussen apparaten
 * en meer... als je een goed idee hebt, laat het me weten!
 
 Je kunt verschillende manieren kiezen om de informatie te synchroniseren:
 
 * Je Google Drive
-* Een gratis server gehost door mij
-* Host je eigen server
-* Meer binnenkort...
+* Een gratis server gehost door mij (end-to-end versleuteld)
+* Host je eigen server zelf (end-to-end versleuteld)
 
 Synchronisatieopties kunnen worden gemengd en gematcht.
+
+Startschermwidgets tonen in één oogopslag de batterij-, klembord- en netwerkstatus.
 
 Octi is open-source, heeft geen advertenties en volgt je niet.
 Je kunt een in-app aankoop doen om enkele extra functies te krijgen en app-ontwikkeling te ondersteunen.

@@ -7,16 +7,18 @@ Tilgængelige informationsmoduler:
 * WiFi-forbindelse
 * Installerede applikationer
 * Udklipsholderdeling
+* Fildeling mellem enheder
 * og mere… Hvis du har en god idé, så lad mig vide det!
 
 Du kan vælge forskellige måder at synkronisere informationen på:
 
 * Dit Google Drive
-* En gratis server hostet af mig
-* Host din egen server
-* Mere snart…
+* En gratis server hostet af mig (ende-til-ende-krypteret)
+* Host din egen server selv (ende-til-ende-krypteret)
 
 Synkroniseringsmuligheder kan blandes og kombineres.
+
+Startskærmwidgets viser batteri, udklipsholder og netværksstatus på et øjeblik.
 
 Octi er open source, har ingen reklamer og sporer dig ikke.
 Du kan købe et in-app-køb for at få et par ekstra funktioner og støtte appudviklingen.

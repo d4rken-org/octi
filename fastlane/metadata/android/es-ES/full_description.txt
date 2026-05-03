@@ -7,16 +7,18 @@ Módulos de información disponibles:
 * Conectividad Wi-Fi
 * Aplicaciones instaladas
 * Compartir portapapeles
+* Compartir archivos entre dispositivos
 * y más... si tienes una buena idea, ¡avísame!
 
 Puedes elegir diferentes formas de sincronizar la información:
 
 * Tu Google Drive
-* Un servidor gratuito alojado por mí
-* Alojado en tu propio servidor
-* Más pronto...
+* Un servidor gratuito alojado por mí (cifrado de extremo a extremo)
+* Aloja tu propio servidor (cifrado de extremo a extremo)
 
 Las opciones de sincronización se pueden mezclar y combinar.
+
+Los widgets de la pantalla de inicio muestran el estado de batería, portapapeles y red de un vistazo.
 
 Octi es de código abierto, no tiene anuncios y no te rastrea.
 Puedes realizar una compra en la aplicación para obtener algunas funciones adicionales y apoyar el desarrollo de la aplicación.
