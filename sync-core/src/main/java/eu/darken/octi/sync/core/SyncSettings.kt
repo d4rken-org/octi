@@ -53,6 +53,15 @@ class SyncSettings @Inject constructor(
 
     val showDashboardCard = dataStore.createValue("sync.dashboard.card.show", true)
 
+    val devicesSortMode = dataStore.createValue(
+        "sync.devices.sort.mode",
+        SyncDevicesSortMode.DATE_ADDED,
+        json,
+        onErrorFallbackToDefault = true,
+    )
+
+    val devicesSortReversed = dataStore.createValue("sync.devices.sort.reversed", false)
+
     private val legacyPausedConnectors = dataStore.createSetValue<ConnectorId>(
         "sync.connectors.paused",
         emptySet(),

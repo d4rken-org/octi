@@ -542,6 +542,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     platform = info?.platform,
                     label = info?.label,
                     lastSeen = lastSeen,
+                    addedAt = dir.createdTime?.let { Instant.fromEpochMilliseconds(it.value) },
                 )
             }
         }.awaitAll()

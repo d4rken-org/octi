@@ -42,6 +42,12 @@
     <string name="sync_connector_progress_device_update_queued">Device update queued...</string>
     <string name="sync_synced_devices_label">Synced devices</string>
 
+    <string name="sync_devices_sort_label">Sort</string>
+    <string name="sync_devices_sort_date_added_label">By date added</string>
+    <string name="sync_devices_sort_last_seen_label">By last seen</string>
+    <string name="sync_devices_sort_name_label">By name</string>
+    <string name="sync_devices_sort_app_version_label">By app version</string>
+
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>

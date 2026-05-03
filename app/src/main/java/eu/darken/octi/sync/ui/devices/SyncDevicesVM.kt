@@ -3,6 +3,7 @@ package eu.darken.octi.sync.ui.devices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
@@ -21,6 +22,7 @@ import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.ConnectorIssueAggregator
+import eu.darken.octi.sync.core.SyncDevicesSortMode
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import eu.darken.octi.sync.core.shortLabel
@@ -100,7 +102,14 @@ class SyncDevicesVM @Inject constructor(
         val deviceRemovalPolicy: DeviceRemovalPolicy? = null,
         val isPaused: Boolean = false,
         val deletingDeviceIds: Set<DeviceId> = emptySet(),
+        val sortMode: SyncDevicesSortMode = SyncDevicesSortMode.DATE_ADDED,
+        val sortReversed: Boolean = false,
     )
+
+    private val sortPrefs = combine(
+        syncSettings.devicesSortMode.flow,
+        syncSettings.devicesSortReversed.flow,
+    ) { mode, reversed -> mode to reversed }
 
     val state = connectorFlow
         .flatMapLatest { connector ->
@@ -146,10 +155,7 @@ class SyncDevicesVM @Inject constructor(
                 val labelsByDevice = disambiguateDeviceLabels(items.associate { it.deviceId to it.baseLabel })
                 val displayItems = items.map { item ->
                     item.copy(displayLabel = labelsByDevice[item.deviceId] ?: item.baseLabel)
-                }.sortedWith(
-                    compareBy<SyncDevicesVM.DeviceItem, String>(String.CASE_INSENSITIVE_ORDER) { it.displayLabel }
-                        .thenBy { it.deviceId.id }
-                )
+                }
 
                 val deletingIds = operations
                     .filter { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing }
@@ -163,11 +169,26 @@ class SyncDevicesVM @Inject constructor(
                 )
             }
         }
+        .combine(sortPrefs) { state, (sortMode, reversed) ->
+            state.copy(
+                items = state.items.sortedWith(comparatorFor(sortMode, reversed)),
+                sortMode = sortMode,
+                sortReversed = reversed,
+            )
+        }
         .asStateFlow()
 
     fun initialize(connectorId: String) {
         if (connectorIdFlow.value != null) return
         connectorIdFlow.value = connectorId
+    }
+
+    fun updateSortMode(mode: SyncDevicesSortMode) = launch {
+        syncSettings.devicesSortMode.value(mode)
+    }
+
+    fun updateSortReversed(reversed: Boolean) = launch {
+        syncSettings.devicesSortReversed.value(reversed)
     }
 
     fun deleteDevice(deviceId: DeviceId) = launch {

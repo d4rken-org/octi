@@ -55,6 +55,7 @@
     <string name="ui_theme_color_blue_label">Blue</string>
     <string name="ui_theme_color_sunset_label">Sunset</string>
     <string name="device_x_label">Device: %s</string>
+    <string name="general_sort_reverse_label">Reverse order</string>
 
     <!-- Widget theme presets -->
     <string name="widget_theme_material_you">Material You</string>
