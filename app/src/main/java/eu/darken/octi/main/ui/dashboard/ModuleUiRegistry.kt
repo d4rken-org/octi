@@ -43,7 +43,7 @@ object ModuleUiRegistry {
         ModuleUiSpec(ClipboardModule.MODULE_ID, Icons.TwoTone.ContentPaste, ClipboardR.string.module_clipboard_label, hasDashboardTile = true),
         ModuleUiSpec(FileShareModule.MODULE_ID, Icons.AutoMirrored.TwoTone.InsertDriveFile, FilesR.string.module_files_label, hasDashboardTile = true),
         ModuleUiSpec(AppsModule.MODULE_ID, Icons.TwoTone.Apps, AppsR.string.module_apps_label, hasDashboardTile = true),
-        ModuleUiSpec(MetaModule.MODULE_ID, Icons.TwoTone.Info, MetaR.string.module_meta_label, hasDashboardTile = false),
+        ModuleUiSpec(MetaModule.MODULE_ID, Icons.TwoTone.Info, MetaR.string.module_meta_label, hasDashboardTile = true),
     )
 
     val orderedIds: List<ModuleId> = entries.map { it.id }

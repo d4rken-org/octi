@@ -34,6 +34,7 @@ import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.modules.files.core.FileShareRepo
 import eu.darken.octi.syncs.octiserver.core.OctiServerIssue
+import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.alert.BatteryHighAlertRule
@@ -235,6 +236,8 @@ class DashboardVM @Inject constructor(
             val isSharingAvailable: Boolean,
             val configuredConnectorIds: Set<String>,
         ) : ModuleItem
+
+        data class Meta(val data: ModuleData<MetaInfo>) : ModuleItem
     }
 
     data class SyncDetail(
@@ -656,7 +659,7 @@ class DashboardVM @Inject constructor(
                                 null
                             }
                         }
-                    }
+                    } + ModuleItem.Meta(metaModule)
 
                 DeviceItem(
                     now = now,
@@ -796,6 +799,7 @@ class DashboardVM @Inject constructor(
             "eu.darken.octi.module.core.apps",
             "eu.darken.octi.module.core.clipboard",
             "eu.darken.octi.module.core.files",
+            MetaModule.MODULE_ID.id,
         )
         private const val DEVICE_LIMIT = 3
         private val WIFI_PERMISSIONS = setOf(Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION)

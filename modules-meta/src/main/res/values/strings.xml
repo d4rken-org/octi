@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Meta module</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Up %1$s</string>
+    <string name="module_meta_detail_label_label">Label</string>
+    <string name="module_meta_detail_manufacturer_label">Manufacturer</string>
+    <string name="module_meta_detail_model_label">Model</string>
+    <string name="module_meta_detail_device_type_label">Device type</string>
+    <string name="module_meta_detail_device_type_phone">Phone</string>
+    <string name="module_meta_detail_device_type_tablet">Tablet</string>
+    <string name="module_meta_detail_device_type_unknown">Unknown</string>
+    <string name="module_meta_detail_android_version_label">Android version</string>
+    <string name="module_meta_detail_api_level_label">API level</string>
+    <string name="module_meta_detail_security_patch_label">Security patch</string>
+    <string name="module_meta_detail_booted_label">Booted</string>
+    <string name="module_meta_detail_octi_version_label">Octi version</string>
+    <string name="module_meta_detail_git_sha_label">Build commit</string>
+    <string name="module_meta_detail_device_id_label">Device ID</string>
+    <string name="module_meta_detail_last_updated_label">Last updated</string>
 </resources>
