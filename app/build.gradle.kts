@@ -5,8 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.android.compose.screenshot") version "0.0.1-alpha13"
+    id("com.google.dagger.hilt.android")
 }
-apply(plugin = "dagger.hilt.android.plugin")
 
 
 val commitHashProvider = providers.of(CommitHashValueSource::class) {}
