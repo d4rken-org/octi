@@ -83,6 +83,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
@@ -783,145 +786,160 @@ private fun SyncStatusBar(
             .padding(vertical = 4.dp)
             .animateContentSize(),
     ) {
-        Box {
-            Column {
-                // Header row
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onToggleExpanded)
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    OctiMascot(modifier = Modifier.size(24.dp))
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        when (syncStatus) {
-                            is DashboardVM.SyncStatus.Syncing -> {
-                                val moduleNames = syncStatus.syncingModules
-                                    .sortedBy {
-                                        ModuleUiRegistry.orderedIds.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
-                                    }
-                                    .mapNotNull { ModuleUiRegistry.byId(it)?.labelRes }
-                                    .map { stringResource(it) }
-                                val text = if (moduleNames.isNotEmpty()) {
-                                    stringResource(
-                                        R.string.dashboard_sync_status_syncing_modules,
-                                        moduleNames.joinToString(", ")
-                                    )
-                                } else {
-                                    stringResource(R.string.dashboard_sync_status_syncing)
+        val expandedLabel = stringResource(CommonR.string.general_expanded_state_label)
+        val collapsedLabel = stringResource(CommonR.string.general_collapsed_state_label)
+        Column {
+            // Header row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        onClickLabel = stringResource(
+                            if (isExpanded) CommonR.string.general_collapse_action
+                            else CommonR.string.general_expand_action,
+                        ),
+                        role = Role.Button,
+                        onClick = onToggleExpanded,
+                    )
+                    .semantics {
+                        stateDescription = if (isExpanded) expandedLabel else collapsedLabel
+                    }
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OctiMascot(modifier = Modifier.size(24.dp))
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    when (syncStatus) {
+                        is DashboardVM.SyncStatus.Syncing -> {
+                            val moduleNames = syncStatus.syncingModules
+                                .sortedBy {
+                                    ModuleUiRegistry.orderedIds.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
                                 }
-                                Text(
-                                    text = text,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
+                                .mapNotNull { ModuleUiRegistry.byId(it)?.labelRes }
+                                .map { stringResource(it) }
+                            val text = if (moduleNames.isNotEmpty()) {
+                                stringResource(
+                                    R.string.dashboard_sync_status_syncing_modules,
+                                    moduleNames.joinToString(", ")
                                 )
+                            } else {
+                                stringResource(R.string.dashboard_sync_status_syncing)
                             }
-
-                            is DashboardVM.SyncStatus.Idle -> {
-                                val primaryText = syncStatus.lastSyncAt?.let {
-                                    stringResource(
-                                        R.string.dashboard_sync_status_last_synced,
-                                        DateUtils.getRelativeTimeSpanString(
-                                            it.toEpochMilliseconds(),
-                                            syncStatus.now.toEpochMilliseconds(),
-                                            DateUtils.MINUTE_IN_MILLIS,
-                                        ).toString(),
-                                    )
-                                } ?: stringResource(R.string.dashboard_sync_status_never)
-                                Text(
-                                    text = primaryText,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                            }
-
-                            is DashboardVM.SyncStatus.Error -> Text(
-                                text = stringResource(R.string.dashboard_sync_status_failed),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
-                        val secondaryText = when (syncStatus) {
-                            is DashboardVM.SyncStatus.Error -> syncStatus.message
-                                ?: connectorTypesLabel(syncStatus)
-
-                            else -> connectorTypesLabel(syncStatus)
-                        }
-                        if (secondaryText != null) {
                             Text(
-                                text = secondaryText,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                text = text,
+                                style = MaterialTheme.typography.bodyMedium,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
-                    }
-                    Box(
-                        modifier = Modifier.size(48.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        when (syncStatus) {
-                            is DashboardVM.SyncStatus.Syncing -> {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(20.dp),
-                                    strokeWidth = 2.dp,
-                                )
-                            }
 
-                            else -> {
-                                IconButton(onClick = onRefresh) {
-                                    Icon(
-                                        imageVector = Icons.TwoTone.Refresh,
-                                        contentDescription = stringResource(CommonR.string.general_sync_action),
-                                    )
-                                }
+                        is DashboardVM.SyncStatus.Idle -> {
+                            val primaryText = syncStatus.lastSyncAt?.let {
+                                stringResource(
+                                    R.string.dashboard_sync_status_last_synced,
+                                    DateUtils.getRelativeTimeSpanString(
+                                        it.toEpochMilliseconds(),
+                                        syncStatus.now.toEpochMilliseconds(),
+                                        DateUtils.MINUTE_IN_MILLIS,
+                                    ).toString(),
+                                )
+                            } ?: stringResource(R.string.dashboard_sync_status_never)
+                            Text(
+                                text = primaryText,
+                                style = MaterialTheme.typography.bodyMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+
+                        is DashboardVM.SyncStatus.Error -> Text(
+                            text = stringResource(R.string.dashboard_sync_status_failed),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    val secondaryText = when (syncStatus) {
+                        is DashboardVM.SyncStatus.Error -> syncStatus.message
+                            ?: connectorTypesLabel(syncStatus)
+
+                        else -> connectorTypesLabel(syncStatus)
+                    }
+                    if (secondaryText != null) {
+                        Text(
+                            text = secondaryText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+                Box(
+                    modifier = Modifier.size(48.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    when (syncStatus) {
+                        is DashboardVM.SyncStatus.Syncing -> {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                            )
+                        }
+
+                        else -> {
+                            IconButton(onClick = onRefresh) {
+                                Icon(
+                                    imageVector = Icons.TwoTone.Refresh,
+                                    contentDescription = stringResource(CommonR.string.general_sync_action),
+                                )
                             }
                         }
                     }
                 }
-
-                // Expanded detail
-                if (isExpanded) {
-                    val detail = syncStatus.syncDetail
-                    HorizontalDivider()
-
-                    // Module rows
-                    Spacer(modifier = Modifier.height(4.dp))
-                    val sortedModules = detail.modules.sortedBy {
-                        ModuleUiRegistry.orderedIds.indexOf(it.moduleId).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
-                    }
-                    sortedModules.forEach { moduleState ->
-                        SyncDetailModuleRow(moduleState)
-                    }
-
-                    // Backend rows
-                    if (detail.connectors.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(2.dp))
-                        HorizontalDivider()
-                        Spacer(modifier = Modifier.height(4.dp))
-                        detail.connectors.forEach { connector ->
-                            SyncDetailConnectorRow(
-                                connector = connector,
-                                quickSyncMode = syncStatus.orchestratorState.quickSync.connectorModes[connector.connectorId],
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
+                Box(
+                    modifier = Modifier.size(48.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = if (isExpanded) Icons.TwoTone.ExpandLess else Icons.TwoTone.ExpandMore,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
 
-            // Overlapping bottom-center chevron
-            Icon(
-                imageVector = if (isExpanded) Icons.TwoTone.ExpandLess else Icons.TwoTone.ExpandMore,
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            // Expanded detail
+            if (isExpanded) {
+                val detail = syncStatus.syncDetail
+                HorizontalDivider()
+
+                // Module rows
+                Spacer(modifier = Modifier.height(4.dp))
+                val sortedModules = detail.modules.sortedBy {
+                    ModuleUiRegistry.orderedIds.indexOf(it.moduleId).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE
+                }
+                sortedModules.forEach { moduleState ->
+                    SyncDetailModuleRow(moduleState)
+                }
+
+                // Backend rows
+                if (detail.connectors.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(4.dp))
+                    detail.connectors.forEach { connector ->
+                        SyncDetailConnectorRow(
+                            connector = connector,
+                            quickSyncMode = syncStatus.orchestratorState.quickSync.connectorModes[connector.connectorId],
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
     }
 }

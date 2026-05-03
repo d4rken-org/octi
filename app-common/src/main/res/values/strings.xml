@@ -30,6 +30,10 @@
     <string name="general_close_action">Close</string>
     <string name="general_continue">Continue</string>
     <string name="general_show_details_action">Show details</string>
+    <string name="general_expand_action">Expand</string>
+    <string name="general_collapse_action">Collapse</string>
+    <string name="general_expanded_state_label">Expanded</string>
+    <string name="general_collapsed_state_label">Collapsed</string>
     <string name="general_minutes_label">Minutes</string>
     <plurals name="general_minutes_quantity_label">
         <item quantity="one">%1$d minute</item>
