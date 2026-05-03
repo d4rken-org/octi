@@ -62,7 +62,7 @@
     <!-- Widget config -->
     <string name="widget_config_title">Dostosuj widżet</string>
     <string name="widget_config_apply_action">Zastosuj</string>
-    <string name="widget_config_presets_label">Predefiniowane</string>
+    <string name="widget_config_presets_label">Ustawienia wstępne</string>
     <string name="widget_config_background_label">Kolor tła</string>
     <string name="widget_config_accent_label">Kolor akcentu</string>
     <string name="widget_config_hex_hint">RRGGBB</string>
@@ -72,9 +72,9 @@
     <string name="widget_config_devices_label">Urządzenia</string>
     <string name="widget_config_devices_empty_hint">Jeśli nie wybrano żadnych urządzeń, wyświetlone zostaną wszystkie urządzenia.</string>
     <string name="widget_config_devices_selected_hint">Wyświetlone zostaną tylko wybrane urządzenia.</string>
-    <string name="widget_config_devices_none_known">Nie znaleziono jeszcze żadnych urządzeń synchronizacji.</string>
+    <string name="widget_config_devices_none_known">Nie ma jeszcze znanych urządzeń do synchronizacji.</string>
     <string name="widget_empty_label">Brak pasujących urządzeń</string>
-    <string name="widget_no_sync_devices_label">Brak urządzeń synchronizacji</string>
+    <string name="widget_no_sync_devices_label">Brak urządzeń do synchronizacji</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Brak danych %1$s dla tego urządzenia</string>
     <string name="widget_deeplink_module_power">bateria</string>

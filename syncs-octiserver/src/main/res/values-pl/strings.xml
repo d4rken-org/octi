@@ -23,12 +23,12 @@
     <string name="sync_octiserver_link_client_link_action">Powiąż urządzenie</string>
     <string name="sync_octiserver_issues_type_device_not_registered">Urządzenie nie jest już połączone</string>
     <string name="sync_octiserver_error_device_not_registered">To urządzenie nie jest już zarejestrowane na serwerze. Odłącz je i ponownie powiąż z innego urządzenia lub utwórz nowe konto.</string>
-    <string name="sync_octiserver_resume_sync_action">Wznowi synchronizację</string>
-    <string name="sync_octiserver_add_create_account_title">Utwórz konto?</string>
+    <string name="sync_octiserver_resume_sync_action">Wznów synchronizację</string>
+    <string name="sync_octiserver_add_create_account_title">Utworzyć konto?</string>
     <string name="sync_octiserver_add_create_account_desc">Na tym serwerze zostanie utworzone nowe zaszyfrowane konto synchronizacji.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">To konto wymaga Octi %1$s lub nowszego. Zaktualizuj to urządzenie lub usuń je z konta.</string>
     <string name="sync_octiserver_legacy_encryption_account">Udostępnianie plików jest niedostępne na tym urządzeniu, ponieważ to konto używa starszego szyfrowania. Utwórz nowe konto na zaktualizowanym urządzeniu i połącz ponownie swoje inne urządzenia, aby używać udostępniania plików.</string>
-    <string name="sync_octiserver_issues_type_encryption_compatibility">Niezgodne szyfrowanie</string>
+    <string name="sync_octiserver_issues_type_encryption_compatibility">Niekompatybilne szyfrowanie</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Udostępnianie plików niedostępne</string>
     <string name="sync_octiserver_add_create_account_action">Utwórz konto</string>
     <string name="sync_octiserver_add_link_existing_action">Połącz z istniejącym kontem</string>

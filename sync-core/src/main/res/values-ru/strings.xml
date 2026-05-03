@@ -31,8 +31,8 @@
     <string name="sync_issues_type_low_storage">Мало места</string>
     <string name="sync_low_storage_description">Осталось менее 10%% доступного хранилища. Освободите место, чтобы продолжить синхронизацию.</string>
     <string name="sync_connector_paused_label">Приостановить синхронизацию</string>
-    <string name="sync_connector_paused_error_label">Соединитель приостановлен</string>
-    <string name="sync_connector_paused_error_desc">Этот соединитель приостановлен. Возобновите его, чтобы выполнить это действие.</string>
+    <string name="sync_connector_paused_error_label">Соединение приостановлено</string>
+    <string name="sync_connector_paused_error_desc">Это соединение приостановлено. Возобновите его, чтобы выполнить это действие.</string>
     <string name="sync_synced_devices_label">Синхронизированные устройства</string>
     <plurals name="sync_stale_period_days">
         <item quantity="one">%d день</item>

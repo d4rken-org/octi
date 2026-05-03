@@ -9,7 +9,7 @@
     <string name="module_clipboard_detail_type_empty">Pusto</string>
     <string name="module_clipboard_detail_type_text">Tekst</string>
     <string name="module_clipboard_copy_action">Kopiuj do schowka</string>
-    <string name="module_clipboard_widget_description">Wyświetl zawartość schowka z Twoich zsynchronizowanych urządzeń.</string>
+    <string name="module_clipboard_widget_description">Wyświetl zawartość schowka z twoich zsynchronizowanych urządzeń.</string>
     <string name="module_clipboard_widget_paste_action">Udostępnij mój schowek</string>
     <string name="module_clipboard_widget_share_action">Udostępnij mój schowek</string>
     <string name="module_clipboard_widget_copied_toast">Skopiowano</string>
