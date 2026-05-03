@@ -71,7 +71,7 @@ fun DeviceActionsSheet(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = device.metaInfo?.labelOrFallback ?: "?",
+                    text = device.displayLabel,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )

@@ -44,6 +44,8 @@ import eu.darken.octi.sync.core.blob.BlobProgress
 import eu.darken.octi.sync.core.blob.RetryStatus
 import eu.darken.octi.sync.core.blob.StorageStatus
 import eu.darken.octi.sync.core.blob.StorageStatusManager
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
+import eu.darken.octi.sync.core.shortLabel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -252,19 +254,24 @@ class FileShareListVM @Inject constructor(
             repo.repoState.others.forEach { add(it.deviceId to it.data) }
         }
 
-        val labelByDevice: Map<DeviceId, String> = deviceData
-            .associate { (id, _) -> id to deviceLabelFor(id, repo.byDevice) }
+        val labelByDevice: Map<DeviceId, String> = disambiguateDeviceLabels(
+            deviceData.associate { (id, _) -> id to deviceLabelFor(id, repo.byDevice) }
+        )
 
         val availableDevices = deviceData
             .map { (id, _) ->
                 DeviceOption(
                     deviceId = id,
-                    label = labelByDevice[id] ?: id.id.take(8),
+                    label = labelByDevice[id] ?: id.shortLabel,
                     isOwn = id == ownDeviceId,
                 )
             }
             .distinctBy { it.deviceId }
-            .sortedWith(compareByDescending<DeviceOption> { it.isOwn }.thenBy { it.label })
+            .sortedWith(
+                compareByDescending<DeviceOption> { it.isOwn }
+                    .thenBy(String.CASE_INSENSITIVE_ORDER) { it.label }
+                    .thenBy { it.deviceId.id }
+            )
 
         val now = Clock.System.now()
         val deleteRequestedKeys = activeDeleteRequestKeys(deviceData, now)
@@ -274,7 +281,7 @@ class FileShareListVM @Inject constructor(
 
         val items: List<FileItem> = deviceData.flatMap { (ownerId, info) ->
             if (!filterIsEmpty && ownerId !in effectiveFilters) return@flatMap emptyList()
-            val ownerLabel = labelByDevice[ownerId] ?: ownerId.id.take(8)
+            val ownerLabel = labelByDevice[ownerId] ?: ownerId.shortLabel
             val isOwn = ownerId == ownDeviceId
             info.files
                 .filter { now <= it.expiresAt }
@@ -368,7 +375,7 @@ class FileShareListVM @Inject constructor(
     private fun deviceLabelFor(deviceId: DeviceId, byDevice: ModuleManager.ByDevice): String {
         val meta = byDevice.devices[deviceId]
             ?.firstOrNull { it.data is MetaInfo } as? ModuleData<MetaInfo>
-        return meta?.data?.labelOrFallback ?: deviceId.id.take(8)
+        return meta?.data?.labelOrFallback ?: deviceId.shortLabel
     }
 
     private fun buildMissingConnectors(

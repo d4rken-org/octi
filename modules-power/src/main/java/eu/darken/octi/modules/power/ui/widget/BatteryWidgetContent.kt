@@ -34,9 +34,13 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import eu.darken.octi.common.navigation.WidgetDeeplink
 import eu.darken.octi.common.widget.WidgetTheme
+import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleRepo
+import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.modules.power.R
+import eu.darken.octi.modules.power.core.PowerInfo
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
 
 private object BatteryWidgetSizing {
     /** 8dp outer padding × 2 sides + 4dp spacer between bar and percent text + 44dp percent text width. */
@@ -136,10 +140,10 @@ private fun buildDeviceRows(
     if (metaState == null || powerState == null) return emptyList()
     if (maxRows <= 0) return emptyList()
 
-    val metaAll = metaState.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.meta.core.MetaInfo>> ?: return emptyList()
-    val powerAll = powerState.all as? Collection<eu.darken.octi.module.core.ModuleData<eu.darken.octi.modules.power.core.PowerInfo>> ?: return emptyList()
+    val metaAll = metaState.all as? Collection<ModuleData<MetaInfo>> ?: return emptyList()
+    val powerAll = powerState.all as? Collection<ModuleData<PowerInfo>> ?: return emptyList()
 
-    return powerAll
+    val pairs = powerAll
         .mapNotNull { powerData ->
             val metaData = metaAll.firstOrNull { it.deviceId == powerData.deviceId }
             metaData?.let { powerData to it }
@@ -148,12 +152,21 @@ private fun buildDeviceRows(
             if (allowedDeviceIds.isNullOrEmpty()) pairs
             else pairs.filter { (powerData, _) -> powerData.deviceId.id in allowedDeviceIds }
         }
-        .sortedBy { (_, metaData) -> metaData.data.labelOrFallback.lowercase() }
+    val labelsByDevice = disambiguateDeviceLabels(pairs.associate { (_, metaData) ->
+        metaData.deviceId to metaData.data.labelOrFallback
+    })
+
+    return pairs
+        .sortedWith(
+            compareBy<Pair<ModuleData<PowerInfo>, ModuleData<MetaInfo>>, String>(String.CASE_INSENSITIVE_ORDER) {
+                labelsByDevice[it.second.deviceId] ?: it.second.data.labelOrFallback
+            }.thenBy { it.second.deviceId.id }
+        )
         .take(maxRows)
         .map { (powerData, metaData) ->
             BatteryDeviceRow(
                 deviceId = powerData.deviceId.id,
-                deviceName = metaData.data.labelOrFallback,
+                deviceName = labelsByDevice[metaData.deviceId] ?: metaData.data.labelOrFallback,
                 lastSeen = DateUtils.getRelativeTimeSpanString(
                     metaData.modifiedAt.toEpochMilliseconds(),
                     System.currentTimeMillis(),

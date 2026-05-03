@@ -42,6 +42,7 @@ import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.clipboard.R
 import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import eu.darken.octi.common.R as CommonR
 
 internal object ClipboardWidgetSizing {
@@ -203,7 +204,7 @@ private fun buildDeviceRows(
     val clipboardAll = clipboardState.all as? Collection<ModuleData<ClipboardInfo>>
         ?: return emptyList()
 
-    return clipboardAll
+    val pairs = clipboardAll
         .asSequence()
         .filter { it.deviceId.id != selfDeviceId }
         .filter { allowedDeviceIds.isNullOrEmpty() || it.deviceId.id in allowedDeviceIds }
@@ -211,12 +212,22 @@ private fun buildDeviceRows(
             val metaData = metaAll.firstOrNull { it.deviceId == clipData.deviceId }
             metaData?.let { clipData to it }
         }
-        .sortedBy { (_, metaData) -> metaData.data.labelOrFallback.lowercase() }
+        .toList()
+    val labelsByDevice = disambiguateDeviceLabels(pairs.associate { (_, metaData) ->
+        metaData.deviceId to metaData.data.labelOrFallback
+    })
+
+    return pairs
+        .sortedWith(
+            compareBy<Pair<ModuleData<ClipboardInfo>, ModuleData<MetaInfo>>, String>(String.CASE_INSENSITIVE_ORDER) {
+                labelsByDevice[it.second.deviceId] ?: it.second.data.labelOrFallback
+            }.thenBy { it.second.deviceId.id }
+        )
         .take(maxRows)
         .map { (clipData, metaData) ->
             val preview = clipData.data.toWidgetPreview()
             ClipboardDeviceRow(
-                deviceName = metaData.data.labelOrFallback,
+                deviceName = labelsByDevice[metaData.deviceId] ?: metaData.data.labelOrFallback,
                 lastSeen = DateUtils.getRelativeTimeSpanString(
                     metaData.modifiedAt.toEpochMilliseconds(),
                     System.currentTimeMillis(),
