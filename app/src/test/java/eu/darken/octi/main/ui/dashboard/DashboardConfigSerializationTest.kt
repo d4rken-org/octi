@@ -41,7 +41,8 @@ class DashboardConfigSerializationTest : BaseTest() {
                         "eu.darken.octi.module.core.connectivity",
                         "eu.darken.octi.module.core.clipboard",
                         "eu.darken.octi.module.core.files",
-                        "eu.darken.octi.module.core.apps"
+                        "eu.darken.octi.module.core.apps",
+                        "eu.darken.octi.module.core.meta"
                     ],
                     "wideModules": ["eu.darken.octi.module.core.power"],
                     "hiddenModules": []
