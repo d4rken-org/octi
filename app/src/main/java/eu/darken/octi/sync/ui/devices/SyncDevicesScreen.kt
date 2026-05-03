@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.twotone.Sort
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -24,11 +25,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.sync.R as SyncR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
+import eu.darken.octi.common.compose.SortModeDialog
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.SyncDevicesSortMode
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
@@ -44,13 +47,31 @@ fun SyncDevicesScreenHost(
     NavigationEventHandler(vm)
 
     val state by vm.state.collectAsState(initial = null)
-    state?.let {
+    var showSortDialog by rememberSaveable { mutableStateOf(false) }
+
+    state?.let { current ->
         SyncDevicesScreen(
-            state = it,
+            state = current,
             initialDeviceId = initialDeviceId,
             onNavigateUp = { vm.navUp() },
             onDeleteDevice = { deviceId -> vm.deleteDevice(deviceId) },
+            onSort = { showSortDialog = true },
         )
+
+        if (showSortDialog) {
+            SortModeDialog(
+                title = stringResource(SyncR.string.sync_devices_sort_label),
+                currentMode = current.sortMode,
+                modes = SyncDevicesSortMode.entries,
+                onSelect = { mode ->
+                    vm.updateSortMode(mode)
+                    showSortDialog = false
+                },
+                onDismiss = { showSortDialog = false },
+                reversed = current.sortReversed,
+                onReverseChange = { vm.updateSortReversed(it) },
+            )
+        }
     }
 }
 
@@ -60,6 +81,7 @@ fun SyncDevicesScreen(
     initialDeviceId: String? = null,
     onNavigateUp: () -> Unit,
     onDeleteDevice: (DeviceId) -> Unit,
+    onSort: () -> Unit,
 ) {
     var selectedDeviceId by rememberSaveable { mutableStateOf<String?>(null) }
     var initialConsumed by rememberSaveable { mutableStateOf(false) }
@@ -89,6 +111,14 @@ fun SyncDevicesScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onSort) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.TwoTone.Sort,
+                            contentDescription = stringResource(SyncR.string.sync_devices_sort_label),
+                        )
                     }
                 },
             )
@@ -121,7 +151,6 @@ fun SyncDevicesScreen(
         )
     }
 }
-
 
 @Preview2
 @Composable
@@ -178,6 +207,7 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
         ),
         onNavigateUp = {},
         onDeleteDevice = {},
+        onSort = {},
     )
 }
 
@@ -188,5 +218,6 @@ private fun SyncDevicesScreenEmptyPreview() = PreviewWrapper {
         state = SyncDevicesVM.State(deviceRemovalPolicy = DeviceRemovalPolicy.REMOVE_AND_REVOKE_REMOTE),
         onNavigateUp = {},
         onDeleteDevice = {},
+        onSort = {},
     )
 }

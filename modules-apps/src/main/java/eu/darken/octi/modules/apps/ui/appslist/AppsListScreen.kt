@@ -14,14 +14,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.automirrored.twotone.Sort
 import androidx.compose.material.icons.twotone.Android
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,6 +39,7 @@ import coil3.compose.AsyncImage
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
+import eu.darken.octi.common.compose.SortModeDialog
 import androidx.compose.runtime.collectAsState
 import eu.darken.octi.common.error.ErrorEventHandler
 import eu.darken.octi.common.navigation.NavigationEventHandler
@@ -94,8 +92,10 @@ fun AppsListScreenHost(
     }
 
     if (showSortDialog) {
-        SortDialog(
+        SortModeDialog(
+            title = stringResource(AppsR.string.module_apps_sort_label),
             currentMode = state?.sortMode ?: AppsSortMode.NAME,
+            modes = AppsSortMode.entries,
             onSelect = { mode ->
                 vm.updateSortMode(mode)
                 showSortDialog = false
@@ -194,43 +194,6 @@ private fun AppItem(item: AppsListVM.PkgItem) {
             )
         }
     }
-}
-
-@Composable
-private fun SortDialog(
-    currentMode: AppsSortMode,
-    onSelect: (AppsSortMode) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val context = LocalContext.current
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(AppsR.string.module_apps_sort_label)) },
-        text = {
-            Column {
-                AppsSortMode.entries.forEach { mode ->
-                    Row(
-                        modifier = Modifier
-                            .clickable { onSelect(mode) }
-                            .padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = mode == currentMode,
-                            onClick = { onSelect(mode) },
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = mode.label.get(context))
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.cancel))
-            }
-        },
-    )
 }
 
 @Preview2
