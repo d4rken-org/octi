@@ -7,16 +7,18 @@ Tillgängliga informationsmoduler:
 * Wi-Fi anslutning
 * Installerade applikationer
 * Urklippsdelning
+* Fildelning mellan enheter
 * Och mer... om du har en bra idé, låt mig veta!
 
 Du kan välja olika sätt att synkronisera informationen:
 
 * Din Google Drive
-* En gratis server som drivs av mig
-* Hosta din egen server
-* Mer snart...
+* En gratis server som jag är värd för (end-to-end-krypterad)
+* Kör din egen server (end-to-end-krypterad)
 
 Synkroniseringsinställningar kan bli mixade och matchade.
+
+Hemskärmswidgetar visar batteri, urklipp och nätverksstatus på ett ögonblick.
 
 Octi är öppen källkod, har inga reklamer och spårar dig inte.
 Du kan göra ett köp i appen för att få extra funktioner och stödja apputveckling.

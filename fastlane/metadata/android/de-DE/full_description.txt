@@ -7,16 +7,18 @@ Verfügbare Informationsmodule:
 * WLAN-Konnektivität
 * Installierte Anwendungen
 * Zwischenablage-Freigabe
+* Dateifreigabe zwischen Geräten
 * und mehr... wenn Sie eine gute Idee haben, lassen Sie es mich wissen!
 
 Sie können verschiedene Wege wählen, um die Informationen zu synchronisieren:
 
 * Ihr Google Drive
-* Ein kostenloser Server, der von mir gehostet wird
-* Hosten Sie Ihren eigenen Server selbst
-* Mehr demnächst...
+* Ein kostenloser Server, der von mir gehostet wird (Ende-zu-Ende-verschlüsselt)
+* Eigenen Server selbst hosten (Ende-zu-Ende-verschlüsselt)
 
 Synchronisationsoptionen können gemischt und angepasst werden.
+
+Startbildschirm-Widgets zeigen auf einen Blick Akku-, Zwischenablage- und Netzwerkstatus an.
 
 Octi ist Open-Source, hat keine Werbung und verfolgt Sie nicht.
 Sie können einen In-App-Kauf tätigen, um einige zusätzliche Funktionen zu erhalten und die App-Entwicklung zu unterstützen.

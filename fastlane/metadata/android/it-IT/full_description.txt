@@ -7,16 +7,18 @@ Informazioni sincronizzabili:
 * Connettività WiFi
 * App installate
 * Condivisione appunti
+* Condivisione di file tra dispositivi
 * e molto altro... se hai dei suggerimenti, fammelo sapere!
 
 Puoi scegliere in che modo sincronizzare le informazioni:
 
 * Il tuo Google Drive
-* Un server gratuito gestito da me
-* Con un server autogestito
-* E presto molto altro...
+* Un server gratuito ospitato da me (crittografia end-to-end)
+* Ospita il tuo server (crittografia end-to-end)
 
 Le opzioni di sincronizzazione possono essere mescolate e abbinate.
+
+I widget della schermata Home mostrano lo stato di batteria, appunti e rete a colpo d’occhio.
 
 Octi è open-source, senza pubblicità e non traccia le tue informazioni.
 Puoi acquistare la versione Pro per ottenere alcune funzioni extra e supportare lo sviluppo dell'app.

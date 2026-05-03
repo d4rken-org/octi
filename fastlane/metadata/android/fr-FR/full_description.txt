@@ -7,16 +7,18 @@ Modules d’information proposés :
 * Connectivité Wi-Fi
 * Applications installées
 * Partage du presse-papiers
+* Partage de fichiers entre appareils
 * et plus encore… Si vous avez une bonne idée, faites-le-moi savoir.
 
 Vous pouvez choisir différentes façons de synchroniser l’information :
 
 * Votre Disque Google Drive ;
-* Un serveur gratuit hébergé par moi ;
-* Votre propre serveur que vous hébergez ;
-* Et plus encore bientôt…
+* Un serveur gratuit hébergé par moi (chiffrement de bout en bout)
+* Hébergez votre propre serveur (chiffrement de bout en bout)
 
 Les options de synchronisation peuvent être combinées et assorties.
+
+Les widgets de l'écran d'accueil affichent d'un coup d'œil la batterie, le presse-papiers et l'état du réseau.
 
 Octi est une appli libre, sans publicité, qui ne vous suit pas à la trace.
 Vous pouvez effectuer un achat intégré dans l’appli pour obtenir quelques fonctions supplémentaires et financer le développement de l’appli.

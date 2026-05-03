@@ -7,16 +7,18 @@ Mòduls d'informació disponibles:
 * Connectivitat Wi-Fi
 * Aplicacions instal·lades
 * Compartició de porta-retalls
+* Compartició de fitxers entre dispositius
 * i molt més... si teniu una bona idea, fes-m'ho saber!
 
 Podeu triar diferents maneres de sincronitzar la informació:
 
 * El vostre Google Drive
-* Un servidor gratuït allotjat per mi
-* Allotgeu el vostre propi servidor
-* Més aviat...
+* Un servidor gratuït allotjat per mi (xifrat d'extrem a extrem)
+* Allotgeu el vostre propi servidor (xifrat d'extrem a extrem)
 
 Les opcions de sincronització es poden combinar i mesclar.
+
+Els ginys de la pantalla d'inici mostren l'estat de la bateria, el porta-retalls i la xarxa d'un cop d'ull.
 
 L'Octi és de codi obert, no té anuncis i no us fa seguiment.
 Podeu realitzar una compra des de l'aplicació per obtenir algunes funcions addicionals i donar suport al desenvolupament d'aplicacions.

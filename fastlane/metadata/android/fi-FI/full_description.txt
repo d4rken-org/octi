@@ -7,16 +7,18 @@ Käytettävissä olevat tietomoduulit:
 * WiFi-yhteys
 * Asennetut sovellukset
 * Leikepöydän jakaminen
+* Tiedostojen jakaminen laitteiden välillä
 * ja lisää... jos sinulla on hyvä idea, kerro siitä minulle!
 
 Voit valita eri tapoja synkronoida tiedot:
 
 * Oma Google Drive
-* Ilmainen palvelimeni
-* Oma palvelin
-* Lisää tulossa...
+* Ilmainen palvelin, jonka isännöin itse (päästä päähän salattu)
+* Isännöi omaa palvelintasi itse (päästä päähän salattu)
 
 Synkronointivaihtoehtoja voi yhdistellä vapaasti.
+
+Aloitusnäytön widgetit näyttävät akun, leikepöydän ja verkon tilan yhdellä silmäyksellä.
 
 Octi on avoimen lähdekoodin sovellus, jossa ei ole mainoksia eikä seurantaa.
 Voit ostaa sovellussisäisen ostoksen saadaksesi lisäominaisuuksia ja tukeaksesi sovelluksen kehitystä.

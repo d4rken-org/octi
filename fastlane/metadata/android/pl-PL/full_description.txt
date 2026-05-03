@@ -7,16 +7,18 @@ Dostępne moduły informacyjne:
 * Łączność WiFi
 * Zainstalowane aplikacje
 * Udostępnianie schowka
+* Udostępnianie plików między urządzeniami
 * i więcej... jeśli masz dobry pomysł, daj mi znać!
 
 Możesz wybrać różne sposoby synchronizacji informacji:
 
 * Twój Dysk Google
-* Darmowy serwer hostowany przeze mnie
-* Własny serwer
-* Więcej wkrótce...
+* Bezpłatny serwer hostowany przeze mnie (szyfrowanie end-to-end)
+* Samodzielnie hostuj własny serwer (szyfrowanie end-to-end)
 
 Opcje synchronizacji można mieszać i dopasowywać.
+
+Widżety ekranu głównego pokazują jednym rzutem oka poziom baterii, schowek i stan sieci.
 
 Octi jest otwarto-źródłowy, nie ma reklam i nie śledzi cię.
 Możesz dokonać zakupu w aplikacji, aby uzyskać kilka dodatkowych funkcji i wesprzeć rozwój aplikacji.

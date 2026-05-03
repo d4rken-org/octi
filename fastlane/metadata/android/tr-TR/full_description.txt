@@ -7,16 +7,18 @@ Mevcut bilgi modülleri:
 * WiFi bağlantısı
 * Yüklü uygulamalar
 * Pano paylaşımı
+* Cihazlar arasında dosya paylaşımı
 * ve daha fazlası... eğer iyi bir fikriniz varsa, bana bildirin!
 
 Bilgileri senkronize etmek için farklı yollar seçebilirsiniz:
 
 * Google Drive'ınız
-* Benim tarafımdan barındırılan ücretsiz bir sunucu
-* Kendi sunucunuzu kendiniz barındırın
-* Daha fazlası yakında...
+* Tarafımdan barındırılan ücretsiz bir sunucu (uçtan uca şifreli)
+* Kendi sunucunuzu barındırın (uçtan uca şifreli)
 
 Senkronizasyon seçenekleri karıştırılabilir ve eşleştirilebilir.
+
+Ana ekran widget'ları pil, pano ve ağ durumunu bir bakışta gösterir.
 
 Octi açık kaynaklıdır, reklam içermez ve sizi takip etmez.
 Birkaç ekstra özellik almak ve uygulama geliştirmeyi desteklemek için uygulama içi satın alma yapabilirsiniz.
