@@ -19,17 +19,21 @@ import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardModuleTile
 import eu.darken.octi.modules.connectivity.ui.dashboard.ConnectivityModuleTile
 import eu.darken.octi.modules.files.ui.dashboard.FileShareDashState
 import eu.darken.octi.modules.files.ui.dashboard.FileShareModuleTile
+import eu.darken.octi.modules.meta.MetaModule
+import eu.darken.octi.modules.meta.ui.dashboard.MetaModuleTile
 import eu.darken.octi.modules.power.ui.dashboard.PowerDashState
 import eu.darken.octi.modules.power.ui.dashboard.PowerModuleTile
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiDashState
 import eu.darken.octi.modules.wifi.ui.dashboard.WifiModuleTile
 import eu.darken.octi.sync.core.DeviceId
+import kotlin.time.Instant
 
 @Composable
 fun ModuleTileGrid(
     rows: List<TileRow>,
     moduleItems: List<DashboardVM.ModuleItem>,
     deviceId: DeviceId,
+    now: Instant,
     modifier: Modifier = Modifier,
     onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
     onPowerAlerts: (DeviceId) -> Unit,
@@ -45,6 +49,7 @@ fun ModuleTileGrid(
     onFileShareClicked: (DeviceId) -> Unit,
     onFileShareUpload: (DeviceId) -> Unit,
     onFileShareDownload: (DeviceId) -> Unit,
+    onMetaClicked: (DashboardVM.ModuleItem.Meta) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     val moduleMap = buildModuleIdMap(moduleItems)
@@ -78,6 +83,7 @@ fun ModuleTileGrid(
                         modifier = tileModifier,
                         isWide = isHeroRow,
                         deviceId = deviceId,
+                        now = now,
                         onPowerClicked = onPowerClicked,
                         onPowerAlerts = onPowerAlerts,
                         onWifiClicked = onWifiClicked,
@@ -92,6 +98,7 @@ fun ModuleTileGrid(
                         onFileShareClicked = onFileShareClicked,
                         onFileShareUpload = onFileShareUpload,
                         onFileShareDownload = onFileShareDownload,
+                        onMetaClicked = onMetaClicked,
                         showMessage = showMessage,
                     )
                 }
@@ -107,6 +114,7 @@ private fun ModuleTileDispatch(
     modifier: Modifier,
     isWide: Boolean,
     deviceId: DeviceId,
+    now: Instant,
     onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
     onPowerAlerts: (DeviceId) -> Unit,
     onWifiClicked: (DashboardVM.ModuleItem.Wifi) -> Unit,
@@ -121,6 +129,7 @@ private fun ModuleTileDispatch(
     onFileShareClicked: (DeviceId) -> Unit,
     onFileShareUpload: (DeviceId) -> Unit,
     onFileShareDownload: (DeviceId) -> Unit,
+    onMetaClicked: (DashboardVM.ModuleItem.Meta) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     when (val item = moduleMap[moduleId]) {
@@ -191,6 +200,14 @@ private fun ModuleTileDispatch(
             onDownloadClicked = { onFileShareDownload(deviceId) },
         )
 
+        is DashboardVM.ModuleItem.Meta -> MetaModuleTile(
+            info = item.data.data,
+            now = now,
+            modifier = modifier,
+            isWide = isWide,
+            onDetailClicked = { onMetaClicked(item) },
+        )
+
         null -> {} // Module not available for this device
     }
 }
@@ -204,6 +221,7 @@ private fun buildModuleIdMap(moduleItems: List<DashboardVM.ModuleItem>): Map<Str
             is DashboardVM.ModuleItem.Apps -> "eu.darken.octi.module.core.apps"
             is DashboardVM.ModuleItem.Clipboard -> "eu.darken.octi.module.core.clipboard"
             is DashboardVM.ModuleItem.FileShare -> "eu.darken.octi.module.core.files"
+            is DashboardVM.ModuleItem.Meta -> MetaModule.MODULE_ID.id
         }
     }
 }

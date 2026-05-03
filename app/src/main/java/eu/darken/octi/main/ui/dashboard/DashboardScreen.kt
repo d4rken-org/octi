@@ -119,7 +119,9 @@ import eu.darken.octi.modules.apps.core.AppsInfo
 import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardDetailSheet
 import eu.darken.octi.modules.connectivity.ui.dashboard.ConnectivityDetailSheet
+import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.modules.meta.ui.dashboard.MetaDetailSheet
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
 import eu.darken.octi.modules.power.core.PowerInfo.Status
@@ -392,6 +394,7 @@ fun DashboardScreen(
     var showWifiDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Wifi?>(null) }
     var showConnectivityDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Connectivity?>(null) }
     var showClipboardDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Clipboard?>(null) }
+    var showMetaDetail by remember { mutableStateOf<DashboardVM.ModuleItem.Meta?>(null) }
     var showIssuesSheetSeverity by remember { mutableStateOf<IssueSeverity?>(null) }
     var showReliabilitySheet by remember { mutableStateOf(false) }
 
@@ -411,7 +414,8 @@ fun DashboardScreen(
             is DashboardVM.ModuleItem.Clipboard -> showClipboardDetail = target
             is DashboardVM.ModuleItem.Wifi,
             is DashboardVM.ModuleItem.Apps,
-            is DashboardVM.ModuleItem.FileShare -> {
+            is DashboardVM.ModuleItem.FileShare,
+            is DashboardVM.ModuleItem.Meta -> {
                 // Not reachable from widgets today; no-op.
             }
         }
@@ -564,6 +568,7 @@ fun DashboardScreen(
                     onFileShareClicked = onFileShareClicked,
                     onFileShareUpload = onFileShareUpload,
                     onFileShareDownload = onFileShareDownload,
+                    onMetaClicked = { showMetaDetail = it },
                     showMessage = showMessage,
                     onDoneEditing = { deviceId, config ->
                         onSaveTileLayout(deviceId, config)
@@ -618,6 +623,7 @@ fun DashboardScreen(
                         onFileShareClicked = onFileShareClicked,
                         onFileShareUpload = onFileShareUpload,
                         onFileShareDownload = onFileShareDownload,
+                        onMetaClicked = { showMetaDetail = it },
                         showMessage = showMessage,
                         onDoneEditing = { deviceId, config ->
                             onSaveTileLayout(deviceId, config)
@@ -664,6 +670,15 @@ fun DashboardScreen(
             info = item.data.data,
             onDismiss = { showClipboardDetail = null },
             onCopy = onCopyClipboard,
+            showMessage = showMessage,
+        )
+    }
+
+    showMetaDetail?.let { item ->
+        MetaDetailSheet(
+            info = item.data.data,
+            lastUpdated = item.data.modifiedAt,
+            onDismiss = { showMetaDetail = null },
             showMessage = showMessage,
         )
     }
@@ -1511,6 +1526,7 @@ private fun DashboardDeviceCard(
     onFileShareClicked: (DeviceId) -> Unit,
     onFileShareUpload: (DeviceId) -> Unit,
     onFileShareDownload: (DeviceId) -> Unit,
+    onMetaClicked: (DashboardVM.ModuleItem.Meta) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     val meta = device.meta?.data
@@ -1678,6 +1694,7 @@ private fun DashboardDeviceCard(
                 rows = rows,
                 moduleItems = device.moduleItems,
                 deviceId = device.deviceId,
+                now = device.now,
                 onPowerClicked = onPowerClicked,
                 onPowerAlerts = onPowerAlerts,
                 onWifiClicked = onWifiClicked,
@@ -1692,6 +1709,7 @@ private fun DashboardDeviceCard(
                 onFileShareClicked = onFileShareClicked,
                 onFileShareUpload = onFileShareUpload,
                 onFileShareDownload = onFileShareDownload,
+                onMetaClicked = onMetaClicked,
                 showMessage = showMessage,
             )
         }
@@ -1724,6 +1742,7 @@ private fun DeviceCardOrEditor(
     onFileShareClicked: (DeviceId) -> Unit,
     onFileShareUpload: (DeviceId) -> Unit,
     onFileShareDownload: (DeviceId) -> Unit,
+    onMetaClicked: (DashboardVM.ModuleItem.Meta) -> Unit,
     showMessage: (String) -> Unit,
     onDoneEditing: (String, TileLayoutConfig) -> Unit,
     onCancelEditing: () -> Unit,
@@ -1769,6 +1788,7 @@ private fun DeviceCardOrEditor(
             onFileShareClicked = onFileShareClicked,
             onFileShareUpload = onFileShareUpload,
             onFileShareDownload = onFileShareDownload,
+            onMetaClicked = onMetaClicked,
             showMessage = showMessage,
         )
     }
@@ -1783,6 +1803,7 @@ private fun buildAvailableModuleIds(moduleItems: List<DashboardVM.ModuleItem>): 
             is DashboardVM.ModuleItem.Apps -> "eu.darken.octi.module.core.apps"
             is DashboardVM.ModuleItem.Clipboard -> "eu.darken.octi.module.core.clipboard"
             is DashboardVM.ModuleItem.FileShare -> "eu.darken.octi.module.core.files"
+            is DashboardVM.ModuleItem.Meta -> MetaModule.MODULE_ID.id
         }
     }.toSet()
 }
