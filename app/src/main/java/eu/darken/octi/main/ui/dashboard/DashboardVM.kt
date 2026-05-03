@@ -48,6 +48,7 @@ import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.IssueSeverity
 import eu.darken.octi.sync.core.SyncConnectorState
+import eu.darken.octi.sync.core.disambiguatedAccountLabel
 import eu.darken.octi.sync.core.SyncExecutor
 import eu.darken.octi.sync.core.SyncManager
 import eu.darken.octi.sync.core.SyncOrchestrator
@@ -715,15 +716,16 @@ class DashboardVM @Inject constructor(
 
 
     private fun List<ConnectorDetail>.disambiguateLabels(): List<ConnectorDetail> {
-        val duplicates = groupBy { it.type to it.accountLabel }.filterValues { it.size > 1 }
-        if (duplicates.isEmpty()) return this
+        val peerKeys = map { it.type to it.accountLabel }
         return map { detail ->
-            if (duplicates.containsKey(detail.type to detail.accountLabel)) {
-                val shortId = detail.connectorId.account.take(8)
-                detail.copy(accountLabel = "${detail.accountLabel} ($shortId)")
-            } else {
-                detail
-            }
+            detail.copy(
+                accountLabel = disambiguatedAccountLabel(
+                    type = detail.type,
+                    account = detail.connectorId.account,
+                    accountLabel = detail.accountLabel,
+                    peerKeys = peerKeys,
+                ),
+            )
         }
     }
 

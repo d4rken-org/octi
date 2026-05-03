@@ -1,28 +1,38 @@
 package eu.darken.octi.sync.ui.devices
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.twotone.Sort
+import androidx.compose.material.icons.twotone.Refresh
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.sync.R as SyncR
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.compose.SortModeDialog
@@ -31,6 +41,7 @@ import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.LocalConnectorContributions
 import eu.darken.octi.sync.core.SyncDevicesSortMode
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
@@ -56,6 +67,7 @@ fun SyncDevicesScreenHost(
             onNavigateUp = { vm.navUp() },
             onDeleteDevice = { deviceId -> vm.deleteDevice(deviceId) },
             onSort = { showSortDialog = true },
+            onRefresh = { vm.refresh() },
         )
 
         if (showSortDialog) {
@@ -82,6 +94,7 @@ fun SyncDevicesScreen(
     onNavigateUp: () -> Unit,
     onDeleteDevice: (DeviceId) -> Unit,
     onSort: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
     var selectedDeviceId by rememberSaveable { mutableStateOf<String?>(null) }
     var initialConsumed by rememberSaveable { mutableStateOf(false) }
@@ -104,16 +117,55 @@ fun SyncDevicesScreen(
 
     val selectedDevice = selectedDeviceId?.let { id -> state.items.find { it.deviceId.id == id } }
 
+    val contribution = state.connectorType?.let { LocalConnectorContributions.current[it] }
+    val subtitleText = contribution?.let { c ->
+        val typeLabel = stringResource(c.labelRes)
+        val account = state.accountLabel?.takeUnless { it.isBlank() }
+        if (account != null) "$typeLabel · $account" else typeLabel
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(SyncR.string.sync_synced_devices_label)) },
+                title = {
+                    Column {
+                        Text(text = stringResource(SyncR.string.sync_synced_devices_label))
+                        if (subtitleText != null) {
+                            Text(
+                                text = subtitleText,
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
                 actions = {
+                    if (!state.isPaused) {
+                        Box(
+                            modifier = Modifier.size(48.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            if (state.isBusy) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(20.dp),
+                                    strokeWidth = 2.dp,
+                                )
+                            } else {
+                                IconButton(onClick = onRefresh) {
+                                    Icon(
+                                        imageVector = Icons.TwoTone.Refresh,
+                                        contentDescription = stringResource(CommonR.string.general_sync_action),
+                                    )
+                                }
+                            }
+                        }
+                    }
                     IconButton(onClick = onSort) {
                         Icon(
                             imageVector = Icons.AutoMirrored.TwoTone.Sort,
@@ -208,6 +260,7 @@ private fun SyncDevicesScreenPreview() = PreviewWrapper {
         onNavigateUp = {},
         onDeleteDevice = {},
         onSort = {},
+        onRefresh = {},
     )
 }
 
@@ -219,5 +272,7 @@ private fun SyncDevicesScreenEmptyPreview() = PreviewWrapper {
         onNavigateUp = {},
         onDeleteDevice = {},
         onSort = {},
+        onRefresh = {},
     )
 }
+
