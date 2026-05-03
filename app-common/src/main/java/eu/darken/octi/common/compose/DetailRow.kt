@@ -44,9 +44,15 @@ fun DetailRow(label: String, value: String) {
 }
 
 @Composable
-fun CopyableDetailRow(label: String, value: String, copyable: Boolean, showMessage: (String) -> Unit) {
+fun CopyableDetailRow(
+    label: String,
+    value: String,
+    copyable: Boolean,
+    showMessage: (String) -> Unit,
+    copiedMessage: String? = null,
+) {
     val context = LocalContext.current
-    val copiedMsg = stringResource(CommonR.string.general_copy_action)
+    val resolvedMsg = copiedMessage ?: stringResource(CommonR.string.general_copy_action)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -69,8 +75,8 @@ fun CopyableDetailRow(label: String, value: String, copyable: Boolean, showMessa
             IconButton(
                 onClick = {
                     val clipboard = context.getSystemService(ClipboardManager::class.java)
-                    clipboard.setPrimaryClip(ClipData.newPlainText("IP", value))
-                    showMessage(copiedMsg)
+                    clipboard.setPrimaryClip(ClipData.newPlainText(label, value))
+                    showMessage(resolvedMsg)
                 },
                 modifier = Modifier.size(28.dp),
             ) {

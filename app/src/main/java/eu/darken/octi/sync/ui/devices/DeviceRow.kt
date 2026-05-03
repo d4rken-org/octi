@@ -10,12 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Android
 import androidx.compose.material.icons.twotone.Error
-import androidx.compose.material.icons.twotone.PhoneAndroid
-import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.Schedule
-import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -26,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.ca.CaString
 import eu.darken.octi.common.ca.toCaString
@@ -57,67 +52,7 @@ internal fun DeviceRow(
             .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = when (item.metaInfo?.deviceType) {
-                        MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
-                        MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
-                        else -> Icons.TwoTone.QuestionMark
-                    },
-                    contentDescription = null,
-                    modifier = Modifier.size(28.dp),
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = item.displayLabel,
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    item.metaInfo?.let { meta ->
-                        Text(
-                            text = "${meta.deviceManufacturer} · Android ${meta.androidVersionName}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Column(horizontalAlignment = Alignment.End) {
-                    item.serverVersion?.let { version ->
-                        Text(
-                            text = version,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                    item.serverPlatform?.let { platform ->
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = when (platform.lowercase()) {
-                                    "android" -> Icons.TwoTone.Android
-                                    else -> Icons.TwoTone.QuestionMark
-                                },
-                                contentDescription = null,
-                                modifier = Modifier.size(10.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text(
-                                text = platform.replaceFirstChar { it.uppercase() },
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
-            }
+            DeviceHeader(item = item)
 
             item.lastSeen?.let { lastSeen ->
                 Spacer(modifier = Modifier.height(8.dp))
