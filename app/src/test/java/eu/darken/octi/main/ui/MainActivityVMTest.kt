@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.datastore.DataStoreValue
+import eu.darken.octi.common.navigation.FileShareDeeplink
+import eu.darken.octi.common.navigation.WidgetDeeplink
 import eu.darken.octi.common.theming.ThemeColor
 import eu.darken.octi.common.theming.ThemeMode
 import eu.darken.octi.common.theming.ThemeState
@@ -23,6 +25,7 @@ import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
@@ -191,5 +194,75 @@ class MainActivityVMTest : BaseTest() {
         val event = vm.incomingShareEvents.first()
         event.shouldBeInstanceOf<MainActivityVM.IncomingShareEvent.IncomingShare>()
         event.selfDeviceId shouldBe "self-device"
+    }
+
+    @Test
+    fun `widget deeplink emits deeplinkAccepted`() = runTest2 {
+        val vm = makeVM()
+        val intent = mockk<Intent> {
+            every { action } returns WidgetDeeplink.ACTION
+            every { getStringExtra(WidgetDeeplink.EXTRA_DEVICE_ID) } returns "device-1"
+            every { getStringExtra(WidgetDeeplink.EXTRA_MODULE_TYPE) } returns "POWER"
+        }
+        vm.handleDeeplinkIntent(intent) shouldBe true
+        vm.deeplinkAccepted.first() shouldBe Unit
+    }
+
+    @Test
+    fun `file-share deeplink emits deeplinkAccepted`() = runTest2 {
+        val vm = makeVM()
+        val intent = mockk<Intent> {
+            every { action } returns FileShareDeeplink.ACTION
+            every { getStringExtra(FileShareDeeplink.EXTRA_DEVICE_ID) } returns "device-1"
+        }
+        vm.handleDeeplinkIntent(intent) shouldBe true
+        vm.deeplinkAccepted.first() shouldBe Unit
+    }
+
+    @Test
+    fun `system-share intent does NOT emit deeplinkAccepted`() = runTest2 {
+        val vm = makeVM()
+        val intent = mockk<Intent> {
+            every { action } returns Intent.ACTION_SEND
+            every { getParcelableExtra<Uri>(Intent.EXTRA_STREAM) } returns fakeUri("content", "a")
+            every { clipData } returns null
+        }
+        vm.handleDeeplinkIntent(intent) shouldBe true
+        withTimeoutOrNull(100) { vm.deeplinkAccepted.first() } shouldBe null
+    }
+
+    @Test
+    fun `unrecognized intent does NOT emit deeplinkAccepted`() = runTest2 {
+        val vm = makeVM()
+        val intent = mockk<Intent> {
+            every { action } returns "android.intent.action.MAIN"
+        }
+        vm.handleDeeplinkIntent(intent) shouldBe false
+        withTimeoutOrNull(100) { vm.deeplinkAccepted.first() } shouldBe null
+    }
+
+    @Test
+    fun `widget deeplink dropped when onboarding not done does NOT emit deeplinkAccepted`() = runTest2 {
+        every { onboardingDone.flow } returns flowOf(false)
+        val vm = makeVM()
+        val intent = mockk<Intent> {
+            every { action } returns WidgetDeeplink.ACTION
+            every { getStringExtra(WidgetDeeplink.EXTRA_DEVICE_ID) } returns "device-1"
+            every { getStringExtra(WidgetDeeplink.EXTRA_MODULE_TYPE) } returns "POWER"
+        }
+        vm.handleDeeplinkIntent(intent) shouldBe false
+        withTimeoutOrNull(100) { vm.deeplinkAccepted.first() } shouldBe null
+    }
+
+    @Test
+    fun `file-share deeplink dropped when onboarding not done does NOT emit deeplinkAccepted`() = runTest2 {
+        every { onboardingDone.flow } returns flowOf(false)
+        val vm = makeVM()
+        val intent = mockk<Intent> {
+            every { action } returns FileShareDeeplink.ACTION
+            every { getStringExtra(FileShareDeeplink.EXTRA_DEVICE_ID) } returns "device-1"
+        }
+        vm.handleDeeplinkIntent(intent) shouldBe false
+        withTimeoutOrNull(100) { vm.deeplinkAccepted.first() } shouldBe null
     }
 }
