@@ -2,24 +2,20 @@ package eu.darken.octi.modules.meta.ui.dashboard
 
 import android.text.format.DateUtils
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Info
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.clampToNow
+import eu.darken.octi.common.compose.BottomSheetHeader
 import eu.darken.octi.common.compose.CopyableDetailRow
 import eu.darken.octi.common.compose.DetailRow
 import eu.darken.octi.common.compose.Preview2
@@ -36,18 +32,28 @@ import kotlin.time.Instant
 @Composable
 fun MetaDetailSheet(
     info: MetaInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
     lastUpdated: Instant?,
     onDismiss: () -> Unit,
     showMessage: (String) -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
-        MetaDetailContent(info = info, lastUpdated = lastUpdated, showMessage = showMessage)
+        MetaDetailContent(
+            info = info,
+            deviceLabel = deviceLabel,
+            deviceIcon = deviceIcon,
+            lastUpdated = lastUpdated,
+            showMessage = showMessage,
+        )
     }
 }
 
 @Composable
 private fun MetaDetailContent(
     info: MetaInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
     lastUpdated: Instant?,
     showMessage: (String) -> Unit = {},
 ) {
@@ -58,26 +64,13 @@ private fun MetaDetailContent(
     }
 
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.TwoTone.Info,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(MetaR.string.module_meta_label),
-                style = MaterialTheme.typography.titleLarge,
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        BottomSheetHeader(
+            icon = Icons.TwoTone.Info,
+            title = stringResource(MetaR.string.module_meta_label),
+            deviceLabel = deviceLabel,
+            deviceIcon = deviceIcon,
+        )
 
-        info.deviceLabel?.let { label ->
-            DetailRow(
-                label = stringResource(MetaR.string.module_meta_detail_label_label),
-                value = label,
-            )
-        }
         DetailRow(
             label = stringResource(MetaR.string.module_meta_detail_manufacturer_label),
             value = info.deviceManufacturer,
@@ -161,6 +154,8 @@ private fun previewInfo(
 private fun MetaDetailContentFullPreview() = PreviewWrapper {
     MetaDetailContent(
         info = previewInfo(),
+        deviceLabel = "Living Room Pixel",
+        deviceIcon = Icons.TwoTone.PhoneAndroid,
         lastUpdated = Clock.System.now() - 5.minutes,
     )
 }
@@ -174,6 +169,8 @@ private fun MetaDetailContentMinimalPreview() = PreviewWrapper {
             androidSecurityPatch = null,
             octiGitSha = "",
         ),
+        deviceLabel = "Pixel 8 Pro",
+        deviceIcon = Icons.TwoTone.PhoneAndroid,
         lastUpdated = null,
     )
 }

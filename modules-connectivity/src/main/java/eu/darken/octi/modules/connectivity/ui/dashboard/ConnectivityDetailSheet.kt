@@ -1,21 +1,18 @@
 package eu.darken.octi.modules.connectivity.ui.dashboard
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import eu.darken.octi.common.compose.BottomSheetHeader
 import eu.darken.octi.common.compose.CopyableDetailRow
 import eu.darken.octi.common.compose.DetailRow
 import eu.darken.octi.common.compose.Preview2
@@ -27,36 +24,33 @@ import eu.darken.octi.modules.connectivity.ui.icon
 @Composable
 fun ConnectivityDetailSheet(
     info: ConnectivityInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
     onDismiss: () -> Unit,
     showMessage: (String) -> Unit,
 ) {
     val unknownLocal = stringResource(ConnectivityR.string.module_connectivity_unknown_local_ip_label)
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
-        ConnectivityDetailContent(info, unknownLocal, showMessage)
+        ConnectivityDetailContent(info, deviceLabel, deviceIcon, unknownLocal, showMessage)
     }
 }
 
 @Composable
 private fun ConnectivityDetailContent(
     info: ConnectivityInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
     unknownLocal: String = "Unknown",
     showMessage: (String) -> Unit = {},
 ) {
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = info.connectionType.icon,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(ConnectivityR.string.module_connectivity_label),
-                style = MaterialTheme.typography.titleLarge,
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        BottomSheetHeader(
+            icon = info.connectionType.icon,
+            title = stringResource(ConnectivityR.string.module_connectivity_label),
+            deviceLabel = deviceLabel,
+            deviceIcon = deviceIcon,
+        )
         DetailRow(
             label = stringResource(ConnectivityR.string.module_connectivity_detail_connection_type_label),
             value = when (info.connectionType) {
@@ -108,5 +102,7 @@ private fun ConnectivityDetailContentPreview() = PreviewWrapper {
             gatewayIp = "192.168.1.1",
             dnsServers = listOf("8.8.8.8", "8.8.4.4"),
         ),
+        deviceLabel = "Living Room Pixel",
+        deviceIcon = Icons.TwoTone.PhoneAndroid,
     )
 }

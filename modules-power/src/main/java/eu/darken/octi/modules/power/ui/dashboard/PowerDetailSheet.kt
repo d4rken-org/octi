@@ -2,25 +2,22 @@ package eu.darken.octi.modules.power.ui.dashboard
 
 import android.os.BatteryManager
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.TemperatureFormatter
+import eu.darken.octi.common.compose.BottomSheetHeader
 import eu.darken.octi.common.compose.DetailRow
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -34,6 +31,8 @@ import eu.darken.octi.modules.power.ui.PowerEstimationFormatter
 @Composable
 fun PowerDetailSheet(
     info: PowerInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -41,30 +40,25 @@ fun PowerDetailSheet(
     val estimationFormatter = remember { PowerEstimationFormatter(context) }
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
-        PowerDetailContent(info, temperatureFormatter, estimationFormatter)
+        PowerDetailContent(info, deviceLabel, deviceIcon, temperatureFormatter, estimationFormatter)
     }
 }
 
 @Composable
 private fun PowerDetailContent(
     info: PowerInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
     temperatureFormatter: TemperatureFormatter = TemperatureFormatter(LocalContext.current),
     estimationFormatter: PowerEstimationFormatter = PowerEstimationFormatter(LocalContext.current),
 ) {
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = info.batteryIcon,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(PowerR.string.module_power_label),
-                style = MaterialTheme.typography.titleLarge,
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        BottomSheetHeader(
+            icon = info.batteryIcon,
+            title = stringResource(PowerR.string.module_power_label),
+            deviceLabel = deviceLabel,
+            deviceIcon = deviceIcon,
+        )
         DetailRow(
             label = stringResource(PowerR.string.module_power_detail_level_label),
             value = "${(info.battery.percent * 100).toInt()}%",
@@ -129,5 +123,7 @@ private fun PowerDetailContentPreview() = PreviewWrapper {
             battery = PowerInfo.Battery(level = 82, scale = 100, health = 2, temp = 31.2f),
             chargeIO = ChargeIO(null, null, null, null, null),
         ),
+        deviceLabel = "Living Room Pixel",
+        deviceIcon = Icons.TwoTone.PhoneAndroid,
     )
 }
