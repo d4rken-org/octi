@@ -1,22 +1,19 @@
 package eu.darken.octi.modules.wifi.ui.dashboard
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.common.R as CommonR
+import eu.darken.octi.common.compose.BottomSheetHeader
 import eu.darken.octi.common.compose.DetailRow
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -27,29 +24,28 @@ import eu.darken.octi.modules.wifi.ui.receptIcon
 @Composable
 fun WifiDetailSheet(
     info: WifiInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
-        WifiDetailContent(info)
+        WifiDetailContent(info, deviceLabel, deviceIcon)
     }
 }
 
 @Composable
-private fun WifiDetailContent(info: WifiInfo) {
+private fun WifiDetailContent(
+    info: WifiInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
+) {
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = info.receptIcon,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(WifiR.string.module_wifi_label),
-                style = MaterialTheme.typography.titleLarge,
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        BottomSheetHeader(
+            icon = info.receptIcon,
+            title = stringResource(WifiR.string.module_wifi_label),
+            deviceLabel = deviceLabel,
+            deviceIcon = deviceIcon,
+        )
         DetailRow(
             label = stringResource(WifiR.string.module_wifi_detail_ssid_label),
             value = info.currentWifi?.ssid
@@ -88,5 +84,7 @@ private fun WifiDetailContentPreview() = PreviewWrapper {
                 freqType = WifiInfo.Wifi.Type.FIVE_GHZ,
             ),
         ),
+        deviceLabel = "Living Room Pixel",
+        deviceIcon = Icons.TwoTone.PhoneAndroid,
     )
 }

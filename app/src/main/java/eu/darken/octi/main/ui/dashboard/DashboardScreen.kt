@@ -131,6 +131,7 @@ import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.IssueSeverity
+import eu.darken.octi.sync.core.shortLabel
 import eu.darken.octi.sync.core.SyncConnector.EventMode
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncOrchestrator
@@ -643,31 +644,59 @@ fun DashboardScreen(
     }
 
     // Detail sheets
+    fun deviceHeaderFor(deviceId: DeviceId): Pair<ImageVector, String> {
+        val device = state.devices.find { it.deviceId == deviceId }
+        val icon = when {
+            device == null -> Icons.TwoTone.QuestionMark
+            device.isCurrentDevice -> Icons.TwoTone.Home
+            device.isDegraded -> Icons.TwoTone.Warning
+            else -> when (device.meta?.data?.deviceType) {
+                MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
+                MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
+                else -> Icons.TwoTone.QuestionMark
+            }
+        }
+        val label = device?.displayLabel ?: deviceId.shortLabel
+        return icon to label
+    }
+
     showPowerDetail?.let { item ->
+        val (icon, label) = deviceHeaderFor(item.data.deviceId)
         PowerDetailSheet(
             info = item.data.data,
+            deviceLabel = label,
+            deviceIcon = icon,
             onDismiss = { showPowerDetail = null },
         )
     }
 
     showWifiDetail?.let { item ->
+        val (icon, label) = deviceHeaderFor(item.data.deviceId)
         WifiDetailSheet(
             info = item.data.data,
+            deviceLabel = label,
+            deviceIcon = icon,
             onDismiss = { showWifiDetail = null },
         )
     }
 
     showConnectivityDetail?.let { item ->
+        val (icon, label) = deviceHeaderFor(item.data.deviceId)
         ConnectivityDetailSheet(
             info = item.data.data,
+            deviceLabel = label,
+            deviceIcon = icon,
             onDismiss = { showConnectivityDetail = null },
             showMessage = showMessage,
         )
     }
 
     showClipboardDetail?.let { item ->
+        val (icon, label) = deviceHeaderFor(item.data.deviceId)
         ClipboardDetailSheet(
             info = item.data.data,
+            deviceLabel = label,
+            deviceIcon = icon,
             onDismiss = { showClipboardDetail = null },
             onCopy = onCopyClipboard,
             showMessage = showMessage,
@@ -675,8 +704,11 @@ fun DashboardScreen(
     }
 
     showMetaDetail?.let { item ->
+        val (icon, label) = deviceHeaderFor(item.data.deviceId)
         MetaDetailSheet(
             info = item.data.data,
+            deviceLabel = label,
+            deviceIcon = icon,
             lastUpdated = item.data.modifiedAt,
             onDismiss = { showMetaDetail = null },
             showMessage = showMessage,

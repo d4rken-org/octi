@@ -1,18 +1,15 @@
 package eu.darken.octi.modules.clipboard.ui.dashboard
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.ContentPaste
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -20,8 +17,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import eu.darken.octi.common.compose.BottomSheetHeader
 import eu.darken.octi.common.compose.DetailRow
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -32,37 +31,34 @@ import okio.ByteString.Companion.encodeUtf8
 @Composable
 fun ClipboardDetailSheet(
     info: ClipboardInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
     onDismiss: () -> Unit,
     onCopy: (ClipboardInfo) -> Unit,
     showMessage: (String) -> Unit,
 ) {
     val copiedMsg = stringResource(ClipboardR.string.module_clipboard_copied_octi_to_os)
     ModalBottomSheet(onDismissRequest = onDismiss) {
-        ClipboardDetailContent(info, copiedMsg, onCopy, showMessage)
+        ClipboardDetailContent(info, deviceLabel, deviceIcon, copiedMsg, onCopy, showMessage)
     }
 }
 
 @Composable
 private fun ClipboardDetailContent(
     info: ClipboardInfo,
+    deviceLabel: String,
+    deviceIcon: ImageVector,
     copiedMsg: String = "Copied",
     onCopy: (ClipboardInfo) -> Unit = {},
     showMessage: (String) -> Unit = {},
 ) {
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.TwoTone.ContentPaste,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(ClipboardR.string.module_clipboard_label),
-                style = MaterialTheme.typography.titleLarge,
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        BottomSheetHeader(
+            icon = Icons.TwoTone.ContentPaste,
+            title = stringResource(ClipboardR.string.module_clipboard_label),
+            deviceLabel = deviceLabel,
+            deviceIcon = deviceIcon,
+        )
         DetailRow(
             label = stringResource(ClipboardR.string.module_clipboard_detail_type_label),
             value = when (info.type) {
@@ -109,5 +105,7 @@ private fun ClipboardDetailContentPreview() = PreviewWrapper {
             type = ClipboardInfo.Type.SIMPLE_TEXT,
             data = "Hello clipboard content!".encodeUtf8(),
         ),
+        deviceLabel = "Living Room Pixel",
+        deviceIcon = Icons.TwoTone.PhoneAndroid,
     )
 }
