@@ -70,6 +70,7 @@ class MainActivity : Activity2() {
                                     autoAction = Nav.Main.FileShareList.AutoAction.INCOMING_SHARE,
                                     incomingShareToken = event.token,
                                 ),
+                                popUpTo = Nav.Main.Dashboard,
                             )
                         }
                         MainActivityVM.IncomingShareEvent.Unsupported ->
@@ -77,6 +78,15 @@ class MainActivity : Activity2() {
                         MainActivityVM.IncomingShareEvent.ModuleDisabled ->
                             Toast.makeText(this@MainActivity, FilesR.string.module_files_share_module_disabled, Toast.LENGTH_LONG).show()
                     }
+                }
+            }
+
+            // Pop back to Dashboard for accepted widget / file-share-notification deeplinks. Done
+            // here (Compose) instead of in onNewIntent because onNewIntent can fire before the
+            // back stack is registered with NavigationController (race observed on Android 16 Beta).
+            LaunchedEffect(Unit) {
+                vm.deeplinkAccepted.collect {
+                    navCtrl.popTo(Nav.Main.Dashboard)
                 }
             }
 
@@ -116,12 +126,9 @@ class MainActivity : Activity2() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        val handled = vm.handleDeeplinkIntent(intent)
-        if (handled) {
-            // Force nav back to Dashboard so the deeplink observer picks it up. If Dashboard
-            // is not on the back stack (e.g. mid-onboarding), popTo no-ops and we leave nav alone.
-            navCtrl.popTo(Nav.Main.Dashboard)
-        }
+        // Pure parsing — emits VM events. Pop-to-Dashboard is handled inside setContent so it
+        // can never run before the back stack is registered with NavigationController.
+        vm.handleDeeplinkIntent(intent)
     }
 
     companion object {

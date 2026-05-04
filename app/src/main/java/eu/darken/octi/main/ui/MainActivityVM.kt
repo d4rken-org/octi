@@ -67,6 +67,19 @@ class MainActivityVM @Inject constructor(
      */
     val incomingShareEvents = SingleEventFlow<IncomingShareEvent>()
 
+    /**
+     * Fires after a successful widget or file-share-notification deeplink is parsed. The activity
+     * collects this from inside the Compose tree and pops back to Dashboard so the Dashboard-level
+     * observers can consume the buffered event. System-share intents are NOT signalled here —
+     * those navigate directly via [incomingShareEvents] using popUpTo, so a separate pop step is
+     * unnecessary (and would race with the goTo).
+     *
+     * Done via a Compose-side collector instead of calling navCtrl directly from onNewIntent, to
+     * avoid the race where onNewIntent fires before the Compose lambda has registered the back
+     * stack with NavigationController (observed crash on Android 16 Beta).
+     */
+    val deeplinkAccepted = SingleEventFlow<Unit>()
+
     sealed interface IncomingShareEvent {
         data class IncomingShare(val token: String, val selfDeviceId: String) : IncomingShareEvent
         data object Unsupported : IncomingShareEvent
@@ -94,6 +107,7 @@ class MainActivityVM @Inject constructor(
             }
             log(_tag, INFO) { "File-share deeplink accepted: device=${parsed.deviceId}" }
             fileShareDeeplinkEvents.tryEmit(parsed)
+            deeplinkAccepted.tryEmit(Unit)
             return true
         }
 
@@ -104,6 +118,7 @@ class MainActivityVM @Inject constructor(
         }
         log(_tag, INFO) { "Widget deeplink accepted: device=${widget.deviceId} module=${widget.moduleType}" }
         deeplinkEvents.tryEmit(widget)
+        deeplinkAccepted.tryEmit(Unit)
         return true
     }
 
