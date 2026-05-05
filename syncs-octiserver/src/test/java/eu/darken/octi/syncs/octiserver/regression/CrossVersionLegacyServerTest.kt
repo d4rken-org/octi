@@ -4,6 +4,7 @@ import eu.darken.octi.common.serialization.SerializationModule
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.encryption.CryptoCapabilities
 import eu.darken.octi.syncs.octiserver.core.BasicAuthInterceptor
 import eu.darken.octi.syncs.octiserver.core.DeviceHeaderInterceptor
 import eu.darken.octi.syncs.octiserver.core.OctiServer
@@ -99,6 +100,9 @@ class CrossVersionLegacyServerTest : BaseTest() {
             retrofitJson = SerializationModule().retrofitJson(),
             basicAuthInterceptor = BasicAuthInterceptor(),
             deviceHeaderInterceptor = deviceHeaderInterceptor,
+            cryptoCapabilities = object : CryptoCapabilities {
+                override val gcmSivAvailable: Boolean = true
+            },
         )
     }
 

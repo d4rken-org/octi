@@ -24,6 +24,7 @@ import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.files.core.BlobMaintenance
 import eu.darken.octi.modules.files.core.IncomingFileNotifier
 import eu.darken.octi.sync.core.SyncOrchestrator
+import eu.darken.octi.sync.core.encryption.CryptoCapabilities
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -47,6 +48,7 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var releaseManager: ReleaseManager
     @Inject lateinit var blobMaintenance: BlobMaintenance
     @Inject lateinit var incomingFileNotifier: IncomingFileNotifier
+    @Inject lateinit var cryptoCapabilities: CryptoCapabilities
 
     override fun onCreate() {
         super.onCreate()
@@ -61,6 +63,11 @@ open class App : Application(), Configuration.Provider {
             .launchIn(appScope)
 
         log(TAG, INFO) { BuildConfigWrap.VERSION_DESCRIPTION }
+
+        // Eagerly resolve crypto capabilities so the JCE provider install + Tink registration
+        // (which run in PayloadEncryption.companion init) finish before any sync component
+        // touches crypto. Reading the property is enough to trigger the underlying class load.
+        log(TAG) { "gcmSivAvailable=${cryptoCapabilities.gcmSivAvailable}" }
 
         bugReporter.setup(this)
 

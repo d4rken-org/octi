@@ -1,11 +1,10 @@
 package eu.darken.octi.syncs.octiserver.core
 
-import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.encryption.CryptoCapabilities
+import eu.darken.octi.sync.core.encryption.EncryptionMode
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContain
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.serialization.json.Json
@@ -13,7 +12,6 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,18 +20,17 @@ import testhelpers.coroutine.TestDispatcherProvider
 import testhelpers.coroutine.runTest2
 
 /**
- * Verifies the on-the-wire shape of [OctiServerEndpoint.writeModule] — specifically that the
- * `device-id` query param carries the *target* device passed by the caller, not the caller's
- * own id (the historical hardcoded value before the deviceId-plumbing fix). A call-site grep
- * cannot catch a regression that hardcodes the target inside the wrapper body — this does.
+ * Verifies the AES-GCM-SIV ↔ legacy-SIV fall-back in [OctiServerEndpoint.createNewAccount].
+ * Required because creating a GCM-SIV keyset on a device whose JCE can't actually do
+ * AES-GCM-SIV would produce an account whose ciphertext can never be decrypted on this
+ * device. See d4rken-org/octi#285 and [eu.darken.octi.sync.core.encryption.PayloadEncryption].
  */
-class OctiServerEndpointWriteModuleTest : BaseTest() {
+class OctiServerEndpointCreateAccountTest : BaseTest() {
 
     private lateinit var server: MockWebServer
     private val syncSettings: SyncSettings = mockk()
     private val basicAuthInterceptor = BasicAuthInterceptor()
     private val deviceHeaderInterceptor: DeviceHeaderInterceptor = mockk()
-    private val cryptoCapabilities: CryptoCapabilities = mockk(relaxed = true)
 
     private val retrofitJson = Json {
         ignoreUnknownKeys = true
@@ -46,8 +43,6 @@ class OctiServerEndpointWriteModuleTest : BaseTest() {
         server = MockWebServer()
         server.start()
         every { syncSettings.deviceId } returns DeviceId("caller-uuid")
-        // Pass-through — DeviceHeaderInterceptor reads android.os.Build which is unavailable
-        // here; we don't care about its headers for this test.
         every { deviceHeaderInterceptor.intercept(any()) } answers {
             val chain = firstArg<Interceptor.Chain>()
             chain.proceed(chain.request())
@@ -59,7 +54,7 @@ class OctiServerEndpointWriteModuleTest : BaseTest() {
         server.shutdown()
     }
 
-    private fun newEndpoint(): OctiServerEndpoint {
+    private fun newEndpoint(cryptoCapabilities: CryptoCapabilities): OctiServerEndpoint {
         val url = server.url("/")
         val address = OctiServer.Address(
             domain = url.host,
@@ -78,35 +73,35 @@ class OctiServerEndpointWriteModuleTest : BaseTest() {
         )
     }
 
-    @Test
-    fun `writeModule sends device-id query param with target id, X-Device-ID header with caller id`() = runTest2 {
-        server.enqueue(MockResponse().setResponseCode(200))
-
-        newEndpoint().writeModule(
-            deviceId = DeviceId("target-uuid"),
-            moduleId = ModuleId("eu.darken.octi.module.test"),
-            payload = "hello".encodeUtf8(),
+    private fun enqueueRegisterResponse() {
+        server.enqueue(
+            MockResponse().setResponseCode(201).setBody(
+                """{"account":"acc-id-001","password":"pw"}"""
+            )
         )
-
-        val recorded = server.takeRequest()
-        recorded.method shouldBe "POST"
-        recorded.path shouldContain "/v1/module/eu.darken.octi.module.test"
-        recorded.path shouldContain "device-id=target-uuid"
-        recorded.getHeader("X-Device-ID") shouldBe "caller-uuid"
     }
 
     @Test
-    fun `writeModule when target equals caller still sends both fields verbatim`() = runTest2 {
-        server.enqueue(MockResponse().setResponseCode(200))
+    fun `createNewAccount produces GCM-SIV keyset when gcmSivAvailable=true`() = runTest2 {
+        enqueueRegisterResponse()
 
-        newEndpoint().writeModule(
-            deviceId = DeviceId("caller-uuid"),
-            moduleId = ModuleId("eu.darken.octi.module.test"),
-            payload = "hello".encodeUtf8(),
-        )
+        val endpoint = newEndpoint(cryptoCapabilities = object : CryptoCapabilities {
+            override val gcmSivAvailable: Boolean = true
+        })
 
-        val recorded = server.takeRequest()
-        recorded.path shouldContain "device-id=caller-uuid"
-        recorded.getHeader("X-Device-ID") shouldBe "caller-uuid"
+        val credentials = endpoint.createNewAccount()
+        credentials.encryptionKeyset.type shouldBe EncryptionMode.AES256_GCM_SIV.typeString
+    }
+
+    @Test
+    fun `createNewAccount falls back to legacy SIV keyset when gcmSivAvailable=false`() = runTest2 {
+        enqueueRegisterResponse()
+
+        val endpoint = newEndpoint(cryptoCapabilities = object : CryptoCapabilities {
+            override val gcmSivAvailable: Boolean = false
+        })
+
+        val credentials = endpoint.createNewAccount()
+        credentials.encryptionKeyset.type shouldBe EncryptionMode.AES256_SIV.typeString
     }
 }
