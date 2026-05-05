@@ -137,17 +137,17 @@ class PayloadEncryptionTest : BaseTest() {
 
     @Test
     fun `RFC 8452 vector probe returns true after BouncyCastle is installed`() {
-        // BouncyCastle is on testImplementation and PayloadEncryption.companion.init has
-        // already installed it as a JCE provider by the time any test runs (instantiating
-        // any PayloadEncryption above triggers class load). Locks the RFC 8452 constants
-        // against accidental edits.
-        PayloadEncryption()  // ensure class init has fired
-        PayloadEncryption.platformHasWorkingGcmSiv() shouldBe true
+        // BouncyCastle is on testImplementation and CryptoBootstrap installs it as a JCE
+        // provider during its init block. Constructing any PayloadEncryption forces the
+        // bootstrap via its instance init. Locks the RFC 8452 constants against accidental
+        // edits.
+        PayloadEncryption()  // ensure CryptoBootstrap init has fired
+        CryptoBootstrap.platformHasWorkingGcmSiv() shouldBe true
     }
 
     @Test
     fun `gcmSivAvailable is true on JVM (BouncyCastle)`() {
-        PayloadEncryption()  // ensure class init has fired
-        PayloadEncryption.gcmSivAvailable shouldBe true
+        PayloadEncryption()  // ensure CryptoBootstrap init has fired
+        CryptoBootstrap.gcmSivAvailable shouldBe true
     }
 }

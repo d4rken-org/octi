@@ -20,10 +20,11 @@ interface CryptoCapabilities {
 @Singleton
 class RealCryptoCapabilities @Inject constructor() : CryptoCapabilities {
     override val gcmSivAvailable: Boolean
-        // Reading the static forces [PayloadEncryption] class load (and thus its companion
-        // init: JCE provider install + Tink registration + RFC 8452 postcondition) on first
-        // access. App.onCreate injects this singleton early so the warmup is deterministic.
-        get() = PayloadEncryption.gcmSivAvailable
+        // Reading the property forces [CryptoBootstrap] class load (and thus its init
+        // block: JCE provider install + Tink registration + RFC 8452 postcondition) on
+        // first access. App.onCreate injects this singleton early so the warmup is
+        // deterministic.
+        get() = CryptoBootstrap.gcmSivAvailable
 }
 
 @InstallIn(SingletonComponent::class)
