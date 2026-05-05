@@ -134,4 +134,20 @@ class PayloadEncryptionTest : BaseTest() {
         val crypti = PayloadEncryption(useLegacyEncryption = true)
         crypti.exportKeyset().type shouldBe EncryptionMode.AES256_SIV.typeString
     }
+
+    @Test
+    fun `RFC 8452 vector probe returns true after BouncyCastle is installed`() {
+        // BouncyCastle is on testImplementation and PayloadEncryption.companion.init has
+        // already installed it as a JCE provider by the time any test runs (instantiating
+        // any PayloadEncryption above triggers class load). Locks the RFC 8452 constants
+        // against accidental edits.
+        PayloadEncryption()  // ensure class init has fired
+        PayloadEncryption.platformHasWorkingGcmSiv() shouldBe true
+    }
+
+    @Test
+    fun `gcmSivAvailable is true on JVM (BouncyCastle)`() {
+        PayloadEncryption()  // ensure class init has fired
+        PayloadEncryption.gcmSivAvailable shouldBe true
+    }
 }

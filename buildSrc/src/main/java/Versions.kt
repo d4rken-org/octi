@@ -39,4 +39,8 @@ object Versions {
     object Desugar {
         const val core = "2.1.5"
     }
+
+    object Conscrypt {
+        const val core = "2.5.2"
+    }
 }

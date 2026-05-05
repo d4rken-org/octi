@@ -15,6 +15,7 @@ import eu.darken.octi.common.serialization.RetrofitJson
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
+import eu.darken.octi.sync.core.encryption.CryptoCapabilities
 import eu.darken.octi.sync.core.encryption.PayloadEncryption
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -37,6 +38,7 @@ class OctiServerEndpoint @AssistedInject constructor(
     @RetrofitJson private val retrofitJson: Json,
     private val basicAuthInterceptor: BasicAuthInterceptor,
     private val deviceHeaderInterceptor: DeviceHeaderInterceptor,
+    private val cryptoCapabilities: CryptoCapabilities,
 ) {
 
     private val httpClient by lazy {
@@ -72,12 +74,20 @@ class OctiServerEndpoint @AssistedInject constructor(
             throw OctiServerHttpException(e)
         }
 
+        // Fall back to legacy SIV when the device can't actually do AES-GCM-SIV. Producing
+        // a GCM-SIV keyset on a broken device would create an account whose ciphertext can
+        // never be decrypted on this device — see PayloadEncryption.gcmSivAvailable.
+        val canDoGcmSiv = cryptoCapabilities.gcmSivAvailable
+        if (!canDoGcmSiv) {
+            log(TAG, WARN) { "createNewAccount: AES-GCM-SIV unavailable on this device, falling back to legacy SIV encryption" }
+        }
+
         OctiServer.Credentials(
             createdAt = Clock.System.now(),
             serverAdress = serverAdress,
             accountId = OctiServer.Credentials.AccountId(response.accountID),
             devicePassword = OctiServer.Credentials.DevicePassword(response.password),
-            encryptionKeyset = PayloadEncryption().exportKeyset(),
+            encryptionKeyset = PayloadEncryption(useLegacyEncryption = !canDoGcmSiv).exportKeyset(),
         )
     }
 
