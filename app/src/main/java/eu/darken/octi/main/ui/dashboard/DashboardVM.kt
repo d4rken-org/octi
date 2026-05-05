@@ -47,6 +47,7 @@ import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.ConnectorIssueAggregator
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.DeviceMetadata
 import eu.darken.octi.sync.core.IssueSeverity
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.disambiguatedAccountLabel
@@ -73,6 +74,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import kotlin.time.Clock
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
@@ -674,32 +676,19 @@ class DashboardVM @Inject constructor(
 
         // Build degraded device items from connector metadata (devices known but no module data)
         val normalDeviceIds = normalItems.map { it.deviceId }.toSet()
-        val degradedItems = activeConnectors.flatMap { connector ->
-            val connState = statesMap[connector.identifier] ?: return@flatMap emptyList()
-            connState.deviceMetadata
-                .filter { meta ->
-                    meta.deviceId !in normalDeviceIds
-                            && meta.deviceId != syncSettings.deviceId
-                            && meta.addedAt?.let { (Clock.System.now() - it) >= SyncSettings.FIRST_SYNC_GRACE_PERIOD } != false
-                }
-                .map { meta ->
-                    DeviceItem(
-                        now = now,
-                        deviceId = meta.deviceId,
-                        meta = null,
-                        moduleItems = emptyList(),
-                        isCollapsed = false,
-                        isLimited = false,
-                        isCurrentDevice = false,
-                        isDegraded = true,
-                        degradedConnectorId = connector.identifier,
-                        degradedLabel = meta.label,
-                        degradedPlatform = meta.platform,
-                        degradedVersion = meta.version,
-                        degradedLastSeen = meta.lastSeen,
-                    )
-                }
-        }
+        val connectorMetadata = activeConnectors
+            .mapNotNull { connector ->
+                val state = statesMap[connector.identifier] ?: return@mapNotNull null
+                connector.identifier to state.deviceMetadata
+            }
+            .toMap()
+        val degradedItems = buildDegradedDeviceItems(
+            now = now,
+            connectorMetadata = connectorMetadata,
+            normalDeviceIds = normalDeviceIds,
+            currentDeviceId = syncSettings.deviceId,
+            gracePeriod = SyncSettings.FIRST_SYNC_GRACE_PERIOD,
+        )
 
         val items = normalItems + degradedItems
         val labelsByDevice = disambiguateDeviceLabels(items.associate { it.deviceId to it.baseLabel })
@@ -783,6 +772,60 @@ class DashboardVM @Inject constructor(
             .filter { (id, _) -> id in blobCapableConnectorIds }
             .flatMap { (_, state) -> state.deviceMetadata.asSequence().map { it.deviceId } }
             .toSet()
+
+        /**
+         * Build degraded device items (devices known to a connector but lacking module data).
+         *
+         * Deduplicates across connectors: the dashboard's LazyVerticalGrid keys items by
+         * deviceId, so the same device appearing in multiple connectors' deviceMetadata
+         * would otherwise crash with "Key … was already used".
+         *
+         * Selection rule per deviceId (most-useful-wins):
+         *  1. Prefer non-null `label` so the card doesn't fall back to `deviceId.shortLabel`.
+         *  2. Newer `lastSeen` wins.
+         *  3. Stable tie-break by `connectorId.idString` so the displayed connector and the
+         *     `goToDeviceDetails(connectorId, deviceId)` navigation target don't flicker
+         *     across emissions when timestamps are equal/null.
+         */
+        internal fun buildDegradedDeviceItems(
+            now: Instant,
+            connectorMetadata: Map<ConnectorId, List<DeviceMetadata>>,
+            normalDeviceIds: Set<DeviceId>,
+            currentDeviceId: DeviceId,
+            gracePeriod: Duration,
+        ): List<DeviceItem> = connectorMetadata.entries
+            .flatMap { (connectorId, metadataList) ->
+                metadataList
+                    .filter { meta ->
+                        meta.deviceId !in normalDeviceIds
+                                && meta.deviceId != currentDeviceId
+                                && meta.addedAt?.let { (now - it) >= gracePeriod } != false
+                    }
+                    .map { meta -> connectorId to meta }
+            }
+            .groupBy { (_, meta) -> meta.deviceId }
+            .map { (_, candidates) ->
+                val (connectorId, meta) = candidates.minWith(
+                    compareBy<Pair<ConnectorId, DeviceMetadata>> { (_, m) -> if (m.label != null) 0 else 1 }
+                        .thenByDescending { (_, m) -> m.lastSeen ?: Instant.DISTANT_PAST }
+                        .thenBy { (id, _) -> id.idString }
+                )
+                DeviceItem(
+                    now = now,
+                    deviceId = meta.deviceId,
+                    meta = null,
+                    moduleItems = emptyList(),
+                    isCollapsed = false,
+                    isLimited = false,
+                    isCurrentDevice = false,
+                    isDegraded = true,
+                    degradedConnectorId = connectorId,
+                    degradedLabel = meta.label,
+                    degradedPlatform = meta.platform,
+                    degradedVersion = meta.version,
+                    degradedLastSeen = meta.lastSeen,
+                )
+            }
 
         private val INFO_ORDER = listOf(
             PowerInfo::class,
