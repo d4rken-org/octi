@@ -41,6 +41,6 @@ object Versions {
     }
 
     object Conscrypt {
-        const val core = "2.5.2"
+        const val core = "2.5.3"
     }
 }
