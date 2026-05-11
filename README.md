@@ -54,11 +54,6 @@ If you like the app, consider:
 * Buying the upgrade on [Google Play](https://play.google.com/store/apps/details?id=eu.darken.octi)
 * [Sponsoring the project](https://github.com/sponsors/d4rken)
 
-## Thanks
-
-* Huge thanks to [@jakmoe](https://github.com/jakmoe) for writing Octi's first open source sync
-  server [J-Server](https://github.com/jakob-moeller-cloud/octi-sync-server)
-
 ## Screenshots
 
 <img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/01_dashboard_light.png" width="150"><img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/02_dashboard_dark.png" width="150"><img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/03_file_sharing.png" width="150"><img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/04_apps.png" width="150"><img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/05_sync_services.png" width="150"><img src="https://github.com/d4rken-org/octi/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/06_widgets.png" width="150">
@@ -67,4 +62,13 @@ If you like the app, consider:
 
 Octi's code is available under a GPL v3 license, this excludes:
 
-* Icons, logos, mascots and marketing materials/assets.
+* Octi icons, logos, mascots, marketing materials and assets.
+* Octi animations and videos.
+* Octi documentation.
+* Google Play screenshots.
+* Google Play texts & descriptions.
+* Translations.
+
+## Thanks
+
+* Thanks to [crowdin.com](https://crowdin.com/) for supporting open-source projects
