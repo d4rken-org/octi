@@ -33,16 +33,23 @@
 ## Screenshots
 
 ```bash
-# Fast smoke pass: 6 locales x 6 screenshots
+# Default — smoke set (6 locales × 6 screens). Use this for local iteration
+# and PRs that touch screenshot content.
 ./fastlane/generate_screenshots.sh --smoke --clean
+./fastlane/copy_screenshots.sh --clean
 
-# Full localized Play Store screenshot refresh
+# Full run — all 30 locales. Use only when intending to upload to Play Store
+# (non-smoke output is .gitignored and should not be committed).
 ./fastlane/generate_screenshots.sh --clean
 ./fastlane/copy_screenshots.sh --clean
 
 # Upload screenshots only
 bundle exec fastlane screenshots_only
 ```
+
+### Commit policy
+
+Only the 6 smoke locales (en-US, de-DE, ja-JP, ar, zh-CN, pt-BR) have `phoneScreenshots/*.png` checked into the repo. Non-smoke locales are excluded by `.gitignore`. Play Store's `supply` retains previously-uploaded screenshots for locales not pushed, so full localization is maintained by an **occasional manual** full regen + `screenshots_only` upload — not by every PR.
 
 ## Code Quality
 
