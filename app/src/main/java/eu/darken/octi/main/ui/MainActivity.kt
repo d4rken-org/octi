@@ -90,6 +90,15 @@ class MainActivity : Activity2() {
                 }
             }
 
+            // External upgrade entry-points (e.g. widget configure activities for non-Pro users)
+            // route through MainActivity via an intent extra. Surface the upgrade screen forced
+            // so it doesn't auto-dismiss before the user can read it.
+            LaunchedEffect(Unit) {
+                vm.openUpgradeEvents.collect {
+                    navCtrl.goTo(Nav.Main.Upgrade(forced = true), popUpTo = Nav.Main.Dashboard)
+                }
+            }
+
             OctiTheme(state = themeState) {
                 CompositionLocalProvider(
                     LocalNavigationController provides navCtrl,

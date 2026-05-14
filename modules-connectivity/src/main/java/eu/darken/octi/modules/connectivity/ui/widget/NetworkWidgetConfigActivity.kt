@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +44,12 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.theming.OctiTheme
 import eu.darken.octi.common.theming.ThemeSettings
 import eu.darken.octi.common.theming.ThemeState
+import eu.darken.octi.common.upgrade.ProState
+import eu.darken.octi.common.upgrade.UpgradeLauncher
 import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.isPro
+import eu.darken.octi.common.upgrade.proState
+import eu.darken.octi.common.widget.WidgetConfigAction
 import eu.darken.octi.common.widget.WidgetConfigDevice
 import eu.darken.octi.common.widget.WidgetConfigScreen
 import eu.darken.octi.common.widget.WidgetInstanceConfig
@@ -68,6 +74,7 @@ class NetworkWidgetConfigActivity : androidx.activity.ComponentActivity() {
 
     @Inject lateinit var themeSettings: ThemeSettings
     @Inject lateinit var upgradeRepo: UpgradeRepo
+    @Inject lateinit var upgradeLauncher: UpgradeLauncher
     @Inject lateinit var metaRepo: MetaRepo
     @Inject lateinit var connectivityRepo: ConnectivityRepo
     @Inject lateinit var widgetSettings: WidgetSettings
@@ -89,84 +96,118 @@ class NetworkWidgetConfigActivity : androidx.activity.ComponentActivity() {
             return
         }
 
-        lifecycleScope.launch {
-            if (!upgradeRepo.upgradeInfo.first().isPro) {
-                setResult(RESULT_CANCELED)
-                finish()
-                return@launch
-            }
+        setContent {
+            val themeState by themeSettings.themeState.collectAsState(ThemeState())
 
-            val instanceConfig = widgetSettings.configValue(appWidgetId) {
-                AppWidgetManager.getInstance(this@NetworkWidgetConfigActivity)
-                    .getAppWidgetOptions(appWidgetId)
-            }
-
-            val availableDevices = withTimeoutOrNull(DEVICE_LOAD_TIMEOUT) {
-                val metaById = metaRepo.state.first().all.associateBy { it.deviceId }
-                val now = System.currentTimeMillis()
-                connectivityRepo.state.first().all.mapNotNull { c ->
-                    val m = metaById[c.deviceId] ?: return@mapNotNull null
-                    WidgetConfigDevice(
-                        id = c.deviceId.id,
-                        label = m.data.labelOrFallback,
-                        subtitle = lastSeenSubtitle(m.modifiedAt.toEpochMilliseconds(), now),
-                        icon = composeIconFor(m.data.deviceType),
-                    )
+            val initialInstanceConfig by produceState<WidgetInstanceConfig?>(initialValue = null) {
+                value = widgetSettings.configValue(appWidgetId) {
+                    AppWidgetManager.getInstance(this@NetworkWidgetConfigActivity)
+                        .getAppWidgetOptions(appWidgetId)
                 }
             }
-                .orEmpty()
-                .distinctBy { it.id }
-                .let { devices ->
-                    val labelsByDevice = disambiguateDeviceLabels(devices.associate { DeviceId(it.id) to it.label })
-                    devices.map { device ->
-                        device.copy(label = labelsByDevice[DeviceId(device.id)] ?: device.label)
-                    }
-                }
-                .sortedWith(
-                    compareBy<WidgetConfigDevice, String>(String.CASE_INSENSITIVE_ORDER) { it.label }
-                        .thenBy { it.id }
-                )
 
-            setContent {
-                val themeState by themeSettings.themeState.collectAsState(ThemeState())
-                OctiTheme(state = themeState) {
+            val availableDevices by produceState<List<WidgetConfigDevice>?>(initialValue = null) {
+                value = loadAvailableDevices()
+            }
+
+            val proState by upgradeRepo.proState().collectAsState(initial = ProState.Checking)
+
+            OctiTheme(state = themeState) {
+                val instanceConfig = initialInstanceConfig
+                if (instanceConfig == null) {
                     WidgetConfigScreen(
-                        initialMode = if (instanceConfig.isMaterialYou) {
-                            WidgetInstanceConfig.MODE_MATERIAL_YOU
-                        } else {
-                            WidgetInstanceConfig.MODE_CUSTOM
-                        },
-                        initialPresetName = instanceConfig.presetName,
-                        initialBgColor = instanceConfig.customBg,
-                        initialAccentColor = instanceConfig.customAccent,
-                        availableDevices = availableDevices,
-                        initialSelectedDeviceIds = instanceConfig.allowedDeviceIds,
+                        initialMode = WidgetInstanceConfig.MODE_MATERIAL_YOU,
+                        initialPresetName = null,
+                        initialBgColor = null,
+                        initialAccentColor = null,
+                        availableDevices = null,
+                        initialSelectedDeviceIds = emptySet(),
+                        action = WidgetConfigAction.Loading,
                         onClose = { finish() },
-                        onApply = { isMy, preset, bg, accent, ids ->
-                            val appContext = applicationContext
-                            lifecycleScope.launch {
-                                applyWidgetConfig(
-                                    appWidgetId = appWidgetId,
-                                    newConfig = WidgetInstanceConfig(
-                                        isMaterialYou = isMy,
-                                        presetName = preset,
-                                        customBg = bg,
-                                        customAccent = accent,
-                                        allowedDeviceIds = ids,
-                                    ),
-                                    widgetSettings = widgetSettings,
-                                    tag = TAG,
-                                ) {
-                                    val glanceId = GlanceAppWidgetManager(appContext).getGlanceIdBy(appWidgetId)
-                                    NetworkGlanceWidget().update(appContext, glanceId)
-                                }
-                            }
-                        },
+                        onApply = { _, _, _, _, _ -> },
+                        onUpgrade = { upgradeLauncher.launch(this@NetworkWidgetConfigActivity) },
+                        onRetry = {},
                         previewContent = { colors -> NetworkWidgetPreview(colors = colors) },
                     )
+                    return@OctiTheme
                 }
+
+                WidgetConfigScreen(
+                    initialMode = if (instanceConfig.isMaterialYou) {
+                        WidgetInstanceConfig.MODE_MATERIAL_YOU
+                    } else {
+                        WidgetInstanceConfig.MODE_CUSTOM
+                    },
+                    initialPresetName = instanceConfig.presetName,
+                    initialBgColor = instanceConfig.customBg,
+                    initialAccentColor = instanceConfig.customAccent,
+                    availableDevices = availableDevices,
+                    initialSelectedDeviceIds = instanceConfig.allowedDeviceIds,
+                    action = when (proState) {
+                        ProState.Checking -> WidgetConfigAction.Loading
+                        ProState.Unlocked -> WidgetConfigAction.Apply
+                        ProState.Locked -> WidgetConfigAction.Upgrade
+                        is ProState.Error -> WidgetConfigAction.ErrorRetry(message = "")
+                    },
+                    onClose = { finish() },
+                    onApply = { isMy, preset, bg, accent, ids ->
+                        val appContext = applicationContext
+                        lifecycleScope.launch {
+                            // Defence-in-depth: re-check Pro before committing the bind. Activity
+                            // may have been backgrounded long enough for Pro state to flip.
+                            if (!upgradeRepo.isPro()) {
+                                upgradeLauncher.launch(this@NetworkWidgetConfigActivity)
+                                return@launch
+                            }
+                            applyWidgetConfig(
+                                appWidgetId = appWidgetId,
+                                newConfig = WidgetInstanceConfig(
+                                    isMaterialYou = isMy,
+                                    presetName = preset,
+                                    customBg = bg,
+                                    customAccent = accent,
+                                    allowedDeviceIds = ids,
+                                ),
+                                widgetSettings = widgetSettings,
+                                tag = TAG,
+                            ) {
+                                val glanceId = GlanceAppWidgetManager(appContext).getGlanceIdBy(appWidgetId)
+                                NetworkGlanceWidget().update(appContext, glanceId)
+                            }
+                        }
+                    },
+                    onUpgrade = { upgradeLauncher.launch(this@NetworkWidgetConfigActivity) },
+                    onRetry = { lifecycleScope.launch { upgradeRepo.refresh() } },
+                    previewContent = { colors -> NetworkWidgetPreview(colors = colors) },
+                )
             }
         }
+    }
+
+    private suspend fun loadAvailableDevices(): List<WidgetConfigDevice> {
+        val devices = withTimeoutOrNull(DEVICE_LOAD_TIMEOUT) {
+            val metaById = metaRepo.state.first().all.associateBy { it.deviceId }
+            val now = System.currentTimeMillis()
+            connectivityRepo.state.first().all.mapNotNull { c ->
+                val m = metaById[c.deviceId] ?: return@mapNotNull null
+                WidgetConfigDevice(
+                    id = c.deviceId.id,
+                    label = m.data.labelOrFallback,
+                    subtitle = lastSeenSubtitle(m.modifiedAt.toEpochMilliseconds(), now),
+                    icon = composeIconFor(m.data.deviceType),
+                )
+            }
+        }
+            .orEmpty()
+            .distinctBy { it.id }
+
+        val labelsByDevice = disambiguateDeviceLabels(devices.associate { DeviceId(it.id) to it.label })
+        return devices
+            .map { device -> device.copy(label = labelsByDevice[DeviceId(device.id)] ?: device.label) }
+            .sortedWith(
+                compareBy<WidgetConfigDevice, String>(String.CASE_INSENSITIVE_ORDER) { it.label }
+                    .thenBy { it.id },
+            )
     }
 
     private fun lastSeenSubtitle(modifiedAtMillis: Long, nowMillis: Long): String {
