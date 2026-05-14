@@ -59,8 +59,7 @@ class BatteryGlanceWidget : GlanceAppWidget() {
             val metaState = metaRepo.state.collectAsState(initial = null)
             val powerState = powerRepo.state.collectAsState(initial = null)
 
-            val heightDp = LocalSize.current.height.value
-            val maxRows = if (heightDp > 0) maxOf(1, ((heightDp - 16) / 32).toInt()) else Int.MAX_VALUE
+            val maxRows = BatteryWidgetSizing.maxRowsForHeight(LocalSize.current.height.value)
 
             BatteryWidgetContent(
                 metaState = metaState.value,
