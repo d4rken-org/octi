@@ -161,10 +161,7 @@ fun BatteryWidgetContent(
                     )
                 }
             } else {
-                Column(
-                    modifier = GlanceModifier.fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+                Column(modifier = GlanceModifier.fillMaxSize()) {
                     visibleDevices.forEachIndexed { index, device ->
                         val isLastSlot = !showOverflow && index == visibleDevices.lastIndex
                         BatteryDeviceRowContent(
