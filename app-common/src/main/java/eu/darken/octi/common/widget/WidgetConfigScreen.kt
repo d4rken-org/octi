@@ -15,16 +15,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -36,6 +39,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -52,6 +56,7 @@ fun WidgetConfigScreen(
     initialAccentColor: Int?,
     availableDevices: List<WidgetConfigDevice>? = null,
     initialSelectedDeviceIds: Set<String> = emptySet(),
+    action: WidgetConfigAction = WidgetConfigAction.Apply,
     onClose: () -> Unit,
     onApply: (
         isMaterialYou: Boolean,
@@ -60,6 +65,8 @@ fun WidgetConfigScreen(
         accentColor: Int?,
         selectedDeviceIds: Set<String>,
     ) -> Unit,
+    onUpgrade: () -> Unit = {},
+    onRetry: () -> Unit = {},
     previewContent: @Composable (WidgetTheme.Colors?) -> Unit,
 ) {
     val initialTheme = WidgetTheme.fromName(initialPresetName)
@@ -128,8 +135,10 @@ fun WidgetConfigScreen(
         bottomBar = {
             Column(modifier = Modifier.navigationBarsPadding()) {
                 HorizontalDivider()
-                Button(
-                    onClick = {
+                WidgetConfigFooter(
+                    action = action,
+                    canApply = canApply,
+                    onApply = {
                         onApply(
                             isMaterialYou,
                             if (isCustomMode) null else selectedPreset.name,
@@ -138,13 +147,9 @@ fun WidgetConfigScreen(
                             selectedDeviceIds,
                         )
                     },
-                    enabled = canApply,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                ) {
-                    Text(stringResource(R.string.widget_config_apply_action))
-                }
+                    onUpgrade = onUpgrade,
+                    onRetry = onRetry,
+                )
             }
         },
     ) { innerPadding ->
@@ -216,6 +221,77 @@ fun WidgetConfigScreen(
                         selectedDeviceIds = if (checked) selectedDeviceIds + id else selectedDeviceIds - id
                     },
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun WidgetConfigFooter(
+    action: WidgetConfigAction,
+    canApply: Boolean,
+    onApply: () -> Unit,
+    onUpgrade: () -> Unit,
+    onRetry: () -> Unit,
+) {
+    when (action) {
+        WidgetConfigAction.Apply -> {
+            Button(
+                onClick = onApply,
+                enabled = canApply,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            ) {
+                Text(stringResource(R.string.widget_config_apply_action))
+            }
+        }
+
+        WidgetConfigAction.Upgrade -> {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = stringResource(R.string.widget_config_pro_required_label),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = onUpgrade,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.widget_config_upgrade_action))
+                }
+            }
+        }
+
+        WidgetConfigAction.Loading -> {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.size(12.dp))
+                Text(
+                    text = stringResource(R.string.widget_config_pro_checking_label),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+
+        is WidgetConfigAction.ErrorRetry -> {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = action.message.ifBlank { stringResource(R.string.widget_config_pro_error_label) },
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = onRetry,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.widget_config_retry_action))
+                }
             }
         }
     }

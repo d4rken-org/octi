@@ -11,9 +11,30 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.LocalSize
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.state.PreferencesGlanceStateDefinition
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.glance.GlanceModifier
+import androidx.glance.LocalContext
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.cornerRadius
+import androidx.glance.background
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Column
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.height
+import androidx.glance.layout.padding
+import androidx.glance.text.FontWeight
+import androidx.glance.text.Text
+import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
+import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
@@ -21,6 +42,8 @@ import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.widget.WidgetSettings
+import eu.darken.octi.common.widget.WidgetTheme
+import eu.darken.octi.common.widget.widgetDefaultColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,6 +60,7 @@ class NetworkGlanceWidget : GlanceAppWidget() {
         val ep = EntryPointAccessors.fromApplication(context, NetworkWidgetEntryPoint::class.java)
         val metaRepo = ep.metaRepo()
         val connectivityRepo = ep.connectivityRepo()
+        val upgradeRepo = ep.upgradeRepo()
         val widgetSettings = ep.widgetSettings()
 
         val appWidgetId = try {
@@ -55,6 +79,15 @@ class NetworkGlanceWidget : GlanceAppWidget() {
                 .collectAsState(initial = initialConfig).value
             val themeColors = instanceConfig.themeColors
             val allowedDeviceIds = instanceConfig.allowedDeviceIds.takeIf { it.isNotEmpty() }
+
+            // Optimistic Pro state: initial null = render content. Only when upgradeInfo emits
+            // a definitive `isPro = false` do we swap to the upgrade placeholder, so paying users
+            // on Gplay cold-start don't briefly see a locked widget.
+            val proInfo = upgradeRepo.upgradeInfo.collectAsState(initial = null).value
+            if (proInfo != null && !proInfo.isPro) {
+                NetworkWidgetUpgradeRequired(themeColors = themeColors ?: widgetDefaultColors())
+                return@provideContent
+            }
 
             val metaState = metaRepo.state.collectAsState(initial = null)
             val connectivityState = connectivityRepo.state.collectAsState(initial = null)
@@ -87,6 +120,39 @@ class NetworkGlanceWidget : GlanceAppWidget() {
 
     companion object {
         val TAG = logTag("Module", "Connectivity", "Widget", "Glance")
+    }
+}
+
+@Composable
+private fun NetworkWidgetUpgradeRequired(themeColors: WidgetTheme.Colors) {
+    val containerColor = ColorProvider(Color(themeColors.containerBg))
+    val onContainerColor = ColorProvider(Color(themeColors.onContainer))
+    val ctx = LocalContext.current
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .cornerRadius(16.dp)
+            .background(containerColor)
+            .clickable(actionRunCallback<NetworkUpgradeAction>())
+            .padding(12.dp),
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = ctx.getString(CommonR.string.widget_upgrade_required_title),
+                style = TextStyle(
+                    color = onContainerColor,
+                    fontWeight = FontWeight.Bold,
+                ),
+            )
+            Spacer(modifier = GlanceModifier.height(4.dp))
+            Text(
+                text = ctx.getString(CommonR.string.widget_upgrade_required_action),
+                style = TextStyle(color = onContainerColor),
+            )
+        }
     }
 }
 

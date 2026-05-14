@@ -80,6 +80,13 @@ class MainActivityVM @Inject constructor(
      */
     val deeplinkAccepted = SingleEventFlow<Unit>()
 
+    /**
+     * One-shot event from an external entry-point asking the Compose tree to push
+     * [Nav.Main.Upgrade] onto the back stack. Used by [UpgradeLauncher] when a widget configure
+     * Activity wants to route a non-Pro user to the upgrade screen.
+     */
+    val openUpgradeEvents = SingleEventFlow<Unit>()
+
     sealed interface IncomingShareEvent {
         data class IncomingShare(val token: String, val selfDeviceId: String) : IncomingShareEvent
         data object Unsupported : IncomingShareEvent
@@ -111,15 +118,25 @@ class MainActivityVM @Inject constructor(
             return true
         }
 
-        val widget = WidgetDeeplink.parse(intent) ?: return false
-        if (!generalSettings.isOnboardingDone.valueBlocking) {
-            log(_tag, WARN) { "Dropping widget deeplink: onboarding not done" }
-            return false
+        WidgetDeeplink.parse(intent)?.let { widget ->
+            if (!generalSettings.isOnboardingDone.valueBlocking) {
+                log(_tag, WARN) { "Dropping widget deeplink: onboarding not done" }
+                return false
+            }
+            log(_tag, INFO) { "Widget deeplink accepted: device=${widget.deviceId} module=${widget.moduleType}" }
+            deeplinkEvents.tryEmit(widget)
+            deeplinkAccepted.tryEmit(Unit)
+            return true
         }
-        log(_tag, INFO) { "Widget deeplink accepted: device=${widget.deviceId} module=${widget.moduleType}" }
-        deeplinkEvents.tryEmit(widget)
-        deeplinkAccepted.tryEmit(Unit)
-        return true
+
+        if (intent?.getBooleanExtra(EXTRA_OPEN_UPGRADE, false) == true) {
+            intent.removeExtra(EXTRA_OPEN_UPGRADE)
+            log(_tag, INFO) { "Upgrade entry-point intent accepted" }
+            openUpgradeEvents.tryEmit(Unit)
+            return true
+        }
+
+        return false
     }
 
     /**
@@ -152,6 +169,9 @@ class MainActivityVM @Inject constructor(
     }
 
     companion object {
+        /** Intent extra used by [UpgradeLauncher] to ask MainActivity to surface the upgrade screen. */
+        const val EXTRA_OPEN_UPGRADE = "eu.darken.octi.EXTRA_OPEN_UPGRADE"
+
         /**
          * Pull URIs out of `ACTION_SEND` / `ACTION_SEND_MULTIPLE` intents in a way that handles
          * the three real-world delivery shapes: the typed `EXTRA_STREAM` extras (single + array)

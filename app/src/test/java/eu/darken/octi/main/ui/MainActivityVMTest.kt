@@ -236,6 +236,7 @@ class MainActivityVMTest : BaseTest() {
         val vm = makeVM()
         val intent = mockk<Intent> {
             every { action } returns "android.intent.action.MAIN"
+            every { getBooleanExtra(MainActivityVM.EXTRA_OPEN_UPGRADE, false) } returns false
         }
         vm.handleDeeplinkIntent(intent) shouldBe false
         withTimeoutOrNull(100) { vm.deeplinkAccepted.first() } shouldBe null
@@ -264,5 +265,28 @@ class MainActivityVMTest : BaseTest() {
         }
         vm.handleDeeplinkIntent(intent) shouldBe false
         withTimeoutOrNull(100) { vm.deeplinkAccepted.first() } shouldBe null
+    }
+
+    @Test
+    fun `EXTRA_OPEN_UPGRADE intent emits openUpgradeEvents and returns true`() = runTest2 {
+        val vm = makeVM()
+        val intent = mockk<Intent>(relaxed = true) {
+            every { action } returns null
+            every { getBooleanExtra(MainActivityVM.EXTRA_OPEN_UPGRADE, false) } returns true
+        }
+        vm.handleDeeplinkIntent(intent) shouldBe true
+        vm.openUpgradeEvents.first() shouldBe Unit
+        verify { intent.removeExtra(MainActivityVM.EXTRA_OPEN_UPGRADE) }
+    }
+
+    @Test
+    fun `intent without EXTRA_OPEN_UPGRADE does NOT emit openUpgradeEvents`() = runTest2 {
+        val vm = makeVM()
+        val intent = mockk<Intent> {
+            every { action } returns "android.intent.action.MAIN"
+            every { getBooleanExtra(MainActivityVM.EXTRA_OPEN_UPGRADE, false) } returns false
+        }
+        vm.handleDeeplinkIntent(intent) shouldBe false
+        withTimeoutOrNull(100) { vm.openUpgradeEvents.first() } shouldBe null
     }
 }

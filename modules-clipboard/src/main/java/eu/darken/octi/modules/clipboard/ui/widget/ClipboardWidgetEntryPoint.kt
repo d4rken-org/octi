@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import eu.darken.octi.common.upgrade.UpgradeLauncher
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.common.widget.WidgetSettings
 import eu.darken.octi.modules.clipboard.ClipboardHandler
@@ -18,5 +19,6 @@ interface ClipboardWidgetEntryPoint {
     fun clipboardRepo(): ClipboardRepo
     fun clipboardHandler(): ClipboardHandler
     fun upgradeRepo(): UpgradeRepo
+    fun upgradeLauncher(): UpgradeLauncher
     fun widgetSettings(): WidgetSettings
 }
