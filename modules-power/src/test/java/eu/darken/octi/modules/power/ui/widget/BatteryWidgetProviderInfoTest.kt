@@ -44,6 +44,13 @@ class BatteryWidgetProviderInfoTest : BaseTest() {
         attributeInt("targetCellHeight")!! shouldBe 2
     }
 
+    @Test
+    fun `previewImage is declared for Android pre-12 widget pickers`() {
+        // previewLayout is API 31+; on older Android the launcher's picker falls back to
+        // previewImage. Without this, Android 9-11 users see a generic app-icon tile.
+        PREVIEW_IMAGE_REGEX.containsMatchIn(xml) shouldBe true
+    }
+
     private fun attributeDp(name: String): Int? {
         val match = Regex("""android:$name="(\d+)dp"""").find(xml) ?: return null
         return match.groupValues[1].toInt()
@@ -56,5 +63,6 @@ class BatteryWidgetProviderInfoTest : BaseTest() {
 
     companion object {
         private val WIDGET_FEATURES_REGEX = Regex("""android:widgetFeatures="([^"]+)"""")
+        private val PREVIEW_IMAGE_REGEX = Regex("""android:previewImage="@drawable/[^"]+"""")
     }
 }
