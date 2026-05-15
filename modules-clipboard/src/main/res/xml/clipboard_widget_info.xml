@@ -7,6 +7,7 @@
     android:targetCellHeight="2"
     android:updatePeriodMillis="86400000"
     android:description="@string/module_clipboard_widget_description"
+    android:previewImage="@drawable/module_clipboard_widget_preview_image"
     android:previewLayout="@layout/module_clipboard_widget_preview"
     android:initialLayout="@layout/module_clipboard_widget_initial"
     android:resizeMode="horizontal|vertical"

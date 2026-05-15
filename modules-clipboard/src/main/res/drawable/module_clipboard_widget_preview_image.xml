@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Static widget-picker preview used by Android < 12, where `previewLayout` is ignored.
+  Mirrors the visual structure of module_clipboard_widget_preview.xml: a rounded container with
+  three stacked tiles — two standard tiles plus an accent tile at the bottom for the self device.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="150dp"
+    android:height="100dp"
+    android:viewportWidth="150"
+    android:viewportHeight="100">
+
+    <!-- Container -->
+    <path
+        android:fillColor="@color/widgetContainerBackground"
+        android:pathData="M16,0 L134,0 A16,16 0 0 1 150,16 L150,84 A16,16 0 0 1 134,100 L16,100 A16,16 0 0 1 0,84 L0,16 A16,16 0 0 1 16,0 Z" />
+
+    <!-- Tile 1 (standard) -->
+    <path
+        android:fillColor="@color/widgetTileBackground"
+        android:pathData="M14,10 L136,10 A6,6 0 0 1 142,16 L142,34 A6,6 0 0 1 136,40 L14,40 A6,6 0 0 1 8,34 L8,16 A6,6 0 0 1 14,10 Z" />
+    <path
+        android:fillColor="@color/widgetOnTile"
+        android:pathData="M16,22 L24,22 L24,28 L16,28 Z" />
+    <path
+        android:fillColor="@color/widgetOnTile"
+        android:pathData="M28,22 L60,22 L60,26 L28,26 Z" />
+    <path
+        android:fillColor="@color/widgetOnTileVariant"
+        android:pathData="M64,22 L130,22 L130,26 L64,26 Z" />
+
+    <!-- Tile 2 (standard) -->
+    <path
+        android:fillColor="@color/widgetTileBackground"
+        android:pathData="M14,44 L136,44 A6,6 0 0 1 142,50 L142,62 A6,6 0 0 1 136,68 L14,68 A6,6 0 0 1 8,62 L8,50 A6,6 0 0 1 14,44 Z" />
+    <path
+        android:fillColor="@color/widgetOnTile"
+        android:pathData="M16,53 L24,53 L24,59 L16,59 Z" />
+    <path
+        android:fillColor="@color/widgetOnTile"
+        android:pathData="M28,53 L60,53 L60,57 L28,57 Z" />
+    <path
+        android:fillColor="@color/widgetOnTileVariant"
+        android:pathData="M64,53 L130,53 L130,57 L64,57 Z" />
+
+    <!-- Tile 3 (accent — self device) -->
+    <path
+        android:fillColor="@color/widgetAccentBackground"
+        android:pathData="M14,72 L136,72 A6,6 0 0 1 142,78 L142,90 A6,6 0 0 1 136,96 L14,96 A6,6 0 0 1 8,90 L8,78 A6,6 0 0 1 14,72 Z" />
+    <path
+        android:fillColor="@color/widgetOnAccent"
+        android:pathData="M16,81 L24,81 L24,87 L16,87 Z" />
+    <path
+        android:fillColor="@color/widgetOnAccent"
+        android:pathData="M28,81 L60,81 L60,85 L28,85 Z" />
+    <path
+        android:fillColor="@color/widgetOnAccent"
+        android:pathData="M64,81 L130,81 L130,85 L64,85 Z" />
+</vector>
