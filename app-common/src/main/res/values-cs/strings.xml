@@ -72,9 +72,9 @@
     <string name="widget_config_devices_label">Zařízení</string>
     <string name="widget_config_devices_empty_hint">Pokud nejsou vybrána žádná zařízení, zobrazí se všechna zařízení.</string>
     <string name="widget_config_devices_selected_hint">Zobrazí se pouze vybraná zařízení.</string>
-    <string name="widget_config_devices_none_known">Zatím nejsou známa žádná synchronizační zařízení.</string>
+    <string name="widget_config_devices_none_known">Zatím nejsou známa žádná zařízení k synchronizaci.</string>
     <string name="widget_empty_label">Žádná odpovídající zařízení</string>
-    <string name="widget_no_sync_devices_label">Zatím žádná synchronizační zařízení</string>
+    <string name="widget_no_sync_devices_label">Zatím žádná zařízení k synchronizaci</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Pro toto zařízení nejsou k dispozici žádná data %1$s</string>
     <string name="widget_deeplink_module_power">baterie</string>
