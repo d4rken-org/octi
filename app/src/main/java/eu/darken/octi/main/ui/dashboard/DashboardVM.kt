@@ -45,10 +45,12 @@ import eu.darken.octi.modules.wifi.core.WifiInfo
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.ConnectorIssueAggregator
+import eu.darken.octi.sync.core.ConnectorUiContribution
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.DeviceMetadata
 import eu.darken.octi.sync.core.IssueSeverity
+import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
 import eu.darken.octi.sync.core.disambiguatedAccountLabel
 import eu.darken.octi.sync.core.SyncExecutor
@@ -102,6 +104,7 @@ class DashboardVM @Inject constructor(
     private val fileShareRepo: FileShareRepo,
     private val blobManager: BlobManager,
     private val storageStatusManager: StorageStatusManager,
+    private val connectorContributions: Map<ConnectorType, @JvmSuppressWildcards ConnectorUiContribution>,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -206,11 +209,24 @@ class DashboardVM @Inject constructor(
         val degradedPlatform: String? = null,
         val degradedVersion: String? = null,
         val degradedLastSeen: Instant? = null,
+        val removalTargets: List<DeviceRemovalTarget> = emptyList(),
         val displayLabel: String = meta?.data?.labelOrFallback ?: degradedLabel ?: deviceId.shortLabel,
     ) {
         val baseLabel: String
             get() = meta?.data?.labelOrFallback ?: degradedLabel ?: deviceId.shortLabel
     }
+
+    /**
+     * One row in the "Choose sync service" picker shown when the user taps "Remove device" on a
+     * dashboard card. Empty for the current device (self-disconnect lives elsewhere); list is
+     * sorted by [ConnectorUiContribution.displayOrder] then account label.
+     */
+    data class DeviceRemovalTarget(
+        val connectorId: ConnectorId,
+        val type: ConnectorType,
+        val accountLabel: String,
+        val isPaused: Boolean,
+    )
 
     sealed interface ModuleItem {
         data class Power(
@@ -587,7 +603,8 @@ class DashboardVM @Inject constructor(
         alertManager.alerts,
         upgradeRepo.upgradeInfo,
         fileShareCtx,
-    ) { now, byDevice, missingPermissions, activeConnectors, activeStates, alerts, _, fileShare ->
+        syncSettings.pausedConnectorIds,
+    ) { now, byDevice, missingPermissions, activeConnectors, activeStates, alerts, _, fileShare, pausedIds ->
         val statesList = activeStates.toList()
         val statesMap = activeConnectors.zip(statesList).associate { (c, s) -> c.identifier to s }
         val fileDeleteRequests = byDevice.devices.values
@@ -690,7 +707,16 @@ class DashboardVM @Inject constructor(
             gracePeriod = SyncSettings.FIRST_SYNC_GRACE_PERIOD,
         )
 
-        val items = normalItems + degradedItems
+        val removalTargetsByDevice = buildRemovalTargetsByDevice(
+            activeConnectors = activeConnectors,
+            connectorMetadata = connectorMetadata,
+            pausedConnectorIds = pausedIds,
+            currentDeviceId = syncSettings.deviceId,
+            contributionDisplayOrder = { type -> connectorContributions[type]?.displayOrder ?: Int.MAX_VALUE },
+        )
+
+        val items = (normalItems + degradedItems)
+            .map { item -> item.copy(removalTargets = removalTargetsByDevice[item.deviceId].orEmpty()) }
         val labelsByDevice = disambiguateDeviceLabels(items.associate { it.deviceId to it.baseLabel })
 
         items
@@ -826,6 +852,55 @@ class DashboardVM @Inject constructor(
                     degradedLastSeen = meta.lastSeen,
                 )
             }
+
+        /**
+         * Per-device list of connectors that hold the device, with disambiguated account labels.
+         * Drives the "Remove device" overflow entry / picker dialog on dashboard device cards.
+         *
+         * The current device is excluded — self-disconnect lives in the connector ActionsSheet,
+         * not in this dashboard entry. Paused connectors are kept on the target with
+         * `isPaused = true` so callers can choose whether to filter (the screen does, because
+         * navigating to a paused connector's devices screen bounces back).
+         *
+         * Targets are sorted by [contributionDisplayOrder] then case-insensitive account label.
+         * Unknown connector types land last via `Int.MAX_VALUE`.
+         */
+        internal fun buildRemovalTargetsByDevice(
+            activeConnectors: List<SyncConnector>,
+            connectorMetadata: Map<ConnectorId, List<DeviceMetadata>>,
+            pausedConnectorIds: Set<ConnectorId>,
+            currentDeviceId: DeviceId,
+            contributionDisplayOrder: (ConnectorType) -> Int,
+        ): Map<DeviceId, List<DeviceRemovalTarget>> {
+            val peerKeys = activeConnectors.map { it.identifier.type to it.accountLabel }
+            val labelByConnector: Map<ConnectorId, String> = activeConnectors.associate { c ->
+                c.identifier to disambiguatedAccountLabel(
+                    type = c.identifier.type,
+                    account = c.identifier.account,
+                    accountLabel = c.accountLabel,
+                    peerKeys = peerKeys,
+                )
+            }
+            return connectorMetadata.entries
+                .flatMap { (cid, metas) -> metas.map { it.deviceId to cid } }
+                .filter { (deviceId, _) -> deviceId != currentDeviceId }
+                .groupBy({ it.first }, { it.second })
+                .mapValues { (_, cids) ->
+                    cids
+                        .map { cid ->
+                            DeviceRemovalTarget(
+                                connectorId = cid,
+                                type = cid.type,
+                                accountLabel = labelByConnector[cid].orEmpty(),
+                                isPaused = cid in pausedConnectorIds,
+                            )
+                        }
+                        .sortedWith(
+                            compareBy<DeviceRemovalTarget> { contributionDisplayOrder(it.type) }
+                                .thenBy(String.CASE_INSENSITIVE_ORDER) { it.accountLabel },
+                        )
+                }
+        }
 
         private val INFO_ORDER = listOf(
             PowerInfo::class,

@@ -267,5 +267,8 @@
     <string name="dashboard_device_edit_card_action">Edit card</string>
     <string name="dashboard_device_move_up_action">Move up</string>
     <string name="dashboard_device_move_down_action">Move down</string>
+    <string name="dashboard_device_remove_action">Remove device</string>
+    <string name="dashboard_device_remove_picker_title">Choose sync service</string>
+    <string name="dashboard_device_remove_picker_message">This device is synced through multiple services. Pick which one to remove it from — you\'ll confirm on the next screen.</string>
 
 </resources>
