@@ -34,6 +34,7 @@ import androidx.compose.material.icons.twotone.ChevronRight
 import androidx.compose.material.icons.twotone.Schedule
 import androidx.compose.material.icons.twotone.CloudSync
 import androidx.compose.material.icons.twotone.Coffee
+import androidx.compose.material.icons.twotone.DeleteSweep
 import androidx.compose.material.icons.twotone.ExpandLess
 import androidx.compose.material.icons.twotone.ExpandMore
 import androidx.compose.material.icons.twotone.Home
@@ -332,6 +333,7 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             onResetTileLayout = { vm.resetTileLayout(it) },
             onMoveDeviceUp = { vm.moveDeviceUp(it) },
             onMoveDeviceDown = { vm.moveDeviceDown(it) },
+            onRemoveDevice = { connectorId, deviceId -> vm.goToDeviceDetails(connectorId, deviceId) },
             externalSheetTarget = externalSheetTarget,
             onExternalSheetHandled = { externalSheetTarget = null },
         )
@@ -373,6 +375,7 @@ fun DashboardScreen(
     onResetTileLayout: (String) -> Unit = {},
     onMoveDeviceUp: (String) -> Unit = {},
     onMoveDeviceDown: (String) -> Unit = {},
+    onRemoveDevice: (ConnectorId, DeviceId) -> Unit = { _, _ -> },
     externalSheetTarget: DashboardVM.ModuleItem? = null,
     onExternalSheetHandled: () -> Unit = {},
 ) {
@@ -580,6 +583,7 @@ fun DashboardScreen(
                     onSaveAsDefault = onSaveAsDefaultTileLayout,
                     onMoveUp = onMoveDeviceUp,
                     onMoveDown = onMoveDeviceDown,
+                    onRemoveDevice = onRemoveDevice,
                 )
             }
 
@@ -635,6 +639,7 @@ fun DashboardScreen(
                         onSaveAsDefault = onSaveAsDefaultTileLayout,
                         onMoveUp = onMoveDeviceUp,
                         onMoveDown = onMoveDeviceDown,
+                        onRemoveDevice = onRemoveDevice,
                     )
                 }
             }
@@ -1560,6 +1565,7 @@ private fun DashboardDeviceCard(
     onFileShareDownload: (DeviceId) -> Unit,
     onMetaClicked: (DashboardVM.ModuleItem.Meta) -> Unit,
     showMessage: (String) -> Unit,
+    onRemoveDevice: (ConnectorId, DeviceId) -> Unit,
 ) {
     val meta = device.meta?.data
     val isDegraded = device.isDegraded
@@ -1567,12 +1573,18 @@ private fun DashboardDeviceCard(
     val canEdit = hasModules && !device.isLimited && !isDegraded
     val shouldShowModules = !device.isLimited && hasModules && !device.isCollapsed && !isDegraded
 
+    val actionableTargets = remember(device.removalTargets) {
+        device.removalTargets.filterNot { it.isPaused }
+    }
+    val canRemove = !device.isCurrentDevice && actionableTargets.isNotEmpty()
+
     val chevronRotation by animateFloatAsState(
         targetValue = if (device.isCollapsed) 0f else 90f,
         label = "chevronRotation",
     )
 
     var showMenu by remember { mutableStateOf(false) }
+    var showRemovePicker by remember { mutableStateOf(false) }
 
     ElevatedCard(
         modifier = Modifier
@@ -1682,7 +1694,7 @@ private fun DashboardDeviceCard(
             }
 
             // Overflow menu (outside combinedClickable to avoid gesture conflicts)
-            if (canEdit) {
+            if (canEdit || canRemove) {
                 Box {
                     IconButton(onClick = { showMenu = true }) {
                         Icon(
@@ -1694,16 +1706,45 @@ private fun DashboardDeviceCard(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false },
                     ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.dashboard_device_edit_card_action)) },
-                            onClick = {
-                                showMenu = false
-                                onEditCard(device.deviceId.id)
-                            },
-                        )
+                        if (canEdit) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.dashboard_device_edit_card_action)) },
+                                onClick = {
+                                    showMenu = false
+                                    onEditCard(device.deviceId.id)
+                                },
+                            )
+                        }
+                        if (canRemove) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.dashboard_device_remove_action)) },
+                                leadingIcon = {
+                                    Icon(imageVector = Icons.TwoTone.DeleteSweep, contentDescription = null)
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    if (actionableTargets.size == 1) {
+                                        onRemoveDevice(actionableTargets.first().connectorId, device.deviceId)
+                                    } else {
+                                        showRemovePicker = true
+                                    }
+                                },
+                            )
+                        }
                     }
                 }
             }
+        }
+
+        if (showRemovePicker) {
+            RemoveDevicePickerDialog(
+                targets = actionableTargets,
+                onPick = { connectorId ->
+                    showRemovePicker = false
+                    onRemoveDevice(connectorId, device.deviceId)
+                },
+                onDismiss = { showRemovePicker = false },
+            )
         }
 
         // Info rows (shown for both normal expanded and degraded devices)
@@ -1749,6 +1790,58 @@ private fun DashboardDeviceCard(
 }
 
 @Composable
+private fun RemoveDevicePickerDialog(
+    targets: List<DashboardVM.DeviceRemovalTarget>,
+    onPick: (ConnectorId) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val contributions = LocalConnectorContributions.current
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.dashboard_device_remove_picker_title)) },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(R.string.dashboard_device_remove_picker_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                targets.forEach { target ->
+                    val contribution = contributions[target.type]
+                    val typeLabel = contribution?.labelRes?.let { stringResource(it) } ?: target.type.name
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onPick(target.connectorId) }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        contribution?.Icon(modifier = Modifier.size(24.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = typeLabel, style = MaterialTheme.typography.bodyLarge)
+                            if (target.accountLabel.isNotBlank()) {
+                                Text(
+                                    text = target.accountLabel,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(CommonR.string.general_cancel_action))
+            }
+        },
+    )
+}
+
+@Composable
 private fun DeviceCardOrEditor(
     device: DashboardVM.DeviceItem,
     editingDeviceId: String?,
@@ -1782,6 +1875,7 @@ private fun DeviceCardOrEditor(
     onSaveAsDefault: (TileLayoutConfig) -> Unit,
     onMoveUp: (String) -> Unit,
     onMoveDown: (String) -> Unit,
+    onRemoveDevice: (ConnectorId, DeviceId) -> Unit,
 ) {
     val deviceId = device.deviceId.id
     if (editingDeviceId == deviceId) {
@@ -1822,6 +1916,7 @@ private fun DeviceCardOrEditor(
             onFileShareDownload = onFileShareDownload,
             onMetaClicked = onMetaClicked,
             showMessage = showMessage,
+            onRemoveDevice = onRemoveDevice,
         )
     }
 }
