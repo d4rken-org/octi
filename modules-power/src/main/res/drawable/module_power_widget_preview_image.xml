@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Static widget-picker preview used by Android < 12, where `previewLayout` is ignored.
-  Mirrors the visual structure of module_power_widget_preview.xml: a rounded container with
-  two horizontal progress-bar rows, each with a partial accent fill.
+  Viewport matches the widget's 180dp x 50dp aspect (~3.6:1) so the launcher renders the tile
+  full-bleed without pillarboxing. Mirrors module_power_widget_preview.xml: rounded container
+  with two horizontal progress-bar rows and a percentage indicator at the right.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="200dp"
+    android:width="360dp"
     android:height="100dp"
-    android:viewportWidth="200"
+    android:viewportWidth="360"
     android:viewportHeight="100">
 
     <!-- Container -->
     <path
         android:fillColor="@color/widgetContainerBackground"
-        android:pathData="M16,0 L184,0 A16,16 0 0 1 200,16 L200,84 A16,16 0 0 1 184,100 L16,100 A16,16 0 0 1 0,84 L0,16 A16,16 0 0 1 16,0 Z" />
+        android:pathData="M16,0 L344,0 A16,16 0 0 1 360,16 L360,84 A16,16 0 0 1 344,100 L16,100 A16,16 0 0 1 0,84 L0,16 A16,16 0 0 1 16,0 Z" />
 
     <!-- Row 1: tile background -->
     <path
         android:fillColor="@color/widgetTileBackground"
-        android:pathData="M14,16 L166,16 A6,6 0 0 1 172,22 L172,42 A6,6 0 0 1 166,48 L14,48 A6,6 0 0 1 8,42 L8,22 A6,6 0 0 1 14,16 Z" />
+        android:pathData="M20,18 L294,18 A6,6 0 0 1 300,24 L300,46 A6,6 0 0 1 294,52 L20,52 A6,6 0 0 1 14,46 L14,24 A6,6 0 0 1 20,18 Z" />
     <!-- Row 1: accent fill (~70%) -->
     <path
         android:fillColor="@color/widgetAccentBackground"
-        android:pathData="M14,16 L121,16 L121,48 L14,48 A6,6 0 0 1 8,42 L8,22 A6,6 0 0 1 14,16 Z" />
-    <!-- Row 1: percentage placeholder -->
+        android:pathData="M20,18 L214,18 L214,52 L20,52 A6,6 0 0 1 14,46 L14,24 A6,6 0 0 1 20,18 Z" />
+    <!-- Row 1: percent placeholder -->
     <path
         android:fillColor="@color/widgetOnContainer"
-        android:pathData="M178,28 L192,28 L192,36 L178,36 Z" />
+        android:pathData="M312,30 L348,30 L348,40 L312,40 Z" />
 
     <!-- Row 2: tile background -->
     <path
         android:fillColor="@color/widgetTileBackground"
-        android:pathData="M14,54 L166,54 A6,6 0 0 1 172,60 L172,80 A6,6 0 0 1 166,86 L14,86 A6,6 0 0 1 8,80 L8,60 A6,6 0 0 1 14,54 Z" />
+        android:pathData="M20,56 L294,56 A6,6 0 0 1 300,62 L300,84 A6,6 0 0 1 294,90 L20,90 A6,6 0 0 1 14,84 L14,62 A6,6 0 0 1 20,56 Z" />
     <!-- Row 2: accent fill (~45%) -->
     <path
         android:fillColor="@color/widgetAccentBackground"
-        android:pathData="M14,54 L84,54 L84,86 L14,86 A6,6 0 0 1 8,80 L8,60 A6,6 0 0 1 14,54 Z" />
-    <!-- Row 2: percentage placeholder -->
+        android:pathData="M20,56 L143,56 L143,90 L20,90 A6,6 0 0 1 14,84 L14,62 A6,6 0 0 1 20,56 Z" />
+    <!-- Row 2: percent placeholder -->
     <path
         android:fillColor="@color/widgetOnContainer"
-        android:pathData="M178,66 L192,66 L192,74 L178,74 Z" />
+        android:pathData="M312,68 L348,68 L348,78 L312,78 Z" />
 </vector>

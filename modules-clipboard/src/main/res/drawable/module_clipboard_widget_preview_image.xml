@@ -1,59 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Static widget-picker preview used by Android < 12, where `previewLayout` is ignored.
-  Mirrors the visual structure of module_clipboard_widget_preview.xml: a rounded container with
-  three stacked tiles — two standard tiles plus an accent tile at the bottom for the self device.
+  Viewport matches the widget's 110dp x 80dp aspect (~11:8) so the launcher renders the tile
+  full-bleed without pillarboxing. Mirrors module_clipboard_widget_preview.xml: rounded
+  container with three stacked tiles (two standard + one accent for the self device), each
+  containing an icon, a short device-label, and a wider clipboard-content placeholder line.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="150dp"
-    android:height="100dp"
-    android:viewportWidth="150"
-    android:viewportHeight="100">
+    android:width="220dp"
+    android:height="160dp"
+    android:viewportWidth="220"
+    android:viewportHeight="160">
 
     <!-- Container -->
     <path
         android:fillColor="@color/widgetContainerBackground"
-        android:pathData="M16,0 L134,0 A16,16 0 0 1 150,16 L150,84 A16,16 0 0 1 134,100 L16,100 A16,16 0 0 1 0,84 L0,16 A16,16 0 0 1 16,0 Z" />
+        android:pathData="M16,0 L204,0 A16,16 0 0 1 220,16 L220,144 A16,16 0 0 1 204,160 L16,160 A16,16 0 0 1 0,144 L0,16 A16,16 0 0 1 16,0 Z" />
 
     <!-- Tile 1 (standard) -->
     <path
         android:fillColor="@color/widgetTileBackground"
-        android:pathData="M14,10 L136,10 A6,6 0 0 1 142,16 L142,34 A6,6 0 0 1 136,40 L14,40 A6,6 0 0 1 8,34 L8,16 A6,6 0 0 1 14,10 Z" />
+        android:pathData="M18,14 L202,14 A6,6 0 0 1 208,20 L208,54 A6,6 0 0 1 202,60 L18,60 A6,6 0 0 1 12,54 L12,20 A6,6 0 0 1 18,14 Z" />
     <path
         android:fillColor="@color/widgetOnTile"
-        android:pathData="M16,22 L24,22 L24,28 L16,28 Z" />
+        android:pathData="M22,30 L34,30 L34,44 L22,44 Z" />
     <path
         android:fillColor="@color/widgetOnTile"
-        android:pathData="M28,22 L60,22 L60,26 L28,26 Z" />
+        android:pathData="M40,34 L100,34 L100,40 L40,40 Z" />
     <path
         android:fillColor="@color/widgetOnTileVariant"
-        android:pathData="M64,22 L130,22 L130,26 L64,26 Z" />
+        android:pathData="M106,35 L196,35 L196,39 L106,39 Z" />
 
     <!-- Tile 2 (standard) -->
     <path
         android:fillColor="@color/widgetTileBackground"
-        android:pathData="M14,44 L136,44 A6,6 0 0 1 142,50 L142,62 A6,6 0 0 1 136,68 L14,68 A6,6 0 0 1 8,62 L8,50 A6,6 0 0 1 14,44 Z" />
+        android:pathData="M18,64 L202,64 A6,6 0 0 1 208,70 L208,104 A6,6 0 0 1 202,110 L18,110 A6,6 0 0 1 12,104 L12,70 A6,6 0 0 1 18,64 Z" />
     <path
         android:fillColor="@color/widgetOnTile"
-        android:pathData="M16,53 L24,53 L24,59 L16,59 Z" />
+        android:pathData="M22,80 L34,80 L34,94 L22,94 Z" />
     <path
         android:fillColor="@color/widgetOnTile"
-        android:pathData="M28,53 L60,53 L60,57 L28,57 Z" />
+        android:pathData="M40,84 L100,84 L100,90 L40,90 Z" />
     <path
         android:fillColor="@color/widgetOnTileVariant"
-        android:pathData="M64,53 L130,53 L130,57 L64,57 Z" />
+        android:pathData="M106,85 L196,85 L196,89 L106,89 Z" />
 
     <!-- Tile 3 (accent — self device) -->
     <path
         android:fillColor="@color/widgetAccentBackground"
-        android:pathData="M14,72 L136,72 A6,6 0 0 1 142,78 L142,90 A6,6 0 0 1 136,96 L14,96 A6,6 0 0 1 8,90 L8,78 A6,6 0 0 1 14,72 Z" />
+        android:pathData="M18,114 L202,114 A6,6 0 0 1 208,120 L208,140 A6,6 0 0 1 202,146 L18,146 A6,6 0 0 1 12,140 L12,120 A6,6 0 0 1 18,114 Z" />
     <path
         android:fillColor="@color/widgetOnAccent"
-        android:pathData="M16,81 L24,81 L24,87 L16,87 Z" />
+        android:pathData="M22,124 L34,124 L34,136 L22,136 Z" />
     <path
         android:fillColor="@color/widgetOnAccent"
-        android:pathData="M28,81 L60,81 L60,85 L28,85 Z" />
+        android:pathData="M40,127 L100,127 L100,133 L40,133 Z" />
     <path
         android:fillColor="@color/widgetOnAccent"
-        android:pathData="M64,81 L130,81 L130,85 L64,85 Z" />
+        android:pathData="M106,128 L196,128 L196,132 L106,132 Z" />
 </vector>

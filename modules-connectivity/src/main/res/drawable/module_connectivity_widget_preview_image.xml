@@ -1,59 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Static widget-picker preview used by Android < 12, where `previewLayout` is ignored.
-  Mirrors the visual structure of module_connectivity_widget_preview.xml: a rounded container
-  with two stacked tiles, each containing a small icon placeholder + two text-line placeholders.
+  Viewport matches the widget's 110dp x 80dp aspect (~11:8) so the launcher renders the tile
+  full-bleed without pillarboxing. Mirrors module_connectivity_widget_preview.xml: rounded
+  container with two stacked tiles, each containing a small icon + a device-label line + two
+  IP-style placeholder lines that span most of the tile width.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="150dp"
-    android:height="100dp"
-    android:viewportWidth="150"
-    android:viewportHeight="100">
+    android:width="220dp"
+    android:height="160dp"
+    android:viewportWidth="220"
+    android:viewportHeight="160">
 
     <!-- Container -->
     <path
         android:fillColor="@color/widgetContainerBackground"
-        android:pathData="M16,0 L134,0 A16,16 0 0 1 150,16 L150,84 A16,16 0 0 1 134,100 L16,100 A16,16 0 0 1 0,84 L0,16 A16,16 0 0 1 16,0 Z" />
+        android:pathData="M16,0 L204,0 A16,16 0 0 1 220,16 L220,144 A16,16 0 0 1 204,160 L16,160 A16,16 0 0 1 0,144 L0,16 A16,16 0 0 1 16,0 Z" />
 
     <!-- Tile 1 -->
     <path
         android:fillColor="@color/widgetTileBackground"
-        android:pathData="M14,12 L136,12 A6,6 0 0 1 142,18 L142,46 A6,6 0 0 1 136,52 L14,52 A6,6 0 0 1 8,46 L8,18 A6,6 0 0 1 14,12 Z" />
+        android:pathData="M18,14 L202,14 A6,6 0 0 1 208,20 L208,72 A6,6 0 0 1 202,78 L18,78 A6,6 0 0 1 12,72 L12,20 A6,6 0 0 1 18,14 Z" />
     <!-- Tile 1: icon placeholder -->
     <path
         android:fillColor="@color/widgetOnTile"
-        android:pathData="M18,22 L26,22 L26,30 L18,30 Z" />
-    <!-- Tile 1: title placeholder -->
+        android:pathData="M22,26 L34,26 L34,38 L22,38 Z" />
+    <!-- Tile 1: device label placeholder -->
     <path
         android:fillColor="@color/widgetOnTile"
-        android:pathData="M30,24 L70,24 L70,28 L30,28 Z" />
-    <!-- Tile 1: subtitle placeholder line 1 -->
+        android:pathData="M40,29 L116,29 L116,35 L40,35 Z" />
+    <!-- Tile 1: "last seen" placeholder -->
     <path
         android:fillColor="@color/widgetOnTileVariant"
-        android:pathData="M18,36 L60,36 L60,40 L18,40 Z" />
-    <!-- Tile 1: subtitle placeholder line 2 -->
+        android:pathData="M120,30 L170,30 L170,34 L120,34 Z" />
+    <!-- Tile 1: IP line 1 placeholder -->
     <path
         android:fillColor="@color/widgetOnTileVariant"
-        android:pathData="M18,44 L52,44 L52,48 L18,48 Z" />
+        android:pathData="M22,50 L150,50 L150,55 L22,55 Z" />
+    <!-- Tile 1: IP line 2 placeholder -->
+    <path
+        android:fillColor="@color/widgetOnTileVariant"
+        android:pathData="M22,60 L138,60 L138,65 L22,65 Z" />
 
     <!-- Tile 2 -->
     <path
         android:fillColor="@color/widgetTileBackground"
-        android:pathData="M14,56 L136,56 A6,6 0 0 1 142,62 L142,90 A6,6 0 0 1 136,96 L14,96 A6,6 0 0 1 8,90 L8,62 A6,6 0 0 1 14,56 Z" />
+        android:pathData="M18,82 L202,82 A6,6 0 0 1 208,88 L208,140 A6,6 0 0 1 202,146 L18,146 A6,6 0 0 1 12,140 L12,88 A6,6 0 0 1 18,82 Z" />
     <!-- Tile 2: icon placeholder -->
     <path
         android:fillColor="@color/widgetOnTile"
-        android:pathData="M18,66 L26,66 L26,74 L18,74 Z" />
-    <!-- Tile 2: title placeholder -->
+        android:pathData="M22,94 L34,94 L34,106 L22,106 Z" />
+    <!-- Tile 2: device label placeholder -->
     <path
         android:fillColor="@color/widgetOnTile"
-        android:pathData="M30,68 L70,68 L70,72 L30,72 Z" />
-    <!-- Tile 2: subtitle placeholder line 1 -->
+        android:pathData="M40,97 L116,97 L116,103 L40,103 Z" />
+    <!-- Tile 2: "last seen" placeholder -->
     <path
         android:fillColor="@color/widgetOnTileVariant"
-        android:pathData="M18,80 L60,80 L60,84 L18,84 Z" />
-    <!-- Tile 2: subtitle placeholder line 2 -->
+        android:pathData="M120,98 L170,98 L170,102 L120,102 Z" />
+    <!-- Tile 2: IP line 1 placeholder -->
     <path
         android:fillColor="@color/widgetOnTileVariant"
-        android:pathData="M18,88 L52,88 L52,92 L18,92 Z" />
+        android:pathData="M22,118 L150,118 L150,123 L22,123 Z" />
+    <!-- Tile 2: IP line 2 placeholder -->
+    <path
+        android:fillColor="@color/widgetOnTileVariant"
+        android:pathData="M22,128 L138,128 L138,133 L22,133 Z" />
 </vector>
