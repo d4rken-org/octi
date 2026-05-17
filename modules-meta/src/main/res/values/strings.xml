@@ -9,7 +9,10 @@
     <string name="module_meta_detail_device_type_label">Device type</string>
     <string name="module_meta_detail_device_type_phone">Phone</string>
     <string name="module_meta_detail_device_type_tablet">Tablet</string>
+    <string name="module_meta_detail_device_type_desktop">Desktop</string>
+    <string name="module_meta_detail_device_type_browser">Browser</string>
     <string name="module_meta_detail_device_type_unknown">Unknown</string>
+    <string name="module_meta_detail_os_label">Operating system</string>
     <string name="module_meta_detail_android_version_label">Android version</string>
     <string name="module_meta_detail_api_level_label">API level</string>
     <string name="module_meta_detail_security_patch_label">Security patch</string>

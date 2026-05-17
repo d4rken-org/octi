@@ -38,6 +38,7 @@ import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.modules.meta.ui.osDisplayName
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.DeviceId
@@ -134,20 +135,24 @@ fun DeviceActionsSheet(
                     label = stringResource(R.string.sync_device_model_label),
                     value = meta.deviceName,
                 )
-                DetailRow(
-                    label = stringResource(R.string.sync_device_android_version_label),
-                    value = "${meta.androidVersionName} (API ${meta.androidApiLevel})",
-                )
+                meta.osDisplayName()?.let { osLabel ->
+                    DetailRow(
+                        label = stringResource(R.string.sync_device_os_label),
+                        value = osLabel,
+                    )
+                }
                 meta.androidSecurityPatch?.takeIf { it.isNotBlank() }?.let { patch ->
                     DetailRow(
                         label = stringResource(R.string.sync_device_security_patch_label),
                         value = patch,
                     )
                 }
-                DetailRow(
-                    label = stringResource(R.string.sync_device_booted_label),
-                    value = DateUtils.getRelativeTimeSpanString(meta.deviceBootedAt.toEpochMilliseconds()).toString(),
-                )
+                meta.deviceBootedAt?.let { booted ->
+                    DetailRow(
+                        label = stringResource(R.string.sync_device_booted_label),
+                        value = DateUtils.getRelativeTimeSpanString(booted.toEpochMilliseconds()).toString(),
+                    )
+                }
             }
 
             CopyableDetailRow(

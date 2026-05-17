@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.PhoneAndroid
-import androidx.compose.material.icons.twotone.QuestionMark
-import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,6 +25,8 @@ import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.modules.meta.R as MetaR
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.meta.ui.formatUptime
+import eu.darken.octi.modules.meta.ui.materialIcon
+import eu.darken.octi.modules.meta.ui.osDisplayName
 import eu.darken.octi.sync.core.DeviceId
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
@@ -43,8 +41,10 @@ fun MetaModuleTile(
     isWide: Boolean = false,
     onDetailClicked: () -> Unit,
 ) {
-    val androidLabel = stringResource(MetaR.string.module_meta_android_name_x_label, info.androidVersionName)
-    val uptimeLabel = stringResource(MetaR.string.module_meta_uptime_label, formatUptime(now, info.deviceBootedAt))
+    val osLabel = info.osDisplayName()
+    val uptimeLabel = info.deviceBootedAt?.let {
+        stringResource(MetaR.string.module_meta_uptime_label, formatUptime(now, it))
+    }
 
     val tileColor = if (isWide) {
         MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
@@ -52,7 +52,7 @@ fun MetaModuleTile(
         MaterialTheme.colorScheme.surfaceContainerHighest
     }
 
-    val tileDescription = "${info.deviceName} $androidLabel"
+    val tileDescription = listOfNotNull(info.deviceName, osLabel).joinToString(" ")
 
     Surface(
         onClick = onDetailClicked,
@@ -66,11 +66,7 @@ fun MetaModuleTile(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = when (info.deviceType) {
-                        MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
-                        MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
-                        MetaInfo.DeviceType.UNKNOWN -> Icons.TwoTone.QuestionMark
-                    },
+                    imageVector = info.deviceType.materialIcon(),
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
                 )
@@ -83,16 +79,20 @@ fun MetaModuleTile(
                     modifier = Modifier.weight(1f),
                 )
             }
-            Text(
-                text = androidLabel,
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = uptimeLabel,
-                style = MaterialTheme.typography.labelSmall,
-            )
+            osLabel?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            uptimeLabel?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.labelSmall,
+                )
+            }
         }
     }
 }
@@ -100,8 +100,11 @@ fun MetaModuleTile(
 private fun previewInfo(
     deviceName: String = "Pixel 8 Pro",
     deviceType: MetaInfo.DeviceType = MetaInfo.DeviceType.PHONE,
-    androidVersionName: String = "15",
-    bootedAgo: kotlin.time.Duration = 2.days + 4.hours,
+    osType: String? = "android",
+    osVersionName: String? = "15",
+    androidVersionName: String? = "15",
+    androidApiLevel: Int? = 35,
+    bootedAgo: kotlin.time.Duration? = 2.days + 4.hours,
 ): MetaInfo = MetaInfo(
     deviceLabel = null,
     deviceId = DeviceId("preview"),
@@ -110,10 +113,12 @@ private fun previewInfo(
     deviceManufacturer = "Google",
     deviceName = deviceName,
     deviceType = deviceType,
-    deviceBootedAt = Clock.System.now() - bootedAgo,
+    deviceBootedAt = bootedAgo?.let { Clock.System.now() - it },
     androidVersionName = androidVersionName,
-    androidApiLevel = 35,
+    androidApiLevel = androidApiLevel,
     androidSecurityPatch = "2025-04-05",
+    osType = osType,
+    osVersionName = osVersionName,
 )
 
 @Preview2
@@ -144,8 +149,45 @@ private fun MetaModuleTileTabletLongNamePreview() = PreviewWrapper {
         info = previewInfo(
             deviceName = "Galaxy Tab S9 Ultra Plus 5G Wifi Edition",
             deviceType = MetaInfo.DeviceType.TABLET,
+            osVersionName = "14",
             androidVersionName = "14",
+            androidApiLevel = 34,
         ),
+        now = Clock.System.now(),
+        onDetailClicked = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun MetaModuleTileDesktopPreview() = PreviewWrapper {
+    MetaModuleTile(
+        info = previewInfo(
+            deviceName = "MacBook Pro",
+            deviceType = MetaInfo.DeviceType.DESKTOP,
+            osType = "macos",
+            osVersionName = "14.4",
+            androidVersionName = null,
+            androidApiLevel = null,
+        ).copy(deviceManufacturer = "Apple"),
+        now = Clock.System.now(),
+        onDetailClicked = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun MetaModuleTileBrowserPreview() = PreviewWrapper {
+    MetaModuleTile(
+        info = previewInfo(
+            deviceName = "Firefox 130",
+            deviceType = MetaInfo.DeviceType.BROWSER,
+            osType = "browser",
+            osVersionName = "130",
+            androidVersionName = null,
+            androidApiLevel = null,
+            bootedAgo = null,
+        ).copy(deviceManufacturer = "Mozilla"),
         now = Clock.System.now(),
         onDetailClicked = {},
     )

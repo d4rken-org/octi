@@ -103,6 +103,7 @@
     <string name="sync_device_id_copied_toast">Device ID copied</string>
     <string name="sync_device_model_label">Model</string>
     <string name="sync_device_android_version_label">Android version</string>
+    <string name="sync_device_os_label">Operating system</string>
     <string name="sync_device_security_patch_label">Security patch</string>
     <string name="sync_device_booted_label">Booted</string>
     <string name="sync_device_octi_version_label">Octi version</string>

@@ -40,12 +40,10 @@ import androidx.compose.material.icons.twotone.ExpandMore
 import androidx.compose.material.icons.twotone.Home
 import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.MoreVert
-import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material.icons.twotone.QuestionMark
 import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.Stars
-import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -122,6 +120,7 @@ import eu.darken.octi.modules.clipboard.ui.dashboard.ClipboardDetailSheet
 import eu.darken.octi.modules.connectivity.ui.dashboard.ConnectivityDetailSheet
 import eu.darken.octi.modules.meta.MetaModule
 import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.modules.meta.ui.materialIcon
 import eu.darken.octi.modules.meta.ui.dashboard.MetaDetailSheet
 import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerInfo.ChargeIO
@@ -655,11 +654,7 @@ fun DashboardScreen(
             device == null -> Icons.TwoTone.QuestionMark
             device.isCurrentDevice -> Icons.TwoTone.Home
             device.isDegraded -> Icons.TwoTone.Warning
-            else -> when (device.meta?.data?.deviceType) {
-                MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
-                MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
-                else -> Icons.TwoTone.QuestionMark
-            }
+            else -> device.meta?.data?.deviceType.materialIcon()
         }
         val label = device?.displayLabel ?: deviceId.shortLabel
         return icon to label
@@ -1627,11 +1622,7 @@ private fun DashboardDeviceCard(
                     imageVector = when {
                         device.isCurrentDevice -> Icons.TwoTone.Home
                         isDegraded -> Icons.TwoTone.Warning
-                        else -> when (meta?.deviceType) {
-                            MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
-                            MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
-                            else -> Icons.TwoTone.QuestionMark
-                        }
+                        else -> meta?.deviceType.materialIcon()
                     },
                     contentDescription = null,
                     modifier = Modifier.size(32.dp),

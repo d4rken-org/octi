@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Android
-import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material.icons.twotone.QuestionMark
-import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,7 +18,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.modules.meta.ui.materialIcon
+import eu.darken.octi.modules.meta.ui.osDisplayName
 
 @Composable
 internal fun DeviceHeader(
@@ -34,11 +33,7 @@ internal fun DeviceHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            imageVector = when (item.metaInfo?.deviceType) {
-                MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
-                MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
-                else -> Icons.TwoTone.QuestionMark
-            },
+            imageVector = item.metaInfo?.deviceType.materialIcon(),
             contentDescription = null,
             modifier = Modifier.size(iconSize),
             tint = MaterialTheme.colorScheme.primary,
@@ -52,13 +47,19 @@ internal fun DeviceHeader(
                 overflow = TextOverflow.Ellipsis,
             )
             item.metaInfo?.let { meta ->
-                Text(
-                    text = "${meta.deviceManufacturer} · Android ${meta.androidVersionName}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                val subtitleParts = listOfNotNull(
+                    meta.deviceManufacturer.takeIf { it.isNotBlank() },
+                    meta.osDisplayName(),
                 )
+                if (subtitleParts.isNotEmpty()) {
+                    Text(
+                        text = subtitleParts.joinToString(" · "),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.width(8.dp))

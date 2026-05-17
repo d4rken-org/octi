@@ -38,6 +38,9 @@ class MetaInfoSource @Inject constructor(
         .flatMapLatest { deviceLabel ->
             flow {
                 while (currentCoroutineContext().isActive) {
+                    val androidVersion = Build.VERSION.CODENAME.let {
+                        if (it == "REL") Build.VERSION.RELEASE else it
+                    }
                     val info = MetaInfo(
                         deviceLabel = deviceLabel.takeIf { !it.isNullOrEmpty() },
 
@@ -54,9 +57,12 @@ class MetaInfoSource @Inject constructor(
                             else -> MetaInfo.DeviceType.PHONE
                         },
 
-                        androidVersionName = Build.VERSION.CODENAME.let { if (it == "REL") Build.VERSION.RELEASE else it },
+                        androidVersionName = androidVersion,
                         androidApiLevel = Build.VERSION.SDK_INT,
                         androidSecurityPatch = Build.VERSION.SECURITY_PATCH,
+
+                        osType = OS_TYPE_ANDROID,
+                        osVersionName = androidVersion,
 
                         deviceBootedAt = deviceBootedAt,
                     )
@@ -70,5 +76,6 @@ class MetaInfoSource @Inject constructor(
 
     companion object {
         val TAG = logTag("Module", "Meta", "Source")
+        private const val OS_TYPE_ANDROID = "android"
     }
 }
