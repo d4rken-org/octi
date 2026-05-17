@@ -74,18 +74,6 @@ internal object ClipboardWidgetSizing {
         return rows.coerceAtMost(MAX_REMOTE_SLOTS)
     }
 
-    fun rowSpacingForHeight(heightDp: Float, visibleRowCount: Int): Dp {
-        if (visibleRowCount <= 1) return 0.dp
-        if (heightDp <= 0f || !heightDp.isFinite()) return ROW_SPACER
-
-        val innerHeightDp = (heightDp - OUTER_PADDING.value * 2f).coerceAtLeast(0f)
-        val rowsHeightDp = visibleRowCount * ROW_HEIGHT.value
-        val gapCount = visibleRowCount - 1
-        return ((innerHeightDp - rowsHeightDp) / gapCount)
-            .coerceAtLeast(ROW_SPACER.value)
-            .dp
-    }
-
     fun computeRemoteSlots(totalRemoteCount: Int, maxRemoteRows: Int): VisibleSlots {
         val cappedMaxRemoteRows = maxRemoteRows.coerceAtMost(MAX_REMOTE_SLOTS)
         return when {
