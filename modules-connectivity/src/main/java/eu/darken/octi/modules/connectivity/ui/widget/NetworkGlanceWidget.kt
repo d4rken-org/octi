@@ -2,6 +2,13 @@ package eu.darken.octi.modules.connectivity.ui.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.os.Build
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -11,14 +18,10 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.LocalSize
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.state.PreferencesGlanceStateDefinition
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.action.clickable
-import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -41,9 +44,11 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.upgrade.ProState
+import eu.darken.octi.common.upgrade.UpgradeLauncher
+import eu.darken.octi.common.upgrade.proState
 import eu.darken.octi.common.widget.WidgetSettings
 import eu.darken.octi.common.widget.WidgetTheme
-import eu.darken.octi.common.widget.widgetDefaultColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -61,6 +66,7 @@ class NetworkGlanceWidget : GlanceAppWidget() {
         val metaRepo = ep.metaRepo()
         val connectivityRepo = ep.connectivityRepo()
         val upgradeRepo = ep.upgradeRepo()
+        val upgradeLauncher = ep.upgradeLauncher()
         val widgetSettings = ep.widgetSettings()
 
         val appWidgetId = try {
@@ -73,19 +79,23 @@ class NetworkGlanceWidget : GlanceAppWidget() {
         val initialConfig = widgetSettings.configValue(appWidgetId) {
             AppWidgetManager.getInstance(context).getAppWidgetOptions(appWidgetId)
         }
+        val configFlow = widgetSettings.config(appWidgetId)
+        val proStateFlow = upgradeRepo.proState()
 
         provideContent {
-            val instanceConfig = widgetSettings.config(appWidgetId)
-                .collectAsState(initial = initialConfig).value
+            val instanceConfig = configFlow.collectAsState(initial = initialConfig).value
             val themeColors = instanceConfig.themeColors
             val allowedDeviceIds = instanceConfig.allowedDeviceIds.takeIf { it.isNotEmpty() }
 
-            // Optimistic Pro state: initial null = render content. Only when upgradeInfo emits
-            // a definitive `isPro = false` do we swap to the upgrade placeholder, so paying users
-            // on Gplay cold-start don't briefly see a locked widget.
-            val proInfo = upgradeRepo.upgradeInfo.collectAsState(initial = null).value
-            if (proInfo != null && !proInfo.isPro) {
-                NetworkWidgetUpgradeRequired(themeColors = themeColors ?: widgetDefaultColors())
+            // Only hard-lock on a definitive Locked emission. ProState.Error is treated as
+            // transient (cold-start billing failure, network blip) and falls through to
+            // content rendering — same pattern as the config activity's retry behaviour.
+            val proState = proStateFlow.collectAsState(initial = ProState.Checking).value
+            if (proState is ProState.Locked) {
+                NetworkWidgetUpgradeRequired(
+                    themeColors = themeColors,
+                    upgradeLauncher = upgradeLauncher,
+                )
                 return@provideContent
             }
 
@@ -95,17 +105,7 @@ class NetworkGlanceWidget : GlanceAppWidget() {
             val size = LocalSize.current
             val heightDp = size.height.value
             val widthDp = size.width.value
-            val maxRows = if (heightDp > 0) {
-                val available = heightDp - NetworkWidgetSizing.FIXED_OVERHEAD_DP
-                if (widthDp >= NetworkWidgetSizing.TWO_COLUMN_MIN_WIDTH_DP) {
-                    // Two tiles per grid row; fits 0 if the widget is shorter than one tile.
-                    maxOf(0, (available / NetworkWidgetSizing.TILE_SLOT_DP).toInt()) * 2
-                } else {
-                    maxOf(0, (available / NetworkWidgetSizing.ROW_SLOT_DP).toInt())
-                }
-            } else {
-                Int.MAX_VALUE
-            }
+            val maxRows = NetworkWidgetSizing.maxItemsForSize(widthDp = widthDp, heightDp = heightDp)
 
             NetworkWidgetContent(
                 metaState = metaState.value,
@@ -113,6 +113,7 @@ class NetworkGlanceWidget : GlanceAppWidget() {
                 themeColors = themeColors,
                 maxRows = maxRows,
                 widthDp = widthDp,
+                heightDp = heightDp,
                 allowedDeviceIds = allowedDeviceIds,
             )
         }
@@ -124,18 +125,26 @@ class NetworkGlanceWidget : GlanceAppWidget() {
 }
 
 @Composable
-private fun NetworkWidgetUpgradeRequired(themeColors: WidgetTheme.Colors) {
-    val containerColor = ColorProvider(Color(themeColors.containerBg))
-    val onContainerColor = ColorProvider(Color(themeColors.onContainer))
+private fun NetworkWidgetUpgradeRequired(
+    themeColors: WidgetTheme.Colors?,
+    upgradeLauncher: UpgradeLauncher,
+) {
+    val containerColor = themeColors?.containerBg
+        ?.let { ColorProvider(Color(it)) }
+        ?: ColorProvider(CommonR.color.widgetContainerBackground)
+    val onContainerColor = themeColors?.onContainer
+        ?.let { ColorProvider(Color(it)) }
+        ?: ColorProvider(CommonR.color.widgetOnContainer)
     val ctx = LocalContext.current
+    val upgradeAction = actionStartActivity(upgradeLauncher.createIntent(ctx))
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
             .fillMaxSize()
-            .cornerRadius(16.dp)
+            .widgetCornerRadius(16.dp)
             .background(containerColor)
-            .clickable(actionRunCallback<NetworkUpgradeAction>())
-            .padding(12.dp),
+            .clickable(upgradeAction)
+            .padding(6.dp),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -145,16 +154,25 @@ private fun NetworkWidgetUpgradeRequired(themeColors: WidgetTheme.Colors) {
                 style = TextStyle(
                     color = onContainerColor,
                     fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
                 ),
+                maxLines = 1,
             )
-            Spacer(modifier = GlanceModifier.height(4.dp))
+            Spacer(modifier = GlanceModifier.height(2.dp))
             Text(
                 text = ctx.getString(CommonR.string.widget_upgrade_required_action),
-                style = TextStyle(color = onContainerColor),
+                style = TextStyle(
+                    color = onContainerColor,
+                    fontSize = 10.sp,
+                ),
+                maxLines = 1,
             )
         }
     }
 }
+
+private fun GlanceModifier.widgetCornerRadius(radius: Dp): GlanceModifier =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) cornerRadius(radius) else this
 
 @AndroidEntryPoint
 class NetworkWidgetProvider : GlanceAppWidgetReceiver() {

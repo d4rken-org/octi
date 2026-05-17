@@ -1,9 +1,11 @@
 package eu.darken.octi.modules.power.ui.widget
 
+import android.os.Build
 import android.text.format.DateUtils
 import androidx.annotation.ColorRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -33,6 +35,9 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.navigation.WidgetDeeplink
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.module.core.ModuleData
@@ -62,7 +67,7 @@ internal object BatteryWidgetSizing {
      * → N ≤ (heightDp - 14) / 32
      */
     fun maxRowsForHeight(heightDp: Float): Int {
-        if (heightDp <= 0f || !heightDp.isFinite()) return MAX_VISIBLE_ROWS
+        if (heightDp <= 0f || !heightDp.isFinite()) return 1
         val verticalOverheadDp = 2f * OUTER_PADDING_DP - ROW_SPACING_DP
         val perRowDp = ROW_HEIGHT_DP + ROW_SPACING_DP
         val rows = ((heightDp - verticalOverheadDp) / perRowDp).toInt()
@@ -77,11 +82,14 @@ internal object BatteryWidgetSizing {
      * so the user sees that devices are hidden. If only one slot is available, the indicator
      * takes that slot — silent truncation was the reported bug.
      */
-    fun computeVisibleSlots(totalDeviceCount: Int, maxRows: Int): VisibleSlots = when {
-        maxRows <= 0 || totalDeviceCount <= 0 -> VisibleSlots(0, false)
-        totalDeviceCount <= maxRows -> VisibleSlots(totalDeviceCount, false)
-        maxRows == 1 -> VisibleSlots(0, true)
-        else -> VisibleSlots(maxRows - 1, true)
+    fun computeVisibleSlots(totalDeviceCount: Int, maxRows: Int): VisibleSlots {
+        val cappedMaxRows = maxRows.coerceAtMost(MAX_VISIBLE_ROWS)
+        return when {
+            cappedMaxRows <= 0 || totalDeviceCount <= 0 -> VisibleSlots(0, false)
+            totalDeviceCount <= cappedMaxRows -> VisibleSlots(totalDeviceCount, false)
+            cappedMaxRows == 1 -> VisibleSlots(0, true)
+            else -> VisibleSlots(cappedMaxRows - 1, true)
+        }
     }
 
     data class VisibleSlots(
@@ -89,6 +97,8 @@ internal object BatteryWidgetSizing {
         val showOverflow: Boolean,
     )
 }
+
+private val TAG = logTag("Module", "Power", "Widget", "Content")
 
 private fun colorOrDefault(value: Int?, @ColorRes defaultRes: Int): ColorProvider =
     value?.let { ColorProvider(Color(it)) } ?: ColorProvider(defaultRes)
@@ -114,8 +124,10 @@ fun BatteryWidgetContent(
     val context = LocalContext.current
     val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
         ?.let { actionStartActivity(it) }
-    val barWidthDp = (LocalSize.current.width.value - BatteryWidgetSizing.BAR_HORIZONTAL_OVERHEAD_DP)
-        .coerceAtLeast(0f)
+    val widgetSize = LocalSize.current
+    val widthDp = widgetSize.width.value
+    val heightDp = widgetSize.height.value
+    val barWidthDp = (widthDp - BatteryWidgetSizing.BAR_HORIZONTAL_OVERHEAD_DP).coerceAtLeast(0f)
     val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
     val showEmptyState = allDevices.isEmpty() && maxRows > 0 && metaState != null && powerState != null
 
@@ -124,11 +136,18 @@ fun BatteryWidgetContent(
     val overflowCount = allDevices.size - visibleDevices.size
     val showOverflow = slots.showOverflow
 
+    log(TAG, VERBOSE) {
+        "layout(size=${widthDp}x${heightDp}dp, maxRows=$maxRows, devices=${allDevices.size}, " +
+            "visible=${visibleDevices.size}, overflowCount=$overflowCount, showOverflow=$showOverflow, " +
+            "empty=$showEmptyState, allowed=${allowedDeviceIds?.size ?: 0}, " +
+            "metaLoaded=${metaState != null}, powerLoaded=${powerState != null})"
+    }
+
     GlanceTheme {
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .cornerRadius(16.dp)
+                .widgetCornerRadius(16.dp)
                 .then(
                     if (containerBg != null) {
                         GlanceModifier.background(ColorProvider(Color(containerBg)))
@@ -163,12 +182,12 @@ fun BatteryWidgetContent(
             } else {
                 Column(modifier = GlanceModifier.fillMaxSize()) {
                     visibleDevices.forEachIndexed { index, device ->
-                        val isLastSlot = !showOverflow && index == visibleDevices.lastIndex
+                        val hasFollowingRow = showOverflow || index < visibleDevices.lastIndex
                         BatteryDeviceRowContent(
                             device = device,
                             themeColors = themeColors,
                             barWidthDp = barWidthDp,
-                            bottomPaddingDp = if (isLastSlot) 0f else BatteryWidgetSizing.ROW_SPACING_DP,
+                            bottomPaddingDp = if (hasFollowingRow) BatteryWidgetSizing.ROW_SPACING_DP else 0f,
                         )
                     }
                     if (showOverflow) {
@@ -176,7 +195,6 @@ fun BatteryWidgetContent(
                             overflowCount = overflowCount,
                             themeColors = themeColors,
                             onClick = openApp,
-                            bottomPaddingDp = 0f,
                         )
                     }
                 }
@@ -259,7 +277,7 @@ private fun BatteryDeviceRowContent(
             modifier = GlanceModifier
                 .defaultWeight()
                 .height(BatteryWidgetSizing.ROW_HEIGHT_DP.dp)
-                .cornerRadius(12.dp)
+                .widgetCornerRadius(12.dp)
                 .background(tileBg)
                 .then(
                     if (rowClick != null) GlanceModifier.clickable(rowClick) else GlanceModifier
@@ -271,7 +289,7 @@ private fun BatteryDeviceRowContent(
                     modifier = GlanceModifier
                         .width(fillWidth.dp)
                         .height(BatteryWidgetSizing.ROW_HEIGHT_DP.dp)
-                        .cornerRadius(12.dp)
+                        .widgetCornerRadius(12.dp)
                         .background(accentBg),
                 ) {}
             }
@@ -327,31 +345,31 @@ private fun BatteryOverflowRowContent(
     overflowCount: Int,
     themeColors: WidgetTheme.Colors?,
     onClick: Action?,
-    bottomPaddingDp: Float,
 ) {
     val context = LocalContext.current
     val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
-    val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
+    val titleColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
 
-    Box(modifier = GlanceModifier.fillMaxWidth().padding(bottom = bottomPaddingDp.dp)) {
-        Box(
-            modifier = GlanceModifier
-                .fillMaxWidth()
-                .height(BatteryWidgetSizing.ROW_HEIGHT_DP.dp)
-                .cornerRadius(12.dp)
-                .background(tileBg)
-                .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = context.getString(R.string.module_power_widget_more_devices, overflowCount),
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    color = onContainer,
-                ),
-                maxLines = 1,
-            )
-        }
+    Box(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .height(BatteryWidgetSizing.ROW_HEIGHT_DP.dp)
+            .widgetCornerRadius(12.dp)
+            .background(tileBg)
+            .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = context.getString(CommonR.string.widget_more_items, overflowCount),
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = titleColor,
+            ),
+            maxLines = 1,
+        )
     }
 }
+
+private fun GlanceModifier.widgetCornerRadius(radius: Dp): GlanceModifier =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) cornerRadius(radius) else this

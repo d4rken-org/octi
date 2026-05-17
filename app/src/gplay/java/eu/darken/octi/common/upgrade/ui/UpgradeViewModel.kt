@@ -4,9 +4,11 @@ import android.app.Activity
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
 import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
+import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
@@ -15,6 +17,8 @@ import eu.darken.octi.common.upgrade.core.OurSku
 import eu.darken.octi.common.upgrade.core.UpgradeRepoGplay
 import eu.darken.octi.common.upgrade.core.billing.GplayServiceUnavailableException
 import eu.darken.octi.common.upgrade.core.billing.SkuDetails
+import eu.darken.octi.common.widget.WidgetManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
@@ -23,6 +27,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.withTimeoutOrNull
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -31,9 +36,11 @@ class UpgradeViewModel @Inject constructor(
     @Suppress("unused") private val handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     private val upgradeRepo: UpgradeRepoGplay,
+    private val widgetManagers: Set<@JvmSuppressWildcards WidgetManager>,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     private var initialized = false
+    private val widgetsRefreshedForUpgrade = AtomicBoolean(false)
 
     val events = SingleEventFlow<UpgradeEvents>()
     val billingEvents = SingleEventFlow<BillingEvent>()
@@ -42,13 +49,14 @@ class UpgradeViewModel @Inject constructor(
         if (initialized) return
         initialized = true
 
-        if (!forced) {
-            upgradeRepo.upgradeInfo
-                .filter { it.isPro }
-                .take(1)
-                .onEach { navUp() }
-                .launchInViewModel()
-        }
+        upgradeRepo.upgradeInfo
+            .filter { it.isPro }
+            .take(1)
+            .onEach {
+                refreshWidgetsForUpgrade()
+                if (!forced) navUp()
+            }
+            .launchInViewModel()
     }
 
     val state: Flow<Pricing> = combine(
@@ -138,9 +146,25 @@ class UpgradeViewModel @Inject constructor(
 
         if (refreshedState.isPro) {
             log(TAG, INFO) { "Restored purchase :))" }
+            refreshWidgetsForUpgrade()
         } else {
             log(TAG, WARN) { "Restore purchase failed" }
             events.emit(UpgradeEvents.RestoreFailed)
+        }
+    }
+
+    private suspend fun refreshWidgetsForUpgrade() {
+        if (!widgetsRefreshedForUpgrade.compareAndSet(false, true)) return
+
+        log(TAG) { "refreshWidgetsForUpgrade()" }
+        for (manager in widgetManagers) {
+            try {
+                manager.refreshWidgets()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Failed to refresh widgets after upgrade: ${e.asLog()}" }
+            }
         }
     }
 

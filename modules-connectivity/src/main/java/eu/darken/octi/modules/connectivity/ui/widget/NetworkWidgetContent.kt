@@ -1,10 +1,12 @@
 package eu.darken.octi.modules.connectivity.ui.widget
 
 import android.content.Context
+import android.os.Build
 import android.text.format.DateUtils
 import androidx.annotation.ColorRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -13,6 +15,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.Action
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
@@ -45,18 +48,59 @@ import eu.darken.octi.common.R as CommonR
 
 internal object NetworkWidgetSizing {
     const val TWO_COLUMN_MIN_WIDTH_DP = 220
-    val OUTER_PADDING = 8.dp
+    const val OUTER_PADDING_DP = 6f
+    const val MAX_VISIBLE_ITEMS = 10
+
+    val OUTER_PADDING = OUTER_PADDING_DP.dp
     val ROW_SPACING = 4.dp
     val TILE_HEIGHT = 76.dp
-    val SINGLE_ROW_HEIGHT = 44.dp
+    val SINGLE_ROW_HEIGHT = 28.dp
     val INTER_ROW_SPACER = 2.dp
 
     val TILE_SLOT_DP: Float
         get() = TILE_HEIGHT.value + ROW_SPACING.value
     val ROW_SLOT_DP: Float
         get() = SINGLE_ROW_HEIGHT.value + INTER_ROW_SPACER.value
-    val FIXED_OVERHEAD_DP: Float
-        get() = OUTER_PADDING.value * 2
+
+    /**
+     * Two-column tile mode requires enough width (≥220dp) AND enough height to fit at least one
+     * 76dp tile vertically. Wide-short placements (e.g. 220dp × 50dp on a 4×1 cell) fall back to
+     * the 28dp compact row layout to avoid clipping.
+     */
+    fun shouldUseTwoColumn(widthDp: Float, heightDp: Float): Boolean {
+        if (widthDp < TWO_COLUMN_MIN_WIDTH_DP) return false
+        if (!heightDp.isFinite() || heightDp <= 0f) return true
+        return heightDp >= 2f * OUTER_PADDING_DP + TILE_HEIGHT.value
+    }
+
+    fun maxItemsForSize(widthDp: Float, heightDp: Float): Int {
+        if (heightDp <= 0f || !heightDp.isFinite()) return 1
+
+        val isTwoColumn = shouldUseTwoColumn(widthDp = widthDp, heightDp = heightDp)
+        val rowHeightDp = if (isTwoColumn) TILE_HEIGHT.value else SINGLE_ROW_HEIGHT.value
+        val rowSpacingDp = if (isTwoColumn) ROW_SPACING.value else INTER_ROW_SPACER.value
+        val rows = ((heightDp - (2f * OUTER_PADDING_DP - rowSpacingDp)) / (rowHeightDp + rowSpacingDp))
+            .toInt()
+            .coerceAtLeast(1)
+            .coerceAtMost(MAX_VISIBLE_ITEMS)
+
+        return if (isTwoColumn) (rows * 2).coerceAtMost(MAX_VISIBLE_ITEMS) else rows
+    }
+
+    fun computeVisibleSlots(totalItemCount: Int, maxItems: Int): VisibleSlots {
+        val cappedMaxItems = maxItems.coerceAtMost(MAX_VISIBLE_ITEMS)
+        return when {
+            cappedMaxItems <= 0 || totalItemCount <= 0 -> VisibleSlots(0, false)
+            totalItemCount <= cappedMaxItems -> VisibleSlots(totalItemCount, false)
+            cappedMaxItems == 1 -> VisibleSlots(0, true)
+            else -> VisibleSlots(cappedMaxItems - 1, true)
+        }
+    }
+
+    data class VisibleSlots(
+        val visibleItemCount: Int,
+        val showOverflow: Boolean,
+    )
 }
 
 private data class NetworkDeviceTile(
@@ -75,22 +119,33 @@ fun NetworkWidgetContent(
     themeColors: WidgetTheme.Colors?,
     maxRows: Int,
     widthDp: Float,
+    heightDp: Float = 0f,
     allowedDeviceIds: Set<String>? = null,
 ) {
-    val devices = buildDeviceTiles(metaState, connectivityState, maxRows, allowedDeviceIds)
+    val allDevices = buildDeviceTiles(metaState, connectivityState, allowedDeviceIds)
     val containerBg = themeColors?.containerBg
     val context = LocalContext.current
     val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
         ?.let { actionStartActivity(it) }
-    val useTwoColumn = widthDp >= NetworkWidgetSizing.TWO_COLUMN_MIN_WIDTH_DP
+    val useTwoColumn = NetworkWidgetSizing.shouldUseTwoColumn(widthDp = widthDp, heightDp = heightDp)
     val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
-    val showEmptyState = devices.isEmpty() && maxRows > 0 && metaState != null && connectivityState != null
+    val showEmptyState = allDevices.isEmpty() && maxRows > 0 && metaState != null && connectivityState != null
+
+    val slots = NetworkWidgetSizing.computeVisibleSlots(allDevices.size, maxRows)
+    val visibleDevices = allDevices.take(slots.visibleItemCount)
+    val overflowCount = allDevices.size - visibleDevices.size
+    val displayItems = buildList {
+        visibleDevices.forEach { add(NetworkDisplayItem.Device(it)) }
+        if (slots.showOverflow) add(NetworkDisplayItem.Overflow(overflowCount))
+    }
+    val tileSpacing = NetworkWidgetSizing.ROW_SPACING
+    val compactSpacing = NetworkWidgetSizing.INTER_ROW_SPACER
 
     GlanceTheme {
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .cornerRadius(16.dp)
+                .widgetCornerRadius(16.dp)
                 .then(
                     if (containerBg != null) {
                         GlanceModifier.background(ColorProvider(Color(containerBg)))
@@ -124,38 +179,40 @@ fun NetworkWidgetContent(
                 }
             } else Column(modifier = GlanceModifier.fillMaxSize()) {
                 if (useTwoColumn) {
-                    val pairs = devices.chunked(2)
+                    val pairs = displayItems.chunked(2)
                     pairs.forEachIndexed { rowIndex, pair ->
-                        Row(modifier = GlanceModifier.fillMaxWidth()) {
-                            NetworkDeviceTileContent(
-                                device = pair[0],
+                        Row(
+                            modifier = GlanceModifier
+                                .fillMaxWidth()
+                                .padding(bottom = if (rowIndex < pairs.lastIndex) tileSpacing else 0.dp),
+                        ) {
+                            NetworkDisplayTileContent(
+                                item = pair[0],
                                 themeColors = themeColors,
+                                overflowClick = openApp,
                                 modifier = GlanceModifier.defaultWeight(),
                             )
-                            Spacer(modifier = GlanceModifier.width(NetworkWidgetSizing.ROW_SPACING))
+                            Spacer(modifier = GlanceModifier.width(tileSpacing))
                             if (pair.size == 2) {
-                                NetworkDeviceTileContent(
-                                    device = pair[1],
+                                NetworkDisplayTileContent(
+                                    item = pair[1],
                                     themeColors = themeColors,
+                                    overflowClick = openApp,
                                     modifier = GlanceModifier.defaultWeight(),
                                 )
                             } else {
                                 Box(modifier = GlanceModifier.defaultWeight()) {}
                             }
                         }
-                        if (rowIndex < pairs.lastIndex) {
-                            Spacer(modifier = GlanceModifier.height(NetworkWidgetSizing.ROW_SPACING))
-                        }
                     }
                 } else {
-                    devices.forEachIndexed { index, device ->
-                        NetworkDeviceCompactRow(
-                            device = device,
+                    displayItems.forEachIndexed { index, item ->
+                        NetworkDisplayCompactRow(
+                            item = item,
                             themeColors = themeColors,
+                            overflowClick = openApp,
+                            bottomSpacing = if (index < displayItems.lastIndex) compactSpacing else 0.dp,
                         )
-                        if (index < devices.lastIndex) {
-                            Spacer(modifier = GlanceModifier.height(NetworkWidgetSizing.INTER_ROW_SPACER))
-                        }
                     }
                 }
             }
@@ -167,11 +224,9 @@ fun NetworkWidgetContent(
 private fun buildDeviceTiles(
     metaState: ModuleRepo.State<*>?,
     connectivityState: ModuleRepo.State<*>?,
-    maxRows: Int,
     allowedDeviceIds: Set<String>?,
 ): List<NetworkDeviceTile> {
     if (metaState == null || connectivityState == null) return emptyList()
-    if (maxRows <= 0) return emptyList()
 
     val metaAll = metaState.all as? Collection<ModuleData<MetaInfo>>
         ?: return emptyList()
@@ -197,7 +252,6 @@ private fun buildDeviceTiles(
                 labelsByDevice[it.second.deviceId] ?: it.second.data.labelOrFallback
             }.thenBy { it.second.deviceId.id }
         )
-        .take(maxRows)
         .map { (connData, metaData) ->
             NetworkDeviceTile(
                 deviceId = connData.deviceId.id,
@@ -215,6 +269,11 @@ private fun buildDeviceTiles(
         }
 }
 
+private sealed interface NetworkDisplayItem {
+    data class Device(val device: NetworkDeviceTile) : NetworkDisplayItem
+    data class Overflow(val hiddenCount: Int) : NetworkDisplayItem
+}
+
 private fun connectionIconRes(type: ConnectivityInfo.ConnectionType?): Int = when (type) {
     ConnectivityInfo.ConnectionType.WIFI -> R.drawable.widget_network_wifi_24
     ConnectivityInfo.ConnectionType.CELLULAR -> R.drawable.widget_network_cellular_24
@@ -230,6 +289,29 @@ private fun connectionTypeLabel(context: Context, type: ConnectivityInfo.Connect
         ConnectivityInfo.ConnectionType.NONE, null -> R.string.module_connectivity_type_none_label
     }
     return context.getString(resId)
+}
+
+@Composable
+private fun NetworkDisplayTileContent(
+    item: NetworkDisplayItem,
+    themeColors: WidgetTheme.Colors?,
+    overflowClick: Action?,
+    modifier: GlanceModifier = GlanceModifier,
+) {
+    when (item) {
+        is NetworkDisplayItem.Device -> NetworkDeviceTileContent(
+            device = item.device,
+            themeColors = themeColors,
+            modifier = modifier,
+        )
+
+        is NetworkDisplayItem.Overflow -> NetworkOverflowTileContent(
+            hiddenCount = item.hiddenCount,
+            themeColors = themeColors,
+            onClick = overflowClick,
+            modifier = modifier,
+        )
+    }
 }
 
 @Composable
@@ -251,7 +333,7 @@ private fun NetworkDeviceTileContent(
     Box(
         modifier = modifier
             .height(NetworkWidgetSizing.TILE_HEIGHT)
-            .cornerRadius(12.dp)
+            .widgetCornerRadius(12.dp)
             .background(tileBg)
             .clickable(copyAction),
     ) {
@@ -310,11 +392,64 @@ private fun NetworkDeviceTileContent(
 }
 
 @Composable
+private fun NetworkOverflowTileContent(
+    hiddenCount: Int,
+    themeColors: WidgetTheme.Colors?,
+    onClick: Action?,
+    modifier: GlanceModifier = GlanceModifier,
+) {
+    val context = LocalContext.current
+    val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
+    val titleColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
+
+    Box(
+        modifier = modifier
+            .height(NetworkWidgetSizing.TILE_HEIGHT)
+            .widgetCornerRadius(12.dp)
+            .background(tileBg)
+            .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = context.getString(CommonR.string.widget_more_items, hiddenCount),
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = titleColor,
+            ),
+            maxLines = 1,
+        )
+    }
+}
+
+@Composable
+private fun NetworkDisplayCompactRow(
+    item: NetworkDisplayItem,
+    themeColors: WidgetTheme.Colors?,
+    overflowClick: Action?,
+    bottomSpacing: Dp,
+) {
+    Column(modifier = GlanceModifier.fillMaxWidth().padding(bottom = bottomSpacing)) {
+        when (item) {
+            is NetworkDisplayItem.Device -> NetworkDeviceCompactRow(
+                device = item.device,
+                themeColors = themeColors,
+            )
+
+            is NetworkDisplayItem.Overflow -> NetworkOverflowCompactRow(
+                hiddenCount = item.hiddenCount,
+                themeColors = themeColors,
+                onClick = overflowClick,
+            )
+        }
+    }
+}
+
+@Composable
 private fun NetworkDeviceCompactRow(
     device: NetworkDeviceTile,
     themeColors: WidgetTheme.Colors?,
 ) {
-    val context = LocalContext.current
     val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
     val titleColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
     val detailColor = colorOrDefault(themeColors?.onTileVariant, CommonR.color.widgetOnTileVariant)
@@ -328,43 +463,31 @@ private fun NetworkDeviceCompactRow(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(NetworkWidgetSizing.SINGLE_ROW_HEIGHT)
-            .cornerRadius(12.dp)
+            .widgetCornerRadius(12.dp)
             .background(tileBg)
             .clickable(copyAction),
     ) {
-        Column(
-            modifier = GlanceModifier.fillMaxSize().padding(horizontal = 10.dp, vertical = 4.dp),
+        Row(
+            modifier = GlanceModifier.fillMaxSize().padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = GlanceModifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Image(
-                    provider = ImageProvider(iconRes),
-                    contentDescription = null,
-                    modifier = GlanceModifier.size(16.dp),
-                    colorFilter = ColorFilter.tint(titleColor),
-                )
-                Spacer(modifier = GlanceModifier.width(4.dp))
-                Text(
-                    text = device.deviceName,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 11.sp,
-                        color = titleColor,
-                    ),
-                    maxLines = 1,
-                )
-                Spacer(modifier = GlanceModifier.width(4.dp))
-                Text(
-                    text = "\u00b7 ${device.lastSeen}",
-                    style = TextStyle(
-                        fontSize = 10.sp,
-                        color = detailColor,
-                    ),
-                    maxLines = 1,
-                )
-            }
+            Image(
+                provider = ImageProvider(iconRes),
+                contentDescription = null,
+                modifier = GlanceModifier.size(16.dp),
+                colorFilter = ColorFilter.tint(titleColor),
+            )
+            Spacer(modifier = GlanceModifier.width(4.dp))
+            Text(
+                text = device.deviceName,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp,
+                    color = titleColor,
+                ),
+                maxLines = 1,
+            )
+            Spacer(modifier = GlanceModifier.width(6.dp))
             Text(
                 text = "${device.localIp} \u00b7 ${device.publicIp}",
                 style = TextStyle(
@@ -372,10 +495,45 @@ private fun NetworkDeviceCompactRow(
                     color = detailColor,
                 ),
                 maxLines = 1,
+                modifier = GlanceModifier.defaultWeight(),
             )
         }
     }
 }
 
+@Composable
+private fun NetworkOverflowCompactRow(
+    hiddenCount: Int,
+    themeColors: WidgetTheme.Colors?,
+    onClick: Action?,
+) {
+    val context = LocalContext.current
+    val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
+    val titleColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
+
+    Box(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .height(NetworkWidgetSizing.SINGLE_ROW_HEIGHT)
+            .widgetCornerRadius(12.dp)
+            .background(tileBg)
+            .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = context.getString(CommonR.string.widget_more_items, hiddenCount),
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = titleColor,
+            ),
+            maxLines = 1,
+        )
+    }
+}
+
 private fun colorOrDefault(value: Int?, @ColorRes defaultRes: Int): ColorProvider =
     value?.let { ColorProvider(Color(it)) } ?: ColorProvider(defaultRes)
+
+private fun GlanceModifier.widgetCornerRadius(radius: Dp): GlanceModifier =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) cornerRadius(radius) else this

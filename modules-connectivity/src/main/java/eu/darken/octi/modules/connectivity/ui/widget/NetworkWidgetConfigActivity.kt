@@ -96,6 +96,8 @@ class NetworkWidgetConfigActivity : androidx.activity.ComponentActivity() {
             return
         }
 
+        val proStateFlow = upgradeRepo.proState()
+
         setContent {
             val themeState by themeSettings.themeState.collectAsState(ThemeState())
 
@@ -110,7 +112,7 @@ class NetworkWidgetConfigActivity : androidx.activity.ComponentActivity() {
                 value = loadAvailableDevices()
             }
 
-            val proState by upgradeRepo.proState().collectAsState(initial = ProState.Checking)
+            val proState by proStateFlow.collectAsState(initial = ProState.Checking)
 
             OctiTheme(state = themeState) {
                 val instanceConfig = initialInstanceConfig

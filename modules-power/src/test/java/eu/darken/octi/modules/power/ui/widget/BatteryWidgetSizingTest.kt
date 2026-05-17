@@ -11,15 +11,15 @@ class BatteryWidgetSizingTest : BaseTest() {
     inner class `maxRowsForHeight` {
 
         @Test
-        fun `non-positive height returns MAX_VISIBLE_ROWS as a safe fallback`() {
-            BatteryWidgetSizing.maxRowsForHeight(0f) shouldBe BatteryWidgetSizing.MAX_VISIBLE_ROWS
-            BatteryWidgetSizing.maxRowsForHeight(-1f) shouldBe BatteryWidgetSizing.MAX_VISIBLE_ROWS
+        fun `non-positive height falls back to one visible slot`() {
+            BatteryWidgetSizing.maxRowsForHeight(0f) shouldBe 1
+            BatteryWidgetSizing.maxRowsForHeight(-1f) shouldBe 1
         }
 
         @Test
-        fun `non-finite height returns MAX_VISIBLE_ROWS`() {
-            BatteryWidgetSizing.maxRowsForHeight(Float.NaN) shouldBe BatteryWidgetSizing.MAX_VISIBLE_ROWS
-            BatteryWidgetSizing.maxRowsForHeight(Float.POSITIVE_INFINITY) shouldBe BatteryWidgetSizing.MAX_VISIBLE_ROWS
+        fun `non-finite height falls back to one visible slot`() {
+            BatteryWidgetSizing.maxRowsForHeight(Float.NaN) shouldBe 1
+            BatteryWidgetSizing.maxRowsForHeight(Float.POSITIVE_INFINITY) shouldBe 1
         }
 
         @Test
@@ -99,6 +99,12 @@ class BatteryWidgetSizingTest : BaseTest() {
         fun `maxRows of 1 with exactly one device shows that device`() {
             BatteryWidgetSizing.computeVisibleSlots(totalDeviceCount = 1, maxRows = 1) shouldBe
                 BatteryWidgetSizing.VisibleSlots(visibleDeviceCount = 1, showOverflow = false)
+        }
+
+        @Test
+        fun `maxRows is capped to Glance child limit before slot allocation`() {
+            BatteryWidgetSizing.computeVisibleSlots(totalDeviceCount = 20, maxRows = 100) shouldBe
+                BatteryWidgetSizing.VisibleSlots(visibleDeviceCount = 9, showOverflow = true)
         }
     }
 }
