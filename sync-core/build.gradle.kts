@@ -29,6 +29,10 @@ android {
         }
         tasks.withType<Test> {
             useJUnitPlatform()
+            // Forward fixture-generation flag used by TinkVectorsExportTest (and any
+            // future cross-language fixture exporters). Gradle does NOT pass -D props
+            // to test JVMs by default, so the opt-in would silently no-op otherwise.
+            System.getProperty("generateTinkFixture")?.let { systemProperty("generateTinkFixture", it) }
         }
     }
 }
