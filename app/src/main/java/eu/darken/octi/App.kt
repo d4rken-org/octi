@@ -17,6 +17,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.debug.recording.core.DebugSessionManager
 import eu.darken.octi.common.theming.Theming
+import eu.darken.octi.common.upgrade.UpgradeEntitlementObserver
 import eu.darken.octi.main.core.CurriculumVitae
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.release.ReleaseManager
@@ -49,6 +50,7 @@ open class App : Application(), Configuration.Provider {
     @Inject lateinit var blobMaintenance: BlobMaintenance
     @Inject lateinit var incomingFileNotifier: IncomingFileNotifier
     @Inject lateinit var cryptoCapabilities: CryptoCapabilities
+    @Inject lateinit var upgradeEntitlementObserver: UpgradeEntitlementObserver
 
     override fun onCreate() {
         super.onCreate()
@@ -75,6 +77,7 @@ open class App : Application(), Configuration.Provider {
         syncOrchestrator.start()
         blobMaintenance.start()
         incomingFileNotifier.start()
+        upgradeEntitlementObserver.start()
 
         curriculumVitae.updateAppLaunch()
 
