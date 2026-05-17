@@ -17,10 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.PhoneAndroid
-import androidx.compose.material.icons.twotone.QuestionMark
-import androidx.compose.material.icons.twotone.Tablet
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -31,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,8 +48,8 @@ import eu.darken.octi.common.widget.WidgetSettings
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.common.widget.applyWidgetConfig
 import eu.darken.octi.common.widget.widgetDefaultColors
-import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.modules.meta.core.MetaRepo
+import eu.darken.octi.modules.meta.ui.materialIcon
 import eu.darken.octi.modules.power.R
 import eu.darken.octi.modules.power.core.PowerRepo
 import eu.darken.octi.sync.core.DeviceId
@@ -105,7 +100,7 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
                         id = p.deviceId.id,
                         label = m.data.labelOrFallback,
                         subtitle = lastSeenSubtitle(m.modifiedAt.toEpochMilliseconds(), now),
-                        icon = composeIconFor(m.data.deviceType),
+                        icon = m.data.deviceType.materialIcon(),
                     )
                 }
             }
@@ -178,12 +173,6 @@ class BatteryWidgetConfigActivity : androidx.activity.ComponentActivity() {
         private val TAG = logTag("Module", "Power", "Widget", "Config")
         private val DEVICE_LOAD_TIMEOUT = 2.seconds
     }
-}
-
-private fun composeIconFor(type: MetaInfo.DeviceType): ImageVector = when (type) {
-    MetaInfo.DeviceType.PHONE -> Icons.TwoTone.PhoneAndroid
-    MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
-    MetaInfo.DeviceType.UNKNOWN -> Icons.TwoTone.QuestionMark
 }
 
 @Composable

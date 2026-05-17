@@ -133,6 +133,8 @@ internal fun ClipboardInfo.toWidgetPreview(): ClipboardPreview {
 internal fun MetaInfo.DeviceType.widgetIconRes(): Int = when (this) {
     MetaInfo.DeviceType.PHONE -> R.drawable.widget_device_phone_24
     MetaInfo.DeviceType.TABLET -> R.drawable.widget_device_tablet_24
+    MetaInfo.DeviceType.DESKTOP -> R.drawable.widget_device_desktop_24
+    MetaInfo.DeviceType.BROWSER -> R.drawable.widget_device_browser_24
     MetaInfo.DeviceType.UNKNOWN -> R.drawable.widget_device_unknown_24
 }
 

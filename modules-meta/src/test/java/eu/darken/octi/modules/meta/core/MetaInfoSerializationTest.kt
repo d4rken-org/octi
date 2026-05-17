@@ -80,6 +80,8 @@ class MetaInfoSerializationTest : BaseTest() {
         decoded.deviceId shouldBe DeviceId(id = "old-device")
         decoded.deviceType shouldBe MetaInfo.DeviceType.PHONE
         decoded.androidSecurityPatch shouldBe null
+        decoded.osType shouldBe null
+        decoded.osVersionName shouldBe null
     }
 
     @Test
@@ -93,7 +95,96 @@ class MetaInfoSerializationTest : BaseTest() {
     fun `DeviceType enum wire names are stable`() {
         json.encodeToString(MetaInfo.DeviceType.PHONE) shouldBe "\"PHONE\""
         json.encodeToString(MetaInfo.DeviceType.TABLET) shouldBe "\"TABLET\""
+        json.encodeToString(MetaInfo.DeviceType.DESKTOP) shouldBe "\"DESKTOP\""
+        json.encodeToString(MetaInfo.DeviceType.BROWSER) shouldBe "\"BROWSER\""
         json.encodeToString(MetaInfo.DeviceType.UNKNOWN) shouldBe "\"UNKNOWN\""
+    }
+
+    @Test
+    fun `unknown DeviceType decodes to UNKNOWN`() {
+        val futureJson = """
+            {
+                "deviceId": {"id": "future-dev"},
+                "octiVersionName": "3.0.0",
+                "octiGitSha": "future",
+                "deviceManufacturer": "Acme",
+                "deviceName": "Foo",
+                "deviceType": "SMARTWATCH"
+            }
+        """
+        val decoded = json.decodeFromString<MetaInfo>(futureJson)
+        decoded.deviceType shouldBe MetaInfo.DeviceType.UNKNOWN
+    }
+
+    @Test
+    fun `decode pure desktop payload`() {
+        val desktopJson = """
+            {
+                "deviceId": {"id": "mac-123"},
+                "octiVersionName": "1.0.0",
+                "octiGitSha": "macsha",
+                "deviceManufacturer": "Apple",
+                "deviceName": "MacBook Pro",
+                "deviceType": "DESKTOP",
+                "osType": "macos",
+                "osVersionName": "14.4"
+            }
+        """
+        val decoded = json.decodeFromString<MetaInfo>(desktopJson)
+        decoded.deviceType shouldBe MetaInfo.DeviceType.DESKTOP
+        decoded.osType shouldBe "macos"
+        decoded.osVersionName shouldBe "14.4"
+        decoded.androidVersionName shouldBe null
+        decoded.androidApiLevel shouldBe null
+        decoded.androidSecurityPatch shouldBe null
+        decoded.deviceBootedAt shouldBe null
+    }
+
+    @Test
+    fun `decode pure browser payload without boot timestamp`() {
+        val browserJson = """
+            {
+                "deviceId": {"id": "ff-tab-1"},
+                "octiVersionName": "1.0.0",
+                "octiGitSha": "websha",
+                "deviceManufacturer": "Mozilla",
+                "deviceName": "Firefox 130",
+                "deviceType": "BROWSER",
+                "osType": "browser",
+                "osVersionName": "130"
+            }
+        """
+        val decoded = json.decodeFromString<MetaInfo>(browserJson)
+        decoded.deviceType shouldBe MetaInfo.DeviceType.BROWSER
+        decoded.osType shouldBe "browser"
+        decoded.deviceBootedAt shouldBe null
+        decoded.androidVersionName shouldBe null
+    }
+
+    @Test
+    fun `Android client dual-writes both legacy and generic OS fields`() {
+        val androidInfo = fullInfo.copy(
+            osType = "android",
+            osVersionName = "14",
+        )
+        val encoded = json.encodeToString(androidInfo)
+        encoded.toComparableJson() shouldBe """
+            {
+                "deviceLabel": "My Phone",
+                "deviceId": {"id": "device-123"},
+                "octiVersionName": "1.0.0",
+                "octiGitSha": "abc1234",
+                "deviceManufacturer": "Google",
+                "deviceName": "Pixel 8",
+                "deviceType": "PHONE",
+                "deviceBootedAt": "2024-01-15T08:00:00Z",
+                "androidVersionName": "14",
+                "androidApiLevel": 34,
+                "androidSecurityPatch": "2024-01-05",
+                "osType": "android",
+                "osVersionName": "14"
+            }
+        """.toComparableJson()
     }
 
     @Test

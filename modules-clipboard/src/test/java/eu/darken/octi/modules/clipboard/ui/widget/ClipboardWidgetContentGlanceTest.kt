@@ -142,6 +142,8 @@ class ClipboardWidgetContentGlanceTest {
     fun `device type icon mapping covers every enum value`() {
         MetaInfo.DeviceType.PHONE.widgetIconRes() shouldBe R.drawable.widget_device_phone_24
         MetaInfo.DeviceType.TABLET.widgetIconRes() shouldBe R.drawable.widget_device_tablet_24
+        MetaInfo.DeviceType.DESKTOP.widgetIconRes() shouldBe R.drawable.widget_device_desktop_24
+        MetaInfo.DeviceType.BROWSER.widgetIconRes() shouldBe R.drawable.widget_device_browser_24
         MetaInfo.DeviceType.UNKNOWN.widgetIconRes() shouldBe R.drawable.widget_device_unknown_24
     }
 
