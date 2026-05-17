@@ -57,6 +57,14 @@ internal object NetworkWidgetSizing {
     val SINGLE_ROW_HEIGHT = 28.dp
     val INTER_ROW_SPACER = 2.dp
 
+    /**
+     * Concentric-corner pair. The inner tile radius is derived so that tile corners visually
+     * continue the container's curve instead of looking offset from it. Material's "parallel
+     * curves" rule: inner_radius = outer_radius − padding.
+     */
+    val OUTER_CONTAINER_CORNER = 16.dp
+    val TILE_CORNER = OUTER_CONTAINER_CORNER - OUTER_PADDING
+
     val TILE_SLOT_DP: Float
         get() = TILE_HEIGHT.value + ROW_SPACING.value
     val ROW_SLOT_DP: Float
@@ -145,7 +153,7 @@ fun NetworkWidgetContent(
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .widgetCornerRadius(16.dp)
+                .widgetCornerRadius(NetworkWidgetSizing.OUTER_CONTAINER_CORNER)
                 .then(
                     if (containerBg != null) {
                         GlanceModifier.background(ColorProvider(Color(containerBg)))
@@ -333,7 +341,7 @@ private fun NetworkDeviceTileContent(
     Box(
         modifier = modifier
             .height(NetworkWidgetSizing.TILE_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(NetworkWidgetSizing.TILE_CORNER)
             .background(tileBg)
             .clickable(copyAction),
     ) {
@@ -405,7 +413,7 @@ private fun NetworkOverflowTileContent(
     Box(
         modifier = modifier
             .height(NetworkWidgetSizing.TILE_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(NetworkWidgetSizing.TILE_CORNER)
             .background(tileBg)
             .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
         contentAlignment = Alignment.Center,
@@ -463,7 +471,7 @@ private fun NetworkDeviceCompactRow(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(NetworkWidgetSizing.SINGLE_ROW_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(NetworkWidgetSizing.TILE_CORNER)
             .background(tileBg)
             .clickable(copyAction),
     ) {
@@ -515,7 +523,7 @@ private fun NetworkOverflowCompactRow(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(NetworkWidgetSizing.SINGLE_ROW_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(NetworkWidgetSizing.TILE_CORNER)
             .background(tileBg)
             .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
         contentAlignment = Alignment.Center,

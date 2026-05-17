@@ -56,6 +56,14 @@ internal object ClipboardWidgetSizing {
     const val MAX_REMOTE_SLOTS = 9
 
     /**
+     * Concentric-corner pair. The inner tile radius is derived so that tile corners visually
+     * continue the container's curve instead of looking offset from it. Material's "parallel
+     * curves" rule: inner_radius = outer_radius − padding.
+     */
+    val OUTER_CONTAINER_CORNER = 16.dp
+    val TILE_CORNER = OUTER_CONTAINER_CORNER - OUTER_PADDING
+
+    /**
      * Total fixed vertical space outside the scrolling device rows.
      * Must match the composable structure in [ClipboardWidgetContent]:
      * outer padding (top+bottom) + self section spacer + self row height.
@@ -157,7 +165,7 @@ fun ClipboardWidgetContent(
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .widgetCornerRadius(16.dp)
+                .widgetCornerRadius(ClipboardWidgetSizing.OUTER_CONTAINER_CORNER)
                 .then(
                     if (containerBg != null) {
                         GlanceModifier.background(ColorProvider(Color(containerBg)))
@@ -327,7 +335,7 @@ private fun ClipboardDeviceRowContent(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(ClipboardWidgetSizing.TILE_CORNER)
             .background(tileBg)
             .clickable(rowAction),
     ) {
@@ -396,7 +404,7 @@ private fun ClipboardOverflowRowContent(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(ClipboardWidgetSizing.TILE_CORNER)
             .background(tileBg)
             .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
         contentAlignment = Alignment.Center,
@@ -428,7 +436,7 @@ private fun SelfClipboardRow(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(ClipboardWidgetSizing.TILE_CORNER)
             .background(accentBg)
             .clickable(shareAction),
     ) {

@@ -137,7 +137,7 @@ private fun ClipboardWidgetUpgradeRequired(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
             .fillMaxSize()
-            .widgetCornerRadius(16.dp)
+            .widgetCornerRadius(ClipboardWidgetSizing.OUTER_CONTAINER_CORNER)
             .background(containerColor)
             .clickable(upgradeAction)
             .padding(6.dp),
