@@ -231,6 +231,100 @@ class ClipboardWidgetContentGlanceTest {
     }
 
     @Test
+    fun `more-than-maxRows devices show the overflow indicator instead of silently truncating`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(
+                    remoteLabel = null,
+                    extraRemotes = (1..5).map { DeviceId("dev-$it") to "Device $it" },
+                ),
+                clipboardState = fakeClipboardState(
+                    remote = null,
+                    extraRemotes = (1..5).map {
+                        DeviceId("dev-$it") to ClipboardInfo(
+                            type = ClipboardInfo.Type.SIMPLE_TEXT,
+                            data = "v$it".encodeUtf8(),
+                        )
+                    },
+                ),
+                themeColors = null,
+                maxRows = 3,
+            )
+        }
+        // With 5 devices and maxRows=3, slots are: 2 visible devices + 1 overflow row.
+        onNode(hasText("Device 1")).assertExists()
+        onNode(hasText("Device 2")).assertExists()
+        onNode(hasText("Device 3")).assertDoesNotExist()
+        // The overflow row uses the generalised widget_more_items string with count=3.
+        onNode(hasText(context.getString(CommonR.string.widget_more_items, 3))).assertExists()
+    }
+
+    @Test
+    fun `maxRows=1 with overflow uses the only slot for the indicator, not a device`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(
+                    remoteLabel = null,
+                    extraRemotes = listOf(
+                        DeviceId("a") to "Alpha",
+                        DeviceId("b") to "Bravo",
+                        DeviceId("c") to "Charlie",
+                    ),
+                ),
+                clipboardState = fakeClipboardState(
+                    remote = null,
+                    extraRemotes = listOf(
+                        DeviceId("a") to ClipboardInfo(type = ClipboardInfo.Type.SIMPLE_TEXT, data = "a".encodeUtf8()),
+                        DeviceId("b") to ClipboardInfo(type = ClipboardInfo.Type.SIMPLE_TEXT, data = "b".encodeUtf8()),
+                        DeviceId("c") to ClipboardInfo(type = ClipboardInfo.Type.SIMPLE_TEXT, data = "c".encodeUtf8()),
+                    ),
+                ),
+                themeColors = null,
+                maxRows = 1,
+            )
+        }
+        // At maxRows=1 the single slot becomes the overflow indicator — silent truncation was
+        // the reported bug, so we always surface that more devices exist.
+        onNode(hasText("Alpha")).assertDoesNotExist()
+        onNode(hasText(context.getString(CommonR.string.widget_more_items, 3))).assertExists()
+    }
+
+    @Test
+    fun `device count at or below maxRows does not render an overflow indicator`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(
+                    remoteLabel = null,
+                    extraRemotes = listOf(
+                        DeviceId("a") to "Alpha",
+                        DeviceId("b") to "Bravo",
+                    ),
+                ),
+                clipboardState = fakeClipboardState(
+                    remote = null,
+                    extraRemotes = listOf(
+                        DeviceId("a") to ClipboardInfo(type = ClipboardInfo.Type.SIMPLE_TEXT, data = "a".encodeUtf8()),
+                        DeviceId("b") to ClipboardInfo(type = ClipboardInfo.Type.SIMPLE_TEXT, data = "b".encodeUtf8()),
+                    ),
+                ),
+                themeColors = null,
+                maxRows = 5,
+            )
+        }
+        onNode(hasText("Alpha")).assertExists()
+        onNode(hasText("Bravo")).assertExists()
+        // Generic regex-ish: any "+ N more" string would match a specific count, so just check
+        // the specific candidate values we'd see at this scale.
+        onNode(hasText(context.getString(CommonR.string.widget_more_items, 1))).assertDoesNotExist()
+    }
+
+    @Test
     fun `filter is applied before take so a late-sorting selection survives small maxRows`() = runGlanceAppWidgetUnitTest {
         setContext(ApplicationProvider.getApplicationContext())
         val aId = DeviceId("a-phone")
