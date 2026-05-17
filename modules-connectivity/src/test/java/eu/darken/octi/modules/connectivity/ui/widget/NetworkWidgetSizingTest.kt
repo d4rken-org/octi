@@ -26,8 +26,8 @@ class NetworkWidgetSizingTest : BaseTest() {
 
         @Test
         fun `wide widget at tile-fit height uses two-column`() {
-            // 2 * OUTER_PADDING + TILE_HEIGHT = 12 + 76 = 88dp
-            NetworkWidgetSizing.shouldUseTwoColumn(widthDp = 220f, heightDp = 88f) shouldBe true
+            // 2 * OUTER_PADDING + TILE_HEIGHT = 16 + 76 = 92dp
+            NetworkWidgetSizing.shouldUseTwoColumn(widthDp = 220f, heightDp = 92f) shouldBe true
             NetworkWidgetSizing.shouldUseTwoColumn(widthDp = 220f, heightDp = 200f) shouldBe true
         }
 
@@ -56,8 +56,8 @@ class NetworkWidgetSizingTest : BaseTest() {
 
         @Test
         fun `two column mode counts two tiles per fitted row`() {
-            NetworkWidgetSizing.maxItemsForSize(widthDp = 220f, heightDp = 88f) shouldBe 2
-            NetworkWidgetSizing.maxItemsForSize(widthDp = 220f, heightDp = 168f) shouldBe 4
+            NetworkWidgetSizing.maxItemsForSize(widthDp = 220f, heightDp = 92f) shouldBe 2
+            NetworkWidgetSizing.maxItemsForSize(widthDp = 220f, heightDp = 172f) shouldBe 4
         }
 
         @Test

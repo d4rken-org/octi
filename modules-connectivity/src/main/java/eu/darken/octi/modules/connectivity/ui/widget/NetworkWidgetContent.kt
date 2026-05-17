@@ -48,7 +48,7 @@ import eu.darken.octi.common.R as CommonR
 
 internal object NetworkWidgetSizing {
     const val TWO_COLUMN_MIN_WIDTH_DP = 220
-    const val OUTER_PADDING_DP = 6f
+    const val OUTER_PADDING_DP = 8f
     const val MAX_VISIBLE_ITEMS = 10
 
     val OUTER_PADDING = OUTER_PADDING_DP.dp
@@ -58,12 +58,13 @@ internal object NetworkWidgetSizing {
     val INTER_ROW_SPACER = 2.dp
 
     /**
-     * Concentric-corner pair. The inner tile radius is derived so that tile corners visually
-     * continue the container's curve instead of looking offset from it. Material's "parallel
-     * curves" rule: inner_radius = outer_radius − padding.
+     * Tile corners use a fixed 12dp radius. The 8dp [OUTER_PADDING] pushes the first/last
+     * rows past the container's rounded corner region so the inner-vs-outer radius
+     * mismatch isn't exposed at the corners. Don't drop padding below 8dp without also
+     * adjusting [TILE_CORNER] — at 6dp the gap becomes visible.
      */
     val OUTER_CONTAINER_CORNER = 16.dp
-    val TILE_CORNER = OUTER_CONTAINER_CORNER - OUTER_PADDING
+    val TILE_CORNER = 12.dp
 
     val TILE_SLOT_DP: Float
         get() = TILE_HEIGHT.value + ROW_SPACING.value

@@ -57,12 +57,14 @@ internal object BatteryWidgetSizing {
     const val ROW_SPACING_DP = 2f
 
     /**
-     * Concentric-corner pair. The inner tile radius is derived so that tile corners visually
-     * continue the container's curve instead of looking offset from it. Material's "parallel
-     * curves" rule: inner_radius = outer_radius − padding.
+     * Tile corners use a fixed 12dp radius. Combined with 8dp outer padding and the 16dp
+     * container corner, the geometry leaves enough buffer that the first/last rows sit past
+     * the container's rounded corner region and don't reveal a visible mismatch. Smaller
+     * padding values (≤6dp) pull the row inside the rounded area and expose the mismatch —
+     * keep [OUTER_PADDING_DP] ≥ 8dp.
      */
     const val OUTER_CONTAINER_CORNER_DP = 16f
-    const val TILE_CORNER_DP = OUTER_CONTAINER_CORNER_DP - OUTER_PADDING_DP
+    const val TILE_CORNER_DP = 12f
 
     /** Glance `Column` truncates beyond ~10 direct children; cap to stay safely under that limit. */
     const val MAX_VISIBLE_ROWS = 10

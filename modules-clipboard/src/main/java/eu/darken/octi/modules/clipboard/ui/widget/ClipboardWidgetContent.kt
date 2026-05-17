@@ -52,16 +52,17 @@ internal object ClipboardWidgetSizing {
     val ROW_HEIGHT = 28.dp
     val ROW_SPACER = 2.dp
     val SELF_SECTION_SPACER = 2.dp
-    val OUTER_PADDING = 6.dp
+    val OUTER_PADDING = 8.dp
     const val MAX_REMOTE_SLOTS = 9
 
     /**
-     * Concentric-corner pair. The inner tile radius is derived so that tile corners visually
-     * continue the container's curve instead of looking offset from it. Material's "parallel
-     * curves" rule: inner_radius = outer_radius − padding.
+     * Tile corners use a fixed 12dp radius. The 8dp [OUTER_PADDING] pushes the first/last
+     * rows past the container's rounded corner region so the inner-vs-outer radius
+     * mismatch isn't exposed at the corners. Don't drop padding below 8dp without also
+     * adjusting [TILE_CORNER] — at 6dp the gap becomes visible.
      */
     val OUTER_CONTAINER_CORNER = 16.dp
-    val TILE_CORNER = OUTER_CONTAINER_CORNER - OUTER_PADDING
+    val TILE_CORNER = 12.dp
 
     /**
      * Total fixed vertical space outside the scrolling device rows.
