@@ -195,4 +195,101 @@ class ConnectorIssueAggregatorTest : BaseTest() {
         val b = CommonIssue.LowStorage(connectorId = connectorA, deviceId = deviceId)
         a shouldBe b
     }
+
+    private fun stateWithPeer(peer: DeviceMetadata): SyncConnectorState = mockk(relaxed = true) {
+        every { issues } returns emptyList()
+        every { deviceMetadata } returns listOf(peer)
+        every { isAvailable } returns true
+    }
+
+    @Test
+    fun `OutdatedVersion emitted for Android peer below MIN_COMPATIBLE_VERSION`() = runTest2 {
+        val peer = DeviceMetadata(
+            deviceId = DeviceId("peer-android-old"),
+            version = "0.10.0",
+            platform = "android",
+        )
+        val aggregator = createAggregator(
+            scope = backgroundScope,
+            connectors = listOf(connector(connectorA)),
+            states = listOf(stateWithPeer(peer)),
+        )
+
+        aggregator.issues.first() shouldContain CommonIssue.OutdatedVersion(
+            connectorId = connectorA,
+            deviceId = peer.deviceId,
+            version = "0.10.0",
+        )
+    }
+
+    @Test
+    fun `OutdatedVersion emitted for legacy Android peer with null platform`() = runTest2 {
+        // Pre-`platform`-field Android clients (v0.8.1 era per CrossVersionLegacyServerTest)
+        // report platform=null. Treat them as Android so the existing gate still warns.
+        val peer = DeviceMetadata(
+            deviceId = DeviceId("peer-android-legacy"),
+            version = "0.10.0",
+            platform = null,
+        )
+        val aggregator = createAggregator(
+            scope = backgroundScope,
+            connectors = listOf(connector(connectorA)),
+            states = listOf(stateWithPeer(peer)),
+        )
+
+        aggregator.issues.first()
+            .filterIsInstance<CommonIssue.OutdatedVersion>()
+            .map { it.deviceId } shouldContain peer.deviceId
+    }
+
+    @Test
+    fun `OutdatedVersion not emitted for web peer with garbage version`() = runTest2 {
+        // The headline fix: 'octi-web/0.0.0' must NOT trip the Android-version gate.
+        val peer = DeviceMetadata(
+            deviceId = DeviceId("peer-web"),
+            version = "octi-web/0.0.0",
+            platform = "web",
+        )
+        val aggregator = createAggregator(
+            scope = backgroundScope,
+            connectors = listOf(connector(connectorA)),
+            states = listOf(stateWithPeer(peer)),
+        )
+
+        aggregator.issues.first().filterIsInstance<CommonIssue.OutdatedVersion>().shouldBeEmpty()
+    }
+
+    @Test
+    fun `OutdatedVersion not emitted for desktop peer even with parseable low semver`() = runTest2 {
+        // Conceptual fix: desktop has an independent release train, so '0.0.0' on desktop
+        // doesn't mean 'older than Android 0.14.0'.
+        val peer = DeviceMetadata(
+            deviceId = DeviceId("peer-desktop"),
+            version = "0.0.0",
+            platform = "desktop",
+        )
+        val aggregator = createAggregator(
+            scope = backgroundScope,
+            connectors = listOf(connector(connectorA)),
+            states = listOf(stateWithPeer(peer)),
+        )
+
+        aggregator.issues.first().filterIsInstance<CommonIssue.OutdatedVersion>().shouldBeEmpty()
+    }
+
+    @Test
+    fun `OutdatedVersion not emitted for Android peer at or above MIN_COMPATIBLE_VERSION`() = runTest2 {
+        val peer = DeviceMetadata(
+            deviceId = DeviceId("peer-android-current"),
+            version = "0.14.0",
+            platform = "android",
+        )
+        val aggregator = createAggregator(
+            scope = backgroundScope,
+            connectors = listOf(connector(connectorA)),
+            states = listOf(stateWithPeer(peer)),
+        )
+
+        aggregator.issues.first().filterIsInstance<CommonIssue.OutdatedVersion>().shouldBeEmpty()
+    }
 }

@@ -25,3 +25,14 @@ data class DeviceMetadata(
 
 val SyncConnectorState.knownDevices: Set<DeviceId>
     get() = deviceMetadata.map { it.deviceId }.toSet()
+
+/**
+ * True if the peer's [DeviceMetadata.version] is comparable to Octi Android's release numbers.
+ *
+ * Non-Android clients (web, desktop) have independent release trains, so comparing their version
+ * strings against Android-specific gates like MIN_COMPATIBLE_VERSION or MIN_GCM_SIV_CLIENT_VERSION
+ * is meaningless. `null` is treated as Android for backward compatibility with pre-`platform`
+ * Android clients (see CrossVersionLegacyServerTest for the v0.8.1 case).
+ */
+val DeviceMetadata.usesAndroidReleaseVersioning: Boolean
+    get() = platform == null || platform.equals("android", ignoreCase = true)
