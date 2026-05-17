@@ -17,7 +17,7 @@ class ClipboardWidgetSizingTest : BaseTest() {
 
         @Test
         fun `one remote row fits above cover-screen minimum when height allows it`() {
-            ClipboardWidgetSizing.maxRemoteRowsForHeight(70f) shouldBe 1
+            ClipboardWidgetSizing.maxRemoteRowsForHeight(80f) shouldBe 1
         }
 
         @Test

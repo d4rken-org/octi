@@ -139,7 +139,7 @@ private fun NetworkWidgetUpgradeRequired(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
             .fillMaxSize()
-            .widgetCornerRadius(16.dp)
+            .widgetCornerRadius(NetworkWidgetSizing.OUTER_CONTAINER_CORNER)
             .background(containerColor)
             .clickable(upgradeAction)
             .padding(6.dp),

@@ -54,6 +54,16 @@ internal object BatteryWidgetSizing {
     const val ROW_HEIGHT_DP = 30f
     const val ROW_SPACING_DP = 2f
 
+    /**
+     * Tile corners use a fixed 12dp radius. Combined with 8dp outer padding and the 16dp
+     * container corner, the geometry leaves enough buffer that the first/last rows sit past
+     * the container's rounded corner region and don't reveal a visible mismatch. Smaller
+     * padding values (≤6dp) pull the row inside the rounded area and expose the mismatch —
+     * keep [OUTER_PADDING_DP] ≥ 8dp.
+     */
+    const val OUTER_CONTAINER_CORNER_DP = 16f
+    const val TILE_CORNER_DP = 12f
+
     /** Glance `Column` truncates beyond ~10 direct children; cap to stay safely under that limit. */
     const val MAX_VISIBLE_ROWS = 10
 
@@ -145,7 +155,7 @@ fun BatteryWidgetContent(
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .widgetCornerRadius(16.dp)
+                .widgetCornerRadius(BatteryWidgetSizing.OUTER_CONTAINER_CORNER_DP.dp)
                 .then(
                     if (containerBg != null) {
                         GlanceModifier.background(ColorProvider(Color(containerBg)))
@@ -275,7 +285,7 @@ private fun BatteryDeviceRowContent(
             modifier = GlanceModifier
                 .defaultWeight()
                 .height(BatteryWidgetSizing.ROW_HEIGHT_DP.dp)
-                .widgetCornerRadius(12.dp)
+                .widgetCornerRadius(BatteryWidgetSizing.TILE_CORNER_DP.dp)
                 .background(tileBg)
                 .then(
                     if (rowClick != null) GlanceModifier.clickable(rowClick) else GlanceModifier
@@ -287,7 +297,7 @@ private fun BatteryDeviceRowContent(
                     modifier = GlanceModifier
                         .width(fillWidth.dp)
                         .height(BatteryWidgetSizing.ROW_HEIGHT_DP.dp)
-                        .widgetCornerRadius(12.dp)
+                        .widgetCornerRadius(BatteryWidgetSizing.TILE_CORNER_DP.dp)
                         .background(accentBg),
                 ) {}
             }
@@ -352,7 +362,7 @@ private fun BatteryOverflowRowContent(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(BatteryWidgetSizing.ROW_HEIGHT_DP.dp)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(BatteryWidgetSizing.TILE_CORNER_DP.dp)
             .background(tileBg)
             .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
         contentAlignment = Alignment.Center,

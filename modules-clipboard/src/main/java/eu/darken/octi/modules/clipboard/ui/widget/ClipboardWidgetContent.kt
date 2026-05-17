@@ -51,8 +51,17 @@ internal object ClipboardWidgetSizing {
     val ROW_HEIGHT = 28.dp
     val ROW_SPACER = 2.dp
     val SELF_SECTION_SPACER = 2.dp
-    val OUTER_PADDING = 6.dp
+    val OUTER_PADDING = 8.dp
     const val MAX_REMOTE_SLOTS = 9
+
+    /**
+     * Tile corners use a fixed 12dp radius. The 8dp [OUTER_PADDING] pushes the first/last
+     * rows past the container's rounded corner region so the inner-vs-outer radius
+     * mismatch isn't exposed at the corners. Don't drop padding below 8dp without also
+     * adjusting [TILE_CORNER] — at 6dp the gap becomes visible.
+     */
+    val OUTER_CONTAINER_CORNER = 16.dp
+    val TILE_CORNER = 12.dp
 
     /**
      * Total fixed vertical space outside the scrolling device rows.
@@ -156,7 +165,7 @@ fun ClipboardWidgetContent(
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .widgetCornerRadius(16.dp)
+                .widgetCornerRadius(ClipboardWidgetSizing.OUTER_CONTAINER_CORNER)
                 .then(
                     if (containerBg != null) {
                         GlanceModifier.background(ColorProvider(Color(containerBg)))
@@ -326,7 +335,7 @@ private fun ClipboardDeviceRowContent(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(ClipboardWidgetSizing.TILE_CORNER)
             .background(tileBg)
             .clickable(rowAction),
     ) {
@@ -395,7 +404,7 @@ private fun ClipboardOverflowRowContent(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(ClipboardWidgetSizing.TILE_CORNER)
             .background(tileBg)
             .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
         contentAlignment = Alignment.Center,
@@ -427,7 +436,7 @@ private fun SelfClipboardRow(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
-            .widgetCornerRadius(12.dp)
+            .widgetCornerRadius(ClipboardWidgetSizing.TILE_CORNER)
             .background(accentBg)
             .clickable(shareAction),
     ) {
