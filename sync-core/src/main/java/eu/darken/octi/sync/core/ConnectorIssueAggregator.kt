@@ -117,7 +117,7 @@ class ConnectorIssueAggregator @Inject constructor(
                 }
 
                 val version = device.version
-                if (version != null && VersionCompat.isOutdated(version)) {
+                if (device.usesAndroidReleaseVersioning && version != null && VersionCompat.isOutdated(version)) {
                     add(
                         CommonIssue.OutdatedVersion(
                             connectorId = connector.identifier,
