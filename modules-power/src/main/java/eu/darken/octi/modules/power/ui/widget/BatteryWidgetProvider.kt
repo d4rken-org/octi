@@ -49,17 +49,24 @@ class BatteryGlanceWidget : GlanceAppWidget() {
         val initialConfig = widgetSettings.configValue(appWidgetId) {
             AppWidgetManager.getInstance(context).getAppWidgetOptions(appWidgetId)
         }
+        val configFlow = widgetSettings.config(appWidgetId)
 
         provideContent {
-            val instanceConfig = widgetSettings.config(appWidgetId)
-                .collectAsState(initial = initialConfig).value
+            val instanceConfig = configFlow.collectAsState(initial = initialConfig).value
             val themeColors = instanceConfig.themeColors
             val allowedDeviceIds = instanceConfig.allowedDeviceIds.takeIf { it.isNotEmpty() }
 
             val metaState = metaRepo.state.collectAsState(initial = null)
             val powerState = powerRepo.state.collectAsState(initial = null)
 
-            val maxRows = BatteryWidgetSizing.maxRowsForHeight(LocalSize.current.height.value)
+            val widgetSize = LocalSize.current
+            val widthDp = widgetSize.width.value
+            val heightDp = widgetSize.height.value
+            val maxRows = BatteryWidgetSizing.maxRowsForHeight(heightDp)
+
+            log(TAG, VERBOSE) {
+                "provideContent(appWidgetId=$appWidgetId, size=${widthDp}x${heightDp}dp, maxRows=$maxRows)"
+            }
 
             BatteryWidgetContent(
                 metaState = metaState.value,

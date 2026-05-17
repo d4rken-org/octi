@@ -20,28 +20,27 @@ class BatteryWidgetProviderInfoTest : BaseTest() {
     }
 
     @Test
-    fun `minHeight fits at least one row so initial placement is usable`() {
-        // One row needs 8dp + 30dp + 8dp = 46dp. Anything below silently clips the bar.
+    fun `minHeight fits one cover-screen row`() {
+        // One row needs 8dp + 30dp + 8dp = 46dp. A 50dp floor still maps to one
+        // landscape launcher cell while avoiding clipped initial placement.
         attributeDp("minHeight")!! shouldBe 50
     }
 
     @Test
-    fun `minWidth allows a readable bar after BAR_HORIZONTAL_OVERHEAD`() {
-        // Bar overhead is 64dp; we want at least ~115dp of bar width so the device
-        // label and percent text fit. 180dp leaves 116dp.
-        attributeDp("minWidth")!! shouldBe 180
+    fun `minWidth keeps widget eligible for constrained cover-screen pickers`() {
+        attributeDp("minWidth")!! shouldBe 80
     }
 
     @Test
-    fun `minResize values match the floor of useful sizes`() {
-        attributeDp("minResizeWidth")!! shouldBe 180
+    fun `minResize values keep widget eligible for constrained cover-screen pickers`() {
+        attributeDp("minResizeWidth")!! shouldBe 80
         attributeDp("minResizeHeight")!! shouldBe 50
     }
 
     @Test
-    fun `targetCell defaults match sibling widgets so initial placement shows multiple devices`() {
-        attributeInt("targetCellWidth")!! shouldBe 3
-        attributeInt("targetCellHeight")!! shouldBe 2
+    fun `targetCell defaults fit constrained cover-screen pickers`() {
+        attributeInt("targetCellWidth")!! shouldBe 2
+        attributeInt("targetCellHeight")!! shouldBe 1
     }
 
     @Test

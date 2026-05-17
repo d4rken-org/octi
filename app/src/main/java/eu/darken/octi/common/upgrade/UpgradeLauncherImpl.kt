@@ -13,12 +13,13 @@ import javax.inject.Singleton
 
 @Singleton
 class UpgradeLauncherImpl @Inject constructor() : UpgradeLauncher {
+    override fun createIntent(context: Context): Intent = Intent(context, MainActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        putExtra(MainActivityVM.EXTRA_OPEN_UPGRADE, true)
+    }
+
     override fun launch(context: Context) {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            putExtra(MainActivityVM.EXTRA_OPEN_UPGRADE, true)
-        }
-        context.startActivity(intent)
+        context.startActivity(createIntent(context))
     }
 
     @Module

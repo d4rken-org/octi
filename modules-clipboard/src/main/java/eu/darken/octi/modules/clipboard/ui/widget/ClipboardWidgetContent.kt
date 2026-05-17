@@ -1,10 +1,12 @@
 package eu.darken.octi.modules.clipboard.ui.widget
 
+import android.os.Build
 import android.text.format.DateUtils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -13,6 +15,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.Action
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
@@ -46,10 +49,11 @@ import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import eu.darken.octi.common.R as CommonR
 
 internal object ClipboardWidgetSizing {
-    val ROW_HEIGHT = 36.dp
+    val ROW_HEIGHT = 28.dp
     val ROW_SPACER = 2.dp
-    val SELF_SECTION_SPACER = 4.dp
-    val OUTER_PADDING = 8.dp
+    val SELF_SECTION_SPACER = 2.dp
+    val OUTER_PADDING = 6.dp
+    const val MAX_REMOTE_SLOTS = 9
 
     /**
      * Total fixed vertical space outside the scrolling device rows.
@@ -62,6 +66,41 @@ internal object ClipboardWidgetSizing {
                 ROW_HEIGHT.value
     val ROW_SLOT_DP: Float
         get() = ROW_HEIGHT.value + ROW_SPACER.value
+
+    fun maxRemoteRowsForHeight(heightDp: Float): Int {
+        if (heightDp <= 0f || !heightDp.isFinite()) return 1
+        val rows = ((heightDp - (FIXED_OVERHEAD_DP - ROW_SPACER.value)) / ROW_SLOT_DP)
+            .toInt()
+            .coerceAtLeast(0)
+        return rows.coerceAtMost(MAX_REMOTE_SLOTS)
+    }
+
+    fun rowSpacingForHeight(heightDp: Float, visibleRowCount: Int): Dp {
+        if (visibleRowCount <= 1) return 0.dp
+        if (heightDp <= 0f || !heightDp.isFinite()) return ROW_SPACER
+
+        val innerHeightDp = (heightDp - OUTER_PADDING.value * 2f).coerceAtLeast(0f)
+        val rowsHeightDp = visibleRowCount * ROW_HEIGHT.value
+        val gapCount = visibleRowCount - 1
+        return ((innerHeightDp - rowsHeightDp) / gapCount)
+            .coerceAtLeast(ROW_SPACER.value)
+            .dp
+    }
+
+    fun computeRemoteSlots(totalRemoteCount: Int, maxRemoteRows: Int): VisibleSlots {
+        val cappedMaxRemoteRows = maxRemoteRows.coerceAtMost(MAX_REMOTE_SLOTS)
+        return when {
+            cappedMaxRemoteRows <= 0 || totalRemoteCount <= 0 -> VisibleSlots(0, false)
+            totalRemoteCount <= cappedMaxRemoteRows -> VisibleSlots(totalRemoteCount, false)
+            cappedMaxRemoteRows == 1 -> VisibleSlots(0, true)
+            else -> VisibleSlots(cappedMaxRemoteRows - 1, true)
+        }
+    }
+
+    data class VisibleSlots(
+        val visibleRemoteCount: Int,
+        val showOverflow: Boolean,
+    )
 }
 
 private data class ClipboardDeviceRow(
@@ -110,19 +149,27 @@ fun ClipboardWidgetContent(
     allowedDeviceIds: Set<String>? = null,
 ) {
     val self = extractSelf(clipboardState)
-    val devices = buildDeviceRows(metaState, clipboardState, self?.deviceId, maxRows, allowedDeviceIds)
+    val allDevices = buildDeviceRows(metaState, clipboardState, self?.deviceId, allowedDeviceIds)
     val containerBg = themeColors?.containerBg
     val context = LocalContext.current
     val openApp = context.packageManager.getLaunchIntentForPackage(context.packageName)
         ?.let { actionStartActivity(it) }
     val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
-    val showEmptyState = devices.isEmpty() && maxRows > 0 && metaState != null && clipboardState != null
+    val showEmptyState = allDevices.isEmpty() && maxRows > 0 && metaState != null && clipboardState != null
+
+    val slots = ClipboardWidgetSizing.computeRemoteSlots(allDevices.size, maxRows)
+    val visibleDevices = allDevices.take(slots.visibleRemoteCount)
+    val overflowCount = allDevices.size - visibleDevices.size
+    val displayRows = buildList {
+        visibleDevices.forEach { add(ClipboardDisplayRow.Device(it)) }
+        if (slots.showOverflow) add(ClipboardDisplayRow.Overflow(overflowCount))
+    }
 
     GlanceTheme {
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .cornerRadius(16.dp)
+                .widgetCornerRadius(16.dp)
                 .then(
                     if (containerBg != null) {
                         GlanceModifier.background(ColorProvider(Color(containerBg)))
@@ -145,7 +192,8 @@ fun ClipboardWidgetContent(
                     Box(
                         modifier = GlanceModifier
                             .fillMaxWidth()
-                            .defaultWeight(),
+                            .height(ClipboardWidgetSizing.ROW_HEIGHT)
+                            .padding(bottom = ClipboardWidgetSizing.ROW_SPACER),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
@@ -158,17 +206,15 @@ fun ClipboardWidgetContent(
                         )
                     }
                 } else {
-                    devices.forEachIndexed { index, device ->
-                        ClipboardDeviceRowContent(
-                            device = device,
+                    displayRows.forEachIndexed { index, row ->
+                        ClipboardDisplayRowContent(
+                            row = row,
                             themeColors = themeColors,
+                            overflowClick = openApp,
+                            bottomSpacing = if (index < displayRows.lastIndex) ClipboardWidgetSizing.ROW_SPACER else ClipboardWidgetSizing.SELF_SECTION_SPACER,
                         )
-                        if (index < devices.lastIndex) {
-                            Spacer(modifier = GlanceModifier.height(ClipboardWidgetSizing.ROW_SPACER))
-                        }
                     }
                 }
-                Spacer(modifier = GlanceModifier.height(ClipboardWidgetSizing.SELF_SECTION_SPACER))
                 SelfClipboardRow(
                     self = self,
                     themeColors = themeColors,
@@ -194,11 +240,9 @@ private fun buildDeviceRows(
     metaState: ModuleRepo.State<*>?,
     clipboardState: ModuleRepo.State<*>?,
     selfDeviceId: String?,
-    maxRows: Int,
     allowedDeviceIds: Set<String>?,
 ): List<ClipboardDeviceRow> {
     if (metaState == null || clipboardState == null) return emptyList()
-    if (maxRows <= 0) return emptyList()
 
     val metaAll = metaState.all as? Collection<ModuleData<MetaInfo>> ?: return emptyList()
     val clipboardAll = clipboardState.all as? Collection<ModuleData<ClipboardInfo>>
@@ -223,7 +267,6 @@ private fun buildDeviceRows(
                 labelsByDevice[it.second.deviceId] ?: it.second.data.labelOrFallback
             }.thenBy { it.second.deviceId.id }
         )
-        .take(maxRows)
         .map { (clipData, metaData) ->
             val preview = clipData.data.toWidgetPreview()
             ClipboardDeviceRow(
@@ -241,6 +284,34 @@ private fun buildDeviceRows(
             )
         }
         .toList()
+}
+
+private sealed interface ClipboardDisplayRow {
+    data class Device(val device: ClipboardDeviceRow) : ClipboardDisplayRow
+    data class Overflow(val hiddenCount: Int) : ClipboardDisplayRow
+}
+
+@Composable
+private fun ClipboardDisplayRowContent(
+    row: ClipboardDisplayRow,
+    themeColors: WidgetTheme.Colors?,
+    overflowClick: Action?,
+    bottomSpacing: Dp,
+) {
+    Column(modifier = GlanceModifier.fillMaxWidth().padding(bottom = bottomSpacing)) {
+        when (row) {
+            is ClipboardDisplayRow.Device -> ClipboardDeviceRowContent(
+                device = row.device,
+                themeColors = themeColors,
+            )
+
+            is ClipboardDisplayRow.Overflow -> ClipboardOverflowRowContent(
+                hiddenCount = row.hiddenCount,
+                themeColors = themeColors,
+                onClick = overflowClick,
+            )
+        }
+    }
 }
 
 @Composable
@@ -268,7 +339,7 @@ private fun ClipboardDeviceRowContent(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
-            .cornerRadius(12.dp)
+            .widgetCornerRadius(12.dp)
             .background(tileBg)
             .clickable(rowAction),
     ) {
@@ -324,6 +395,37 @@ private fun ClipboardDeviceRowContent(
 }
 
 @Composable
+private fun ClipboardOverflowRowContent(
+    hiddenCount: Int,
+    themeColors: WidgetTheme.Colors?,
+    onClick: Action?,
+) {
+    val context = LocalContext.current
+    val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
+    val primaryColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
+
+    Box(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .height(ClipboardWidgetSizing.ROW_HEIGHT)
+            .widgetCornerRadius(12.dp)
+            .background(tileBg)
+            .then(if (onClick != null) GlanceModifier.clickable(onClick) else GlanceModifier),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = context.getString(CommonR.string.widget_more_items, hiddenCount),
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = primaryColor,
+            ),
+            maxLines = 1,
+        )
+    }
+}
+
+@Composable
 private fun SelfClipboardRow(
     self: SelfClipboardDisplay?,
     themeColors: WidgetTheme.Colors?,
@@ -338,7 +440,7 @@ private fun SelfClipboardRow(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(ClipboardWidgetSizing.ROW_HEIGHT)
-            .cornerRadius(12.dp)
+            .widgetCornerRadius(12.dp)
             .background(accentBg)
             .clickable(shareAction),
     ) {
@@ -379,3 +481,6 @@ private fun SelfClipboardRow(
 
 private fun colorOrDefault(value: Int?, @ColorRes defaultRes: Int): ColorProvider =
     value?.let { ColorProvider(Color(it)) } ?: ColorProvider(defaultRes)
+
+private fun GlanceModifier.widgetCornerRadius(radius: Dp): GlanceModifier =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) cornerRadius(radius) else this
