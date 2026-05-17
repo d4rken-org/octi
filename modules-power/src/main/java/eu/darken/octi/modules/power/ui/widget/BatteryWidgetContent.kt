@@ -1,11 +1,9 @@
 package eu.darken.octi.modules.power.ui.widget
 
-import android.os.Build
 import android.text.format.DateUtils
 import androidx.annotation.ColorRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -18,7 +16,6 @@ import androidx.glance.LocalSize
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
-import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -40,6 +37,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.navigation.WidgetDeeplink
 import eu.darken.octi.common.widget.WidgetTheme
+import eu.darken.octi.common.widget.widgetCornerRadius
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.modules.meta.core.MetaInfo
@@ -370,6 +368,3 @@ private fun BatteryOverflowRowContent(
         )
     }
 }
-
-private fun GlanceModifier.widgetCornerRadius(radius: Dp): GlanceModifier =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) cornerRadius(radius) else this

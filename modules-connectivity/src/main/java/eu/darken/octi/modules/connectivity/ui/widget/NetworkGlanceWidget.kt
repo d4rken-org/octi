@@ -2,11 +2,9 @@ package eu.darken.octi.modules.connectivity.ui.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -22,7 +20,6 @@ import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
-import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -49,6 +46,7 @@ import eu.darken.octi.common.upgrade.UpgradeLauncher
 import eu.darken.octi.common.upgrade.proState
 import eu.darken.octi.common.widget.WidgetSettings
 import eu.darken.octi.common.widget.WidgetTheme
+import eu.darken.octi.common.widget.widgetCornerRadius
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -170,9 +168,6 @@ private fun NetworkWidgetUpgradeRequired(
         }
     }
 }
-
-private fun GlanceModifier.widgetCornerRadius(radius: Dp): GlanceModifier =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) cornerRadius(radius) else this
 
 @AndroidEntryPoint
 class NetworkWidgetProvider : GlanceAppWidgetReceiver() {

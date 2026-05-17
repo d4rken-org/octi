@@ -1,7 +1,6 @@
 package eu.darken.octi.modules.connectivity.ui.widget
 
 import android.content.Context
-import android.os.Build
 import android.text.format.DateUtils
 import androidx.annotation.ColorRes
 import androidx.compose.runtime.Composable
@@ -20,7 +19,6 @@ import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
-import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -38,6 +36,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import eu.darken.octi.common.widget.WidgetTheme
+import eu.darken.octi.common.widget.widgetCornerRadius
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.modules.connectivity.R
@@ -534,6 +533,3 @@ private fun NetworkOverflowCompactRow(
 
 private fun colorOrDefault(value: Int?, @ColorRes defaultRes: Int): ColorProvider =
     value?.let { ColorProvider(Color(it)) } ?: ColorProvider(defaultRes)
-
-private fun GlanceModifier.widgetCornerRadius(radius: Dp): GlanceModifier =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) cornerRadius(radius) else this

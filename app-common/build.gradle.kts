@@ -46,4 +46,9 @@ dependencies {
     addCompose()
     addNavigation3()
     addTesting()
+
+    // Compile-only so widget-shared extensions (e.g. WidgetCornerRadius) can reference Glance
+    // types without dragging the dependency into non-widget consumers of app-common. Each widget
+    // module brings glance-appwidget at runtime itself.
+    compileOnly("androidx.glance:glance-appwidget:1.2.0-rc01")
 }
