@@ -15,3 +15,4 @@ Multi-device companion app for Android. Syncs device information (battery, WiFi,
 - [Localization](rules/localization.md) — String resources, naming conventions, Crowdin
 - [Commit Guidelines](rules/commit-guidelines.md) — Commit message format and examples
 - [Agent Instructions](rules/agent-instructions.md) — How to add modules/sync backends, common mistakes
+- [Device Capabilities](rules/device-capabilities.md) — Per-peer capability tag set: wire contract, namespaces, how to add new ones
