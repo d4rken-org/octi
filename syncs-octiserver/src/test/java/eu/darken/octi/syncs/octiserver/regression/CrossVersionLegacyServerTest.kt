@@ -2,6 +2,7 @@ package eu.darken.octi.syncs.octiserver.regression
 
 import eu.darken.octi.common.serialization.SerializationModule
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.CapabilitiesCodec
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.encryption.CryptoCapabilities
@@ -103,6 +104,7 @@ class CrossVersionLegacyServerTest : BaseTest() {
             cryptoCapabilities = object : CryptoCapabilities {
                 override val gcmSivAvailable: Boolean = true
             },
+            capabilitiesCodec = CapabilitiesCodec(SerializationModule().retrofitJson()),
         )
     }
 

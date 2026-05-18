@@ -4,6 +4,7 @@ import eu.darken.octi.common.serialization.serializer.InstantSerializer
 import eu.darken.octi.sync.core.DeviceId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -59,6 +60,12 @@ interface OctiServerApi {
             @SerialName("label") val label: String? = null,
             @SerialName("addedAt") @Serializable(with = InstantSerializer::class) val addedAt: Instant? = null,
             @SerialName("lastSeen") @Serializable(with = InstantSerializer::class) val lastSeen: Instant? = null,
+            /**
+             * Per-peer capability tag set. Stored as raw JsonElement so a malformed value
+             * on one device doesn't tank the whole response decode. Mapped through
+             * [eu.darken.octi.sync.core.CapabilitiesCodec.decode] at the boundary.
+             */
+            @SerialName("capabilities") val capabilities: JsonElement? = null,
         )
     }
 

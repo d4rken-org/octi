@@ -13,6 +13,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.serialization.RetrofitJson
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.CapabilitiesCodec
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.encryption.CryptoCapabilities
@@ -39,6 +40,7 @@ class OctiServerEndpoint @AssistedInject constructor(
     private val basicAuthInterceptor: BasicAuthInterceptor,
     private val deviceHeaderInterceptor: DeviceHeaderInterceptor,
     private val cryptoCapabilities: CryptoCapabilities,
+    private val capabilitiesCodec: CapabilitiesCodec,
 ) {
 
     private val httpClient by lazy {
@@ -132,6 +134,7 @@ class OctiServerEndpoint @AssistedInject constructor(
         val label: String?,
         val addedAt: Instant?,
         val lastSeen: Instant?,
+        val capabilities: Set<String>?,
     )
 
     suspend fun listDevices(): Collection<LinkedDevice> = withContext(dispatcherProvider.IO) {
@@ -144,6 +147,13 @@ class OctiServerEndpoint @AssistedInject constructor(
             throw OctiServerHttpException(e)
         }
         response.devices.map {
+            // Decode per-device so one malformed capability doesn't poison the whole list.
+            val caps = try {
+                capabilitiesCodec.decode(it.capabilities)
+            } catch (e: Exception) {
+                log(TAG, WARN) { "listDevices(): capabilities decode failed for ${it.id}: ${e.message}" }
+                null
+            }
             LinkedDevice(
                 deviceId = DeviceId(it.id),
                 version = it.version,
@@ -151,6 +161,7 @@ class OctiServerEndpoint @AssistedInject constructor(
                 label = it.label,
                 addedAt = it.addedAt,
                 lastSeen = it.lastSeen,
+                capabilities = caps,
             )
         }
     }

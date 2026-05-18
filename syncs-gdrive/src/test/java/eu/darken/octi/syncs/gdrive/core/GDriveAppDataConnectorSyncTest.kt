@@ -13,10 +13,13 @@ import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.BlobKey
+import eu.darken.octi.sync.core.CapabilitiesCodec
 import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorSyncState
+import eu.darken.octi.sync.core.DeviceCapabilitiesProvider
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.DeviceMetadata
+import eu.darken.octi.sync.core.encryption.CryptoCapabilities
 import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncOptions
 import eu.darken.octi.sync.core.SyncSettings
@@ -123,6 +126,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         )
         val cache = syncCache ?: SyncCache(json, testDispatcher, context)
 
+        val capabilitiesCodec = CapabilitiesCodec(json)
         val connector = GDriveAppDataConnector(
             account = testAccount,
             initialDeviceMetadata = initialDeviceMetadata,
@@ -135,6 +139,10 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
             syncState = ConnectorSyncState(),
             syncCache = cache,
             json = json,
+            capabilitiesProvider = DeviceCapabilitiesProvider(
+                object : CryptoCapabilities { override val gcmSivAvailable: Boolean = true },
+            ),
+            capabilitiesCodec = capabilitiesCodec,
         )
 
         // Inject mock Drive via reflection, bypassing GDriveBaseConnector's lazy init
