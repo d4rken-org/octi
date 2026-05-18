@@ -308,6 +308,7 @@ class OctiServerConnector @AssistedInject constructor(
                         label = it.label,
                         lastSeen = it.lastSeen,
                         addedAt = it.addedAt,
+                        capabilities = it.capabilities,
                     )
                 }
                 updateDeviceMetadata(metadata)

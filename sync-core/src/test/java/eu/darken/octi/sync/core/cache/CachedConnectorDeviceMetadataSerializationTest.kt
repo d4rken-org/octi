@@ -80,4 +80,36 @@ class CachedConnectorDeviceMetadataSerializationTest : BaseTest() {
         val decoded = json.decodeFromString<CachedConnectorDeviceMetadata>(futureJson)
         decoded.devices shouldBe emptyList()
     }
+
+    @Test
+    fun `round-trips when capabilities are populated`() {
+        val withCaps = fullCache.copy(
+            devices = fullCache.devices.map {
+                it.copy(capabilities = setOf("encryption:_reported", "encryption:AES256_GCM_SIV"))
+            },
+        )
+        val encoded = json.encodeToString(withCaps)
+        val decoded = json.decodeFromString<CachedConnectorDeviceMetadata>(encoded)
+        decoded shouldBe withCaps
+    }
+
+    @Test
+    fun `backward compatibility - legacy cache without capabilities field decodes`() {
+        val legacyJson = """
+            {
+                "schemaVersion": 1,
+                "connectorId": {"type": "kserver", "subtype": "prod", "account": "acc-123"},
+                "cachedAt": "2026-05-02T10:15:30Z",
+                "devices": [
+                    {
+                        "deviceId": {"id": "device-abc"},
+                        "version": "1.2.3",
+                        "platform": "android"
+                    }
+                ]
+            }
+        """
+        val decoded = json.decodeFromString<CachedConnectorDeviceMetadata>(legacyJson)
+        decoded.devices.single().capabilities shouldBe null
+    }
 }

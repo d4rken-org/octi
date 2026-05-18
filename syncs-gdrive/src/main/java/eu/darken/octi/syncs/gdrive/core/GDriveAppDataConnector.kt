@@ -20,6 +20,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.module.core.ModuleId
+import eu.darken.octi.sync.core.CapabilitiesCodec
 import eu.darken.octi.sync.core.ConnectorCapabilities
 import eu.darken.octi.sync.core.ConnectorCommand
 import eu.darken.octi.sync.core.ConnectorId
@@ -27,6 +28,7 @@ import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.ConnectorOperation
 import eu.darken.octi.sync.core.ConnectorProcessor
 import eu.darken.octi.sync.core.ConnectorSyncState
+import eu.darken.octi.sync.core.DeviceCapabilitiesProvider
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.DeviceRemovalPolicy
 import eu.darken.octi.common.BuildConfigWrap
@@ -94,6 +96,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
     private val syncState: ConnectorSyncState,
     private val syncCache: SyncCache,
     private val json: Json,
+    private val capabilitiesProvider: DeviceCapabilitiesProvider,
+    private val capabilitiesCodec: CapabilitiesCodec,
 ) : GDriveBaseConnector(dispatcherProvider, context, account), SyncConnector {
 
     data class State(
@@ -536,6 +540,14 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 val lastSeen = index.children(dir)
                     .filter { it.name != DEVICE_INFO_FILE && !it.isDirectory }
                     .maxOfOrNull { Instant.fromEpochMilliseconds(it.modifiedTime.value) }
+                val capabilities = info?.capabilities?.let {
+                    try {
+                        capabilitiesCodec.decode(it)
+                    } catch (e: Exception) {
+                        log(TAG, WARN) { "readDeviceMetadata(): capabilities decode failed for ${dir.name}: ${e.message}" }
+                        null
+                    }
+                }
                 DeviceMetadata(
                     deviceId = deviceId,
                     version = info?.version,
@@ -543,6 +555,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     label = info?.label,
                     lastSeen = lastSeen,
                     addedAt = dir.createdTime?.let { Instant.fromEpochMilliseconds(it.value) },
+                    capabilities = capabilities,
                 )
             }
         }.awaitAll()
@@ -939,10 +952,17 @@ class GDriveAppDataConnector @AssistedInject constructor(
 
         // Write device info metadata only when changed
         try {
+            val capsJson = try {
+                capabilitiesCodec.encodeToJson(capabilitiesProvider.current())
+            } catch (e: Exception) {
+                log(TAG, WARN) { "writeDrive(): capability encode failed: ${e.message}" }
+                null
+            }
             val deviceInfo = GDriveDeviceInfo(
                 version = deviceInfoVersionName(),
                 platform = "android",
                 label = syncSettings.deviceLabel.value(),
+                capabilities = capsJson,
             )
             if (deviceInfo != lastWrittenDeviceInfo) {
                 val infoPayload = json.encodeToString(deviceInfo).encodeToByteArray().toByteString()

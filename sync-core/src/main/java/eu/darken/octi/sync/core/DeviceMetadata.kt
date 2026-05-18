@@ -21,6 +21,22 @@ data class DeviceMetadata(
     @Serializable(with = InstantSerializer::class)
     @SerialName("addedAt")
     val addedAt: Instant? = null,
+    /**
+     * Set of feature tags this peer reports supporting. Format: `<namespace>:<value>`
+     * (e.g. `encryption:AES256_GCM_SIV`). Use the [Capability] helpers to construct/check
+     * tags rather than hand-rolling strings.
+     *
+     * Tri-state at the wrapper level:
+     *   - null      → peer doesn't report capabilities (legacy / not yet rolled out).
+     *                 Consumers fall back to other heuristics.
+     *   - non-null  → peer participates. Within each namespace, support is determined
+     *                 by the `<namespace>:_reported` marker; see [Capability].
+     *
+     * Advisory only — not signed. A hostile substrate can rewrite; real incompatibilities
+     * surface at decrypt/use time regardless. See [CapabilitiesCodec] for validation limits.
+     */
+    @SerialName("capabilities")
+    val capabilities: Set<String>? = null,
 )
 
 val SyncConnectorState.knownDevices: Set<DeviceId>

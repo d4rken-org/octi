@@ -315,7 +315,7 @@ class DeviceInfoBuilderTest : BaseTest() {
         fun `non-legacy issue with the same deviceId passes through even when blob-reachable`() {
             // Use EncryptionCompatibilityIncompatible (not CurrentDeviceNotRegistered, which
             // has its own paused-but-shown special case that would muddle this assertion).
-            val incompat = OctiServerIssue.EncryptionCompatibilityIncompatible(
+            val incompat = OctiServerIssue.EncryptionCompatibilityIncompatible.AndroidClientTooOld(
                 connectorId = connectorId,
                 deviceId = remoteDeviceId,
                 minClientVersion = "1.2.3",

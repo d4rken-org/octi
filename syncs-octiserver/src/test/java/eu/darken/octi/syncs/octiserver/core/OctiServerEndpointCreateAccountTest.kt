@@ -1,5 +1,6 @@
 package eu.darken.octi.syncs.octiserver.core
 
+import eu.darken.octi.sync.core.CapabilitiesCodec
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.sync.core.encryption.CryptoCapabilities
@@ -70,6 +71,7 @@ class OctiServerEndpointCreateAccountTest : BaseTest() {
             basicAuthInterceptor = basicAuthInterceptor,
             deviceHeaderInterceptor = deviceHeaderInterceptor,
             cryptoCapabilities = cryptoCapabilities,
+            capabilitiesCodec = CapabilitiesCodec(retrofitJson),
         )
     }
 
