@@ -27,6 +27,11 @@ Synchronization options:
 * Google Drive: Easy to use if all devices use the same account.
 * [Octi Server](https://github.com/d4rken-org/octi-server): End-To-End encrypted server that doesn't require a Google account.
 
+Companion clients (early-stage, talk to the same Octi Server):
+
+* [Octi Desktop](https://github.com/d4rken-org/octi-desktop) — Compose Multiplatform desktop client (Linux / macOS / Windows).
+* [Octi Web](https://github.com/d4rken-org/octi-web) — Browser-based client, connects directly to your self-hosted Octi Server.
+
 Hungry for details? [Check the wiki](https://github.com/d4rken-org/octi/wiki). Still have
 questions? [Join us on discord](https://discord.gg/s7V4C6zuVy)!
 
