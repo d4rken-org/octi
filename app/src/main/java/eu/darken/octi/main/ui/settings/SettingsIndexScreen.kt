@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.twotone.Book
+import androidx.compose.material.icons.twotone.Devices
 import androidx.compose.material.icons.twotone.Extension
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Settings
@@ -49,6 +50,7 @@ fun SettingsIndexScreenHost(vm: SettingsIndexVM = hiltViewModel()) {
             onModuleSettings = { vm.navTo(Nav.Settings.Modules) },
             onSupport = { vm.navTo(Nav.Settings.Support) },
             onChangelog = { vm.openUrl("https://octi.darken.eu/changelog") },
+            onEcosystem = { vm.navTo(Nav.Settings.Ecosystem) },
             onHelpTranslate = { vm.openUrl("https://crowdin.com/project/octi") },
             onAcknowledgements = { vm.navTo(Nav.Settings.Acknowledgements) },
             onPrivacyPolicy = { vm.openUrl(PrivacyPolicy.URL) },
@@ -65,6 +67,7 @@ fun SettingsIndexScreen(
     onModuleSettings: () -> Unit,
     onSupport: () -> Unit,
     onChangelog: () -> Unit,
+    onEcosystem: () -> Unit,
     onHelpTranslate: () -> Unit,
     onAcknowledgements: () -> Unit,
     onPrivacyPolicy: () -> Unit,
@@ -132,6 +135,14 @@ fun SettingsIndexScreen(
             }
             item {
                 SettingsBaseItem(
+                    title = stringResource(R.string.settings_ecosystem_label),
+                    subtitle = stringResource(R.string.settings_ecosystem_desc),
+                    icon = Icons.TwoTone.Devices,
+                    onClick = onEcosystem,
+                )
+            }
+            item {
+                SettingsBaseItem(
                     title = stringResource(R.string.help_translate_label),
                     subtitle = stringResource(R.string.help_translate_description),
                     icon = Icons.TwoTone.Translate,
@@ -169,6 +180,7 @@ private fun SettingsIndexScreenPreview() = PreviewWrapper {
         onModuleSettings = {},
         onSupport = {},
         onChangelog = {},
+        onEcosystem = {},
         onHelpTranslate = {},
         onAcknowledgements = {},
         onPrivacyPolicy = {},

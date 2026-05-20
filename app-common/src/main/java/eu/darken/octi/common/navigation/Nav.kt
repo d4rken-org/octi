@@ -71,6 +71,9 @@ object Nav {
         data object Acknowledgements : Settings
 
         @Serializable
+        data object Ecosystem : Settings
+
+        @Serializable
         data object Modules : Settings
 
         @Serializable
