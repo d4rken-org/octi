@@ -16,3 +16,4 @@ Multi-device companion app for Android. Syncs device information (battery, WiFi,
 - [Commit Guidelines](rules/commit-guidelines.md) — Commit message format and examples
 - [Agent Instructions](rules/agent-instructions.md) — How to add modules/sync backends, common mistakes
 - [Device Capabilities](rules/device-capabilities.md) — Per-peer capability tag set: wire contract, namespaces, how to add new ones
+- [Interop Fixtures](rules/interop-fixtures.md) — Cross-repo wire-format fixtures shared with octi-web/octi-desktop: generate, verify, regen workflow
