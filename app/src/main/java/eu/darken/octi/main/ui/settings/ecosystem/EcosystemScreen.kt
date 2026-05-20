@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
+import androidx.compose.material.icons.twotone.Code
 import androidx.compose.material.icons.twotone.DesktopWindows
 import androidx.compose.material.icons.twotone.Dns
 import androidx.compose.material.icons.twotone.Language
@@ -72,6 +73,14 @@ fun EcosystemScreen(
                     title = stringResource(R.string.settings_ecosystem_web_label),
                     subtitle = stringResource(R.string.settings_ecosystem_web_desc),
                     icon = Icons.TwoTone.Language,
+                    onClick = { onOpenUrl("https://web.octi.darken.eu") },
+                )
+            }
+            item {
+                SettingsBaseItem(
+                    title = stringResource(R.string.settings_ecosystem_web_source_label),
+                    subtitle = stringResource(R.string.settings_ecosystem_web_source_desc),
+                    icon = Icons.TwoTone.Code,
                     onClick = { onOpenUrl("https://github.com/d4rken-org/octi-web") },
                 )
             }

@@ -76,7 +76,9 @@
     <string name="settings_ecosystem_desc">Web, desktop, and self-hosted sync</string>
     <string name="settings_ecosystem_header_desc">Use Octi from a browser or desktop app, connected through Octi Server.</string>
     <string name="settings_ecosystem_web_label">Octi Web</string>
-    <string name="settings_ecosystem_web_desc">Browser companion — view source and self-host instructions</string>
+    <string name="settings_ecosystem_web_desc">Use Octi from any browser</string>
+    <string name="settings_ecosystem_web_source_label">Octi Web (source)</string>
+    <string name="settings_ecosystem_web_source_desc">View source and self-host instructions</string>
     <string name="settings_ecosystem_desktop_label">Octi Desktop</string>
     <string name="settings_ecosystem_desktop_desc">Native client for Windows, macOS, and Linux</string>
     <string name="settings_ecosystem_server_label">Octi Server</string>
