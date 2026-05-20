@@ -9,6 +9,7 @@
 [![Github Downloads](https://img.shields.io/github/downloads/d4rken-org/octi/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/d4rken-org/octi/main/README.md#download)
 [![Google Play Downloads](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Deu.darken.octi%26l%3DGoogle%2520Play%26m%3D%24totalinstalls)](https://github.com/d4rken-org/octi/main/README.md#download)
 [![⭐](https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Deu.darken.octi%26gl%3DUS%26hl%3Den%26l%3D%25E2%25AD%2590%26m%3D%24rating)](https://github.com/d4rken-org/octi/main/README.md#download)
+[![Discord](https://img.shields.io/badge/Discord-Octi-5865F2?logo=discord&logoColor=white)](https://discord.gg/s7V4C6zuVy)
 
 All your Android devices, closer together than ever.
 
