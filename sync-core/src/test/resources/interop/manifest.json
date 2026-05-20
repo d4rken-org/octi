@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "source": "d4rken-org/octi",
+  "generator": "sync-core InteropFixtureGeneratorTest",
+  "files": {
+    "streaming-vectors.json": {
+      "sha256": "77f2a680a63dcf45920b305423a66878f39a8d611a9547295e00693ccffd2882"
+    },
+    "tink-vectors.json": {
+      "sha256": "631695a90f555313c77859dd76b4b53bd8b9746a6ea0631ac312e1c6d02fd24d"
+    }
+  }
+}
