@@ -72,6 +72,16 @@
     <string name="settings_acknowledgements_label">Acknowledgements</string>
     <string name="documentation_label">Documentation</string>
 
+    <string name="settings_ecosystem_label">More ways to use Octi</string>
+    <string name="settings_ecosystem_desc">Web, desktop, and self-hosted sync</string>
+    <string name="settings_ecosystem_header_desc">Use Octi from a browser or desktop app, connected through Octi Server.</string>
+    <string name="settings_ecosystem_web_label">Octi Web</string>
+    <string name="settings_ecosystem_web_desc">Browser companion — view source and self-host instructions</string>
+    <string name="settings_ecosystem_desktop_label">Octi Desktop</string>
+    <string name="settings_ecosystem_desktop_desc">Native client for Windows, macOS, and Linux</string>
+    <string name="settings_ecosystem_server_label">Octi Server</string>
+    <string name="settings_ecosystem_server_desc">Self-host your own sync backend</string>
+
     <string name="help_translate_label">Translation</string>
     <string name="help_translate_description">Help translate this app into your favorite language.</string>
 
