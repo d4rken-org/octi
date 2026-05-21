@@ -111,6 +111,80 @@ PRs that don't touch the allowlist still run the workflow but echo "skip: no
 relevant paths changed" and exit 0 — required-check status reports green
 without leaving the check pending.
 
+## Consuming other repos' fixtures (Phase B onward)
+
+App-main also **consumes** fixtures published by `d4rken-org/octi-web` (and, in
+Phase C, `d4rken-org/octi-desktop`). The other side of the same bidirectional
+contract: producer-side serializer drift breaks the gate at the producer's PR,
+because every consumer's CI runs against the producer's HEAD via the
+`INTEROP_FIXTURE_OVERRIDES` env var.
+
+### Pinning
+
+`fixture-lock.json` at repo root pins each upstream source:
+
+```json
+{
+  "schemaVersion": 2,
+  "sources": {
+    "d4rken-org/octi-web": {
+      "ref": "<40-char commit SHA>",
+      "manifest_sha256": "<sha256 of that source's manifest.json>"
+    }
+  }
+}
+```
+
+Schema is v2 — multi-source from day one so Phase C can add `d4rken-org/octi-desktop`
+without a migration step.
+
+### Test layout
+
+- **Shared sync helper**: `app-common-test/src/main/java/testhelpers/interop/`
+  (`InteropFixtureSync`, `SyncRefResolver`, schemas). Lives there because
+  `modules-meta`, `modules-clipboard`, `modules-files` depend on `sync-core`
+  and each module's consumer test needs to import its own `*Info` model.
+- **Per-module consumer tests**: `modules-{meta,clipboard,files}/src/test/.../interop/Web*InteropTest.kt`.
+  Each calls `InteropFixtureSync.ensureSynced("d4rken-org/octi-web")` in
+  `@BeforeAll`, reads the relevant `octi-web-<module>.json` from the cache,
+  and decodes every `payloadJson` through its production decoder with
+  field-by-field assertions.
+
+### Cache
+
+`.cache/interop-fixtures/<owner>/<repo>/<sha>/` — gitignored. Owner+repo in
+the path prevents collisions when multiple sources land. Marker file `.sha`
+written last; a cache that's missing it (or whose marker mismatches `lock.ref`)
+gets re-fetched on the next run.
+
+### CI override
+
+`INTEROP_FIXTURE_OVERRIDES` is a JSON map `{ "<owner>/<repo>": "<sha40>" }`. When
+set, the matching `lock.sources[source].manifest_sha256` is **dropped** as a
+trust anchor — there's no committed sha that could pin an arbitrary upstream
+commit. Per-file sha256 inside the fresh manifest becomes the sole anchor for
+that run. Used by the consumer-side workflow in each producer repo
+(`octi-web/.github/workflows/cross-repo-verify.yml` in Phase B4) to point at a
+PR HEAD SHA without rewriting `fixture-lock.json`.
+
+The env var is declared as a Gradle task input on each consuming module's
+test task so an overridden run can't be UP-TO-DATE skipped.
+
+### Bumping the pin
+
+```bash
+# 1. Pick the new upstream commit SHA.
+# 2. Fetch its manifest.json and sha256 it.
+curl -sSL https://raw.githubusercontent.com/d4rken-org/octi-web/<sha>/src/__interop__/published/manifest.json \
+  | sha256sum
+# 3. Edit fixture-lock.json with both values.
+# 4. Run the module test suites — re-fetch happens automatically.
+./gradlew :modules-meta:testDebugUnitTest :modules-clipboard:testDebugUnitTest :modules-files:testDebugUnitTest
+```
+
+Cache misses force a fresh fetch; the lockfile's `manifest_sha256` is the
+single-file trust anchor for that fetch.
+
 ## Breaking a wire format on purpose
 
 The cross-repo gate makes "land producer change first, consumers later"

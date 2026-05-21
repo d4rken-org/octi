@@ -30,3 +30,4 @@ fastlane/metadata/android/*/images/phoneScreenshots/*.png
 _site/
 .jekyll-cache/
 vendor/bundle/
+.cache/interop-fixtures/
