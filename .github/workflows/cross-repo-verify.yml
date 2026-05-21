@@ -1,0 +1,221 @@
+name: Cross-repo wire-format verify
+
+# Runs on every PR (no path filter at trigger level — branch-protection rules can require
+# these checks without GitHub leaving them pending on path-skipped PRs). The relevance
+# check happens inside the job, and irrelevant PRs early-exit with success.
+#
+# Sister workflows in octi-web and octi-desktop (Phase B4, C4) mirror this shape from
+# their respective directions once those repos start publishing fixtures of their own.
+
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cross-repo-verify-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # Path prefixes that can affect the bytes app-main puts on the wire AND that are
+  # actually exercised by the consumer fixtures in sync-core/src/test/resources/interop/.
+  # Entries ending in `/` match any file under that prefix; bare file entries must
+  # match exactly. Module-specific paths (modules-meta/, etc.) are deliberately NOT
+  # here today — the committed fixtures only cover the crypto layer. Add per-module
+  # paths in the same PRs that ship module fixtures (Phase B/C).
+  ALLOWLIST: |
+    sync-core/src/main/java/eu/darken/octi/sync/core/encryption/
+    sync-core/src/main/java/eu/darken/octi/sync/core/blob/
+    sync-core/src/test/resources/interop/
+    app-common/src/main/java/eu/darken/octi/common/serialization/
+    sync-core/build.gradle.kts
+    app-common/build.gradle.kts
+    buildSrc/
+    gradle/wrapper/
+    .github/workflows/cross-repo-verify.yml
+
+jobs:
+  verify-web:
+    name: Verify octi-web decodes this PR's wire bytes
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout this repo at PR head
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          persist-credentials: false
+          path: app-main
+          # Full history so `git merge-base` finds the PR's branch point on main.
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Detect wire-format-relevant changes
+        id: changed
+        working-directory: app-main
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+          merge_base="$(git merge-base "$base" "$head")"
+
+          matches_allowlist() {
+            local path="$1" prefix
+            while IFS= read -r prefix; do
+              prefix="${prefix#"${prefix%%[![:space:]]*}"}"
+              [[ -z "$prefix" ]] && continue
+              if [[ "$prefix" == */ ]]; then
+                [[ "$path" == "$prefix"* ]] && return 0
+              else
+                [[ "$path" == "$prefix" ]] && return 0
+              fi
+            done <<< "$ALLOWLIST"
+            return 1
+          }
+
+          relevant=false
+          while IFS= read -r -d '' path; do
+            if matches_allowlist "$path"; then
+              echo "relevant: $path"
+              relevant=true
+            fi
+          done < <(git diff --name-only --no-renames -z "$merge_base" "$head" --)
+
+          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
+          if [[ "$relevant" == "false" ]]; then
+            echo "no wire-format-relevant paths changed; consumer verify will be skipped."
+          fi
+
+      - name: Checkout octi-web
+        if: steps.changed.outputs.relevant == 'true'
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          repository: d4rken-org/octi-web
+          persist-credentials: false
+          path: octi-web
+
+      - name: Install pnpm
+        if: steps.changed.outputs.relevant == 'true'
+        uses: pnpm/action-setup@d15e628ca66d93ee5f352c71671a7bc6a97af5c9 # v6.0.8
+        with:
+          version: 11.1.1
+
+      - name: Setup Node 24 with pnpm cache
+        if: steps.changed.outputs.relevant == 'true'
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: octi-web/pnpm-lock.yaml
+
+      - name: Install octi-web dependencies
+        if: steps.changed.outputs.relevant == 'true'
+        working-directory: octi-web
+        run: pnpm install --frozen-lockfile
+
+      - name: Run octi-web tests with fixture override
+        if: steps.changed.outputs.relevant == 'true'
+        working-directory: octi-web
+        env:
+          INTEROP_FIXTURE_OVERRIDES: '{"d4rken-org/octi":"${{ github.event.pull_request.head.sha }}"}'
+        run: |
+          echo "Running octi-web tests against this PR's app-main HEAD (${{ github.event.pull_request.head.sha }})"
+          pnpm test
+
+  verify-desktop:
+    name: Verify octi-desktop decodes this PR's wire bytes
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout this repo at PR head
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          persist-credentials: false
+          path: app-main
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Detect wire-format-relevant changes
+        id: changed
+        working-directory: app-main
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+          merge_base="$(git merge-base "$base" "$head")"
+
+          matches_allowlist() {
+            local path="$1" prefix
+            while IFS= read -r prefix; do
+              prefix="${prefix#"${prefix%%[![:space:]]*}"}"
+              [[ -z "$prefix" ]] && continue
+              if [[ "$prefix" == */ ]]; then
+                [[ "$path" == "$prefix"* ]] && return 0
+              else
+                [[ "$path" == "$prefix" ]] && return 0
+              fi
+            done <<< "$ALLOWLIST"
+            return 1
+          }
+
+          relevant=false
+          while IFS= read -r -d '' path; do
+            if matches_allowlist "$path"; then
+              echo "relevant: $path"
+              relevant=true
+            fi
+          done < <(git diff --name-only --no-renames -z "$merge_base" "$head" --)
+
+          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
+          if [[ "$relevant" == "false" ]]; then
+            echo "no wire-format-relevant paths changed; consumer verify will be skipped."
+          fi
+
+      - name: Checkout octi-desktop
+        if: steps.changed.outputs.relevant == 'true'
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          repository: d4rken-org/octi-desktop
+          persist-credentials: false
+          path: octi-desktop
+
+      - name: Setup JDK 21
+        if: steps.changed.outputs.relevant == 'true'
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 #v5.2.0
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle wrapper
+        if: steps.changed.outputs.relevant == 'true'
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae #v5.0.5
+        with:
+          path: |
+            ~/.gradle/wrapper
+            !~/.gradle/wrapper/dists/**/gradle*.zip
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('octi-desktop/**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-wrapper-
+
+      - name: Cache Gradle dependencies
+        if: steps.changed.outputs.relevant == 'true'
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae #v5.0.5
+        with:
+          path: |
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('octi-desktop/**/*.gradle*', 'octi-desktop/**/gradle-wrapper.properties', 'octi-desktop/buildSrc/**/*.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-caches-
+
+      - name: Run octi-desktop tests with fixture override
+        if: steps.changed.outputs.relevant == 'true'
+        working-directory: octi-desktop
+        env:
+          INTEROP_FIXTURE_OVERRIDES: '{"d4rken-org/octi":"${{ github.event.pull_request.head.sha }}"}'
+        run: |
+          echo "Running octi-desktop tests against this PR's app-main HEAD (${{ github.event.pull_request.head.sha }})"
+          chmod +x ./gradlew
+          ./gradlew test
