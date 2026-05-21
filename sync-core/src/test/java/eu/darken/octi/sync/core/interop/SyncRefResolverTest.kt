@@ -152,23 +152,50 @@ class SyncRefResolverTest {
     }
 
     @Test
-    fun `resolveAll throws when override targets a source not present in the lock`() {
-        // Workflow misconfiguration guard: a override for an allowlisted-but-not-yet-locked
-        // source (e.g. octi-desktop before Phase C lands it in app-main's lock) must fail loudly,
-        // not silently fall back to the locked refs.
+    fun `resolveAllFromEnv throws when override targets a source not present in the lock`() {
+        // Workflow misconfiguration guard: an override for an allowlisted source that isn't
+        // present in this repo's lock must fail loudly, not silently fall back. Goes through
+        // the full env → parseOverrides → resolveAll path so SOURCE_PATHS validation is also
+        // exercised on the way in.
+        val env = mapOf(
+            "INTEROP_FIXTURE_OVERRIDES" to """{"d4rken-org/octi-desktop":"${"a".repeat(40)}"}""",
+        )
+        // validLock() only carries octi-web; the desktop override is allowlisted by SOURCE_PATHS
+        // but not present in the lock → resolveAll's missing-source guard fires.
         shouldThrow<IllegalArgumentException> {
-            // Use any SOURCE_PATHS-known key OTHER than what's in this lock. We only have one
-            // SOURCE_PATHS entry today, so simulate a second one being added to overrides without
-            // first being added to the lock by reaching for an arbitrary known string from the
-            // override path's validation set. Since SOURCE_PATHS only has octi-web today, this
-            // test uses parseOverrides validation as a precondition — any other key would be
-            // rejected at parse-time, so the only way to exercise resolveAll's check is to call
-            // it directly with a manually-constructed override map.
-            SyncRefResolver.resolveAll(
-                validLock(),
-                mapOf("d4rken-org/octi-future" to "0000000000000000000000000000000000000003"),
-            )
+            SyncRefResolver.resolveAllFromEnv(validLock(), env = env)
         }
+    }
+
+    @Test
+    fun `resolveAllFromEnv applies an override to one source of a multi-source lock and leaves the other anchored`() {
+        // Phase C2 onward: app-main's lock has both octi-web and octi-desktop. An override
+        // workflow (e.g. octi-desktop's symmetric gate) pins only its own source; the other
+        // must keep its locked ref + manifestSha256 anchor. End-to-end test via the env path
+        // — the same path the production gate exercises.
+        val secondSource = "d4rken-org/octi-desktop"
+        val secondRef = "1e00e71fc60841fda80d7db4f630aa99b1112c9d"
+        val secondSha = "ce2fd860ff124599bfc61a94f824c17c521cf79d744f06bc3551e284e6a37fe4"
+        val multiSourceLock = FixtureLock(
+            schemaVersion = InteropFixtures.LOCK_SCHEMA_VERSION,
+            sources = mapOf(
+                validSourceA to LockedSource(validRefA, validShaA),
+                secondSource to LockedSource(secondRef, secondSha),
+            ),
+        )
+        val override = "1111111111111111111111111111111111111111"
+        val resolved = SyncRefResolver.resolveAllFromEnv(
+            multiSourceLock,
+            env = mapOf("INTEROP_FIXTURE_OVERRIDES" to """{"$secondSource":"$override"}"""),
+        )
+
+        val webEntry = resolved.getValue(validSourceA)
+        webEntry.ref shouldBe validRefA
+        webEntry.manifestSha256 shouldBe validShaA
+
+        val desktopEntry = resolved.getValue(secondSource)
+        desktopEntry.ref shouldBe override
+        desktopEntry.manifestSha256 shouldBe null
     }
 
     @Test

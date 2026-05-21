@@ -63,8 +63,9 @@ object InteropFixtures {
 }
 
 /**
- * Multi-source lockfile entry. App-main consumes from `d4rken-org/octi-web` today; later
- * phases (Phase C) add `d4rken-org/octi-desktop` to the same map.
+ * Multi-source lockfile entry. App-main consumes both `d4rken-org/octi-web` and
+ * `d4rken-org/octi-desktop` today; new sources land here by adding both the lockfile entry
+ * and the matching path in [SyncRefResolver.SOURCE_PATHS].
  */
 @Serializable
 data class FixtureLock(

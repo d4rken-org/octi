@@ -113,30 +113,29 @@ without leaving the check pending.
 
 ## Consuming other repos' fixtures (Phase B onward)
 
-App-main also **consumes** fixtures published by `d4rken-org/octi-web` (and, in
-Phase C, `d4rken-org/octi-desktop`). The other side of the same bidirectional
-contract: producer-side serializer drift breaks the gate at the producer's PR,
-because every consumer's CI runs against the producer's HEAD via the
+App-main also **consumes** fixtures published by `d4rken-org/octi-web` and
+`d4rken-org/octi-desktop`. The other side of the same bidirectional contract:
+producer-side serializer drift breaks the gate at the producer's PR, because
+every consumer's CI runs against the producer's HEAD via the
 `INTEROP_FIXTURE_OVERRIDES` env var.
 
 ### Pinning
 
-`fixture-lock.json` at repo root pins each upstream source:
+`fixture-lock.json` at repo root pins each upstream source independently:
 
 ```json
 {
   "schemaVersion": 2,
   "sources": {
-    "d4rken-org/octi-web": {
-      "ref": "<40-char commit SHA>",
-      "manifest_sha256": "<sha256 of that source's manifest.json>"
-    }
+    "d4rken-org/octi-web":     { "ref": "<sha40>", "manifest_sha256": "<sha256>" },
+    "d4rken-org/octi-desktop": { "ref": "<sha40>", "manifest_sha256": "<sha256>" }
   }
 }
 ```
 
-Schema is v2 — multi-source from day one so Phase C can add `d4rken-org/octi-desktop`
-without a migration step.
+Schema is v2 multi-source from day one. Each source can be bumped independently
+of the others; the gating workflow on the matching producer repo can override
+just its own entry without disturbing the rest.
 
 ### Test layout
 
@@ -144,11 +143,17 @@ without a migration step.
   (`InteropFixtureSync`, `SyncRefResolver`, schemas). Lives there because
   `modules-meta`, `modules-clipboard`, `modules-files` depend on `sync-core`
   and each module's consumer test needs to import its own `*Info` model.
-- **Per-module consumer tests**: `modules-{meta,clipboard,files}/src/test/.../interop/Web*InteropTest.kt`.
-  Each calls `InteropFixtureSync.ensureSynced("d4rken-org/octi-web")` in
-  `@BeforeAll`, reads the relevant `octi-web-<module>.json` from the cache,
+- **Per-module consumer tests** (one pair per producer):
+  - `modules-{meta,clipboard,files}/src/test/.../interop/Web*InteropTest.kt`
+    consumes octi-web's fixtures.
+  - `modules-{meta,clipboard,files}/src/test/.../interop/Desktop*InteropTest.kt`
+    consumes octi-desktop's fixtures.
+  Each calls `InteropFixtureSync.ensureSynced("d4rken-org/<source>")` in
+  `@BeforeAll`, reads the relevant `octi-<source>-<module>.json` from the cache,
   and decodes every `payloadJson` through its production decoder with
-  field-by-field assertions.
+  field-by-field assertions. Desktop's fixtures pin a different wire shape for
+  `SharedFile.blobKey` (plain UUID, not `sha256:<hex>`) and emit a real
+  `deviceBootedAt` Instant for the `full` meta vector.
 
 ### Cache
 
