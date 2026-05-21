@@ -27,6 +27,19 @@ android {
         }
         tasks.withType<Test> {
             useJUnitPlatform()
+            // InteropFixtureSync (in app-common-test) reads this to locate fixture-lock.json
+            // and write its cache at <rootDir>/.cache/interop-fixtures/. Pinning it here makes
+            // IDE-direct and Gradle invocations agree.
+            systemProperty("interopRepoRoot", rootProject.projectDir.absolutePath)
+            // Pin fixture-lock.json + INTEROP_FIXTURE_OVERRIDES as task inputs so a lock bump
+            // or override change invalidates the cached test result and forces a re-fetch +
+            // re-verify, instead of being skipped UP-TO-DATE.
+            inputs.file(rootProject.layout.projectDirectory.file("fixture-lock.json"))
+                .withPathSensitivity(PathSensitivity.RELATIVE)
+            inputs.property(
+                "INTEROP_FIXTURE_OVERRIDES",
+                providers.environmentVariable("INTEROP_FIXTURE_OVERRIDES").orElse(""),
+            )
         }
     }
 }
