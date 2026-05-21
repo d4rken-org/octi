@@ -26,6 +26,7 @@ class PayloadEncryption(
     private val useLegacyEncryption: Boolean = false,
 ) {
 
+    // smoke: cross-repo-verify gate touch (no behavior change)
     init {
         // Process-global JCE provider install + Tink configuration registration must
         // happen before any keysetHandle / primitive call. CryptoBootstrap owns that;
