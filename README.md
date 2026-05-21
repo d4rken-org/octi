@@ -5,6 +5,7 @@
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/d4rken-org/octi?include_prereleases)](https://github.com/d4rken-org/octi/releases/latest)
 [![RB Status](https://shields.rbtlog.dev/simple/eu.darken.octi)](https://shields.rbtlog.dev/eu.darken.octi)
 [![Code tests & eval](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml/badge.svg)](https://github.com/d4rken-org/octi/actions/workflows/code-checks.yml)
+[![Cross-repo wire-format verify](https://github.com/d4rken-org/octi/actions/workflows/cross-repo-verify.yml/badge.svg)](https://github.com/d4rken-org/octi/actions/workflows/cross-repo-verify.yml)
 [![Crowdin](https://badges.crowdin.net/octi/localized.svg)](https://crowdin.com/project/octi)
 [![Github Downloads](https://img.shields.io/github/downloads/d4rken-org/octi/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/d4rken-org/octi/main/README.md#download)
 [![Google Play Downloads](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Deu.darken.octi%26l%3DGoogle%2520Play%26m%3D%24totalinstalls)](https://github.com/d4rken-org/octi/main/README.md#download)
