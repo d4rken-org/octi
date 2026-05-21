@@ -50,6 +50,11 @@ object InteropFixtureSync {
      * Populate (or reuse) the cache for every source in the lockfile. Returns a map
      * `source -> cache directory`. Safe to call from multiple test classes — only the
      * first call does work.
+     *
+     * Note: cache directories are per-source, but the FIRST call syncs *all* sources at once.
+     * If one source's lockfile entry is stale (e.g. upstream history was rewritten),
+     * subsequent tests against a different, still-valid source will fail before reading
+     * their own cache. Treat each lockfile bump as a single global event.
      */
     fun ensureSynced(): Map<String, Path> {
         cacheDirsRef.get()?.let { return it }
@@ -61,7 +66,11 @@ object InteropFixtureSync {
         }
     }
 
-    /** Convenience overload — return the cache dir for one specific source. */
+    /**
+     * Convenience overload — return the cache dir for one specific source. Same blocking
+     * sync semantics as the no-arg variant (all sources sync on the first caller); this is
+     * just sugar for picking one entry out of the resulting map.
+     */
     fun ensureSynced(source: String): Path {
         val dirs = ensureSynced()
         return dirs[source] ?: error(

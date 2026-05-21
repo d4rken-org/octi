@@ -22,17 +22,21 @@ data class ResolvedSource(
  * + cache directories after `INTEROP_FIXTURE_OVERRIDES` is applied.
  *
  * Mirrors octi-web's `src/__interop__/sync-ref-resolver.ts` and octi-desktop's
- * `SyncRefResolver.kt`. Keep [SOURCE_PATHS] in lockstep across all three.
+ * `SyncRefResolver.kt`. Each consumer lists only the producers it consumes; the
+ * invariant is that for any shared source, the path string must agree across consumers.
  */
 object SyncRefResolver {
 
     /**
-     * Code-owned allowlist of upstream sources. Adding a fourth source requires a code
-     * change here — cross-repo trust is not a runtime config. The value is the path
-     * under the source repo root that hosts `manifest.json` + the fixture files.
+     * Code-owned allowlist of upstream sources THIS REPO consumes. Adding a new source
+     * requires a coordinated rollout: producer commits + ships its fixtures, then each
+     * consumer adds it here. Cross-repo trust is never a runtime config.
+     *
+     * Value is the path under the source repo root that hosts `manifest.json` + fixture files.
      */
     val SOURCE_PATHS: Map<String, String> = mapOf(
         "d4rken-org/octi-web" to "src/__interop__/published",
+        "d4rken-org/octi-desktop" to "src/test/resources/interop/published",
     )
 
     private val SHA40_RE = Regex("""^[a-f0-9]{40}$""")

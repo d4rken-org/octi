@@ -4,6 +4,10 @@
     "d4rken-org/octi-web": {
       "ref": "84b9e57ac72e9b113de4c0c661e81938f8588f9d",
       "manifest_sha256": "d5037e9c9ef02e7b36e6f69c2081a1cdd6adc398b8203e9e8c9409a5c2810bd0"
+    },
+    "d4rken-org/octi-desktop": {
+      "ref": "1e00e71fc60841fda80d7db4f630aa99b1112c9d",
+      "manifest_sha256": "ce2fd860ff124599bfc61a94f824c17c521cf79d744f06bc3551e284e6a37fe4"
     }
   }
 }
