@@ -53,6 +53,7 @@ import okio.Source
 import okio.source
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.FilterInputStream
 import java.io.IOException
 import java.io.InputStream
 import java.security.DigestInputStream
@@ -538,17 +539,39 @@ class FileShareService @Inject constructor(
      * Build a single-call `() -> Source` factory that opens [uri], wraps the InputStream with a
      * [DigestInputStream] feeding [plaintextDigest], and returns an okio `Source`. A second call
      * is a contract violation (Tier B and B′ are single-connector — the factory is invoked
-     * exactly once by `BlobManager.put`). A source-open failure raises [SourceUnavailableException];
-     * because the factory runs inside `BlobManager.put`, that surfaces as a per-connector error and
-     * — when every connector saw only source failures — is mapped to [ShareResult.SourceUnavailable]
-     * by [mapAllFailedToShareResult].
+     * exactly once by `BlobManager.put`). A source-open failure ([openSourceStream]) or a source-read
+     * failure ([sourceReadGuard]) raises [SourceUnavailableException]; because the factory runs inside
+     * `BlobManager.put`, that surfaces as a per-connector error and — when every connector saw only
+     * source failures — is mapped to [ShareResult.SourceUnavailable] by [mapAllFailedToShareResult].
      */
     private fun singleUseUriSource(uri: Uri, plaintextDigest: MessageDigest): () -> Source {
         var opened = false
         return {
             check(!opened) { "single-use URI source factory invoked twice" }
             opened = true
-            DigestInputStream(openSourceStream(uri), plaintextDigest).source()
+            DigestInputStream(sourceReadGuard(uri, openSourceStream(uri)), plaintextDigest).source()
+        }
+    }
+
+    /**
+     * Wrap [stream] so a failure while *reading* the source URI maps to [SourceUnavailableException],
+     * mirroring [openSourceStream]'s open-time mapping and the staging tier's mid-copy handling. The
+     * streaming tiers read the URI inside `BlobManager.put`, so without this a URI that goes
+     * unreadable mid-upload (grant revoked / cloud file evicted) would surface as a generic connector
+     * failure. Only the source stream is wrapped — connector/network writes happen elsewhere in
+     * `store.put`, so they can't be mislabeled as a source problem.
+     */
+    private fun sourceReadGuard(uri: Uri, stream: InputStream): InputStream = object : FilterInputStream(stream) {
+        override fun read(): Int = guarded { super.read() }
+        override fun read(b: ByteArray, off: Int, len: Int): Int = guarded { super.read(b, off, len) }
+        private fun guarded(read: () -> Int): Int = try {
+            read()
+        } catch (e: IOException) {
+            throw SourceUnavailableException("read failed for $uri", e)
+        } catch (e: SecurityException) {
+            throw SourceUnavailableException("read permission lost for $uri", e)
+        } catch (e: IllegalArgumentException) {
+            throw SourceUnavailableException("read rejected for $uri", e)
         }
     }
 
