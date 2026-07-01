@@ -46,6 +46,7 @@ import eu.darken.octi.sync.core.blob.StorageStatus
 import eu.darken.octi.sync.core.blob.StorageStatusManager
 import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import eu.darken.octi.sync.core.shortLabel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -467,25 +468,38 @@ class FileShareListVM @Inject constructor(
             return@launch
         }
         appScope.launch(dispatcherProvider.IO) {
-            when (val result = fileShareService.shareFile(uri)) {
-                is FileShareService.ShareResult.Success ->
-                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_success))
-                is FileShareService.ShareResult.PartialMirror ->
-                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_partial))
-                is FileShareService.ShareResult.AllConnectorsFailed ->
-                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_failed))
-                is FileShareService.ShareResult.FileTooLarge ->
-                    uiEvents.tryEmit(UiEvent.ShowMessageWithSize(R.string.module_files_upload_too_large, result.maxBytes))
-                is FileShareService.ShareResult.NoEligibleConnectors ->
-                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_no_connectors))
-                is FileShareService.ShareResult.Cancelled ->
-                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_cancelled))
-                is FileShareService.ShareResult.ServerStorageLow ->
-                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_server_storage_low))
-                is FileShareService.ShareResult.AccountQuotaFull ->
-                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_account_quota_full))
-                is FileShareService.ShareResult.LocalStorageLow ->
-                    uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_local_storage_low))
+            // appScope has no CoroutineExceptionHandler, so an exception escaping here crashes the
+            // app. shareFile maps known failures to ShareResult; the guard below turns an unexpected
+            // exception into a generic failure message instead of a crash (while letting genuine
+            // cancellation propagate). Mirrors the runCatching guards on the fire-and-forget sites.
+            try {
+                when (val result = fileShareService.shareFile(uri)) {
+                    is FileShareService.ShareResult.Success ->
+                        uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_success))
+                    is FileShareService.ShareResult.PartialMirror ->
+                        uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_partial))
+                    is FileShareService.ShareResult.AllConnectorsFailed ->
+                        uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_failed))
+                    is FileShareService.ShareResult.FileTooLarge ->
+                        uiEvents.tryEmit(UiEvent.ShowMessageWithSize(R.string.module_files_upload_too_large, result.maxBytes))
+                    is FileShareService.ShareResult.NoEligibleConnectors ->
+                        uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_no_connectors))
+                    is FileShareService.ShareResult.Cancelled ->
+                        uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_cancelled))
+                    is FileShareService.ShareResult.SourceUnavailable ->
+                        uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_source_unavailable))
+                    is FileShareService.ShareResult.ServerStorageLow ->
+                        uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_server_storage_low))
+                    is FileShareService.ShareResult.AccountQuotaFull ->
+                        uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_account_quota_full))
+                    is FileShareService.ShareResult.LocalStorageLow ->
+                        uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_local_storage_low))
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "onShareFile($uri) unexpected failure: ${e.asLog()}" }
+                uiEvents.tryEmit(UiEvent.ShowMessage(R.string.module_files_upload_failed))
             }
         }
     }

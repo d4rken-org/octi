@@ -32,7 +32,10 @@ import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
 import testhelpers.coroutine.runTest2
+import okio.Source
 import java.io.ByteArrayInputStream
+import java.io.FileNotFoundException
+import java.io.IOException
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
@@ -380,6 +383,158 @@ class FileShareServiceTest : BaseTest() {
         val result = createService().shareFile(uri)
 
         result.shouldBeInstanceOf<FileShareService.ShareResult.AllConnectorsFailed>()
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile returns SourceUnavailable when staging source open throws FileNotFoundException`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        every { contentResolver.openInputStream(uri) } throws FileNotFoundException("gone")
+        every { syncSettings.deviceId } returns ownDeviceId
+        // Two connectors -> staging tier, which opens the URI directly before BlobManager.put.
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.SourceUnavailable
+        coVerify(exactly = 0) { blobManager.put(any(), any(), any(), any(), any(), any(), any()) }
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile returns SourceUnavailable when staging source open throws SecurityException`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        // A revoked read grant surfaces as SecurityException, which is NOT an IOException — it must
+        // still be mapped rather than crashing the app.
+        every { contentResolver.openInputStream(uri) } throws SecurityException("permission revoked")
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.SourceUnavailable
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile returns SourceUnavailable when staging read fails mid-copy`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        // Stream opens fine, then the provider drops mid-read (e.g. cloud file evicted).
+        every { contentResolver.openInputStream(uri) } answers {
+            object : java.io.InputStream() {
+                override fun read(): Int = throw IOException("mid-read boom")
+                override fun read(b: ByteArray): Int = throw IOException("mid-read boom")
+                override fun read(b: ByteArray, off: Int, len: Int): Int = throw IOException("mid-read boom")
+            }
+        }
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.SourceUnavailable
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile returns SourceUnavailable when single-connector pre-count and staging fallback both fail`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        // Single connector + unsized probe -> pre-count tier. Every open fails: the pre-count read
+        // routes to the staging fallback, which re-opens and maps the still-dead URI to
+        // SourceUnavailable. Without the fix, the thrown FileNotFoundException escapes -> crash.
+        every { contentResolver.openInputStream(uri) } throws FileNotFoundException("gone")
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA)
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.SourceUnavailable
+        coVerify(exactly = 0) { blobManager.put(any(), any(), any(), any(), any(), any(), any()) }
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile returns SourceUnavailable when single-connector streaming re-open fails`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val fileBytes = ByteArray(42) { it.toByte() }
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        // First open (pre-count) succeeds; the streaming re-open inside BlobManager.put fails.
+        var opens = 0
+        every { contentResolver.openInputStream(uri) } answers {
+            opens++
+            if (opens == 1) ByteArrayInputStream(fileBytes) else throw FileNotFoundException("gone")
+        }
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA)
+        // Drive the real openSource lambda so a genuine SourceUnavailableException lands in
+        // perConnectorErrors, then assert that an all-source-failure put maps to SourceUnavailable
+        // (the mapAllFailedToShareResult path for single-connector streaming tiers).
+        coEvery { blobManager.put(any(), any(), any(), any(), any(), any(), any()) } answers {
+            val openSource = arg<() -> Source>(3)
+            val err = try {
+                openSource()
+                error("expected streaming re-open to throw")
+            } catch (e: Throwable) {
+                e
+            }
+            BlobManager.PutResult(successful = emptySet(), perConnectorErrors = mapOf(connectorA to err))
+        }
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.SourceUnavailable
 
         cacheDir.deleteRecursively()
     }

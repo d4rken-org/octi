@@ -52,6 +52,7 @@ import okio.Path.Companion.toPath
 import okio.Source
 import okio.source
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
 import java.security.DigestInputStream
@@ -90,6 +91,12 @@ class FileShareService @Inject constructor(
         data class FileTooLarge(val requestedBytes: Long, val maxBytes: Long) : ShareResult()
         data object NoEligibleConnectors : ShareResult()
         data object Cancelled : ShareResult()
+        /**
+         * The source content URI could not be read — the SAF/cloud provider revoked the read
+         * grant, or the underlying file was moved/deleted between the user picking it and the
+         * upload running. Distinct from a transport failure: nothing was ever readable to send.
+         */
+        data object SourceUnavailable : ShareResult()
         /** Every reachable connector reported `BlobServerStorageLowException`. */
         data object ServerStorageLow : ShareResult()
         /** Every reachable connector reported `BlobQuotaExceededException`. */
@@ -300,6 +307,9 @@ class FileShareService @Inject constructor(
         } catch (e: LocalStorageLowException) {
             log(TAG, WARN) { "shareFile(): local storage exhausted: ${e.message}" }
             ShareResult.LocalStorageLow(requestedBytes = e.requestedBytes, availableBytes = e.availableBytes)
+        } catch (e: SourceUnavailableException) {
+            log(TAG, WARN) { "shareFile(): source URI unreadable: ${e.message}" }
+            ShareResult.SourceUnavailable
         } finally {
             activeJobs.remove(blobKey.id)
             stagedFile?.delete()
@@ -328,31 +338,49 @@ class FileShareService @Inject constructor(
         val digest = MessageDigest.getInstance("SHA-256")
         var size = 0L
 
-        try {
-            context.contentResolver.openInputStream(uri)?.use { input ->
-                stagedFile.outputStream().use { output ->
+        // Attribute failures precisely: opening/reading the source URI failing means the shared
+        // content is gone (SourceUnavailableException); ENOSPC opening/writing/closing the staging
+        // file means local storage (LocalStorageLowException); any other local IO error propagates
+        // as a generic failure. Lumping them together mislabels a full disk as "file moved/deleted"
+        // and vice versa.
+        openSourceStream(uri).use { input ->
+            try {
+                stagedFile.outputStream().use { sink ->
                     val buffer = ByteArray(8192)
-                    var read: Int
-                    while (input.read(buffer).also { read = it } != -1) {
-                        output.write(buffer, 0, read)
+                    while (true) {
+                        val read = try {
+                            input.read(buffer)
+                        } catch (e: IOException) {
+                            throw SourceUnavailableException("read failed for $uri", e)
+                        } catch (e: SecurityException) {
+                            throw SourceUnavailableException("read permission lost for $uri", e)
+                        } catch (e: IllegalArgumentException) {
+                            throw SourceUnavailableException("read rejected for $uri", e)
+                        }
+                        if (read == -1) break
+                        // sink.write / the .use close below are staging-file IO — a failure here is
+                        // handled by the outer catch, not attributed to the source.
+                        sink.write(buffer, 0, read)
                         digest.update(buffer, 0, read)
                         size += read
                     }
                 }
-            } ?: throw IOException("openInputStream returned null for $uri")
-        } catch (e: IOException) {
-            // Local IO during staging is the only place a real ENOSPC fires for shareFile —
-            // distinguish it from generic transport failures so the UI can surface a useful
-            // error. Other IOException causes (provider revoked, permission lost) propagate
-            // as-is and get bucketed into AllConnectorsFailed by the outer `put` flow.
-            if (isNoSpaceOnDevice(e)) {
-                throw LocalStorageLowException(
-                    requestedBytes = size.coerceAtLeast(1L),
-                    availableBytes = stagingDir.usableSpace,
-                    cause = e,
-                )
+            } catch (e: SourceUnavailableException) {
+                // A source-read failure must not be reclassified as a local-storage failure below.
+                throw e
+            } catch (e: IOException) {
+                // Opening, writing, or closing the staging file failed. ENOSPC on the cache
+                // partition -> LocalStorageLow; any other local IO error propagates as a generic
+                // failure (the VM's appScope guard maps it), never mislabeled as "source gone".
+                if (isNoSpaceOnDevice(e)) {
+                    throw LocalStorageLowException(
+                        requestedBytes = size.coerceAtLeast(1L),
+                        availableBytes = stagingDir.usableSpace,
+                        cause = e,
+                    )
+                }
+                throw e
             }
-            throw e
         }
 
         val checksum = digest.digest().toLowercaseHex()
@@ -435,14 +463,27 @@ class FileShareService @Inject constructor(
     ): UploadOutcome {
         val precountDigest = MessageDigest.getInstance("SHA-256")
         var precountSize = 0L
-        context.contentResolver.openInputStream(uri)?.use { input ->
-            val buffer = ByteArray(8192)
-            var read: Int
-            while (input.read(buffer).also { read = it } != -1) {
-                precountDigest.update(buffer, 0, read)
-                precountSize += read
-            }
-        } ?: throw UriNotReopenableException("Pre-count open returned null for $uri")
+        try {
+            context.contentResolver.openInputStream(uri)?.use { input ->
+                val buffer = ByteArray(8192)
+                var read: Int
+                while (input.read(buffer).also { read = it } != -1) {
+                    precountDigest.update(buffer, 0, read)
+                    precountSize += read
+                }
+            } ?: throw UriNotReopenableException("Pre-count open returned null for $uri")
+        } catch (e: UriNotReopenableException) {
+            throw e
+        } catch (e: IOException) {
+            // Open or read of the source URI failed (missing/moved file, provider error). Route
+            // to the staging fallback like the null case — the last-resort Tier A read maps a
+            // still-dead URI to SourceUnavailableException. Without this, a thrown FNF escapes.
+            throw UriNotReopenableException("Pre-count read failed for $uri: ${e.message}")
+        } catch (e: SecurityException) {
+            throw UriNotReopenableException("Pre-count read permission lost for $uri: ${e.message}")
+        } catch (e: IllegalArgumentException) {
+            throw UriNotReopenableException("Pre-count provider rejected $uri: ${e.message}")
+        }
         val precountChecksum = precountDigest.digest().toLowercaseHex()
         log(TAG, VERBOSE) { "runPreCountThenStream(): precount size=$precountSize" }
 
@@ -471,18 +512,36 @@ class FileShareService @Inject constructor(
      * Build a single-call `() -> Source` factory that opens [uri], wraps the InputStream with a
      * [DigestInputStream] feeding [plaintextDigest], and returns an okio `Source`. A second call
      * is a contract violation (Tier B and B′ are single-connector — the factory is invoked
-     * exactly once by `BlobManager.put`). [UriNotReopenableException] propagates when the
-     * provider returns null on open, signalling the orchestrator to drop to Tier A.
+     * exactly once by `BlobManager.put`). A source-open failure raises [SourceUnavailableException];
+     * because the factory runs inside `BlobManager.put`, that surfaces as a per-connector error and
+     * — when every connector saw only source failures — is mapped to [ShareResult.SourceUnavailable]
+     * by [mapAllFailedToShareResult].
      */
     private fun singleUseUriSource(uri: Uri, plaintextDigest: MessageDigest): () -> Source {
         var opened = false
         return {
             check(!opened) { "single-use URI source factory invoked twice" }
             opened = true
-            val input: InputStream = context.contentResolver.openInputStream(uri)
-                ?: throw UriNotReopenableException("openInputStream returned null for $uri")
-            DigestInputStream(input, plaintextDigest).source()
+            DigestInputStream(openSourceStream(uri), plaintextDigest).source()
         }
+    }
+
+    /**
+     * Open [uri] for reading, mapping every "source is gone" signal to [SourceUnavailableException]:
+     * the provider returned null, [FileNotFoundException] (file moved/deleted), [SecurityException]
+     * (read grant revoked), or [IllegalArgumentException] (provider rejected the URI). Callers that
+     * open the URI directly (outside `BlobManager.put`) rely on this so a stale content URI produces
+     * a mapped [ShareResult] instead of an uncaught crash.
+     */
+    private fun openSourceStream(uri: Uri): InputStream = try {
+        context.contentResolver.openInputStream(uri)
+            ?: throw SourceUnavailableException("openInputStream returned null for $uri", null)
+    } catch (e: FileNotFoundException) {
+        throw SourceUnavailableException("openInputStream failed for $uri", e)
+    } catch (e: SecurityException) {
+        throw SourceUnavailableException("read permission lost for $uri", e)
+    } catch (e: IllegalArgumentException) {
+        throw SourceUnavailableException("provider rejected $uri", e)
     }
 
     private suspend inline fun <T> withTransferRow(
@@ -521,6 +580,13 @@ class FileShareService @Inject constructor(
             return ShareResult.NoEligibleConnectors
         }
         val errs = putResult.perConnectorErrors.values
+        if (errs.isNotEmpty() && errs.all { it is SourceUnavailableException }) {
+            // Single-connector streaming tiers open the URI inside BlobManager.put, so a dead
+            // source surfaces as a per-connector error rather than throwing out of shareFile.
+            // Map it to the same result the staging path produces — this is a source problem,
+            // not a connector/transport failure.
+            return ShareResult.SourceUnavailable
+        }
         if (errs.isNotEmpty() && errs.all { it is BlobConnectorUnsupportedException }) {
             // Every reachable connector pointed at a legacy server. Surface as
             // "no eligible connectors" — same UX as never having one configured.
@@ -564,6 +630,12 @@ class FileShareService @Inject constructor(
     ) : IOException("Local storage exhausted (requested=$requestedBytes, available=$availableBytes)", cause)
 
     private class UriNotReopenableException(message: String) : IOException(message)
+
+    /**
+     * The source content URI could not be read (provider returned null, file moved/deleted, read
+     * grant revoked, or the provider rejected the URI). Mapped to [ShareResult.SourceUnavailable].
+     */
+    private class SourceUnavailableException(message: String, cause: Throwable?) : IOException(message, cause)
 
     private fun ByteArray.toLowercaseHex(): String = joinToString("") { "%02x".format(it) }
 

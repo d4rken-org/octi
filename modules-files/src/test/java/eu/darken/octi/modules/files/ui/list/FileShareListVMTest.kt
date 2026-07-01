@@ -7,6 +7,7 @@ import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
 import eu.darken.octi.modules.files.FileShareModule
+import eu.darken.octi.modules.files.R
 import eu.darken.octi.modules.files.core.FileKey
 import eu.darken.octi.modules.files.core.FileShareInfo
 import eu.darken.octi.modules.files.core.FileShareRepo
@@ -380,6 +381,38 @@ class FileShareListVMTest : BaseTest() {
         val uri = mockk<android.net.Uri>(relaxed = true)
         // Should not throw — runCatching wraps the failing call.
         vm.enqueueShareFile(uri)
+    }
+
+    @Test
+    fun `onShareFile shows source-unavailable message when service reports SourceUnavailable`() = runTest2 {
+        setupBaseMocks()
+        val uri = mockk<android.net.Uri>(relaxed = true)
+        coEvery { fileShareService.shareFile(uri) } returns FileShareService.ShareResult.SourceUnavailable
+
+        val vm = makeVM(fakeUpgradeRepo(isPro = true))
+        vm.initialize(null)
+        vm.onShareFile(uri)
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.ShowMessage>()
+        event.messageRes shouldBe R.string.module_files_upload_source_unavailable
+    }
+
+    @Test
+    fun `onShareFile surfaces generic failure and does not crash on unexpected exception`() = runTest2 {
+        setupBaseMocks()
+        val uri = mockk<android.net.Uri>(relaxed = true)
+        // shareFile maps known failures to ShareResult; an escaping throwable would otherwise crash
+        // appScope (no CoroutineExceptionHandler). The guard turns it into a generic failure.
+        coEvery { fileShareService.shareFile(uri) } throws IOException("unexpected")
+
+        val vm = makeVM(fakeUpgradeRepo(isPro = true))
+        vm.initialize(null)
+        vm.onShareFile(uri)
+
+        val event = vm.uiEvents.first()
+        event.shouldBeInstanceOf<FileShareListVM.UiEvent.ShowMessage>()
+        event.messageRes shouldBe R.string.module_files_upload_failed
     }
 
     @Test
