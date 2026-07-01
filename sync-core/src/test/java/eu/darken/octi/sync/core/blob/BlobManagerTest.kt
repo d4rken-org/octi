@@ -14,7 +14,11 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.Flow
@@ -472,6 +476,77 @@ class BlobManagerTest : BaseTest() {
         storeB.getCalls shouldBe 0
     }
 
+    @Test
+    fun `put aborts finalized blobs when cancelled mid-fan-out`() = runTest2 {
+        val connectorIdA = connectorId
+        val connectorIdB = ConnectorId(ConnectorType.OCTISERVER, "b.example.com", "acc-b")
+        val gateB = CompletableDeferred<Unit>()
+        val reachedB = CompletableDeferred<Unit>()
+        val storeA = FakeBlobStore(connectorIdA, StorageStatus.Ready(connectorIdA, snap(used = 0, total = 1_000)))
+        val storeB = FakeBlobStore(
+            connectorId = connectorIdB,
+            initial = StorageStatus.Ready(connectorIdB, snap(used = 0, total = 1_000, cId = connectorIdB)),
+            putGate = gateB,
+            putReached = reachedB,
+        )
+        val manager = createManager(backgroundScope, storeA, storeB)
+
+        val job = launch {
+            manager.put(
+                deviceId = deviceId,
+                moduleId = moduleId,
+                blobKey = blobKey,
+                openSource = { Buffer().writeUtf8("payload") },
+                metadata = metadata,
+            )
+        }
+        // storeA finalizes immediately; storeB is suspended inside put() when we cancel.
+        reachedB.await()
+        job.cancel()
+        job.join()
+
+        storeA.putCalls shouldBe 1
+        storeA.abortCalls shouldBe 1
+        storeA.abortedRefs shouldBe listOf(RemoteBlobRef(blobKey.id))
+        storeB.abortCalls shouldBe 0
+    }
+
+    @Test
+    fun `put aborts a blob finalized by a store that ignores cancellation`() = runTest2 {
+        val connectorIdA = connectorId
+        val connectorIdB = ConnectorId(ConnectorType.OCTISERVER, "b.example.com", "acc-b")
+        val gateB = CompletableDeferred<Unit>()
+        val reachedB = CompletableDeferred<Unit>()
+        val storeA = FakeBlobStore(connectorIdA, StorageStatus.Ready(connectorIdA, snap(used = 0, total = 1_000)))
+        val storeB = FakeBlobStore(
+            connectorId = connectorIdB,
+            initial = StorageStatus.Ready(connectorIdB, snap(used = 0, total = 1_000, cId = connectorIdB)),
+            putGate = gateB,
+            putReached = reachedB,
+            ignoreCancellationInPut = true,
+        )
+        val manager = createManager(backgroundScope, storeA, storeB)
+
+        val job = launch {
+            manager.put(
+                deviceId = deviceId,
+                moduleId = moduleId,
+                blobKey = blobKey,
+                openSource = { Buffer().writeUtf8("payload") },
+                metadata = metadata,
+            )
+        }
+        reachedB.await()
+        job.cancel()          // cancellation requested while storeB.put is still running
+        gateB.complete(Unit)  // storeB finalizes and returns a ref AFTER cancellation
+        job.join()
+
+        // The joinAll barrier must capture storeB's late ref so it, too, gets aborted.
+        storeA.abortCalls shouldBe 1
+        storeB.abortCalls shouldBe 1
+        storeB.abortedRefs shouldBe listOf(RemoteBlobRef(blobKey.id))
+    }
+
     private fun createManager(
         scope: CoroutineScope,
         vararg stores: BlobStore,
@@ -500,9 +575,14 @@ class BlobManagerTest : BaseTest() {
         var throwOnPut: Throwable? = null,
         var throwOnGet: Throwable? = null,
         var getMetadata: BlobMetadata? = null,
+        private val putGate: CompletableDeferred<Unit>? = null,
+        private val putReached: CompletableDeferred<Unit>? = null,
+        private val ignoreCancellationInPut: Boolean = false,
     ) : BlobStore {
         var putCalls: Int = 0
         var getCalls: Int = 0
+        var abortCalls: Int = 0
+        val abortedRefs = mutableListOf<RemoteBlobRef>()
 
         override val storageStatus: StorageStatusProvider = object : StorageStatusProvider {
             override val connectorId: ConnectorId = this@FakeBlobStore.connectorId
@@ -523,7 +603,22 @@ class BlobManagerTest : BaseTest() {
             putCalls += 1
             throwOnPut?.let { throw it }
             if (failOnPut) throw RuntimeException("put() failed (test)")
+            putReached?.complete(Unit)
+            putGate?.let { gate ->
+                if (ignoreCancellationInPut) {
+                    // Simulate a store that finalizes despite cancellation: the ref returns after
+                    // the surrounding put() is cancelled, exercising BlobManager's joinAll barrier.
+                    withContext(NonCancellable) { gate.await() }
+                } else {
+                    gate.await()
+                }
+            }
             return RemoteBlobRef(key.id)
+        }
+
+        override suspend fun abortPostFinalize(deviceId: DeviceId, moduleId: ModuleId, remoteRef: RemoteBlobRef) {
+            abortCalls += 1
+            abortedRefs += remoteRef
         }
 
         override suspend fun get(
