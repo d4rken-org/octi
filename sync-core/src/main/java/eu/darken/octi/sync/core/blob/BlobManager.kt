@@ -19,8 +19,10 @@ import eu.darken.octi.sync.core.RemoteBlobRef
 import eu.darken.octi.sync.core.SyncSettings
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -173,7 +175,7 @@ class BlobManager @Inject constructor(
             ProgressAggregator(expectedConnectors = candidates.size, downstream = it)
         }
 
-        candidates.map { store ->
+        val uploads = candidates.map { store ->
             async {
                 try {
                     // Pre-flight via the storage-status snapshot. Always refresh first — TTL +
@@ -273,7 +275,41 @@ class BlobManager @Inject constructor(
                     recordFailure(store.connectorId, blobKey)
                 }
             }
-        }.awaitAll()
+        }
+        try {
+            uploads.awaitAll()
+        } catch (e: CancellationException) {
+            // A store may have finalized its blob and recorded a remoteRef before this put was
+            // cancelled (e.g. the user cancelled a multi-connector share while another connector was
+            // still uploading). A cancelled put never returns a PutResult, so the caller can't clean
+            // these up — abort them here or they orphan on the server until GC. joinAll first so a
+            // child that returns a ref as cancellation propagates is still captured; then abort
+            // against the original candidate store instances (NOT the public abortPostFinalize, which
+            // re-resolves via allStores and would skip a connector that paused after uploading).
+            kotlinx.coroutines.withContext(NonCancellable) {
+                // Cancel any still-running uploads before the join barrier. In the user-cancel path
+                // the parent is already cancelling them; this also covers a store throwing its own
+                // (Timeout)CancellationException while the parent is still active, so a sibling can't
+                // keep uploading indefinitely under this NonCancellable join.
+                uploads.forEach { it.cancel() }
+                uploads.joinAll()
+                val finalized = remoteRefs.toMap()
+                if (finalized.isNotEmpty()) {
+                    log(TAG, WARN) { "put(${blobKey.id}): cancelled — aborting ${finalized.size} finalized blob(s)" }
+                    val storesById = candidates.associateBy { it.connectorId }
+                    finalized.forEach { (connectorId, ref) ->
+                        storesById[connectorId]?.let { store ->
+                            try {
+                                store.abortPostFinalize(deviceId, moduleId, ref)
+                            } catch (ex: Exception) {
+                                log(TAG, WARN) { "put(${blobKey.id}): abort $connectorId failed: ${ex.message}" }
+                            }
+                        }
+                    }
+                }
+            }
+            throw e
+        }
 
         // Quota refresh after success is handled by the caller (FileShareService /
         // BlobMaintenance) AFTER its module commit lands, so the cache reflects committed state
