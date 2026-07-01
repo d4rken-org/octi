@@ -110,4 +110,27 @@ class PowerAlertRuleSerializationTest : BaseTest() {
         decoded.triggeredAt shouldBe event.triggeredAt
         decoded.dismissedAt shouldBe null
     }
+
+    @Test
+    fun `Event round-trip with notifiedAt`() {
+        val event = PowerAlertRule.Event(
+            id = "device-1-batterlow",
+            triggeredAt = Instant.parse("2024-06-15T12:00:00Z"),
+            dismissedAt = Instant.parse("2024-06-15T13:00:00Z"),
+            notifiedAt = Instant.parse("2024-06-15T12:30:00Z"),
+        )
+        val encoded = json.encodeToString(event)
+        val decoded = json.decodeFromString<PowerAlertRule.Event>(encoded)
+        decoded shouldBe event
+    }
+
+    @Test
+    fun `Event backward compatibility - old JSON without notifiedAt decodes to null`() {
+        val oldJson = """{"id":"device-1-batterlow","triggeredAt":"2024-06-15T12:00:00Z"}"""
+        val decoded = json.decodeFromString<PowerAlertRule.Event>(oldJson)
+        decoded.id shouldBe "device-1-batterlow"
+        decoded.triggeredAt shouldBe Instant.parse("2024-06-15T12:00:00Z")
+        decoded.dismissedAt shouldBe null
+        decoded.notifiedAt shouldBe null
+    }
 }
