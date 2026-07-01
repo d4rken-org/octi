@@ -11,6 +11,8 @@ import eu.darken.octi.modules.power.core.PowerInfo
 import eu.darken.octi.modules.power.core.PowerRepo
 import eu.darken.octi.modules.power.core.PowerSettings
 import eu.darken.octi.sync.core.DeviceId
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
 
 class PowerAlertManagerTest : BaseTest() {
@@ -91,6 +94,156 @@ class PowerAlertManagerTest : BaseTest() {
         coVerify(exactly = 1) { notifications.dismiss(rule) }
     }
 
+    @Test
+    fun `stale peer data does not raise an alert and clears an active event`() = runTest2 {
+        val rule = BatteryLowAlertRule(deviceId = remoteDevice, threshold = 0.3f)
+        val rules = statefulValue(setOf<PowerAlertRule>(rule))
+        val events = statefulValue(setOf(PowerAlertRule.Event(id = rule.id)))
+        val powerStates = MutableStateFlow(
+            powerState(
+                remote = powerInfo(status = PowerInfo.Status.DISCHARGING, level = 4),
+                remoteModifiedAt = Clock.System.now() - 25.hours,
+            )
+        )
+
+        setupManager(rules, events, powerStates)
+        advanceTimeBy(1_100)
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { notifications.show(any(), any(), any()) }
+        coVerify { notifications.dismiss(rule) }
+        events.flow.value shouldBe emptySet()
+    }
+
+    @Test
+    fun `stale peer data does not re-notify a dismissed alert`() = runTest2 {
+        val rule = BatteryLowAlertRule(deviceId = remoteDevice, threshold = 0.3f)
+        val rules = statefulValue(setOf<PowerAlertRule>(rule))
+        val events = statefulValue(
+            setOf(
+                PowerAlertRule.Event(
+                    id = rule.id,
+                    dismissedAt = Clock.System.now(),
+                    notifiedAt = Clock.System.now(),
+                )
+            )
+        )
+        // Stale data that also looks "recovered" (charging): the freshness gate must handle it, not the
+        // recovery branch, which would delete the event and let a later low reading re-trigger a fresh one.
+        val powerStates = MutableStateFlow(
+            powerState(
+                remote = powerInfo(status = PowerInfo.Status.CHARGING, level = 50),
+                remoteModifiedAt = Clock.System.now() - 25.hours,
+            )
+        )
+
+        setupManager(rules, events, powerStates)
+        advanceTimeBy(1_100)
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { notifications.show(any(), any(), any()) }
+        events.flow.value shouldBe emptySet()
+    }
+
+    @Test
+    fun `already-notified alert is not re-shown on a fresh evaluation`() = runTest2 {
+        // Simulates a process restart: the event was already delivered (notifiedAt set) and the peer is
+        // still low with fresh data. The persisted notifiedAt must prevent a re-post.
+        val rule = BatteryLowAlertRule(deviceId = remoteDevice, threshold = 0.3f)
+        val rules = statefulValue(setOf<PowerAlertRule>(rule))
+        val events = statefulValue(setOf(PowerAlertRule.Event(id = rule.id, notifiedAt = Clock.System.now())))
+        val powerStates = MutableStateFlow(
+            powerState(remote = powerInfo(status = PowerInfo.Status.DISCHARGING, level = 20))
+        )
+
+        setupManager(rules, events, powerStates)
+        advanceTimeBy(1_100)
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { notifications.show(any(), any(), any()) }
+    }
+
+    @Test
+    fun `fresh low battery triggers once and stamps notifiedAt`() = runTest2 {
+        val rule = BatteryLowAlertRule(deviceId = remoteDevice, threshold = 0.3f)
+        val rules = statefulValue(setOf<PowerAlertRule>(rule))
+        val events = statefulValue(emptySet<PowerAlertRule.Event>())
+        val powerStates = MutableStateFlow(
+            powerState(remote = powerInfo(status = PowerInfo.Status.DISCHARGING, level = 20))
+        )
+
+        setupManager(rules, events, powerStates)
+        advanceTimeBy(1_100)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { notifications.show(rule, any(), any()) }
+        events.flow.value.single().notifiedAt shouldNotBe null
+    }
+
+    @Test
+    fun `disabling an alert clears its event and dismisses the notification`() = runTest2 {
+        val rule = BatteryLowAlertRule(deviceId = remoteDevice, threshold = 0.3f)
+        val rules = statefulValue(setOf<PowerAlertRule>(rule))
+        val events = statefulValue(setOf(PowerAlertRule.Event(id = rule.id, notifiedAt = Clock.System.now())))
+        // No power data for the peer -> processAlerts leaves the event untouched, isolating the setter.
+        val powerStates = MutableStateFlow(powerState(remote = null))
+
+        val manager = setupManager(rules, events, powerStates)
+        advanceTimeBy(1_100)
+        advanceUntilIdle()
+
+        manager.setBatteryLowAlert(remoteDevice, null)
+        advanceUntilIdle()
+
+        events.flow.value shouldBe emptySet()
+        rules.flow.value shouldBe emptySet()
+        coVerify { notifications.dismiss(any()) }
+    }
+
+    @Test
+    fun `lowering the threshold below the current level dismisses the stale notification`() = runTest2 {
+        val rule = BatteryLowAlertRule(deviceId = remoteDevice, threshold = 0.3f)
+        val rules = statefulValue(setOf<PowerAlertRule>(rule))
+        val events = statefulValue(setOf(PowerAlertRule.Event(id = rule.id, notifiedAt = Clock.System.now())))
+        val powerStates = MutableStateFlow(
+            powerState(remote = powerInfo(status = PowerInfo.Status.DISCHARGING, level = 20))
+        )
+
+        val manager = setupManager(rules, events, powerStates)
+        advanceTimeBy(1_100)
+        advanceUntilIdle()
+
+        // Battery is 20%; lowering the alert to 10% means it no longer triggers, so the previously shown
+        // notification must be cancelled rather than left visible.
+        manager.setBatteryLowAlert(remoteDevice, 0.1f)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { notifications.dismiss(any()) }
+        coVerify(exactly = 0) { notifications.show(any(), any(), any()) }
+        events.flow.value shouldBe emptySet()
+    }
+
+    @Test
+    fun `stale charging data clears a high battery alert without notifying`() = runTest2 {
+        val rule = BatteryHighAlertRule(deviceId = remoteDevice, threshold = 0.85f)
+        val rules = statefulValue(setOf<PowerAlertRule>(rule))
+        val events = statefulValue(setOf(PowerAlertRule.Event(id = rule.id)))
+        val powerStates = MutableStateFlow(
+            powerState(
+                remote = powerInfo(status = PowerInfo.Status.CHARGING, level = 95),
+                remoteModifiedAt = Clock.System.now() - 25.hours,
+            )
+        )
+
+        setupManager(rules, events, powerStates)
+        advanceTimeBy(1_100)
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { notifications.show(any(), any(), any()) }
+        coVerify { notifications.dismiss(rule) }
+        events.flow.value shouldBe emptySet()
+    }
+
     private fun kotlinx.coroutines.test.TestScope.setupManager(
         rules: StatefulValue<Set<PowerAlertRule>>,
         events: StatefulValue<Set<PowerAlertRule.Event>>,
@@ -118,8 +271,9 @@ class PowerAlertManagerTest : BaseTest() {
     }
 
     private fun powerState(
-        remote: PowerInfo,
+        remote: PowerInfo?,
         self: PowerInfo = powerInfo(status = PowerInfo.Status.CHARGING, level = 80),
+        remoteModifiedAt: Instant = Clock.System.now(),
     ): BaseModuleRepo.State<PowerInfo> = BaseModuleRepo.State(
         moduleId = PowerModule.MODULE_ID,
         self = ModuleData(
@@ -128,13 +282,15 @@ class PowerAlertManagerTest : BaseTest() {
             moduleId = PowerModule.MODULE_ID,
             data = self,
         ),
-        others = listOf(
-            ModuleData(
-                modifiedAt = Clock.System.now(),
-                deviceId = remoteDevice,
-                moduleId = PowerModule.MODULE_ID,
-                data = remote,
-            )
+        others = listOfNotNull(
+            remote?.let {
+                ModuleData(
+                    modifiedAt = remoteModifiedAt,
+                    deviceId = remoteDevice,
+                    moduleId = PowerModule.MODULE_ID,
+                    data = it,
+                )
+            }
         ),
     )
 

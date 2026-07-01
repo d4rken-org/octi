@@ -31,8 +31,9 @@ import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 
 @Singleton
 class PowerAlertManager @Inject constructor(
@@ -44,7 +45,6 @@ class PowerAlertManager @Inject constructor(
 ) {
 
     private val mutex = Mutex()
-    private val shownNotifications = mutableSetOf<AlertNotificationKey>()
 
     val alerts: Flow<Collection<PowerAlert<*>>> = combine(
         powerSettings.alertRules.flow,
@@ -95,78 +95,83 @@ class PowerAlertManager @Inject constructor(
                     return@forEach
                 }
 
+                val event = alertEvents.find { it.id == rule.id }
+                log(TAG) { "Found $event for $rule" }
+
+                // Freshness gate: a peer's battery reading is only actionable while recent.
+                // Stale data (peer offline for a while) — or data timestamped in the future by a
+                // skewed peer clock — must not raise or keep alerts alive. Evaluated on each alert
+                // check (cold-start init + per-sync checkAlerts), not via a timer.
+                val dataAge = Clock.System.now() - powerState.modifiedAt
+                if (dataAge > ALERT_DATA_MAX_AGE || dataAge < -CLOCK_SKEW_TOLERANCE) {
+                    if (event != null) {
+                        log(TAG, INFO) { "Power data for $rule is stale (age=$dataAge), clearing alert" }
+                        powerSettings.alertEvents.update { events -> events.filterNot { it.id == rule.id }.toSet() }
+                        notifications.dismiss(rule)
+                    } else {
+                        log(TAG, VERBOSE) { "Skipping stale $rule (age=$dataAge)" }
+                    }
+                    return@forEach
+                }
+
                 val metaState = metaRepo.device(rule.deviceId)
                 if (metaState == null) {
                     log(TAG, WARN) { "No MetaInfo available for $rule" }
                     return@forEach
                 }
 
-                val event = alertEvents.find { it.id == rule.id }
-                log(TAG) { "Found $event for $rule" }
-
+                val isTriggered: Boolean
+                val isRecovered: Boolean
                 when (rule) {
                     is BatteryLowAlertRule -> {
-                        val isTriggered = !powerState.data.isCharging &&
+                        isTriggered = !powerState.data.isCharging &&
                                 powerState.data.battery.percent < rule.threshold
-                        val isRecovered = powerState.data.isCharging ||
+                        isRecovered = powerState.data.isCharging ||
                                 powerState.data.battery.percent > (rule.threshold + 0.05f).coerceAtMost(0.95f)
-                        when {
-                            event == null && isTriggered && !isRecovered -> {
-                                log(TAG, INFO) { "Rule has triggered" }
-                                val newEvent = PowerAlertRule.Event(rule.id)
-                                powerSettings.alertEvents.update { it + newEvent }
-                                showNotificationIfNeeded(rule, newEvent, powerState.data, metaState.data)
-                            }
-
-                            event != null && !isTriggered && isRecovered -> {
-                                log(TAG, INFO) { "Rule is no longer triggered" }
-                                shownNotifications.remove(event.notificationKey)
-                                powerSettings.alertEvents.update { it - event }
-                                notifications.dismiss(rule)
-                            }
-
-                            event == null && !isTriggered -> {
-                                log(TAG, VERBOSE) { "Rule is not triggered" }
-                            }
-
-                            event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
-                                log(TAG, VERBOSE) { "Rule is triggered (not dismissed)" }
-                                showNotificationIfNeeded(rule, event, powerState.data, metaState.data)
-                            }
-                        }
                     }
 
                     is BatteryHighAlertRule -> {
-                        val isTriggered = powerState.data.isCharging &&
+                        isTriggered = powerState.data.isCharging &&
                                 powerState.data.battery.percent >= rule.threshold
-                        val isRecovered = !powerState.data.isCharging ||
+                        isRecovered = !powerState.data.isCharging ||
                                 powerState.data.battery.percent < (rule.threshold - 0.05f).coerceAtLeast(0.05f)
-                        when {
-                            event == null && isTriggered && !isRecovered -> {
-                                log(TAG, INFO) { "Rule has triggered" }
-                                val newEvent = PowerAlertRule.Event(rule.id)
-                                powerSettings.alertEvents.update { it + newEvent }
-                                showNotificationIfNeeded(rule, newEvent, powerState.data, metaState.data)
-                            }
-
-                            event != null && !isTriggered && isRecovered -> {
-                                log(TAG, INFO) { "Rule is no longer triggered" }
-                                shownNotifications.remove(event.notificationKey)
-                                powerSettings.alertEvents.update { it - event }
-                                notifications.dismiss(rule)
-                            }
-
-                            event == null && !isTriggered -> {
-                                log(TAG, VERBOSE) { "Rule is not triggered" }
-                            }
-
-                            event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
-                                log(TAG, VERBOSE) { "Rule is triggered (not dismissed)" }
-                                showNotificationIfNeeded(rule, event, powerState.data, metaState.data)
-                            }
-                        }
                     }
                 }
+
+                evaluateAlert(rule, event, isTriggered, isRecovered, powerState.data, metaState.data)
+            }
+        }
+    }
+
+    private suspend fun evaluateAlert(
+        rule: PowerAlertRule,
+        event: PowerAlertRule.Event?,
+        isTriggered: Boolean,
+        isRecovered: Boolean,
+        power: PowerInfo,
+        meta: MetaInfo,
+    ) {
+        when {
+            event == null && isTriggered && !isRecovered -> {
+                log(TAG, INFO) { "Rule has triggered" }
+                val newEvent = PowerAlertRule.Event(rule.id)
+                powerSettings.alertEvents.update { it + newEvent }
+                showNotificationIfNeeded(rule, newEvent, power, meta)
+            }
+
+            event != null && !isTriggered && isRecovered -> {
+                log(TAG, INFO) { "Rule is no longer triggered" }
+                powerSettings.alertEvents.update { events -> events.filterNot { it.id == rule.id }.toSet() }
+                notifications.dismiss(rule)
+            }
+
+            event == null && !isTriggered -> {
+                log(TAG, VERBOSE) { "Rule is not triggered" }
+            }
+
+            event != null && event.dismissedAt == null && isTriggered && !isRecovered -> {
+                log(TAG, VERBOSE) { "Rule is triggered (not dismissed)" }
+                showNotificationIfNeeded(rule, event, power, meta)
             }
         }
     }
@@ -177,21 +182,20 @@ class PowerAlertManager @Inject constructor(
         power: PowerInfo,
         meta: MetaInfo,
     ) {
-        val key = event.notificationKey
-        if (key in shownNotifications) {
-            log(TAG, VERBOSE) { "Notification already shown for $key" }
+        // `notifiedAt` is persisted, so a delivered notification is not re-posted after a process
+        // restart (the in-memory-only guard we replaced reset on every cold start). Stamped after a
+        // successful show() so a failed delivery is retried on the next check rather than silently lost.
+        if (event.notifiedAt != null) {
+            log(TAG, VERBOSE) { "Notification already shown for ${event.id} at ${event.notifiedAt}" }
             return
         }
 
         notifications.show(rule, power, meta)
-        shownNotifications += key
+        powerSettings.alertEvents.update { events ->
+            val target = events.firstOrNull { it.id == event.id } ?: return@update events
+            (events.filterNot { it.id == event.id } + target.copy(notifiedAt = Clock.System.now())).toSet()
+        }
     }
-
-    private val PowerAlertRule.Event.notificationKey: AlertNotificationKey
-        get() = AlertNotificationKey(
-            alertId = id,
-            triggeredAt = triggeredAt,
-        )
 
     private fun ModuleRepo.State<PowerInfo>.alertRelevantStateKey(): Set<AlertRelevantPowerState> = all
         .map {
@@ -204,11 +208,6 @@ class PowerAlertManager @Inject constructor(
         }
         .toSet()
 
-    private data class AlertNotificationKey(
-        val alertId: PowerAlertRuleId,
-        val triggeredAt: Instant,
-    )
-
     private data class AlertRelevantPowerState(
         val deviceId: DeviceId,
         val isCharging: Boolean,
@@ -219,49 +218,41 @@ class PowerAlertManager @Inject constructor(
     suspend fun setBatteryLowAlert(deviceId: DeviceId, threshold: Float?): Unit = mutex.withLock {
         log(TAG) { "setBatteryLowAlert($deviceId,$threshold)" }
 
-        var newRule: BatteryLowAlertRule? = null
-
         powerSettings.alertRules.update { oldRules ->
             val otherRules = oldRules.filterNot { it.deviceId == deviceId && it is BatteryLowAlertRule }
-
             if (threshold == null) {
-                otherRules
+                otherRules.toSet()
             } else {
-                otherRules + BatteryLowAlertRule(deviceId = deviceId, threshold = threshold).also {
-                    newRule = it
-                }
-            }.toSet()
+                (otherRules + BatteryLowAlertRule(deviceId = deviceId, threshold = threshold)).toSet()
+            }
         }
 
-        powerSettings.alertEvents.update { old ->
-            val previousEvent = old.singleOrNull { it.id == newRule?.id } ?: return@update old
-            log(TAG) { "setBatteryLowAlert(...): Removing old event" }
-            (old - previousEvent).toSet()
-        }
+        // Clear any lingering event + notification for this rule id, whether we created, replaced, or
+        // disabled it. `id` and the notification id depend only on deviceId + rule type, so a placeholder
+        // threshold is fine. Dismiss unconditionally: a replaced rule that still triggers is re-shown by
+        // the next evaluation, while a lowered/disabled rule must not leave a stale notification visible.
+        val ruleRef = BatteryLowAlertRule(deviceId = deviceId, threshold = threshold ?: 0f)
+        log(TAG) { "setBatteryLowAlert(...): Clearing any existing event for ${ruleRef.id}" }
+        powerSettings.alertEvents.update { old -> old.filterNot { it.id == ruleRef.id }.toSet() }
+        notifications.dismiss(ruleRef)
     }
 
     suspend fun setBatteryHighAlert(deviceId: DeviceId, threshold: Float?): Unit = mutex.withLock {
         log(TAG) { "setBatteryHighAlert($deviceId,$threshold)" }
 
-        var newRule: BatteryHighAlertRule? = null
-
         powerSettings.alertRules.update { oldRules ->
             val otherRules = oldRules.filterNot { it.deviceId == deviceId && it is BatteryHighAlertRule }
-
             if (threshold == null) {
-                otherRules
+                otherRules.toSet()
             } else {
-                otherRules + BatteryHighAlertRule(deviceId = deviceId, threshold = threshold).also {
-                    newRule = it
-                }
-            }.toSet()
+                (otherRules + BatteryHighAlertRule(deviceId = deviceId, threshold = threshold)).toSet()
+            }
         }
 
-        powerSettings.alertEvents.update { old ->
-            val previousEvent = old.singleOrNull { it.id == newRule?.id } ?: return@update old
-            log(TAG) { "setBatteryHighAlert(...): Removing old event" }
-            (old - previousEvent).toSet()
-        }
+        val ruleRef = BatteryHighAlertRule(deviceId = deviceId, threshold = threshold ?: 0f)
+        log(TAG) { "setBatteryHighAlert(...): Clearing any existing event for ${ruleRef.id}" }
+        powerSettings.alertEvents.update { old -> old.filterNot { it.id == ruleRef.id }.toSet() }
+        notifications.dismiss(ruleRef)
     }
 
     suspend fun dismissAlert(alertId: PowerAlertRuleId): Unit = mutex.withLock {
@@ -306,5 +297,11 @@ class PowerAlertManager @Inject constructor(
 
     companion object {
         val TAG = logTag("Module", "Power", "Alert", "Manager")
+
+        // A peer's battery reading is only actionable while recent; older data no longer raises alerts.
+        private val ALERT_DATA_MAX_AGE = 24.hours
+
+        // Tolerance for peer clock skew: data timestamped this far into the future is treated as stale.
+        private val CLOCK_SKEW_TOLERANCE = 5.minutes
     }
 }

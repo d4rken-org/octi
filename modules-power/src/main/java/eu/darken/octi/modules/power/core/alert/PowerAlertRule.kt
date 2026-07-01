@@ -17,6 +17,7 @@ sealed interface PowerAlertRule {
         val id: PowerAlertRuleId,
         @Serializable(with = InstantSerializer::class) val triggeredAt: Instant = Clock.System.now(),
         @Serializable(with = InstantSerializer::class) val dismissedAt: Instant? = null,
+        @Serializable(with = InstantSerializer::class) val notifiedAt: Instant? = null,
     )
 }
 
