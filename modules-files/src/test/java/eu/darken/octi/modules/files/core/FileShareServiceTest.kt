@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
 import testhelpers.coroutine.runTest2
+import okio.Buffer
 import okio.Source
 import java.io.ByteArrayInputStream
 import java.io.FileNotFoundException
@@ -526,6 +527,57 @@ class FileShareServiceTest : BaseTest() {
             val err = try {
                 openSource()
                 error("expected streaming re-open to throw")
+            } catch (e: Throwable) {
+                e
+            }
+            BlobManager.PutResult(successful = emptySet(), perConnectorErrors = mapOf(connectorA to err))
+        }
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.SourceUnavailable
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile returns SourceUnavailable when single-connector streaming read fails mid-upload`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val fileBytes = ByteArray(42) { it.toByte() }
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        // Force UriProbe.Unsized (null size cursor) so the tier choice is deliberate: single
+        // connector + Unsized -> Tier B′ (pre-count then stream).
+        every { contentResolver.query(uri, any(), any(), any(), any()) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        // Pre-count open reads fine; the streaming re-open opens fine but throws mid-read (grant
+        // revoked / cloud file evicted while uploading).
+        var opens = 0
+        every { contentResolver.openInputStream(uri) } answers {
+            opens++
+            if (opens == 1) {
+                ByteArrayInputStream(fileBytes)
+            } else {
+                object : java.io.InputStream() {
+                    override fun read(): Int = throw SecurityException("revoked mid-read")
+                    override fun read(b: ByteArray, off: Int, len: Int): Int = throw SecurityException("revoked mid-read")
+                }
+            }
+        }
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA)
+        // Drive the real openSource lambda and READ it (not just open) so the mid-read failure is
+        // exercised and mapped to SourceUnavailableException, then bucketed to SourceUnavailable.
+        coEvery { blobManager.put(any(), any(), any(), any(), any(), any(), any()) } answers {
+            val openSource = arg<() -> Source>(3)
+            val err = try {
+                openSource().use { src -> src.read(Buffer(), 8192L) }
+                error("expected streaming read to throw")
             } catch (e: Throwable) {
                 e
             }
