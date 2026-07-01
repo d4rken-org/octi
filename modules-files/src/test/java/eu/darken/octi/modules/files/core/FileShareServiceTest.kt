@@ -20,6 +20,7 @@ import eu.darken.octi.sync.core.blob.BlobManager
 import eu.darken.octi.sync.core.blob.BlobQuotaExceededException
 import eu.darken.octi.sync.core.blob.BlobServerStorageLowException
 import eu.darken.octi.sync.core.blob.StorageStatusManager
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
@@ -28,6 +29,9 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.launch
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
@@ -587,6 +591,206 @@ class FileShareServiceTest : BaseTest() {
         val result = createService().shareFile(uri)
 
         result shouldBe FileShareService.ShareResult.SourceUnavailable
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile aborts the finalized blob and returns SourceUnavailable on B-prime URI content change`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val ref = RemoteBlobRef("ref-1")
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        // Single connector + unsized probe -> pre-count tier. First open (pre-count) and second
+        // open (encrypt/upload) return DIFFERENT bytes, so the checksum cross-check trips after the
+        // blob is already finalized on the server.
+        var opens = 0
+        every { contentResolver.openInputStream(uri) } answers {
+            opens++
+            if (opens == 1) ByteArrayInputStream(byteArrayOf(1, 2, 3)) else ByteArrayInputStream(byteArrayOf(9, 9, 9))
+        }
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA)
+        coEvery { blobManager.put(any(), any(), any(), any(), any(), any(), any()) } answers {
+            val openSource = arg<() -> Source>(3)
+            openSource().use { src ->
+                val sink = Buffer()
+                while (src.read(sink, 8192L) != -1L) sink.clear()
+            }
+            BlobManager.PutResult(
+                successful = setOf(connectorA),
+                perConnectorErrors = emptyMap(),
+                remoteRefs = mapOf(connectorA to ref),
+            )
+        }
+        coEvery { blobManager.abortPostFinalize(any(), any(), any()) } returns emptyList<Unit>()
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.SourceUnavailable
+        // The finalized-but-unreferenced blob must be aborted, not orphaned.
+        coVerify(exactly = 1) {
+            blobManager.abortPostFinalize(ownDeviceId, FileShareModule.MODULE_ID, mapOf(connectorA to ref))
+        }
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile does NOT abort the blob when a post-upsert sync failure occurs`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(ByteArray(42)) }
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
+        coEvery { blobManager.put(any(), any(), any(), any(), any(), any(), any()) } returns BlobManager.PutResult(
+            successful = setOf(connectorA, connectorB),
+            perConnectorErrors = emptyMap(),
+            remoteRefs = mapOf(connectorA to RemoteBlobRef("ref-a"), connectorB to RemoteBlobRef("ref-b")),
+        )
+        coEvery { handler.upsertFile(any()) } just runs
+        coEvery { handler.currentOwn() } returns FileShareInfo()
+        // The forced sync fails AFTER upsertFile has recorded the SharedFile. Aborting the blob now
+        // would dangle that metadata, so the blob must be kept (writeFlow re-syncs later).
+        coEvery { syncManager.sync(any<SyncOptions>()) } throws IOException("sync boom")
+
+        shouldThrow<IOException> { createService().shareFile(uri) }
+
+        coVerify(exactly = 0) { blobManager.abortPostFinalize(any(), any(), any()) }
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile succeeds without aborting the blob on the happy path`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(ByteArray(42)) }
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
+        coEvery { blobManager.put(any(), any(), any(), any(), any(), any(), any()) } returns BlobManager.PutResult(
+            successful = setOf(connectorA, connectorB),
+            perConnectorErrors = emptyMap(),
+            remoteRefs = mapOf(connectorA to RemoteBlobRef("ref-a"), connectorB to RemoteBlobRef("ref-b")),
+        )
+        coEvery { handler.upsertFile(any()) } just runs
+        coEvery { handler.currentOwn() } returns FileShareInfo()
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.Success
+        coVerify(exactly = 0) { blobManager.abortPostFinalize(any(), any(), any()) }
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `shareFile aborts the finalized blob when cancelled before upsert`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val remoteRefs = mapOf(connectorA to RemoteBlobRef("ref-a"), connectorB to RemoteBlobRef("ref-b"))
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(ByteArray(42)) }
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
+        coEvery { blobManager.put(any(), any(), any(), any(), any(), any(), any()) } returns BlobManager.PutResult(
+            successful = setOf(connectorA, connectorB),
+            perConnectorErrors = emptyMap(),
+            remoteRefs = remoteRefs,
+        )
+        // Cancellation lands inside the cleanup window (after finalize, before the SharedFile is
+        // recorded) — the finalized blob must be aborted.
+        coEvery { handler.upsertFile(any()) } throws CancellationException("cancelled")
+        coEvery { blobManager.abortPostFinalize(any(), any(), any()) } returns emptyList<Unit>()
+
+        val result = createService().shareFile(uri)
+
+        result shouldBe FileShareService.ShareResult.Cancelled
+        coVerify(exactly = 1) {
+            blobManager.abortPostFinalize(ownDeviceId, FileShareModule.MODULE_ID, remoteRefs)
+        }
+
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
+    fun `cancellation during upsert still records the file and does not abort the blob`() = runTest2 {
+        val cacheDir = java.nio.file.Files.createTempDirectory("files-service-test").toFile()
+        val ownDeviceId = DeviceId("self")
+        val connectorA = ConnectorId(ConnectorType.OCTISERVER, "srv-a.example.com", "acc-a")
+        val connectorB = ConnectorId(ConnectorType.OCTISERVER, "srv-b.example.com", "acc-b")
+        val uri = mockk<Uri>()
+        val contentResolver = mockk<ContentResolver>()
+
+        every { context.cacheDir } returns cacheDir
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.query(uri, null, null, null, null) } returns null
+        every { contentResolver.getType(uri) } returns "application/octet-stream"
+        every { contentResolver.openInputStream(uri) } answers { ByteArrayInputStream(ByteArray(42)) }
+        every { syncSettings.deviceId } returns ownDeviceId
+        coEvery { blobManager.configuredConnectorIds() } returns setOf(connectorA, connectorB)
+        coEvery { blobManager.put(any(), any(), any(), any(), any(), any(), any()) } returns BlobManager.PutResult(
+            successful = setOf(connectorA, connectorB),
+            perConnectorErrors = emptyMap(),
+            remoteRefs = mapOf(connectorA to RemoteBlobRef("ref-a"), connectorB to RemoteBlobRef("ref-b")),
+        )
+        // upsertFile suspends; we cancel the share while it's mid-record. Because it runs under
+        // NonCancellable, it must finish (recording the SharedFile) and the blob must NOT be aborted
+        // — otherwise the metadata would dangle. Without the NonCancellable guard, upsertFile would
+        // throw CancellationException here and the finally block would abort the blob.
+        val upsertReached = CompletableDeferred<Unit>()
+        val releaseUpsert = CompletableDeferred<Unit>()
+        var upsertCompleted = false
+        coEvery { handler.upsertFile(any()) } coAnswers {
+            upsertReached.complete(Unit)
+            releaseUpsert.await()
+            upsertCompleted = true
+        }
+        coEvery { handler.currentOwn() } returns FileShareInfo()
+        coEvery { blobManager.abortPostFinalize(any(), any(), any()) } returns emptyList<Unit>()
+
+        val service = createService()
+        val job = launch { service.shareFile(uri) }
+        upsertReached.await()
+        job.cancel()
+        releaseUpsert.complete(Unit)
+        job.join()
+
+        upsertCompleted shouldBe true
+        coVerify(exactly = 0) { blobManager.abortPostFinalize(any(), any(), any()) }
 
         cacheDir.deleteRecursively()
     }

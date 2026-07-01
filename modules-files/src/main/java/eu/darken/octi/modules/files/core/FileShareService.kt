@@ -241,8 +241,9 @@ class FileShareService @Inject constructor(
                 return@withContext mapAllFailedToShareResult(outcome.plaintextSize, putResult)
             }
 
-            // Open the cleanup window — covers the gap between put returning and upsertFile
-            // taking effect. Cancellation in here triggers abortPostFinalize.
+            // Open the cleanup window: from here until upsertFile records the SharedFile, the blob
+            // is finalized on the server but not yet referenced by any local state. Any failure or
+            // cancellation in this window must abort the blob (see the finally block) or it orphans.
             pendingPostFinalizeCleanup = putResult
 
             val sharedFile = FileShareInfo.SharedFile(
@@ -256,7 +257,16 @@ class FileShareService @Inject constructor(
                 availableOn = putResult.successful.map { it.idString }.toSet(),
                 connectorRefs = putResult.remoteRefs.mapKeys { (connectorId, _) -> connectorId.idString },
             )
-            fileShareHandler.upsertFile(sharedFile)
+            // Record the reference and close the cleanup window atomically w.r.t. cancellation.
+            // upsertFile suspends (DynamicStateFlow.updateBlocking); if cancellation landed between
+            // the SharedFile being recorded and the window closing, the finally block would abort a
+            // blob the metadata now points at (dangling). NonCancellable defers cancellation until
+            // both have completed. A failure past this point must NOT abort the blob — a failed sync
+            // below keeps it, and BaseModuleRepo's writeFlow re-syncs the pending row later.
+            withContext(NonCancellable) {
+                fileShareHandler.upsertFile(sharedFile)
+                pendingPostFinalizeCleanup = null
+            }
 
             // Force the just-finalized blob to land in a persisted module revision before we
             // declare the share done. BaseModuleRepo's writeFLow eventually picks up the
@@ -278,7 +288,6 @@ class FileShareService @Inject constructor(
                     moduleFilter = setOf(FileShareModule.MODULE_ID),
                 ),
             )
-            pendingPostFinalizeCleanup = null
             // Invalidate the storage cache for connectors that received the blob — the server-side
             // numbers just changed. Done after commit (not inside BlobManager.put) so an aborted
             // commit doesn't leave us holding a stale "we just used X bytes" snapshot.
@@ -291,19 +300,6 @@ class FileShareService @Inject constructor(
             }
         } catch (e: CancellationException) {
             log(TAG, INFO) { "shareFile(${blobKey.id}) cancelled" }
-            pendingPostFinalizeCleanup?.let { result ->
-                withContext(NonCancellable) {
-                    try {
-                        blobManager.abortPostFinalize(
-                            deviceId = syncSettings.deviceId,
-                            moduleId = FileShareModule.MODULE_ID,
-                            targets = result.remoteRefs,
-                        )
-                    } catch (e: Exception) {
-                        log(TAG, WARN) { "abortPostFinalize cleanup failed: ${e.message}" }
-                    }
-                }
-            }
             ShareResult.Cancelled
         } catch (e: LocalStorageLowException) {
             log(TAG, WARN) { "shareFile(): local storage exhausted: ${e.message}" }
@@ -312,8 +308,31 @@ class FileShareService @Inject constructor(
             log(TAG, WARN) { "shareFile(): source URI unreadable: ${e.message}" }
             ShareResult.SourceUnavailable
         } finally {
+            // If the cleanup window is still open we exited abnormally (cancellation, or any failure
+            // between finalize and upsertFile) with a finalized-but-unreferenced blob — abort it so
+            // it doesn't orphan. Runs for every abnormal exit, not just cancellation; NonCancellable
+            // inside abortFinalized keeps it working even when the coroutine is already cancelled.
+            pendingPostFinalizeCleanup?.let { abortFinalized(it) }
             activeJobs.remove(blobKey.id)
             stagedFile?.delete()
+        }
+    }
+
+    /**
+     * Abort blobs that were finalized on the server but never got referenced by a persisted
+     * SharedFile — otherwise they orphan until server-side GC. Runs under [NonCancellable] so it
+     * completes even when invoked from a cancelled coroutine's finally block, and swallows its own
+     * failures so cleanup errors never mask the original exception.
+     */
+    private suspend fun abortFinalized(putResult: BlobManager.PutResult) = withContext(NonCancellable) {
+        try {
+            blobManager.abortPostFinalize(
+                deviceId = syncSettings.deviceId,
+                moduleId = FileShareModule.MODULE_ID,
+                targets = putResult.remoteRefs,
+            )
+        } catch (e: Exception) {
+            log(TAG, WARN) { "abortPostFinalize cleanup failed: ${e.message}" }
         }
     }
 
@@ -495,9 +514,16 @@ class FileShareService @Inject constructor(
         // share fails on its own merits when `successful` is empty — we don't need to layer a
         // spurious "URI changed" error on top.
         if (outcome.putResult.successful.isNotEmpty() && outcome.plaintextChecksum != precountChecksum) {
-            throw IOException(
+            // The URI's content changed between the pre-count and encrypt reads, so the blob the
+            // server just finalized holds bytes we can't vouch for. This throw happens before
+            // shareFile opens its cleanup window (the window lives inside this helper's own put),
+            // so abort the finalized blob here or it orphans. Surface as SourceUnavailable — the
+            // source wasn't stably readable — rather than a raw IOException handled by the guard.
+            abortFinalized(outcome.putResult)
+            throw SourceUnavailableException(
                 "URI content changed between pre-count and upload: precount=$precountChecksum " +
-                    "encrypt=${outcome.plaintextChecksum}"
+                    "encrypt=${outcome.plaintextChecksum}",
+                null,
             )
         }
         // For the all-failed case, surface the precount digest as the canonical plaintext
