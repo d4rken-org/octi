@@ -60,7 +60,9 @@ class GDriveUiContribution @Inject constructor() : ConnectorUiContribution {
         )
     }
 
-    override fun addAccountDestination(): NavigationDestination = Nav.Sync.AddGDrive
+    override fun addAccountDestination(): NavigationDestination = Nav.Sync.AddGDrive(linking = false)
+
+    override fun joinDeviceDestination(): NavigationDestination = Nav.Sync.AddGDrive(linking = true)
 
     @Composable
     override fun listCardTitle(connector: SyncConnector): String = stringResource(R.string.sync_gdrive_type_label)

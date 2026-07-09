@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -156,11 +157,13 @@ fun SyncListScreen(
                     return@items
                 }
                 val isHighlighted = state.highlightedConnectorIds.contains(item.connectorId)
+                val linkDestination = contribution.linkDeviceDestination(item.connector)
                 ConnectorCard(
                     item = item,
                     contribution = contribution,
                     isHighlighted = isHighlighted,
                     onClick = { showActionsForId = item.connectorId },
+                    onLinkDevice = linkDestination?.let { dest -> { onLinkNewDevice(dest) } },
                 )
             }
 
@@ -225,6 +228,7 @@ private fun ConnectorCard(
     contribution: eu.darken.octi.sync.core.ConnectorUiContribution,
     isHighlighted: Boolean,
     onClick: () -> Unit,
+    onLinkDevice: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val borderColor by animateColorAsState(
@@ -301,6 +305,16 @@ private fun ConnectorCard(
             DevicesField(state = item.ourState, otherStates = item.otherStates)
 
             ConnectorIssuesRow(issues = item.issues)
+
+            if (onLinkDevice != null) {
+                TextButton(
+                    onClick = onLinkDevice,
+                    enabled = !item.isPaused && !item.isBusy,
+                    modifier = Modifier.align(Alignment.End),
+                ) {
+                    Text(text = stringResource(SyncR.string.sync_link_device_action))
+                }
+            }
         }
     }
 }

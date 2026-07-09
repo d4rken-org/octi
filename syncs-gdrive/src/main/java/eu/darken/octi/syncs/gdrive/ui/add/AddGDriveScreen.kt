@@ -16,6 +16,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,12 +46,16 @@ import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.syncs.gdrive.R as GDriveR
 
 @Composable
-fun AddGDriveScreenHost(vm: AddGDriveVM = hiltViewModel()) {
+fun AddGDriveScreenHost(
+    linking: Boolean,
+    vm: AddGDriveVM = hiltViewModel(),
+) {
     ErrorEventHandler(vm)
     NavigationEventHandler(vm)
 
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val currentLinking by rememberUpdatedState(linking)
     var pendingAuthEmail by remember { mutableStateOf<String?>(null) }
 
     val authLauncher = rememberLauncherForActivityResult(
@@ -86,7 +93,13 @@ fun AddGDriveScreenHost(vm: AddGDriveVM = hiltViewModel()) {
 
                 is AddGDriveEvents.AccountAlreadyConnected -> {
                     snackbarHostState.showSnackbar(
-                        context.getString(GDriveR.string.sync_gdrive_error_account_already_connected)
+                        context.getString(
+                            if (currentLinking) {
+                                GDriveR.string.sync_gdrive_link_already_connected
+                            } else {
+                                GDriveR.string.sync_gdrive_error_account_already_connected
+                            }
+                        )
                     )
                 }
             }
@@ -94,6 +107,7 @@ fun AddGDriveScreenHost(vm: AddGDriveVM = hiltViewModel()) {
     }
 
     AddGDriveScreen(
+        linking = linking,
         snackbarHostState = snackbarHostState,
         onNavigateUp = { vm.navUp() },
         onSignIn = { vm.startSignIn() },
@@ -102,10 +116,12 @@ fun AddGDriveScreenHost(vm: AddGDriveVM = hiltViewModel()) {
 
 @Composable
 fun AddGDriveScreen(
+    linking: Boolean,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
     onNavigateUp: () -> Unit,
     onSignIn: () -> Unit,
 ) {
+    val actionLabelRes = if (linking) GDriveR.string.sync_gdrive_link_label else GDriveR.string.sync_gdrive_add_label
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
@@ -114,7 +130,7 @@ fun AddGDriveScreen(
                     Column {
                         Text(text = stringResource(GDriveR.string.sync_gdrive_type_label))
                         Text(
-                            text = stringResource(GDriveR.string.sync_gdrive_add_label),
+                            text = stringResource(actionLabelRes),
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }
@@ -135,16 +151,42 @@ fun AddGDriveScreen(
                 .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            if (linking) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(GDriveR.string.sync_gdrive_link_same_account_warning),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(16.dp),
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
             Text(
                 text = stringResource(GDriveR.string.sync_gdrive_add_description),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth(),
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(GDriveR.string.sync_gdrive_add_same_account_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(onClick = onSignIn) {
-                Text(text = stringResource(GDriveR.string.sync_gdrive_add_label))
+                Text(text = stringResource(actionLabelRes))
             }
         }
     }
@@ -154,6 +196,17 @@ fun AddGDriveScreen(
 @Composable
 private fun AddGDriveScreenPreview() = PreviewWrapper {
     AddGDriveScreen(
+        linking = false,
+        onNavigateUp = {},
+        onSignIn = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun AddGDriveScreenLinkingPreview() = PreviewWrapper {
+    AddGDriveScreen(
+        linking = true,
         onNavigateUp = {},
         onSignIn = {},
     )

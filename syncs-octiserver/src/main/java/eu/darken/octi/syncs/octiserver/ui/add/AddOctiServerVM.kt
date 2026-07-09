@@ -69,16 +69,6 @@ class AddOctiServerVM @Inject constructor(
         }
     }
 
-    fun linkAccount() = launch {
-        log(TAG) { "linkAccount()" }
-        _state.value = _state.value.copy(isBusy = true)
-        try {
-            navTo(Nav.Sync.OctiServerLinkClient)
-        } finally {
-            _state.value = _state.value.copy(isBusy = false)
-        }
-    }
-
     companion object {
         private val TAG = logTag("Sync", "Add", "OctiServer", "VM")
     }

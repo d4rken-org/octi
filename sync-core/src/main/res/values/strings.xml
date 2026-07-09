@@ -41,6 +41,7 @@
     <string name="sync_connector_progress_device_updating">Updating devices...</string>
     <string name="sync_connector_progress_device_update_queued">Device update queued...</string>
     <string name="sync_synced_devices_label">Synced devices</string>
+    <string name="sync_link_device_action">Link a device</string>
 
     <string name="sync_devices_sort_label">Sort</string>
     <string name="sync_devices_sort_date_added_label">By date added</string>

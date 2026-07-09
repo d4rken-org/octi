@@ -16,7 +16,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +62,6 @@ fun AddOctiServerScreenHost(vm: AddOctiServerVM = hiltViewModel()) {
             onNavigateUp = { vm.navUp() },
             onSelectType = { type -> vm.selectType(type) },
             onCreateAccount = { customServer -> vm.createAccount(customServer) },
-            onLinkAccount = { vm.linkAccount() },
         )
     }
 }
@@ -74,7 +72,6 @@ fun AddOctiServerScreen(
     onNavigateUp: () -> Unit,
     onSelectType: (OctiServer.Official?) -> Unit,
     onCreateAccount: (String?) -> Unit,
-    onLinkAccount: () -> Unit,
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
     var showCreateDialog by remember { mutableStateOf(false) }
@@ -162,27 +159,6 @@ fun AddOctiServerScreen(
 
             Text(
                 text = stringResource(OctiServerR.string.sync_octiserver_add_create_action_hint),
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                textAlign = TextAlign.Center,
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            FilledTonalButton(
-                onClick = onLinkAccount,
-                enabled = !state.isBusy,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-            ) {
-                Text(text = stringResource(OctiServerR.string.sync_octiserver_add_link_existing_action))
-            }
-
-            Text(
-                text = stringResource(OctiServerR.string.sync_octiserver_add_link_action_hint),
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -286,7 +262,6 @@ private fun AddOctiServerScreenPreview() = PreviewWrapper {
         onNavigateUp = {},
         onSelectType = {},
         onCreateAccount = {},
-        onLinkAccount = {},
     )
 }
 
@@ -298,7 +273,6 @@ private fun AddOctiServerScreenCustomPreview() = PreviewWrapper {
         onNavigateUp = {},
         onSelectType = {},
         onCreateAccount = {},
-        onLinkAccount = {},
     )
 }
 
@@ -310,6 +284,5 @@ private fun AddOctiServerScreenBusyPreview() = PreviewWrapper {
         onNavigateUp = {},
         onSelectType = {},
         onCreateAccount = {},
-        onLinkAccount = {},
     )
 }
