@@ -20,6 +20,10 @@
     <string name="onboarding_privacy_subtitle">Privacy policy</string>
     <string name="onboarding_privacy_body1">Octi has no ads and does not sell user data.</string>
     <string name="onboarding_privacy_sync_explanation">Your data is synced via Google Drive or Octi Server. Octi does not have access to your synced data.</string>
+    <string name="onboarding_connect_title">Connect your devices</string>
+    <string name="onboarding_connect_body1">Octi shows you what\'s happening on your other devices — battery, WiFi, clipboard and more.</string>
+    <string name="onboarding_connect_body2">For that, Octi needs to be installed on a second device and connected through a sync service. Without a second device, there isn\'t much to see.</string>
+    <string name="onboarding_connect_setup_action">Set up sync</string>
 
     <string name="updatecheck_setting_enabled_label">Update check</string>
     <string name="updatecheck_setting_enabled_explanation">Allow Octi to check for updates to let you know if a newer version is available.</string>
@@ -56,6 +60,10 @@
 
     <string name="onboarding_setupsync_title">Set up synchronization</string>
     <string name="onboarding_setupsync_message">Currently you are only seeing this device. To connect your Octi installations, set up a common synchronization service.</string>
+    <string name="dashboard_syncsetup_setup_action">Set up</string>
+    <string name="dashboard_syncedalone_card_title">Now add your second device</string>
+    <string name="dashboard_syncedalone_card_body">Sync is ready, but Octi only sees this device so far. Install Octi on your other device and choose \'Add this device\' there.</string>
+    <string name="dashboard_syncedalone_card_action">Add device</string>
 
     <string name="settings_privacy_policy_label">Privacy policy</string>
     <string name="settings_privacy_policy_desc">Handling data responsibly.</string>

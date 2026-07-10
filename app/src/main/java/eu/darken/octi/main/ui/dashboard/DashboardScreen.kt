@@ -308,7 +308,8 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             onConnectorDevices = { vm.goToConnectorDevices(it) },
             onUpgrade = { vm.goToUpgrade() },
             onSettings = { vm.goToSettings() },
-            onDismissSyncSetup = { vm.dismissSyncSetup() },
+            onSnoozeSyncSetup = { vm.snoozeSyncSetup() },
+            onSnoozeSyncedAlone = { vm.snoozeSyncedAlone() },
             onSetupSync = { vm.setupSync() },
             onGrantPermission = { vm.requestPermission(it) },
             onDismissPermission = { vm.dismissPermission(it) },
@@ -350,7 +351,8 @@ fun DashboardScreen(
     onConnectorDevices: (ConnectorId) -> Unit,
     onUpgrade: () -> Unit,
     onSettings: () -> Unit,
-    onDismissSyncSetup: () -> Unit,
+    onSnoozeSyncSetup: () -> Unit,
+    onSnoozeSyncedAlone: () -> Unit,
     onSetupSync: () -> Unit,
     onGrantPermission: (Permission) -> Unit,
     onDismissPermission: (Permission) -> Unit,
@@ -447,7 +449,7 @@ fun DashboardScreen(
                             contentDescription = stringResource(R.string.sync_services_label),
                         )
                     }
-                    if (!state.upgradeInfo.isPro) {
+                    if (!state.upgradeInfo.isPro && state.hasConnectors) {
                         IconButton(onClick = onUpgrade) {
                             Icon(
                                 imageVector = Icons.TwoTone.Stars,
@@ -494,20 +496,36 @@ fun DashboardScreen(
                 }
             }
 
-            // Action chips row (sync setup + permissions + upgrade + issue counts)
+            // First-run guidance cards (full-span, mutually exclusive by construction)
+            if (state.showSyncSetup) {
+                item(key = "sync_setup", span = { GridItemSpan(maxLineSpan) }) {
+                    SyncSetupCard(
+                        onLater = onSnoozeSyncSetup,
+                        onSetup = onSetupSync,
+                    )
+                }
+            }
+            if (state.showSyncedAlone) {
+                item(key = "synced_alone", span = { GridItemSpan(maxLineSpan) }) {
+                    SyncedAloneCard(
+                        onLater = onSnoozeSyncedAlone,
+                        onAddDevice = onSetupSync,
+                    )
+                }
+            }
+
+            // Action chips row (permissions + upgrade + issue counts)
             val errorCount = state.issues.count { it.severity == IssueSeverity.ERROR }
             val warningCount = state.issues.count { it.severity == IssueSeverity.WARNING }
-            val hasActionChips = state.showSyncSetup || state.missingPermissions.isNotEmpty() || !state.upgradeInfo.isPro || errorCount > 0 || warningCount > 0
+            val showUpgradeChip = !state.upgradeInfo.isPro && state.hasConnectors
+            val hasActionChips = state.missingPermissions.isNotEmpty() || showUpgradeChip || errorCount > 0 || warningCount > 0
             if (hasActionChips) {
                 item(key = "action_chips", span = { GridItemSpan(maxLineSpan) }) {
                     ActionChipsRow(
-                        showSyncSetup = state.showSyncSetup,
                         missingPermissions = state.missingPermissions,
-                        showUpgrade = !state.upgradeInfo.isPro,
+                        showUpgrade = showUpgradeChip,
                         errorCount = errorCount,
                         warningCount = warningCount,
-                        onSetupSync = onSetupSync,
-                        onDismissSyncSetup = onDismissSyncSetup,
                         onGrantPermission = { permission ->
                             if (permission == Permission.IGNORE_BATTERY_OPTIMIZATION) {
                                 showReliabilitySheet = true
@@ -1189,13 +1207,10 @@ private fun defaultDashboardBuildChannelLabel(): String? = when (BuildConfigWrap
 
 @Composable
 private fun ActionChipsRow(
-    showSyncSetup: Boolean,
     missingPermissions: List<Permission>,
     showUpgrade: Boolean,
     errorCount: Int = 0,
     warningCount: Int = 0,
-    onSetupSync: () -> Unit,
-    onDismissSyncSetup: () -> Unit,
     onGrantPermission: (Permission) -> Unit,
     onDismissPermission: (Permission) -> Unit,
     onUpgrade: () -> Unit,
@@ -1209,14 +1224,6 @@ private fun ActionChipsRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (showSyncSetup) {
-            ActionChip(
-                icon = Icons.TwoTone.CloudSync,
-                label = stringResource(R.string.onboarding_setupsync_title),
-                onClick = onSetupSync,
-                onLongClick = onDismissSyncSetup,
-            )
-        }
         missingPermissions.forEach { permission ->
             ActionChip(
                 icon = when (permission) {
@@ -1303,7 +1310,7 @@ private fun ActionChip(
 
 @Composable
 private fun SyncSetupCard(
-    onDismiss: () -> Unit,
+    onLater: () -> Unit,
     onSetup: () -> Unit,
 ) {
     ElevatedCard(
@@ -1326,11 +1333,47 @@ private fun SyncSetupCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(CommonR.string.general_dismiss_action))
+                TextButton(onClick = onLater) {
+                    Text(stringResource(CommonR.string.general_maybe_later_action))
                 }
                 TextButton(onClick = onSetup) {
-                    Text(stringResource(R.string.onboarding_setupsync_title))
+                    Text(stringResource(R.string.dashboard_syncsetup_setup_action))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SyncedAloneCard(
+    onLater: () -> Unit,
+    onAddDevice: () -> Unit,
+) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.dashboard_syncedalone_card_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.dashboard_syncedalone_card_body),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                TextButton(onClick = onLater) {
+                    Text(stringResource(CommonR.string.general_maybe_later_action))
+                }
+                TextButton(onClick = onAddDevice) {
+                    Text(stringResource(R.string.dashboard_syncedalone_card_action))
                 }
             }
         }
@@ -2002,6 +2045,8 @@ private fun DashboardScreenEmptyPreview() = PreviewWrapper {
             syncStatus = null,
             isOffline = false,
             showSyncSetup = true,
+            showSyncedAlone = false,
+            hasConnectors = false,
             missingPermissions = emptyList(),
             update = null,
             upgradeInfo = PreviewUpgradeInfo(),
@@ -2014,7 +2059,53 @@ private fun DashboardScreenEmptyPreview() = PreviewWrapper {
         onConnectorDevices = {},
         onUpgrade = {},
         onSettings = {},
-        onDismissSyncSetup = {},
+        onSnoozeSyncSetup = {},
+        onSnoozeSyncedAlone = {},
+        onSetupSync = {},
+        onGrantPermission = {},
+        onDismissPermission = {},
+        onDismissUpdate = {},
+        onViewUpdate = {},
+        onStartUpdate = {},
+        onToggleSyncExpanded = {},
+        onToggleDeviceCollapsed = {},
+        onPowerAlerts = {},
+        onAppsList = {},
+        onInstallLatestApp = {},
+        onClearClipboard = {},
+        onShareClipboard = {},
+        onCopyClipboard = {},
+        onFileShareClicked = {},
+        onWifiPermissionGrant = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun DashboardScreenSyncedAlonePreview() = PreviewWrapper {
+    DashboardScreen(
+        state = DashboardVM.State(
+            devices = emptyList(),
+            deviceCount = 0,
+            syncStatus = null,
+            isOffline = false,
+            showSyncSetup = false,
+            showSyncedAlone = true,
+            hasConnectors = true,
+            missingPermissions = emptyList(),
+            update = null,
+            upgradeInfo = PreviewUpgradeInfo(),
+            deviceLimitReached = false,
+        ),
+        onRefresh = {},
+        onSyncServices = {},
+        onDegradedClick = {},
+        onIssueClick = {},
+        onConnectorDevices = {},
+        onUpgrade = {},
+        onSettings = {},
+        onSnoozeSyncSetup = {},
+        onSnoozeSyncedAlone = {},
         onSetupSync = {},
         onGrantPermission = {},
         onDismissPermission = {},
@@ -2106,6 +2197,8 @@ private fun DashboardScreenPreview() = PreviewWrapper {
             ),
             isOffline = false,
             showSyncSetup = false,
+            showSyncedAlone = false,
+            hasConnectors = true,
             missingPermissions = emptyList(),
             update = null,
             upgradeInfo = PreviewUpgradeInfo(isPro = true),
@@ -2118,7 +2211,8 @@ private fun DashboardScreenPreview() = PreviewWrapper {
         onConnectorDevices = {},
         onUpgrade = {},
         onSettings = {},
-        onDismissSyncSetup = {},
+        onSnoozeSyncSetup = {},
+        onSnoozeSyncedAlone = {},
         onSetupSync = {},
         onGrantPermission = {},
         onDismissPermission = {},
@@ -2209,6 +2303,8 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
             ),
             isOffline = false,
             showSyncSetup = false,
+            showSyncedAlone = false,
+            hasConnectors = true,
             missingPermissions = emptyList(),
             update = null,
             upgradeInfo = PreviewUpgradeInfo(),
@@ -2221,7 +2317,8 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
         onConnectorDevices = {},
         onUpgrade = {},
         onSettings = {},
-        onDismissSyncSetup = {},
+        onSnoozeSyncSetup = {},
+        onSnoozeSyncedAlone = {},
         onSetupSync = {},
         onGrantPermission = {},
         onDismissPermission = {},

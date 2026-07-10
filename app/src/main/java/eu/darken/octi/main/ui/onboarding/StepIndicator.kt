@@ -46,5 +46,5 @@ fun StepIndicator(
 @Preview2
 @Composable
 private fun StepIndicatorPreview() = PreviewWrapper {
-    StepIndicator(totalSteps = 2, currentStep = 1)
+    StepIndicator(totalSteps = 3, currentStep = 1)
 }
