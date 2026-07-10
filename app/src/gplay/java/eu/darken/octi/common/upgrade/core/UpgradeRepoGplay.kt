@@ -17,6 +17,7 @@ import eu.darken.octi.common.upgrade.core.billing.BillingManager
 import eu.darken.octi.common.upgrade.core.billing.PurchasedSku
 import eu.darken.octi.common.upgrade.core.billing.Sku
 import eu.darken.octi.common.upgrade.core.billing.SkuDetails
+import eu.darken.octi.common.upgrade.core.billing.UserCanceledBillingException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.TimeoutCancellationException
@@ -80,6 +81,8 @@ class UpgradeRepoGplay @Inject constructor(
         scope.launch {
             try {
                 billingManager.startIapFlow(activity, sku, offer)
+            } catch (e: UserCanceledBillingException) {
+                log(TAG) { "User canceled the billing flow." }
             } catch (e: Exception) {
                 log(TAG) { "startIapFlow failed:${e.asLog()}" }
                 withContext(dispatcherProvider.Main) {

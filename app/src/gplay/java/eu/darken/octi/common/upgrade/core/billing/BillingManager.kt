@@ -167,7 +167,12 @@ class BillingManager @Inject constructor(
             }
         } catch (e: Exception) {
             log(TAG, WARN) { "Failed to start IAP flow:\n${e.asLog()}" }
-            val ignoredCodes = listOf(3, 6)
+            // Expected environmental/user situations — user-facing handling only, no bug report.
+            val ignoredCodes = listOf(
+                BillingResponseCode.USER_CANCELED,
+                BillingResponseCode.BILLING_UNAVAILABLE,
+                BillingResponseCode.ERROR,
+            )
             when {
                 e !is BillingException -> {
                     Bugs.report(RuntimeException("State exception for $sku, U", e))
@@ -198,6 +203,10 @@ class BillingManager @Inject constructor(
             if (this !is BillingClientException) return this
 
             return when (result.responseCode) {
+                BillingResponseCode.USER_CANCELED -> UserCanceledBillingException(this)
+
+                BillingResponseCode.ITEM_ALREADY_OWNED -> ItemAlreadyOwnedBillingException(this)
+
                 BillingResponseCode.BILLING_UNAVAILABLE,
                 BillingResponseCode.SERVICE_UNAVAILABLE,
                 BillingResponseCode.SERVICE_DISCONNECTED,
