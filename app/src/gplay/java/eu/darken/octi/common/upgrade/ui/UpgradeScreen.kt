@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -184,7 +185,10 @@ fun UpgradeScreen(
 
             if (state?.wasPreviouslyPro == true) {
                 Spacer(modifier = Modifier.height(16.dp))
-                RestoreBanner(onRestore = onRestore)
+                RestoreBanner(
+                    onRestore = onRestore,
+                    restoreInProgress = state.restoreInProgress,
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -244,6 +248,7 @@ fun UpgradeScreen(
                 // buyer with a flaky Play connection is exactly who needs it.
                 TextButton(
                     onClick = onRestore,
+                    enabled = !state.restoreInProgress,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(text = stringResource(R.string.upgrade_screen_restore_purchase_action))
@@ -258,6 +263,7 @@ fun UpgradeScreen(
 @Composable
 private fun RestoreBanner(
     onRestore: () -> Unit,
+    restoreInProgress: Boolean = false,
 ) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
@@ -282,8 +288,16 @@ private fun RestoreBanner(
 
             Button(
                 onClick = onRestore,
+                enabled = !restoreInProgress,
                 modifier = Modifier.fillMaxWidth(),
             ) {
+                if (restoreInProgress) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
                 Text(text = stringResource(R.string.upgrade_screen_restore_purchase_action))
             }
         }

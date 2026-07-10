@@ -19,6 +19,7 @@ import eu.darken.octi.common.upgrade.core.billing.SkuDetails
 import eu.darken.octi.common.widget.WidgetManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
@@ -57,12 +58,15 @@ class UpgradeViewModel @Inject constructor(
             .launchInViewModel()
     }
 
+    private val restoring = MutableStateFlow(false)
+
     val state: Flow<State> = combine(
         querySkuDetails(OurSku.Iap.PRO_UPGRADE),
         querySkuDetails(OurSku.Sub.PRO_UPGRADE),
         upgradeRepo.upgradeInfo,
         upgradeRepo.wasEverPro,
-    ) { iap, sub, current, wasEverPro ->
+        restoring,
+    ) { iap, sub, current, wasEverPro, isRestoring ->
         // Pricing is deliberately decoupled from entitlement: a returning buyer must see the
         // restore banner and the restore action immediately, even while Google Play is still
         // resolving (or failing to resolve) pricing.
@@ -89,6 +93,7 @@ class UpgradeViewModel @Inject constructor(
             pricingLoading = pricingLoading,
             pricingUnavailable = !pricingLoading && pricing == null,
             wasPreviouslyPro = wasEverPro && !current.isPro,
+            restoreInProgress = isRestoring,
         )
     }.asStateFlow()
 
@@ -117,6 +122,7 @@ class UpgradeViewModel @Inject constructor(
         val pricingLoading: Boolean = false,
         val pricingUnavailable: Boolean = false,
         val wasPreviouslyPro: Boolean = false,
+        val restoreInProgress: Boolean = false,
     )
 
     data class Pricing(
@@ -159,37 +165,49 @@ class UpgradeViewModel @Inject constructor(
         upgradeRepo.launchBillingFlow(activity, OurSku.Sub.PRO_UPGRADE, OurSku.Sub.PRO_UPGRADE.TRIAL_OFFER)
     }
 
-    fun restorePurchase() = launch {
-        log(TAG) { "restorePurchase()" }
-
-        val restored = try {
-            withTimeoutOrNull(RESTORE_TIMEOUT) { upgradeRepo.restorePurchaseNow() }
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            // Play/billing error (e.g. service unavailable): surface the proper error dialog instead
-            // of the generic "restore failed" message, so the user can tell the two cases apart.
-            log(TAG, WARN) { "Restore purchase errored: ${e.asLog()}" }
-            errorEvents.emit(e)
-            return@launch
+    fun restorePurchase() {
+        // Single-flight: repeated taps while a restore is running (worst case bounded by
+        // RESTORE_TIMEOUT) must not stack concurrent restores and duplicate result dialogs.
+        if (!restoring.compareAndSet(expect = false, update = true)) {
+            log(TAG) { "restorePurchase() ignored, already in progress" }
+            return
         }
 
-        when {
-            restored == null -> {
-                // Play never answered in time; the restore-failed dialog already suggests waiting /
-                // clearing the Play cache, which fits a timeout too.
-                log(TAG, WARN) { "Restore purchase timed out" }
-                events.emit(UpgradeEvents.RestoreFailed)
-            }
+        launch {
+            log(TAG) { "restorePurchase()" }
+            try {
+                val restored = withTimeoutOrNull(RESTORE_TIMEOUT) { upgradeRepo.restorePurchaseNow() }
 
-            restored.isPro -> {
-                log(TAG, INFO) { "Restored purchase :))" }
-                refreshWidgetsForUpgrade()
-            }
+                when {
+                    restored == null -> {
+                        // Play never answered in time; the restore-failed dialog already suggests
+                        // waiting / clearing the Play cache, which fits a timeout too.
+                        log(TAG, WARN) { "Restore purchase timed out" }
+                        events.emit(UpgradeEvents.RestoreFailed)
+                    }
 
-            else -> {
-                log(TAG, WARN) { "Restore purchase failed" }
-                events.emit(UpgradeEvents.RestoreFailed)
+                    restored.isPro -> {
+                        log(TAG, INFO) { "Restored purchase :))" }
+                        refreshWidgetsForUpgrade()
+                    }
+
+                    else -> {
+                        log(TAG, WARN) { "Restore purchase failed" }
+                        events.emit(UpgradeEvents.RestoreFailed)
+                    }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // Play/billing error (e.g. service unavailable): surface the proper error dialog
+                // instead of the generic "restore failed" message, so the user can tell the two
+                // cases apart.
+                log(TAG, WARN) { "Restore purchase errored: ${e.asLog()}" }
+                errorEvents.emit(e)
+            } finally {
+                // Reset only after result handling, so the single-flight guard covers the whole
+                // user-visible action, including dialog emission.
+                restoring.value = false
             }
         }
     }

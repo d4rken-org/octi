@@ -14,6 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import org.junit.jupiter.api.Test
@@ -142,6 +143,68 @@ class UpgradeViewModelTest : BaseTest() {
             pricingLoading shouldBe true
             wasPreviouslyPro shouldBe true
         }
+    }
+
+    @Test fun `restore is single-flight, taps during a running restore are ignored`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        coEvery { repo.restorePurchaseNow() } coAnswers {
+            delay(5_000)
+            UpgradeRepoGplay.Info(gracePeriod = true, billingData = null)
+        }
+        val vm = buildVm(repo)
+
+        vm.restorePurchase()
+        vm.restorePurchase()
+        vm.restorePurchase()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { repo.restorePurchaseNow() }
+    }
+
+    @Test fun `a finished restore allows a new attempt`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        coEvery { repo.restorePurchaseNow() } returns UpgradeRepoGplay.Info(gracePeriod = true, billingData = null)
+        val vm = buildVm(repo)
+
+        vm.restorePurchase()
+        advanceUntilIdle()
+        vm.restorePurchase()
+        advanceUntilIdle()
+
+        coVerify(exactly = 2) { repo.restorePurchaseNow() }
+    }
+
+    @Test fun `a failed restore also allows a new attempt`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        coEvery { repo.restorePurchaseNow() } throws IllegalStateException("Play unavailable")
+        val vm = buildVm(repo)
+
+        vm.restorePurchase()
+        advanceUntilIdle()
+        vm.restorePurchase()
+        advanceUntilIdle()
+
+        coVerify(exactly = 2) { repo.restorePurchaseNow() }
+    }
+
+    @Test fun `restore progress flows into the ui state`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo(wasEverPro = true)
+        coEvery { repo.restorePurchaseNow() } coAnswers {
+            delay(5_000)
+            UpgradeRepoGplay.Info(gracePeriod = true, billingData = null)
+        }
+        val vm = buildVm(repo)
+
+        vm.restorePurchase()
+        val inProgress = async { vm.state.first { it.restoreInProgress } }
+        advanceTimeBy(1_000)
+
+        inProgress.await().restoreInProgress shouldBe true
+
+        val done = async { vm.state.first { !it.restoreInProgress } }
+        advanceUntilIdle()
+
+        done.await().restoreInProgress shouldBe false
     }
 
     @Test fun `successful restore refreshes widgets`() = runTest2(context = testDispatcher) {
