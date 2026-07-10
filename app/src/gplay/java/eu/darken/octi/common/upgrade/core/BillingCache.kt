@@ -20,4 +20,7 @@ class BillingCache @Inject constructor(
         get() = context.dataStore
 
     val lastProStateAt = dataStore.createValue("gplay.cache.lastProAt", 0L)
+
+    // Product id of the last known-owned pro SKU; determines which grace window applies.
+    val lastProStateSku = dataStore.createValue("gplay.cache.lastProSku", "")
 }

@@ -61,7 +61,7 @@ class UpgradeRepoGplay @Inject constructor(
             val now = Clock.System.now().toEpochMilliseconds()
             val lastProStateAt = billingCache.lastProStateAt.value()
             log(TAG) { "Catch: now=$now, lastProStateAt=$lastProStateAt, error=$it" }
-            if ((now - lastProStateAt).milliseconds < PRO_GRACE_PERIOD) {
+            if ((now - lastProStateAt).milliseconds < graceWindow()) {
                 log(TAG, VERBOSE) { "We are not pro, but were recently, and just and an error, what is GPlay doing???" }
                 emit(Info(gracePeriod = true, billingData = null))
             } else {
@@ -117,7 +117,7 @@ class UpgradeRepoGplay @Inject constructor(
             // the proper "Play unavailable" message instead of a generic restore failure.
             val now = Clock.System.now().toEpochMilliseconds()
             val lastProStateAt = billingCache.lastProStateAt.value()
-            if ((now - lastProStateAt).milliseconds < PRO_GRACE_PERIOD) {
+            if ((now - lastProStateAt).milliseconds < graceWindow()) {
                 log(TAG, VERBOSE) { "Restore hit a Play error but we were pro recently -> grace" }
                 Info(gracePeriod = true, billingData = null)
             } else {
@@ -132,20 +132,50 @@ class UpgradeRepoGplay @Inject constructor(
         val now = Clock.System.now().toEpochMilliseconds()
         val lastProStateAt = billingCache.lastProStateAt.value()
         log(TAG) { "toUpgradeInfo(): now=$now, lastProStateAt=$lastProStateAt, data=$this" }
+        val info = Info(billingData = this)
+        // Only a *known* pro SKU counts as "last pro state" — an unrecognized purchase must not
+        // refresh the grace timestamp (and must not suppress an active grace window either).
+        // Prefer the permanent IAP so it drives the window.
+        val preferred = preferredProSku(info.upgrades)
         return when {
-            this?.purchases?.isNotEmpty() == true -> {
-                // If we are pro refresh timestamp
+            preferred != null -> {
                 billingCache.lastProStateAt.value(now)
-                Info(billingData = this)
+                updateLastProSku(preferred, iapQueryOk = this?.iapQueryOk ?: true)
+                info
             }
 
-            (now - lastProStateAt).milliseconds < PRO_GRACE_PERIOD -> {
+            (now - lastProStateAt).milliseconds < graceWindow() -> {
                 log(TAG, VERBOSE) { "We are not pro, but were recently, did GPlay try annoy us again?" }
                 Info(gracePeriod = true, billingData = null)
             }
 
-            else -> Info(billingData = this)
+            else -> info
         }
+    }
+
+    // A stored permanent-IAP sku is only replaced by a subscription sku when the IAP query actually
+    // succeeded and confirmed no IAP is owned — a transient IAP query failure must not silently
+    // shrink the 30d grace window down to the 7d subscription one.
+    private suspend fun updateLastProSku(preferred: Sku, iapQueryOk: Boolean) {
+        if (preferred.type != Sku.Type.IAP) {
+            val storedSku = billingCache.lastProStateSku.value()
+            val storedIsIap = OurSku.PRO_SKUS.singleOrNull { it.id == storedSku }?.type == Sku.Type.IAP
+            if (storedIsIap && !iapQueryOk) {
+                log(TAG) { "Keeping stored IAP sku, the IAP query failed and can't confirm it's gone" }
+                return
+            }
+        }
+        billingCache.lastProStateSku.value(preferred.id)
+    }
+
+    // Grace window depends on what was last owned: a permanent one-time purchase gets a long window,
+    // a subscription (or an unknown/legacy last SKU) gets the short default.
+    private suspend fun graceWindow(): Duration {
+        val lastSku = billingCache.lastProStateSku.value()
+        val type = OurSku.PRO_SKUS.singleOrNull { it.id == lastSku }?.type
+        val window = if (type == Sku.Type.IAP) PRO_GRACE_PERIOD_IAP else PRO_GRACE_PERIOD
+        log(TAG) { "graceWindow(): lastSku=$lastSku, type=$type -> $window" }
+        return window
     }
 
     data class Info(
@@ -182,9 +212,19 @@ class UpgradeRepoGplay @Inject constructor(
     companion object {
         private const val SITE = "https://play.google.com/store/apps/details?id=eu.darken.octi"
 
-        // Keep paying users pro through transient empty/failed Play Billing responses.
+        // Keep paying users pro through transient empty/failed Play Billing responses. A permanent
+        // one-time purchase should almost never be dropped on a hiccup, so it gets a long window; a
+        // subscription legitimately lapses, so it keeps the short one. PRO_GRACE_PERIOD is the
+        // subscription/default window (also used when the last-owned SKU is unknown/legacy).
         internal val PRO_GRACE_PERIOD = 7.days
+        internal val PRO_GRACE_PERIOD_IAP = 30.days
         private val REFRESH_TIMEOUT = 15.seconds
         val TAG: String = logTag("Upgrade", "Gplay", "Repo")
+
+        // The SKU whose grace window applies when several are owned: the permanent one-time purchase
+        // wins over a subscription (purchases are time-sorted, so firstOrNull alone isn't enough).
+        // null when no known pro SKU is owned.
+        internal fun preferredProSku(upgrades: Collection<PurchasedSku>): Sku? =
+            upgrades.firstOrNull { it.sku.type == Sku.Type.IAP }?.sku ?: upgrades.firstOrNull()?.sku
     }
 }
