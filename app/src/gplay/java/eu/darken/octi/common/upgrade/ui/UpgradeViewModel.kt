@@ -14,7 +14,7 @@ import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.core.OurSku
 import eu.darken.octi.common.upgrade.core.UpgradeRepoGplay
-import eu.darken.octi.common.upgrade.core.billing.GplayServiceUnavailableException
+import eu.darken.octi.common.upgrade.core.billing.Sku
 import eu.darken.octi.common.upgrade.core.billing.SkuDetails
 import eu.darken.octi.common.widget.WidgetManager
 import kotlinx.coroutines.CancellationException
@@ -57,41 +57,67 @@ class UpgradeViewModel @Inject constructor(
             .launchInViewModel()
     }
 
-    val state: Flow<Pricing> = combine(
-        flow {
-            val data = withTimeoutOrNull(5.seconds) {
-                try {
-                    upgradeRepo.querySkus(OurSku.Iap.PRO_UPGRADE)
-                } catch (e: Exception) {
-                    errorEvents.emitBlocking(e)
-                    null
-                }
-            }
-            emit(data)
-        },
-        flow {
-            val data = withTimeoutOrNull(5.seconds) {
-                try {
-                    upgradeRepo.querySkus(OurSku.Sub.PRO_UPGRADE)
-                } catch (e: Exception) {
-                    errorEvents.emitBlocking(e)
-                    null
-                }
-            }
-            emit(data)
-        },
+    val state: Flow<State> = combine(
+        querySkuDetails(OurSku.Iap.PRO_UPGRADE),
+        querySkuDetails(OurSku.Sub.PRO_UPGRADE),
         upgradeRepo.upgradeInfo,
-    ) { iap, sub, current ->
-        if (iap == null && sub == null) {
-            throw GplayServiceUnavailableException(RuntimeException("IAP and SUB data request timed out."))
+        upgradeRepo.wasEverPro,
+    ) { iap, sub, current, wasEverPro ->
+        // Pricing is deliberately decoupled from entitlement: a returning buyer must see the
+        // restore banner and the restore action immediately, even while Google Play is still
+        // resolving (or failing to resolve) pricing.
+        val pricingLoading = iap is SkuQuery.Loading || sub is SkuQuery.Loading
+        val iapDetails = (iap as? SkuQuery.Done)?.details
+        val subDetails = (sub as? SkuQuery.Done)?.details
+        val pricing = when {
+            pricingLoading -> null
+
+            iapDetails == null && subDetails == null -> {
+                log(TAG, WARN) { "Pricing unavailable, IAP and SUB queries failed or timed out." }
+                null
+            }
+
+            else -> Pricing(
+                iap = iapDetails?.firstOrNull(),
+                sub = subDetails?.firstOrNull(),
+                hasIap = current.upgrades.any { it.sku == OurSku.Iap.PRO_UPGRADE },
+                hasSub = current.upgrades.any { it.sku == OurSku.Sub.PRO_UPGRADE },
+            )
         }
-        Pricing(
-            iap = iap?.first(),
-            sub = sub?.first(),
-            hasIap = current.upgrades.any { it.sku == OurSku.Iap.PRO_UPGRADE },
-            hasSub = current.upgrades.any { it.sku == OurSku.Sub.PRO_UPGRADE },
+        State(
+            pricing = pricing,
+            pricingLoading = pricingLoading,
+            pricingUnavailable = !pricingLoading && pricing == null,
+            wasPreviouslyPro = wasEverPro && !current.isPro,
         )
     }.asStateFlow()
+
+    private sealed interface SkuQuery {
+        data object Loading : SkuQuery
+        data class Done(val details: Collection<SkuDetails>?) : SkuQuery
+    }
+
+    private fun querySkuDetails(sku: Sku): Flow<SkuQuery> = flow {
+        emit(SkuQuery.Loading)
+        val data = withTimeoutOrNull(SKU_QUERY_TIMEOUT) {
+            try {
+                upgradeRepo.querySkus(sku)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                log(TAG, WARN) { "SKU query failed for $sku: ${e.asLog()}" }
+                null
+            }
+        }
+        emit(SkuQuery.Done(data))
+    }
+
+    data class State(
+        val pricing: Pricing?,
+        val pricingLoading: Boolean = false,
+        val pricingUnavailable: Boolean = false,
+        val wasPreviouslyPro: Boolean = false,
+    )
 
     data class Pricing(
         val iap: SkuDetails?,
@@ -184,6 +210,7 @@ class UpgradeViewModel @Inject constructor(
     }
 
     companion object {
+        private val SKU_QUERY_TIMEOUT = 5.seconds
         private val RESTORE_TIMEOUT = 15.seconds
         private val TAG = logTag("Upgrade", "Gplay", "ViewModel")
     }
