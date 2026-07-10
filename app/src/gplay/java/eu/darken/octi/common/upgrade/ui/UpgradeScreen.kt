@@ -1,6 +1,11 @@
 package eu.darken.octi.common.upgrade.ui
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -122,7 +127,7 @@ private fun RestoreFailedDialog(onDismiss: () -> Unit) {
 
 @Composable
 fun UpgradeScreen(
-    state: UpgradeViewModel.Pricing?,
+    state: UpgradeViewModel.State?,
     onNavigateUp: () -> Unit,
     onIap: () -> Unit,
     onSubscription: () -> Unit,
@@ -177,6 +182,11 @@ fun UpgradeScreen(
                 )
             }
 
+            if (state?.wasPreviouslyPro == true) {
+                Spacer(modifier = Modifier.height(16.dp))
+                RestoreBanner(onRestore = onRestore)
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
@@ -207,7 +217,7 @@ fun UpgradeScreen(
                     .padding(bottom = 24.dp),
             )
 
-            if (state == null) {
+            if (state == null || state.pricingLoading) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -216,14 +226,28 @@ fun UpgradeScreen(
                 ) {
                     CircularProgressIndicator()
                 }
-            } else {
+            } else if (state.pricing != null) {
                 PricingContent(
-                    state = state,
+                    pricing = state.pricing,
                     onIap = onIap,
                     onSubscription = onSubscription,
                     onSubscriptionTrial = onSubscriptionTrial,
-                    onRestore = onRestore,
                 )
+            } else {
+                PricingUnavailable()
+            }
+
+            if (state != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Restore is available regardless of whether pricing could be loaded — a returning
+                // buyer with a flaky Play connection is exactly who needs it.
+                TextButton(
+                    onClick = onRestore,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = stringResource(R.string.upgrade_screen_restore_purchase_action))
+                }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -232,26 +256,102 @@ fun UpgradeScreen(
 }
 
 @Composable
+private fun RestoreBanner(
+    onRestore: () -> Unit,
+) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.upgrade_screen_restore_banner_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = stringResource(R.string.upgrade_screen_restore_banner_body),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = onRestore,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = stringResource(R.string.upgrade_screen_restore_purchase_action))
+            }
+        }
+    }
+}
+
+@Composable
+private fun PricingUnavailable() {
+    val context = LocalContext.current
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.upgrades_gplay_unavailable_error_title),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = stringResource(R.string.upgrades_gplay_unavailable_error_description),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Same fix action the GplayServiceUnavailableException error dialog offers.
+        OutlinedButton(
+            onClick = {
+                try {
+                    val intent = Intent().apply {
+                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        data = Uri.fromParts("package", "com.android.vending", null)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    context.startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(context, "Google Play is not installed", Toast.LENGTH_SHORT).show()
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(text = "Google Play")
+        }
+    }
+}
+
+@Composable
 private fun PricingContent(
-    state: UpgradeViewModel.Pricing,
+    pricing: UpgradeViewModel.Pricing,
     onIap: () -> Unit,
     onSubscription: () -> Unit,
     onSubscriptionTrial: () -> Unit,
-    onRestore: () -> Unit,
 ) {
-    val subOffer = state.sub?.details?.subscriptionOfferDetails?.singleOrNull { offer ->
+    val subOffer = pricing.sub?.details?.subscriptionOfferDetails?.singleOrNull { offer ->
         OurSku.Sub.PRO_UPGRADE.BASE_OFFER.matches(offer)
     }
-    val subOfferTrial = state.sub?.details?.subscriptionOfferDetails?.singleOrNull { offer ->
+    val subOfferTrial = pricing.sub?.details?.subscriptionOfferDetails?.singleOrNull { offer ->
         OurSku.Sub.PRO_UPGRADE.TRIAL_OFFER.matches(offer)
     }
-    val iapOffer = state.iap?.details?.oneTimePurchaseOfferDetails
+    val iapOffer = pricing.iap?.details?.oneTimePurchaseOfferDetails
     val canSub = subOffer != null || subOfferTrial != null
 
     if (canSub) {
         Button(
             onClick = if (subOfferTrial != null) onSubscriptionTrial else onSubscription,
-            enabled = !state.hasSub,
+            enabled = !pricing.hasSub,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
@@ -277,7 +377,7 @@ private fun PricingContent(
 
     OutlinedButton(
         onClick = onIap,
-        enabled = iapOffer != null && !state.hasIap,
+        enabled = iapOffer != null && !pricing.hasIap,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text(text = stringResource(R.string.upgrade_screen_iap_action))
@@ -290,15 +390,6 @@ private fun PricingContent(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
-    }
-
-    Spacer(modifier = Modifier.height(8.dp))
-
-    TextButton(
-        onClick = onRestore,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(text = stringResource(R.string.upgrade_screen_restore_purchase_action))
     }
 }
 
@@ -319,11 +410,51 @@ private fun UpgradeScreenLoadingPreview() = PreviewWrapper {
 @Composable
 private fun UpgradeScreenLoadedPreview() = PreviewWrapper {
     UpgradeScreen(
-        state = UpgradeViewModel.Pricing(
-            iap = null,
-            sub = null,
-            hasIap = false,
-            hasSub = false,
+        state = UpgradeViewModel.State(
+            pricing = UpgradeViewModel.Pricing(
+                iap = null,
+                sub = null,
+                hasIap = false,
+                hasSub = false,
+            ),
+        ),
+        onNavigateUp = {},
+        onIap = {},
+        onSubscription = {},
+        onSubscriptionTrial = {},
+        onRestore = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun UpgradeScreenReturningBuyerPreview() = PreviewWrapper {
+    UpgradeScreen(
+        state = UpgradeViewModel.State(
+            pricing = UpgradeViewModel.Pricing(
+                iap = null,
+                sub = null,
+                hasIap = false,
+                hasSub = false,
+            ),
+            wasPreviouslyPro = true,
+        ),
+        onNavigateUp = {},
+        onIap = {},
+        onSubscription = {},
+        onSubscriptionTrial = {},
+        onRestore = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun UpgradeScreenPricingUnavailablePreview() = PreviewWrapper {
+    UpgradeScreen(
+        state = UpgradeViewModel.State(
+            pricing = null,
+            pricingUnavailable = true,
+            wasPreviouslyPro = true,
         ),
         onNavigateUp = {},
         onIap = {},

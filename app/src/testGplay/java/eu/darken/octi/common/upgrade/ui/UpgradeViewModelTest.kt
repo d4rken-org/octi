@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
@@ -24,10 +25,15 @@ class UpgradeViewModelTest : BaseTest() {
 
     private val testDispatcher = StandardTestDispatcher()
 
-    private fun mockRepo(): UpgradeRepoGplay = mockk<UpgradeRepoGplay>(relaxed = true).apply {
+    private fun mockRepo(
+        isProViaGrace: Boolean = false,
+        wasEverPro: Boolean = false,
+    ): UpgradeRepoGplay = mockk<UpgradeRepoGplay>(relaxed = true).apply {
         every { upgradeInfo } returns MutableStateFlow(
-            UpgradeRepoGplay.Info(gracePeriod = false, billingData = null)
+            UpgradeRepoGplay.Info(gracePeriod = isProViaGrace, billingData = null)
         )
+        every { this@apply.wasEverPro } returns MutableStateFlow(wasEverPro)
+        coEvery { querySkus(any()) } returns emptyList()
     }
 
     private fun buildVm(
@@ -81,6 +87,61 @@ class UpgradeViewModelTest : BaseTest() {
         advanceUntilIdle()
 
         forwardedError.await() shouldBe boom
+    }
+
+    @Test fun `previously-pro on this device flows into the banner flag`() = runTest2(context = testDispatcher) {
+        val vm = buildVm(mockRepo(wasEverPro = true))
+
+        val state = async { vm.state.first { !it.pricingLoading } }
+        advanceUntilIdle()
+
+        state.await().wasPreviouslyPro shouldBe true
+    }
+
+    @Test fun `banner flag stays off while grace still keeps the user pro`() = runTest2(context = testDispatcher) {
+        // gracePeriod = true => Info.isPro is true even without a current raw purchase.
+        val vm = buildVm(mockRepo(isProViaGrace = true, wasEverPro = true))
+
+        val state = async { vm.state.first { !it.pricingLoading } }
+        advanceUntilIdle()
+
+        state.await().wasPreviouslyPro shouldBe false
+    }
+
+    @Test fun `banner and restore stay available when pricing is unavailable`() = runTest2(context = testDispatcher) {
+        // A returning buyer with a flaky Play connection is exactly who needs restore — pricing
+        // failures must not take the banner down with them.
+        val repo = mockRepo(wasEverPro = true)
+        coEvery { repo.querySkus(any()) } throws IllegalStateException("Play unavailable")
+        val vm = buildVm(repo)
+
+        val state = async { vm.state.first { !it.pricingLoading } }
+        advanceUntilIdle()
+
+        state.await().apply {
+            pricingUnavailable shouldBe true
+            pricing shouldBe null
+            wasPreviouslyPro shouldBe true
+        }
+    }
+
+    @Test fun `banner is already available while pricing is still loading`() = runTest2(context = testDispatcher) {
+        // The banner must not wait for the SKU queries — a hanging Play pricing request (up to the
+        // 5s timeout) must not delay the restore affordance for a returning buyer.
+        val repo = mockRepo(wasEverPro = true)
+        coEvery { repo.querySkus(any()) } coAnswers {
+            delay(60_000) // never resolves within this test
+            emptyList()
+        }
+        val vm = buildVm(repo)
+
+        val state = async { vm.state.first() }
+        runCurrent()
+
+        state.await().apply {
+            pricingLoading shouldBe true
+            wasPreviouslyPro shouldBe true
+        }
     }
 
     @Test fun `successful restore refreshes widgets`() = runTest2(context = testDispatcher) {
