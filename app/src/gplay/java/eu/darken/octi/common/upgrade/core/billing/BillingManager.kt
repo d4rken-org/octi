@@ -22,18 +22,20 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @Singleton
@@ -42,32 +44,62 @@ class BillingManager @Inject constructor(
     connectionProvider: BillingConnectionProvider,
 ) {
 
-    private val connection = connectionProvider.connection
-        .onEach {
-            try {
-                it.refreshPurchases()
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Initial purchase data refresh failed: ${e.asLog()}" }
+    // Carries connection failures as values instead of swallowing them: useConnection callers
+    // (purchase, restore) get an immediate, mappable error (e.g. BILLING_UNAVAILABLE) instead of
+    // hanging on a flow that never emits until some timeout fires. After a failure a fresh
+    // connection attempt is made once the retry delay elapses — permanent subscribers (the ACK
+    // loop) keep this flow active, so without the loop a single failure would stick in the replay
+    // cache and break billing until process restart.
+    private val connection: Flow<Result<BillingConnection>> = flow {
+        while (true) {
+            var failure: Throwable? = null
+            connectionProvider.connection
+                .onEach {
+                    try {
+                        it.refreshPurchases()
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        log(TAG, ERROR) { "Initial purchase data refresh failed: ${e.asLog()}" }
+                    }
+                }
+                .map<BillingConnection, Result<BillingConnection>> { Result.success(it) }
+                .catch {
+                    log(TAG, ERROR) { "Unable to provide client connection:\n${it.asLog()}" }
+                    failure = it
+                    emit(Result.failure(it))
+                }
+                .collect { emit(it) }
+
+            // The provider flow only completes after a connection failure — a healthy connection
+            // stays open indefinitely. Pause, then attempt a fresh connection so billing recovers
+            // without a process restart. A device without Play (BILLING_UNAVAILABLE) gets a much
+            // longer pause since that state rarely changes.
+            val cause = failure
+            val retryDelay = when {
+                cause is BillingClientException &&
+                    cause.result.responseCode == BillingResponseCode.BILLING_UNAVAILABLE -> CONNECTION_RETRY_DELAY_UNAVAILABLE
+
+                else -> CONNECTION_RETRY_DELAY
             }
+            log(TAG) { "Retrying billing connection in $retryDelay" }
+            delay(retryDelay)
         }
-        .catch { log(TAG, ERROR) { "Unable to provide client connection:\n${it.asLog()}" } }
+    }
         .setupCommonEventHandlers(TAG) { "connection" }
         .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeout = 3.seconds, replayExpiration = Duration.ZERO), replay = 1)
 
-    private val purchases = connection
-        .flatMapLatest { it.purchases }
+    val billingData: Flow<BillingData> = connection
+        .mapNotNull { it.getOrNull() }
+        .flatMapLatest { it.billingData }
         .distinctUntilChanged()
-        .setupCommonEventHandlers(TAG) { "purchases" }
-        .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeout = 3.seconds, replayExpiration = Duration.ZERO), replay = 1)
-
-    val billingData: Flow<BillingData> = purchases
-        .map { BillingData(purchases = it) }
+        .setupCommonEventHandlers(TAG) { "billingData" }
         .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeout = 3.seconds, replayExpiration = Duration.ZERO), replay = 1)
 
     init {
-        purchases
-            .onEach { purchases ->
-                purchases
+        billingData
+            .onEach { data ->
+                data.purchases
                     .filter {
                         val needsAck = !it.isAcknowledged
 
@@ -117,10 +149,9 @@ class BillingManager @Inject constructor(
             .launchIn(scope)
     }
 
-    private suspend fun <T> useConnection(action: suspend BillingConnection.() -> T): T = connection
-        .map { action(it) }
-        .take(1)
-        .single()
+    private suspend fun <T> useConnection(action: suspend BillingConnection.() -> T): T = connection.first()
+        .getOrElse { throw it.tryMapUserFriendly() }
+        .action()
 
     suspend fun querySkus(vararg skus: Sku): Collection<SkuDetails> = useConnection {
         log(TAG) { "querySkus(): $skus..." }
@@ -151,20 +182,18 @@ class BillingManager @Inject constructor(
         }
     }
 
-    suspend fun refresh() {
+    // Query in the caller's context and return the result directly, so callers get the fresh
+    // purchases (and any billing error) with a real happens-before instead of racing the shared
+    // billingData replay cache.
+    suspend fun refresh(): BillingData {
         log(TAG) { "refresh()" }
-        scope.launch {
-            useConnection {
-                try {
-                    refreshPurchases()
-                } catch (e: Exception) {
-                    log(TAG, ERROR) { "Manual purchase data refresh failed: ${e.asLog()}" }
-                }
-            }
-        }.join()
+        return useConnection { refreshPurchases() }
     }
 
     companion object {
+        private val CONNECTION_RETRY_DELAY = 1.minutes
+        private val CONNECTION_RETRY_DELAY_UNAVAILABLE = 1.hours
+
         internal fun Throwable.tryMapUserFriendly(): Throwable {
             if (this !is BillingClientException) return this
 

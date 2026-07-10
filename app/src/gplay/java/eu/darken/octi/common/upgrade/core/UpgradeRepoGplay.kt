@@ -17,7 +17,9 @@ import eu.darken.octi.common.upgrade.core.billing.BillingManager
 import eu.darken.octi.common.upgrade.core.billing.PurchasedSku
 import eu.darken.octi.common.upgrade.core.billing.Sku
 import eu.darken.octi.common.upgrade.core.billing.SkuDetails
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
@@ -51,28 +54,7 @@ class UpgradeRepoGplay @Inject constructor(
         .map<BillingData, BillingData?> { it }
         .onStart { emit(null) }
         .setupCommonEventHandlers(TAG) { "upgradeInfo1" }
-        .map { data: BillingData? -> // Only relinquish pro state if we haven't had it for a while
-            val now = Clock.System.now().toEpochMilliseconds()
-            val lastProStateAt = billingCache.lastProStateAt.value()
-            log(TAG) { "Map: now=$now, lastProStateAt=$lastProStateAt, data=${data}" }
-
-            when {
-                data?.purchases?.isNotEmpty() == true -> {
-                    // If we are pro refresh timestamp
-                    billingCache.lastProStateAt.value(now)
-                    Info(billingData = data)
-                }
-
-                (now - lastProStateAt).milliseconds < PRO_GRACE_PERIOD -> {
-                    log(TAG, VERBOSE) { "We are not pro, but were recently, did GPlay try annoy us again?" }
-                    Info(gracePeriod = true, billingData = null)
-                }
-
-                else -> {
-                    Info(billingData = data)
-                }
-            }
-        }
+        .map { data: BillingData? -> data.toUpgradeInfo() }
         .distinctUntilChanged()
         .catch {
             // Ignore Google Play errors if the last pro state was recent
@@ -107,7 +89,63 @@ class UpgradeRepoGplay @Inject constructor(
 
     override suspend fun refresh() {
         log(TAG) { "refresh()" }
-        billingManager.refresh()
+        try {
+            withTimeout(REFRESH_TIMEOUT) { billingManager.refresh() }
+        } catch (e: TimeoutCancellationException) {
+            log(TAG, ERROR) { "Background refresh timed out" }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // Background refresh: swallow-and-log so callers like the widget config screens aren't
+            // affected. The explicit restore path uses restorePurchaseNow(), which surfaces errors.
+            log(TAG, ERROR) { "Background refresh failed: ${e.asLog()}" }
+        }
+    }
+
+    // Explicit "Restore purchase": query Play now and evaluate pro from the returned data in the same
+    // coroutine (real happens-before), so we never read a stale upgradeInfo replay. Billing errors
+    // propagate so the caller can distinguish "not owned" from "Play unavailable".
+    suspend fun restorePurchaseNow(): Info {
+        log(TAG) { "restorePurchaseNow()" }
+        return try {
+            billingManager.refresh().toUpgradeInfo()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // Mirror the reactive flow's catch: a transient Play error while we were pro recently
+            // keeps us pro via the grace period; otherwise surface the error so the caller can show
+            // the proper "Play unavailable" message instead of a generic restore failure.
+            val now = Clock.System.now().toEpochMilliseconds()
+            val lastProStateAt = billingCache.lastProStateAt.value()
+            if ((now - lastProStateAt).milliseconds < PRO_GRACE_PERIOD) {
+                log(TAG, VERBOSE) { "Restore hit a Play error but we were pro recently -> grace" }
+                Info(gracePeriod = true, billingData = null)
+            } else {
+                throw e
+            }
+        }
+    }
+
+    // Shared pro/grace mapping used by both the reactive upgradeInfo flow and restorePurchaseNow().
+    // Only relinquishes pro state if we haven't had it for a while (grace period).
+    private suspend fun BillingData?.toUpgradeInfo(): Info {
+        val now = Clock.System.now().toEpochMilliseconds()
+        val lastProStateAt = billingCache.lastProStateAt.value()
+        log(TAG) { "toUpgradeInfo(): now=$now, lastProStateAt=$lastProStateAt, data=$this" }
+        return when {
+            this?.purchases?.isNotEmpty() == true -> {
+                // If we are pro refresh timestamp
+                billingCache.lastProStateAt.value(now)
+                Info(billingData = this)
+            }
+
+            (now - lastProStateAt).milliseconds < PRO_GRACE_PERIOD -> {
+                log(TAG, VERBOSE) { "We are not pro, but were recently, did GPlay try annoy us again?" }
+                Info(gracePeriod = true, billingData = null)
+            }
+
+            else -> Info(billingData = this)
+        }
     }
 
     data class Info(
@@ -143,7 +181,10 @@ class UpgradeRepoGplay @Inject constructor(
 
     companion object {
         private const val SITE = "https://play.google.com/store/apps/details?id=eu.darken.octi"
-        private val PRO_GRACE_PERIOD = 7.days
+
+        // Keep paying users pro through transient empty/failed Play Billing responses.
+        internal val PRO_GRACE_PERIOD = 7.days
+        private val REFRESH_TIMEOUT = 15.seconds
         val TAG: String = logTag("Upgrade", "Gplay", "Repo")
     }
 }

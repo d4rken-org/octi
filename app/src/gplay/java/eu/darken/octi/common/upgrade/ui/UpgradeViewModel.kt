@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.Logging.Priority.INFO
-import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
@@ -22,7 +21,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
@@ -138,18 +136,35 @@ class UpgradeViewModel @Inject constructor(
     fun restorePurchase() = launch {
         log(TAG) { "restorePurchase()" }
 
-        log(TAG, VERBOSE) { "Refreshing" }
-        upgradeRepo.refresh()
+        val restored = try {
+            withTimeoutOrNull(RESTORE_TIMEOUT) { upgradeRepo.restorePurchaseNow() }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // Play/billing error (e.g. service unavailable): surface the proper error dialog instead
+            // of the generic "restore failed" message, so the user can tell the two cases apart.
+            log(TAG, WARN) { "Restore purchase errored: ${e.asLog()}" }
+            errorEvents.emit(e)
+            return@launch
+        }
 
-        val refreshedState = upgradeRepo.upgradeInfo.first()
-        log(TAG) { "Refreshed purchase state: $refreshedState" }
+        when {
+            restored == null -> {
+                // Play never answered in time; the restore-failed dialog already suggests waiting /
+                // clearing the Play cache, which fits a timeout too.
+                log(TAG, WARN) { "Restore purchase timed out" }
+                events.emit(UpgradeEvents.RestoreFailed)
+            }
 
-        if (refreshedState.isPro) {
-            log(TAG, INFO) { "Restored purchase :))" }
-            refreshWidgetsForUpgrade()
-        } else {
-            log(TAG, WARN) { "Restore purchase failed" }
-            events.emit(UpgradeEvents.RestoreFailed)
+            restored.isPro -> {
+                log(TAG, INFO) { "Restored purchase :))" }
+                refreshWidgetsForUpgrade()
+            }
+
+            else -> {
+                log(TAG, WARN) { "Restore purchase failed" }
+                events.emit(UpgradeEvents.RestoreFailed)
+            }
         }
     }
 
@@ -169,6 +184,7 @@ class UpgradeViewModel @Inject constructor(
     }
 
     companion object {
+        private val RESTORE_TIMEOUT = 15.seconds
         private val TAG = logTag("Upgrade", "Gplay", "ViewModel")
     }
 }
