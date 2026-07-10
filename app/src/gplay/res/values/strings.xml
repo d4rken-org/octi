@@ -7,6 +7,9 @@
 
     <string name="upgrades_no_purchases_found_check_account">No purchases found. Are you using the right account?</string>
 
+    <string name="upgrades_already_owned_error_title">Already purchased</string>
+    <string name="upgrades_already_owned_error_description">Google Play reports that you already own this upgrade. Use \'Restore purchase\' to unlock it.</string>
+
     <string name="upgrades_dashcard_title">Get Octi Pro</string>
     <string name="upgrades_dashcard_body">Upgrade to unlock additional features and support development!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgrade</string>
