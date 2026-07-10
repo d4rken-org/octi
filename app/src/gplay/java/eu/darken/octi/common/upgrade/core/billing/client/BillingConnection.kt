@@ -34,6 +34,7 @@ import kotlin.coroutines.suspendCoroutine
 data class BillingConnection(
     private val client: BillingClient,
     val purchaseEvents: Flow<Pair<BillingResult, Collection<Purchase>?>?>,
+    private val purchaseFailureEvents: Flow<BillingResult?>,
 ) {
 
     private val queryCacheIaps = MutableStateFlow<QueryCache?>(null)
@@ -65,6 +66,10 @@ data class BillingConnection(
         val purchases: Collection<Purchase>,
         val querySucceeded: Boolean,
     )
+
+    // Non-OK results from onPurchasesUpdated (e.g. async ITEM_ALREADY_OWNED after the Play sheet
+    // opened). Consumed by a single persistent collector in UpgradeRepoGplay — not an event bus.
+    val purchaseFailures: Flow<BillingResult> = purchaseFailureEvents.filterNotNull()
 
     private suspend fun queryPurchases(@BillingClient.ProductType type: String): Collection<Purchase> {
         val params = QueryPurchasesParams.newBuilder().apply {

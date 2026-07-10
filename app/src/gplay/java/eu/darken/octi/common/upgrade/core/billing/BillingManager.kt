@@ -2,6 +2,7 @@ package eu.darken.octi.common.upgrade.core.billing
 
 import android.app.Activity
 import com.android.billingclient.api.BillingClient.BillingResponseCode
+import com.android.billingclient.api.BillingResult
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.Bugs
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
@@ -95,6 +96,11 @@ class BillingManager @Inject constructor(
         .distinctUntilChanged()
         .setupCommonEventHandlers(TAG) { "billingData" }
         .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeout = 3.seconds, replayExpiration = Duration.ZERO), replay = 1)
+
+    val purchaseFailures: Flow<BillingResult> = connection
+        .mapNotNull { it.getOrNull() }
+        .flatMapLatest { it.purchaseFailures }
+        .setupCommonEventHandlers(TAG) { "purchaseFailures" }
 
     init {
         billingData

@@ -98,7 +98,7 @@ class BillingConnectionTest : BaseTest() {
                     )
                 }
             }
-            val connection = BillingConnection(client, flowOf(null))
+            val connection = BillingConnection(client, flowOf(null), flowOf(null))
 
             connection.refreshPurchases().purchases shouldBe listOf(owned)
             // The failed type's cache is seeded empty, so the combined flow must still emit —

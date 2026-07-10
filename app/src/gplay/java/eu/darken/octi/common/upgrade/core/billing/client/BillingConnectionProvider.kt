@@ -34,6 +34,7 @@ class BillingConnectionProvider @Inject constructor(
 
     private val provider: Flow<BillingConnection> = callbackFlow {
         val purchaseEvents = MutableStateFlow<Pair<BillingResult, Collection<Purchase>?>?>(null)
+        val purchaseFailureEvents = MutableStateFlow<BillingResult?>(null)
 
         val pendingPurchasesParams = PendingPurchasesParams.newBuilder().apply {
             enableOneTimeProducts()
@@ -52,6 +53,11 @@ class BillingConnectionProvider @Inject constructor(
                     log(TAG, WARN) {
                         "error: onPurchasesUpdated(code=${result.responseCode}, message=${result.debugMessage}, purchases=$purchases)"
                     }
+                    // Failures go to their own slot: async ITEM_ALREADY_OWNED drives the auto-restore
+                    // in UpgradeRepoGplay. They must NOT overwrite the success slot — a purchase event
+                    // not yet reflected in the query caches would vanish from billingData (and could
+                    // starve acknowledgement) if a later cancel/error replaced it.
+                    purchaseFailureEvents.value = result
                 }
             }
         }.build()
@@ -65,7 +71,7 @@ class BillingConnectionProvider @Inject constructor(
 
                 when (result.responseCode) {
                     BillingResponseCode.OK -> {
-                        val connection = BillingConnection(client, purchaseEvents)
+                        val connection = BillingConnection(client, purchaseEvents, purchaseFailureEvents)
                         trySendBlocking(connection)
                     }
 
