@@ -1,22 +1,32 @@
-<i>Octi</i> synchronizes information between multiple Android devices.
+<i>Octi</i> shows you what's happening on your other Android devices.
 
-Available information modules:
+Check your tablet's battery without getting up. Copy on your phone, paste on your tablet. Get an alert when your second phone runs low.
 
-* Device & Android OS details
-* Battery status
-* WiFi connectivity
-* Installed applications
-* Clipboard sharing
-* and more... if you have a good idea, let me know!
+<b>What Octi can do:</b>
 
-You can pick different ways to synchronize the information:
+* Battery level and charging status of every device
+* WiFi and network status at a glance
+* Clipboard sync: copy on one device, paste on another
+* Send files between your devices
+* See which apps are installed on your other devices
+* Battery alerts for your other devices
+* Home screen widgets for battery, network and clipboard
+* Device details: model, Android version, uptime and more
 
-* Your Google Drive
-* A free server hosted by me
-* Self-host your own server
-* More soon...
+<b>How it works:</b>
 
-Synchronization options can be mixed and matched.
+Install Octi on two or more devices and link them in minutes:
 
-Octi is open-source, has no ads and doesn't track you.
-You can buy an in-app purchase to get a few extra features and support app development.
+* Google Drive — sign in with the same account on each device, done
+* Octi Server — free and anonymous, no account needed; devices link via QR code and data is end-to-end encrypted, only your devices can read it
+* Self-host your own Octi Server (open source)
+
+Sync options can be mixed and matched.
+
+<b>Privacy comes first:</b>
+
+* Open source
+* No ads, no tracking, no data sold
+* No account or email required
+
+Octi is free. An optional in-app purchase unlocks a few extra features and supports development.
