@@ -17,8 +17,12 @@ import eu.darken.octi.common.upgrade.core.billing.client.BillingConnection
 import eu.darken.octi.common.upgrade.core.billing.client.BillingConnectionProvider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
@@ -32,10 +36,10 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -44,6 +48,10 @@ class BillingManager @Inject constructor(
     @AppScope private val scope: CoroutineScope,
     connectionProvider: BillingConnectionProvider,
 ) {
+
+    // Declared before `connection`: the init-block collectors can drive the retry loop on the
+    // app scope while this class is still initializing.
+    private val retryNow = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     // Carries connection failures as values instead of swallowing them: useConnection callers
     // (purchase, restore) get an immediate, mappable error (e.g. BILLING_UNAVAILABLE) instead of
@@ -74,8 +82,8 @@ class BillingManager @Inject constructor(
 
             // The provider flow only completes after a connection failure — a healthy connection
             // stays open indefinitely. Pause, then attempt a fresh connection so billing recovers
-            // without a process restart. A device without Play (BILLING_UNAVAILABLE) gets a much
-            // longer pause since that state rarely changes.
+            // without a process restart. A device without Play (BILLING_UNAVAILABLE) gets a longer
+            // pause — but not too long: the user may just have signed into their Google account.
             val cause = failure
             val retryDelay = when {
                 cause is BillingClientException &&
@@ -83,8 +91,10 @@ class BillingManager @Inject constructor(
 
                 else -> CONNECTION_RETRY_DELAY
             }
-            log(TAG) { "Retrying billing connection in $retryDelay" }
-            delay(retryDelay)
+            log(TAG) { "Retrying billing connection in $retryDelay (sooner on demand)" }
+            // User-facing billing actions can skip the wait via retryNow — e.g. tapping "Restore
+            // purchase" right after fixing the Play/account state shouldn't fail on a stale error.
+            withTimeoutOrNull(retryDelay) { retryNow.first() }
         }
     }
         .setupCommonEventHandlers(TAG) { "connection" }
@@ -155,11 +165,36 @@ class BillingManager @Inject constructor(
             .launchIn(scope)
     }
 
-    private suspend fun <T> useConnection(action: suspend BillingConnection.() -> T): T = connection.first()
-        .getOrElse { throw it.tryMapUserFriendly() }
-        .action()
+    private suspend fun <T> useConnection(
+        retryOnFailure: Boolean = false,
+        action: suspend BillingConnection.() -> T,
+    ): T {
+        var current = connection.first()
+        if (current.isFailure && retryOnFailure) {
+            // A user-facing action must not keep failing on a stale error until the retry delay
+            // elapses — the user may just have fixed the cause (signed in, updated Play). Poke the
+            // retry loop and wait (bounded — not every caller has its own timeout, e.g. buy taps)
+            // for the fresh attempt's outcome. Subscribe before poking so the fresh result can't
+            // be missed, and filter on the stale value in case the loop retried on its own in the
+            // meantime. If the fresh attempt doesn't resolve in time, fail with the known error.
+            log(TAG) { "Connection has a stale failure, requesting an immediate retry" }
+            val stale = current
+            current = withTimeoutOrNull(RETRY_WAIT_TIMEOUT) {
+                coroutineScope {
+                    val fresh = async(start = CoroutineStart.UNDISPATCHED) {
+                        connection.first { it != stale }
+                    }
+                    retryNow.tryEmit(Unit)
+                    fresh.await()
+                }
+            } ?: stale
+        }
+        return current
+            .getOrElse { throw it.tryMapUserFriendly() }
+            .action()
+    }
 
-    suspend fun querySkus(vararg skus: Sku): Collection<SkuDetails> = useConnection {
+    suspend fun querySkus(vararg skus: Sku): Collection<SkuDetails> = useConnection(retryOnFailure = true) {
         log(TAG) { "querySkus(): $skus..." }
         querySkus(*skus).also {
             log(TAG) { "querySkus(): $it" }
@@ -168,7 +203,7 @@ class BillingManager @Inject constructor(
 
     suspend fun startIapFlow(activity: Activity, sku: Sku, offer: Sku.Subscription.Offer?) {
         try {
-            useConnection {
+            useConnection(retryOnFailure = true) {
                 launchBillingFlow(activity, sku, offer)
             }
         } catch (e: Exception) {
@@ -198,12 +233,13 @@ class BillingManager @Inject constructor(
     // billingData replay cache.
     suspend fun refresh(): BillingData {
         log(TAG) { "refresh()" }
-        return useConnection { refreshPurchases() }
+        return useConnection(retryOnFailure = true) { refreshPurchases() }
     }
 
     companion object {
         private val CONNECTION_RETRY_DELAY = 1.minutes
-        private val CONNECTION_RETRY_DELAY_UNAVAILABLE = 1.hours
+        internal val CONNECTION_RETRY_DELAY_UNAVAILABLE = 5.minutes
+        private val RETRY_WAIT_TIMEOUT = 10.seconds
 
         internal fun Throwable.tryMapUserFriendly(): Throwable {
             if (this !is BillingClientException) return this
