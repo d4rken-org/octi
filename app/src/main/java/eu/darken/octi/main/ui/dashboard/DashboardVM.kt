@@ -105,6 +105,7 @@ class DashboardVM @Inject constructor(
     private val blobManager: BlobManager,
     private val storageStatusManager: StorageStatusManager,
     private val connectorContributions: Map<ConnectorType, @JvmSuppressWildcards ConnectorUiContribution>,
+    private val cardSnoozer: DashboardCardSnoozer,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -185,6 +186,8 @@ class DashboardVM @Inject constructor(
         val isSyncExpanded: Boolean = false,
         val isOffline: Boolean,
         val showSyncSetup: Boolean,
+        val showSyncedAlone: Boolean,
+        val hasConnectors: Boolean,
         val missingPermissions: List<Permission>,
         val update: UpdateChecker.Update?,
         val upgradeInfo: UpgradeRepo.Info,
@@ -355,10 +358,34 @@ class DashboardVM @Inject constructor(
         val configuredConnectorIds: Set<String>,
     )
 
+    private val syncHintCtx: Flow<SyncHintCtx> = kotlinx.coroutines.flow.combine(
+        syncManager.allConnectors,
+        syncManager.states,
+        syncManager.allStates,
+        cardSnoozer.snoozedCards,
+    ) { allConnectors, activeStates, allStates, snoozedCards ->
+        buildSyncHintCtx(
+            connectorCount = allConnectors.size,
+            activeStates = activeStates,
+            allStates = allStates,
+            snoozedCards = snoozedCards,
+            selfDeviceId = syncSettings.deviceId,
+        )
+    }
+
+    internal data class SyncHintCtx(
+        val connectorCount: Int,
+        val activeConnectorCount: Int,
+        val activeSyncedCount: Int,
+        val activeErrorCount: Int,
+        val knownPeerIds: Set<DeviceId>,
+        val snoozedCards: Set<DashboardCardSnoozer.Card>,
+    )
+
     val state: Flow<State> = combine(
         tickerUiRefresh,
         networkStateProvider.networkState,
-        generalSettings.isSyncSetupDismissed.flow,
+        syncHintCtx,
         deviceItems(),
         permissionTool.missingPermissions,
         syncStatusFlow,
@@ -366,10 +393,19 @@ class DashboardVM @Inject constructor(
         updateService.availableUpdate.onStart { emit(null) },
         generalSettings.dashboardConfig.flow,
         filteredIssues,
-    ) { now, networkState, isSyncSetupDismissed, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig, issues ->
+    ) { now, networkState, syncHints, deviceItems, missingPermissions, syncStatus, upgradeInfo, update, uiConfig, issues ->
 
-        val connectorCount = syncManager.allConnectors.first().size
-        val showSyncSetup = !isSyncSetupDismissed && connectorCount == 0
+        val showSyncSetup = syncHints.connectorCount == 0 &&
+            DashboardCardSnoozer.Card.SYNC_SETUP !in syncHints.snoozedCards
+        val showSyncedAlone = DashboardCardSnoozer.Card.SYNCED_ALONE !in syncHints.snoozedCards &&
+            isSyncedButAlone(
+                connectorCount = syncHints.connectorCount,
+                activeConnectorCount = syncHints.activeConnectorCount,
+                activeSyncedCount = syncHints.activeSyncedCount,
+                activeErrorCount = syncHints.activeErrorCount,
+                knownPeerCount = syncHints.knownPeerIds.size,
+                visiblePeerCount = deviceItems.count { !it.isCurrentDevice },
+            )
 
         val filteredPermissions = missingPermissions
             .filterNot { WIFI_PERMISSIONS.contains(it) }
@@ -415,6 +451,8 @@ class DashboardVM @Inject constructor(
             isSyncExpanded = uiConfig.isSyncExpanded,
             isOffline = !networkState.isInternetAvailable,
             showSyncSetup = showSyncSetup,
+            showSyncedAlone = showSyncedAlone,
+            hasConnectors = syncHints.connectorCount > 0,
             missingPermissions = filteredPermissions,
             update = update,
             upgradeInfo = upgradeInfo,
@@ -448,8 +486,12 @@ class DashboardVM @Inject constructor(
         navTo(Nav.Settings.Index)
     }
 
-    fun dismissSyncSetup() = launch {
-        generalSettings.isSyncSetupDismissed.value(true)
+    fun snoozeSyncSetup() {
+        cardSnoozer.snooze(DashboardCardSnoozer.Card.SYNC_SETUP)
+    }
+
+    fun snoozeSyncedAlone() {
+        cardSnoozer.snooze(DashboardCardSnoozer.Card.SYNCED_ALONE)
     }
 
     fun setupSync() {
@@ -748,6 +790,49 @@ class DashboardVM @Inject constructor(
     }
 
     companion object {
+        /**
+         * Sync is configured and healthy, but this device has no peers — the user set up a
+         * backend but never reached the actual goal (a second device).
+         *
+         * Mutually exclusive with the sync-setup card by construction: that one requires
+         * `connectorCount == 0`, this one `> 0`.
+         *
+         * Deliberately NOT gated on busy: busy toggles on every periodic sync and would blink
+         * the card. First-sync flicker is prevented by requiring every active connector to
+         * have completed a sync (`lastSyncAt != null`), and erroring connectors suppress the
+         * card entirely.
+         */
+        internal fun isSyncedButAlone(
+            connectorCount: Int,
+            activeConnectorCount: Int,
+            activeSyncedCount: Int,
+            activeErrorCount: Int,
+            knownPeerCount: Int,
+            visiblePeerCount: Int,
+        ): Boolean = connectorCount > 0 &&
+            activeConnectorCount > 0 &&
+            activeSyncedCount == activeConnectorCount &&
+            activeErrorCount == 0 &&
+            knownPeerCount == 0 &&
+            visiblePeerCount == 0
+
+        internal fun buildSyncHintCtx(
+            connectorCount: Int,
+            activeStates: Collection<SyncConnectorState>,
+            allStates: Collection<SyncConnectorState>,
+            snoozedCards: Set<DashboardCardSnoozer.Card>,
+            selfDeviceId: DeviceId,
+        ): SyncHintCtx = SyncHintCtx(
+            connectorCount = connectorCount,
+            activeConnectorCount = activeStates.size,
+            activeSyncedCount = activeStates.count { it.lastSyncAt != null },
+            activeErrorCount = activeStates.count { it.lastError != null },
+            knownPeerIds = allStates
+                .flatMap { s -> s.deviceMetadata.map { it.deviceId } }
+                .toSet() - selfDeviceId,
+            snoozedCards = snoozedCards,
+        )
+
         internal fun buildDeviceInfos(
             item: DeviceItem,
             allIssues: List<ConnectorIssue>,

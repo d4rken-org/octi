@@ -15,6 +15,9 @@ object Nav {
         data object Privacy : Main
 
         @Serializable
+        data object Connect : Main
+
+        @Serializable
         data class Upgrade(val forced: Boolean = false) : Main
 
         @Serializable

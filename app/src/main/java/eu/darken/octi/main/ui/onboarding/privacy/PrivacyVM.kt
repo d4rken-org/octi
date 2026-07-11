@@ -38,9 +38,8 @@ class PrivacyVM @Inject constructor(
         webpageTool.open(PrivacyPolicy.URL)
     }
 
-    fun finishScreen() = launch {
-        generalSettings.isOnboardingDone.value(true)
-        navTo(Nav.Main.Dashboard, popUpTo = Nav.Main.Welcome, inclusive = true)
+    fun finishScreen() {
+        navTo(Nav.Main.Connect)
     }
 
     fun toggleUpdateCheck() = launch {

@@ -145,7 +145,7 @@ fun WelcomeScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                StepIndicator(totalSteps = 2, currentStep = 1)
+                StepIndicator(totalSteps = 3, currentStep = 1)
 
                 Spacer(modifier = Modifier.height(32.dp))
             }
