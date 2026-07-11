@@ -9,11 +9,13 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationEntry
+import eu.darken.octi.sync.ui.add.intent.SyncSetupIntentScreenHost
 import javax.inject.Inject
 
 class SyncAddNavigation @Inject constructor() : NavigationEntry {
     override fun EntryProviderScope<NavKey>.setup() {
-        entry<Nav.Sync.Add> { SyncAddScreenHost() }
+        entry<Nav.Sync.Add> { SyncSetupIntentScreenHost() }
+        entry<Nav.Sync.AddPicker> { key -> SyncAddScreenHost(mode = key.mode) }
     }
 
     @Module

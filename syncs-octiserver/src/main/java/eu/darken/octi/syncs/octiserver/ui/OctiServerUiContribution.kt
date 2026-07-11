@@ -57,6 +57,8 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
 
     override fun addAccountDestination(): NavigationDestination = Nav.Sync.AddOctiServer
 
+    override fun joinDeviceDestination(): NavigationDestination = Nav.Sync.OctiServerLinkClient
+
     override fun linkDeviceDestination(connector: SyncConnector): NavigationDestination? {
         val octi = connector as? OctiServerConnector ?: return null
         return Nav.Sync.OctiServerLinkHost(octi.identifier.idString)

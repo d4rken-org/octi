@@ -1,14 +1,9 @@
 package eu.darken.octi.sync.ui.add
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -32,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.octi.R
@@ -50,9 +46,13 @@ import eu.darken.octi.sync.core.ConnectorPauseReason
 import eu.darken.octi.sync.core.ConnectorUiContribution
 import eu.darken.octi.sync.core.SyncConnector
 import eu.darken.octi.sync.core.SyncConnectorState
+import eu.darken.octi.sync.ui.add.SyncAddVM.Companion.forMode
 
 @Composable
-fun SyncAddScreenHost(vm: SyncAddVM = hiltViewModel()) {
+fun SyncAddScreenHost(
+    mode: Nav.Sync.AddPicker.Mode,
+    vm: SyncAddVM = hiltViewModel(),
+) {
     ErrorEventHandler(vm)
     NavigationEventHandler(vm)
 
@@ -60,6 +60,8 @@ fun SyncAddScreenHost(vm: SyncAddVM = hiltViewModel()) {
     state?.let {
         SyncAddScreen(
             state = it,
+            mode = mode,
+            onContributionClicked = { contribution -> vm.onContributionClicked(contribution, mode) },
             onNavigateUp = { vm.navUp() },
         )
     }
@@ -68,15 +70,27 @@ fun SyncAddScreenHost(vm: SyncAddVM = hiltViewModel()) {
 @Composable
 fun SyncAddScreen(
     state: SyncAddVM.State,
+    mode: Nav.Sync.AddPicker.Mode,
+    onContributionClicked: (ConnectorUiContribution) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
     var showHelpDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val items = remember(state.contributions, mode) { state.contributions.forMode(mode) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(R.string.sync_add_label)) },
+                title = {
+                    Text(
+                        text = stringResource(
+                            when (mode) {
+                                Nav.Sync.AddPicker.Mode.CREATE -> R.string.sync_add_pick_create_title
+                                Nav.Sync.AddPicker.Mode.LINK -> R.string.sync_add_pick_link_title
+                            }
+                        )
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -90,13 +104,36 @@ fun SyncAddScreen(
             )
         },
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-        ) {
-            items(state.items, key = { it.contribution.type.name }) { item ->
-                SyncAddItemRow(item = item)
+        if (items.isEmpty() && mode == Nav.Sync.AddPicker.Mode.LINK) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(R.string.sync_add_link_none_available),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+            ) {
+                items(items, key = { it.type.name }) { contribution ->
+                    SyncSetupRow(
+                        icon = { modifier -> contribution.Icon(modifier = modifier) },
+                        title = stringResource(contribution.labelRes),
+                        description = stringResource(contribution.descriptionRes),
+                        onClick = { onContributionClicked(contribution) },
+                    )
+                }
             }
         }
     }
@@ -122,56 +159,71 @@ fun SyncAddScreen(
     }
 }
 
+@Preview2
 @Composable
-private fun SyncAddItemRow(item: SyncAddVM.SyncAddItem) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { item.onClick() }
-            .padding(16.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        item.contribution.Icon(modifier = Modifier.size(20.dp))
-
-        Spacer(modifier = Modifier.width(4.dp))
-
-        Column {
-            Text(
-                text = stringResource(item.contribution.labelRes),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = stringResource(item.contribution.descriptionRes),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
+private fun SyncAddScreenCreatePreview() = PreviewWrapper {
+    SyncAddScreen(
+        state = SyncAddVM.State(
+            contributions = listOf(
+                previewContribution(
+                    type = ConnectorType.GDRIVE,
+                    labelRes = R.string.sync_add_label,
+                    descriptionRes = R.string.sync_add_help_desc,
+                ),
+                previewContribution(
+                    type = ConnectorType.OCTISERVER,
+                    labelRes = R.string.sync_add_label,
+                    descriptionRes = R.string.sync_add_help_desc,
+                ),
+            ),
+        ),
+        mode = Nav.Sync.AddPicker.Mode.CREATE,
+        onContributionClicked = {},
+        onNavigateUp = {},
+    )
 }
 
 @Preview2
 @Composable
-private fun SyncAddScreenPreview() = PreviewWrapper {
+private fun SyncAddScreenLinkPreview() = PreviewWrapper {
     SyncAddScreen(
         state = SyncAddVM.State(
-            items = listOf(
-                SyncAddVM.SyncAddItem(
-                    contribution = previewContribution(
-                        type = ConnectorType.GDRIVE,
-                        labelRes = R.string.sync_add_label,
-                        descriptionRes = R.string.sync_add_help_desc,
-                    ),
-                    onClick = {},
+            contributions = listOf(
+                previewContribution(
+                    type = ConnectorType.GDRIVE,
+                    labelRes = R.string.sync_add_label,
+                    descriptionRes = R.string.sync_add_help_desc,
+                    joinDestination = Nav.Sync.AddGDrive(linking = true),
                 ),
-                SyncAddVM.SyncAddItem(
-                    contribution = previewContribution(
-                        type = ConnectorType.OCTISERVER,
-                        labelRes = R.string.sync_add_label,
-                        descriptionRes = R.string.sync_add_help_desc,
-                    ),
-                    onClick = {},
+                previewContribution(
+                    type = ConnectorType.OCTISERVER,
+                    labelRes = R.string.sync_add_label,
+                    descriptionRes = R.string.sync_add_help_desc,
+                    joinDestination = Nav.Sync.OctiServerLinkClient,
                 ),
             ),
         ),
+        mode = Nav.Sync.AddPicker.Mode.LINK,
+        onContributionClicked = {},
+        onNavigateUp = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun SyncAddScreenLinkEmptyPreview() = PreviewWrapper {
+    SyncAddScreen(
+        state = SyncAddVM.State(
+            contributions = listOf(
+                previewContribution(
+                    type = ConnectorType.GDRIVE,
+                    labelRes = R.string.sync_add_label,
+                    descriptionRes = R.string.sync_add_help_desc,
+                ),
+            ),
+        ),
+        mode = Nav.Sync.AddPicker.Mode.LINK,
+        onContributionClicked = {},
         onNavigateUp = {},
     )
 }
@@ -180,13 +232,15 @@ private fun previewContribution(
     type: ConnectorType,
     labelRes: Int,
     descriptionRes: Int,
+    joinDestination: NavigationDestination? = null,
 ): ConnectorUiContribution = object : ConnectorUiContribution {
     override val type = type
     override val displayOrder = 0
     override val labelRes = labelRes
     override val descriptionRes = descriptionRes
     @Composable override fun Icon(modifier: Modifier, tint: Color) {}
-    override fun addAccountDestination(): NavigationDestination = Nav.Sync.Add
+    override fun addAccountDestination(): NavigationDestination = Nav.Sync.AddPicker(Nav.Sync.AddPicker.Mode.CREATE)
+    override fun joinDeviceDestination(): NavigationDestination? = joinDestination
     @Composable override fun listCardTitle(connector: SyncConnector): String = ""
     @Composable override fun listCardAccountValue(connector: SyncConnector): String = ""
     @Composable override fun ActionsSheet(

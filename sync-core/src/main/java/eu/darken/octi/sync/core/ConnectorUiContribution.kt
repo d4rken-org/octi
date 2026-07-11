@@ -33,6 +33,14 @@ interface ConnectorUiContribution {
     fun addAccountDestination(): NavigationDestination
 
     /**
+     * Destination for adding THIS device to an already-existing remote account (client side,
+     * no local connector yet), or null if the backend cannot join an existing account without
+     * creating one. OctiServer returns its link-client (QR scan) screen; GDrive returns its
+     * add screen in linking mode (same-account sign-in).
+     */
+    fun joinDeviceDestination(): NavigationDestination? = null
+
+    /**
      * Destination for the "link new device" action for this connector, or null if the backend
      * does not support device linking. OctiServer returns its link-host screen; GDrive returns null.
      */

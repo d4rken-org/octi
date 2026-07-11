@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class AddGDriveNavigation @Inject constructor() : NavigationEntry {
     override fun EntryProviderScope<NavKey>.setup() {
-        entry<Nav.Sync.AddGDrive> { AddGDriveScreenHost() }
+        entry<Nav.Sync.AddGDrive> { key -> AddGDriveScreenHost(linking = key.linking) }
     }
 
     @Module

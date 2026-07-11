@@ -42,7 +42,13 @@ object Nav {
         data object Add : Sync
 
         @Serializable
-        data object AddGDrive : Sync
+        data class AddPicker(val mode: Mode) : Sync {
+            @Serializable
+            enum class Mode { CREATE, LINK }
+        }
+
+        @Serializable
+        data class AddGDrive(val linking: Boolean = false) : Sync
 
         @Serializable
         data object AddOctiServer : Sync
