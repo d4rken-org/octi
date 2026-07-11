@@ -1,1 +1,1 @@
-Monitor and synchronize information between multiple Android devices
+Keep an eye on your other Android devices: battery, WiFi, clipboard and more
