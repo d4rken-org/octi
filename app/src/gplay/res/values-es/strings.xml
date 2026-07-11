@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Beneficios</string>
     <string name="upgrade_screen_benefits_body">• Más de 3 dispositivos 💯\n• Diferentes temas 🎨\n• Más opciones ⚙️\n• Servidores de sincronización extra🖥️️\n• Desarrollo continuo ☕\n• Un desarrollador motivado 🧙</string>
     <string name="upgrade_screen_how_title">Opciones</string>
-    <string name="upgrade_screen_how_body">Puedes elegir entre una compra única y una suscripción anual más económica.\nLa suscripción comienza con una prueba gratuita de 14 días, después serás cobrado una vez al año. La prueba y suscripción pueden cancelarse en cualquier momento.\nLas mismas funciones, solo diferentes modelos de precios.</string>
     <string name="upgrade_screen_subscription_trial_action">Comenzar prueba gratuita de 14 días</string>
     <string name="upgrade_screen_subscription_action">Suscribirse</string>
     <string name="upgrade_screen_subscription_action_hint">La suscripción cuesta %s al año.</string>

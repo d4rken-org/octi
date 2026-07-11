@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Hyödyt</string>
     <string name="upgrade_screen_benefits_body">• Yli 3 laitetta 💯\n• Erilaiset teemat 🎨\n• Lisää vaihtoehtoja ⚙️\n• Lisäsynkronointipalvelimet🖥️️\n• Jatkuva kehitys ☕\n• Motivoitunut kehittäjä 🧙</string>
     <string name="upgrade_screen_how_title">Vaihtoehdot</string>
-    <string name="upgrade_screen_how_body">Voit valita kertamaksun ja halvemman vuositilauksen välillä.\nTilaus alkaa ilmaisella 14 päivän kokeilulla, jonka jälkeen maksu veloitetaan vuosittain. Kokeilu ja tilaus ovat peruttavissa milloin tahansa.\nSamat ominaisuudet, vain eri hinnoittelumallit.</string>
     <string name="upgrade_screen_subscription_trial_action">Aloita ilmainen 14 päivän kokeilu</string>
     <string name="upgrade_screen_subscription_action">Tilaa</string>
     <string name="upgrade_screen_subscription_action_hint">Tilauksen hinta on %s vuodessa.</string>

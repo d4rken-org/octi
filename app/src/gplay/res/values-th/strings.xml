@@ -12,7 +12,6 @@
     <string name="upgrade_screen_benefits_title">ข้อดี</string>
     <string name="upgrade_screen_benefits_body">• มากกว่า 3 อุปกรณ์ 💯\n• ธีมที่แตกต่างกัน 🎨\n• ตัวเลือกเพิ่มเติม ⚙️\n• เซิร์ฟเวอร์ซิงค์เพิ่มเติม 🖥️️\n• การพัฒนาอย่างต่อเนื่อง ☕\n• นักพัฒนาที่มีแรงบันดาลใจ 🧙</string>
     <string name="upgrade_screen_how_title">ตัวเลือก</string>
-    <string name="upgrade_screen_how_body">คุณสามารถเลือกการซื้อเพียงครั้งเดียวหรือสมัครสมาชิกรายปีในราคาถูกกว่า\nการสมัครสมาชิกเริ่มต้นด้วยการทดลองใช้ฟรี 14 วัน หลังจากนั้นจะมีการเรียกเก็บเงินปีละครั้ง คุณสามารถยกเลิกการทดลองใช้ฟรีและการสมัครสมาชิกได้ทุกเมื่อ\nคุณสมบัติเหมือนกัน แค่รูปแบบราคาแตกต่างกัน</string>
     <string name="upgrade_screen_subscription_trial_action">เริ่มทดลองใช้งานฟรี 14 วัน</string>
     <string name="upgrade_screen_subscription_action">สมัครสมาชิก</string>
     <string name="upgrade_screen_subscription_action_hint">ค่าสมัครสมาชิก %s ต่อปี</string>

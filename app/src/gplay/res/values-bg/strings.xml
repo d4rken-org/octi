@@ -12,7 +12,6 @@
     <string name="upgrade_screen_benefits_title">Предимства</string>
     <string name="upgrade_screen_benefits_body">• Повече от 3 устройства 💯\n• Различни теми 🎨\n• Повече опции ⚙️\n• Допълнителни сървъри за синхронизация 🖥️️\n• Продължаващо развитие ☕\n• Мотивиран разработчик 🧙</string>
     <string name="upgrade_screen_how_title">Опции</string>
-    <string name="upgrade_screen_how_body">Можете да изберете между еднокупна покупка и по-евтин годишен абонамент.\nАбонаментът започва с 14-дневен безплатен пробен период, след което ще бъдете таксувани веднъж годишно. Пробният период и абонаментът могат да бъдат анулирани по всяко време.\nСъщите функции, просто различни модели на ценообразуване.</string>
     <string name="upgrade_screen_subscription_trial_action">Стартирайте безплатен 14-дневен пробен период</string>
     <string name="upgrade_screen_subscription_action">Абонирайте се</string>
     <string name="upgrade_screen_subscription_action_hint">Абонаментът струва %s на година.</string>

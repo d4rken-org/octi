@@ -12,7 +12,6 @@
     <string name="upgrade_screen_benefits_title">Privalumai</string>
     <string name="upgrade_screen_benefits_body">• Daugiau nei 3 įrenginiai 💯\n• Skirtingos temos 🎨\n• Daugiau parinkčių ⚙️\n• Papildomi sinchronizavimo serveriai 🖥️️\n• Nuolatinė plėtra ☕\n• Motyvuotas kūrėjas 🧙</string>
     <string name="upgrade_screen_how_title">Pasirinkimai</string>
-    <string name="upgrade_screen_how_body">Galite pasirinkti vienkartinį pirkimą arba pigesnį metinį prenumeratą.\nPrenumerata prasideda nuo 14 dienų nemokamo bandomojo laikotarpio, po kurio būsite apmokestinti kartą per metus. Bandomasis laikotarpis ir prenumerata gali būti bet kada atšaukti.\nTie patys funkcionalumai, tik skirtingi kainodaros modeliai.</string>
     <string name="upgrade_screen_subscription_trial_action">Pradėti nemokamą 14 dienų bandomąją versiją</string>
     <string name="upgrade_screen_subscription_action">Prenumeruoti</string>
     <string name="upgrade_screen_subscription_action_hint">Prenumerata kainuoja %s per metus.</string>

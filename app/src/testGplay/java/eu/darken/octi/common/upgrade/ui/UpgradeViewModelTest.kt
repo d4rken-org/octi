@@ -1,7 +1,10 @@
 package eu.darken.octi.common.upgrade.ui
 
 import androidx.lifecycle.SavedStateHandle
+import com.android.billingclient.api.ProductDetails
+import eu.darken.octi.common.upgrade.core.OurSku
 import eu.darken.octi.common.upgrade.core.UpgradeRepoGplay
+import eu.darken.octi.common.upgrade.core.billing.SkuDetails
 import eu.darken.octi.common.widget.WidgetManager
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -46,6 +49,45 @@ class UpgradeViewModelTest : BaseTest() {
         upgradeRepo = repo,
         widgetManagers = widgetManagers,
     )
+
+    private fun subDetailsWithOffers(vararg offerIds: String?): SkuDetails {
+        val offers = offerIds.map { id ->
+            mockk<ProductDetails.SubscriptionOfferDetails>().apply {
+                every { basePlanId } returns OurSku.Sub.PRO_UPGRADE.BASE_OFFER.basePlanId
+                every { offerId } returns id
+            }
+        }
+        val details = mockk<ProductDetails>().apply {
+            every { subscriptionOfferDetails } returns offers
+        }
+        return SkuDetails(OurSku.Sub.PRO_UPGRADE, details)
+    }
+
+    @Test fun `trial copy is advertised when Play returns the trial offer`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        coEvery { repo.querySkus(OurSku.Sub.PRO_UPGRADE) } returns listOf(
+            subDetailsWithOffers(null, OurSku.Sub.PRO_UPGRADE.TRIAL_OFFER.offerId)
+        )
+        val vm = buildVm(repo)
+
+        val state = async { vm.state.first { !it.pricingLoading } }
+        advanceUntilIdle()
+
+        state.await().trialAvailable shouldBe true
+    }
+
+    @Test fun `no trial copy when Play only returns the base offer`() = runTest2(context = testDispatcher) {
+        // An account that already used its trial (or a region without one) only gets the base
+        // offer back — the UI must not promise a 14-day trial it can't deliver.
+        val repo = mockRepo()
+        coEvery { repo.querySkus(OurSku.Sub.PRO_UPGRADE) } returns listOf(subDetailsWithOffers(null))
+        val vm = buildVm(repo)
+
+        val state = async { vm.state.first { !it.pricingLoading } }
+        advanceUntilIdle()
+
+        state.await().trialAvailable shouldBe false
+    }
 
     @Test fun `restore with no purchase emits RestoreFailed`() = runTest2(context = testDispatcher) {
         val repo = mockRepo()

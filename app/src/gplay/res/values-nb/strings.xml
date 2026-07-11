@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Fordeler</string>
     <string name="upgrade_screen_benefits_body">• Mer enn 3 enheter 💯\n• Ulike temaer 🎨\n• Flere alternativer ⚙️\n• Ekstra synkroniseringsservere 🖥️️\n• Fortsatt utvikling ☕\n• En motivert utvikler 🧙</string>
     <string name="upgrade_screen_how_title">Alternativer</string>
-    <string name="upgrade_screen_how_body">Du kan velge mellom et engangskjøp og et billigere årlig abonnement.\nAbonnementet starter med en gratis 14-dagers prøveperiode, deretter blir du belastet én gang i året. Prøveperioden og abonnementet kan når som helst avbestilles.\nSamme funksjoner, bare ulike prismodeller.</string>
     <string name="upgrade_screen_subscription_trial_action">Start gratis 14-dagers prøveperiode</string>
     <string name="upgrade_screen_subscription_action">Abonner</string>
     <string name="upgrade_screen_subscription_action_hint">Abonnementet koster %s per år.</string>

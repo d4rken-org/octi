@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Avantages</string>
     <string name="upgrade_screen_benefits_body">• Plus de 3 appareils 💯;\n• Plusieurs thèmes 🎨;\n• Plus d’options ⚙️;\n• Des serveurs de synchronisation supplémentaires ; 🖥️\n• Un développement permanent ; ☕\nUn développeur motivé 🧙.</string>
     <string name="upgrade_screen_how_title">Options</string>
-    <string name="upgrade_screen_how_body">Vous pouvez soit choisir un achat unique soit un abonnement annuel moins coûteux.\nL\'abonnement commence par un essai gratuit de 14 jours suivi d’une facture annuelle. L’essai et l’abonnement peuvent être annulés n’importe quand.\nMême fonctions, juste différents modes tarifaires.</string>
     <string name="upgrade_screen_subscription_trial_action">Commencer l’essai gratuit de 14 jours</string>
     <string name="upgrade_screen_subscription_action">M’abonner</string>
     <string name="upgrade_screen_subscription_action_hint">L’abonnement coûte %s par an.</string>

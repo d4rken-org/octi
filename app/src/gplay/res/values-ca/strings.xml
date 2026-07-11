@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Avantatges</string>
     <string name="upgrade_screen_benefits_body">• Més de 3 dispositius 💯\n• Temes diferents 🎨\n• Més opcions ⚙️\n• Servidors de sincronització addicionals🖥️️\n• Desenvolupament continu ☕\n• Un desenvolupador motivat 🧙</string>
     <string name="upgrade_screen_how_title">Opcions</string>
-    <string name="upgrade_screen_how_body">Podeu triar entre una compra única i una subscripció anual més barata.\nLa subscripció comença amb una prova gratuïta de 14 dies, després de la qual se li cobrarà un cop l\'any. La prova i la subscripció es poden cancel·lar en qualsevol moment.\nLes mateixes funcions, només models de preus diferents.</string>
     <string name="upgrade_screen_subscription_trial_action">Comença la prova gratuïta de 14 dies</string>
     <string name="upgrade_screen_subscription_action">Subscriure’s</string>
     <string name="upgrade_screen_subscription_action_hint">La subscripció costa %s a l\'any.</string>

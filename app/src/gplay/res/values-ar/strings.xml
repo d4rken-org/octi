@@ -20,7 +20,6 @@
     <string name="upgrade_screen_benefits_title">المزايا</string>
     <string name="upgrade_screen_benefits_body">• أكثر من 3 أجهزة 💯\n• سمات مختلفة 🎨\n• المزيد من الخيارات ⚙️\n• خوادم مزامنة إضافية🖥️️\n• تطوير مستمر ☕\n• مطور متحمس 🧙</string>
     <string name="upgrade_screen_how_title">الخيارات</string>
-    <string name="upgrade_screen_how_body">يمكنك الاختيار بين عملية شراء لمرة واحدة واشتراك سنوي أرخص.\nيبدأ الاشتراك بفترة تجريبية مجانية لمدة 14 يومًا، وبعدها سيتم محاسبتك مرة واحدة سنويًا. يمكن إلغاء الفترة التجريبية والاشتراك في أي وقت.\nنفس الميزات، فقط نماذج تسعير مختلفة.</string>
     <string name="upgrade_screen_subscription_trial_action">ابدأ فترة تجريبية مجانية لمدة 14 يومًا</string>
     <string name="upgrade_screen_subscription_action">اشتراك</string>
     <string name="upgrade_screen_subscription_action_hint">تبلغ تكلفة الاشتراك %s سنوياً.</string>

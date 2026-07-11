@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Vantaggi</string>
     <string name="upgrade_screen_benefits_body">• Più di 3 dispositivi 💯\n• Temi diversi 🎨\n• Più opzioni ⚙️\n• Server di sincronizzazione extra 🖥️️\n• Sviluppo continuo ☕\n• Uno sviluppatore motivato 🧙</string>
     <string name="upgrade_screen_how_title">Opzioni</string>
-    <string name="upgrade_screen_how_body">Puoi scegliere tra un acquisto una tantum e un abbonamento annuale più economico. L\'abbonamento inizia con una prova gratuita di 14 giorni, dopo la quale verrà addebitato una volta all\'anno. La prova e l\'abbonamento possono essere annullati in qualsiasi momento.\nStesse funzionalità, solo modelli di prezzo diversi.</string>
     <string name="upgrade_screen_subscription_trial_action">Inizia la prova gratuita di 14 giorni</string>
     <string name="upgrade_screen_subscription_action">Iscriviti</string>
     <string name="upgrade_screen_subscription_action_hint">L\'abbonamento costa %s all\'anno.</string>

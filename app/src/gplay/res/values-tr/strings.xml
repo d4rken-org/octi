@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Avantajlar</string>
     <string name="upgrade_screen_benefits_body">- 3\'ten fazla cihaz 💯\n- Farklı temalar 🎨\n- Daha fazla seçenek ⚙️\n- Ekstra senkronizasyon sunucuları🖥️️\n- Sürekli devam eden geliştirme ☕\n- Motive olmuş bir geliştirici 🧙</string>
     <string name="upgrade_screen_how_title">Şeçenekler</string>
-    <string name="upgrade_screen_how_body">Tek seferlik satın alma ile daha ucuz olan yıllık abonelik arasında seçim yapabilirsiniz.\nAbonelik 14 günlük ücretsiz deneme ile başlar ve sonrasında yılda bir kez ücretlendirilirsiniz. Deneme sürümü ve abonelik istenildiği zaman iptal edilebilir.\nAynı özellikler, sadece farklı fiyatlandırma modelleri.</string>
     <string name="upgrade_screen_subscription_trial_action">14 günlük ücretsiz denemeyi başlatın</string>
     <string name="upgrade_screen_subscription_action">Abone ol</string>
     <string name="upgrade_screen_subscription_action_hint">Abonelik ücreti yıllık %s\'dir.</string>

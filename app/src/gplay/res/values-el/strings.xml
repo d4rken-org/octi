@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Πλεονεκτήματα</string>
     <string name="upgrade_screen_benefits_body">• Πάνω από 3 συσκευές 💯\n• Διαφορετικά θέματα 🎨\n• Περισσότερες επιλογές ⚙️\n• Πρόσθετοι servers συγχρονισμού🖥️️\n• Συνεχής ανάπτυξη ☕\n• Ένας αφοσιωμένος προγραμματιστής 🧙</string>
     <string name="upgrade_screen_how_title">Επιλογές</string>
-    <string name="upgrade_screen_how_body">Μπορείτε να επιλέξετε μεταξύ μιας εφάπαξ αγοράς και μιας φθηνότερης ετήσιας συνδρομής.\nΗ συνδρομή ξεκινά με μια δωρεάν δοκιμή 14 ημερών, μετά την οποία θα χρεώνεστε ετησίως. Η δοκιμή και η συνδρομή ακυρώνονται ανά πάσα στιγμή.\nΊδια χαρακτηριστικά, απλά διαφορετικά μοντέλα τιμολόγησης.</string>
     <string name="upgrade_screen_subscription_trial_action">Έναρξη δωρεάν δοκιμής 14 ημερών</string>
     <string name="upgrade_screen_subscription_action">Συνδρομή</string>
     <string name="upgrade_screen_subscription_action_hint">Η συνδρομή κοστίζει %s ετησίως.</string>
