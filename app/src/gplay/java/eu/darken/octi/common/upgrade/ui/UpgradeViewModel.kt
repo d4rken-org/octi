@@ -92,6 +92,10 @@ class UpgradeViewModel @Inject constructor(
             pricing = pricing,
             pricingLoading = pricingLoading,
             pricingUnavailable = !pricingLoading && pricing == null,
+            // Only advertise the free trial when Play actually returned the trial offer — accounts
+            // that already used their trial (or regions without it) get plain subscription copy.
+            trialAvailable = pricing?.sub?.details?.subscriptionOfferDetails
+                ?.any { OurSku.Sub.PRO_UPGRADE.TRIAL_OFFER.matches(it) } == true,
             wasPreviouslyPro = wasEverPro && !current.isPro,
             restoreInProgress = isRestoring,
         )
@@ -121,6 +125,7 @@ class UpgradeViewModel @Inject constructor(
         val pricing: Pricing?,
         val pricingLoading: Boolean = false,
         val pricingUnavailable: Boolean = false,
+        val trialAvailable: Boolean = false,
         val wasPreviouslyPro: Boolean = false,
         val restoreInProgress: Boolean = false,
     )

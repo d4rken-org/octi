@@ -18,7 +18,6 @@
     <string name="upgrade_screen_benefits_title">Výhody</string>
     <string name="upgrade_screen_benefits_body">• Více než 3 zařízení 💯\n• Různé motivy 🎨\n• Více možností ⚙️\n• Extra synchronizace serverů🖥️\n• Pokračování ve vývoji ☕\n• Motivovaný vývojář 🧙</string>
     <string name="upgrade_screen_how_title">Možnosti</string>
-    <string name="upgrade_screen_how_body">Můžete si vybrat mezi jednorázovým nákupem a levnějším ročním předplatným.\nPředplatné začíná 14denní bezplatnou zkušební dobou, po které budete jednou ročně účtováni. Zkušební dobu a předplatné je možné kdykoliv zrušit.\nStejné funkce, jen různé cenové modely.</string>
     <string name="upgrade_screen_subscription_trial_action">Zahájit bezplatnou 14denní zkušební dobu</string>
     <string name="upgrade_screen_subscription_action">Předplatit</string>
     <string name="upgrade_screen_subscription_action_hint">Předplatné stojí %s ročně.</string>

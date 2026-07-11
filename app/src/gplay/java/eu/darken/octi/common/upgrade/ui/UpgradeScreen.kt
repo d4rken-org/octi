@@ -214,12 +214,22 @@ fun UpgradeScreen(
             )
 
             Text(
-                text = stringResource(R.string.upgrade_screen_how_body),
+                text = stringResource(R.string.upgrade_screen_how_body2),
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+                modifier = Modifier.fillMaxWidth(),
             )
+
+            // Trial copy is promise-accurate: only shown when Play actually offers the trial to
+            // this account, matching the button below.
+            if (state?.trialAvailable == true) {
+                Text(
+                    text = stringResource(R.string.upgrade_screen_how_trial_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             if (state == null || state.pricingLoading) {
                 Box(

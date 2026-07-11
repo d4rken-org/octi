@@ -12,7 +12,6 @@
     <string name="upgrade_screen_benefits_title">Eelised</string>
     <string name="upgrade_screen_benefits_body">• Rohkem kui 3 seadet 💯\n• Erinevad teemad 🎨\n• Rohkem valikuid ⚙️\n• Lisanduvad sünkroonimisserverid🖥️️\n• Jätkuv arendus ☕\n• Motiveeritud arendaja 🧙</string>
     <string name="upgrade_screen_how_title">Valikud</string>
-    <string name="upgrade_screen_how_body">Saad valida ühekordse ostu ja odavama aastase tellimuse vahel.\nTellige alustuseks tasuta 14-päevane prooviperiood, mille järel arvestatakse tasu kord aastas. Prooviperioodi ja tellimust saab igal ajal tühistada.\nSama funktsionaalsus, lihtsalt erinevad hinnamudelid.</string>
     <string name="upgrade_screen_subscription_trial_action">Alusta tasuta 14-päevast prooviperioodi</string>
     <string name="upgrade_screen_subscription_action">Telli</string>
     <string name="upgrade_screen_subscription_action_hint">Tellimus maksab %s aastas.</string>

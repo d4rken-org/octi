@@ -12,7 +12,6 @@
     <string name="upgrade_screen_benefits_title">უპირატესობები</string>
     <string name="upgrade_screen_benefits_body">• 3-ზე მეტი მოწყობილობა 💯\n• სხვადასხვა თემები 🎨\n• მეტი პარამეტრი ⚙️\n• დამატებითი სინქრონიზაციის სერვერები 🖥️️\n• გამუდმებული ახალი შესაძლებლობების წარმოება ☕\n• მოტივირებული დეველოპერი 🧙</string>
     <string name="upgrade_screen_how_title">არჩევანი</string>
-    <string name="upgrade_screen_how_body">შეგიძლიათ აირჩიოთ ერთჯერადი შეძენა ან იაფი წლიური გამოწერა.\nგამოწერა იწყება 14-დღიანი უფასო საცდელი პერიოდით, რის შემდეგაც თანხა ჩამოგეჭრებათ წელიწადში ერთხელ. საცდელი პერიოდი და გამოწერა ნებისმიერ დროს შეიძლება გაუქმდეს.\nიგივე შესაძლებლობები, უბრალოდ განსხვავებული ფასების მოდელები.</string>
     <string name="upgrade_screen_subscription_trial_action">დაიწყეთ 14-დღიანი უფასო საცდელი პერიოდი</string>
     <string name="upgrade_screen_subscription_action">გამოწერა</string>
     <string name="upgrade_screen_subscription_action_hint">გამოწერის ღირებულებაა %s წელიწადში.</string>

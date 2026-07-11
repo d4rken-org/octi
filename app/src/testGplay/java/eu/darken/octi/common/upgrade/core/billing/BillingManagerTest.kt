@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.currentTime
+import kotlinx.coroutines.test.runCurrent
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -121,7 +123,12 @@ class BillingManagerTest : BaseTest() {
         }
     }
 
-    @Test fun `connection recovers after an earlier failure without a process restart`() = runTest2 {
+    // A manager whose provider fails `failuresBeforeSuccess` times before providing a healthy
+    // connection. `attempts()` reports how many connection attempts the provider has seen.
+    private fun TestScope.recoveringManager(
+        failuresBeforeSuccess: Int = 1,
+        failure: () -> Throwable = { BillingException("Google Play hiccup") },
+    ): Pair<BillingManager, () -> Int> {
         val healthyConnection = mockk<BillingConnection>().apply {
             coEvery { refreshPurchases() } returns BillingData(emptySet())
             every { billingData } returns emptyFlow()
@@ -129,20 +136,77 @@ class BillingManagerTest : BaseTest() {
         var attempts = 0
         val provider = mockk<BillingConnectionProvider>().apply {
             every { connection } returns flow {
-                if (attempts++ == 0) throw BillingException("Google Play hiccup")
+                if (attempts++ < failuresBeforeSuccess) throw failure()
                 emit(healthyConnection)
                 awaitCancellation() // a healthy connection stays open indefinitely
             }
         }
+        return BillingManager(backgroundScope, provider) to { attempts }
+    }
+
+    @Test fun `an explicit action retries a failed connection immediately`() = runTest2 {
+        val (manager, attempts) = recoveringManager()
+
+        // A user action (restore/buy/pricing) right after the user fixed the Play/account state
+        // must not keep failing on the stale cached error until the retry delay elapses.
+        val timeBefore = currentTime
+        manager.refresh().purchases shouldBe emptySet()
+
+        attempts() shouldBe 2
+        // On-demand retry, not the virtual clock skipping the retry delay.
+        (currentTime - timeBefore) shouldBe 0L
+    }
+
+    @Test fun `connection self-heals over time without any user action`() = runTest2 {
+        val (manager, attempts) = recoveringManager()
+
+        // The ACK loop keeps the shared connection flow subscribed for the process lifetime; the
+        // retry loop alone must recover the connection without anyone calling billing APIs.
+        runCurrent()
+        attempts() shouldBe 1
+
+        advanceTimeBy(61_000) // past the default retry delay
+        runCurrent()
+
+        attempts() shouldBe 2
+        manager.refresh().purchases shouldBe emptySet()
+    }
+
+    @Test fun `the on-demand retry wait is bounded, a wedged attempt fails with the known error`() = runTest2 {
+        // First attempt fails, second attempt hangs forever (Play wedged): a user action must not
+        // hang with it — after the bounded wait it fails with the stale, mapped error. This matters
+        // for buy taps, which have no caller-side timeout.
+        var attempts = 0
+        val provider = mockk<BillingConnectionProvider>().apply {
+            every { connection } returns flow {
+                if (attempts++ == 0) throw BillingException("Google Play hiccup")
+                awaitCancellation() // attempt never resolves
+            }
+        }
         val manager = BillingManager(backgroundScope, provider)
 
-        // The ACK loop keeps the shared connection flow subscribed for the process lifetime, so a
-        // failure Result must not stick in the replay cache forever.
+        val timeBefore = currentTime
         shouldThrow<BillingException> { manager.refresh() }
+        (currentTime - timeBefore) shouldBe 10_000L
+    }
 
-        advanceTimeBy(61_000) // past the connection retry delay
+    @Test fun `billing-unavailable retries within minutes, not hours`() = runTest2 {
+        val unavailable = BillingResult.newBuilder()
+            .setResponseCode(BillingResponseCode.BILLING_UNAVAILABLE)
+            .build()
+        val (_, attempts) = recoveringManager(failure = { BillingClientException(unavailable) })
 
-        manager.refresh().purchases shouldBe emptySet()
-        attempts shouldBe 2
+        runCurrent()
+        attempts() shouldBe 1
+
+        // Longer than the default delay, but a user signing into their Google account must not
+        // stay locked out for an hour.
+        advanceTimeBy(250_000)
+        runCurrent()
+        attempts() shouldBe 1
+
+        advanceTimeBy(51_000) // past the 5min BILLING_UNAVAILABLE delay
+        runCurrent()
+        attempts() shouldBe 2
     }
 }

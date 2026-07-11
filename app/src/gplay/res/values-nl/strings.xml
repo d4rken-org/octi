@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Voordelen</string>
     <string name="upgrade_screen_benefits_body">• Meer dan 3 apparaten 💯\n• Verschillende thema\'s 🎨\n• Meer opties ⚙️\n• Extra synchronisatie-servers🖥️️\n• Voortgezette ontwikkeling ☕\n• Een gemotiveerde ontwikkelaar 🧙</string>
     <string name="upgrade_screen_how_title">Opties</string>
-    <string name="upgrade_screen_how_body">Je kunt kiezen tussen een eenmalige aankoop en een goedkoper jaarabonnement.\nHet abonnement begint met een gratis proefperiode van 14 dagen, waarna je jaarlijks wordt gefactureerd. De proefperiode en het abonnement zijn op elk moment opzegbaar.\nDezelfde functies, alleen andere prijsmodellen.</string>
     <string name="upgrade_screen_subscription_trial_action">Start gratis proefperiode van 14 dagen</string>
     <string name="upgrade_screen_subscription_action">Abonneren</string>
     <string name="upgrade_screen_subscription_action_hint">Het abonnement kost %s per jaar.</string>

@@ -12,7 +12,6 @@
     <string name="upgrade_screen_benefits_title">Priekšrocības</string>
     <string name="upgrade_screen_benefits_body">• Vairāk nekā 3 ierīces 💯\n• Dažādas tēmas 🎨\n• Vairāk opciju ⚙️\n• Papildu sinhronizācijas serveri 🖥️️\n• Pastāvīga izstrāde ☕\n• Motivēts izstrādātājs 🧙</string>
     <string name="upgrade_screen_how_title">Iespējas</string>
-    <string name="upgrade_screen_how_body">Jūs varat izvēlēties vienreizēju pirkumu vai lētāku gada abonementu.\nAbonements sākas ar 14 dienu bezmaksas izmēģinājumu, pēc kura jums tiks iekasēta maksa reizi gadā. Izmēģinājumu un abonementu var jebkurā laikā atcelt.\nVienas un tās pašas funkcijas, tikai atšķirīgi cenu modeļi.</string>
     <string name="upgrade_screen_subscription_trial_action">Sākt bezmaksas 14 dienu izmēģinājumu</string>
     <string name="upgrade_screen_subscription_action">Abonēt</string>
     <string name="upgrade_screen_subscription_action_hint">Abonements maksā %s gadā.</string>

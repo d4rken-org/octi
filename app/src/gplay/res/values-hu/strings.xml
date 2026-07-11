@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Előnyök</string>
     <string name="upgrade_screen_benefits_body">• Több mint 3 eszköz 💯\n• Különböző témák 🎨\n• Több lehetőség ⚙️\n• Extra szinkronizáló szerverek🖥️️\n• Folyamatos fejlesztés ☕\n• Elkötelezett fejlesztő 🧙</string>
     <string name="upgrade_screen_how_title">Lehetőségek</string>
-    <string name="upgrade_screen_how_body">Választhatsz egyszeri vásárlás és olcsóbb éves előfizetés között.\nAz előfizetés 14 napos ingyenes próbaidőszakkal indul, utána évente egyszer kerül számlázásra. A próbaidő és az előfizetés bármikor lemondható.\nUgyanazok a funkciók, csak eltérő árazási modellek.</string>
     <string name="upgrade_screen_subscription_trial_action">14 napos ingyenes próba indítása</string>
     <string name="upgrade_screen_subscription_action">Előfizetés</string>
     <string name="upgrade_screen_subscription_action_hint">Az előfizetés ára: %s évente.</string>

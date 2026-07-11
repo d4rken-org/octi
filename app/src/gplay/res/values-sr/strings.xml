@@ -17,7 +17,6 @@
     <string name="upgrade_screen_benefits_title">Предности</string>
     <string name="upgrade_screen_benefits_body">• Више од 3 уређаја 💯\n• Различите теме 🎨\n• Више опција ⚙️\n• Додатни сервери за синхронизацију 🖥️️\n• Континуиран развој ☕\n• Мотивациони програмер 🧙</string>
     <string name="upgrade_screen_how_title">Опције</string>
-    <string name="upgrade_screen_how_body">Можете да бирате између једнократне куповине и јефтиније годишње претплате.\nПретплата почиње бесплатним пробним периодом од 14 дана, након чега се наплаћује једном годишње. Пробни период и претплату можете отказати у било ком тренутку.\nИсте функције, само различити модели цена.</string>
     <string name="upgrade_screen_subscription_trial_action">Почните бесплатни пробни период од 14 дана</string>
     <string name="upgrade_screen_subscription_action">Претплатите се</string>
     <string name="upgrade_screen_subscription_action_hint">Претплата кошта %s годишње.</string>

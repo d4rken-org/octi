@@ -16,7 +16,6 @@
     <string name="upgrade_screen_benefits_title">Vorteile</string>
     <string name="upgrade_screen_benefits_body">• Mehr als 3 Geräte 💯\n• Verschiedene Skins</string>
     <string name="upgrade_screen_how_title">Optionen</string>
-    <string name="upgrade_screen_how_body">Sie können zwischen einem einmaligen Kauf und einem günstigeren Jahresabonnement wählen.\nDas Abonnement beginnt mit einer kostenlosen 14-Tage-Testversion. Danach wird Ihnen einmal pro Jahr eine Gebühr berechnet. Testversion und Abonnement sind jederzeit kündbar.\nGleiche Funktionen, nur unterschiedliche Preismodelle.</string>
     <string name="upgrade_screen_subscription_trial_action">Starte eine 14 Tage Testversion</string>
     <string name="upgrade_screen_subscription_action">Abonnement</string>
     <string name="upgrade_screen_subscription_action_hint">Das Abonnement kostet %s im Jahr.</string>

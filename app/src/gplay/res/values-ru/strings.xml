@@ -18,7 +18,6 @@
     <string name="upgrade_screen_benefits_title">Преимущества</string>
     <string name="upgrade_screen_benefits_body">• Более 3 устройств 💯\n• Различные темы оформления 🎨\n• Больше опций ⚙️\n• Дополнительные серверы синхронизации🖥️️\n• Поддержка разработки ☕\n• Мотивированный разработчик 🧙</string>
     <string name="upgrade_screen_how_title">Варианты</string>
-    <string name="upgrade_screen_how_body">Вы можете выбрать между разовой покупкой или более выгодной годовой подпиской.\nПодписка начинается с бесплатного 14-дневного пробного периода, после чего списание происходит раз в год. Пробный период и подписку можно отменить в любой момент.\nТе же функции, просто разные модели оплаты.</string>
     <string name="upgrade_screen_subscription_trial_action">Начать 14-дневный бесплатный период</string>
     <string name="upgrade_screen_subscription_action">Подписаться</string>
     <string name="upgrade_screen_subscription_action_hint">Подписка стоит %s в год.</string>

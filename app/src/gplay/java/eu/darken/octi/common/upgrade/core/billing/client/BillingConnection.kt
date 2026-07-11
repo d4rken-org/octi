@@ -171,6 +171,12 @@ data class BillingConnection(
         log(TAG) {
             "querySkus(skus=${skus.joinToString { it.print() }}): code=${result.responseCode}, debug=${result.debugMessage}), skuDetails=$details"
         }
+        // Make "Play withheld an offer" vs "we failed to match it" diagnosable from debug logs.
+        details?.forEach { detail ->
+            log(TAG) {
+                "querySkus(): ${detail.productId} offers=${detail.subscriptionOfferDetails?.map { "${it.basePlanId}:${it.offerId}" }}"
+            }
+        }
 
         if (!result.isSuccess) throw BillingClientException(result)
 

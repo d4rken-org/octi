@@ -12,7 +12,6 @@
     <string name="upgrade_screen_benefits_title">Артықшылықтар</string>
     <string name="upgrade_screen_benefits_body">• 3-тен көп құрылғы 💯\n• Әртүрлі тақырыптар 🎨\n• Көптеген параметрлер ⚙️\n• Қосымша синхрондау серверлері🖥️️\n• Үздіксіз дамыту ☕\n• Мотивацияланған әзірлеуші 🧙</string>
     <string name="upgrade_screen_how_title">Таңдау мүмкіндіктері</string>
-    <string name="upgrade_screen_how_body">Бір реттік сатып алу немесе арзанырақ жылдық жазылымды таңдай аласыз.\nЖазылым 14 күндік тегін сынақ мерзімінен басталады, содан кейін жылына бір рет ақы алынады. Сынақ мерзімі мен жазылымды кез келген уақытта тоқтатуға болады.\nБірдей функциялар, тек баға үлгілері әртүрлі.</string>
     <string name="upgrade_screen_subscription_trial_action">14 күндік тегін сынақты бастаңыз</string>
     <string name="upgrade_screen_subscription_action">Жазылу</string>
     <string name="upgrade_screen_subscription_action_hint">Жазылым құны жылына %s.</string>
