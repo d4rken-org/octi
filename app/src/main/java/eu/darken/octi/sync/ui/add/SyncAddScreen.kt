@@ -1,6 +1,5 @@
 package eu.darken.octi.sync.ui.add
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -85,8 +83,8 @@ fun SyncAddScreen(
                     Text(
                         text = stringResource(
                             when (mode) {
-                                Nav.Sync.AddPicker.Mode.CREATE -> R.string.sync_add_pick_create_title
-                                Nav.Sync.AddPicker.Mode.LINK -> R.string.sync_add_pick_link_title
+                                Nav.Sync.AddPicker.Mode.CREATE -> R.string.sync_setup_intent_new_title
+                                Nav.Sync.AddPicker.Mode.LINK -> R.string.sync_setup_intent_link_title
                             }
                         )
                     )
@@ -104,28 +102,39 @@ fun SyncAddScreen(
             )
         },
     ) { innerPadding ->
-        if (items.isEmpty() && mode == Nav.Sync.AddPicker.Mode.LINK) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center,
-            ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            item(key = "header") {
                 Text(
-                    text = stringResource(R.string.sync_add_link_none_available),
+                    text = stringResource(
+                        when (mode) {
+                            Nav.Sync.AddPicker.Mode.CREATE -> R.string.sync_add_pick_create_header
+                            Nav.Sync.AddPicker.Mode.LINK -> R.string.sync_add_pick_link_header
+                        }
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(32.dp),
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 )
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            ) {
+
+            if (items.isEmpty() && mode == Nav.Sync.AddPicker.Mode.LINK) {
+                item(key = "empty") {
+                    Text(
+                        text = stringResource(R.string.sync_add_link_none_available),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                    )
+                }
+            } else {
                 items(items, key = { it.type.name }) { contribution ->
                     SyncSetupRow(
                         icon = { modifier -> contribution.Icon(modifier = modifier) },

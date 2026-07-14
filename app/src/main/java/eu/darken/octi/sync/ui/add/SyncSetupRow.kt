@@ -30,11 +30,11 @@ internal fun SyncSetupRow(
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(16.dp),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        icon(Modifier.size(20.dp))
+        icon(Modifier.size(24.dp))
 
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         Column {
             Text(

@@ -122,8 +122,8 @@
     <string name="sync_setup_intent_new_desc">Create a new account. Choose this on your first device.</string>
     <string name="sync_setup_intent_link_title">Add this device</string>
     <string name="sync_setup_intent_link_desc">Link to an Octi setup you already use on another device.</string>
-    <string name="sync_add_pick_create_title">Choose a sync service</string>
-    <string name="sync_add_pick_link_title">Which service does your other device use?</string>
+    <string name="sync_add_pick_create_header">These are the sync services Octi currently supports. Pick one to start — you can add more or switch later.</string>
+    <string name="sync_add_pick_link_header">Which sync service does your other device use? Devices can only see each other on a shared service.</string>
     <string name="sync_add_link_none_available">None of your sync services support linking a device yet.</string>
     <string name="sync_add_help_desc">A synchronization service is required for information exchange between Octi installs.\n\nDevices can only see each other if they have a common sync service!</string>
 

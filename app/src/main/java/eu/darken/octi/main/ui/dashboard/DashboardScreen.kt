@@ -496,24 +496,6 @@ fun DashboardScreen(
                 }
             }
 
-            // First-run guidance cards (full-span, mutually exclusive by construction)
-            if (state.showSyncSetup) {
-                item(key = "sync_setup", span = { GridItemSpan(maxLineSpan) }) {
-                    SyncSetupCard(
-                        onLater = onSnoozeSyncSetup,
-                        onSetup = onSetupSync,
-                    )
-                }
-            }
-            if (state.showSyncedAlone) {
-                item(key = "synced_alone", span = { GridItemSpan(maxLineSpan) }) {
-                    SyncedAloneCard(
-                        onLater = onSnoozeSyncedAlone,
-                        onAddDevice = onSetupSync,
-                    )
-                }
-            }
-
             // Action chips row (permissions + upgrade + issue counts)
             val errorCount = state.issues.count { it.severity == IssueSeverity.ERROR }
             val warningCount = state.issues.count { it.severity == IssueSeverity.WARNING }
@@ -602,6 +584,25 @@ fun DashboardScreen(
                     onMoveDown = onMoveDeviceDown,
                     onRemoveDevice = onRemoveDevice,
                 )
+            }
+
+            // First-run guidance cards below the device content (full-span,
+            // mutually exclusive by construction)
+            if (state.showSyncSetup) {
+                item(key = "sync_setup", span = { GridItemSpan(maxLineSpan) }) {
+                    SyncSetupCard(
+                        onLater = onSnoozeSyncSetup,
+                        onSetup = onSetupSync,
+                    )
+                }
+            }
+            if (state.showSyncedAlone) {
+                item(key = "synced_alone", span = { GridItemSpan(maxLineSpan) }) {
+                    SyncedAloneCard(
+                        onLater = onSnoozeSyncedAlone,
+                        onAddDevice = onSetupSync,
+                    )
+                }
             }
 
             // Device limit card (full-span)
