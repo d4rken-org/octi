@@ -16,13 +16,16 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.upgrade.core.billing.BillingException
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.retryWhen
+import java.util.concurrent.atomic.AtomicLong
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
@@ -33,8 +36,28 @@ class BillingConnectionProvider @Inject constructor(
 ) {
 
     private val provider: Flow<BillingConnection> = callbackFlow {
-        val purchaseEvents = MutableStateFlow<Pair<BillingResult, Collection<Purchase>?>?>(null)
+        // Reconcilable listener overlay: onPurchasesUpdated writes here, fresh queries prune it.
+        val purchasesGlobal = MutableStateFlow<Collection<Purchase>>(emptyList())
         val purchaseFailureEvents = MutableStateFlow<BillingResult?>(null)
+        // replay=1: a fresh observation can arrive before UpgradeRepoGplay's grace collector
+        // subscribes (construction-order race) — the latest fresh look must not be lost.
+        val freshObservations = MutableSharedFlow<FreshPurchases>(
+            replay = 1,
+            extraBufferCapacity = 16,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
+        // replay=1: the initial refresh can fail before the failure collector subscribes — that
+        // first failure must still be able to start the unconfirmed-episode clock. A stale replayed
+        // failure is harmless (episode recording is set-if-unset and guarded).
+        val freshFailures = MutableSharedFlow<Unit>(
+            replay = 1,
+            extraBufferCapacity = 8,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
+        // Bumped on every successful onPurchasesUpdated BEFORE its data is published: a refresh
+        // compares the generation around its queries to detect a racing purchase event, which
+        // downgrades that refresh's snapshot from "proves absence" to "presence only".
+        val listenerGeneration = AtomicLong(0)
 
         val pendingPurchasesParams = PendingPurchasesParams.newBuilder().apply {
             enableOneTimeProducts()
@@ -48,7 +71,16 @@ class BillingConnectionProvider @Inject constructor(
                     log(TAG) {
                         "onPurchasesUpdated(code=${result.responseCode}, message=${result.debugMessage}, purchases=$purchases)"
                     }
-                    purchaseEvents.value = result to purchases
+                    listenerGeneration.incrementAndGet()
+                    purchasesGlobal.value = purchases.orEmpty()
+                    freshObservations.tryEmit(
+                        FreshPurchases(
+                            purchases = purchases.orEmpty().filter { it.purchaseState == Purchase.PurchaseState.PURCHASED },
+                            // Push payloads only carry this session's purchases — they prove
+                            // presence, never absence.
+                            isFullSnapshot = false,
+                        )
+                    )
                 } else {
                     log(TAG, WARN) {
                         "error: onPurchasesUpdated(code=${result.responseCode}, message=${result.debugMessage}, purchases=$purchases)"
@@ -71,7 +103,14 @@ class BillingConnectionProvider @Inject constructor(
 
                 when (result.responseCode) {
                     BillingResponseCode.OK -> {
-                        val connection = BillingConnection(client, purchaseEvents, purchaseFailureEvents)
+                        val connection = BillingConnection(
+                            client = client,
+                            purchasesGlobal = purchasesGlobal,
+                            freshObservations = freshObservations,
+                            freshFailuresGlobal = freshFailures,
+                            purchaseFailureEvents = purchaseFailureEvents,
+                            listenerGeneration = { listenerGeneration.get() },
+                        )
                         trySendBlocking(connection)
                     }
 

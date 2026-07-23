@@ -8,6 +8,7 @@ import eu.darken.octi.common.upgrade.core.OurSku
 import eu.darken.octi.common.upgrade.core.billing.client.BillingClientException
 import eu.darken.octi.common.upgrade.core.billing.client.BillingConnection
 import eu.darken.octi.common.upgrade.core.billing.client.BillingConnectionProvider
+import eu.darken.octi.common.upgrade.core.billing.client.FreshPurchases
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -52,7 +53,7 @@ class BillingManagerTest : BaseTest() {
     // the path Play uses for immediate "buy" failures (returned result, not an exception).
     private fun TestScope.manager(launchFailureCode: Int): BillingManager {
         val connection = mockk<BillingConnection>().apply {
-            coEvery { refreshPurchases() } returns BillingData(emptySet())
+            coEvery { refreshPurchases() } returns FreshPurchases(emptySet(), isFullSnapshot = false)
             every { billingData } returns emptyFlow()
             coEvery { launchBillingFlow(any(), any(), null) } throws BillingClientException(result(launchFailureCode))
         }
@@ -130,7 +131,7 @@ class BillingManagerTest : BaseTest() {
         failure: () -> Throwable = { BillingException("Google Play hiccup") },
     ): Pair<BillingManager, () -> Int> {
         val healthyConnection = mockk<BillingConnection>().apply {
-            coEvery { refreshPurchases() } returns BillingData(emptySet())
+            coEvery { refreshPurchases() } returns FreshPurchases(emptySet(), isFullSnapshot = false)
             every { billingData } returns emptyFlow()
         }
         var attempts = 0
@@ -150,7 +151,7 @@ class BillingManagerTest : BaseTest() {
         // A user action (restore/buy/pricing) right after the user fixed the Play/account state
         // must not keep failing on the stale cached error until the retry delay elapses.
         val timeBefore = currentTime
-        manager.refresh().purchases shouldBe emptySet()
+        manager.refresh().data.purchases shouldBe emptySet()
 
         attempts() shouldBe 2
         // On-demand retry, not the virtual clock skipping the retry delay.
@@ -169,7 +170,7 @@ class BillingManagerTest : BaseTest() {
         runCurrent()
 
         attempts() shouldBe 2
-        manager.refresh().purchases shouldBe emptySet()
+        manager.refresh().data.purchases shouldBe emptySet()
     }
 
     @Test fun `the on-demand retry wait is bounded, a wedged attempt fails with the known error`() = runTest2 {

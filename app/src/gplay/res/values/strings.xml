@@ -41,4 +41,37 @@
     <string name="upgrade_screen_restore_troubleshooting_msg">Troubleshooting tips for unrecognized upgrades:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play Store synchronization may take time. Try rebooting, clearing Google Play cache or simply wait.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Multiple accounts can confuse Google Play. Log out of other accounts or install through the Google Play website, which forces associations with a specific account.</string>
+    <string name="upgrade_screen_restore_success_message">Purchase restored — thank you!</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">You are Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Thanks for supporting Octi! Your Pro features are unlocked.</string>
+    <string name="upgrade_screen_owned_iap_title">Lifetime purchase</string>
+    <string name="upgrade_screen_owned_iap_body">You own the one-time Pro purchase. It never expires.</string>
+    <string name="upgrade_screen_owned_sub_title">Subscription</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Your Pro subscription is active and renews automatically.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Your Pro subscription is active but set to not renew. It stays active until the end of the current period.</string>
+    <string name="upgrade_screen_owned_both_title">You own both</string>
+    <string name="upgrade_screen_owned_both_warning">You own both the subscription and the one-time purchase. To avoid paying twice, cancel the subscription in Google Play — you keep Pro through the lifetime purchase.</string>
+    <string name="upgrade_screen_manage_subscription_action">Manage subscription</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Switch to a one-time purchase</string>
+    <string name="upgrade_screen_switch_body">Prefer to pay once instead of subscribing? You can buy the one-time Pro purchase and stop the subscription.</string>
+    <string name="upgrade_screen_switch_locked_note">Your subscription still renews automatically. Cancel it in Google Play first, then come back to buy the one-time purchase. Buying it here does not cancel or refund the subscription — use the same Google account.</string>
+    <string name="upgrade_screen_switch_action">Buy one-time purchase (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Subscription still active</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Your subscription is still set to renew. Cancel it in Google Play first so you are not charged twice, then buy the one-time purchase. This does not refund the subscription.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Couldn\'t verify subscription</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Play didn\'t respond in time, so we can\'t safely confirm your subscription state. Please try again in a moment.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro is still active</string>
+    <string name="upgrade_screen_grace_body">We\'re confirming your purchase with Google Play. Your Pro features stay unlocked in the meantime.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">We still can\'t confirm your purchase with Google Play. Your Pro features remain unlocked for now. Try restoring, or contact support if this persists.</string>
+    <string name="upgrade_screen_contact_support_action">Contact support</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">You are on the free version</string>
+    <string name="upgrade_screen_free_status_body">Upgrade to Octi Pro to unlock extra features and support development.</string>
+    <string name="upgrade_screen_see_options_action">See upgrade options</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">See your Pro status and manage your upgrade</string>
 </resources>

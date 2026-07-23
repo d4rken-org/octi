@@ -1,10 +1,12 @@
 package eu.darken.octi.common.upgrade.ui
 
+import android.app.Activity
 import androidx.lifecycle.SavedStateHandle
-import com.android.billingclient.api.ProductDetails
+import com.android.billingclient.api.Purchase
+import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.upgrade.core.OurSku
 import eu.darken.octi.common.upgrade.core.UpgradeRepoGplay
-import eu.darken.octi.common.upgrade.core.billing.SkuDetails
+import eu.darken.octi.common.upgrade.core.billing.BillingData
 import eu.darken.octi.common.widget.WidgetManager
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -14,180 +16,200 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
 import testhelpers.coroutine.runTest2
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class UpgradeViewModelTest : BaseTest() {
 
     private val testDispatcher = StandardTestDispatcher()
+    private val webpageTool = mockk<WebpageTool>(relaxed = true)
+    private val clock = object : Clock {
+        override fun now(): Instant = Instant.fromEpochMilliseconds(BASE_MS)
+    }
+    private val activity = mockk<Activity>(relaxed = true)
+
+    private fun infoOf(vararg purchases: Purchase) = UpgradeRepoGplay.Info(
+        gracePeriod = false,
+        billingData = BillingData(purchases.toSet()),
+    )
 
     private fun mockRepo(
-        isProViaGrace: Boolean = false,
+        info: UpgradeRepoGplay.Info = UpgradeRepoGplay.Info(gracePeriod = false, billingData = null),
         wasEverPro: Boolean = false,
+        settled: Boolean = true,
     ): UpgradeRepoGplay = mockk<UpgradeRepoGplay>(relaxed = true).apply {
-        every { upgradeInfo } returns MutableStateFlow(
-            UpgradeRepoGplay.Info(gracePeriod = isProViaGrace, billingData = null)
-        )
+        every { upgradeInfo } returns MutableStateFlow(info)
         every { this@apply.wasEverPro } returns MutableStateFlow(wasEverPro)
+        every { proUnconfirmedSince } returns MutableStateFlow(0L)
+        every { isSettled } returns MutableStateFlow(settled)
+        every { autoRestoreInProgress } returns MutableStateFlow(false)
         coEvery { querySkus(any()) } returns emptyList()
     }
 
     private fun buildVm(
         repo: UpgradeRepoGplay,
         widgetManagers: Set<WidgetManager> = emptySet(),
+        forced: Boolean = false,
+        manage: Boolean = false,
+        autoInit: Boolean = true,
     ): UpgradeViewModel = UpgradeViewModel(
         handle = SavedStateHandle(),
         dispatcherProvider = TestDispatcherProvider(testDispatcher),
         upgradeRepo = repo,
         widgetManagers = widgetManagers,
-    )
+        webpageTool = webpageTool,
+        clock = clock,
+    ).apply { if (autoInit) initialize(forced = forced, manage = manage) }
 
-    private fun subDetailsWithOffers(vararg offerIds: String?): SkuDetails {
-        val offers = offerIds.map { id ->
-            mockk<ProductDetails.SubscriptionOfferDetails>().apply {
-                every { basePlanId } returns OurSku.Sub.PRO_UPGRADE.BASE_OFFER.basePlanId
-                every { offerId } returns id
-            }
-        }
-        val details = mockk<ProductDetails>().apply {
-            every { subscriptionOfferDetails } returns offers
-        }
-        return SkuDetails(OurSku.Sub.PRO_UPGRADE, details)
+    private fun purchase(skuId: String, autoRenewing: Boolean) = mockk<Purchase>().apply {
+        every { products } returns listOf(skuId)
+        every { purchaseTime } returns 1704067200000L
+        every { isAutoRenewing } returns autoRenewing
     }
 
-    @Test fun `trial copy is advertised when Play returns the trial offer`() = runTest2(context = testDispatcher) {
+    @Test fun `iap gate blocks while the subscription still auto-renews`() = runTest2(context = testDispatcher) {
         val repo = mockRepo()
-        coEvery { repo.querySkus(OurSku.Sub.PRO_UPGRADE) } returns listOf(
-            subDetailsWithOffers(null, OurSku.Sub.PRO_UPGRADE.TRIAL_OFFER.offerId)
-        )
+        coEvery { repo.queryCurrentSubscriptions() } returns listOf(purchase(OurSku.Sub.PRO_UPGRADE.id, autoRenewing = true))
         val vm = buildVm(repo)
 
-        val state = async { vm.state.first { !it.pricingLoading } }
+        val event = async { vm.events.first() }
+        vm.onGoIap(activity)
         advanceUntilIdle()
 
-        state.await().trialAvailable shouldBe true
+        event.await() shouldBe UpgradeEvents.SubscriptionStillRenewing
+        coVerify(exactly = 0) { repo.launchBillingFlowNow(any(), any(), any()) }
     }
 
-    @Test fun `no trial copy when Play only returns the base offer`() = runTest2(context = testDispatcher) {
-        // An account that already used its trial (or a region without one) only gets the base
-        // offer back — the UI must not promise a 14-day trial it can't deliver.
+    @Test fun `iap gate reports check-failed on verification timeout`() = runTest2(context = testDispatcher) {
         val repo = mockRepo()
-        coEvery { repo.querySkus(OurSku.Sub.PRO_UPGRADE) } returns listOf(subDetailsWithOffers(null))
+        coEvery { repo.queryCurrentSubscriptions() } coAnswers {
+            delay(20_000) // longer than VERIFY_TIMEOUT_MS
+            emptyList()
+        }
         val vm = buildVm(repo)
 
-        val state = async { vm.state.first { !it.pricingLoading } }
+        val event = async { vm.events.first() }
+        vm.onGoIap(activity)
         advanceUntilIdle()
 
-        state.await().trialAvailable shouldBe false
+        event.await() shouldBe UpgradeEvents.SubscriptionCheckFailed
+        coVerify(exactly = 0) { repo.launchBillingFlowNow(any(), any(), any()) }
     }
 
-    @Test fun `restore with no purchase emits RestoreFailed`() = runTest2(context = testDispatcher) {
+    @Test fun `iap gate forwards a verification error`() = runTest2(context = testDispatcher) {
         val repo = mockRepo()
-        coEvery { repo.restorePurchaseNow() } returns UpgradeRepoGplay.Info(
-            gracePeriod = false,
-            billingData = null,
-        )
+        val boom = IllegalStateException("Play unavailable")
+        coEvery { repo.queryCurrentSubscriptions() } throws boom
         val vm = buildVm(repo)
+
+        val error = async { vm.errorEvents.first() }
+        vm.onGoIap(activity)
+        advanceUntilIdle()
+
+        error.await() shouldBe boom
+        coVerify(exactly = 0) { repo.launchBillingFlowNow(any(), any(), any()) }
+    }
+
+    @Test fun `iap gate launches when no subscription is renewing`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        coEvery { repo.queryCurrentSubscriptions() } returns emptyList()
+        coJustRun { repo.launchBillingFlowNow(any(), any(), any()) }
+        val vm = buildVm(repo)
+
+        vm.onGoIap(activity)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { repo.launchBillingFlowNow(activity, OurSku.Iap.PRO_UPGRADE, null) }
+    }
+
+    @Test fun `restore with only grace shows failed and does not refresh widgets`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        // Grace-only isPro: Play still couldn't confirm a real purchase.
+        coEvery { repo.restorePurchaseNow() } returns UpgradeRepoGplay.Info(gracePeriod = true, billingData = null)
+        val widget = mockk<WidgetManager>().apply { coJustRun { refreshWidgets() } }
+        val vm = buildVm(repo, widgetManagers = setOf(widget))
 
         val event = async { vm.events.first() }
         vm.restorePurchase()
         advanceUntilIdle()
 
         event.await() shouldBe UpgradeEvents.RestoreFailed
+        coVerify(exactly = 0) { widget.refreshWidgets() }
     }
 
-    @Test fun `restore that times out emits RestoreFailed`() = runTest2(context = testDispatcher) {
+    @Test fun `restore with a real purchase succeeds and refreshes widgets`() = runTest2(context = testDispatcher) {
         val repo = mockRepo()
-        coEvery { repo.restorePurchaseNow() } coAnswers {
-            delay(30_000) // longer than the 15s restore timeout
-            UpgradeRepoGplay.Info(gracePeriod = true, billingData = null)
-        }
-        val vm = buildVm(repo)
+        coEvery { repo.restorePurchaseNow() } returns infoOf(purchase(OurSku.Iap.PRO_UPGRADE.id, autoRenewing = false))
+        val widget = mockk<WidgetManager>().apply { coJustRun { refreshWidgets() } }
+        val vm = buildVm(repo, widgetManagers = setOf(widget))
 
         val event = async { vm.events.first() }
         vm.restorePurchase()
         advanceUntilIdle()
 
-        event.await() shouldBe UpgradeEvents.RestoreFailed
+        event.await() shouldBe UpgradeEvents.RestoreSucceeded
+        coVerify(exactly = 1) { widget.refreshWidgets() }
     }
 
-    @Test fun `restore that errors forwards the error instead of RestoreFailed`() = runTest2(context = testDispatcher) {
+    @Test fun `restore that errors forwards the error`() = runTest2(context = testDispatcher) {
         val repo = mockRepo()
         val boom = IllegalStateException("Play unavailable")
         coEvery { repo.restorePurchaseNow() } throws boom
         val vm = buildVm(repo)
 
-        val forwardedError = async { vm.errorEvents.first() }
+        val error = async { vm.errorEvents.first() }
         vm.restorePurchase()
         advanceUntilIdle()
 
-        forwardedError.await() shouldBe boom
+        error.await() shouldBe boom
     }
 
-    @Test fun `previously-pro on this device flows into the banner flag`() = runTest2(context = testDispatcher) {
-        val vm = buildVm(mockRepo(wasEverPro = true))
-
-        val state = async { vm.state.first { !it.pricingLoading } }
-        advanceUntilIdle()
-
-        state.await().wasPreviouslyPro shouldBe true
-    }
-
-    @Test fun `banner flag stays off while grace still keeps the user pro`() = runTest2(context = testDispatcher) {
-        // gracePeriod = true => Info.isPro is true even without a current raw purchase.
-        val vm = buildVm(mockRepo(isProViaGrace = true, wasEverPro = true))
-
-        val state = async { vm.state.first { !it.pricingLoading } }
-        advanceUntilIdle()
-
-        state.await().wasPreviouslyPro shouldBe false
-    }
-
-    @Test fun `banner and restore stay available when pricing is unavailable`() = runTest2(context = testDispatcher) {
-        // A returning buyer with a flaky Play connection is exactly who needs restore — pricing
-        // failures must not take the banner down with them.
-        val repo = mockRepo(wasEverPro = true)
-        coEvery { repo.querySkus(any()) } throws IllegalStateException("Play unavailable")
-        val vm = buildVm(repo)
-
-        val state = async { vm.state.first { !it.pricingLoading } }
-        advanceUntilIdle()
-
-        state.await().apply {
-            pricingUnavailable shouldBe true
-            pricing shouldBe null
-            wasPreviouslyPro shouldBe true
-        }
-    }
-
-    @Test fun `banner is already available while pricing is still loading`() = runTest2(context = testDispatcher) {
-        // The banner must not wait for the SKU queries — a hanging Play pricing request (up to the
-        // 5s timeout) must not delay the restore affordance for a returning buyer.
-        val repo = mockRepo(wasEverPro = true)
-        coEvery { repo.querySkus(any()) } coAnswers {
-            delay(60_000) // never resolves within this test
-            emptyList()
+    @Test fun `an in-flight restore blocks the iap gate`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        coEvery { repo.restorePurchaseNow() } coAnswers {
+            delay(5_000)
+            UpgradeRepoGplay.Info(gracePeriod = true, billingData = null)
         }
         val vm = buildVm(repo)
 
-        val state = async { vm.state.first() }
-        runCurrent()
+        vm.restorePurchase()
+        runCurrent() // restore admitted, holding the guard
+        vm.onGoIap(activity)
+        advanceUntilIdle()
 
-        state.await().apply {
-            pricingLoading shouldBe true
-            wasPreviouslyPro shouldBe true
-        }
+        // The gate never even queried subscriptions — the single guard rejected it.
+        coVerify(exactly = 0) { repo.queryCurrentSubscriptions() }
+        coVerify(exactly = 0) { repo.launchBillingFlowNow(any(), any(), any()) }
     }
 
-    @Test fun `restore is single-flight, taps during a running restore are ignored`() = runTest2(context = testDispatcher) {
+    @Test fun `an immediate already-owned launch reconciles by restoring`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        coEvery { repo.queryCurrentSubscriptions() } returns emptyList()
+        coEvery { repo.launchBillingFlowNow(any(), OurSku.Iap.PRO_UPGRADE, null) } throws
+            eu.darken.octi.common.upgrade.core.billing.ItemAlreadyOwnedBillingException()
+        coEvery { repo.restorePurchaseNow() } returns infoOf(purchase(OurSku.Iap.PRO_UPGRADE.id, autoRenewing = false))
+        val widget = mockk<WidgetManager>().apply { coJustRun { refreshWidgets() } }
+        val vm = buildVm(repo, widgetManagers = setOf(widget))
+
+        val event = async { vm.events.first() }
+        vm.onGoIap(activity)
+        advanceUntilIdle()
+
+        event.await() shouldBe UpgradeEvents.RestoreSucceeded
+        coVerify(exactly = 1) { widget.refreshWidgets() }
+    }
+
+    @Test fun `restore is single-flight`() = runTest2(context = testDispatcher) {
         val repo = mockRepo()
         coEvery { repo.restorePurchaseNow() } coAnswers {
             delay(5_000)
@@ -203,64 +225,64 @@ class UpgradeViewModelTest : BaseTest() {
         coVerify(exactly = 1) { repo.restorePurchaseNow() }
     }
 
-    @Test fun `a finished restore allows a new attempt`() = runTest2(context = testDispatcher) {
-        val repo = mockRepo()
-        coEvery { repo.restorePurchaseNow() } returns UpgradeRepoGplay.Info(gracePeriod = true, billingData = null)
+    @Test fun `owner sees the switch offer, subscription button disabled`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo(info = infoOf(purchase(OurSku.Sub.PRO_UPGRADE.id, autoRenewing = false)))
         val vm = buildVm(repo)
 
-        vm.restorePurchase()
-        advanceUntilIdle()
-        vm.restorePurchase()
+        val loaded = async { vm.state.first { it is UpgradeUiState.Loaded } as UpgradeUiState.Loaded }
         advanceUntilIdle()
 
-        coVerify(exactly = 2) { repo.restorePurchaseNow() }
-    }
-
-    @Test fun `a failed restore also allows a new attempt`() = runTest2(context = testDispatcher) {
-        val repo = mockRepo()
-        coEvery { repo.restorePurchaseNow() } throws IllegalStateException("Play unavailable")
-        val vm = buildVm(repo)
-
-        vm.restorePurchase()
-        advanceUntilIdle()
-        vm.restorePurchase()
-        advanceUntilIdle()
-
-        coVerify(exactly = 2) { repo.restorePurchaseNow() }
-    }
-
-    @Test fun `restore progress flows into the ui state`() = runTest2(context = testDispatcher) {
-        val repo = mockRepo(wasEverPro = true)
-        coEvery { repo.restorePurchaseNow() } coAnswers {
-            delay(5_000)
-            UpgradeRepoGplay.Info(gracePeriod = true, billingData = null)
+        loaded.await().apply {
+            ownership.subscription?.isAutoRenewing shouldBe false
+            subscriptionEnabled shouldBe false
         }
-        val vm = buildVm(repo)
-
-        vm.restorePurchase()
-        val inProgress = async { vm.state.first { it.restoreInProgress } }
-        advanceTimeBy(1_000)
-
-        inProgress.await().restoreInProgress shouldBe true
-
-        val done = async { vm.state.first { !it.restoreInProgress } }
-        advanceUntilIdle()
-
-        done.await().restoreInProgress shouldBe false
     }
 
-    @Test fun `successful restore refreshes widgets`() = runTest2(context = testDispatcher) {
-        val repo = mockRepo()
-        coEvery { repo.restorePurchaseNow() } returns UpgradeRepoGplay.Info(
-            gracePeriod = true,
-            billingData = null,
-        )
-        val widgetManager = mockk<WidgetManager>().apply { coJustRun { refreshWidgets() } }
-        val vm = buildVm(repo, widgetManagers = setOf(widgetManager))
+    @Test fun `purchase actions stay disabled until settled`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo(settled = false)
+        val vm = buildVm(repo)
 
-        vm.restorePurchase()
+        // runCurrent only: advancing to idle would trip the bounded settle fallback timer.
+        val loaded = async { vm.state.first { it is UpgradeUiState.Loaded } as UpgradeUiState.Loaded }
+        runCurrent()
+
+        loaded.await().apply {
+            settled shouldBe false
+            iapEnabled shouldBe false
+            subscriptionEnabled shouldBe false
+        }
+    }
+
+    @Test fun `sales route auto-closes once the user is pro`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo(info = infoOf(purchase(OurSku.Iap.PRO_UPGRADE.id, autoRenewing = false)))
+        val vm = buildVm(repo, forced = false, manage = false, autoInit = false)
+
+        // Subscribe before initializing so the navUp event can't be emitted before we collect.
+        val navs = mutableListOf<Any>()
+        val job = launch { vm.navEvents.collect { navs.add(it) } }
+        runCurrent()
+        vm.initialize(forced = false, manage = false)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { widgetManager.refreshWidgets() }
+        navs.isNotEmpty() shouldBe true
+        job.cancel()
+    }
+
+    @Test fun `manage route does not auto-close when pro`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo(info = infoOf(purchase(OurSku.Iap.PRO_UPGRADE.id, autoRenewing = false)))
+        val vm = buildVm(repo, forced = false, manage = true, autoInit = false)
+
+        val navs = mutableListOf<Any>()
+        val job = launch { vm.navEvents.collect { navs.add(it) } }
+        runCurrent()
+        vm.initialize(forced = false, manage = true)
+        advanceUntilIdle()
+
+        navs.isEmpty() shouldBe true
+        job.cancel()
+    }
+
+    companion object {
+        private const val BASE_MS = 40L * 365 * 24 * 60 * 60 * 1000
     }
 }
