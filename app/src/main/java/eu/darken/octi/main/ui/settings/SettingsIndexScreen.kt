@@ -9,6 +9,7 @@ import androidx.compose.material.icons.twotone.Devices
 import androidx.compose.material.icons.twotone.Extension
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Settings
+import androidx.compose.material.icons.twotone.Stars
 import androidx.compose.material.icons.twotone.SupportAgent
 import androidx.compose.material.icons.twotone.Sync
 import androidx.compose.material.icons.twotone.Translate
@@ -54,6 +55,7 @@ fun SettingsIndexScreenHost(vm: SettingsIndexVM = hiltViewModel()) {
             onHelpTranslate = { vm.openUrl("https://crowdin.com/project/octi") },
             onAcknowledgements = { vm.navTo(Nav.Settings.Acknowledgements) },
             onPrivacyPolicy = { vm.openUrl(PrivacyPolicy.URL) },
+            onUpgradeStatus = { vm.navTo(Nav.Main.Upgrade(manage = true)) },
         )
     }
 }
@@ -71,6 +73,7 @@ fun SettingsIndexScreen(
     onHelpTranslate: () -> Unit,
     onAcknowledgements: () -> Unit,
     onPrivacyPolicy: () -> Unit,
+    onUpgradeStatus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -116,6 +119,14 @@ fun SettingsIndexScreen(
             }
             item {
                 SettingsCategoryHeader(text = stringResource(R.string.settings_category_other_label))
+            }
+            item {
+                SettingsBaseItem(
+                    title = stringResource(R.string.settings_upgrade_status_title),
+                    subtitle = stringResource(R.string.settings_upgrade_status_desc),
+                    icon = Icons.TwoTone.Stars,
+                    onClick = onUpgradeStatus,
+                )
             }
             item {
                 SettingsBaseItem(
@@ -184,5 +195,6 @@ private fun SettingsIndexScreenPreview() = PreviewWrapper {
         onHelpTranslate = {},
         onAcknowledgements = {},
         onPrivacyPolicy = {},
+        onUpgradeStatus = {},
     )
 }

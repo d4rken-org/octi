@@ -9,17 +9,25 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.uix.ViewModel4
+import eu.darken.octi.common.upgrade.core.FossUpgrade
 import eu.darken.octi.common.upgrade.core.UpgradeRepoFoss
 import eu.darken.octi.common.widget.WidgetManager
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 @HiltViewModel
 class UpgradeViewModel @Inject constructor(
@@ -32,25 +40,77 @@ class UpgradeViewModel @Inject constructor(
     val snackbarEvents = SingleEventFlow<Unit>()
 
     private var initialized = false
+    private var forced = false
+    private var manage = false
     private val widgetsRefreshedForUpgrade = AtomicBoolean(false)
 
-    fun initialize(forced: Boolean) {
+    private val manageRoute = MutableStateFlow<Boolean?>(null)
+    private val viewingOffers = MutableStateFlow(handle.get<Boolean>(KEY_SHOW_OFFERS) ?: false)
+
+    data class State(
+        val isPro: Boolean = false,
+        val upgradedAt: Instant? = null,
+        val upgradeType: FossUpgrade.Type? = null,
+        val manageMode: Boolean = false,
+        val viewingOffers: Boolean = false,
+    ) {
+        // Free user opening the status row: show the calm status page first, revealing the sponsor
+        // pitch only when asked.
+        val showFreeStatus: Boolean get() = !isPro && manageMode && !viewingOffers
+    }
+
+    // Null until DataStore answered: a defaulted isPro=false would flash the sales pitch (and its
+    // armable unlock heuristic) at an existing supporter opening their status.
+    val state: StateFlow<State?> = combine(
+        upgradeRepo.upgradeInfo,
+        manageRoute.filterNotNull(),
+        viewingOffers,
+    ) { info, isManage, offers ->
+        val fossInfo = info as? UpgradeRepoFoss.Info
+        State(
+            isPro = info.isPro,
+            upgradedAt = info.upgradedAt,
+            upgradeType = fossInfo?.fossUpgradeType,
+            manageMode = isManage,
+            viewingOffers = offers,
+        )
+    }.stateIn(vmScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    fun initialize(forced: Boolean, manage: Boolean) {
         if (initialized) return
         initialized = true
+        this.forced = forced
+        this.manage = manage
+        manageRoute.value = manage
 
+        // Sales route: close once the user is Pro. Manage/forced route: never auto-close.
+        if (forced || manage) return
         upgradeRepo.upgradeInfo
             .filter { it.isPro }
             .take(1)
             .onEach {
                 refreshWidgetsForUpgrade()
-                if (!forced) navUp()
+                navUp()
             }
             .launchInViewModel()
+    }
+
+    fun onSeeUpgradeOptions() {
+        log(TAG) { "onSeeUpgradeOptions()" }
+        handle[KEY_SHOW_OFFERS] = true
+        viewingOffers.value = true
     }
 
     fun goGithubSponsors() {
         log(TAG) { "goGithubSponsors()" }
         handle["browserOpenedAt"] = Clock.System.now().toEpochMilliseconds()
+        upgradeRepo.openSponsorsPage()
+    }
+
+    // Plain sponsor link for existing supporters: must NOT arm the unlock heuristic — re-running it
+    // would rewrite the "supporter since" date and navigate away from the status view.
+    fun openSponsors() {
+        log(TAG) { "openSponsors()" }
         upgradeRepo.openSponsorsPage()
     }
 
@@ -69,7 +129,8 @@ class UpgradeViewModel @Inject constructor(
             launch {
                 upgradeRepo.unlockUpgrade()
                 refreshWidgetsForUpgrade()
-                navUp()
+                // Sales route closes; manage/forced route stays to show the new supporter status.
+                if (!forced && !manage) navUp()
             }
         }
     }
@@ -91,6 +152,7 @@ class UpgradeViewModel @Inject constructor(
 
     companion object {
         private val MIN_SPONSOR_TIME = 5.seconds
-        private val TAG = logTag("Upgrade", "ViewModel")
+        private const val KEY_SHOW_OFFERS = "upgrade.manage.showOffers"
+        private val TAG = logTag("Upgrade", "Foss", "ViewModel")
     }
 }

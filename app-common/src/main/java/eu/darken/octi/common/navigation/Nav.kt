@@ -18,7 +18,10 @@ object Nav {
         data object Connect : Main
 
         @Serializable
-        data class Upgrade(val forced: Boolean = false) : Main
+        data class Upgrade(
+            val forced: Boolean = false,
+            val manage: Boolean = false,
+        ) : Main
 
         @Serializable
         data class AppsList(val deviceId: String) : Main

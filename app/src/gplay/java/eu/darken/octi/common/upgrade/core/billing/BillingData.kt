@@ -10,3 +10,11 @@ data class BillingData(
     val iapQueryOk: Boolean = true,
     val subQueryOk: Boolean = true,
 )
+
+// Provenance-tagged fresh billing data: only a full snapshot (both product types queried
+// conclusively, no racing purchase event) proves absence — anything else proves presence only.
+// The grace machinery relies on this to never start an unconfirmed episode from partial data.
+data class FreshBillingData(
+    val data: BillingData,
+    val isFullSnapshot: Boolean,
+)
