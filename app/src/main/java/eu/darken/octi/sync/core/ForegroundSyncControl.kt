@@ -22,7 +22,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -177,9 +179,7 @@ class ForegroundSyncControl @Inject constructor(
                             }
                         }
 
-                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT) {
-                            syncPendingModules(pending)
-                        } ?: log(TAG, WARN) { "In-flight sync timed out after $SYNC_COMPLETION_TIMEOUT" }
+                        syncPendingModules(pending)
                     }
                 }
             } finally {
@@ -196,9 +196,7 @@ class ForegroundSyncControl @Inject constructor(
                     }
                     if (remaining.isNotEmpty()) {
                         log(TAG, INFO) { "Flushing ${remaining.values.sumOf { it.modules.size }} pending events on shutdown" }
-                        withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT) {
-                            syncPendingModules(remaining)
-                        } ?: log(TAG, WARN) { "Flush sync timed out after $SYNC_COMPLETION_TIMEOUT" }
+                        syncPendingModules(remaining)
                     }
                 }
             }
@@ -218,21 +216,39 @@ class ForegroundSyncControl @Inject constructor(
     private suspend fun syncPendingModules(pending: Map<ConnectorId, PendingSync>) {
         pending.forEach { (connectorId, sync) ->
             log(TAG) { "Batched sync: ${sync.modules.size} modules, ${sync.devices.size} devices on ${connectorId.logLabel}" }
-            try {
-                syncManager.sync(
-                    connectorId,
-                    SyncOptions(
-                        stats = false,
-                        readData = true,
-                        writeData = false,
-                        moduleFilter = sync.modules.toSet(),
-                        deviceFilter = sync.devices.toSet(),
-                    ),
-                )
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                log(TAG, ERROR) { "Batched sync failed: ${e.asLog()}" }
+            // Per-connector timeout: this loop is serial, so a single whole-batch timeout would give a
+            // later connector only whatever time the earlier one left over. Bound each connector on its
+            // own instead. The op keeps running to completion on the connector's scope after a timeout
+            // (bounded by the HTTP client timeouts); we just stop waiting on it here.
+            val completed = withTimeoutOrNull(SYNC_COMPLETION_TIMEOUT) {
+                try {
+                    syncManager.sync(
+                        connectorId,
+                        SyncOptions(
+                            stats = false,
+                            readData = true,
+                            writeData = false,
+                            moduleFilter = sync.modules.toSet(),
+                            deviceFilter = sync.devices.toSet(),
+                        ),
+                    )
+                    true
+                } catch (e: CancellationException) {
+                    // ensureActive() rethrows only if WE are cancelled — our own timeout (converted to
+                    // null above) or the collector being torn down, both of which must propagate. A
+                    // stopped connector fails ops with ConnectorStoppedException (not a cancellation),
+                    // but if some other in-connector cancellation bubbles up while this loop is still
+                    // active, swallow it so it can't abort the remaining connectors in this serial batch.
+                    currentCoroutineContext().ensureActive()
+                    log(TAG, WARN) { "Sync cancelled by connector on ${connectorId.logLabel}, continuing batch" }
+                    true
+                } catch (e: Exception) {
+                    log(TAG, ERROR) { "Batched sync failed on ${connectorId.logLabel}: ${e.asLog()}" }
+                    true
+                }
+            }
+            if (completed == null) {
+                log(TAG, WARN) { "In-flight sync timed out after $SYNC_COMPLETION_TIMEOUT on ${connectorId.logLabel}" }
             }
         }
     }

@@ -2,6 +2,7 @@ package eu.darken.octi.sync.core
 
 import eu.darken.octi.common.sync.ConnectorType
 import eu.darken.octi.sync.core.errors.ConnectorPausedException
+import eu.darken.octi.sync.core.errors.ConnectorStoppedException
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -13,6 +14,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -273,5 +275,94 @@ class ConnectorProcessorTest : BaseTest() {
 
         // The processor teardown should have completed the pending deferred as Failed.
         proc.await(id).shouldBeInstanceOf<ConnectorOperation.Failed>()
+    }
+
+    @Test
+    fun `processor scope cancellation clears busy operations, not just waiters`() = runTest2 {
+        val gate = CompletableDeferred<Unit>()
+        val (proc, job) = buildProcessor(executor = { gate.await() })
+
+        proc.submit(ConnectorCommand.Sync()) // becomes Processing (awaits gate)
+        proc.submit(ConnectorCommand.Sync()) // stays Queued behind it
+        advanceUntilIdle()
+
+        // Busy: at least one Queued/Processing entry.
+        proc.operations.first()
+            .any { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing } shouldBe true
+
+        job.cancel()
+        advanceUntilIdle()
+
+        // After shutdown no non-terminal op remains, so isBusy would report false — the connector card
+        // and its gated actions recover instead of staying stuck "busy".
+        val ops = proc.operations.first()
+        ops.none { it is ConnectorOperation.Queued || it is ConnectorOperation.Processing } shouldBe true
+        ops.filterIsInstance<ConnectorOperation.Failed>().shouldHaveSize(2)
+    }
+
+    @Test
+    fun `scope cancelled before the actor is dispatched still terminates submitted ops`() = runTest2 {
+        val (proc, job) = buildProcessor(executor = { })
+        // Cancel BEFORE advancing: the actor coroutine has been launched but not yet dispatched. With
+        // CoroutineStart.DEFAULT the body (and its shutdown finally) would be skipped entirely, leaving
+        // this op queued forever and await() hanging. ATOMIC start guarantees the finally runs.
+        job.cancel()
+        val id = proc.submit(ConnectorCommand.Sync())
+        advanceUntilIdle()
+
+        proc.await(id).shouldBeInstanceOf<ConnectorOperation.Terminal>()
+    }
+
+    @Test
+    fun `submitting after shutdown fails fast instead of hanging`() = runTest2 {
+        val (proc, job) = buildProcessor()
+        advanceUntilIdle() // let the actor start and reach inbox.receive() before we tear it down
+        job.cancel()
+        advanceUntilIdle() // run cancellation + finally, which closes the inbox
+
+        // A stale reference submitting after teardown must not enqueue onto a consumer-less channel;
+        // with the inbox closed, submit completes the op as Failed instead of leaving it Queued forever.
+        val id = proc.submit(ConnectorCommand.Sync())
+        proc.await(id).shouldBeInstanceOf<ConnectorOperation.Failed>()
+    }
+
+    @Test
+    fun `active waiters on more ops than retention all resolve at shutdown`() = runTest2 {
+        val gate = CompletableDeferred<Unit>()
+        // Retention smaller than the op count: after shutdown, `operations` keeps only 2 terminals. Real
+        // callers (SyncConnector.execute) await immediately after submit, so model suspended waiters —
+        // they resolve from their deferred and must never hang, independent of retention trimming.
+        val (proc, job) = buildProcessor(retention = 2, executor = { gate.await() })
+
+        val ids = (1..5).map { proc.submit(ConnectorCommand.Sync()) }
+        val waiters = ids.map { id -> async { proc.await(id) } }
+        advanceUntilIdle() // first becomes Processing on the gate, rest stay Queued; all waiters suspend
+
+        job.cancel()
+        advanceUntilIdle()
+
+        proc.operations.first().filterIsInstance<ConnectorOperation.Terminal>().shouldHaveSize(2)
+        waiters.forEach { it.await().shouldBeInstanceOf<ConnectorOperation.Failed>() }
+    }
+
+    @Test
+    fun `shutdown fails still-queued ops with ConnectorStoppedException, not a CancellationException`() = runTest2 {
+        val gate = CompletableDeferred<Unit>()
+        val (proc, job) = buildProcessor(executor = { gate.await() })
+
+        proc.submit(ConnectorCommand.Sync()) // becomes Processing, blocks on the gate
+        val queuedId = proc.submit(ConnectorCommand.Sync()) // never pulled — stays Queued behind it
+        advanceUntilIdle()
+
+        job.cancel()
+        advanceUntilIdle()
+
+        // The still-queued op is failed by the shutdown path, whose error must NOT be a
+        // CancellationException: ForegroundSyncControl's serial loop catches cancellation to honor
+        // structured concurrency and would otherwise abort the remaining connectors in the batch.
+        val terminal = proc.await(queuedId)
+        terminal.shouldBeInstanceOf<ConnectorOperation.Failed>()
+        // ConnectorStoppedException is an IllegalStateException, not a CancellationException.
+        terminal.error.shouldBeInstanceOf<ConnectorStoppedException>()
     }
 }
