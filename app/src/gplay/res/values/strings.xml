@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
 
     <string name="upgrades_gplay_unavailable_error_title">Google Play is unavailable</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi can\'t connect to Google Play. Is Google Play installed and up to date? Is your Google Account logged in? Try clearing the cache of the Google Play app and rebooting your device.</string>
@@ -19,6 +21,8 @@
     </plurals>
 
     <string name="upgrade_screen_title">Get Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Navigate up</string>
+    <string name="upgrade_screen_progress_loading">Loading…</string>
     <string name="upgrade_screen_preamble">Octi has no ads and doesn\'t sell user data. My work is financed by you ❤️.</string>
     <string name="upgrade_screen_benefits_title">Benefits</string>
     <string name="upgrade_screen_benefits_body">• More than 3 devices 💯\n• Different themes 🎨\n• More options ⚙️\n• Extra sync servers🖥️️\n• Continued development ☕\n• A motivated developer 🧙</string>
@@ -34,6 +38,15 @@
     <string name="upgrade_screen_iap_action">One-time purchase</string>
     <string name="upgrade_screen_iap_action_hint">The one-time purchase costs %s.</string>
     <string name="upgrade_screen_thanks_toast">You are the best! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Upgrade options</string>
+    <string name="upgrade_screen_offers_or">or</string>
+    <string name="upgrade_screen_offers_body">Both unlock the same features — pick whichever pricing you prefer. Cancel anytime.</string>
+    <string name="upgrade_screen_subscription_offer_title">Yearly subscription</string>
+    <string name="upgrade_screen_subscription_offer_body">Starts with a free 14-day trial, then billed once per year until cancelled.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Billed once per year until cancelled.</string>
+    <string name="upgrade_screen_iap_offer_title">One-time purchase</string>
+    <string name="upgrade_screen_iap_offer_body">Pay once, yours forever — no subscription.</string>
     <string name="upgrade_screen_restore_purchase_action">Restore purchase</string>
     <string name="upgrade_screen_restore_banner_title">Already bought Pro?</string>
     <string name="upgrade_screen_restore_banner_body">It looks like you upgraded to Pro on this device before. If you still own the upgrade, restoring will unlock it again.</string>
@@ -42,6 +55,12 @@
     <string name="upgrade_screen_restore_sync_patience_hint">Play Store synchronization may take time. Try rebooting, clearing Google Play cache or simply wait.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Multiple accounts can confuse Google Play. Log out of other accounts or install through the Google Play website, which forces associations with a specific account.</string>
     <string name="upgrade_screen_restore_success_message">Purchase restored — thank you!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Already bought Pro on this account? Ask Google Play to re-check this app\'s purchases.</string>
+    <string name="upgrade_screen_restore_status_title">Purchase status</string>
+    <string name="upgrade_screen_restore_status_body">Re-check your purchases with Google Play if your Pro status ever looks out of date.</string>
+    <string name="upgrade_screen_restore_checked_message">We asked Google Play to re-check this app\'s purchases but couldn\'t confirm one for the current account.</string>
+    <string name="upgrade_screen_restore_contact_hint">Still stuck? Contact support and we\'ll help sort it out.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">You are Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Thanks for supporting Octi! Your Pro features are unlocked.</string>
@@ -52,6 +71,10 @@
     <string name="upgrade_screen_owned_sub_not_renewing_body">Your Pro subscription is active but set to not renew. It stays active until the end of the current period.</string>
     <string name="upgrade_screen_owned_both_title">You own both</string>
     <string name="upgrade_screen_owned_both_warning">You own both the subscription and the one-time purchase. To avoid paying twice, cancel the subscription in Google Play — you keep Pro through the lifetime purchase.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">You are Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Thanks for buying %1$s! Your Pro features are unlocked and never expire.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Thanks for subscribing to %1$s! Your Pro features are unlocked.</string>
     <string name="upgrade_screen_manage_subscription_action">Manage subscription</string>
     <!-- Switch subscription → one-time purchase -->
     <string name="upgrade_screen_switch_title">Switch to a one-time purchase</string>
@@ -65,7 +88,7 @@
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro is still active</string>
     <string name="upgrade_screen_grace_body">We\'re confirming your purchase with Google Play. Your Pro features stay unlocked in the meantime.</string>
-    <string name="upgrade_screen_grace_diagnostics_body">We still can\'t confirm your purchase with Google Play. Your Pro features remain unlocked for now. Try restoring, or contact support if this persists.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">We still can\'t confirm your purchase with Google Play. Your Pro features remain unlocked for now. Try restoring to reconnect it.</string>
     <string name="upgrade_screen_contact_support_action">Contact support</string>
     <!-- Free status page (manage entry) -->
     <string name="upgrade_screen_free_status_title">You are on the free version</string>

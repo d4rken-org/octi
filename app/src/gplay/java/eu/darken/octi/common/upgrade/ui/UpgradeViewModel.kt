@@ -32,7 +32,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
@@ -40,6 +39,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -97,28 +97,41 @@ class UpgradeViewModel @Inject constructor(
         },
     ).stateIn(vmScope, SharingStarted.Eagerly, false)
 
-    // One aggregate SKU-detail query per ViewModel lifetime, both types concurrently. Failures
-    // resolve to null details — owners/grace render price-independently, acquisition users get the
-    // fallback purchase UI.
-    private val skuQueries = flow {
-        emit(SkuQueryState())
-        val result = coroutineScope {
-            val iap = async { querySkuDetailsSafe(OurSku.Iap.PRO_UPGRADE) }
-            val sub = async { querySkuDetailsSafe(OurSku.Sub.PRO_UPGRADE) }
-            SkuQueryState(done = true, iap = iap.await(), sub = sub.await())
+    // Re-runnable via retryTrigger: after a full "Play unavailable" episode the Lazily-cached failure
+    // would otherwise brick the offers box for the whole ViewModel lifetime.
+    private val retryTrigger = MutableStateFlow(0)
+
+    // One aggregate SKU-detail query per retry generation, both types concurrently, landing in a
+    // single Done so the UI can never combine results from two different attempts. Owners/grace
+    // render price-independently; acquisition users see Loading/Unavailable/Ready derived from this.
+    private val skuQueries = retryTrigger.flatMapLatest {
+        flow {
+            emit(SkuQueries.Pending)
+            val done = coroutineScope {
+                val iap = async { querySkuDetails(OurSku.Iap.PRO_UPGRADE) }
+                val sub = async { querySkuDetails(OurSku.Sub.PRO_UPGRADE) }
+                SkuQueries.Done(iap = iap.await(), sub = sub.await())
+            }
+            emit(done)
         }
-        emit(result)
     }.shareIn(vmScope, SharingStarted.Lazily, replay = 1)
 
-    private suspend fun querySkuDetailsSafe(sku: Sku): SkuDetails? = try {
-        withTimeoutOrNull(SKU_QUERY_TIMEOUT_MS) {
-            upgradeRepo.querySkus(sku).firstOrNull()
-        }
+    // Empty is a failure (BillingConnection.querySkus throws on empty details) and a timeout maps to
+    // a failure Result — both let the mapper decide Unavailable vs a partially-available Ready.
+    private suspend fun querySkuDetails(sku: Sku): Result<List<SkuDetails>> = try {
+        val details = withTimeoutOrNull(SKU_QUERY_TIMEOUT_MS) { upgradeRepo.querySkus(sku).toList() }
+            ?: throw IllegalStateException("SKU query timed out for ${sku.id}")
+        Result.success(details)
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {
         log(TAG, WARN) { "Failed to query SKU ${sku.id}: ${e.asLog()}" }
-        null
+        Result.failure(e)
+    }
+
+    fun retrySkuQuery() {
+        log(TAG) { "retrySkuQuery()" }
+        retryTrigger.update { it + 1 }
     }
 
     // Re-evaluates the grace presentation when the open episode crosses the diagnostics threshold —
@@ -158,8 +171,9 @@ class UpgradeViewModel @Inject constructor(
 
     private data class UiInputs(
         val settled: Boolean,
-        val restoring: Boolean,
-        val busy: Boolean,
+        val restoreInProgress: Boolean,
+        val restoreBusy: Boolean,
+        val verificationInProgress: Boolean,
         val manage: Boolean,
         val viewingOffers: Boolean,
     )
@@ -171,12 +185,15 @@ class UpgradeViewModel @Inject constructor(
         manageRoute.filterNotNull(),
         viewingOffers,
     ) { isSettled, operation, autoRestoring, manage, offers ->
+        val manualRestoring = operation == Operation.RESTORE
         UiInputs(
             settled = isSettled,
-            restoring = operation == Operation.RESTORE,
-            // The invisible already-owned reconciliation runs off the VM's guard — treat it as busy
-            // so the buy buttons stay disabled while it resolves.
-            busy = operation == Operation.PURCHASE || autoRestoring,
+            // Manual restore drives the in-button spinner...
+            restoreInProgress = manualRestoring,
+            // ...while the invisible already-owned reconciliation folds into both busy signals, so
+            // neither a manual restore nor a purchase can be started while it resolves.
+            restoreBusy = manualRestoring || autoRestoring,
+            verificationInProgress = operation == Operation.PURCHASE || autoRestoring,
             manage = manage,
             viewingOffers = offers,
         )
@@ -198,21 +215,25 @@ class UpgradeViewModel @Inject constructor(
             null
         }
 
-        // Owners and grace users render price-independently: their status view must not degrade to a
-        // spinner (or an error) just because the SKU pricing queries failed or are slow.
-        val priceIndependent = ownership.ownsAnything || grace != null
-        if (!priceIndependent && !skus.done) {
+        // Hidden while a grace period or an actual purchase keeps the user Pro.
+        val showRestoreBanner = billing.wasEverPro && info?.isPro != true
+        // Anyone whose primary view doesn't need offer prices renders a Loaded dashboard immediately;
+        // the offers box carries its own Loading/Unavailable phase. That's owners and grace users,
+        // but ALSO the manage/free-status calm page and the returning-buyer restore banner — none of
+        // them should sit behind a full-screen spinner until a slow/hanging SKU query resolves.
+        val priceIndependent = ownership.ownsAnything || grace != null || inputs.manage || showRestoreBanner
+        if (!priceIndependent && skus is SkuQueries.Pending) {
             UpgradeUiState.Loading
         } else {
             toLoadedState(
-                skus = skus,
+                queries = skus,
                 ownership = ownership,
                 grace = grace,
-                // Hidden while a grace period or an actual purchase keeps the user Pro.
-                showRestoreBanner = billing.wasEverPro && info?.isPro != true,
+                showRestoreBanner = showRestoreBanner,
                 settled = inputs.settled,
-                restoreInProgress = inputs.restoring,
-                verificationInProgress = inputs.busy,
+                restoreInProgress = inputs.restoreInProgress,
+                restoreBusy = inputs.restoreBusy,
+                verificationInProgress = inputs.verificationInProgress,
                 manageMode = inputs.manage,
                 viewingOffers = inputs.viewingOffers,
             )
@@ -338,6 +359,13 @@ class UpgradeViewModel @Inject constructor(
     }
 
     fun restorePurchase() = launch {
+        // The repo's invisible already-owned auto-restore is external to the CAS guard below, so it
+        // can't be rejected by it — bail explicitly if one is running rather than stacking a second
+        // concurrent restore. The UI also disables the button via restoreBusy; this is the backstop.
+        if (upgradeRepo.autoRestoreInProgress.value) {
+            log(TAG) { "restorePurchase() ignored, an auto-restore is in flight" }
+            return@launch
+        }
         // Same authoritative guard as purchases: a single CAS from null admits at most one operation,
         // so a restore can't overlap an in-flight verification/launch and vice versa (no stacked
         // result dialogs), and repeated restore taps collapse to one.

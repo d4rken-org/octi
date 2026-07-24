@@ -9,12 +9,14 @@ import eu.darken.octi.common.upgrade.core.UpgradeRepoGplay
 import eu.darken.octi.common.upgrade.core.billing.BillingData
 import eu.darken.octi.common.widget.WidgetManager
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,12 +49,13 @@ class UpgradeViewModelTest : BaseTest() {
         info: UpgradeRepoGplay.Info = UpgradeRepoGplay.Info(gracePeriod = false, billingData = null),
         wasEverPro: Boolean = false,
         settled: Boolean = true,
+        autoRestore: Boolean = false,
     ): UpgradeRepoGplay = mockk<UpgradeRepoGplay>(relaxed = true).apply {
         every { upgradeInfo } returns MutableStateFlow(info)
         every { this@apply.wasEverPro } returns MutableStateFlow(wasEverPro)
         every { proUnconfirmedSince } returns MutableStateFlow(0L)
         every { isSettled } returns MutableStateFlow(settled)
-        every { autoRestoreInProgress } returns MutableStateFlow(false)
+        every { autoRestoreInProgress } returns MutableStateFlow(autoRestore)
         coEvery { querySkus(any()) } returns emptyList()
     }
 
@@ -280,6 +283,152 @@ class UpgradeViewModelTest : BaseTest() {
 
         navs.isEmpty() shouldBe true
         job.cancel()
+    }
+
+    private fun UpgradeUiState?.asLoaded() = this as UpgradeUiState.Loaded
+
+    @Test fun `both sku queries failing shows the offers box as unavailable`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        coEvery { repo.querySkus(any()) } throws IllegalStateException("Play down")
+        val vm = buildVm(repo)
+
+        val loaded = async {
+            vm.state.first { (it as? UpgradeUiState.Loaded)?.offers is OfferState.Unavailable }.asLoaded()
+        }
+        advanceUntilIdle()
+
+        loaded.await().offers.shouldBeInstanceOf<OfferState.Unavailable>()
+    }
+
+    @Test fun `retry recovers the offers box after a failure`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        var failing = true
+        coEvery { repo.querySkus(any()) } coAnswers {
+            if (failing) throw IllegalStateException("Play down") else emptyList()
+        }
+        val vm = buildVm(repo)
+
+        val failed = async {
+            vm.state.first { (it as? UpgradeUiState.Loaded)?.offers is OfferState.Unavailable }
+        }
+        advanceUntilIdle()
+        failed.await()
+
+        failing = false
+        vm.retrySkuQuery()
+        val recovered = async {
+            vm.state.first { (it as? UpgradeUiState.Loaded)?.offers is OfferState.Ready }
+        }
+        advanceUntilIdle()
+
+        recovered.await().asLoaded().offers shouldBe OfferState.Ready
+    }
+
+    @Test fun `manage-route free user survives a sku failure and still shows the free status page`() =
+        runTest2(context = testDispatcher) {
+            val repo = mockRepo()
+            coEvery { repo.querySkus(any()) } throws IllegalStateException("Play down")
+            val vm = buildVm(repo, manage = true)
+
+            // The failure must NOT blank the calm free-status page into a full error screen.
+            val loaded = async { vm.state.first { it is UpgradeUiState.Loaded }.asLoaded() }
+            advanceUntilIdle()
+
+            loaded.await().showFreeStatus shouldBe true
+        }
+
+    @Test fun `returning buyer keeps the restore banner even when offers fail`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo(wasEverPro = true)
+        coEvery { repo.querySkus(any()) } throws IllegalStateException("Play down")
+        val vm = buildVm(repo)
+
+        val loaded = async {
+            vm.state.first { (it as? UpgradeUiState.Loaded)?.offers is OfferState.Unavailable }.asLoaded()
+        }
+        advanceUntilIdle()
+
+        loaded.await().showRestoreBanner shouldBe true
+    }
+
+    @Test fun `grace user renders loaded despite a sku failure`() = runTest2(context = testDispatcher) {
+        // gracePeriod isPro without any owned purchase: price-independent, must not become Unavailable.
+        val repo = mockRepo(info = UpgradeRepoGplay.Info(gracePeriod = true, billingData = null))
+        coEvery { repo.querySkus(any()) } throws IllegalStateException("Play down")
+        val vm = buildVm(repo)
+
+        val loaded = async { vm.state.first { it is UpgradeUiState.Loaded }.asLoaded() }
+        advanceUntilIdle()
+
+        loaded.await().grace shouldBe GraceHint(showDiagnostics = false)
+    }
+
+    @Test fun `a single failing product type is not a full unavailable`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo()
+        // SUB query fails, IAP succeeds (empty): a partial failure keeps the offers box Ready.
+        coEvery { repo.querySkus(OurSku.Sub.PRO_UPGRADE) } throws IllegalStateException("SUB down")
+        coEvery { repo.querySkus(OurSku.Iap.PRO_UPGRADE) } returns emptyList()
+        val vm = buildVm(repo)
+
+        val loaded = async {
+            vm.state.first { it is UpgradeUiState.Loaded && it.offers !is OfferState.Loading }.asLoaded()
+        }
+        advanceUntilIdle()
+
+        loaded.await().offers shouldBe OfferState.Ready
+    }
+
+    @Test fun `an unsettled owner keeps settled false so the switch stays gated`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo(info = infoOf(purchase(OurSku.Sub.PRO_UPGRADE.id, autoRenewing = false)), settled = false)
+        val vm = buildVm(repo)
+
+        val loaded = async { vm.state.first { it is UpgradeUiState.Loaded }.asLoaded() }
+        runCurrent()
+
+        loaded.await().apply {
+            ownership.subscription?.isAutoRenewing shouldBe false
+            settled shouldBe false
+        }
+    }
+
+    @Test fun `manage-route free user renders loaded with loading offers while the sku query hangs`() =
+        runTest2(context = testDispatcher) {
+            val repo = mockRepo()
+            coEvery { repo.querySkus(any()) } coAnswers { awaitCancellation() }
+            val vm = buildVm(repo, manage = true)
+
+            // Must NOT sit behind a full-screen spinner: the calm free page needs no offer prices.
+            val loaded = async { vm.state.first { it is UpgradeUiState.Loaded }.asLoaded() }
+            runCurrent()
+
+            loaded.await().apply {
+                showFreeStatus shouldBe true
+                offers shouldBe OfferState.Loading
+            }
+        }
+
+    @Test fun `returning buyer renders loaded with loading offers while the sku query hangs`() =
+        runTest2(context = testDispatcher) {
+            val repo = mockRepo(wasEverPro = true)
+            coEvery { repo.querySkus(any()) } coAnswers { awaitCancellation() }
+            val vm = buildVm(repo)
+
+            val loaded = async { vm.state.first { it is UpgradeUiState.Loaded }.asLoaded() }
+            runCurrent()
+
+            loaded.await().apply {
+                showRestoreBanner shouldBe true
+                offers shouldBe OfferState.Loading
+            }
+        }
+
+    @Test fun `an in-flight auto-restore blocks a manual restore`() = runTest2(context = testDispatcher) {
+        val repo = mockRepo(autoRestore = true)
+        val vm = buildVm(repo)
+
+        vm.restorePurchase()
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { repo.restorePurchaseNow() }
     }
 
     companion object {

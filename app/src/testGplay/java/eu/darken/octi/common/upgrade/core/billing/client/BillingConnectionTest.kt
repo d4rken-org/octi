@@ -3,23 +3,30 @@ package eu.darken.octi.common.upgrade.core.billing.client
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponseCode
 import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.ProductDetailsResponseListener
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesResult
+import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
 import com.android.billingclient.api.queryPurchasesAsync
 import eu.darken.octi.common.upgrade.core.OurSku
+import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.slot
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
@@ -186,6 +193,36 @@ class BillingConnectionTest : BaseTest() {
             overlay.value shouldBe listOf(racing)
         } finally {
             unmockkStatic("com.android.billingclient.api.BillingClientKotlinKt")
+        }
+    }
+
+    @Test fun `querySkus is cancellable when Play never invokes the product-details callback`() = runTest2 {
+        val client = mockk<BillingClient>()
+        // Play accepts the query but never calls back. With a non-cancellable suspendCoroutine a
+        // withTimeout around this could never resume — the test would hang. It must complete.
+        every { client.queryProductDetailsAsync(any<QueryProductDetailsParams>(), any()) } just Runs
+        val (connection, _) = connectionWith(client)
+
+        val result = withTimeoutOrNull(5_000) { connection.querySkus(OurSku.Iap.PRO_UPGRADE) }
+
+        result shouldBe null
+    }
+
+    @Test fun `querySkus ignores a product-details callback that arrives after cancellation`() = runTest2 {
+        val client = mockk<BillingClient>()
+        val listener = slot<ProductDetailsResponseListener>()
+        every { client.queryProductDetailsAsync(any<QueryProductDetailsParams>(), capture(listener)) } just Runs
+        val (connection, _) = connectionWith(client)
+
+        withTimeoutOrNull(5_000) { connection.querySkus(OurSku.Iap.PRO_UPGRADE) } shouldBe null
+
+        // Play finally answers after we already timed out and cancelled: resuming a dead continuation
+        // would crash. The isActive guard must drop it silently.
+        shouldNotThrowAny {
+            listener.captured.onProductDetailsResponse(
+                BillingResult.newBuilder().setResponseCode(BillingResponseCode.OK).build(),
+                mockk(relaxed = true),
+            )
         }
     }
 
