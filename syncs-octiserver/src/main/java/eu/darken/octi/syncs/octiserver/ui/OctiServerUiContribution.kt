@@ -164,10 +164,13 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                     Text(text = stringResource(CommonR.string.general_sync_action))
                 }
 
+                // Not gated on isBusy: reading the device list and generating a link code do not go
+                // through the sync command queue, so an in-flight sync never conflicts with them —
+                // gating them on busy just needlessly blocks the user while a sync churns.
                 FilledTonalButton(
                     onClick = onViewDevices,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isPaused && !isBusy,
+                    enabled = !isPaused,
                 ) {
                     Text(text = stringResource(SyncR.string.sync_synced_devices_label))
                 }
@@ -175,7 +178,7 @@ class OctiServerUiContribution @Inject constructor() : ConnectorUiContribution {
                 FilledTonalButton(
                     onClick = onLinkNewDevice,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isPaused && !isBusy,
+                    enabled = !isPaused,
                 ) {
                     Text(text = stringResource(R.string.sync_octiserver_link_device_action))
                 }

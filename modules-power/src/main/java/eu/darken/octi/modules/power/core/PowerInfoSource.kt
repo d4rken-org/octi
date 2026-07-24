@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
@@ -172,6 +173,10 @@ class PowerInfoSource @Inject constructor(
             chargeIO = chargeIO,
         )
     }
+        // The battery broadcast fires ~1/sec while (dis)charging and current/temp/ETA jitter every
+        // read, so plain equality would push a module sync every second. Suppress sub-tolerance drift
+        // (hysteresis vs. the last emitted sample) — emitted values keep full precision.
+        .distinctUntilChanged { old, new -> old.isEquivalentForSync(new) }
         .setupCommonEventHandlers(TAG) { "info" }
         .shareLatest(appScope, SharingStarted.Lazily, TAG)
 

@@ -134,10 +134,12 @@ class GDriveUiContribution @Inject constructor() : ConnectorUiContribution {
                     Text(text = stringResource(CommonR.string.general_sync_action))
                 }
 
+                // Reading the device list doesn't go through the sync command queue, so don't block it
+                // while a sync is in flight.
                 FilledTonalButton(
                     onClick = onViewDevices,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isPaused && !isBusy,
+                    enabled = !isPaused,
                 ) {
                     Text(text = stringResource(SyncR.string.sync_synced_devices_label))
                 }
