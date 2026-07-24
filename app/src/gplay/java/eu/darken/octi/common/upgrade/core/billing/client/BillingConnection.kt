@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.coroutines.resume
@@ -283,9 +284,15 @@ data class BillingConnection(
             setProductList(productList)
         }.build()
 
-        val (result, details) = suspendCoroutine<Pair<BillingResult, Collection<ProductDetails>?>> { continuation ->
+        // Cancellable bridge: queryProductDetailsAsync has no cancel API, so a withTimeout around this
+        // call could never interrupt a plain suspendCoroutine — if Play never called back, the caller
+        // hung forever. suspendCancellableCoroutine lets the timeout resume us; a late Play callback
+        // after that cancellation is dropped instead of resuming a dead continuation.
+        val (result, details) = suspendCancellableCoroutine<Pair<BillingResult, Collection<ProductDetails>?>> { continuation ->
             client.queryProductDetailsAsync(params) { billingResult, queryResult ->
-                continuation.resume(billingResult to queryResult.productDetailsList)
+                if (continuation.isActive) {
+                    continuation.resume(billingResult to queryResult.productDetailsList)
+                }
             }
         }
 

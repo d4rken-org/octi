@@ -28,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -138,7 +139,7 @@ class UpgradeRepoGplay @Inject constructor(
     // True while the invisible already-owned reconciliation runs. Exposed so the UI can hold its buy
     // buttons disabled during it — that restore is off the VM's operation guard, so without this a
     // second purchase could be launched on top of the one being reconciled.
-    val autoRestoreInProgress: Flow<Boolean> = _autoRestoreInProgress
+    val autoRestoreInProgress: StateFlow<Boolean> = _autoRestoreInProgress
 
     // Grace is time-based, but billingData is equality-deduped state kept hot by a process-lifetime
     // subscriber — without this deadline tick, a lapsed grace window would keep isPro=true until the
