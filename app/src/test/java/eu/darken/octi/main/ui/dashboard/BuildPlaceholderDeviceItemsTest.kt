@@ -7,6 +7,7 @@ import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.DeviceMetadata
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -273,11 +274,12 @@ class BuildPlaceholderDeviceItemsTest : BaseTest() {
             item.isLimited shouldBe false
             item.meta shouldBe null
             item.moduleItems.shouldBeEmpty()
-            item.placeholder!!.kind shouldBe Kind.DEGRADED
-            item.placeholder!!.connectorId shouldBe gdrive
-            item.placeholder!!.metadata.label shouldBe "Phone"
-            item.placeholder!!.metadata.platform shouldBe "android"
-            item.placeholder!!.metadata.version shouldBe "1.0.0"
+            val placeholder = item.placeholder.shouldNotBeNull()
+            placeholder.kind shouldBe Kind.DEGRADED
+            placeholder.connectorId shouldBe gdrive
+            placeholder.metadata.label shouldBe "Phone"
+            placeholder.metadata.platform shouldBe "android"
+            placeholder.metadata.version shouldBe "1.0.0"
         }
     }
 
@@ -409,6 +411,118 @@ class BuildPlaceholderDeviceItemsTest : BaseTest() {
             )
 
             items.single().placeholder!!.kind shouldBe Kind.DEGRADED
+        }
+    }
+
+    /**
+     * The grace period is a property of the individual holder's `addedAt`, not of whichever holder
+     * happens to win the display-metadata tie-break. Long-standing knowledge by any holder must
+     * defeat the grace, otherwise device visibility would depend on unrelated label/lastSeen
+     * ordering.
+     */
+    @Nested
+    inner class `per-holder grace evaluation` {
+        @Test
+        fun `within-grace holder winning the tie-break does not suppress the device`() {
+            // gdrive would win on lastSeen, but it only learned about the device a minute ago.
+            val items = call(
+                mapOf(
+                    gdrive to listOf(
+                        metadata(deviceA, label = "Fresh", lastSeen = now, addedAt = now - 1.minutes),
+                    ),
+                    octiserver to listOf(
+                        metadata(deviceA, label = "Settled", lastSeen = now - 10.minutes, addedAt = now - 1.hours),
+                    ),
+                ),
+            )
+
+            val placeholder = items.single().placeholder.shouldNotBeNull()
+            placeholder.kind shouldBe Kind.DEGRADED
+            placeholder.connectorId shouldBe octiserver
+            placeholder.metadata.label shouldBe "Settled"
+            placeholder.metadata.addedAt shouldBe (now - 1.hours)
+        }
+
+        @Test
+        fun `within-grace holder winning on label does not suppress the device`() {
+            // Even the label preference must not resurrect the within-grace holder.
+            val items = call(
+                mapOf(
+                    gdrive to listOf(
+                        metadata(deviceA, label = "Fresh", lastSeen = now, addedAt = now - 1.minutes),
+                    ),
+                    octiserver to listOf(
+                        metadata(deviceA, label = null, lastSeen = now - 10.minutes, addedAt = now - 1.hours),
+                    ),
+                ),
+            )
+
+            val placeholder = items.single().placeholder.shouldNotBeNull()
+            placeholder.kind shouldBe Kind.DEGRADED
+            placeholder.connectorId shouldBe octiserver
+            placeholder.metadata.label shouldBe null
+        }
+
+        @Test
+        fun `all settled holders within grace omits the device`() {
+            val items = call(
+                mapOf(
+                    gdrive to listOf(metadata(deviceA, addedAt = now - 1.minutes)),
+                    octiserver to listOf(metadata(deviceA, addedAt = now - 2.minutes)),
+                ),
+            )
+
+            items.shouldBeEmpty()
+        }
+
+        @Test
+        fun `null addedAt on one holder keeps the device visible`() {
+            val items = call(
+                mapOf(
+                    gdrive to listOf(
+                        metadata(deviceA, label = "Fresh", lastSeen = now, addedAt = now - 1.minutes),
+                    ),
+                    octiserver to listOf(
+                        metadata(deviceA, label = "Unknown", lastSeen = now - 10.minutes, addedAt = null),
+                    ),
+                ),
+            )
+
+            val placeholder = items.single().placeholder.shouldNotBeNull()
+            placeholder.kind shouldBe Kind.DEGRADED
+            placeholder.connectorId shouldBe octiserver
+        }
+
+        @Test
+        fun `single-connector grace behavior is unchanged`() {
+            call(
+                mapOf(gdrive to listOf(metadata(deviceA, addedAt = now - 1.minutes))),
+            ).shouldBeEmpty()
+
+            call(
+                mapOf(gdrive to listOf(metadata(deviceA, addedAt = now - 6.minutes))),
+            ) shouldHaveSize 1
+
+            call(
+                mapOf(gdrive to listOf(metadata(deviceA, addedAt = null))),
+            ) shouldHaveSize 1
+        }
+
+        @Test
+        fun `grace does not apply when the winning kind is not degraded`() {
+            // Both holders are within grace, but one is still reading — SYNCING stays visible.
+            val items = call(
+                mapOf(
+                    gdrive to listOf(metadata(deviceA, addedAt = now - 1.minutes)),
+                    octiserver to listOf(metadata(deviceA, addedAt = now - 1.minutes)),
+                ),
+                lastFullReadAt = mapOf(gdrive to now - 1.hours, octiserver to null),
+                readingConnectorIds = setOf(octiserver),
+            )
+
+            val placeholder = items.single().placeholder.shouldNotBeNull()
+            placeholder.kind shouldBe Kind.SYNCING
+            placeholder.connectorId shouldBe octiserver
         }
     }
 
