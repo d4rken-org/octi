@@ -14,6 +14,15 @@ interface SyncConnectorState {
 
     val deviceMetadata: List<DeviceMetadata> get() = emptyList()
 
+    /**
+     * When this connector last completed a **full** (non-targeted) payload read that actually
+     * retrieved data. `null` means no such read has completed for this connector instance — the
+     * absence of a device's payload therefore proves nothing, and callers must not treat it as
+     * degradation. Cleared on Pause/Resume and Reset so a peer added while paused isn't
+     * mistaken for a missing one.
+     */
+    val lastFullReadAt: Instant? get() = null
+
     val issues: List<ConnectorIssue> get() = emptyList()
 
     val isAvailable: Boolean
