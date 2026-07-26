@@ -952,8 +952,12 @@ class DashboardVM @Inject constructor(
          *
          * Across holders the most optimistic verdict wins (SYNCING > UNVERIFIED > DEGRADED): a
          * connector that is still reading may yet deliver the payload, so one settled holder must
-         * not paint the device as broken. The [gracePeriod] on `addedAt` suppresses the device
-         * entirely, but only in the degraded case.
+         * not paint the device as broken.
+         *
+         * The [gracePeriod] on `addedAt` only applies in the degraded case, and is evaluated per
+         * holder: holders that added the device less than [gracePeriod] ago are dropped from the
+         * winner selection, and the device is omitted entirely only if no out-of-grace holder
+         * remains. A `null` `addedAt` counts as out-of-grace.
          */
         internal fun buildPlaceholderDeviceItems(
             now: Instant,
@@ -986,15 +990,20 @@ class DashboardVM @Inject constructor(
 
                 val winningKind = placeholderKindOptimism.first { kind -> verdicts.any { it.second == kind } }
                 val winners = verdicts.filter { it.second == winningKind }.map { it.first }
-                val (connectorId, meta) = winners.minWith(placeholderCandidateOrder)
 
-                if (winningKind == PlaceholderData.Kind.DEGRADED &&
-                    meta.addedAt?.let { (now - it) >= gracePeriod } == false
-                ) {
-                    // Freshly added peer that genuinely has no data yet — omit the card entirely
-                    // instead of showing a placeholder for it.
-                    return@mapNotNull null
+                // Grace is evaluated per holder, before the display-metadata tie-break: a holder
+                // that has known this device for longer than the grace period proves it isn't
+                // freshly added, no matter which holder would win on label/lastSeen.
+                val eligible = if (winningKind == PlaceholderData.Kind.DEGRADED) {
+                    winners.filter { (_, meta) -> meta.addedAt?.let { (now - it) >= gracePeriod } != false }
+                } else {
+                    winners
                 }
+                // Freshly added peer that genuinely has no data yet — omit the card entirely
+                // instead of showing a placeholder for it.
+                if (eligible.isEmpty()) return@mapNotNull null
+
+                val (connectorId, meta) = eligible.minWith(placeholderCandidateOrder)
 
                 DeviceItem(
                     now = now,
