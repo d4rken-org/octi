@@ -15,6 +15,7 @@ import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.flow.combine
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.navigation.Nav
+import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.PermissionState
@@ -487,13 +488,17 @@ class DashboardVM @Inject constructor(
     }
 
     fun goToConnectorDevices(connectorId: ConnectorId) = launch {
-        log(TAG) { "goToConnectorDevices($connectorId)" }
-        navTo(Nav.Sync.Devices(connectorId = connectorId.idString))
+        navigateToConnector(connectorId, null)
     }
 
     fun goToDeviceDetails(connectorId: ConnectorId, deviceId: DeviceId) = launch {
-        log(TAG) { "goToDeviceDetails($connectorId, $deviceId)" }
-        navTo(Nav.Sync.Devices(connectorId = connectorId.idString, deviceId = deviceId.id))
+        navigateToConnector(connectorId, deviceId)
+    }
+
+    private suspend fun navigateToConnector(connectorId: ConnectorId, deviceId: DeviceId?) {
+        val isPaused = syncSettings.isPaused(connectorId)
+        log(TAG) { "navigateToConnector($connectorId, $deviceId): isPaused=$isPaused" }
+        navTo(connectorNavTarget(connectorId, deviceId, isPaused))
     }
 
     fun goToUpgrade() {
@@ -820,6 +825,21 @@ class DashboardVM @Inject constructor(
     }
 
     companion object {
+        /**
+         * A paused connector's devices screen pops itself the moment it composes (SyncDevicesScreen's
+         * isPaused guard), so routing there is a dead end that reads as a flash. Send the user to the
+         * sync list instead: that connector's card shows the issue and opens an actions sheet with the
+         * resume/repair affordance.
+         */
+        internal fun connectorNavTarget(
+            connectorId: ConnectorId,
+            deviceId: DeviceId?,
+            isPaused: Boolean,
+        ): NavigationDestination = when {
+            isPaused -> Nav.Sync.List
+            else -> Nav.Sync.Devices(connectorId = connectorId.idString, deviceId = deviceId?.id)
+        }
+
         /**
          * Sync is configured and healthy, but this device has no peers — the user set up a
          * backend but never reached the actual goal (a second device).
