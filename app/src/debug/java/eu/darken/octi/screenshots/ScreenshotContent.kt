@@ -167,7 +167,7 @@ internal fun DashboardContent() = PreviewWrapper {
             ),
             onRefresh = {},
             onSyncServices = {},
-            onDegradedClick = {},
+            onPlaceholderClick = {},
             onIssueClick = {},
             onConnectorDevices = {},
             onUpgrade = {},

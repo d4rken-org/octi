@@ -82,7 +82,15 @@ class DeviceInfoBuilderTest : BaseTest() {
         isCollapsed = false,
         isLimited = false,
         isCurrentDevice = isCurrentDevice,
-        isDegraded = isDegraded,
+        placeholder = if (isDegraded) {
+            DashboardVM.PlaceholderData(
+                kind = DashboardVM.PlaceholderData.Kind.DEGRADED,
+                connectorId = connectorId,
+                metadata = DeviceMetadata(deviceId = deviceId),
+            )
+        } else {
+            null
+        },
     )
 
     @Nested
