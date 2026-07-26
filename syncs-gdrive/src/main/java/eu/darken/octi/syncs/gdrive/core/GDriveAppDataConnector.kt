@@ -204,8 +204,17 @@ class GDriveAppDataConnector @AssistedInject constructor(
     /**
      * Records that a full (non-targeted) payload read completed. Consumers use this to tell
      * "this peer has no data" apart from "we haven't read this peer's data yet".
+     *
+     * Only a read that actually retrieved module data proves coverage: [readDrive] returns
+     * `devices = emptySet()` when the device-data dir is missing and swallows per-module fetch
+     * failures into a device entry with zero modules — neither may be mistaken for "these peers
+     * have no data". The guard lives here so no call site can forget it.
      */
-    private suspend fun markFullReadCompleted() {
+    private suspend fun markFullReadCompleted(data: GDriveData) {
+        if (data.devices.none { it.modules.isNotEmpty() }) {
+            log(TAG, WARN) { "markFullReadCompleted(): Read retrieved no module data, not claiming coverage" }
+            return
+        }
         _state.updateBlocking { copy(lastFullReadAt = Clock.System.now()) }
     }
 
@@ -862,7 +871,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             log(TAG) { "handleSync(): First sync, forcing full read despite filters" }
             val newData = readDrive(refreshDeviceMetadata = options.stats)
             _data.value = newData
-            markFullReadCompleted()
+            markFullReadCompleted(newData)
             updateDeviceMetadataFromData(newData)
             val startToken = drive.changes().getStartPageToken()
                 .setSupportsAllDrives(false)
@@ -881,7 +890,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             is SyncChangeResult.HasChanges -> {
                 val newData = readDrive(refreshDeviceMetadata = options.stats)
                 _data.value = newData
-                markFullReadCompleted()
+                markFullReadCompleted(newData)
                 updateDeviceMetadataFromData(newData)
                 syncToken.value(result.newToken)
             }
@@ -889,7 +898,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             is SyncChangeResult.ForceFullSync -> {
                 val newData = readDrive(refreshDeviceMetadata = options.stats)
                 _data.value = newData
-                markFullReadCompleted()
+                markFullReadCompleted(newData)
                 updateDeviceMetadataFromData(newData)
                 val startToken = drive.changes().getStartPageToken()
                     .setSupportsAllDrives(false)
@@ -902,7 +911,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     log(TAG) { "handleSync(): No cached data, forcing initial read" }
                     val newData = readDrive(refreshDeviceMetadata = options.stats)
                     _data.value = newData
-                    markFullReadCompleted()
+                    markFullReadCompleted(newData)
                     updateDeviceMetadataFromData(newData)
                 } else if (options.stats && hasMissingDeviceMetadata()) {
                     log(TAG) { "handleSync(): No changes but device metadata is incomplete, refreshing" }
