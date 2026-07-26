@@ -28,6 +28,7 @@ import eu.darken.octi.sync.core.blob.BlobMetadata
 import eu.darken.octi.sync.core.blob.StorageStatusProvider
 import eu.darken.octi.sync.core.cache.SyncCache
 import eu.darken.octi.sync.core.execute
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -400,11 +401,83 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
     @Nested
     inner class `full read coverage` {
 
+        private val coverageDevice = DeviceId("device-a")
+        private val coveragePowerFileId = "coverage-power-file-id"
+
+        /**
+         * Full read that actually retrieves a module payload — the only shape that may claim
+         * coverage.
+         */
+        private fun setupDriveReadWithModuleData(payload: String = "power-data") {
+            setupDriveRead(withModuleFile = true, payload = payload)
+        }
+
+        /**
+         * Device dir exists, but no module payload comes back: `devices` is non-empty while every
+         * entry has zero modules. Same observable shape as transient per-module read failures.
+         */
+        private fun setupDriveReadWithoutModuleData() {
+            setupDriveRead(withModuleFile = false)
+        }
+
+        private fun setupDriveRead(withModuleFile: Boolean, payload: String = "power-data") {
+            val rootFile = GDriveFile().apply {
+                id = "appDataFolder"
+                name = "appDataFolder"
+                mimeType = "application/vnd.google-apps.folder"
+            }
+            val devicesDir = GDriveFile().apply {
+                id = "devices-dir-id"
+                name = "devices"
+                mimeType = "application/vnd.google-apps.folder"
+                parents = listOf("appDataFolder")
+            }
+            val deviceDir = GDriveFile().apply {
+                id = "device-a-dir-id"
+                name = coverageDevice.id
+                mimeType = "application/vnd.google-apps.folder"
+                parents = listOf("devices-dir-id")
+            }
+            val powerFile = GDriveFile().apply {
+                id = coveragePowerFileId
+                name = power.id
+                mimeType = "application/octet-stream"
+                parents = listOf("device-a-dir-id")
+                modifiedTime = DateTime(1000L)
+            }
+
+            val rootGet = mockk<Drive.Files.Get>(relaxed = true).also {
+                every { it.setFields(any<String>()) } returns it
+                every { it.execute() } returns rootFile
+            }
+            val moduleGet = mockk<Drive.Files.Get>(relaxed = true).also {
+                every { it.setFields(any<String>()) } returns it
+                every { it.execute() } returns powerFile
+                every { it.executeMediaAndDownloadTo(any()) } answers {
+                    firstArg<java.io.OutputStream>().write(payload.toByteArray())
+                }
+            }
+            every { mockFiles.get(any()) } answers {
+                when (firstArg<String>()) {
+                    "appDataFolder" -> rootGet
+                    coveragePowerFileId -> moduleGet
+                    else -> mockk(relaxed = true)
+                }
+            }
+            every { mockFilesList.execute() } returns FileList().apply {
+                files = buildList {
+                    add(devicesDir)
+                    add(deviceDir)
+                    if (withModuleFile) add(powerFile)
+                }
+            }
+        }
+
         @Test
-        fun `full read sets lastFullReadAt`() = runTest {
+        fun `full read that retrieved module data sets lastFullReadAt`() = runTest {
             val connector = createConnector()
             setupStartPageToken("start-token")
-            setupEmptyDriveRead()
+            setupDriveReadWithModuleData()
 
             connector.state.first().lastFullReadAt.shouldBeNull()
 
@@ -414,10 +487,38 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         }
 
         @Test
+        fun `full read where no device yielded module data leaves lastFullReadAt null`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupDriveReadWithoutModuleData()
+
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+
+            val data = connector.data.first()
+            data.shouldNotBeNull()
+            data.devices shouldHaveSize 1
+            data.devices.single().modules.shouldBeEmpty()
+            connector.state.first().lastFullReadAt.shouldBeNull()
+        }
+
+        @Test
+        fun `full read with a missing device data dir leaves lastFullReadAt null`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            // No "devices" dir at all → readDrive returns devices = emptySet()
+            setupEmptyDriveRead()
+
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+
+            connector.data.first()?.devices.shouldNotBeNull().shouldBeEmpty()
+            connector.state.first().lastFullReadAt.shouldBeNull()
+        }
+
+        @Test
         fun `targeted read on top of existing data does not advance lastFullReadAt`() = runTest {
             val connector = createConnector()
             setupStartPageToken("start-token")
-            setupEmptyDriveRead()
+            setupDriveReadWithModuleData()
 
             connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
             val afterFullRead = connector.state.first().lastFullReadAt
@@ -439,7 +540,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         fun `pause clears lastFullReadAt`() = runTest {
             val connector = createConnector()
             setupStartPageToken("start-token")
-            setupEmptyDriveRead()
+            setupDriveReadWithModuleData()
             connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
             connector.state.first().lastFullReadAt.shouldNotBeNull()
 
@@ -452,7 +553,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         fun `resume clears lastFullReadAt`() = runTest {
             val connector = createConnector()
             setupStartPageToken("start-token")
-            setupEmptyDriveRead()
+            setupDriveReadWithModuleData()
             connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
             connector.state.first().lastFullReadAt.shouldNotBeNull()
 
@@ -465,9 +566,13 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         fun `reset clears lastFullReadAt`() = runTest {
             val connector = createConnector()
             setupStartPageToken("start-token")
-            setupEmptyDriveRead()
+            setupDriveReadWithModuleData()
             connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
             connector.state.first().lastFullReadAt.shouldNotBeNull()
+
+            // The reset path resolves the devices dir via child(), which the mock can't filter by
+            // parent — hand it an empty listing so the deletion walk finds nothing to delete.
+            setupEmptyDriveRead()
 
             connector.execute(ConnectorCommand.Reset)
 
