@@ -35,6 +35,7 @@ import androidx.compose.material.icons.twotone.Schedule
 import androidx.compose.material.icons.twotone.CloudSync
 import androidx.compose.material.icons.twotone.Coffee
 import androidx.compose.material.icons.twotone.DeleteSweep
+import androidx.compose.material.icons.twotone.DeviceUnknown
 import androidx.compose.material.icons.twotone.ExpandLess
 import androidx.compose.material.icons.twotone.ExpandMore
 import androidx.compose.material.icons.twotone.Home
@@ -130,6 +131,7 @@ import eu.darken.octi.modules.wifi.ui.dashboard.WifiDetailSheet
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.DeviceId
+import eu.darken.octi.sync.core.DeviceMetadata
 import eu.darken.octi.sync.core.IssueSeverity
 import eu.darken.octi.sync.core.shortLabel
 import eu.darken.octi.sync.core.SyncConnector.EventMode
@@ -296,8 +298,8 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             state = it,
             onRefresh = { vm.refresh() },
             onSyncServices = { vm.goToSyncServices() },
-            onDegradedClick = { device ->
-                val connectorId = device.degradedConnectorId
+            onPlaceholderClick = { device ->
+                val connectorId = device.placeholder?.connectorId
                 if (connectorId != null) {
                     vm.goToDeviceDetails(connectorId, device.deviceId)
                 } else {
@@ -346,7 +348,7 @@ fun DashboardScreen(
     state: DashboardVM.State,
     onRefresh: () -> Unit,
     onSyncServices: () -> Unit,
-    onDegradedClick: (DashboardVM.DeviceItem) -> Unit,
+    onPlaceholderClick: (DashboardVM.DeviceItem) -> Unit,
     onIssueClick: (ConnectorIssue) -> Unit,
     onConnectorDevices: (ConnectorId) -> Unit,
     onUpgrade: () -> Unit,
@@ -555,7 +557,7 @@ fun DashboardScreen(
                     onEditCard = { editingDeviceId = it },
                     onUpgrade = onUpgrade,
                     onManageStaleDevice = onSyncServices,
-                    onDegradedClick = onDegradedClick,
+                    onPlaceholderClick = onPlaceholderClick,
                     onIssueClick = onIssueClick,
                     onPowerClicked = { showPowerDetail = it },
                     onPowerAlerts = onPowerAlerts,
@@ -630,7 +632,7 @@ fun DashboardScreen(
                         onEditCard = { editingDeviceId = it },
                         onUpgrade = onUpgrade,
                         onManageStaleDevice = onSyncServices,
-                        onDegradedClick = onDegradedClick,
+                        onPlaceholderClick = onPlaceholderClick,
                         onIssueClick = onIssueClick,
                         onPowerClicked = { showPowerDetail = it },
                         onPowerAlerts = onPowerAlerts,
@@ -1586,7 +1588,7 @@ private fun DashboardDeviceCard(
     onEditCard: (String) -> Unit,
     onUpgrade: () -> Unit,
     onManageStaleDevice: () -> Unit,
-    onDegradedClick: (DashboardVM.DeviceItem) -> Unit,
+    onPlaceholderClick: (DashboardVM.DeviceItem) -> Unit,
     onIssueClick: (ConnectorIssue) -> Unit,
     onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
     onPowerAlerts: (DeviceId) -> Unit,
@@ -1607,10 +1609,11 @@ private fun DashboardDeviceCard(
     onRemoveDevice: (ConnectorId, DeviceId) -> Unit,
 ) {
     val meta = device.meta?.data
+    val isPlaceholder = device.isPlaceholder
     val isDegraded = device.isDegraded
     val hasModules = device.moduleItems.isNotEmpty()
-    val canEdit = hasModules && !device.isLimited && !isDegraded
-    val shouldShowModules = !device.isLimited && hasModules && !device.isCollapsed && !isDegraded
+    val canEdit = hasModules && !device.isLimited && !isPlaceholder
+    val shouldShowModules = !device.isLimited && hasModules && !device.isCollapsed && !isPlaceholder
 
     val actionableTargets = remember(device.removalTargets) {
         device.removalTargets.filterNot { it.isPaused }
@@ -1648,7 +1651,7 @@ private fun DashboardDeviceCard(
                     .combinedClickable(
                         onClick = {
                             when {
-                                isDegraded -> onDegradedClick(device)
+                                isPlaceholder -> onPlaceholderClick(device)
                                 canEdit -> onToggleCollapse(device.deviceId.id)
                                 device.isLimited -> onUpgrade()
                             }
@@ -1662,16 +1665,35 @@ private fun DashboardDeviceCard(
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    imageVector = when {
-                        device.isCurrentDevice -> Icons.TwoTone.Home
-                        isDegraded -> Icons.TwoTone.Warning
-                        else -> meta?.deviceType.materialIcon()
-                    },
-                    contentDescription = null,
-                    modifier = Modifier.size(32.dp),
-                    tint = if (isDegraded) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
-                )
+                if (device.isSyncing) {
+                    // Centered in a box the size of the icon slot so the label doesn't shift
+                    // sideways once the payload lands and the real icon replaces the spinner.
+                    Box(
+                        modifier = Modifier.size(32.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
+                        )
+                    }
+                } else {
+                    Icon(
+                        imageVector = when {
+                            device.isCurrentDevice -> Icons.TwoTone.Home
+                            isDegraded -> Icons.TwoTone.Warning
+                            device.isUnverified -> Icons.TwoTone.DeviceUnknown
+                            else -> meta?.deviceType.materialIcon()
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        tint = when {
+                            isDegraded -> MaterialTheme.colorScheme.error
+                            device.isUnverified -> MaterialTheme.colorScheme.onSurfaceVariant
+                            else -> MaterialTheme.colorScheme.onSurface
+                        },
+                    )
+                }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
@@ -1680,7 +1702,7 @@ private fun DashboardDeviceCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    if (!isDegraded && device.meta != null) {
+                    if (!isPlaceholder && device.meta != null) {
                         val primaryInfo = device.infos.firstOrNull()
                         val badgeColor = primaryInfo?.severityColor()
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1701,8 +1723,17 @@ private fun DashboardDeviceCard(
                                 color = badgeColor ?: Color.Unspecified,
                             )
                         }
-                    } else if (isDegraded) {
-                        val details = listOfNotNull(device.degradedVersion, device.degradedPlatform).joinToString(" · ")
+                    } else if (device.isSyncing) {
+                        Text(
+                            text = stringResource(R.string.dashboard_sync_status_syncing),
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+                    } else if (isPlaceholder) {
+                        val placeholder = device.placeholder
+                        val details = listOfNotNull(
+                            placeholder?.metadata?.version,
+                            placeholder?.metadata?.platform,
+                        ).joinToString(" · ")
                         if (details.isNotEmpty()) {
                             Text(
                                 text = details,
@@ -1782,8 +1813,8 @@ private fun DashboardDeviceCard(
             )
         }
 
-        // Info rows (shown for both normal expanded and degraded devices)
-        if (shouldShowModules || isDegraded) {
+        // Info rows (shown for both normal expanded and placeholder devices)
+        if (shouldShowModules || isPlaceholder) {
             device.infos.forEach { issue ->
                 HorizontalDivider()
                 IssueInfoRow(
@@ -1886,7 +1917,7 @@ private fun DeviceCardOrEditor(
     onEditCard: (String) -> Unit,
     onUpgrade: () -> Unit,
     onManageStaleDevice: () -> Unit,
-    onDegradedClick: (DashboardVM.DeviceItem) -> Unit,
+    onPlaceholderClick: (DashboardVM.DeviceItem) -> Unit,
     onIssueClick: (ConnectorIssue) -> Unit,
     onPowerClicked: (DashboardVM.ModuleItem.Power) -> Unit,
     onPowerAlerts: (DeviceId) -> Unit,
@@ -1933,7 +1964,7 @@ private fun DeviceCardOrEditor(
             onEditCard = onEditCard,
             onUpgrade = onUpgrade,
             onManageStaleDevice = onManageStaleDevice,
-            onDegradedClick = onDegradedClick,
+            onPlaceholderClick = onPlaceholderClick,
             onIssueClick = onIssueClick,
             onPowerClicked = onPowerClicked,
             onPowerAlerts = onPowerAlerts,
@@ -2055,7 +2086,7 @@ private fun DashboardScreenEmptyPreview() = PreviewWrapper {
         ),
         onRefresh = {},
         onSyncServices = {},
-        onDegradedClick = {},
+        onPlaceholderClick = {},
         onIssueClick = {},
         onConnectorDevices = {},
         onUpgrade = {},
@@ -2100,7 +2131,7 @@ private fun DashboardScreenSyncedAlonePreview() = PreviewWrapper {
         ),
         onRefresh = {},
         onSyncServices = {},
-        onDegradedClick = {},
+        onPlaceholderClick = {},
         onIssueClick = {},
         onConnectorDevices = {},
         onUpgrade = {},
@@ -2207,7 +2238,7 @@ private fun DashboardScreenPreview() = PreviewWrapper {
         ),
         onRefresh = {},
         onSyncServices = {},
-        onDegradedClick = {},
+        onPlaceholderClick = {},
         onIssueClick = {},
         onConnectorDevices = {},
         onUpgrade = {},
@@ -2313,7 +2344,101 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
         ),
         onRefresh = {},
         onSyncServices = {},
-        onDegradedClick = {},
+        onPlaceholderClick = {},
+        onIssueClick = {},
+        onConnectorDevices = {},
+        onUpgrade = {},
+        onSettings = {},
+        onSnoozeSyncSetup = {},
+        onSnoozeSyncedAlone = {},
+        onSetupSync = {},
+        onGrantPermission = {},
+        onDismissPermission = {},
+        onDismissUpdate = {},
+        onViewUpdate = {},
+        onStartUpdate = {},
+        onToggleSyncExpanded = {},
+        onToggleDeviceCollapsed = {},
+        onPowerAlerts = {},
+        onAppsList = {},
+        onInstallLatestApp = {},
+        onClearClipboard = {},
+        onShareClipboard = {},
+        onCopyClipboard = {},
+        onFileShareClicked = {},
+        onWifiPermissionGrant = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun DashboardScreenPlaceholderDevicesPreview() = PreviewWrapper {
+    val now = Clock.System.now()
+    val connectorId = ConnectorId(
+        type = ConnectorType.OCTISERVER,
+        subtype = "preview",
+        account = "preview-account",
+    )
+
+    fun placeholderDevice(
+        deviceId: DeviceId,
+        label: String,
+        kind: DashboardVM.PlaceholderData.Kind,
+    ) = DashboardVM.DeviceItem(
+        now = now,
+        deviceId = deviceId,
+        meta = null,
+        moduleItems = emptyList(),
+        isCollapsed = false,
+        isLimited = false,
+        isCurrentDevice = false,
+        placeholder = DashboardVM.PlaceholderData(
+            kind = kind,
+            connectorId = connectorId,
+            metadata = DeviceMetadata(
+                deviceId = deviceId,
+                version = "0.14.0",
+                platform = "android",
+                label = label,
+                lastSeen = now - 300.seconds,
+                addedAt = now - 86400.seconds,
+            ),
+        ),
+    )
+
+    DashboardScreen(
+        state = DashboardVM.State(
+            devices = listOf(
+                placeholderDevice(
+                    DeviceId("preview-syncing"),
+                    "Pixel 8 (syncing)",
+                    DashboardVM.PlaceholderData.Kind.SYNCING,
+                ),
+                placeholderDevice(
+                    DeviceId("preview-unverified"),
+                    "Galaxy Tab S9 (unverified)",
+                    DashboardVM.PlaceholderData.Kind.UNVERIFIED,
+                ),
+                placeholderDevice(
+                    DeviceId("preview-degraded"),
+                    "Old Phone (degraded)",
+                    DashboardVM.PlaceholderData.Kind.DEGRADED,
+                ),
+            ),
+            deviceCount = 3,
+            syncStatus = null,
+            isOffline = false,
+            showSyncSetup = false,
+            showSyncedAlone = false,
+            hasConnectors = true,
+            missingPermissions = emptyList(),
+            update = null,
+            upgradeInfo = PreviewUpgradeInfo(isPro = true),
+            deviceLimitReached = false,
+        ),
+        onRefresh = {},
+        onSyncServices = {},
+        onPlaceholderClick = {},
         onIssueClick = {},
         onConnectorDevices = {},
         onUpgrade = {},

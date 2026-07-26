@@ -78,6 +78,7 @@ import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @HiltViewModel
@@ -206,17 +207,34 @@ class DashboardVM @Inject constructor(
         val isLimited: Boolean,
         val isCurrentDevice: Boolean,
         val infos: List<ConnectorIssue> = emptyList(),
-        val isDegraded: Boolean = false,
-        val degradedConnectorId: ConnectorId? = null,
-        val degradedLabel: String? = null,
-        val degradedPlatform: String? = null,
-        val degradedVersion: String? = null,
-        val degradedLastSeen: Instant? = null,
+        val placeholder: PlaceholderData? = null,
         val removalTargets: List<DeviceRemovalTarget> = emptyList(),
-        val displayLabel: String = meta?.data?.labelOrFallback ?: degradedLabel ?: deviceId.shortLabel,
+        val displayLabel: String = meta?.data?.labelOrFallback
+            ?: placeholder?.metadata?.label
+            ?: deviceId.shortLabel,
     ) {
         val baseLabel: String
-            get() = meta?.data?.labelOrFallback ?: degradedLabel ?: deviceId.shortLabel
+            get() = meta?.data?.labelOrFallback ?: placeholder?.metadata?.label ?: deviceId.shortLabel
+
+        val isPlaceholder: Boolean get() = placeholder != null
+        val isDegraded: Boolean get() = placeholder?.kind == PlaceholderData.Kind.DEGRADED
+        val isSyncing: Boolean get() = placeholder?.kind == PlaceholderData.Kind.SYNCING
+        val isUnverified: Boolean get() = placeholder?.kind == PlaceholderData.Kind.UNVERIFIED
+    }
+
+    /**
+     * A device that a connector knows about, but for which we have no module data (yet).
+     *
+     * [Kind.DEGRADED] is the only variant that claims the data is actually missing — it requires
+     * positive evidence (a completed full read that settled without producing data for this
+     * device). The other two mean "we can't tell yet" and must render benignly.
+     */
+    data class PlaceholderData(
+        val kind: Kind,
+        val connectorId: ConnectorId,
+        val metadata: DeviceMetadata,
+    ) {
+        enum class Kind { SYNCING, UNVERIFIED, DEGRADED }
     }
 
     /**
@@ -642,11 +660,12 @@ class DashboardVM @Inject constructor(
         permissionTool.missingPermissions,
         syncManager.connectors,
         syncManager.states,
+        syncManager.busyConnectorIds,
         alertManager.alerts,
         upgradeRepo.upgradeInfo,
         fileShareCtx,
         syncSettings.pausedConnectorIds,
-    ) { now, byDevice, missingPermissions, activeConnectors, activeStates, alerts, _, fileShare, pausedIds ->
+    ) { now, byDevice, missingPermissions, activeConnectors, activeStates, busyIds, alerts, _, fileShare, pausedIds ->
         val statesList = activeStates.toList()
         val statesMap = activeConnectors.zip(statesList).associate { (c, s) -> c.identifier to s }
         val fileDeleteRequests = byDevice.devices.values
@@ -733,7 +752,7 @@ class DashboardVM @Inject constructor(
                 )
             }
 
-        // Build degraded device items from connector metadata (devices known but no module data)
+        // Build placeholder device items from connector metadata (devices known but no module data)
         val normalDeviceIds = normalItems.map { it.deviceId }.toSet()
         val connectorMetadata = activeConnectors
             .mapNotNull { connector ->
@@ -741,12 +760,23 @@ class DashboardVM @Inject constructor(
                 connector.identifier to state.deviceMetadata
             }
             .toMap()
-        val degradedItems = buildDegradedDeviceItems(
+        val lastFullReadAt = activeConnectors
+            .mapNotNull { connector ->
+                val state = statesMap[connector.identifier] ?: return@mapNotNull null
+                connector.identifier to state.lastFullReadAt
+            }
+            .toMap()
+        val placeholderItems = buildPlaceholderDeviceItems(
             now = now,
             connectorMetadata = connectorMetadata,
+            lastFullReadAt = lastFullReadAt,
+            // busyConnectorIds also counts writes — a write-only-busy connector that never read
+            // is classified SYNCING instead of UNVERIFIED, which is benign (both render neutral).
+            readingConnectorIds = busyIds,
             normalDeviceIds = normalDeviceIds,
             currentDeviceId = syncSettings.deviceId,
             gracePeriod = SyncSettings.FIRST_SYNC_GRACE_PERIOD,
+            settleWindow = PLACEHOLDER_SETTLE_WINDOW,
         )
 
         val removalTargetsByDevice = buildRemovalTargetsByDevice(
@@ -757,7 +787,7 @@ class DashboardVM @Inject constructor(
             contributionDisplayOrder = { type -> connectorContributions[type]?.displayOrder ?: Int.MAX_VALUE },
         )
 
-        val items = (normalItems + degradedItems)
+        val items = (normalItems + placeholderItems)
             .map { item -> item.copy(removalTargets = removalTargetsByDevice[item.deviceId].orEmpty()) }
         val labelsByDevice = disambiguateDeviceLabels(items.associate { it.deviceId to it.baseLabel })
 
@@ -884,43 +914,88 @@ class DashboardVM @Inject constructor(
             .flatMap { (_, state) -> state.deviceMetadata.asSequence().map { it.deviceId } }
             .toSet()
 
+        /** Most-optimistic-first: a holder that may still deliver data outranks a settled one. */
+        private val placeholderKindOptimism = listOf(
+            PlaceholderData.Kind.SYNCING,
+            PlaceholderData.Kind.UNVERIFIED,
+            PlaceholderData.Kind.DEGRADED,
+        )
+
         /**
-         * Build degraded device items (devices known to a connector but lacking module data).
-         *
-         * Deduplicates across connectors: the dashboard's LazyVerticalGrid keys items by
-         * deviceId, so the same device appearing in multiple connectors' deviceMetadata
-         * would otherwise crash with "Key … was already used".
-         *
-         * Selection rule per deviceId (most-useful-wins):
+         * Most-useful-wins comparator for picking which connector's view of a device the
+         * placeholder card shows:
          *  1. Prefer non-null `label` so the card doesn't fall back to `deviceId.shortLabel`.
          *  2. Newer `lastSeen` wins.
          *  3. Stable tie-break by `connectorId.idString` so the displayed connector and the
          *     `goToDeviceDetails(connectorId, deviceId)` navigation target don't flicker
          *     across emissions when timestamps are equal/null.
          */
-        internal fun buildDegradedDeviceItems(
+        private val placeholderCandidateOrder: Comparator<Pair<ConnectorId, DeviceMetadata>> =
+            compareBy<Pair<ConnectorId, DeviceMetadata>> { (_, m) -> if (m.label != null) 0 else 1 }
+                .thenByDescending { (_, m) -> m.lastSeen ?: Instant.DISTANT_PAST }
+                .thenBy { (id, _) -> id.idString }
+
+        /**
+         * Build placeholder device items (devices known to a connector but lacking module data).
+         *
+         * Deduplicates across connectors: the dashboard's LazyVerticalGrid keys items by
+         * deviceId, so the same device appearing in multiple connectors' deviceMetadata
+         * would otherwise crash with "Key … was already used".
+         *
+         * Per (device, connector) holder the verdict is:
+         *  - no full read completed + connector currently reading → [PlaceholderData.Kind.SYNCING]
+         *  - no full read completed + idle → [PlaceholderData.Kind.UNVERIFIED]
+         *  - full read completed less than [settleWindow] ago → [PlaceholderData.Kind.SYNCING]
+         *    (covers the ingestion lag between a connector publishing its snapshot and the module
+         *    repos reflecting it)
+         *  - full read completed and settled → [PlaceholderData.Kind.DEGRADED]
+         *
+         * Across holders the most optimistic verdict wins (SYNCING > UNVERIFIED > DEGRADED): a
+         * connector that is still reading may yet deliver the payload, so one settled holder must
+         * not paint the device as broken. The [gracePeriod] on `addedAt` suppresses the device
+         * entirely, but only in the degraded case.
+         */
+        internal fun buildPlaceholderDeviceItems(
             now: Instant,
             connectorMetadata: Map<ConnectorId, List<DeviceMetadata>>,
+            lastFullReadAt: Map<ConnectorId, Instant?>,
+            readingConnectorIds: Set<ConnectorId>,
             normalDeviceIds: Set<DeviceId>,
             currentDeviceId: DeviceId,
             gracePeriod: Duration,
+            settleWindow: Duration,
         ): List<DeviceItem> = connectorMetadata.entries
             .flatMap { (connectorId, metadataList) ->
                 metadataList
-                    .filter { meta ->
-                        meta.deviceId !in normalDeviceIds
-                                && meta.deviceId != currentDeviceId
-                                && meta.addedAt?.let { (now - it) >= gracePeriod } != false
-                    }
+                    .filter { meta -> meta.deviceId !in normalDeviceIds && meta.deviceId != currentDeviceId }
                     .map { meta -> connectorId to meta }
             }
             .groupBy { (_, meta) -> meta.deviceId }
-            .map { (_, candidates) ->
-                val (connectorId, meta) = candidates.minWith(
-                    compareBy<Pair<ConnectorId, DeviceMetadata>> { (_, m) -> if (m.label != null) 0 else 1 }
-                        .thenByDescending { (_, m) -> m.lastSeen ?: Instant.DISTANT_PAST }
-                        .thenBy { (id, _) -> id.idString }
-                )
+            .mapNotNull { (_, candidates) ->
+                val verdicts = candidates.map { candidate ->
+                    val (connectorId, _) = candidate
+                    val readAt = lastFullReadAt[connectorId]
+                    val kind = when {
+                        readAt == null && connectorId in readingConnectorIds -> PlaceholderData.Kind.SYNCING
+                        readAt == null -> PlaceholderData.Kind.UNVERIFIED
+                        (now - readAt) < settleWindow -> PlaceholderData.Kind.SYNCING
+                        else -> PlaceholderData.Kind.DEGRADED
+                    }
+                    candidate to kind
+                }
+
+                val winningKind = placeholderKindOptimism.first { kind -> verdicts.any { it.second == kind } }
+                val winners = verdicts.filter { it.second == winningKind }.map { it.first }
+                val (connectorId, meta) = winners.minWith(placeholderCandidateOrder)
+
+                if (winningKind == PlaceholderData.Kind.DEGRADED &&
+                    meta.addedAt?.let { (now - it) >= gracePeriod } == false
+                ) {
+                    // Freshly added peer that genuinely has no data yet — omit the card entirely
+                    // instead of showing a placeholder for it.
+                    return@mapNotNull null
+                }
+
                 DeviceItem(
                     now = now,
                     deviceId = meta.deviceId,
@@ -929,12 +1004,11 @@ class DashboardVM @Inject constructor(
                     isCollapsed = false,
                     isLimited = false,
                     isCurrentDevice = false,
-                    isDegraded = true,
-                    degradedConnectorId = connectorId,
-                    degradedLabel = meta.label,
-                    degradedPlatform = meta.platform,
-                    degradedVersion = meta.version,
-                    degradedLastSeen = meta.lastSeen,
+                    placeholder = PlaceholderData(
+                        kind = winningKind,
+                        connectorId = connectorId,
+                        metadata = meta,
+                    ),
                 )
             }
 
@@ -1004,6 +1078,16 @@ class DashboardVM @Inject constructor(
             "eu.darken.octi.module.core.files",
             MetaModule.MODULE_ID.id,
         )
+        /**
+         * How long after a connector's full read we still treat a missing payload as "in flight".
+         *
+         * Only covers the ingestion lag between a connector publishing its snapshot and
+         * [ModuleManager.byDevice] reflecting it (disk save → deserialize → per-module repo
+         * update). Window expiry isn't polled — it's observed on the next UI tick or any other
+         * `combine` source change, so the imprecision can only ever delay the degraded verdict.
+         */
+        internal val PLACEHOLDER_SETTLE_WINDOW: Duration = 3.seconds
+
         private const val DEVICE_LIMIT = 3
         private val WIFI_PERMISSIONS = setOf(Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION)
 
