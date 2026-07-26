@@ -106,6 +106,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
         override val isAvailable: Boolean = true,
         override val issues: List<ConnectorIssue> = emptyList(),
         override val deviceMetadata: List<DeviceMetadata> = emptyList(),
+        override val lastFullReadAt: Instant? = null,
         val isDead: Boolean = false,
     ) : SyncConnectorState
 
@@ -189,9 +190,32 @@ class GDriveAppDataConnector @AssistedInject constructor(
             is ConnectorCommand.Sync -> handleSync(command.options)
             is ConnectorCommand.DeleteDevice -> handleDeleteDevice(command.deviceId)
             ConnectorCommand.Reset -> handleReset()
-            is ConnectorCommand.Pause -> syncSettings.pauseConnector(identifier, command.reason)
-            ConnectorCommand.Resume -> syncSettings.resumeConnector(identifier)
+            is ConnectorCommand.Pause -> {
+                syncSettings.pauseConnector(identifier, command.reason)
+                clearFullReadCoverage()
+            }
+            ConnectorCommand.Resume -> {
+                syncSettings.resumeConnector(identifier)
+                clearFullReadCoverage()
+            }
         }
+    }
+
+    /**
+     * Records that a full (non-targeted) payload read completed. Consumers use this to tell
+     * "this peer has no data" apart from "we haven't read this peer's data yet".
+     */
+    private suspend fun markFullReadCompleted() {
+        _state.updateBlocking { copy(lastFullReadAt = Clock.System.now()) }
+    }
+
+    /**
+     * Drops the full-read coverage marker. A pause/resume boundary means peers may have been
+     * added or removed without us reading, so our last full read no longer proves that a peer
+     * without payload data has none.
+     */
+    private suspend fun clearFullReadCoverage() {
+        _state.updateBlocking { if (lastFullReadAt == null) this else copy(lastFullReadAt = null) }
     }
 
     private suspend fun GDriveEnvironment.checkForChanges(): List<SyncEvent> {
@@ -288,7 +312,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 }
         }
         syncState.clearConnector(identifier)
-        _state.updateBlocking { copy(deviceMetadata = emptyList()) }
+        _state.updateBlocking { copy(deviceMetadata = emptyList(), lastFullReadAt = null) }
         syncCache.removeDeviceMetadata(identifier)
     }
 
@@ -838,6 +862,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             log(TAG) { "handleSync(): First sync, forcing full read despite filters" }
             val newData = readDrive(refreshDeviceMetadata = options.stats)
             _data.value = newData
+            markFullReadCompleted()
             updateDeviceMetadataFromData(newData)
             val startToken = drive.changes().getStartPageToken()
                 .setSupportsAllDrives(false)
@@ -856,6 +881,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             is SyncChangeResult.HasChanges -> {
                 val newData = readDrive(refreshDeviceMetadata = options.stats)
                 _data.value = newData
+                markFullReadCompleted()
                 updateDeviceMetadataFromData(newData)
                 syncToken.value(result.newToken)
             }
@@ -863,6 +889,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
             is SyncChangeResult.ForceFullSync -> {
                 val newData = readDrive(refreshDeviceMetadata = options.stats)
                 _data.value = newData
+                markFullReadCompleted()
                 updateDeviceMetadataFromData(newData)
                 val startToken = drive.changes().getStartPageToken()
                     .setSupportsAllDrives(false)
@@ -875,6 +902,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     log(TAG) { "handleSync(): No cached data, forcing initial read" }
                     val newData = readDrive(refreshDeviceMetadata = options.stats)
                     _data.value = newData
+                    markFullReadCompleted()
                     updateDeviceMetadataFromData(newData)
                 } else if (options.stats && hasMissingDeviceMetadata()) {
                     log(TAG) { "handleSync(): No changes but device metadata is incomplete, refreshing" }

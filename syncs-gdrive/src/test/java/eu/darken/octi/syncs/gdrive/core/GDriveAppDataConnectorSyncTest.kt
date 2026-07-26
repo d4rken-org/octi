@@ -398,6 +398,84 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
     }
 
     @Nested
+    inner class `full read coverage` {
+
+        @Test
+        fun `full read sets lastFullReadAt`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupEmptyDriveRead()
+
+            connector.state.first().lastFullReadAt.shouldBeNull()
+
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+
+            connector.state.first().lastFullReadAt.shouldNotBeNull()
+        }
+
+        @Test
+        fun `targeted read on top of existing data does not advance lastFullReadAt`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupEmptyDriveRead()
+
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+            val afterFullRead = connector.state.first().lastFullReadAt
+            afterFullRead.shouldNotBeNull()
+
+            connector.sync(
+                SyncOptions(
+                    stats = false,
+                    readData = true,
+                    writeData = false,
+                    moduleFilter = setOf(power),
+                ),
+            )
+
+            connector.state.first().lastFullReadAt shouldBe afterFullRead
+        }
+
+        @Test
+        fun `pause clears lastFullReadAt`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupEmptyDriveRead()
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+            connector.state.first().lastFullReadAt.shouldNotBeNull()
+
+            connector.execute(ConnectorCommand.Pause())
+
+            connector.state.first().lastFullReadAt.shouldBeNull()
+        }
+
+        @Test
+        fun `resume clears lastFullReadAt`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupEmptyDriveRead()
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+            connector.state.first().lastFullReadAt.shouldNotBeNull()
+
+            connector.execute(ConnectorCommand.Resume)
+
+            connector.state.first().lastFullReadAt.shouldBeNull()
+        }
+
+        @Test
+        fun `reset clears lastFullReadAt`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupEmptyDriveRead()
+            connector.sync(SyncOptions(stats = false, readData = true, writeData = false))
+            connector.state.first().lastFullReadAt.shouldNotBeNull()
+
+            connector.execute(ConnectorCommand.Reset)
+
+            connector.state.first().lastFullReadAt.shouldBeNull()
+        }
+    }
+
+    @Nested
     inner class `error handling` {
 
         @Test
