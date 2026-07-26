@@ -120,6 +120,7 @@ class OctiServerConnector @AssistedInject constructor(
         override val clockOffsets: List<SyncConnectorState.ClockOffset> = emptyList(),
         override val issues: List<ConnectorIssue> = emptyList(),
         override val deviceMetadata: List<DeviceMetadata> = emptyList(),
+        override val lastFullReadAt: Instant? = null,
     ) : SyncConnectorState
 
     private val _state = DynamicStateFlow(
@@ -239,10 +240,12 @@ class OctiServerConnector @AssistedInject constructor(
             ConnectorCommand.Reset -> handleReset()
             is ConnectorCommand.Pause -> {
                 syncSettings.pauseConnector(identifier, command.reason)
+                clearFullReadCoverage()
                 computeIssues()
             }
             ConnectorCommand.Resume -> {
                 syncSettings.resumeConnector(identifier)
+                clearFullReadCoverage()
                 computeIssues()
             }
         }
@@ -255,8 +258,17 @@ class OctiServerConnector @AssistedInject constructor(
             etagCache.clear()
         }
         syncState.clearConnector(identifier)
-        _state.updateBlocking { copy(deviceMetadata = emptyList()) }
+        _state.updateBlocking { copy(deviceMetadata = emptyList(), lastFullReadAt = null) }
         syncCache.removeDeviceMetadata(identifier)
+    }
+
+    /**
+     * Drops the full-read coverage marker. A pause/resume boundary means peers may have been
+     * added or removed without us reading, so our last full read no longer proves that a peer
+     * without payload data has none.
+     */
+    private suspend fun clearFullReadCoverage() {
+        _state.updateBlocking { if (lastFullReadAt == null) this else copy(lastFullReadAt = null) }
     }
 
     private suspend fun handleDeleteDevice(deviceId: DeviceId) {
@@ -352,6 +364,13 @@ class OctiServerConnector @AssistedInject constructor(
                         mergeData(existing, newData, moduleFilter)
                     } else {
                         newData
+                    }
+                    // Only an untargeted read that actually retrieved module data proves coverage:
+                    // a targeted read skips modules/devices by design, and readServer() swallows
+                    // per-module fetch failures into a device entry with zero modules — neither
+                    // may be mistaken for "this peer has no data".
+                    if (!isTargeted && newData.devices.any { it.modules.isNotEmpty() }) {
+                        _state.updateBlocking { copy(lastFullReadAt = Clock.System.now()) }
                     }
                 }
             } catch (e: CancellationException) {
@@ -513,7 +532,7 @@ class OctiServerConnector @AssistedInject constructor(
 
         val devices = deviceIds.map { deviceId ->
             scope.async moduleFetch@{
-                val moduleFetchJobs = targetModuleIds.map { moduleId ->
+                val moduleFetchJobs = targetModuleIds.mapIndexed { index, moduleId ->
                     val fetchResult = try {
                         fetchModule(deviceId, moduleId)
                     } catch (e: Exception) {
@@ -521,7 +540,9 @@ class OctiServerConnector @AssistedInject constructor(
                         null
                     }
                     log(TAG, VERBOSE) { "Module fetched: $fetchResult" }
-                    if (!isTargeted) delay(1.seconds)
+                    // Throttle between requests only — a trailing delay is pure dead time before
+                    // the caller can publish the snapshot.
+                    if (!isTargeted && index < targetModuleIds.size - 1) delay(1.seconds)
                     fetchResult
                 }
 
