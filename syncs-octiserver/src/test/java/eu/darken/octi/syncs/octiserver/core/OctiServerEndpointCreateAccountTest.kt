@@ -67,6 +67,7 @@ class OctiServerEndpointCreateAccountTest : BaseTest() {
             dispatcherProvider = TestDispatcherProvider(),
             syncSettings = syncSettings,
             baseHttpClient = OkHttpClient(),
+            streamingHttpClient = OkHttpClient(),
             retrofitJson = retrofitJson,
             basicAuthInterceptor = basicAuthInterceptor,
             deviceHeaderInterceptor = deviceHeaderInterceptor,

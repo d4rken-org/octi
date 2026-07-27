@@ -95,6 +95,9 @@ class CrossVersionLegacyServerTest : BaseTest() {
             baseHttpClient = OkHttpClient.Builder()
                 .callTimeout(30, TimeUnit.SECONDS)
                 .build(),
+            streamingHttpClient = OkHttpClient.Builder()
+                .callTimeout(30, TimeUnit.SECONDS)
+                .build(),
             // Reuse the production retrofit Json so wire-format drift in SerializationModule
             // is caught. SerializationModule is a regular `class` with @Provides — directly
             // instantiable without Hilt.

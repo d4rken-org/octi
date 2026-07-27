@@ -11,6 +11,7 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.http.StreamingClient
 import eu.darken.octi.common.serialization.RetrofitJson
 import eu.darken.octi.module.core.ModuleId
 import eu.darken.octi.sync.core.CapabilitiesCodec
@@ -36,6 +37,7 @@ class OctiServerEndpoint @AssistedInject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val syncSettings: SyncSettings,
     private val baseHttpClient: OkHttpClient,
+    @StreamingClient private val streamingHttpClient: OkHttpClient,
     @RetrofitJson private val retrofitJson: Json,
     private val basicAuthInterceptor: BasicAuthInterceptor,
     private val deviceHeaderInterceptor: DeviceHeaderInterceptor,
@@ -50,13 +52,27 @@ class OctiServerEndpoint @AssistedInject constructor(
         }.build()
     }
 
-    private val api: OctiServerApi by lazy {
-        Retrofit.Builder().apply {
-            baseUrl("${serverAdress.address}/v1/")
-            client(httpClient)
-            addConverterFactory(retrofitJson.asConverterFactory("application/json".toMediaType()))
-        }.build().create(OctiServerApi::class.java)
+    private val streamingClient by lazy {
+        streamingHttpClient.newBuilder().apply {
+            addInterceptor(basicAuthInterceptor)
+            addInterceptor(deviceHeaderInterceptor)
+        }.build()
     }
+
+    private fun buildApi(client: OkHttpClient): OctiServerApi = Retrofit.Builder().apply {
+        baseUrl("${serverAdress.address}/v1/")
+        client(client)
+        addConverterFactory(retrofitJson.asConverterFactory("application/json".toMediaType()))
+    }.build().create(OctiServerApi::class.java)
+
+    private val api: OctiServerApi by lazy { buildApi(httpClient) }
+
+    /**
+     * Blob transfer routes only. These move bodies that the caller consumes after the call returns
+     * (download) or feeds in chunk by chunk (upload), neither of which fits the metadata client's
+     * total-call bound. See [StreamingClient].
+     */
+    private val streamingApi: OctiServerApi by lazy { buildApi(streamingClient) }
 
     private val ourDeviceIdString: String
         get() = syncSettings.deviceId.id
@@ -288,7 +304,7 @@ class OctiServerEndpoint @AssistedInject constructor(
     ): Long = withContext(dispatcherProvider.IO) {
         log(TAG, VERBOSE) { "appendBlobSession(session=$sessionId, offset=$offset)" }
         val response = try {
-            api.appendBlobSession(
+            streamingApi.appendBlobSession(
                 moduleId = moduleId.id,
                 sessionId = sessionId,
                 callerDeviceId = ourDeviceIdString,
@@ -354,7 +370,7 @@ class OctiServerEndpoint @AssistedInject constructor(
     ): okhttp3.ResponseBody? = withContext(dispatcherProvider.IO) {
         log(TAG, VERBOSE) { "getBlob(blobId=$serverBlobId, device=${deviceId.logLabel}, module=${moduleId.logLabel})" }
         try {
-            val response = api.getBlob(
+            val response = streamingApi.getBlob(
                 moduleId = moduleId.id,
                 blobId = serverBlobId,
                 callerDeviceId = ourDeviceIdString,
