@@ -602,35 +602,38 @@ class GDriveAppDataConnector @AssistedInject constructor(
         log(TAG, DEBUG) { "readDriveByFileIds(): Fetching ${cachedIds.size} files directly by ID" }
         val start = TimeSource.Monotonic.markNow()
 
-        val fetchJobs = cachedIds.map { (key, fileId) ->
-            val (deviceId, moduleId) = key
-            scope.async(dispatcherProvider.IO) {
-                val file = getFileMetadata(fileId)
+        // Structured: the per-file fetches are children of this call, so cancelling the command
+        // that triggered the read actually stops them. On the connector's own scope they would
+        // outlive their waiter and keep hitting Drive after the command was abandoned.
+        val modules = coroutineScope {
+            cachedIds.map { (key, fileId) ->
+                val (deviceId, moduleId) = key
+                async(dispatcherProvider.IO) {
+                    val file = getFileMetadata(fileId)
 
-                if (file.name != moduleId.id) {
-                    log(TAG, WARN) { "readDriveByFileIds(): Name mismatch for $fileId: expected=${moduleId.id}, got=${file.name}" }
-                    fileIdCache.remove(key)
-                    fileIdReverseCache.remove(fileId)
-                    return@async null
+                    if (file.name != moduleId.id) {
+                        log(TAG, WARN) { "readDriveByFileIds(): Name mismatch for $fileId: expected=${moduleId.id}, got=${file.name}" }
+                        fileIdCache.remove(key)
+                        fileIdReverseCache.remove(fileId)
+                        return@async null
+                    }
+
+                    val payload = file.readData()
+                    if (payload == null) {
+                        log(TAG, WARN) { "readDriveByFileIds(): Empty payload for $fileId" }
+                        return@async null
+                    }
+
+                    GDriveModuleData(
+                        connectorId = identifier,
+                        deviceId = deviceId,
+                        moduleId = moduleId,
+                        modifiedAt = Instant.fromEpochMilliseconds(file.modifiedTime.value),
+                        payload = payload,
+                    )
                 }
-
-                val payload = file.readData()
-                if (payload == null) {
-                    log(TAG, WARN) { "readDriveByFileIds(): Empty payload for $fileId" }
-                    return@async null
-                }
-
-                GDriveModuleData(
-                    connectorId = identifier,
-                    deviceId = deviceId,
-                    moduleId = moduleId,
-                    modifiedAt = Instant.fromEpochMilliseconds(file.modifiedTime.value),
-                    payload = payload,
-                )
-            }
-        }
-
-        val modules = fetchJobs.awaitAll().filterNotNull()
+            }.awaitAll()
+        }.filterNotNull()
         log(TAG) { "readDriveByFileIds() took ${start.elapsedNow().inWholeMilliseconds}ms" }
 
         val deviceGroups = modules.groupBy { it.deviceId }
@@ -927,13 +930,19 @@ class GDriveAppDataConnector @AssistedInject constructor(
         }
     }
 
-    private suspend fun GDriveEnvironment.writeDrive(data: SyncWrite) = withContext(NonCancellable) {
+    /**
+     * The Drive uploads are deliberately cancellable. They used to run inside
+     * `withContext(NonCancellable)`, which makes any bound placed around the command inert: a
+     * `withTimeout` around a non-cancellable body does not return until that body completes. Only
+     * the state commit below stays non-cancellable, mirroring `OctiServerConnector.runServerAction`.
+     */
+    private suspend fun GDriveEnvironment.writeDrive(data: SyncWrite) {
         log(TAG, DEBUG) { "writeDrive(): $data" }
 
         // TODO cache write data for when we are online again?
         if (!isInternetAvailable()) {
             log(TAG, WARN) { "writeDrive(): Skipping, we are offline." }
-            return@withContext
+            return
         }
 
         val userDir = rootChildCache[DEVICE_DATA_DIR_NAME]?.let { cachedDriveFolder(it, DEVICE_DATA_DIR_NAME) }
@@ -1027,7 +1036,9 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 if (!infoWritten) {
                     infoFile.writeData(infoPayload)
                 }
-                lastWrittenDeviceInfo = deviceInfo
+                // State commit: the file is published, so record what it holds even if we are
+                // being cancelled right now — otherwise the next sync rewrites it needlessly.
+                withContext(NonCancellable) { lastWrittenDeviceInfo = deviceInfo }
             } else {
                 log(TAG, VERBOSE) { "writeDrive(): Device info unchanged, skipping" }
             }
