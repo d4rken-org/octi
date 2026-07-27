@@ -22,10 +22,12 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -97,7 +99,22 @@ class SyncOrchestrator @Inject constructor(
             .onEach {
                 log(TAG) { "pendingSyncTrigger: syncing pending writes" }
                 try {
-                    syncManager.sync(SyncOptions(readData = false, stats = false))
+                    // This collector lives on @AppScope and is never cancelled, so parking in here
+                    // takes background sync down for the lifetime of the process. Bound it: the
+                    // request is already accumulated in the manager, so giving up on the wait only
+                    // costs us the completion signal, not the work.
+                    val completed = withTimeoutOrNull(SYNC_WATCHDOG_TIMEOUT) {
+                        syncManager.sync(SyncOptions(readData = false, stats = false))
+                        true
+                    }
+                    if (completed == null) {
+                        val stuck = syncManager.activeConnectorSyncs.value
+                        log(TAG, WARN) {
+                            "pendingSyncTrigger: sync exceeded $SYNC_WATCHDOG_TIMEOUT, " +
+                                "still in flight: ${stuck.map { it.logLabel }}, " +
+                                "last outcomes: ${syncManager.lastConnectorSyncOutcomes.value}"
+                        }
+                    }
                     consecutiveFailures = 0
                 } catch (e: CancellationException) {
                     throw e
@@ -121,6 +138,7 @@ class SyncOrchestrator @Inject constructor(
     companion object {
         private const val MAX_RETRIES = 3
         private val RETRY_BASE_DELAY = 2.seconds
+        private val SYNC_WATCHDOG_TIMEOUT = 2.minutes
         private val TAG = logTag("App", "Sync", "Orchestrator")
 
         private fun SyncWorkerControl.WorkerState.WorkerInfo.toOrchestratorInfo() = BackgroundSyncState.WorkerInfo(
