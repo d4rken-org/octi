@@ -59,10 +59,9 @@ class OctiServerWebSocket(
 
     /**
      * The [baseHttpClient]'s `callTimeout` is deliberately inherited. OkHttp calls
-     * `timeoutEarlyExit()` once the upgrade succeeds, so the bound covers only the handshake and
-     * the time the call spends queued in the dispatcher — it never terminates an established
-     * socket. Clearing it would leave a queued reconnect handshake unbounded, which is exactly the
-     * failure mode this connector must not have.
+     * `timeoutEarlyExit()` once the upgrade succeeds, so the bound covers the handshake only and
+     * never terminates an established socket — clearing it would just leave the handshake
+     * unbounded. Both halves are pinned by `WebSocketCallTimeoutTest`.
      */
     fun connect(): Flow<SyncEvent> = callbackFlow {
         val wsClient = baseHttpClient.newBuilder()

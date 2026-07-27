@@ -46,10 +46,15 @@ class HttpModule {
         connectTimeout(TIMEOUT.toJavaDuration())
         readTimeout(TIMEOUT.toJavaDuration())
         writeTimeout(TIMEOUT.toJavaDuration())
-        // The per-socket timeouts above do NOT cover time an async call spends queued in OkHttp's
-        // Dispatcher (maxRequestsPerHost = 5, one slot permanently held by the live-mode
-        // WebSocket). Only callTimeout bounds the full call including that queue time — without it
-        // a queued request can suspend indefinitely and wedge whatever awaits it.
+        // Bounds a call end-to-end once the dispatcher starts it — redirects, retries and full body
+        // consumption — none of which the per-socket timeouts above cover on their own.
+        //
+        // What it does NOT cover, verified against OkHttp 4.9.1 in WebSocketCallTimeoutTest: time
+        // an async call spends *queued* in the Dispatcher. RealCall.enqueue() only calls
+        // callStart(); the call timeout is entered in AsyncCall.run(), i.e. when the call is
+        // actually dispatched. With maxRequestsPerHost = 5 and one slot permanently held by the
+        // live-mode WebSocket, a queued call can therefore still wait arbitrarily long. That gap is
+        // closed one level up, by the connector processor's per-command bound.
         callTimeout(CALL_TIMEOUT.toJavaDuration())
         retryOnConnectionFailure(true)
         addInterceptor(loggingInterceptor)
