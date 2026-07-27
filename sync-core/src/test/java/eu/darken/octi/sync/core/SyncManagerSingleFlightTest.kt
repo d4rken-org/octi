@@ -80,6 +80,7 @@ class SyncManagerSingleFlightTest : BaseTest() {
     private inner class FakeConnector(
         override val identifier: ConnectorId,
         processorScope: CoroutineScope,
+        onOther: suspend (ConnectorCommand) -> Unit = { },
         executor: suspend (SyncOptions) -> Unit,
     ) : SyncConnector {
         private val processor = ConnectorProcessor(
@@ -90,6 +91,8 @@ class SyncManagerSingleFlightTest : BaseTest() {
                 if (command is ConnectorCommand.Sync) {
                     executions += command.options
                     executor(command.options)
+                } else {
+                    onOther(command)
                 }
             },
         )
@@ -464,36 +467,59 @@ class SyncManagerSingleFlightTest : BaseTest() {
 
         @Test
         fun `a direct per-connector sync survives the manager superseding its own run`() = runTest2 {
-            // Both would share one coalesced op if the manager's submissions were coalescible;
-            // supersede would then cancel the direct caller's op too.
+            // Both syncs queue behind a destructive command, so the manager's Sync used to fold
+            // into the direct caller's queued op and receive that shared id. Superseding then
+            // cancelled the direct caller along with it, dropping its module filter.
             val timeSource = TestTimeSource()
             val processorJob = SupervisorJob()
-            val hang = CompletableDeferred<Unit>()
-            connectorsFlow.value = listOf(
-                FakeConnector(connectorId1, this + processorJob) { if (executions.size == 1) hang.await() },
+            val blocker = CompletableDeferred<Unit>()
+            val connector = FakeConnector(
+                connectorId1,
+                this + processorJob,
+                onOther = { blocker.await() },
+                executor = { },
             )
+            connectorsFlow.value = listOf(connector)
             val (sm, job) = createSyncManager(timeSource)
+            advanceUntilIdle()
+
+            // Occupies the actor: Reset is destructive, so supersede cannot cancel it either.
+            connector.submit(ConnectorCommand.Reset)
+            advanceUntilIdle()
+
+            var directOutcome: Result<Unit>? = null
+            val direct = launch {
+                directOutcome = runCatching {
+                    sm.sync(
+                        connectorId1,
+                        SyncOptions(
+                            stats = false,
+                            readData = true,
+                            writeData = false,
+                            moduleFilter = setOf(powerModuleId),
+                        ),
+                    )
+                }
+            }
             advanceUntilIdle()
 
             val stuck = launch { sm.sync() }
             advanceUntilIdle()
 
-            var directCompleted = false
-            val direct = launch {
-                sm.sync(connectorId1, SyncOptions(stats = false, readData = true, writeData = false))
-                directCompleted = true
-            }
-            advanceUntilIdle()
-
             timeSource += SyncManager.SYNC_STALE_AFTER + 1.minutes
             val replacement = launch { sm.sync() }
             advanceUntilIdle()
-            replacement.join()
 
+            blocker.complete(Unit)
+            advanceUntilIdle()
             direct.join()
-            directCompleted shouldBe true
+
+            // The direct caller's own op ran, with its filter intact.
+            directOutcome!!.isSuccess shouldBe true
+            executions.count { it.moduleFilter == setOf(powerModuleId) } shouldBe 1
 
             stuck.cancel()
+            replacement.cancel()
             processorJob.cancel()
             job.cancel()
             advanceUntilIdle()
