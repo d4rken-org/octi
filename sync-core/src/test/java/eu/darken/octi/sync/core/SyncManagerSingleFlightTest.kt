@@ -103,6 +103,7 @@ class SyncManagerSingleFlightTest : BaseTest() {
         override val operations = processor.operations
         override val completions = processor.completions
         override fun submit(command: ConnectorCommand) = processor.submit(command)
+        override fun submitExclusive(command: ConnectorCommand) = processor.submitExclusive(command)
         override suspend fun await(id: OperationId) = processor.await(id)
         override fun cancel(id: OperationId) = processor.cancel(id)
         override fun dismiss(id: OperationId) = processor.dismiss(id)
@@ -345,6 +346,154 @@ class SyncManagerSingleFlightTest : BaseTest() {
             executions.last().readData shouldBe true
             executions.last().writeData shouldBe true
 
+            processorJob.cancel()
+            job.cancel()
+            advanceUntilIdle()
+        }
+    }
+
+    @Nested
+    inner class `caller cancellation` {
+
+        @Test
+        fun `cancelling the last caller cancels the connector operation`() = runTest2 {
+            val processorJob = SupervisorJob()
+            val events = mutableListOf<String>()
+            val hang = CompletableDeferred<Unit>()
+            connectorsFlow.value = listOf(
+                FakeConnector(connectorId1, this + processorJob) {
+                    events += "start"
+                    try {
+                        hang.await()
+                    } finally {
+                        events += "end"
+                    }
+                },
+            )
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            val caller = launch { sm.sync() }
+            advanceUntilIdle()
+            events shouldBe listOf("start")
+
+            // The run lives on @AppScope: without withdrawing the request, cancelling the caller
+            // would leave the connector command hitting the network for nobody.
+            caller.cancel()
+            advanceUntilIdle()
+
+            events shouldBe listOf("start", "end")
+            executions shouldHaveSize 1
+
+            processorJob.cancel()
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `cancelling one of two coalesced callers leaves the work running`() = runTest2 {
+            val processorJob = SupervisorJob()
+            val events = mutableListOf<String>()
+            val hang = CompletableDeferred<Unit>()
+            connectorsFlow.value = listOf(
+                FakeConnector(connectorId1, this + processorJob) {
+                    events += "start"
+                    try {
+                        hang.await()
+                    } finally {
+                        events += "end"
+                    }
+                },
+            )
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            // Both records land before the run claims a batch, so they own the same iteration.
+            val first = launch { sm.sync(SyncOptions(stats = false, readData = true, writeData = false)) }
+            val second = launch { sm.sync(SyncOptions(stats = false, readData = false, writeData = true)) }
+            advanceUntilIdle()
+            events shouldBe listOf("start")
+
+            first.cancel()
+            advanceUntilIdle()
+
+            // Still running for the remaining owner — options already merged into the executing
+            // command cannot be subtracted mid-flight.
+            events shouldBe listOf("start")
+
+            hang.complete(Unit)
+            advanceUntilIdle()
+            second.join()
+            events shouldBe listOf("start", "end")
+            executions shouldHaveSize 1
+            executions.single().readData shouldBe true
+            executions.single().writeData shouldBe true
+
+            processorJob.cancel()
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `a cancelled caller does not take another caller's queued request with it`() = runTest2 {
+            val processorJob = SupervisorJob()
+            val gate = CompletableDeferred<Unit>()
+            connectorsFlow.value = listOf(
+                FakeConnector(connectorId1, this + processorJob) { if (executions.size == 1) gate.await() },
+            )
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            val stuck = launch { sm.sync() }
+            advanceUntilIdle()
+
+            // Arrives after the batch was claimed, so it waits for the next iteration.
+            val later = launch { sm.sync(SyncOptions(stats = false, readData = false, writeData = true)) }
+            advanceUntilIdle()
+
+            stuck.cancel()
+            advanceUntilIdle()
+            later.join()
+
+            executions.last().writeData shouldBe true
+
+            processorJob.cancel()
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `a direct per-connector sync survives the manager superseding its own run`() = runTest2 {
+            // Both would share one coalesced op if the manager's submissions were coalescible;
+            // supersede would then cancel the direct caller's op too.
+            val timeSource = TestTimeSource()
+            val processorJob = SupervisorJob()
+            val hang = CompletableDeferred<Unit>()
+            connectorsFlow.value = listOf(
+                FakeConnector(connectorId1, this + processorJob) { if (executions.size == 1) hang.await() },
+            )
+            val (sm, job) = createSyncManager(timeSource)
+            advanceUntilIdle()
+
+            val stuck = launch { sm.sync() }
+            advanceUntilIdle()
+
+            var directCompleted = false
+            val direct = launch {
+                sm.sync(connectorId1, SyncOptions(stats = false, readData = true, writeData = false))
+                directCompleted = true
+            }
+            advanceUntilIdle()
+
+            timeSource += SyncManager.SYNC_STALE_AFTER + 1.minutes
+            val replacement = launch { sm.sync() }
+            advanceUntilIdle()
+            replacement.join()
+
+            direct.join()
+            directCompleted shouldBe true
+
+            stuck.cancel()
             processorJob.cancel()
             job.cancel()
             advanceUntilIdle()
