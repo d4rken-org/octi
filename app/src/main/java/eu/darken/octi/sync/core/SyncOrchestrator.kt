@@ -100,9 +100,10 @@ class SyncOrchestrator @Inject constructor(
                 log(TAG) { "pendingSyncTrigger: syncing pending writes" }
                 try {
                     // This collector lives on @AppScope and is never cancelled, so parking in here
-                    // takes background sync down for the lifetime of the process. Bound it: the
-                    // request is already accumulated in the manager, so giving up on the wait only
-                    // costs us the completion signal, not the work.
+                    // takes background sync down for the lifetime of the process. Bound it. If
+                    // another caller is still waiting on the same run, the work continues without
+                    // us; if we were the last one, the manager cancels the run rather than leaving
+                    // it hitting the network for a result nobody reads.
                     val completed = withTimeoutOrNull(SYNC_WATCHDOG_TIMEOUT) {
                         syncManager.sync(SyncOptions(readData = false, stats = false))
                         true

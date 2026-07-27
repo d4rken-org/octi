@@ -161,6 +161,7 @@ class OctiServerConnector @AssistedInject constructor(
     override val operations: StateFlow<List<ConnectorOperation>> get() = processor.operations
     override val completions: SharedFlow<ConnectorOperation.Terminal> get() = processor.completions
     override fun submit(command: ConnectorCommand): OperationId = processor.submit(command)
+    override fun submitExclusive(command: ConnectorCommand): OperationId = processor.submitExclusive(command)
     override suspend fun await(id: OperationId): ConnectorOperation.Terminal = processor.await(id)
     override fun cancel(id: OperationId): Boolean = processor.cancel(id)
     override fun dismiss(id: OperationId) = processor.dismiss(id)

@@ -27,8 +27,20 @@ interface SyncConnector {
     val syncEvents: Flow<SyncEvent> get() = emptyFlow()
     val syncEventMode: StateFlow<EventMode> get() = MutableStateFlow(EventMode.NONE)
 
-    /** Non-suspending. Enqueues [command]; observe [operations] / [completions] for lifecycle. */
+    /**
+     * Non-suspending. Enqueues [command]; observe [operations] / [completions] for lifecycle.
+     *
+     * A [ConnectorCommand.Sync] may be folded into an equivalent queued Sync, so the returned id
+     * can be shared with other callers. Use [submitExclusive] if you may [cancel] it.
+     */
     fun submit(command: ConnectorCommand): OperationId
+
+    /**
+     * Like [submit], but the returned [OperationId] is never shared: the op is not folded into
+     * another and nothing is folded into it. Required for any op the caller may [cancel] —
+     * cancelling a shared id would fail unrelated callers and drop their narrower filters.
+     */
+    fun submitExclusive(command: ConnectorCommand): OperationId
 
     /** Suspends until the op with [id] reaches terminal state. */
     suspend fun await(id: OperationId): ConnectorOperation.Terminal

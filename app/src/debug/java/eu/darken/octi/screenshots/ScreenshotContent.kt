@@ -713,6 +713,7 @@ private class PreviewConnector(
     override val completions: SharedFlow<ConnectorOperation.Terminal> = MutableSharedFlow()
 
     override fun submit(command: ConnectorCommand): OperationId = OperationId.create()
+    override fun submitExclusive(command: ConnectorCommand): OperationId = OperationId.create()
 
     override suspend fun await(id: OperationId): ConnectorOperation.Terminal = ConnectorOperation.Succeeded(
         id = id,

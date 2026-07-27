@@ -69,7 +69,7 @@ class SyncManager @Inject constructor(
      */
     private val stateLock = Mutex()
     private var activeRun: ActiveRun? = null
-    private var pendingRequest: PendingRequest? = null
+    private val pendingRequests = mutableListOf<RequestRecord>()
     private var generationCounter = 0L
 
     /**
@@ -97,17 +97,12 @@ class SyncManager @Inject constructor(
         _lastConnectorSyncOutcomes.asStateFlow()
 
     /**
-     * One iteration's worth of work: the union of every request folded into it, plus the callers
-     * waiting for that work to finish.
+     * A single caller's request. Requests stay separate until a batch actually executes: merging
+     * them up front would make one caller's scope indistinguishable from another's, and a caller
+     * that gives up could then no longer withdraw exactly what it asked for.
      */
-    private class PendingRequest(
-        var options: SyncOptions,
-        val waiters: MutableList<CompletableDeferred<Unit>> = mutableListOf(),
-    ) {
-        fun absorb(other: PendingRequest) {
-            options = options.merge(other.options)
-            waiters += other.waiters
-        }
+    private class RequestRecord(val options: SyncOptions) {
+        val waiter = CompletableDeferred<Unit>()
     }
 
     private class ActiveRun(val generation: Long) {
@@ -116,8 +111,11 @@ class SyncManager @Inject constructor(
         /** Reset per iteration, so a run that keeps doing real work never ages into staleness. */
         var startedAt: TimeMark? = null
 
-        /** Non-null while a batch is executing — folded back into pending if the run is cancelled. */
-        var currentBatch: PendingRequest? = null
+        /**
+         * The requests this iteration is working for. Non-null while a batch is executing — folded
+         * back into pending if the run is cancelled, and emptied when its last owner walks away.
+         */
+        var currentBatch: MutableList<RequestRecord>? = null
 
         /** What to cancel when this run is superseded: the actual connector operations. */
         val inFlightOps = ConcurrentHashMap<ConnectorId, Pair<SyncConnector, OperationId>>()
@@ -238,12 +236,16 @@ class SyncManager @Inject constructor(
      * by whichever request happened to hold the lock. If the current run has been working on the
      * same iteration for longer than [SYNC_STALE_AFTER] it is superseded — its connector
      * operations are cancelled and a fresh run takes over carrying every outstanding request.
+     *
+     * Cancelling the caller withdraws that caller's request. If it was the last one the current
+     * iteration was working for, the iteration itself is cancelled — connector operations included.
+     * As long as another caller still wants it, the work continues untouched.
      */
     suspend fun sync(options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(${options.logLabel})" }
-        val waiter = CompletableDeferred<Unit>()
+        val record = RequestRecord(options)
         stateLock.withLock {
-            enqueueLocked(PendingRequest(options, mutableListOf(waiter)))
+            pendingRequests += record
             val current = activeRun
             val age = current?.startedAt?.elapsedNow()
             when {
@@ -256,12 +258,37 @@ class SyncManager @Inject constructor(
                 else -> log(TAG) { "sync(): folded into run ${current.generation}" }
             }
         }
-        waiter.await()
+        try {
+            record.waiter.await()
+        } catch (e: CancellationException) {
+            // Our caller is gone: the worker was stopped, a watchdog timed out, a UI scope died.
+            // The run lives on @AppScope, so without this it would keep doing network work for a
+            // result nobody reads. NonCancellable because we are already being cancelled.
+            withContext(NonCancellable) { abandon(record) }
+            throw e
+        }
     }
 
-    /** Callers must hold [stateLock]. */
-    private fun enqueueLocked(request: PendingRequest) {
-        pendingRequest = pendingRequest?.also { it.absorb(request) } ?: request
+    /**
+     * Withdraws [record] on behalf of a cancelled caller, and cancels the run if that leaves the
+     * executing iteration with no owner at all.
+     */
+    private suspend fun abandon(record: RequestRecord) = stateLock.withLock {
+        pendingRequests.remove(record)
+        val run = activeRun ?: return@withLock
+        val batch = run.currentBatch ?: return@withLock
+        if (!batch.remove(record)) return@withLock
+        if (batch.isNotEmpty()) {
+            // Another caller still wants this work. Options already merged into the executing
+            // command cannot be subtracted anyway — leave it running.
+            log(TAG) { "abandon(): run ${run.generation} still has ${batch.size} owner(s)" }
+            return@withLock
+        }
+        log(TAG, WARN) { "abandon(): last caller of run ${run.generation} left, cancelling its work" }
+        // Detach the batch BEFORE cancelling: the run's finally folds a still-attached batch back
+        // into pending, which would restart the very work we are abandoning.
+        run.currentBatch = null
+        supersedeLocked(run)
     }
 
     /** Callers must hold [stateLock]. */
@@ -293,26 +320,29 @@ class SyncManager @Inject constructor(
     private suspend fun runLoop(run: ActiveRun) {
         try {
             while (true) {
-                val batch = stateLock.withLock {
-                    val next = pendingRequest ?: return@withLock null
-                    pendingRequest = null
+                // Merging happens here and nowhere earlier: one option set per executing batch,
+                // computed under the same lock hold that claims the records.
+                val options = stateLock.withLock {
+                    if (pendingRequests.isEmpty()) return@withLock null
+                    val next = pendingRequests.toMutableList()
+                    pendingRequests.clear()
                     run.startedAt = timeSource.markNow()
                     run.currentBatch = next
-                    next
+                    next.map { it.options }.reduce { acc, o -> acc.merge(o) }
                 } ?: break
 
                 try {
-                    executeBatch(run, batch.options)
-                    stateLock.withLock { run.currentBatch = null }
-                    batch.waiters.forEach { it.complete(Unit) }
+                    executeBatch(run, options)
+                    // Detach and release atomically: a caller that abandoned while this batch ran
+                    // is no longer in the list, so it is not "completed" behind its own back.
+                    detachOwners(run).forEach { it.waiter.complete(Unit) }
                 } catch (e: CancellationException) {
                     // Leave currentBatch set — the finally folds it back into pending so a
                     // superseded batch's requests and waiters are carried by the next run.
                     throw e
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "runLoop(${run.generation}) failed: ${e.asLog()}" }
-                    stateLock.withLock { run.currentBatch = null }
-                    batch.waiters.forEach { it.completeExceptionally(e) }
+                    detachOwners(run).forEach { it.waiter.completeExceptionally(e) }
                 }
             }
         } finally {
@@ -325,12 +355,18 @@ class SyncManager @Inject constructor(
                     run.currentBatch?.let { leftover ->
                         run.currentBatch = null
                         log(TAG, WARN) { "runLoop(${run.generation}): folding cancelled batch back in" }
-                        enqueueLocked(leftover)
+                        pendingRequests.addAll(0, leftover)
                     }
-                    if (pendingRequest != null && activeRun == null) startRunLocked()
+                    if (pendingRequests.isNotEmpty() && activeRun == null) startRunLocked()
                 }
             }
         }
+    }
+
+    private suspend fun detachOwners(run: ActiveRun): List<RequestRecord> = stateLock.withLock {
+        val owners = run.currentBatch.orEmpty().toList()
+        run.currentBatch = null
+        owners
     }
 
     private suspend fun executeBatch(run: ActiveRun, options: SyncOptions) {
@@ -397,8 +433,10 @@ class SyncManager @Inject constructor(
 
         // Connector sets hashes inline for each successfully-written module — no post-call update here.
         // Submit and await separately (rather than execute()) so a supersede has the operation id to
-        // cancel; cancelling only the waiter would leave the command running.
-        val opId = connector.submit(ConnectorCommand.Sync(effectiveOptions))
+        // cancel; cancelling only the waiter would leave the command running. Exclusive because we
+        // may cancel this id: a coalesced one is shared, and cancelling it would fail unrelated
+        // callers — including a targeted foreground sync whose filters would be dropped with it.
+        val opId = connector.submitExclusive(ConnectorCommand.Sync(effectiveOptions))
         run?.inFlightOps?.put(connectorId, connector to opId)
         _activeConnectorSyncs.update { it + connectorId }
         try {
