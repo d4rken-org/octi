@@ -72,14 +72,23 @@ class ConnectorProcessor(
     /**
      * Per-command bounds.
      *
-     * [destructive] covers [ConnectorCommand.Reset] and [ConnectorCommand.DeleteDevice]. Those get
-     * a deliberately generous bound and are excluded from [cancel] entirely: a destructive command
-     * that is reported failed locally may already have taken effect remotely, so aborting one
-     * mid-flight trades a bounded wait for an unknown remote state. Let them finish.
+     * What a bound does and does not guarantee: it bounds the *reported outcome*, not the time the
+     * actor is occupied. A command body that never reaches a suspension point — blocking I/O, a
+     * busy loop — cannot be cancelled, so it keeps the actor loop for its full natural duration and
+     * only afterwards has its outcome converted to a [ConnectorTimeoutException] (see [runCommand]).
+     * What actually caps that duration is the transport: the HTTP client's `callTimeout` and the
+     * GDrive request initializer's connect/read timeouts. Treat these values as "when do we stop
+     * believing the command", not "when does the connector become free again".
+     *
+     * [destructive] covers [ConnectorCommand.Reset] and [ConnectorCommand.DeleteDevice]. It is
+     * [Duration.INFINITE] by default, and those commands are excluded from [cancel] entirely: a
+     * destructive command that is reported failed locally may already have taken effect remotely,
+     * so aborting one mid-flight trades a bounded wait for an unknown remote state. Let them
+     * finish — their transport bounds are what terminates them.
      */
     data class Timeouts(
         val sync: Duration = 3.minutes,
-        val destructive: Duration = 10.minutes,
+        val destructive: Duration = Duration.INFINITE,
         val local: Duration = 1.minutes,
     ) {
         companion object {
@@ -95,6 +104,8 @@ class ConnectorProcessor(
     private data class Pending(
         var queued: ConnectorOperation.Queued,
         val result: CompletableDeferred<ConnectorOperation.Terminal>,
+        /** Whether later Syncs may be folded into this entry — see [submit] vs [submitExclusive]. */
+        val coalescible: Boolean,
     )
 
     private val inbox = Channel<Pending>(capacity = Channel.UNLIMITED)
@@ -107,7 +118,12 @@ class ConnectorProcessor(
     private val lifecycleLock = Any()
     private var stopped = false
 
-    /** Id of the newest submitted [ConnectorCommand.Sync] that has not started processing yet. */
+    /**
+     * Id of the newest coalescible [ConnectorCommand.Sync] that is still the last queued command.
+     * Cleared as soon as anything else is enqueued, so folding can never reorder a Sync across a
+     * command that is an ordering barrier (Pause/Resume/Reset/DeleteDevice), and never hands an
+     * exclusive submitter's id to somebody else.
+     */
     private var queuedSyncId: OperationId? = null
     private val cancelRequests = mutableSetOf<OperationId>()
     private val started = mutableSetOf<OperationId>()
@@ -172,11 +188,27 @@ class ConnectorProcessor(
         }
     }
 
-    fun submit(command: ConnectorCommand): OperationId {
+    /**
+     * Enqueues [command]. A [ConnectorCommand.Sync] may be folded into an equivalent queued Sync,
+     * in which case the returned id is shared with those callers.
+     */
+    fun submit(command: ConnectorCommand): OperationId = submit(command, coalescible = true)
+
+    /**
+     * Like [submit], but the returned [OperationId] belongs to this caller alone: the op is never
+     * folded into another, and no later Sync is ever folded into it.
+     *
+     * Required by anybody who may [cancel] the returned id. A shared id cancelled on one caller's
+     * behalf would fail every other caller that folded into it — including one whose narrower
+     * filters would silently be dropped along the way.
+     */
+    fun submitExclusive(command: ConnectorCommand): OperationId = submit(command, coalescible = false)
+
+    private fun submit(command: ConnectorCommand, coalescible: Boolean): OperationId {
         val id = OperationId.create()
         val queued = ConnectorOperation.Queued(id, command, Clock.System.now())
         val deferred = CompletableDeferred<ConnectorOperation.Terminal>()
-        val entry = Pending(queued, deferred)
+        val entry = Pending(queued, deferred, coalescible)
 
         // Register the pending entry, publish the Queued op, and enqueue — all under the lock. The
         // shutdown path runs under the same lock, so it sees an all-or-nothing submit: either the op is
@@ -188,9 +220,12 @@ class ConnectorProcessor(
             if (stopped) {
                 false
             } else {
-                coalesceSyncLocked(command)?.let { return it }
+                if (coalescible) coalesceSyncLocked(command)?.let { return it }
                 pending[id] = entry
-                if (command is ConnectorCommand.Sync) queuedSyncId = id
+                // Anything that is not a foldable Sync ends the coalescing window: the tracked Sync
+                // is no longer the last queued command, so folding into it would run it ahead of
+                // what we are enqueueing here.
+                queuedSyncId = if (coalescible && command is ConnectorCommand.Sync) id else null
                 _operations.update { (it + queued).trim() }
                 check(inbox.trySend(entry).isSuccess) { "inbox closed while not stopped" }
                 true
@@ -207,7 +242,8 @@ class ConnectorProcessor(
     }
 
     /**
-     * Folds a [ConnectorCommand.Sync] into the queued-but-not-yet-started Sync, if there is one.
+     * Folds a [ConnectorCommand.Sync] into the queued-but-not-yet-started coalescible Sync, if
+     * there is one — and only while that Sync is still the last queued command.
      *
      * Without this, a caller that keeps re-requesting (takeovers, retries, event bursts) grows the
      * UNLIMITED inbox without bound behind a slow command. The merged request is a superset of
@@ -220,6 +256,7 @@ class ConnectorProcessor(
         val existingId = queuedSyncId ?: return null
         val existing = pending[existingId] ?: return null
         val existingCommand = existing.queued.command
+        if (!existing.coalescible) return null
         if (existingCommand !is ConnectorCommand.Sync || existing.result.isCompleted) return null
 
         val merged = existing.queued.copy(

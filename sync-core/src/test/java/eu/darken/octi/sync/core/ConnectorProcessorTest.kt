@@ -39,6 +39,7 @@ import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class ConnectorProcessorTest : BaseTest() {
@@ -504,6 +505,28 @@ class ConnectorProcessorTest : BaseTest() {
         }
 
         @Test
+        fun `destructive commands are unbounded by default`() = runTest2 {
+            // A Reset/DeleteDevice reported failed locally may already have taken effect remotely,
+            // so no bound may cancel one mid-flight. The transport timeouts terminate it instead.
+            val (proc, job) = buildProcessor(
+                timeouts = ConnectorProcessor.Timeouts(),
+                executor = { cmd ->
+                    if (cmd is ConnectorCommand.Reset || cmd is ConnectorCommand.DeleteDevice) delay(60.minutes)
+                },
+            )
+
+            val resetId = proc.submit(ConnectorCommand.Reset)
+            val deleteId = proc.submit(ConnectorCommand.DeleteDevice(DeviceId("a")))
+            advanceUntilIdle()
+
+            proc.await(resetId).shouldBeInstanceOf<ConnectorOperation.Succeeded>()
+            proc.await(deleteId).shouldBeInstanceOf<ConnectorOperation.Succeeded>()
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
         fun `destructive commands get the destructive bound`() = runTest2 {
             val (proc, job) = buildProcessor(
                 timeouts = shortTimeouts,
@@ -690,6 +713,76 @@ class ConnectorProcessorTest : BaseTest() {
             val merged = (executed.last() as ConnectorCommand.Sync).options
             merged.readData shouldBe true
             merged.writeData shouldBe true
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `coalescing never crosses a non-Sync command`() = runTest2 {
+            // running command -> Sync A -> Pause -> Sync B. Folding B into A would run a sync that
+            // was requested AFTER the pause BEFORE it, escaping the pause guard entirely.
+            val executed = mutableListOf<ConnectorCommand>()
+            val gate = CompletableDeferred<Unit>()
+            val (proc, job) = buildProcessor(executor = { cmd ->
+                executed += cmd
+                if (executed.size == 1) gate.await()
+                if (cmd is ConnectorCommand.Pause) {
+                    pauseStatesValue.value = setOf(ConnectorPauseState(connectorId, cmd.reason))
+                }
+            })
+
+            proc.submit(ConnectorCommand.Reset) // occupies the actor on the gate
+            advanceUntilIdle()
+
+            val syncA = proc.submit(ConnectorCommand.Sync())
+            val pauseId = proc.submit(ConnectorCommand.Pause())
+            val syncB = proc.submit(ConnectorCommand.Sync())
+            (syncB == syncA) shouldBe false
+            (pauseId == syncA) shouldBe false
+
+            gate.complete(Unit)
+            advanceUntilIdle()
+
+            // Four ops processed in submission order; Sync B is reached after Pause, where the
+            // guard rejects it before the executor — so it never lands in `executed`.
+            executed.map { it::class.simpleName } shouldBe listOf("Reset", "Sync", "Pause")
+            proc.await(syncA).shouldBeInstanceOf<ConnectorOperation.Succeeded>()
+            proc.await(pauseId).shouldBeInstanceOf<ConnectorOperation.Succeeded>()
+            val terminalB = proc.await(syncB)
+            terminalB.shouldBeInstanceOf<ConnectorOperation.Failed>()
+            terminalB.error.shouldBeInstanceOf<ConnectorPausedException>()
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `exclusive submissions are neither folded into nor folded from`() = runTest2 {
+            val executed = mutableListOf<ConnectorCommand>()
+            val gate = CompletableDeferred<Unit>()
+            val (proc, job) = buildProcessor(executor = { cmd ->
+                executed += cmd
+                if (executed.size == 1) gate.await()
+            })
+
+            proc.submit(ConnectorCommand.Sync()) // occupies the actor on the gate
+            advanceUntilIdle()
+
+            val exclusive = proc.submitExclusive(ConnectorCommand.Sync())
+            val coalescible = proc.submit(ConnectorCommand.Sync())
+            val second = proc.submit(ConnectorCommand.Sync())
+
+            (coalescible == exclusive) shouldBe false
+            // Ordinary submits still fold into each other.
+            second shouldBe coalescible
+
+            gate.complete(Unit)
+            advanceUntilIdle()
+
+            executed.shouldHaveSize(3)
+            proc.await(exclusive).shouldBeInstanceOf<ConnectorOperation.Succeeded>()
+            proc.await(coalescible).shouldBeInstanceOf<ConnectorOperation.Succeeded>()
 
             job.cancel()
             advanceUntilIdle()
