@@ -673,7 +673,7 @@ class SyncManagerSyncWriteTest : BaseTest() {
     @Nested
     inner class `sync lock contention` {
         @Test
-        fun `pending flag triggers re-run after current sync completes`() = runTest2 {
+        fun `request arriving mid-sync triggers a re-run after the current one completes`() = runTest2 {
             val (sm, job) = createSyncManager()
             advanceUntilIdle()
 
@@ -694,18 +694,19 @@ class SyncManagerSyncWriteTest : BaseTest() {
                 )
             }
 
-            // First sync acquires lock and blocks inside connector.await()
+            // First sync starts a run and blocks inside connector.await()
             val firstSync = launch { sm.sync(SyncOptions(writeData = true, readData = false, stats = false)) }
             advanceUntilIdle()
 
-            // Second sync hits tryLock failure and sets pending flag
-            sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
+            // Second sync folds into the run's next iteration — and waits for it, hence the launch.
+            val secondSync = launch { sm.sync(SyncOptions(writeData = true, readData = false, stats = false)) }
             advanceUntilIdle()
 
-            // Release the gate — first sync completes, then re-runs due to pending flag
+            // Release the gate — the first batch completes, then the folded one runs
             gate.complete(Unit)
             advanceUntilIdle()
             firstSync.join()
+            secondSync.join()
 
             // connector.submit should have been called twice: original + pending re-run
             coVerify(exactly = 2) { connector1.submit(match { it is ConnectorCommand.Sync }) }
