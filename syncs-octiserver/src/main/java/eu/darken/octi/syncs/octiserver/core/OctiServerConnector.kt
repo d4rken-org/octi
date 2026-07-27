@@ -52,6 +52,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -530,30 +531,37 @@ class OctiServerConnector @AssistedInject constructor(
         val targetModuleIds = moduleFilter ?: supportedModuleIds
         val isTargeted = moduleFilter != null
 
-        val devices = deviceIds.map { deviceId ->
-            scope.async moduleFetch@{
-                val moduleFetchJobs = targetModuleIds.mapIndexed { index, moduleId ->
-                    val fetchResult = try {
-                        fetchModule(deviceId, moduleId)
-                    } catch (e: Exception) {
-                        log(TAG, ERROR) { "Failed to fetch: $deviceId:$moduleId:\n${e.asLog()}" }
-                        null
+        // Structured: the per-device fetches are children of this call, so cancelling the command
+        // that triggered the read actually stops the fetches. Launched on @AppScope they would
+        // outlive their waiter and keep hitting the server after a timeout.
+        val devices = coroutineScope {
+            deviceIds.map { deviceId ->
+                async moduleFetch@{
+                    val moduleFetchJobs = targetModuleIds.mapIndexed { index, moduleId ->
+                        val fetchResult = try {
+                            fetchModule(deviceId, moduleId)
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            log(TAG, ERROR) { "Failed to fetch: $deviceId:$moduleId:\n${e.asLog()}" }
+                            null
+                        }
+                        log(TAG, VERBOSE) { "Module fetched: $fetchResult" }
+                        // Throttle between requests only — a trailing delay is pure dead time before
+                        // the caller can publish the snapshot.
+                        if (!isTargeted && index < targetModuleIds.size - 1) delay(1.seconds)
+                        fetchResult
                     }
-                    log(TAG, VERBOSE) { "Module fetched: $fetchResult" }
-                    // Throttle between requests only — a trailing delay is pure dead time before
-                    // the caller can publish the snapshot.
-                    if (!isTargeted && index < targetModuleIds.size - 1) delay(1.seconds)
-                    fetchResult
+
+                    val modules = moduleFetchJobs.filterNotNull()
+
+                    OctiServerDeviceData(
+                        deviceId = deviceId,
+                        modules = modules,
+                    )
                 }
-
-                val modules = moduleFetchJobs.filterNotNull()
-
-                OctiServerDeviceData(
-                    deviceId = deviceId,
-                    modules = modules,
-                )
-            }
-        }.awaitAll()
+            }.awaitAll()
+        }
 
         val result = OctiServerData(
             connectorId = identifier,
@@ -694,6 +702,13 @@ class OctiServerConnector @AssistedInject constructor(
         return true
     }
 
+    /**
+     * The server call itself is deliberately cancellable. It used to run inside
+     * `withContext(NonCancellable)`, which made any bound placed around a command inert: a
+     * `withTimeout` around a non-cancellable body does not return until that body completes. Only
+     * the state commits below stay non-cancellable — they are bookkeeping that must not be lost
+     * once the call has already had its effect.
+     */
     private suspend fun <R> runServerAction(
         tag: String,
         block: suspend () -> R,
@@ -704,12 +719,11 @@ class OctiServerConnector @AssistedInject constructor(
         return try {
             serverLock.withLock {
                 try {
-                    withContext(NonCancellable) { block() }
+                    block()
                 } catch (e: OctiServerHttpException) {
                     // Per-account rate limit: hold the lock across the Retry-After delay so
                     // the next queued caller for this connector waits, not just the current
-                    // one. delay() is outside NonCancellable so a connector pause/cancel
-                    // terminates the wait promptly.
+                    // one.
                     if (e.httpCode == 429) {
                         e.retryAfterSeconds?.let { secs ->
                             log(TAG, WARN) { "runServerAction($tag): 429 rate-limited, holding lock for ${secs}s" }
@@ -719,18 +733,22 @@ class OctiServerConnector @AssistedInject constructor(
                     throw e
                 }
             }.also {
-                _state.updateBlocking {
-                    copy(
-                        lastError = null,
-                        lastActionAt = Clock.System.now(),
-                    )
+                withContext(NonCancellable) {
+                    _state.updateBlocking {
+                        copy(
+                            lastError = null,
+                            lastActionAt = Clock.System.now(),
+                        )
+                    }
                 }
             }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             log(TAG, ERROR) { "runServerAction($tag) failed: ${e.asLog()}" }
-            _state.updateBlocking { copy(lastError = e) }
+            withContext(NonCancellable) {
+                _state.updateBlocking { copy(lastError = e) }
+            }
             throw e
         } finally {
             log(TAG, VERBOSE) { "runServerAction($tag) finished after ${start.elapsedNow().inWholeMilliseconds}ms" }
