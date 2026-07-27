@@ -722,6 +722,7 @@ private class PreviewConnector(
         finishedAt = NOW,
     )
 
+    override fun cancel(id: OperationId): Boolean = false
     override fun dismiss(id: OperationId) = Unit
 }
 
