@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -53,6 +54,8 @@ class SyncOrchestratorTest : BaseTest() {
         every { syncManager.connectors } returns connectorsFlow
         every { syncManager.pendingSyncTrigger } returns pendingSyncTriggerFlow
         every { syncWorkerControl.workerState } returns workerStateFlow
+        every { syncManager.activeConnectorSyncs } returns MutableStateFlow(emptySet())
+        every { syncManager.lastConnectorSyncOutcomes } returns MutableStateFlow(emptyMap())
     }
 
     private fun createOrchestrator(scope: CoroutineScope) = SyncOrchestrator(
@@ -221,6 +224,31 @@ class SyncOrchestratorTest : BaseTest() {
             pendingSyncTriggerFlow.emit(Unit)
             advanceUntilIdle()
 
+            verify(exactly = 0) { syncManager.requestSync() }
+        }
+
+        @Test
+        fun `collector keeps collecting after a sync exceeds its bound`() = runTest2(autoCancel = true) {
+            // This collector runs on @AppScope and is never cancelled — a sync that never returns
+            // used to take background sync down until the process died.
+            var callCount = 0
+            coEvery { syncManager.sync(any<SyncOptions>()) } coAnswers {
+                callCount++
+                if (callCount == 1) awaitCancellation()
+            }
+
+            val orchestrator = createOrchestrator(this)
+            orchestrator.start()
+            advanceUntilIdle()
+
+            pendingSyncTriggerFlow.emit(Unit)
+            advanceUntilIdle() // runs past the watchdog bound
+
+            pendingSyncTriggerFlow.emit(Unit)
+            advanceUntilIdle()
+
+            coVerify(exactly = 2) { syncManager.sync(any<SyncOptions>()) }
+            // A timed-out wait is not a failure to retry — the request is already accumulated.
             verify(exactly = 0) { syncManager.requestSync() }
         }
 
