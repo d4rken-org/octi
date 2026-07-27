@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -64,7 +65,13 @@ class OctiServerWebSocket(
      * unbounded. Both halves are pinned by `WebSocketCallTimeoutTest`.
      */
     fun connect(): Flow<SyncEvent> = callbackFlow {
+        // Own Dispatcher, not the inherited one: newBuilder() shares the base client's Dispatcher,
+        // and an established LIVE-mode socket permanently occupies one of its
+        // maxRequestsPerHost = 5 slots for this host. Saturating those slots starves ordinary API
+        // calls, which then sit queued — time no HTTP timeout covers. Isolating the sockets keeps
+        // them from competing with the calls they exist to announce.
         val wsClient = baseHttpClient.newBuilder()
+            .dispatcher(Dispatcher())
             .pingInterval(30, TimeUnit.SECONDS)
             .build()
 
