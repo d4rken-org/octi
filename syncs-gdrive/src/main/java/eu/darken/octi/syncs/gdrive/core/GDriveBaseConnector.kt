@@ -3,6 +3,7 @@ package eu.darken.octi.syncs.gdrive.core
 import android.accounts.Account
 import android.content.Context
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
@@ -10,6 +11,7 @@ import com.google.api.services.drive.DriveScopes
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.logTag
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.seconds
 
 abstract class GDriveBaseConnector(
     private val dispatcherProvider: DispatcherProvider,
@@ -22,7 +24,15 @@ abstract class GDriveBaseConnector(
         val credential = GoogleAccountCredential.usingOAuth2(context, scopes).apply {
             selectedAccount = Account(account.email, "com.google")
         }
-        Drive.Builder(NetHttpTransport(), GsonFactory(), credential).apply {
+        // The Google API client's execute() is a blocking call on NetHttpTransport and is not
+        // interruptible by coroutine cancellation — a stalled request would ignore any timeout we
+        // wrap it in. Bounding it at the transport level is the only way to make it self-terminate.
+        val initializer = HttpRequestInitializer { request ->
+            credential.initialize(request)
+            request.connectTimeout = CONNECT_TIMEOUT.inWholeMilliseconds.toInt()
+            request.readTimeout = READ_TIMEOUT.inWholeMilliseconds.toInt()
+        }
+        Drive.Builder(NetHttpTransport(), GsonFactory(), initializer).apply {
             applicationName = context.getString(eu.darken.octi.common.R.string.app_name)
         }.build()
     }
@@ -37,5 +47,7 @@ abstract class GDriveBaseConnector(
 
     companion object {
         internal val TAG = logTag("Sync", "GDrive", "Connector", "Base")
+        private val CONNECT_TIMEOUT = 20.seconds
+        private val READ_TIMEOUT = 60.seconds
     }
 }
