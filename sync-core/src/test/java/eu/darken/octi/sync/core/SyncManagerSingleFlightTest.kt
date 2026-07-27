@@ -12,6 +12,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -81,6 +83,12 @@ class SyncManagerSingleFlightTest : BaseTest() {
         override val identifier: ConnectorId,
         processorScope: CoroutineScope,
         onOther: suspend (ConnectorCommand) -> Unit = { },
+        /**
+         * When set, the FIRST [await] parks non-cancellably until it completes — modelling a
+         * manager-side wait that does not unwind the moment its run is superseded, which is what
+         * blocking connector work (GDrive's `.execute()`) produces in practice.
+         */
+        private val awaitHold: CompletableDeferred<Unit>? = null,
         executor: suspend (SyncOptions) -> Unit,
     ) : SyncConnector {
         private val processor = ConnectorProcessor(
@@ -107,7 +115,17 @@ class SyncManagerSingleFlightTest : BaseTest() {
         override val completions = processor.completions
         override fun submit(command: ConnectorCommand) = processor.submit(command)
         override fun submitExclusive(command: ConnectorCommand) = processor.submitExclusive(command)
-        override suspend fun await(id: OperationId) = processor.await(id)
+        private var awaitHoldUsed = false
+
+        override suspend fun await(id: OperationId): ConnectorOperation.Terminal {
+            val hold = awaitHold
+            if (hold == null || awaitHoldUsed) return processor.await(id)
+            awaitHoldUsed = true
+            val terminal = processor.await(id)
+            withContext(NonCancellable) { hold.await() }
+            return terminal
+        }
+
         override fun cancel(id: OperationId) = processor.cancel(id)
         override fun dismiss(id: OperationId) = processor.dismiss(id)
     }
@@ -459,6 +477,60 @@ class SyncManagerSingleFlightTest : BaseTest() {
             later.join()
 
             executions.last().writeData shouldBe true
+
+            processorJob.cancel()
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `a caller cancelled after its run was superseded leaves nothing behind`() = runTest2 {
+            // Run A is superseded, so activeRun is already B, but A's cancellation has not landed:
+            // it still owns the batch holding the stuck caller's record. Resolving the owning batch
+            // through activeRun misses that record entirely, and A's finally then folds it back into
+            // pending — so the withdrawn options run again for a caller that is long gone.
+            val timeSource = TestTimeSource()
+            val processorJob = SupervisorJob()
+            val releaseA = CompletableDeferred<Unit>()
+            val gateB = CompletableDeferred<Unit>()
+            connectorsFlow.value = listOf(
+                FakeConnector(
+                    connectorId1,
+                    this + processorJob,
+                    awaitHold = releaseA,
+                ) { if (executions.size == 2) gateB.await() },
+            )
+            val (sm, job) = createSyncManager(timeSource)
+            advanceUntilIdle()
+
+            val optionsA = SyncOptions(
+                stats = false,
+                readData = true,
+                writeData = false,
+                moduleFilter = setOf(powerModuleId),
+            )
+            val stuck = launch { sm.sync(optionsA) }
+            advanceUntilIdle()
+            executions shouldHaveSize 1
+
+            // Past the staleness threshold: B takes over while A is still parked in its wait.
+            timeSource += SyncManager.SYNC_STALE_AFTER + 1.minutes
+            val replacement = launch { sm.sync(SyncOptions(stats = false, readData = false, writeData = true)) }
+            advanceUntilIdle()
+            executions shouldHaveSize 2
+
+            // The only owner of A's batch walks away inside that window.
+            stuck.cancel()
+            advanceUntilIdle()
+
+            releaseA.complete(Unit)
+            gateB.complete(Unit)
+            advanceUntilIdle()
+            replacement.join()
+
+            // A's options were withdrawn: never requeued, never executed a second time.
+            executions shouldHaveSize 2
+            executions.count { it.moduleFilter == setOf(powerModuleId) } shouldBe 1
 
             processorJob.cancel()
             job.cancel()

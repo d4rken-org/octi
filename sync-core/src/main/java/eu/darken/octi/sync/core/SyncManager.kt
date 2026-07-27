@@ -103,6 +103,16 @@ class SyncManager @Inject constructor(
      */
     private class RequestRecord(val options: SyncOptions) {
         val waiter = CompletableDeferred<Unit>()
+
+        /**
+         * The run that claimed this record into its batch, or null while it is still pending.
+         * Guarded by [stateLock].
+         *
+         * Ownership has to be read off the record rather than inferred from [activeRun]: a run that
+         * was superseded but whose cancellation has not landed yet still holds its batch, while
+         * [activeRun] is already its replacement.
+         */
+        var ownerRun: ActiveRun? = null
     }
 
     private class ActiveRun(val generation: Long) {
@@ -275,9 +285,13 @@ class SyncManager @Inject constructor(
      */
     private suspend fun abandon(record: RequestRecord) = stateLock.withLock {
         pendingRequests.remove(record)
-        val run = activeRun ?: return@withLock
+        // The owner comes from the record, not from activeRun: a superseded run whose cancellation
+        // is still in flight keeps its batch, and activeRun already points at the replacement. Going
+        // through activeRun would silently fail to find the record and leave it to be folded back in.
+        val run = record.ownerRun ?: return@withLock
         val batch = run.currentBatch ?: return@withLock
         if (!batch.remove(record)) return@withLock
+        record.ownerRun = null
         if (batch.isNotEmpty()) {
             // Another caller still wants this work. Options already merged into the executing
             // command cannot be subtracted anyway — leave it running.
@@ -286,7 +300,8 @@ class SyncManager @Inject constructor(
         }
         log(TAG, WARN) { "abandon(): last caller of run ${run.generation} left, cancelling its work" }
         // Detach the batch BEFORE cancelling: the run's finally folds a still-attached batch back
-        // into pending, which would restart the very work we are abandoning.
+        // into pending, which would restart the very work we are abandoning. Applies whether or not
+        // this run is still activeRun — a superseded run folds its leftovers back just the same.
         run.currentBatch = null
         supersedeLocked(run)
     }
@@ -307,6 +322,10 @@ class SyncManager @Inject constructor(
      * Callers must hold [stateLock]. Cancels the connector operations first: cancelling only our
      * own waiter would leave the command running inside the connector's actor, and the replacement
      * would simply queue behind it.
+     *
+     * [run] need not be [activeRun]: a run that was already superseded can still be holding a batch
+     * and in-flight operations, and both have to go when its last owner walks away. Only this run's
+     * own operation ids are cancelled, so a replacement run's work is never touched.
      */
     private fun supersedeLocked(run: ActiveRun) {
         run.inFlightOps.forEach { (connectorId, entry) ->
@@ -326,6 +345,9 @@ class SyncManager @Inject constructor(
                     if (pendingRequests.isEmpty()) return@withLock null
                     val next = pendingRequests.toMutableList()
                     pendingRequests.clear()
+                    // Stamp ownership while claiming, so a caller that gives up later can find the
+                    // batch holding its record without having to guess which run that is.
+                    next.forEach { it.ownerRun = run }
                     run.startedAt = timeSource.markNow()
                     run.currentBatch = next
                     next.map { it.options }.reduce { acc, o -> acc.merge(o) }
@@ -355,6 +377,9 @@ class SyncManager @Inject constructor(
                     run.currentBatch?.let { leftover ->
                         run.currentBatch = null
                         log(TAG, WARN) { "runLoop(${run.generation}): folding cancelled batch back in" }
+                        // Back to unowned: whichever run claims them next stamps itself, and until
+                        // then an abandoning caller must find them in pendingRequests, not here.
+                        leftover.forEach { it.ownerRun = null }
                         pendingRequests.addAll(0, leftover)
                     }
                     if (pendingRequests.isNotEmpty() && activeRun == null) startRunLocked()
@@ -365,6 +390,7 @@ class SyncManager @Inject constructor(
 
     private suspend fun detachOwners(run: ActiveRun): List<RequestRecord> = stateLock.withLock {
         val owners = run.currentBatch.orEmpty().toList()
+        owners.forEach { it.ownerRun = null }
         run.currentBatch = null
         owners
     }
