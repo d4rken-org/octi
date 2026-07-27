@@ -17,11 +17,16 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.shareIn
 import eu.darken.octi.sync.core.cache.SyncCache
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
@@ -30,16 +35,22 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 
 @Singleton
 class SyncManager @Inject constructor(
@@ -51,9 +62,66 @@ class SyncManager @Inject constructor(
     private val connectorSyncState: ConnectorSyncState,
 ) {
 
-    private val syncLock = Mutex()
-    private val pendingSync = AtomicBoolean(false)
+    /**
+     * Guards the whole single-flight transition — {active run, its start mark, the pending request,
+     * the generation token} move together or not at all. Held only for those decisions, never
+     * across connector work.
+     */
+    private val stateLock = Mutex()
+    private var activeRun: ActiveRun? = null
+    private var pendingRequest: PendingRequest? = null
+    private var generationCounter = 0L
+
+    /**
+     * Monotonic on purpose: a wall-clock jump must not make a run look stale (superseding healthy
+     * work) or eternally fresh (never superseding wedged work). Overridable for tests only.
+     */
+    internal var timeSource: TimeSource = TimeSource.Monotonic
+
     private val modulePayloads = ConcurrentHashMap<ModuleId, SyncWrite.Device.Module>()
+
+    private val _activeConnectorSyncs = MutableStateFlow(emptySet<ConnectorId>())
+
+    /** Connectors with a sync submitted by this manager that has not reached a terminal state. */
+    val activeConnectorSyncs: StateFlow<Set<ConnectorId>> = _activeConnectorSyncs.asStateFlow()
+
+    sealed interface ConnectorSyncOutcome {
+        data object Success : ConnectorSyncOutcome
+        data class Failure(val error: Throwable) : ConnectorSyncOutcome
+    }
+
+    private val _lastConnectorSyncOutcomes = MutableStateFlow(emptyMap<ConnectorId, ConnectorSyncOutcome>())
+
+    /** Result of the most recent sync this manager ran per connector. */
+    val lastConnectorSyncOutcomes: StateFlow<Map<ConnectorId, ConnectorSyncOutcome>> =
+        _lastConnectorSyncOutcomes.asStateFlow()
+
+    /**
+     * One iteration's worth of work: the union of every request folded into it, plus the callers
+     * waiting for that work to finish.
+     */
+    private class PendingRequest(
+        var options: SyncOptions,
+        val waiters: MutableList<CompletableDeferred<Unit>> = mutableListOf(),
+    ) {
+        fun absorb(other: PendingRequest) {
+            options = options.merge(other.options)
+            waiters += other.waiters
+        }
+    }
+
+    private class ActiveRun(val generation: Long) {
+        lateinit var job: Job
+
+        /** Reset per iteration, so a run that keeps doing real work never ages into staleness. */
+        var startedAt: TimeMark? = null
+
+        /** Non-null while a batch is executing — folded back into pending if the run is cancelled. */
+        var currentBatch: PendingRequest? = null
+
+        /** What to cancel when this run is superseded: the actual connector operations. */
+        val inFlightOps = ConcurrentHashMap<ConnectorId, Pair<SyncConnector, OperationId>>()
+    }
 
     private val syncRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
@@ -162,35 +230,137 @@ class SyncManager @Inject constructor(
         .setupCommonEventHandlers(TAG) { "syncData" }
         .shareLatest(scope + dispatcherProvider.Default)
 
+    /**
+     * Runs [options] against every active connector, and does not return until that work is done.
+     *
+     * Single-flight with accumulation: a request arriving while a run is in progress is merged into
+     * the run's next iteration instead of being dropped, so no caller's scope is silently absorbed
+     * by whichever request happened to hold the lock. If the current run has been working on the
+     * same iteration for longer than [SYNC_STALE_AFTER] it is superseded — its connector
+     * operations are cancelled and a fresh run takes over carrying every outstanding request.
+     */
     suspend fun sync(options: SyncOptions = SyncOptions()) {
         log(TAG) { "sync(${options.logLabel})" }
-        if (!syncLock.tryLock()) {
-            pendingSync.set(true)
-            log(TAG) { "Sync already in progress, flagged for re-run" }
-            return
-        }
-        try {
-            do {
-                pendingSync.set(false)
-                val syncJobs = connectors.first().map {
-                    scope.launch {
-                        try {
-                            sync(it.identifier, options = options)
-                        } catch (e: CancellationException) {
-                            throw e
-                        } catch (e: Exception) {
-                            log(TAG, ERROR) { "sync(): ${it.identifier} failed: ${e.asLog()}" }
-                        }
-                    }
+        val waiter = CompletableDeferred<Unit>()
+        stateLock.withLock {
+            enqueueLocked(PendingRequest(options, mutableListOf(waiter)))
+            val current = activeRun
+            val age = current?.startedAt?.elapsedNow()
+            when {
+                current == null -> startRunLocked()
+                age != null && age >= SYNC_STALE_AFTER -> {
+                    log(TAG, WARN) { "sync(): run ${current.generation} stuck for $age, superseding" }
+                    supersedeLocked(current)
+                    startRunLocked()
                 }
-                syncJobs.joinAll()
-            } while (pendingSync.getAndSet(false))
+                else -> log(TAG) { "sync(): folded into run ${current.generation}" }
+            }
+        }
+        waiter.await()
+    }
+
+    /** Callers must hold [stateLock]. */
+    private fun enqueueLocked(request: PendingRequest) {
+        pendingRequest = pendingRequest?.also { it.absorb(request) } ?: request
+    }
+
+    /** Callers must hold [stateLock]. */
+    private fun startRunLocked() {
+        val run = ActiveRun(++generationCounter)
+        // LAZY so the run object is fully wired (and published as `activeRun`) before its body can
+        // observe it — the body's first act is to take this very lock.
+        val job = scope.launch(start = CoroutineStart.LAZY) { runLoop(run) }
+        run.job = job
+        activeRun = run
+        log(TAG) { "startRun(${run.generation})" }
+        job.start()
+    }
+
+    /**
+     * Callers must hold [stateLock]. Cancels the connector operations first: cancelling only our
+     * own waiter would leave the command running inside the connector's actor, and the replacement
+     * would simply queue behind it.
+     */
+    private fun supersedeLocked(run: ActiveRun) {
+        run.inFlightOps.forEach { (connectorId, entry) ->
+            val (connector, opId) = entry
+            val cancelled = connector.cancel(opId)
+            log(TAG, WARN) { "supersede(${run.generation}): cancel ${connectorId.logLabel} -> $cancelled" }
+        }
+        run.job.cancel(CancellationException("Sync run ${run.generation} superseded"))
+    }
+
+    private suspend fun runLoop(run: ActiveRun) {
+        try {
+            while (true) {
+                val batch = stateLock.withLock {
+                    val next = pendingRequest ?: return@withLock null
+                    pendingRequest = null
+                    run.startedAt = timeSource.markNow()
+                    run.currentBatch = next
+                    next
+                } ?: break
+
+                try {
+                    executeBatch(run, batch.options)
+                    stateLock.withLock { run.currentBatch = null }
+                    batch.waiters.forEach { it.complete(Unit) }
+                } catch (e: CancellationException) {
+                    // Leave currentBatch set — the finally folds it back into pending so a
+                    // superseded batch's requests and waiters are carried by the next run.
+                    throw e
+                } catch (e: Exception) {
+                    log(TAG, ERROR) { "runLoop(${run.generation}) failed: ${e.asLog()}" }
+                    stateLock.withLock { run.currentBatch = null }
+                    batch.waiters.forEach { it.completeExceptionally(e) }
+                }
+            }
         } finally {
-            syncLock.unlock()
+            // The whole exit decision happens under one lock hold, so there is no window between
+            // "nothing pending" and "no longer the active run" for a request to fall into.
+            withContext(NonCancellable) {
+                stateLock.withLock {
+                    // Compare before clearing: a superseded run must not clear its replacement.
+                    if (activeRun?.generation == run.generation) activeRun = null
+                    run.currentBatch?.let { leftover ->
+                        run.currentBatch = null
+                        log(TAG, WARN) { "runLoop(${run.generation}): folding cancelled batch back in" }
+                        enqueueLocked(leftover)
+                    }
+                    if (pendingRequest != null && activeRun == null) startRunLocked()
+                }
+            }
         }
     }
 
-    suspend fun sync(connectorId: ConnectorId, options: SyncOptions = SyncOptions()) {
+    private suspend fun executeBatch(run: ActiveRun, options: SyncOptions) {
+        // Bounded: an unresolved connector list must not wedge the run (and with it every waiter).
+        val targets = withTimeoutOrNull(CONNECTOR_RESOLVE_TIMEOUT) { connectors.first() }
+        if (targets == null) {
+            log(TAG, WARN) { "executeBatch(): connectors unresolved after $CONNECTOR_RESOLVE_TIMEOUT" }
+            return
+        }
+        // Structured children of the run: cancelling the run actually stops them, which detached
+        // scope.launch calls would not.
+        supervisorScope {
+            targets.map { connector ->
+                launch {
+                    try {
+                        sync(connector.identifier, options, run)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        log(TAG, ERROR) { "sync(): ${connector.identifier} failed: ${e.asLog()}" }
+                    }
+                }
+            }.joinAll()
+        }
+    }
+
+    suspend fun sync(connectorId: ConnectorId, options: SyncOptions = SyncOptions()) =
+        sync(connectorId, options, run = null)
+
+    private suspend fun sync(connectorId: ConnectorId, options: SyncOptions, run: ActiveRun?) {
         log(TAG) { "sync(${connectorId.logLabel}, ${options.logLabel})" }
         // Fast-path defense: avoid submitting work we already know the processor will reject.
         // The processor also enforces the pause guard authoritatively.
@@ -226,7 +396,27 @@ class SyncManager @Inject constructor(
         }
 
         // Connector sets hashes inline for each successfully-written module — no post-call update here.
-        connector.execute(ConnectorCommand.Sync(effectiveOptions))
+        // Submit and await separately (rather than execute()) so a supersede has the operation id to
+        // cancel; cancelling only the waiter would leave the command running.
+        val opId = connector.submit(ConnectorCommand.Sync(effectiveOptions))
+        run?.inFlightOps?.put(connectorId, connector to opId)
+        _activeConnectorSyncs.update { it + connectorId }
+        try {
+            when (val terminal = connector.await(opId)) {
+                is ConnectorOperation.Succeeded -> {
+                    _lastConnectorSyncOutcomes.update { it + (connectorId to ConnectorSyncOutcome.Success) }
+                }
+                is ConnectorOperation.Failed -> {
+                    _lastConnectorSyncOutcomes.update {
+                        it + (connectorId to ConnectorSyncOutcome.Failure(terminal.error))
+                    }
+                    throw terminal.error
+                }
+            }
+        } finally {
+            run?.inFlightOps?.remove(connectorId)
+            _activeConnectorSyncs.update { it - connectorId }
+        }
     }
 
     fun updatePayload(payload: SyncWrite.Device.Module) {
@@ -298,5 +488,13 @@ class SyncManager @Inject constructor(
 
     companion object {
         private val TAG = logTag("Sync", "Manager")
+
+        /**
+         * How long one run iteration may work before a newly arriving request takes over. Above the
+         * connector processor's per-command bound on purpose: in practice a wedged command fails
+         * itself first, and this is the backstop for anything the processor cannot bound.
+         */
+        internal val SYNC_STALE_AFTER = 5.minutes
+        private val CONNECTOR_RESOLVE_TIMEOUT = 10.seconds
     }
 }
