@@ -33,6 +33,14 @@ interface SyncConnector {
     /** Suspends until the op with [id] reaches terminal state. */
     suspend fun await(id: OperationId): ConnectorOperation.Terminal
 
+    /**
+     * Terminates the op with [id] if it is still queued or running. Destructive commands are
+     * refused — see `ConnectorProcessor.Timeouts`.
+     *
+     * @return true if the op was cancelled.
+     */
+    fun cancel(id: OperationId): Boolean
+
     /** Remove a terminal entry from [operations]. No effect on pending ops. */
     fun dismiss(id: OperationId)
 }

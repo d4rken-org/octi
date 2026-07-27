@@ -144,6 +144,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
     override val completions: SharedFlow<ConnectorOperation.Terminal> get() = processor.completions
     override fun submit(command: ConnectorCommand): OperationId = processor.submit(command)
     override suspend fun await(id: OperationId): ConnectorOperation.Terminal = processor.await(id)
+    override fun cancel(id: OperationId): Boolean = processor.cancel(id)
     override fun dismiss(id: OperationId) = processor.dismiss(id)
 
     /** Start the processor loop. Called by the hub after construction with a connector-lifetime scope. */
