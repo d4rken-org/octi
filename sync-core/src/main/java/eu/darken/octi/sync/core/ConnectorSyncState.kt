@@ -4,25 +4,43 @@ import eu.darken.octi.module.core.ModuleId
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 
 /**
- * Tracks the last-sent payload hash per (connectorId, moduleId) pair.
- * In-memory only — hashes repopulate naturally on restart because writeFLow
- * fires, payloads get cached, and first sync sends everything (no hashes = all mismatches).
+ * Tracks the last-sent payload hash and its age per (connectorId, moduleId) pair.
+ * In-memory only — records repopulate naturally on restart because writeFLow
+ * fires, payloads get cached, and first sync sends everything (no records = all mismatches).
  */
 @Singleton
 class ConnectorSyncState @Inject constructor() {
 
-    private val hashes = ConcurrentHashMap<Pair<ConnectorId, ModuleId>, String>()
+    private data class Record(val hash: String, val sentAt: TimeMark)
 
-    fun getHash(connectorId: ConnectorId, moduleId: ModuleId): String? =
-        hashes[connectorId to moduleId]
+    private val records = ConcurrentHashMap<Pair<ConnectorId, ModuleId>, Record>()
+
+    /**
+     * Monotonic on purpose: a wall-clock jump must not make a record look eternally fresh (never
+     * refreshing a static payload) or instantly expired. Overridable for tests only.
+     */
+    internal var timeSource: TimeSource = TimeSource.Monotonic
+
+    /** Hash and age of the last successful write, captured together. */
+    data class SentRecord(val hash: String, val age: Duration)
+
+    /**
+     * One atomic snapshot: hash and age come from the same record version. Reading them through
+     * separate calls could observe two different writes and mix a stale hash with a fresh age.
+     */
+    fun getRecord(connectorId: ConnectorId, moduleId: ModuleId): SentRecord? =
+        records[connectorId to moduleId]?.let { SentRecord(hash = it.hash, age = it.sentAt.elapsedNow()) }
 
     fun setHash(connectorId: ConnectorId, moduleId: ModuleId, hash: String) {
-        hashes[connectorId to moduleId] = hash
+        records[connectorId to moduleId] = Record(hash = hash, sentAt = timeSource.markNow())
     }
 
     fun clearConnector(connectorId: ConnectorId) {
-        hashes.keys.removeAll { it.first == connectorId }
+        records.keys.removeAll { it.first == connectorId }
     }
 }

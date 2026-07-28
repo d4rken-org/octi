@@ -29,6 +29,8 @@ import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.runTest2
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.TestTimeSource
 
 class SyncManagerSyncWriteTest : BaseTest() {
 
@@ -406,7 +408,218 @@ class SyncManagerSyncWriteTest : BaseTest() {
     }
 
     @Nested
+    inner class `rewrite horizon` {
+        // Static payloads (meta) never change their hash, so pure dedup would write them once per
+        // process lifetime. Past the horizon they go out again even though nothing changed.
+
+        @Test
+        fun `unchanged hash past the horizon is rewritten`() = runTest2 {
+            val timeSource = TestTimeSource()
+            connectorSyncState.timeSource = timeSource
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            val module = createModule(powerModuleId, "static-data")
+            sm.updatePayload(module)
+            connectorSyncState.setHash(connectorId1, powerModuleId, module.payload.sha256().hex())
+
+            timeSource += SyncManager.MODULE_REWRITE_HORIZON
+
+            sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+
+            val cmdSlot = slot<ConnectorCommand>()
+            coVerify { connector1.submitExclusive(capture(cmdSlot)) }
+            cmdSlot.syncOptions().writePayload.single().module.moduleId shouldBe powerModuleId
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `unchanged hash inside the horizon is skipped`() = runTest2 {
+            val timeSource = TestTimeSource()
+            connectorSyncState.timeSource = timeSource
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            val module = createModule(powerModuleId, "static-data")
+            sm.updatePayload(module)
+            connectorSyncState.setHash(connectorId1, powerModuleId, module.payload.sha256().hex())
+
+            timeSource += SyncManager.MODULE_REWRITE_HORIZON - 1.minutes
+
+            sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+
+            val cmdSlot = slot<ConnectorCommand>()
+            coVerify { connector1.submitExclusive(capture(cmdSlot)) }
+            cmdSlot.syncOptions().writePayload shouldBe emptyList()
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `changed hash is written regardless of age`() = runTest2 {
+            val timeSource = TestTimeSource()
+            connectorSyncState.timeSource = timeSource
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            connectorSyncState.setHash(connectorId1, powerModuleId, "some-other-hash")
+            sm.updatePayload(createModule(powerModuleId, "fresh-data"))
+
+            sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+
+            val cmdSlot = slot<ConnectorCommand>()
+            coVerify { connector1.submitExclusive(capture(cmdSlot)) }
+            cmdSlot.syncOptions().writePayload.single().module.payload shouldBe "fresh-data".encodeUtf8()
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `repeated triggers within the horizon do not rewrite again`() = runTest2 {
+            val timeSource = TestTimeSource()
+            connectorSyncState.timeSource = timeSource
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            val module = createModule(powerModuleId, "static-data")
+            sm.updatePayload(module)
+
+            // First sync writes, connector records the hash on success.
+            sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+            connectorSyncState.setHash(connectorId1, powerModuleId, module.payload.sha256().hex())
+
+            // Minute-cadence background triggers for the rest of the hour.
+            repeat(5) {
+                timeSource += 10.minutes
+                sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+            }
+
+            val all = mutableListOf<ConnectorCommand>()
+            coVerify(exactly = 6) { connector1.submitExclusive(capture(all)) }
+            (all.first() as ConnectorCommand.Sync).options.writePayload.size shouldBe 1
+            all.drop(1).forEach { (it as ConnectorCommand.Sync).options.writePayload shouldBe emptyList() }
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `only the connector whose record expired rewrites`() = runTest2 {
+            val timeSource = TestTimeSource()
+            connectorSyncState.timeSource = timeSource
+            connectorsFlow.value = listOf(connector1, connector2)
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            val module = createModule(powerModuleId, "static-data")
+            sm.updatePayload(module)
+            val hash = module.payload.sha256().hex()
+
+            connectorSyncState.setHash(connectorId1, powerModuleId, hash)
+            timeSource += SyncManager.MODULE_REWRITE_HORIZON
+            connectorSyncState.setHash(connectorId2, powerModuleId, hash)
+
+            sm.sync(SyncOptions(writeData = true, readData = false, stats = false))
+            advanceUntilIdle()
+
+            val cmd1 = slot<ConnectorCommand>()
+            coVerify { connector1.submitExclusive(capture(cmd1)) }
+            (cmd1.captured as ConnectorCommand.Sync).options.writePayload.size shouldBe 1
+
+            val cmd2 = slot<ConnectorCommand>()
+            coVerify { connector2.submitExclusive(capture(cmd2)) }
+            (cmd2.captured as ConnectorCommand.Sync).options.writePayload shouldBe emptyList()
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
+        @Test
+        fun `merged batch options still evaluate the horizon`() = runTest2 {
+            val timeSource = TestTimeSource()
+            connectorSyncState.timeSource = timeSource
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            val module = createModule(powerModuleId, "static-data")
+            sm.updatePayload(module)
+            connectorSyncState.setHash(connectorId1, powerModuleId, module.payload.sha256().hex())
+
+            // Hold the first run inside await() so the next two requests accumulate into one batch.
+            val gate = CompletableDeferred<Unit>()
+            var callCount = 0
+            coEvery { connector1.await(any()) } coAnswers {
+                callCount++
+                if (callCount == 1) gate.await()
+                ConnectorOperation.Succeeded(
+                    id = OperationId.create(),
+                    command = ConnectorCommand.Sync(),
+                    submittedAt = Clock.System.now(),
+                    startedAt = Clock.System.now(),
+                    finishedAt = Clock.System.now(),
+                )
+            }
+
+            val blocking = launch { sm.sync(SyncOptions(writeData = false, readData = true, stats = false)) }
+            advanceUntilIdle()
+
+            timeSource += SyncManager.MODULE_REWRITE_HORIZON
+
+            val readOnly = launch { sm.sync(SyncOptions(writeData = false, readData = true, stats = false)) }
+            val writing = launch { sm.sync(SyncOptions(writeData = true, readData = false, stats = false)) }
+            advanceUntilIdle()
+
+            gate.complete(Unit)
+            advanceUntilIdle()
+            blocking.join()
+            readOnly.join()
+            writing.join()
+
+            val all = mutableListOf<ConnectorCommand>()
+            coVerify(exactly = 2) { connector1.submitExclusive(capture(all)) }
+            // The blocking read-only batch never carries a payload…
+            (all.first() as ConnectorCommand.Sync).options.writePayload shouldBe emptyList()
+            // …while the merged batch inherits writeData and rewrites the expired module.
+            val merged = (all.last() as ConnectorCommand.Sync).options
+            merged.readData shouldBe true
+            merged.writePayload.single().module.moduleId shouldBe powerModuleId
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+    }
+
+    @Nested
     inner class `sync failure` {
+        @Test
+        fun `a failed write leaves no record — module retried inside the horizon`() = runTest2 {
+            val timeSource = TestTimeSource()
+            connectorSyncState.timeSource = timeSource
+            val (sm, job) = createSyncManager()
+            advanceUntilIdle()
+
+            sm.updatePayload(createModule(powerModuleId, "data"))
+
+            connector1.wireSubmitFailure(RuntimeException("Network error"))
+            runCatching { sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false)) }
+
+            // Well inside the horizon — only the missing record can put the module back on the wire.
+            connector1.wireProcessorSideEffects()
+            timeSource += 1.minutes
+            sm.sync(connectorId1, SyncOptions(writeData = true, readData = false, stats = false))
+
+            val all = mutableListOf<ConnectorCommand>()
+            coVerify(exactly = 2) { connector1.submitExclusive(capture(all)) }
+            (all.last() as ConnectorCommand.Sync).options.writePayload.size shouldBe 1
+
+            job.cancel()
+            advanceUntilIdle()
+        }
+
         @Test
         fun `sync failure does not update hashes — module resent next sync`() = runTest2 {
             val (sm, job) = createSyncManager()
