@@ -47,6 +47,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeMark
@@ -439,8 +440,8 @@ class SyncManager @Inject constructor(
         val changedModules = if (options.writeData) {
             modulePayloads.values.mapNotNull { module ->
                 val currentHash = module.payload.sha256().hex()
-                val lastSent = connectorSyncState.getHash(connectorId, module.moduleId)
-                if (currentHash != lastSent) {
+                val record = connectorSyncState.getRecord(connectorId, module.moduleId)
+                if (record == null || record.hash != currentHash || record.age >= MODULE_REWRITE_HORIZON) {
                     SyncOptions.ModuleWrite(module = module, expectedHash = currentHash)
                 } else {
                     null
@@ -560,5 +561,14 @@ class SyncManager @Inject constructor(
          */
         internal val SYNC_STALE_AFTER = 5.minutes
         private val CONNECTOR_RESOLVE_TIMEOUT = 10.seconds
+
+        /**
+         * How long an unchanged module payload may go unwritten before it is sent again anyway.
+         * Static-payload modules (meta: labels, versions, bootedAt) never change their hash between
+         * reboots, so pure hash dedup writes them exactly once per process lifetime and every peer's
+         * view of "last written" ages into process uptime. Rewriting at roughly background-sync
+         * cadence restores the pre-dedup hourly freshness without giving up per-minute dedup.
+         */
+        internal val MODULE_REWRITE_HORIZON = 1.hours
     }
 }
