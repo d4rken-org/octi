@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">A Google Play nem elérhető</string>
     <string name="upgrades_gplay_unavailable_error_description">Az Octi nem tud csatlakozni a Google Playhez. Telepítve és naprakész a Google Play? Be vagy jelentkezve Google-fiókkal? Próbáld meg törölni a Google Play alkalmazás gyorsítótárát és indítsd újra az eszközt.</string>
     <string name="upgrades_no_purchases_found_check_account">Nem találhatók vásárlások. Biztosan a megfelelő fiókot használod?</string>
+    <string name="upgrades_already_owned_error_title">Már megvásárolva</string>
+    <string name="upgrades_already_owned_error_description">A Google Play szerint már megvásároltad ezt a frissítést. Használd a „Vásárlás visszaállítása\" lehetőséget feloldásához.</string>
     <string name="upgrades_dashcard_title">Szerezze be az Octi Pro-t</string>
     <string name="upgrades_dashcard_body">Frissíts további funkciók eléréséhez és a fejlesztés támogatásához!</string>
     <string name="upgrades_dashcard_upgrade_action">Frissítés</string>
@@ -12,19 +16,80 @@
         <item quantity="other">%1$d eszközre korlátozódik az ingyenes verzió.</item>
     </plurals>
     <string name="upgrade_screen_title">Szerezze be az Octi Pro-t</string>
+    <string name="upgrade_screen_navigate_up">Vissza</string>
+    <string name="upgrade_screen_progress_loading">Betöltés…</string>
     <string name="upgrade_screen_preamble">Az Octi nem tartalmaz hirdetéseket és nem árul felhasználói adatokat. A munkámat te finanszírozod ❤️.</string>
     <string name="upgrade_screen_benefits_title">Előnyök</string>
     <string name="upgrade_screen_benefits_body">• Több mint 3 eszköz 💯\n• Különböző témák 🎨\n• Több lehetőség ⚙️\n• Extra szinkronizáló szerverek🖥️️\n• Folyamatos fejlesztés ☕\n• Elkötelezett fejlesztő 🧙</string>
     <string name="upgrade_screen_how_title">Lehetőségek</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Választhatsz az egyszeri vásárlás és az olcsóbb éves előfizetés között. Mindkettő bármikor lemondható.\nAzonos funkciók, csak eltérő árazási modellek.</string>
+    <string name="upgrade_screen_how_trial_hint">Az előfizetés egy ingyenes 14 napos próbaidővel kezdődik, amely után évente egyszer számlázásra kerülsz.</string>
     <string name="upgrade_screen_subscription_trial_action">14 napos ingyenes próba indítása</string>
     <string name="upgrade_screen_subscription_action">Előfizetés</string>
     <string name="upgrade_screen_subscription_action_hint">Az előfizetés ára: %s évente.</string>
     <string name="upgrade_screen_iap_action">Egyszeri vásárlás</string>
     <string name="upgrade_screen_iap_action_hint">Az egyszeri vásárlás ára: %s.</string>
     <string name="upgrade_screen_thanks_toast">Te vagy a legjobb! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Frissítési lehetőségek</string>
+    <string name="upgrade_screen_offers_or">vagy</string>
+    <string name="upgrade_screen_offers_body">Mindkettő ugyanazokat a funkciókat oldja fel — válaszd az általad preferált árazást. Bármikor lemondható.</string>
+    <string name="upgrade_screen_subscription_offer_title">Éves előfizetés</string>
+    <string name="upgrade_screen_subscription_offer_body">Ingyenes 14 napos próbaidővel kezdődik, majd évente egyszer számlázott, amíg nem mondod fel.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Évente egyszer számlázott, amíg nem mondod fel.</string>
+    <string name="upgrade_screen_iap_offer_title">Egyszeri vásárlás</string>
+    <string name="upgrade_screen_iap_offer_body">Fizess egyszer, örökre a tiéd — nincs előfizetés.</string>
     <string name="upgrade_screen_restore_purchase_action">Vásárlás visszaállítása</string>
+    <string name="upgrade_screen_restore_banner_title">Már megvásároltad a Pro verziót?</string>
+    <string name="upgrade_screen_restore_banner_body">Úgy tűnik, hogy már frissítettél Pro-ra ezen az eszközön. Ha még mindig tulajdonlod a frissítést, a visszaállítás újra feloldja azt.</string>
     <string name="upgrade_screen_restore_purchase_message">A frissítésed minden eszközön érvényes, amelyen ugyanaz a Google-fiók van használatban.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Tippek nem felismert frissítésekhez:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">A Play Store szinkronizáció eltarthat egy ideig. Próbáld újraindítani, törölni a Google Play gyorsítótárát, vagy várj egy kicsit.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Több fiók összezavarhatja a Google Playt. Jelentkezz ki a többi fiókból vagy telepítsd a Google Play webhelyén keresztül, hogy egy adott fiókhoz rendelje.</string>
+    <string name="upgrade_screen_restore_success_message">Vásárlás helyreállítva — köszönjük!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Már vásároltál Pro-t ezen a fiókon? Kérd meg a Google Play-t, hogy ellenőrizze újra az alkalmazás vásárlásait.</string>
+    <string name="upgrade_screen_restore_status_title">Vásárlás állapota</string>
+    <string name="upgrade_screen_restore_status_body">Ellenőrizd újra a vásárlásaidat a Google Play-ben, ha a Pro státuszod elavultnak tűnik.</string>
+    <string name="upgrade_screen_restore_checked_message">Megkértük a Google Play-t, hogy ellenőrizze újra az alkalmazás vásárlásait, de nem tudtunk megerősíteni vásárlást az aktuális fiók számára.</string>
+    <string name="upgrade_screen_restore_contact_hint">Még mindig nem működik? Fordulj az ügyfélszolgálathoz, és segítünk rendezni.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Te vagy az Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Köszönjük az Octi támogatásáért! A Pro funkciók feloldottak.</string>
+    <string name="upgrade_screen_owned_iap_title">Élettartam vásárlás</string>
+    <string name="upgrade_screen_owned_iap_body">Megvetted az egyszeri Pro vásárlást. Soha nem jár le.</string>
+    <string name="upgrade_screen_owned_sub_title">Előfizetés</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">A Pro előfizetésed aktív és automatikusan megújul.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">A Pro előfizetésed aktív, de nem fog megújulni. Az aktuális időszak végéig aktív marad.</string>
+    <string name="upgrade_screen_owned_both_title">Mindkettőt birtoklod</string>
+    <string name="upgrade_screen_owned_both_warning">Mindkettőt birtoklod: az előfizetést és az egyszeri vásárlást. Hogy ne fizess kétszer, mondj le az előfizetésről a Google Play-ben — az élettartam vásárlás révén megtartod a Pro-t.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Te vagy az Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Köszönjük a %1$s vásárlást! A Pro funkciók feloldottak és soha nem járnak le.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Köszönjük a %1$s-ra való feliratkozást! A Pro funkciók feloldottak.</string>
+    <string name="upgrade_screen_manage_subscription_action">Előfizetés kezelése</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Váltás egyszeri vásárlásra</string>
+    <string name="upgrade_screen_switch_body">Egyszer fizetni szeretnél az előfizetés helyett? Megvásárolhatod az egyszeri Pro vásárlást és leállíthatod az előfizetést.</string>
+    <string name="upgrade_screen_switch_locked_note">Az előfizetésed továbbra is automatikusan megújul. Először töröld le a Google Play-ben, majd térj vissza az egyszeri verzió megvásárlásához. Az itt történő vásárlás nem törli vagy nem téríti vissza az előfizetést — ugyanazt a Google-fiókot használd.</string>
+    <string name="upgrade_screen_switch_action">Vásárold meg az egyszeri verziót (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Az előfizetés még aktív</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Az előfizetésed továbbra is megújulásra van beállítva. Először töröld le a Google Play-ben, hogy ne legyél kétszer felszámítva, majd vásárold meg az egyszeri verziót. Ez nem téríti vissza az előfizetést.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Nem sikerült ellenőrizni az előfizetést</string>
+    <string name="upgrade_screen_sub_check_failed_message">A Google Play nem válaszolt időben, ezért nem tudjuk biztonságosan megerősíteni az előfizetésed állapotát. Próbálkozz újra egy pillanat múlva.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">A Pro továbbra is aktív</string>
+    <string name="upgrade_screen_grace_body">Megerősítjük a vásárlásodat a Google Play-ben. A Pro funkciók addig is feloldva maradnak.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Továbbra sem tudjuk megerősíteni a vásárlásodat a Google Play-ben. A Pro funkciók egyelőre feloldva maradnak. Próbálkozz a helyreállítással az újracsatlakoztatáshoz.</string>
+    <string name="upgrade_screen_contact_support_action">Fordulj az ügyfélszolgálathoz</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">A szabad verzión vagy</string>
+    <string name="upgrade_screen_free_status_body">Frissítsd az Octi Pro-ra az extra funkciók feloldásához és a fejlesztés támogatásához.</string>
+    <string name="upgrade_screen_see_options_action">Tekintsd meg a frissítési lehetőségeket</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Tekintsd meg a Pro státuszod és kezeld a frissítésed</string>
 </resources>

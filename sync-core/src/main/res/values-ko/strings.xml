@@ -30,7 +30,24 @@
     <string name="sync_connector_paused_label">동기화 일시정지</string>
     <string name="sync_connector_paused_error_label">커넥터 일시 중지</string>
     <string name="sync_connector_paused_error_desc">이 커넥터는 일시 중지되었습니다. 이 작업을 수행하려면 다시 시작하세요.</string>
+    <string name="sync_connector_account_label">계정</string>
+    <string name="sync_connector_progress_syncing">동기화 중...</string>
+    <string name="sync_connector_progress_sync_queued">동기화 대기 중...</string>
+    <string name="sync_connector_progress_pausing">동기화 일시정지 중...</string>
+    <string name="sync_connector_progress_pause_queued">일시정지 대기 중...</string>
+    <string name="sync_connector_progress_resuming">동기화 재개 중...</string>
+    <string name="sync_connector_progress_resume_queued">재개 대기 중...</string>
+    <string name="sync_connector_progress_resetting">데이터 재설정 중...</string>
+    <string name="sync_connector_progress_reset_queued">재설정 대기 중...</string>
+    <string name="sync_connector_progress_device_updating">기기 업데이트 중...</string>
+    <string name="sync_connector_progress_device_update_queued">기기 업데이트 대기 중...</string>
     <string name="sync_synced_devices_label">동기화된 기기</string>
+    <string name="sync_link_device_action">기기 연결</string>
+    <string name="sync_devices_sort_label">정렬</string>
+    <string name="sync_devices_sort_date_added_label">추가 날짜 순</string>
+    <string name="sync_devices_sort_last_seen_label">마지막으로 본 시간 순</string>
+    <string name="sync_devices_sort_name_label">이름 순</string>
+    <string name="sync_devices_sort_app_version_label">앱 버전 순</string>
     <plurals name="sync_stale_period_days">
         <item quantity="other">%d일</item>
     </plurals>

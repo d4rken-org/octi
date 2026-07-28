@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Модуль метаданих</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Запущено %1$s</string>
+    <string name="module_meta_detail_label_label">Назва</string>
+    <string name="module_meta_detail_manufacturer_label">Виробник</string>
+    <string name="module_meta_detail_model_label">Модель</string>
+    <string name="module_meta_detail_device_type_label">Тип пристрою</string>
+    <string name="module_meta_detail_device_type_phone">Телефон</string>
+    <string name="module_meta_detail_device_type_tablet">Планшет</string>
+    <string name="module_meta_detail_device_type_desktop">Комп\'ютер</string>
+    <string name="module_meta_detail_device_type_browser">Браузер</string>
+    <string name="module_meta_detail_device_type_unknown">Невідомо</string>
+    <string name="module_meta_detail_os_label">Операційна система</string>
+    <string name="module_meta_detail_android_version_label">Версія Android</string>
+    <string name="module_meta_detail_api_level_label">Рівень API</string>
+    <string name="module_meta_detail_security_patch_label">Патч безпеки</string>
+    <string name="module_meta_detail_booted_label">Запущено</string>
+    <string name="module_meta_detail_octi_version_label">Версія Octi</string>
+    <string name="module_meta_detail_git_sha_label">Коміт збірки</string>
+    <string name="module_meta_detail_device_id_label">ID пристрою</string>
+    <string name="module_meta_detail_last_updated_label">Останнє оновлення</string>
 </resources>

@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Modul meta</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Běží %1$s</string>
+    <string name="module_meta_detail_label_label">Popisek</string>
+    <string name="module_meta_detail_manufacturer_label">Výrobce</string>
+    <string name="module_meta_detail_model_label">Model</string>
+    <string name="module_meta_detail_device_type_label">Typ zařízení</string>
+    <string name="module_meta_detail_device_type_phone">Telefon</string>
+    <string name="module_meta_detail_device_type_tablet">Tablet</string>
+    <string name="module_meta_detail_device_type_desktop">Počítač</string>
+    <string name="module_meta_detail_device_type_browser">Prohlížeč</string>
+    <string name="module_meta_detail_device_type_unknown">Neznámá</string>
+    <string name="module_meta_detail_os_label">Operační systém</string>
+    <string name="module_meta_detail_android_version_label">Verze Androidu</string>
+    <string name="module_meta_detail_api_level_label">Úroveň API</string>
+    <string name="module_meta_detail_security_patch_label">Bezpečnostní záplata</string>
+    <string name="module_meta_detail_booted_label">Spuštěno</string>
+    <string name="module_meta_detail_octi_version_label">Verze Octi</string>
+    <string name="module_meta_detail_git_sha_label">Commit buildu</string>
+    <string name="module_meta_detail_device_id_label">ID zařízení</string>
+    <string name="module_meta_detail_last_updated_label">Poslední aktualizace</string>
 </resources>

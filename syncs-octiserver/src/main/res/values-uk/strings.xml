@@ -29,6 +29,7 @@
     <string name="sync_octiserver_add_create_account_title">Створити акаунт?</string>
     <string name="sync_octiserver_add_create_account_desc">На цьому сервері буде створено новий зашифрований обліковий запис для синхронізації.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Цей обліковий запис потребує Octi %1$s або новішої версії. Оновіть цей пристрій або видаліть його з облікового запису.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Цей пристрій не підтримує режим шифрування, який використовує цей акаунт (%1$s). Зв\'яжіться з розробником цього пристрою.</string>
     <string name="sync_octiserver_legacy_encryption_account">Спільний доступ до файлів недоступний на цьому пристрої, оскільки цей обліковий запис використовує застаріле шифрування. Створіть новий обліковий запис на оновленому пристрої та переприєднайте інші пристрої, щоб використовувати спільний доступ до файлів.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Несумісне шифрування</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Спільний доступ до файлів недоступний</string>

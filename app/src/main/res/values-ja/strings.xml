@@ -17,6 +17,10 @@
     <string name="onboarding_privacy_subtitle">プライバシーポリシー</string>
     <string name="onboarding_privacy_body1">Octi は無広告で、ユーザーデータの販売もしません。</string>
     <string name="onboarding_privacy_sync_explanation">データはGoogle DriveまたはOcti Serverを通じて同期されます。Octiは同期されたデータにアクセスできません。</string>
+    <string name="onboarding_connect_title">デバイスを接続してください</string>
+    <string name="onboarding_connect_body1">Octiはあなたの他のデバイスで何が起きているかを表示します — バッテリー、WiFi、クリップボードなど。</string>
+    <string name="onboarding_connect_body2">そのためには、Octiを2番目のデバイスにインストールし、同期サービスを通じて接続する必要があります。2番目のデバイスがなければ、見るべきものはほとんどありません。</string>
+    <string name="onboarding_connect_setup_action">同期を設定</string>
     <string name="updatecheck_setting_enabled_label">更新を確認</string>
     <string name="updatecheck_setting_enabled_explanation">Octi の更新を確認して、新しいバージョンが利用可能かどうかを通知できるようにします。</string>
     <string name="debug_debuglog_size_label">サイズ</string>
@@ -46,6 +50,10 @@
     <string name="debug_debuglog_short_recording_stop_action">とにかく停止</string>
     <string name="onboarding_setupsync_title">同期の設定</string>
     <string name="onboarding_setupsync_message">現在、このデバイスのみ表示されています。Octi のインストール間を接続するには、共通の同期サービスを設定してください。</string>
+    <string name="dashboard_syncsetup_setup_action">設定</string>
+    <string name="dashboard_syncedalone_card_title">次に2番目のデバイスを追加</string>
+    <string name="dashboard_syncedalone_card_body">同期の準備はできていますが、Octiはこのデバイスのみを認識しています。他のデバイスにOctiをインストールし、そこで「このデバイスを追加」を選択してください。</string>
+    <string name="dashboard_syncedalone_card_action">デバイスを追加</string>
     <string name="settings_privacy_policy_label">プライバシーポリシー</string>
     <string name="settings_privacy_policy_desc">責任を持ってデータを取り扱います。</string>
     <string name="settings_licenses_label">ライセンス</string>
@@ -59,6 +67,17 @@
     <string name="changelog_label">更新履歴</string>
     <string name="settings_acknowledgements_label">謝辞</string>
     <string name="documentation_label">ドキュメント</string>
+    <string name="settings_ecosystem_label">Octiのその他の使用方法</string>
+    <string name="settings_ecosystem_desc">Web、デスクトップ、セルフホストの同期</string>
+    <string name="settings_ecosystem_header_desc">ブラウザまたはデスクトップアプリからOctiを使用し、Octi Serverを通じて接続します。</string>
+    <string name="settings_ecosystem_web_label">Octi Web</string>
+    <string name="settings_ecosystem_web_desc">任意のブラウザからOctiを使用</string>
+    <string name="settings_ecosystem_web_source_label">Octi Web（ソース）</string>
+    <string name="settings_ecosystem_web_source_desc">ソースを表示し、セルフホスティング手順を表示</string>
+    <string name="settings_ecosystem_desktop_label">Octi Desktop</string>
+    <string name="settings_ecosystem_desktop_desc">Windows、macOS、Linuxのネイティブクライアント</string>
+    <string name="settings_ecosystem_server_label">Octi Server</string>
+    <string name="settings_ecosystem_server_desc">独自の同期バックエンドをセルフホストする</string>
     <string name="help_translate_label">翻訳</string>
     <string name="help_translate_description">このアプリの翻訳を手伝ってください。</string>
     <string name="issue_tracker_label">Issue tracker</string>
@@ -78,8 +97,25 @@
     <string name="sync_account_label">アカウント</string>
     <string name="sync_services_label">デバイスを同期</string>
     <string name="sync_add_label">同期するデバイスを追加</string>
+    <string name="sync_setup_intent_label">同期をセットアップ</string>
+    <string name="sync_setup_intent_new_title">新しい同期をセットアップ</string>
+    <string name="sync_setup_intent_new_desc">新しいアカウントを作成します。最初のデバイスでこれを選択してください。</string>
+    <string name="sync_setup_intent_link_title">このデバイスを追加</string>
+    <string name="sync_setup_intent_link_desc">別のデバイスで既に使用しているOctiセットアップをリンク</string>
+    <string name="sync_add_pick_create_header">これらはOctiが現在対応している同期サービスです。開始するものを1つ選んでください — 後で追加したり切り替えたりできます。</string>
+    <string name="sync_add_pick_link_header">他のデバイスではどの同期サービスを使用していますか？デバイス同士は共有されたサービスでのみ互いを認識できます。</string>
+    <string name="sync_add_link_none_available">お使いの同期サービスはどれもまだデバイスのリンクに対応していません</string>
     <string name="sync_add_help_desc">Octi のインストール環境での情報交換には同期サービスが必要です。\n\nデバイスは共通の同期サービスを使用している場合のみ、相互で確認ができます！</string>
     <string name="sync_device_id_label">デバイスID</string>
+    <string name="sync_device_id_copied_toast">デバイスIDをコピーしました</string>
+    <string name="sync_device_model_label">モデル</string>
+    <string name="sync_device_android_version_label">Androidバージョン</string>
+    <string name="sync_device_os_label">オペレーティングシステム</string>
+    <string name="sync_device_security_patch_label">セキュリティパッチ</string>
+    <string name="sync_device_booted_label">起動日時</string>
+    <string name="sync_device_octi_version_label">Octiバージョン</string>
+    <string name="sync_device_added_label">追加日時</string>
+    <string name="sync_device_last_seen_short_label">最終確認</string>
     <plurals name="general_devices_count_label">
         <item quantity="other">%d 台のデバイス</item>
     </plurals>
@@ -206,4 +242,7 @@
     <string name="dashboard_device_edit_card_action">カードを編集</string>
     <string name="dashboard_device_move_up_action">上に移動</string>
     <string name="dashboard_device_move_down_action">下に移動</string>
+    <string name="dashboard_device_remove_action">デバイスを削除</string>
+    <string name="dashboard_device_remove_picker_title">同期サービスを選択</string>
+    <string name="dashboard_device_remove_picker_message">このデバイスは複数のサービスを通じて同期されています。どのサービスから削除するかを選択してください — 次の画面で確認します。</string>
 </resources>

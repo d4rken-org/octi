@@ -29,6 +29,7 @@ Aangesien beide die app en die bediener nog verbeter word, kan dit minder stabie
     <string name="sync_octiserver_add_create_account_title">Skep rekening?</string>
     <string name="sync_octiserver_add_create_account_desc">\'n Nuwe geënkripteerde sinkronisasierekening sal op hierdie bediener geskep word.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Hierdie rekening vereis Octi %1$s of nuwer. Werk hierdie toestel op of verwyder dit van die rekening.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Hierdie toestel ondersteun nie die enkripsiewerkingswyse wat hierdie rekening gebruik nie (%1$s). Neem kontak op met die toestel se onderhouder.</string>
     <string name="sync_octiserver_legacy_encryption_account">Lêerdeling is nie beskikbaar op hierdie toestel nie omdat hierdie rekening ou enkripsie gebruik. Skep \'n nuwe rekening op \'n opgedateerde toestel en koppel jou ander toestelle weer om lêerdeling te gebruik.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Onversoenbare enkripsie</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Lêerdeling nie beskikbaar nie</string>

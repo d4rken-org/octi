@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play er utilgængelig</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi kan ikke oprette forbindelse til Google Play. Er Google Play installeret og opdateret? Er din Google-konto logget ind? Prøv at rydde cachen for Google Play-appen og genstart din enhed.</string>
     <string name="upgrades_no_purchases_found_check_account">Ingen køb fundet. Bruger du den rigtige konto?</string>
+    <string name="upgrades_already_owned_error_title">Allerede købt</string>
+    <string name="upgrades_already_owned_error_description">Google Play rapporterer, at du allerede ejer denne opgradering. Brug \'Gendan køb\' for at låse den op.</string>
     <string name="upgrades_dashcard_title">Få Octi Pro</string>
     <string name="upgrades_dashcard_body">Opgrader for at låse op for flere funktioner og støtte udviklingen!</string>
     <string name="upgrades_dashcard_upgrade_action">Opgrader</string>
@@ -12,19 +16,80 @@
         <item quantity="other">Gratisversionen er begrænset til %1$d enheder.</item>
     </plurals>
     <string name="upgrade_screen_title">Få Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Navigér op</string>
+    <string name="upgrade_screen_progress_loading">Indlæser…</string>
     <string name="upgrade_screen_preamble">Octi har ingen reklamer og sælger ikke brugerdata. Mit arbejde finansieres af dig ❤️.</string>
     <string name="upgrade_screen_benefits_title">Fordele</string>
     <string name="upgrade_screen_benefits_body">• Mere end 3 enheder 💯\n• Forskellige temaer 🎨\n• Flere muligheder ⚙️\n• Ekstra synkroniseringsservere🖥️️\n• Fortsat udvikling ☕\n• En motiveret udvikler 🧙</string>
     <string name="upgrade_screen_how_title">Muligheder</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Du kan vælge mellem et engangskøb og et billigere årligt abonnement. Begge kan annulleres når som helst.\nDe samme funktioner, bare forskellige prismodeller.</string>
+    <string name="upgrade_screen_how_trial_hint">Abonnementet starter med en gratis 14-dages prøveperiode, hvorefter du faktureres én gang om året.</string>
     <string name="upgrade_screen_subscription_trial_action">Start gratis 14-dages prøveperiode</string>
     <string name="upgrade_screen_subscription_action">Abonner</string>
     <string name="upgrade_screen_subscription_action_hint">Abonnementet koster %s om året.</string>
     <string name="upgrade_screen_iap_action">Engangskøb</string>
     <string name="upgrade_screen_iap_action_hint">Engangskøbet koster %s.</string>
     <string name="upgrade_screen_thanks_toast">Du er den bedste! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Opgraderingsmuligheder</string>
+    <string name="upgrade_screen_offers_or">eller</string>
+    <string name="upgrade_screen_offers_body">Begge låser de samme funktioner op – vælg den pris, du foretrækker. Annuller når som helst.</string>
+    <string name="upgrade_screen_subscription_offer_title">Årligt abonnement</string>
+    <string name="upgrade_screen_subscription_offer_body">Starter med en gratis 14-dages prøveperiode, derefter faktureres en gang om året, indtil du annullerer.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Faktureret en gang om året, indtil du annullerer.</string>
+    <string name="upgrade_screen_iap_offer_title">Engangskøb</string>
+    <string name="upgrade_screen_iap_offer_body">Betal en gang, din for evigt – intet abonnement.</string>
     <string name="upgrade_screen_restore_purchase_action">Gendan køb</string>
+    <string name="upgrade_screen_restore_banner_title">Købte du allerede Pro?</string>
+    <string name="upgrade_screen_restore_banner_body">Det ser ud til, at du opgraderede til Pro på denne enhed før. Hvis du stadig ejer opgraderingen, vil gendannelse låse den op igen.</string>
     <string name="upgrade_screen_restore_purchase_message">Din opgradering gælder på tværs af enheder på samme Google-konto.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Fejlfindingstips for ikke-genkendte opgraderinger:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play Butik-synkronisering kan tage tid. Prøv at genstarte, rydde Google Play-cachen eller vent lidt.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Flere konti kan forvirre Google Play. Log af andre konti, eller installer via Google Play-webstedet, hvilket tvinger tilknytning til en bestemt konto.</string>
+    <string name="upgrade_screen_restore_success_message">Køb gendannet – tak!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Har du allerede købt Pro på denne konto? Bed Google Play om at kontrollere denne apps køb igen.</string>
+    <string name="upgrade_screen_restore_status_title">Købsstatus</string>
+    <string name="upgrade_screen_restore_status_body">Kontroller dine køb igen med Google Play, hvis din Pro-status nogensinde ser forældet ud.</string>
+    <string name="upgrade_screen_restore_checked_message">Vi bad Google Play om at kontrollere denne apps køb igen, men kunne ikke bekræfte ét for den aktuelle konto.</string>
+    <string name="upgrade_screen_restore_contact_hint">Stadig fast? Kontakt support, og vi hjælper dig med at løse det.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Du er Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Tak fordi du støtter Octi! Dine Pro-funktioner er låst op.</string>
+    <string name="upgrade_screen_owned_iap_title">Livsvarigt køb</string>
+    <string name="upgrade_screen_owned_iap_body">Du ejer engangskøbet af Pro. Det udløber aldrig.</string>
+    <string name="upgrade_screen_owned_sub_title">Abonnement</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Dit Pro-abonnement er aktivt og fornyes automatisk.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Dit Pro-abonnement er aktivt, men indstillet til ikke at fornyes. Det forbliver aktivt indtil slutningen af den aktuelle periode.</string>
+    <string name="upgrade_screen_owned_both_title">Du ejer begge</string>
+    <string name="upgrade_screen_owned_both_warning">Du ejer både abonnementet og engangskøbet. For at undgå at betale to gange, annuller abonnementet i Google Play – du beholder Pro gennem det livsvarige køb.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Du er Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Tak for købet af %1$s! Dine Pro-funktioner er låst op og udløber aldrig.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Tak for abonnementet på %1$s! Dine Pro-funktioner er låst op.</string>
+    <string name="upgrade_screen_manage_subscription_action">Administrer abonnement</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Skift til engangskøb</string>
+    <string name="upgrade_screen_switch_body">Foretrækker du at betale en gang i stedet for at abonnere? Du kan købe engangskøbet af Pro og stoppe abonnementet.</string>
+    <string name="upgrade_screen_switch_locked_note">Dit abonnement fornyes stadig automatisk. Annuller det først i Google Play, derefter kommer du tilbage for at købe engangskøbet. At købe det her annullerer eller refunderer ikke abonnementet – brug den samme Google-konto.</string>
+    <string name="upgrade_screen_switch_action">Køb engangskøb (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Abonnement stadig aktivt</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Dit abonnement er stadig indstillet til at fornyes. Annuller det først i Google Play, så du ikke bliver debiteret to gange, derefter køb engangskøbet. Dette refunderer ikke abonnementet.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Kunne ikke bekræfte abonnement</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Play svarede ikke i tide, så vi kan ikke sikkert bekræfte din abonnementstatus. Prøv igen om et øjeblik.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro er stadig aktivt</string>
+    <string name="upgrade_screen_grace_body">Vi bekræfter dit køb med Google Play. Dine Pro-funktioner forbliver låst op i mellemtiden.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Vi kan stadig ikke bekræfte dit køb med Google Play. Dine Pro-funktioner forbliver låst op for nu. Prøv at gendanne for at forbinde det igen.</string>
+    <string name="upgrade_screen_contact_support_action">Kontakt support</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Du er på den gratis version</string>
+    <string name="upgrade_screen_free_status_body">Opgrader til Octi Pro for at få ekstra funktioner og støtte udvikling.</string>
+    <string name="upgrade_screen_see_options_action">Se opgraderingsmuligheder</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Se din Pro-status og administrer din opgradering</string>
 </resources>

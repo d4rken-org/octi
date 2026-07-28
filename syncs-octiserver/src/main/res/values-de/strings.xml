@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Erstelle ein Konto?</string>
     <string name="sync_octiserver_add_create_account_desc">Auf diesem Server wird ein neues verschlüsseltes Synchronisierungskonto erstellt.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Dieses Konto erfordert Octi %1$s oder neuer. Aktualisiere dieses Gerät oder entferne es aus dem Konto.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Dieses Gerät unterstützt den Verschlüsselungsmodus nicht, den dieses Konto verwendet (%1$s). Kontaktiere den Betreuer dieses Geräts.</string>
     <string name="sync_octiserver_legacy_encryption_account">Die Dateifreigabe ist auf diesem Gerät nicht verfügbar, da dieses Konto eine veraltete Verschlüsselung verwendet. Erstelle ein neues Konto auf einem aktualisierten Gerät und verknüpfe deine anderen Geräte neu, um die Dateifreigabe zu nutzen.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Inkompatible Verschlüsselung</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Dateifreigabe nicht verfügbar</string>

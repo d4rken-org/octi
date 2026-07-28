@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play kullanılamıyor</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi Google Play\'e bağlanamıyor. Google Play yüklü ve güncel mi? Google Hesabınız ile oturum açtınız mı? Google Play uygulamasının önbelleğini temizlemeyi ve cihazınızı yeniden başlatmayı deneyin.</string>
     <string name="upgrades_no_purchases_found_check_account">Satın alma bulunamadı. Doğru hesabı mı kullanıyorsunuz?</string>
+    <string name="upgrades_already_owned_error_title">Zaten satın alındı</string>
+    <string name="upgrades_already_owned_error_description">Google Play, bu yükseltmeyi zaten sahip olduğunuzu bildiriyor. Kilidini açmak için \'Satın Alma İşlemini Geri Yükle\' seçeneğini kullanın.</string>
     <string name="upgrades_dashcard_title">Octi Pro Al</string>
     <string name="upgrades_dashcard_body">Ek özelliklerin kilidini açmak ve geliştirmeyi desteklemek için yükseltin!</string>
     <string name="upgrades_dashcard_upgrade_action">Yükselt</string>
@@ -12,19 +16,81 @@
         <item quantity="other">Ücretsiz sürüm %1$d cihazla sınırlıdır.</item>
     </plurals>
     <string name="upgrade_screen_title">Octi Pro Al</string>
+    <string name="upgrade_screen_navigate_up">Yukarı git</string>
+    <string name="upgrade_screen_progress_loading">Yükleniyor…</string>
     <string name="upgrade_screen_preamble">Octi\'de reklam yoktur ve kullanıcı verilerini satmaz. Çalışmalarım sizin tarafınızdan finanse edilmektedir ❤️.</string>
     <string name="upgrade_screen_benefits_title">Avantajlar</string>
     <string name="upgrade_screen_benefits_body">- 3\'ten fazla cihaz 💯\n- Farklı temalar 🎨\n- Daha fazla seçenek ⚙️\n- Ekstra senkronizasyon sunucuları🖥️️\n- Sürekli devam eden geliştirme ☕\n- Motive olmuş bir geliştirici 🧙</string>
     <string name="upgrade_screen_how_title">Şeçenekler</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Tek seferlik bir satın alma veya daha ucuz yıllık abonelik arasından seçim yapabilirsiniz. Her ikisi de istediğiniz zaman iptal edilebilir.
+Aynı özellikler, sadece farklı fiyatlandırma modelleri.</string>
+    <string name="upgrade_screen_how_trial_hint">Abonelik, ücretsiz 14 günlük deneme süresiyle başlar, bundan sonra yılda bir kez ücretlendirilirsiniz.</string>
     <string name="upgrade_screen_subscription_trial_action">14 günlük ücretsiz denemeyi başlatın</string>
     <string name="upgrade_screen_subscription_action">Abone ol</string>
     <string name="upgrade_screen_subscription_action_hint">Abonelik ücreti yıllık %s\'dir.</string>
     <string name="upgrade_screen_iap_action">Tek seferlik satın alma</string>
     <string name="upgrade_screen_iap_action_hint">Tek seferlik satın alma ücreti %s.</string>
     <string name="upgrade_screen_thanks_toast">Çok teşekkürler! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Yükseltme seçenekleri</string>
+    <string name="upgrade_screen_offers_or">veya</string>
+    <string name="upgrade_screen_offers_body">Her ikisi de aynı özellikleri açar — istediğiniz fiyatlandırmayı seçin. Dilediğiniz zaman iptal edebilirsiniz.</string>
+    <string name="upgrade_screen_subscription_offer_title">Yıllık abonelik</string>
+    <string name="upgrade_screen_subscription_offer_body">Ücretsiz 14 günlük deneme sürümü ile başlar, sonra iptal edilene kadar yılda bir kez faturalandırılır.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">İptal edilene kadar yılda bir kez faturalandırılır.</string>
+    <string name="upgrade_screen_iap_offer_title">Tek seferlik satın alma</string>
+    <string name="upgrade_screen_iap_offer_body">Bir kez ödeme yapın, sonsuza kadar sizin — abonelik yok.</string>
     <string name="upgrade_screen_restore_purchase_action">Satın alma işlemini geri yükle</string>
+    <string name="upgrade_screen_restore_banner_title">Zaten Pro\'yu satın aldınız mı?</string>
+    <string name="upgrade_screen_restore_banner_body">Bu cihazda daha önce Pro\'ya yükseltmiş görünüyorsunuz. Yükseltmeye hâlâ sahipseniz, geri yüklemek onu tekrar açacaktır.</string>
     <string name="upgrade_screen_restore_purchase_message">Yükseltmeniz aynı Google hesabındaki cihazlar arasında geçerlidir.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Tanınmayan yükseltmeler için sorun giderme ipuçları:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play Store senkronizasyonu zaman alabilir. Yeniden başlatmayı, Google Play önbelleğini temizlemeyi deneyin veya sadece bekleyin.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Birden fazla hesap Google Play\'i karıştırabilir. Diğer hesaplardan çıkış yapın veya belirli bir hesapla ilişkilendirmeye zorlayan Google Play web sitesi üzerinden yükleyin.</string>
+    <string name="upgrade_screen_restore_success_message">Satın alma geri yüklendi — teşekkür ederiz!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Bu hesapta zaten Pro satın aldınız mı? Bu uygulamanın satın almalarını yeniden kontrol etmesi için Google Play\'den isteyin.</string>
+    <string name="upgrade_screen_restore_status_title">Satın alma durumu</string>
+    <string name="upgrade_screen_restore_status_body">Pro durumunuz güncel görünmüyorsa, satın almalarınızı Google Play ile yeniden kontrol edin.</string>
+    <string name="upgrade_screen_restore_checked_message">Bu uygulamanın satın almalarını yeniden kontrol etmesi için Google Play\'den istedik ancak mevcut hesap için birini doğrulayamadık.</string>
+    <string name="upgrade_screen_restore_contact_hint">Hâlâ sorun mu yaşıyorsunuz? Destek ekibiyle iletişime geçin, sorunu birlikte çözelim.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Octi Pro\'sunuz 🎉</string>
+    <string name="upgrade_screen_owned_body">Octi\'yi desteklediğiniz için teşekkürler! Pro özellikleriniz açıldı.</string>
+    <string name="upgrade_screen_owned_iap_title">Ömür Boyu Satın Alma</string>
+    <string name="upgrade_screen_owned_iap_body">Tek seferlik Pro satın alımına sahipsiniz. Hiçbir zaman süresi dolmaz.</string>
+    <string name="upgrade_screen_owned_sub_title">Abonelik</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Pro aboneliğiniz aktif ve otomatik olarak yenileniyor.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Pro aboneliğiniz aktif ama otomatik yenileme kapatıldı. Geçerli dönemin sonuna kadar aktif kalacak.</string>
+    <string name="upgrade_screen_owned_both_title">Her ikisine de sahipsiniz</string>
+    <string name="upgrade_screen_owned_both_warning">Hem aboneliğe hem de tek seferlik satın almaya sahipsiniz. İki kez ödeme yapmamak için Google Play\'de aboneliği iptal edin — ömür boyu satın alma yoluyla Pro\'ya sahip olmaya devam edersiniz.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Siz Octi Pro\'sunuz 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Satın aldığınız %1$s için teşekkür ederiz! Pro özellikleriniz açık ve asla süresi dolmaz.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Abone olduğunuz %1$s için teşekkür ederiz! Pro özellikleriniz açık.</string>
+    <string name="upgrade_screen_manage_subscription_action">Aboneliği Yönetin</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Tek Seferlik Satın Almaya Geçin</string>
+    <string name="upgrade_screen_switch_body">Abone olmak yerine bir kez ödemeyi mi tercih edersiniz? Tek seferlik Pro satın alımını satın alabilir ve aboneliği iptal edebilirsiniz.</string>
+    <string name="upgrade_screen_switch_locked_note">Aboneliğiniz hâlâ otomatik olarak yenilenmektedir. Önce Google Play\'de iptal edin, ardından tek seferlik satın alma için geri dönün. Burada satın almak aboneliği iptal etmez veya para iadesi yapmaz — aynı Google hesabını kullanın.</string>
+    <string name="upgrade_screen_switch_action">Tek Seferlik Satın Al (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Abonelik Hâlâ Etkin</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Aboneliğiniz hâlâ yenilenecek şekilde ayarlanmıştır. Önce Google Play\'de iptal edin, böylece iki kez ücretlendirilmezsiniz, ardından tek seferlik satın alma yapın. Bu işlem aboneliğin para iadesini içermez.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Abonelik doğrulanamadı</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Play zamanında yanıt vermedi, bu nedenle abonelik durumunuzu güvenle doğrulayamıyoruz. Lütfen bir an sonra tekrar deneyin.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro hâlâ etkin</string>
+    <string name="upgrade_screen_grace_body">Satın alımınızı Google Play ile doğruluyoruz. Pro özellikleriniz bu arada açık kalır.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Satın alımınızı Google Play ile hâlâ doğrulayamıyoruz. Pro özellikleriniz şimdilik açık kalır. Yeniden bağlanmak için geri yüklemeyi deneyin.</string>
+    <string name="upgrade_screen_contact_support_action">Desteğe başvurun</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Ücretsiz sürümü kullanıyorsunuz</string>
+    <string name="upgrade_screen_free_status_body">Octi Pro\'ya yükseltin, ek özelliklerin kilidini açın ve geliştirmeyi destekleyin.</string>
+    <string name="upgrade_screen_see_options_action">Yükseltme seçeneklerini görün</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Pro durumunuzu görün ve yükseltmenizi yönetin</string>
 </resources>

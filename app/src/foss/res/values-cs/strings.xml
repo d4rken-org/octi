@@ -21,4 +21,15 @@
     <string name="upgrade_screen_sponsor_action_hint">Alternativou jsou reklamy, analytika a Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Děkujeme vám za podporu vývoje open-source ❤️</string>
     <string name="upgrade_screen_sponsor_too_fast_msg">Už jste zpět? Vaše podpora udržuje Octi naživu!</string>
+    <!-- Supporter / status (manage entry) -->
+    <string name="upgrade_screen_supporter_title">Jste podporovatel ❤️</string>
+    <string name="upgrade_screen_supporter_body">Děkujeme za podporu vývoje Octi s otevřeným zdrojovým kódem!</string>
+    <string name="upgrade_screen_supporter_since">Podporovatel od %1$s</string>
+    <string name="upgrade_screen_open_sponsors_action">Otevřít GitHub Sponsors</string>
+    <string name="upgrade_screen_free_status_title">Používáte bezplatnou verzi</string>
+    <string name="upgrade_screen_free_status_body">Staňte se podporovatelem, abyste odemkli další funkce a podpořili pokračující vývoj.</string>
+    <string name="upgrade_screen_see_options_action">Zobrazit možnosti upgradu</string>
+    <!-- Settings status row (foss) -->
+    <string name="settings_upgrade_status_title">Octi FOSS</string>
+    <string name="settings_upgrade_status_desc">Zobrazit stav podporovatele</string>
 </resources>

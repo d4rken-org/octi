@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">Escopo de dados do app</string>
     <string name="sync_gdrive_type_appdata_description">Os dados são armazenados no Google Drive. Esta variante específica usa o escopo \"app-data\". O acesso é concedido apenas a uma nova pasta exclusiva para este app. A pasta não é visível no seu drive. É semelhante a como funcionam os backups do WhatsApp.</string>
     <string name="sync_gdrive_add_label">Adicionar novo Google Drive</string>
+    <string name="sync_gdrive_link_label">Ligar este dispositivo</string>
+    <string name="sync_gdrive_add_same_account_hint">Utilize a mesma conta do Google em cada dispositivo — é isto que os liga.</string>
+    <string name="sync_gdrive_link_same_account_warning">Inicie sessão com a MESMA conta do Google que utilizou no seu outro dispositivo. Uma conta diferente cria uma cópia de segurança separada e não ligada.</string>
+    <string name="sync_gdrive_link_already_connected">Este dispositivo já está ligado a essa conta.</string>
     <string name="sync_gdrive_add_description">Clique no botão de início de sessão abaixo para configurar o acesso ao Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Redefinir todos os dados do Octi armazenados no Google Drive. Seu dispositivo permanece conectado ao Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Desconectar do Google Drive e excluir os dados relacionados a este dispositivo.</string>

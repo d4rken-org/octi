@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Créer un compte?</string>
     <string name="sync_octiserver_add_create_account_desc">Un nouveau compte de synchronisation chiffré sera créé sur ce serveur.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Ce compte nécessite Octi %1$s ou une version plus récente. Mettez à jour cet appareil ou supprimez-le du compte.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Cet appareil ne prend pas en charge le mode de chiffrement que ce compte utilise (%1$s). Contactez le responsable de cet appareil.</string>
     <string name="sync_octiserver_legacy_encryption_account">Le partage de fichiers n’est pas disponible sur cet appareil car ce compte utilise un chiffrement hérité. Créez un nouveau compte sur un appareil mis à jour et reliez à nouveau vos autres appareils pour utiliser le partage de fichiers.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Chiffrement incompatible</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Partage de fichiers indisponible</string>

@@ -17,6 +17,10 @@
     <string name="onboarding_privacy_subtitle">隱私政策</string>
     <string name="onboarding_privacy_body1">Octi 無廣告也不販賣用戶資料。</string>
     <string name="onboarding_privacy_sync_explanation">您的資料透過 Google Drive 或 Octi Server 同步。Octi 無法存取您的同步資料。</string>
+    <string name="onboarding_connect_title">連接您的設備</string>
+    <string name="onboarding_connect_body1">Octi 顯示您其他設備上發生的情況 — 電池、WiFi、剪貼簿等。</string>
+    <string name="onboarding_connect_body2">為此，Octi 需要安裝在第二台設備上並通過同步服務連接。如果沒有第二台設備，就沒有什麼可看的。</string>
+    <string name="onboarding_connect_setup_action">設定同步</string>
     <string name="updatecheck_setting_enabled_label">檢查更新</string>
     <string name="updatecheck_setting_enabled_explanation">允許 Octi 檢查應用更新，有新版時通知你。</string>
     <string name="debug_debuglog_size_label">大小</string>
@@ -46,6 +50,10 @@
     <string name="debug_debuglog_short_recording_stop_action">仍然停止</string>
     <string name="onboarding_setupsync_title">設定同步</string>
     <string name="onboarding_setupsync_message">目前你只能看到此裝置。要連接你的 Octi 安裝，請設定一個共用的同步服務。</string>
+    <string name="dashboard_syncsetup_setup_action">設定</string>
+    <string name="dashboard_syncedalone_card_title">現在新增您的第二台設備</string>
+    <string name="dashboard_syncedalone_card_body">同步已準備就緒，但 Octi 目前只看到此設備。在您的其他設備上安裝 Octi，並在那裡選擇「新增此設備」。</string>
+    <string name="dashboard_syncedalone_card_action">新增裝置</string>
     <string name="settings_privacy_policy_label">隱私政策</string>
     <string name="settings_privacy_policy_desc">負責任地處理資料。</string>
     <string name="settings_licenses_label">授權</string>
@@ -59,6 +67,17 @@
     <string name="changelog_label">更新日誌</string>
     <string name="settings_acknowledgements_label">致謝</string>
     <string name="documentation_label">文件</string>
+    <string name="settings_ecosystem_label">更多使用 Octi 的方式</string>
+    <string name="settings_ecosystem_desc">網頁、桌面和自託管同步</string>
+    <string name="settings_ecosystem_header_desc">從瀏覽器或桌面應用程式使用 Octi，通過 Octi Server 連接。</string>
+    <string name="settings_ecosystem_web_label">Octi Web</string>
+    <string name="settings_ecosystem_web_desc">從任何瀏覽器使用 Octi</string>
+    <string name="settings_ecosystem_web_source_label">Octi Web（原始碼）</string>
+    <string name="settings_ecosystem_web_source_desc">檢視原始碼和自託管說明</string>
+    <string name="settings_ecosystem_desktop_label">Octi Desktop</string>
+    <string name="settings_ecosystem_desktop_desc">Windows、macOS 和 Linux 的原生用戶端</string>
+    <string name="settings_ecosystem_server_label">Octi Server</string>
+    <string name="settings_ecosystem_server_desc">自託管您自己的同步後端</string>
     <string name="help_translate_label">翻譯</string>
     <string name="help_translate_description">幫助將本 app 翻譯為你喜愛的語言。</string>
     <string name="issue_tracker_label">問題追蹤器</string>
@@ -78,8 +97,25 @@
     <string name="sync_account_label">帳號</string>
     <string name="sync_services_label">同步服務</string>
     <string name="sync_add_label">新增同步服務</string>
+    <string name="sync_setup_intent_label">設定同步</string>
+    <string name="sync_setup_intent_new_title">設定新的同步</string>
+    <string name="sync_setup_intent_new_desc">建立新帳戶。在您的第一台設備上選擇此項。</string>
+    <string name="sync_setup_intent_link_title">新增此設備</string>
+    <string name="sync_setup_intent_link_desc">連結到您已在其他設備上使用的 Octi 設定。</string>
+    <string name="sync_add_pick_create_header">這些是 Octi 目前支援的同步服務。選擇一個開始 — 您可以稍後新增或切換。</string>
+    <string name="sync_add_pick_link_header">您的其他裝置使用哪個同步服務？裝置只能在共用服務上相互看到對方。</string>
+    <string name="sync_add_link_none_available">您的任何同步服務尚不支援連結設備。</string>
     <string name="sync_add_help_desc">要讓 Octi 安裝版本間的信息互通需有同步服務。\n\n僅同步同一服務的裝置可見！</string>
     <string name="sync_device_id_label">裝置 ID</string>
+    <string name="sync_device_id_copied_toast">設備 ID 已複製</string>
+    <string name="sync_device_model_label">型號</string>
+    <string name="sync_device_android_version_label">Android 版本</string>
+    <string name="sync_device_os_label">作業系統</string>
+    <string name="sync_device_security_patch_label">安全修補程式</string>
+    <string name="sync_device_booted_label">上次啟動</string>
+    <string name="sync_device_octi_version_label">Octi 版本</string>
+    <string name="sync_device_added_label">已新增</string>
+    <string name="sync_device_last_seen_short_label">最後查看</string>
     <plurals name="general_devices_count_label">
         <item quantity="other">%d 台裝置</item>
     </plurals>
@@ -206,4 +242,7 @@
     <string name="dashboard_device_edit_card_action">編輯卡片</string>
     <string name="dashboard_device_move_up_action">上移</string>
     <string name="dashboard_device_move_down_action">下移</string>
+    <string name="dashboard_device_remove_action">移除裝置</string>
+    <string name="dashboard_device_remove_picker_title">選擇同步服務</string>
+    <string name="dashboard_device_remove_picker_message">此裝置透過多個服務進行同步。選擇要將其移除的服務 — 您將在下一個畫面確認。</string>
 </resources>

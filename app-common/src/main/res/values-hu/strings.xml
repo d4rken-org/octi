@@ -21,6 +21,7 @@
     <string name="general_reset_action">Visszaállítás</string>
     <string name="general_disconnect_action">Leválasztás</string>
     <string name="general_upgrade_action">Frissítés</string>
+    <string name="general_upgrade_required_label">Frissítés szükséges</string>
     <string name="general_update_action">Frissítés</string>
     <string name="general_donate_action">Adományozás</string>
     <string name="general_check_action">Ellenőrzés</string>
@@ -29,6 +30,10 @@
     <string name="general_close_action">Bezár</string>
     <string name="general_continue">Folytatás</string>
     <string name="general_show_details_action">Részletek megjelenítése</string>
+    <string name="general_expand_action">Kibontás</string>
+    <string name="general_collapse_action">Összecsukás</string>
+    <string name="general_expanded_state_label">Kibontva</string>
+    <string name="general_collapsed_state_label">Összecsukva</string>
     <string name="general_minutes_label">Percek</string>
     <plurals name="general_minutes_quantity_label">
         <item quantity="one">%1$d perc</item>
@@ -50,6 +55,7 @@
     <string name="ui_theme_color_blue_label">Kék</string>
     <string name="ui_theme_color_sunset_label">Naplemente</string>
     <string name="device_x_label">Eszköz: %s</string>
+    <string name="general_sort_reverse_label">Fordított sorrend</string>
     <!-- Widget theme presets -->
     <string name="widget_theme_material_you">Material You</string>
     <string name="widget_theme_classic_green">Klasszikus zöld</string>
@@ -60,6 +66,11 @@
     <!-- Widget config -->
     <string name="widget_config_title">Widget testreszabása</string>
     <string name="widget_config_apply_action">Alkalmaz</string>
+    <string name="widget_config_upgrade_action">Frissítés Octi Pro-ra</string>
+    <string name="widget_config_pro_required_label">Ez a widget az Octi Pro verzióhoz szükséges.</string>
+    <string name="widget_config_pro_checking_label">Az Octi Pro státuszod ellenőrzése…</string>
+    <string name="widget_config_pro_error_label">Nem sikerült ellenőrizni az Octi Pro státuszod.</string>
+    <string name="widget_config_retry_action">Újra</string>
     <string name="widget_config_presets_label">Előbeállítások</string>
     <string name="widget_config_background_label">Háttérszín</string>
     <string name="widget_config_accent_label">Kiemelőszín</string>
@@ -73,6 +84,9 @@
     <string name="widget_config_devices_none_known">Még nem ismert szinkronizációs eszköz.</string>
     <string name="widget_empty_label">Nincs egyező eszköz</string>
     <string name="widget_no_sync_devices_label">Még nincs szinkronizációs eszköz</string>
+    <string name="widget_more_items">+ még %1$d</string>
+    <string name="widget_upgrade_required_title">Octi Pro szükséges</string>
+    <string name="widget_upgrade_required_action">Koppints a frissítéshez</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Nincs %1$s adat ennél az eszköznél</string>
     <string name="widget_deeplink_module_power">akkumulátor</string>

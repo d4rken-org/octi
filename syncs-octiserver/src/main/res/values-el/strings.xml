@@ -29,6 +29,7 @@
     <string name="sync_octiserver_add_create_account_title">Δημιουργία λογαριασμού?</string>
     <string name="sync_octiserver_add_create_account_desc">Θα δημιουργηθεί ένας νέος κρυπτογραφημένος λογαριασμός συγχρονισμού σε αυτόν τον διακομιστή.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Αυτός ο λογαριασμός απαιτεί Octi %1$s ή νεότερη έκδοση. Ενημερώστε αυτή τη συσκευή ή αφαιρέστε την από τον λογαριασμό.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Αυτή η συσκευή δεν υποστηρίζει τη λειτουργία κρυπτογράφησης που χρησιμοποιεί αυτός ο λογαριασμός (%1$s). Επικοινωνήστε με τον συντηρητή αυτής της συσκευής.</string>
     <string name="sync_octiserver_legacy_encryption_account">Η κοινή χρήση αρχείων δεν είναι διαθέσιμη σε αυτή τη συσκευή επειδή αυτός ο λογαριασμός χρησιμοποιεί παλαιά κρυπτογράφηση. Δημιουργήστε νέο λογαριασμό σε ενημερωμένη συσκευή και επανασυνδέστε τις άλλες συσκευές σας για να χρησιμοποιήσετε την κοινή χρήση αρχείων.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Μη συμβατή κρυπτογράφηση</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Κοινή χρήση αρχείων μη διαθέσιμη</string>

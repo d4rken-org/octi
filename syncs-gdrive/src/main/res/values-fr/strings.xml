@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">Portée des données d’applis</string>
     <string name="sync_gdrive_type_appdata_description">Les données sont placées dans le Disque Google Drive. Cette variante particulière utilise la portée « app-data ». L’accès n’est accordé qu’à un nouveau dossier, seulement pour cette appli. Le dossier n’est pas visible dans votre disque Google. Semblable au fonctionnement des sauvegardes WhatsApp.</string>
     <string name="sync_gdrive_add_label">Ajouter un nouveau Disque Google Drive</string>
+    <string name="sync_gdrive_link_label">Relier cet appareil</string>
+    <string name="sync_gdrive_add_same_account_hint">Utilisez le même compte Google sur chaque appareil — c’est ce qui les relie.</string>
+    <string name="sync_gdrive_link_same_account_warning">Connectez-vous avec le MÊME compte Google que vous avez utilisé sur votre autre appareil. Un compte différent crée une sauvegarde séparée et non reliée.</string>
+    <string name="sync_gdrive_link_already_connected">Cet appareil est déjà relié à ce compte.</string>
     <string name="sync_gdrive_add_description">Cliquez sur le bouton de « Se connecter » ci-dessous pour configurer l’accès au Disque Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Réinitialiser toutes les données Octi stockées sur le Disque Google Drive. Votre appareil reste connecté au Disque Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Vous déconnecter du Disque Google Drive et supprimer les données associées à cet appareil.</string>

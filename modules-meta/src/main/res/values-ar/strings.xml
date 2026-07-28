@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">وحدة التعريف</string>
-    <string name="module_meta_android_name_x_label">أندرويد %s</string>
+    <string name="module_meta_android_name_x_label">أندرويد %1$s</string>
+    <string name="module_meta_uptime_label">تشغيل منذ %1$s</string>
+    <string name="module_meta_detail_label_label">التسمية</string>
+    <string name="module_meta_detail_manufacturer_label">الشركة المصنعة</string>
+    <string name="module_meta_detail_model_label">الطراز</string>
+    <string name="module_meta_detail_device_type_label">نوع الجهاز</string>
+    <string name="module_meta_detail_device_type_phone">هاتف</string>
+    <string name="module_meta_detail_device_type_tablet">جهاز لوحي</string>
+    <string name="module_meta_detail_device_type_desktop">سطح المكتب</string>
+    <string name="module_meta_detail_device_type_browser">المتصفح</string>
+    <string name="module_meta_detail_device_type_unknown">غير معروف</string>
+    <string name="module_meta_detail_os_label">نظام التشغيل</string>
+    <string name="module_meta_detail_android_version_label">إصدار Android</string>
+    <string name="module_meta_detail_api_level_label">مستوى API</string>
+    <string name="module_meta_detail_security_patch_label">تصحيح الأمان</string>
+    <string name="module_meta_detail_booted_label">تم الإقلاع</string>
+    <string name="module_meta_detail_octi_version_label">إصدار Octi</string>
+    <string name="module_meta_detail_git_sha_label">معرف الإصدار (Commit)</string>
+    <string name="module_meta_detail_device_id_label">معرف الجهاز</string>
+    <string name="module_meta_detail_last_updated_label">آخر تحديث</string>
 </resources>

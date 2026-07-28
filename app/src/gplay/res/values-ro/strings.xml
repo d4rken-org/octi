@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play indisponibil</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi nu se poate conecta la Google Play. Este Google Play instalat și actualizat? Contul tău Google este conectat? Încearcă să ștergi memoria cache a aplicației Google Play și să repornești dispozitivul.</string>
     <string name="upgrades_no_purchases_found_check_account">Nu au fost găsite achiziții. Folosiți contul corect?</string>
+    <string name="upgrades_already_owned_error_title">Deja cumpărat</string>
+    <string name="upgrades_already_owned_error_description">Google Play raportează că deja dețineți această actualizare. Utilizați \'Restabilire cumpărare\' pentru a o debloca.</string>
     <string name="upgrades_dashcard_title">Obține Octi Pro</string>
     <string name="upgrades_dashcard_body">Fă upgrade pentru a debloca funcții suplimentare și a sprijini dezvoltarea!</string>
     <string name="upgrades_dashcard_upgrade_action">Actualizează</string>
@@ -13,19 +17,80 @@
         <item quantity="other">Versiunea gratuită este limitată la %1$d de dispozitive.</item>
     </plurals>
     <string name="upgrade_screen_title">Obține Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Navighează sus</string>
+    <string name="upgrade_screen_progress_loading">Se încarcă…</string>
     <string name="upgrade_screen_preamble">Octi nu are reclame și nu vinde datele utilizatorilor. Munca mea este finanțată de tine ❤️.</string>
     <string name="upgrade_screen_benefits_title">Beneficii</string>
     <string name="upgrade_screen_benefits_body">• Mai mult de 3 dispozitive 💯\n• Teme diferite 🎨\n• Mai multe opțiuni ⚙️\n• Servere suplimentare de sincronizare🖥️️\n• Dezvoltare continuă ☕\n• Un dezvoltator motivat 🧙</string>
     <string name="upgrade_screen_how_title">Opțiuni</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Poți alege între o achiziție unică și un abonament anual mai ieftin. Ambele pot fi anulate oricând.\nAceleași funcții, doar modele de prețuri diferite.</string>
+    <string name="upgrade_screen_how_trial_hint">Abonamentul începe cu o probă gratuită de 14 zile, după care vei fi taxat o dată pe an.</string>
     <string name="upgrade_screen_subscription_trial_action">Începe perioada de probă gratuită de 14 zile</string>
     <string name="upgrade_screen_subscription_action">Abonare</string>
     <string name="upgrade_screen_subscription_action_hint">Abonamentul costă %s pe an.</string>
     <string name="upgrade_screen_iap_action">Achiziție unică</string>
     <string name="upgrade_screen_iap_action_hint">Achiziția unică costă %s.</string>
     <string name="upgrade_screen_thanks_toast">Ești cel mai bun! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Opțiuni de upgrade</string>
+    <string name="upgrade_screen_offers_or">sau</string>
+    <string name="upgrade_screen_offers_body">Ambele deblochează aceleași funcții — alege prețul care îți place. Anulează oricând.</string>
+    <string name="upgrade_screen_subscription_offer_title">Abonament anual</string>
+    <string name="upgrade_screen_subscription_offer_body">Începe cu o probă gratuită de 14 zile, apoi facturat o dată pe an până la anulare.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Facturat o dată pe an până la anulare.</string>
+    <string name="upgrade_screen_iap_offer_title">Achiziție unică</string>
+    <string name="upgrade_screen_iap_offer_body">Plătește o dată, al tău pentru totdeauna — fără abonament.</string>
     <string name="upgrade_screen_restore_purchase_action">Restabilește achiziția</string>
+    <string name="upgrade_screen_restore_banner_title">Ați cumpărat deja Pro?</string>
+    <string name="upgrade_screen_restore_banner_body">Se pare că ați făcut upgrade la Pro pe acest dispozitiv mai înainte. Dacă încă dețineți actualizarea, restaurarea va debloca din nou.</string>
     <string name="upgrade_screen_restore_purchase_message">Upgrade-ul tău este valabil pe dispozitivele cu același cont Google.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Sfaturi pentru depanarea upgrade-urilor nerecunoscute:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Sincronizarea cu Play Store poate dura. Încearcă să repornești, șterge cache-ul Google Play sau pur și simplu așteaptă.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Conturile multiple pot deruta Google Play. Deloghează-te de pe alte conturi sau instalează prin site-ul Google Play, ceea ce forțează asocierea cu un anumit cont.</string>
+    <string name="upgrade_screen_restore_success_message">Achiziție restabilită — mulțumesc!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Ai cumpărat deja Pro pe acest cont? Cere Google Play să re-verifice achizițiile acestei aplicații.</string>
+    <string name="upgrade_screen_restore_status_title">Starea achiziției</string>
+    <string name="upgrade_screen_restore_status_body">Re-verifică achizițiile tale cu Google Play dacă starea ta Pro apare vreodată depășit.</string>
+    <string name="upgrade_screen_restore_checked_message">Am cerut Google Play să re-verifice achizițiile acestei aplicații, dar nu am putut confirma vreuna pentru contul curent.</string>
+    <string name="upgrade_screen_restore_contact_hint">Încă blocat? Contactează asistența și te vom ajuta să rezolvi problema.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Ești Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Mulțumesc pentru suportul acordat Octi! Caracteristicile tale Pro sunt deblocate.</string>
+    <string name="upgrade_screen_owned_iap_title">Achiziție pe viață</string>
+    <string name="upgrade_screen_owned_iap_body">Deții achiziția Pro unică. Nu expiră niciodată.</string>
+    <string name="upgrade_screen_owned_sub_title">Abonament</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Abonamentul tău Pro este activ și se reînnuiește automat.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Abonamentul tău Pro este activ, dar setat să nu se reînnuiască. Rămâne activ până la sfârșitul perioadei curente.</string>
+    <string name="upgrade_screen_owned_both_title">Deții ambele</string>
+    <string name="upgrade_screen_owned_both_warning">Deții atât abonamentul cât și achiziția unică. Pentru a evita plata de două ori, anulează abonamentul în Google Play — păstrezi Pro prin achiziția pe viață.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Ești Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Mulțumesc că ai cumpărat %1$s! Caracteristicile tale Pro sunt deblocate și nu expiră niciodată.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Mulțumesc că te-ai abonat la %1$s! Caracteristicile tale Pro sunt deblocate.</string>
+    <string name="upgrade_screen_manage_subscription_action">Gestionează abonamentul</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Treci la o achiziție unică</string>
+    <string name="upgrade_screen_switch_body">Preferi să plătești o dată în loc să te abonezi? Poți cumpăra achiziția Pro unică și să oprești abonamentul.</string>
+    <string name="upgrade_screen_switch_locked_note">Abonamentul tău se reînnoiește în continuare automat. Anulează-l mai întâi în Google Play, apoi revino pentru a cumpăra achiziția unică. Cumpărarea aici nu anulează și nu returnează abonamentul — folosește același cont Google.</string>
+    <string name="upgrade_screen_switch_action">Cumpără achiziția unică (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Abonament încă activ</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Abonamentul tău este încă setat să se reînnoiască. Anulează-l mai întâi în Google Play pentru a nu fi taxat de două ori, apoi cumpără achiziția unică. Aceasta nu returnează abonamentul.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Nu am putut verifica abonamentul</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Play nu a răspuns la timp, deci nu putem confirma în siguranță starea abonamentului tău. Te rog, încearcă din nou într-un moment.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro este încă activ</string>
+    <string name="upgrade_screen_grace_body">Confirmăm achiziția ta cu Google Play. Funcțiile tale Pro rămân deblocate deocamdată.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Încă nu putem confirma achiziția ta cu Google Play. Funcțiile tale Pro rămân deblocate pentru acum. Încearcă restabilirea pentru a o reconecta.</string>
+    <string name="upgrade_screen_contact_support_action">Contactează suportul</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Ești pe versiunea gratuită</string>
+    <string name="upgrade_screen_free_status_body">Fă upgrade la Octi Pro pentru a debloca funcții suplimentare și a sprijini dezvoltarea.</string>
+    <string name="upgrade_screen_see_options_action">Vezi opțiuni de upgrade</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Vezi starea ta Pro și gestionează upgradul</string>
 </resources>

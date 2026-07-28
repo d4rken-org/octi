@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">App-data-omfang</string>
     <string name="sync_gdrive_type_appdata_description">Data plasseres i Google Drive. Denne varianten bruker \"app-data\"-omfanget. Tilgang gis kun til en ny mappe bare for denne appen. Mappen er ikke synlig på din Drive. Det ligner på hvordan WhatsApp-sikkerhetskopier fungerer.</string>
     <string name="sync_gdrive_add_label">Legg til ny Google Drive</string>
+    <string name="sync_gdrive_link_label">Koble til denne enheten</string>
+    <string name="sync_gdrive_add_same_account_hint">Bruk samme Google-konto på hver enhet – det er det som kobler dem sammen.</string>
+    <string name="sync_gdrive_link_same_account_warning">Logg inn med samme Google-konto som du brukte på den andre enheten. En annen konto oppretter en separat sikkerhetskopi som ikke er koblet.</string>
+    <string name="sync_gdrive_link_already_connected">Denne enheten er allerede koblet til denne kontoen.</string>
     <string name="sync_gdrive_add_description">Klikk på logg inn-knappen nedenfor for å sette opp Google Drive-tilgang.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Tilbakestill all Octi-data lagret på Google Drive. Enheten din forblir innlogget på Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Logg ut fra Google Drive og slett data relatert til denne enheten.</string>

@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">メタモジュール</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">稼働時間 %1$s</string>
+    <string name="module_meta_detail_label_label">ラベル</string>
+    <string name="module_meta_detail_manufacturer_label">製造元</string>
+    <string name="module_meta_detail_model_label">モデル</string>
+    <string name="module_meta_detail_device_type_label">デバイスの種類</string>
+    <string name="module_meta_detail_device_type_phone">スマートフォン</string>
+    <string name="module_meta_detail_device_type_tablet">タブレット</string>
+    <string name="module_meta_detail_device_type_desktop">デスクトップ</string>
+    <string name="module_meta_detail_device_type_browser">ブラウザ</string>
+    <string name="module_meta_detail_device_type_unknown">不明</string>
+    <string name="module_meta_detail_os_label">オペレーティングシステム</string>
+    <string name="module_meta_detail_android_version_label">Androidバージョン</string>
+    <string name="module_meta_detail_api_level_label">APIレベル</string>
+    <string name="module_meta_detail_security_patch_label">セキュリティパッチ</string>
+    <string name="module_meta_detail_booted_label">起動日時</string>
+    <string name="module_meta_detail_octi_version_label">Octiバージョン</string>
+    <string name="module_meta_detail_git_sha_label">ビルドコミット</string>
+    <string name="module_meta_detail_device_id_label">デバイスID</string>
+    <string name="module_meta_detail_last_updated_label">最終更新</string>
 </resources>

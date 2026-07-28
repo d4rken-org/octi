@@ -17,6 +17,10 @@
     <string name="onboarding_privacy_subtitle">Chính sách quyền riêng tư</string>
     <string name="onboarding_privacy_body1">Octi không có quảng cáo và không bán dữ liệu người dùng.</string>
     <string name="onboarding_privacy_sync_explanation">Dữ liệu của bạn được đồng bộ qua Google Drive hoặc Octi Server. Octi không có quyền truy cập dữ liệu đã đồng bộ của bạn.</string>
+    <string name="onboarding_connect_title">Kết nối thiết bị của bạn</string>
+    <string name="onboarding_connect_body1">Octi cho bạn thấy những gì đang diễn ra trên các thiết bị khác của bạn — pin, WiFi, clipboard và nhiều hơn nữa.</string>
+    <string name="onboarding_connect_body2">Để làm điều đó, Octi cần được cài đặt trên một thiết bị thứ hai và được kết nối thông qua dịch vụ đồng bộ. Nếu không có thiết bị thứ hai, không có gì để xem.</string>
+    <string name="onboarding_connect_setup_action">Thiết lập đồng bộ</string>
     <string name="updatecheck_setting_enabled_label">Kiểm tra cập nhật</string>
     <string name="updatecheck_setting_enabled_explanation">Cho phép Octi kiểm tra các cập nhật để thông báo cho bạn nếu có phiên bản mới hơn.</string>
     <string name="debug_debuglog_size_label">Kích thước</string>
@@ -46,6 +50,10 @@
     <string name="debug_debuglog_short_recording_stop_action">Vẫn dừng lại</string>
     <string name="onboarding_setupsync_title">Thiết lập đồng bộ hóa</string>
     <string name="onboarding_setupsync_message">Hiện tại bạn chỉ thấy thiết bị này. Để kết nối các bản cài Octi, hãy thiết lập một dịch vụ đồng bộ hóa chung.</string>
+    <string name="dashboard_syncsetup_setup_action">Thiết lập</string>
+    <string name="dashboard_syncedalone_card_title">Bây giờ hãy thêm thiết bị thứ hai của bạn</string>
+    <string name="dashboard_syncedalone_card_body">Đồng bộ hóa đã sẵn sàng, nhưng Octi chỉ nhìn thấy thiết bị này cho đến nay. Cài đặt Octi trên thiết bị khác của bạn và chọn \'Thêm thiết bị này\' ở đó.</string>
+    <string name="dashboard_syncedalone_card_action">Thêm thiết bị</string>
     <string name="settings_privacy_policy_label">Chính sách quyền riêng tư</string>
     <string name="settings_privacy_policy_desc">Quản lý dữ liệu một cách có trách nhiệm.</string>
     <string name="settings_licenses_label">Giấy phép</string>
@@ -59,6 +67,17 @@
     <string name="changelog_label">Nhật ký thay đổi</string>
     <string name="settings_acknowledgements_label">Lời cảm ơn</string>
     <string name="documentation_label">Tài liệu</string>
+    <string name="settings_ecosystem_label">Nhiều cách khác để sử dụng Octi</string>
+    <string name="settings_ecosystem_desc">Web, ứng dụng máy tính để bàn và đồng bộ hóa tự lưu trữ</string>
+    <string name="settings_ecosystem_header_desc">Sử dụng Octi từ trình duyệt web hoặc ứng dụng máy tính để bàn, được kết nối thông qua Octi Server.</string>
+    <string name="settings_ecosystem_web_label">Octi Web</string>
+    <string name="settings_ecosystem_web_desc">Sử dụng Octi từ bất kỳ trình duyệt nào</string>
+    <string name="settings_ecosystem_web_source_label">Octi Web (nguồn)</string>
+    <string name="settings_ecosystem_web_source_desc">Xem hướng dẫn nguồn và tự lưu trữ</string>
+    <string name="settings_ecosystem_desktop_label">Octi Desktop</string>
+    <string name="settings_ecosystem_desktop_desc">Ứng dụng khách gốc cho Windows, macOS và Linux</string>
+    <string name="settings_ecosystem_server_label">Octi Server</string>
+    <string name="settings_ecosystem_server_desc">Tự lưu trữ backend đồng bộ của riêng bạn</string>
     <string name="help_translate_label">Dịch thuật</string>
     <string name="help_translate_description">Hãy giúp dịch ứng dụng này sang ngôn ngữ bạn yêu thích.</string>
     <string name="issue_tracker_label">Theo dõi vấn đề</string>
@@ -78,8 +97,25 @@
     <string name="sync_account_label">Tài khoản</string>
     <string name="sync_services_label">Dịch vụ đồng bộ</string>
     <string name="sync_add_label">Thêm dịch vụ đồng bộ</string>
+    <string name="sync_setup_intent_label">Thiết lập đồng bộ</string>
+    <string name="sync_setup_intent_new_title">Thiết lập một đồng bộ mới</string>
+    <string name="sync_setup_intent_new_desc">Tạo tài khoản mới. Chọn điều này trên thiết bị đầu tiên của bạn.</string>
+    <string name="sync_setup_intent_link_title">Thêm thiết bị này</string>
+    <string name="sync_setup_intent_link_desc">Liên kết đến một thiết lập Octi mà bạn đã sử dụng trên một thiết bị khác.</string>
+    <string name="sync_add_pick_create_header">Đây là các dịch vụ đồng bộ hóa mà Octi hiện hỗ trợ. Chọn một để bắt đầu — bạn có thể thêm nhiều hơn hoặc chuyển đổi sau.</string>
+    <string name="sync_add_pick_link_header">Thiết bị khác của bạn sử dụng dịch vụ đồng bộ nào? Các thiết bị chỉ có thể nhìn thấy nhau trên một dịch vụ được chia sẻ.</string>
+    <string name="sync_add_link_none_available">Các dịch vụ đồng bộ của bạn chưa hỗ trợ liên kết thiết bị.</string>
     <string name="sync_add_help_desc">Dịch vụ đồng bộ hóa là cần thiết cho việc trao đổi thông tin giữa các bản cài Octi.\n\nCác thiết bị chỉ thấy nhau khi chúng có dịch vụ đồng bộ hóa chung!</string>
     <string name="sync_device_id_label">ID thiết bị</string>
+    <string name="sync_device_id_copied_toast">ID thiết bị đã được sao chép</string>
+    <string name="sync_device_model_label">Mô hình</string>
+    <string name="sync_device_android_version_label">Phiên bản Android</string>
+    <string name="sync_device_os_label">Hệ điều hành</string>
+    <string name="sync_device_security_patch_label">Bản vá bảo mật</string>
+    <string name="sync_device_booted_label">Khởi động</string>
+    <string name="sync_device_octi_version_label">Phiên bản Octi</string>
+    <string name="sync_device_added_label">Đã thêm</string>
+    <string name="sync_device_last_seen_short_label">Lần cuối nhìn thấy</string>
     <plurals name="general_devices_count_label">
         <item quantity="other">%d thiết bị</item>
     </plurals>
@@ -206,4 +242,7 @@
     <string name="dashboard_device_edit_card_action">Chỉnh sửa thẻ</string>
     <string name="dashboard_device_move_up_action">Di chuyển lên</string>
     <string name="dashboard_device_move_down_action">Di chuyển xuống</string>
+    <string name="dashboard_device_remove_action">Xóa bỏ Thiết bị</string>
+    <string name="dashboard_device_remove_picker_title">Chọn dịch vụ đồng bộ</string>
+    <string name="dashboard_device_remove_picker_message">Thiết bị này được đồng bộ qua nhiều dịch vụ. Chọn dịch vụ nào để xóa nó khỏi — bạn sẽ xác nhận trên màn hình tiếp theo.</string>
 </resources>

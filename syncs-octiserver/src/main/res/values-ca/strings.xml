@@ -29,6 +29,7 @@ Com que tant l’aplicació com el servidor encara s’estan millorant, pot ser 
     <string name="sync_octiserver_add_create_account_title">Crea un compte?</string>
     <string name="sync_octiserver_add_create_account_desc">Es crearà un nou compte de sincronització xifrat en aquest servidor.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Aquest compte requereix Octi %1$s o posterior. Actualitzeu aquest dispositiu o elimineu-lo del compte.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Aquest dispositiu no és compatible amb el mode d’encriptació que utilitza aquest compte (%1$s). Poseu-vos en contacte amb el responsable del dispositiu.</string>
     <string name="sync_octiserver_legacy_encryption_account">El recurs compartit de fitxers no està disponible en aquest dispositiu perquè aquest compte utilitza xifratge antic. Creeu un compte nou en un dispositiu actualitzat i torneu a vincular els altres dispositius per poder compartir fitxers.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Xifratge incompatible</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Compartició de fitxers no disponible</string>

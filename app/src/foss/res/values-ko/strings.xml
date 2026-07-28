@@ -18,4 +18,15 @@
     <string name="upgrade_screen_sponsor_action_hint">대안은 광고, 분석, Google Play입니다 🙁</string>
     <string name="upgrade_screen_thanks_toast">오픈소스 개발을 지원해 주셔서 감사합니다 ❤️</string>
     <string name="upgrade_screen_sponsor_too_fast_msg">벌써 돌아왔나요? 여러분의 지원이 Octi를 살아있게 합니다!</string>
+    <!-- Supporter / status (manage entry) -->
+    <string name="upgrade_screen_supporter_title">당신은 후원자입니다 ❤️</string>
+    <string name="upgrade_screen_supporter_body">Octi의 오픈소스 개발을 지원해 주셔서 감사합니다!</string>
+    <string name="upgrade_screen_supporter_since">%1$s부터의 후원자</string>
+    <string name="upgrade_screen_open_sponsors_action">GitHub Sponsors 열기</string>
+    <string name="upgrade_screen_free_status_title">무료 버전을 사용 중입니다</string>
+    <string name="upgrade_screen_free_status_body">후원자가 되어 추가 기능을 잠금 해제하고 지속적인 개발을 후원하세요.</string>
+    <string name="upgrade_screen_see_options_action">업그레이드 옵션 보기</string>
+    <!-- Settings status row (foss) -->
+    <string name="settings_upgrade_status_title">Octi FOSS</string>
+    <string name="settings_upgrade_status_desc">후원자 상태 보기</string>
 </resources>

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play không khả dụng</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi không thể kết nối với Google Play. Google Play đã được cài đặt và cập nhật chưa? Bạn đã đăng nhập tài khoản Google chưa? Hãy thử xóa bộ nhớ cache của ứng dụng Google Play và khởi động lại thiết bị.</string>
     <string name="upgrades_no_purchases_found_check_account">Không tìm thấy giao dịch mua nào. Bạn có dùng đúng tài khoản không?</string>
+    <string name="upgrades_already_owned_error_title">Đã mua</string>
+    <string name="upgrades_already_owned_error_description">Google Play báo cáo rằng bạn đã sở hữu bản nâng cấp này. Sử dụng \'Khôi phục mua hàng\' để mở khóa nó.</string>
     <string name="upgrades_dashcard_title">Nhận Octi Pro</string>
     <string name="upgrades_dashcard_body">Nâng cấp để mở khóa các tính năng bổ sung và hỗ trợ phát triển!</string>
     <string name="upgrades_dashcard_upgrade_action">Nâng cấp</string>
@@ -11,19 +15,81 @@
         <item quantity="other">Phiên bản miễn phí bị giới hạn ở %1$d thiết bị.</item>
     </plurals>
     <string name="upgrade_screen_title">Nhận Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Quay lại</string>
+    <string name="upgrade_screen_progress_loading">Đang tải…</string>
     <string name="upgrade_screen_preamble">Octi không có quảng cáo và không bán dữ liệu người dùng. Công việc của tôi được tài trợ bởi bạn ❤️.</string>
     <string name="upgrade_screen_benefits_title">Lợi ích</string>
     <string name="upgrade_screen_benefits_body">• Hơn 3 thiết bị 💯\n• Chủ đề khác nhau 🎨\n• Nhiều tùy chọn hơn ⚙️\n• Máy chủ đồng bộ hóa bổ sung 🖥️️\n• Tiếp tục phát triển ☕\n• Nhà phát triển đầy nhiệt huyết 🧙</string>
     <string name="upgrade_screen_how_title">Tùy chọn</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Bạn có thể chọn giữa mua một lần và gói đăng ký hàng năm rẻ hơn. Cả hai đều có thể hủy bất cứ lúc nào.
+Các tính năng giống nhau, chỉ khác các mô hình giá.</string>
+    <string name="upgrade_screen_how_trial_hint">Gói đăng ký bắt đầu với bản dùng thử miễn phí 14 ngày, sau đó bạn sẽ bị tính phí mỗi năm một lần.</string>
     <string name="upgrade_screen_subscription_trial_action">Bắt đầu dùng thử miễn phí 14 ngày</string>
     <string name="upgrade_screen_subscription_action">Đăng ký</string>
     <string name="upgrade_screen_subscription_action_hint">Đăng ký có giá %s một năm.</string>
     <string name="upgrade_screen_iap_action">Mua một lần</string>
     <string name="upgrade_screen_iap_action_hint">Mua một lần có giá %s.</string>
     <string name="upgrade_screen_thanks_toast">Bạn là tuyệt nhất! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Tùy chọn nâng cấp</string>
+    <string name="upgrade_screen_offers_or">hoặc</string>
+    <string name="upgrade_screen_offers_body">Cả hai đều mở khóa các tính năng giống nhau — chọn mức giá bạn thích. Hủy bất kỳ lúc nào.</string>
+    <string name="upgrade_screen_subscription_offer_title">Gói đăng ký hàng năm</string>
+    <string name="upgrade_screen_subscription_offer_body">Bắt đầu với dùng thử miễn phí 14 ngày, sau đó tính phí một lần hàng năm cho đến khi bạn hủy.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Tính phí một lần hàng năm cho đến khi bạn hủy.</string>
+    <string name="upgrade_screen_iap_offer_title">Mua một lần</string>
+    <string name="upgrade_screen_iap_offer_body">Trả tiền một lần, của bạn mãi mãi — không có đăng ký.</string>
     <string name="upgrade_screen_restore_purchase_action">Khôi phục giao dịch mua</string>
+    <string name="upgrade_screen_restore_banner_title">Đã mua Pro rồi?</string>
+    <string name="upgrade_screen_restore_banner_body">Có vẻ như bạn đã nâng cấp lên Pro trên thiết bị này trước đây. Nếu bạn vẫn sở hữu bản nâng cấp, khôi phục sẽ mở khóa nó lại.</string>
     <string name="upgrade_screen_restore_purchase_message">Nâng cấp của bạn có hiệu lực trên tất cả các thiết bị dùng cùng một tài khoản Google.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Mẹo khắc phục sự cố đối với nâng cấp không được nhận diện:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Đồng bộ Play Store có thể mất một lúc. Thử khởi động lại, xóa bộ nhớ cache của Google Play hoặc chỉ cần chờ đợi.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Nhiều tài khoản có thể khiến Google Play nhầm lẫn. Đăng xuất khỏi các tài khoản khác hoặc cài đặt qua trang web Google Play để liên kết với tài khoản cụ thể.</string>
+    <string name="upgrade_screen_restore_success_message">Lần mua được khôi phục — cảm ơn bạn!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Đã mua Pro trên tài khoản này? Yêu cầu Google Play kiểm tra lại các lần mua của ứng dụng này.</string>
+    <string name="upgrade_screen_restore_status_title">Trạng thái mua hàng</string>
+    <string name="upgrade_screen_restore_status_body">Kiểm tra lại các lần mua của bạn với Google Play nếu trạng thái Pro của bạn trông không cập nhật.</string>
+    <string name="upgrade_screen_restore_checked_message">Chúng tôi đã yêu cầu Google Play kiểm tra lại các lần mua của ứng dụng này, nhưng không thể xác nhận lần mua cho tài khoản hiện tại.</string>
+    <string name="upgrade_screen_restore_contact_hint">Vẫn gặp vấn đề? Liên hệ hỗ trợ và chúng tôi sẽ giúp bạn giải quyết.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Bạn là Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Cảm ơn bạn đã hỗ trợ Octi! Các tính năng Pro của bạn đã được mở khóa.</string>
+    <string name="upgrade_screen_owned_iap_title">Mua trọn đời</string>
+    <string name="upgrade_screen_owned_iap_body">Bạn sở hữu gói mua Pro một lần. Nó không bao giờ hết hạn.</string>
+    <string name="upgrade_screen_owned_sub_title">Đăng ký</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Gói đăng ký Pro của bạn đang hoạt động và tự động gia hạn.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Gói đăng ký Pro của bạn đang hoạt động nhưng được đặt để không gia hạn. Nó vẫn hoạt động cho đến cuối kỳ hiện tại.</string>
+    <string name="upgrade_screen_owned_both_title">Bạn sở hữu cả hai</string>
+    <string name="upgrade_screen_owned_both_warning">Bạn sở hữu cả gói đăng ký và gói mua một lần. Để tránh thanh toán hai lần, hãy hủy gói đăng ký trong Google Play — bạn vẫn giữ Pro thông qua gói mua trọn đời.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Bạn là Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Cảm ơn bạn đã mua %1$s! Các tính năng Pro của bạn đã được mở khóa và không bao giờ hết hạn.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Cảm ơn bạn đã đăng ký %1$s! Các tính năng Pro của bạn đã được mở khóa.</string>
+    <string name="upgrade_screen_manage_subscription_action">Quản lý đăng ký</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Chuyển sang mua một lần</string>
+    <string name="upgrade_screen_switch_body">Bạn muốn thanh toán một lần thay vì đăng ký? Bạn có thể mua Pro một lần và dừng đăng ký.</string>
+    <string name="upgrade_screen_switch_locked_note">Đăng ký của bạn vẫn tự động gia hạn. Hãy hủy nó trên Google Play trước, sau đó quay lại đây để mua một lần. Mua ở đây không hủy hoặc hoàn tiền cho đăng ký — hãy sử dụng cùng tài khoản Google.</string>
+    <string name="upgrade_screen_switch_action">Mua một lần (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Đăng ký vẫn hoạt động</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Đăng ký của bạn vẫn được đặt để gia hạn. Vui lòng hủy nó trên Google Play trước để bạn không bị tính phí hai lần, sau đó mua một lần. Điều này không hoàn tiền cho đăng ký.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Không thể xác minh đăng ký</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Play không phản hồi kịp thời, vì vậy chúng tôi không thể xác nhận an toàn trạng thái đăng ký của bạn. Vui lòng thử lại sau vài giây.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro vẫn hoạt động</string>
+    <string name="upgrade_screen_grace_body">Chúng tôi đang xác nhận lệnh mua của bạn với Google Play. Các tính năng Pro của bạn vẫn được mở khóa trong lúc đó.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Chúng tôi vẫn không thể xác nhận lệnh mua của bạn với Google Play. Các tính năng Pro của bạn vẫn được mở khóa. Hãy thử khôi phục để kết nối lại.</string>
+    <string name="upgrade_screen_contact_support_action">Liên hệ hỗ trợ</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Bạn đang sử dụng phiên bản miễn phí</string>
+    <string name="upgrade_screen_free_status_body">Nâng cấp lên Octi Pro để mở khóa các tính năng bổ sung và hỗ trợ phát triển.</string>
+    <string name="upgrade_screen_see_options_action">Xem các tùy chọn nâng cấp</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Xem trạng thái Pro của bạn và quản lý nâng cấp của bạn</string>
 </resources>

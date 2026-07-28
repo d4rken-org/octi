@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">El Google Play no està disponible</string>
     <string name="upgrades_gplay_unavailable_error_description">L\'Octi no es pot connectar al Google Play. El Google Play està instal·lat i actualitzat? Heu iniciat sessió amb el vostre compte de Google? Proveu d\'esborrar la memòria cau de l\'aplicació Google Play i reinicieu el dispositiu.</string>
     <string name="upgrades_no_purchases_found_check_account">No s\'han trobat compres. Esteu utilitzant el compte correcte?</string>
+    <string name="upgrades_already_owned_error_title">Ja comprat</string>
+    <string name="upgrades_already_owned_error_description">Google Play indica que ja posseïu aquesta actualització. Utilitzeu «Restaurar la compra» per desbloquejar-la.</string>
     <string name="upgrades_dashcard_title">Obtén l\'Octi Pro</string>
     <string name="upgrades_dashcard_body">Actualitzeu per desbloquejar funcions addicionals i donar suport al desenvolupament!</string>
     <string name="upgrades_dashcard_upgrade_action">Millora</string>
@@ -12,19 +16,80 @@
         <item quantity="other">La versió gratuïta està limitada a %1$d dispositius.</item>
     </plurals>
     <string name="upgrade_screen_title">Obtén l\'Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Navegueu cap amunt</string>
+    <string name="upgrade_screen_progress_loading">S’està carregant…</string>
     <string name="upgrade_screen_preamble">L\'Octi no té anuncis i no ven dades d\'usuari. El meu treball està finançat per usuaris com vós ❤️.</string>
     <string name="upgrade_screen_benefits_title">Avantatges</string>
     <string name="upgrade_screen_benefits_body">• Més de 3 dispositius 💯\n• Temes diferents 🎨\n• Més opcions ⚙️\n• Servidors de sincronització addicionals🖥️️\n• Desenvolupament continu ☕\n• Un desenvolupador motivat 🧙</string>
     <string name="upgrade_screen_how_title">Opcions</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Podeu triar entre una compra única i una subscripció anual més barata. Tots dos es poden cancel·lar en qualsevol moment.\nLes mateixes funcions, només models de preus diferents.</string>
+    <string name="upgrade_screen_how_trial_hint">La subscripció comença amb una prova gratuïta de 14 dies, després de la qual se us cobrarà una vegada l’any.</string>
     <string name="upgrade_screen_subscription_trial_action">Comença la prova gratuïta de 14 dies</string>
     <string name="upgrade_screen_subscription_action">Subscriure’s</string>
     <string name="upgrade_screen_subscription_action_hint">La subscripció costa %s a l\'any.</string>
     <string name="upgrade_screen_iap_action">Compra única</string>
     <string name="upgrade_screen_iap_action_hint">La compra única costa %s.</string>
     <string name="upgrade_screen_thanks_toast">Sou el millor! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Opcions d’actualització</string>
+    <string name="upgrade_screen_offers_or">o</string>
+    <string name="upgrade_screen_offers_body">Tots dos desbloquegen les mateixes funcions — escolliu el preu que preferiu. Podeu cancel·lar en qualsevol moment.</string>
+    <string name="upgrade_screen_subscription_offer_title">Subscripció anual</string>
+    <string name="upgrade_screen_subscription_offer_body">Comença amb una prova gratuïta de 14 dies, després es cobra una vegada l’any fins que es cancel·li.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Es cobra una vegada l’any fins que es cancel·li.</string>
+    <string name="upgrade_screen_iap_offer_title">Compra única</string>
+    <string name="upgrade_screen_iap_offer_body">Pagueu una vegada, és vostre per sempre — sense subscripció.</string>
     <string name="upgrade_screen_restore_purchase_action">Recupera la compra</string>
+    <string name="upgrade_screen_restore_banner_title">Ja heu comprat Pro?</string>
+    <string name="upgrade_screen_restore_banner_body">Sembla que ja vau actualitzar al Pro en aquest dispositiu abans. Si seguiu tenint l’actualització, restaurar-la us la desbloquejarà de nou.</string>
     <string name="upgrade_screen_restore_purchase_message">La vostra millora és vàlida en tots els dispositius del mateix compte de Google.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Consells de resolució de problemes per a actualitzacions no reconegudes:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">La sincronització de la Play Store pot trigar un temps. Proveu a reiniciar, esborrar la memòria cau del Google Play o simplement espereu.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Diversos comptes poden confondre al Google Play. Tanqueu la sessió d\'altres comptes o instal·leu-lo a través del lloc web del Google Play, que obliga a associar-los amb un compte específic.</string>
+    <string name="upgrade_screen_restore_success_message">Compra restaurada — gràcies!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Ja heu comprat Pro en aquest compte? Demaneu a Google Play que revisi les compres d’aquesta aplicació.</string>
+    <string name="upgrade_screen_restore_status_title">Estat de la compra</string>
+    <string name="upgrade_screen_restore_status_body">Reviseu les vostres compres a Google Play si l’estat de Pro us sembla desfasat.</string>
+    <string name="upgrade_screen_restore_checked_message">Hem demanat a Google Play que revisés les compres d’aquesta aplicació però no hem pogut confirmar cap compra per al compte actual.</string>
+    <string name="upgrade_screen_restore_contact_hint">Seguiu tenint problemes? Contacteu amb el suport i us ajudarem a resoldre-ho.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Sou Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Gràcies per donar suport a Octi! Les vostres funcionalitats Pro estan desbloquejades.</string>
+    <string name="upgrade_screen_owned_iap_title">Compra de per vida</string>
+    <string name="upgrade_screen_owned_iap_body">Teniu la compra Pro d’una vegada. Mai no caduca.</string>
+    <string name="upgrade_screen_owned_sub_title">Subscripció</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">La vostra subscripció Pro està activa i es renova automàticament.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">La vostra subscripció Pro és activa però està configurada per no renovar-se. Continuarà activa fins al final del període actual.</string>
+    <string name="upgrade_screen_owned_both_title">Posseïu ambdues</string>
+    <string name="upgrade_screen_owned_both_warning">Posseïu tant la subscripció com la compra única. Per evitar pagar dues vegades, cancel·leu la subscripció a Google Play — manteniu l’accés Pro a través de la compra de per vida.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Sou Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Gràcies per comprar %1$s! Les vostres funcionalitats Pro estan desbloquejades i no caducaran mai.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Gràcies per subscriure-us a %1$s! Les vostres funcionalitats Pro estan desbloquejades.</string>
+    <string name="upgrade_screen_manage_subscription_action">Gestiona la subscripció</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Canviar a una compra única</string>
+    <string name="upgrade_screen_switch_body">Preferiu pagar una sola vegada en lloc de subscriure-us? Podeu comprar la compra Pro única i cancel·lar la subscripció.</string>
+    <string name="upgrade_screen_switch_locked_note">La vostra subscripció continua renovant-se automàticament. Cancel·leu-la a Google Play primer, llavors torneu per comprar la compra única. Comprar-la aquí no cancel·larà ni reemborsarà la subscripció — utilitzeu el mateix compte de Google.</string>
+    <string name="upgrade_screen_switch_action">Compra única (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">La subscripció encara està activa</string>
+    <string name="upgrade_screen_sub_still_renewing_message">La subscripció segueix configurada per renovar-se. Cancel·leu-la primer a Google Play perquè no us cobrin dues vegades, després compreu la compra única. Això no reemborsa la subscripció.</string>
+    <string name="upgrade_screen_sub_check_failed_title">No s’ha pogut verificar la subscripció</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Play no ha respost a temps, per tant no podem confirmar de forma segura l’estat de la vostra subscripció. Intenteu-ho de nou en un moment.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro segueix actiu</string>
+    <string name="upgrade_screen_grace_body">Estem confirmant la vostra compra amb Google Play. Les vostres funcions de Pro es mantenen desbloquejades mentrestant.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Encara no podem confirmar la vostra compra amb Google Play. Les vostres funcions de Pro es mantenen desbloquejades per ara. Intenteu restaurar per tornar-la a connectar.</string>
+    <string name="upgrade_screen_contact_support_action">Contacteu amb suport</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Esteu en la versió gratuïta</string>
+    <string name="upgrade_screen_free_status_body">Actualitzeu a Octi Pro per desbloquejar funcions addicionals i donar suport al desenvolupament.</string>
+    <string name="upgrade_screen_see_options_action">Veieu les opcions d’actualització</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Consulteu el vostre estat de Pro i gestioneu la vostra actualització</string>
 </resources>

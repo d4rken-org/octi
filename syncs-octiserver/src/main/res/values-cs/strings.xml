@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Vytvořit účet?</string>
     <string name="sync_octiserver_add_create_account_desc">Na tomto serveru bude vytvořen nový šifrovaný synchronizační účet.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Tento účet vyžaduje Octi %1$s nebo novější. Aktualizujte toto zařízení nebo je odeberte z účtu.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Toto zařízení nepodporuje režim šifrování, který tento účet používá (%1$s). Kontaktujte správce tohoto zařízení.</string>
     <string name="sync_octiserver_legacy_encryption_account">Sdílení souborů není na tomto zařízení dostupné, protože tento účet používá starší šifrovaní. Vytvořte nový účet na aktualizovaném zařízení a znovu propojte ostatní zařízení, abyste mohli sdílet soubory.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Nekompatibilní šifrování</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Sdílení souborů není dostupné</string>

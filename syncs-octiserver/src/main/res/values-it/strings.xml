@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Crea account?</string>
     <string name="sync_octiserver_add_create_account_desc">Verrà creato un nuovo account di sincronizzazione cifrato su questo server.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Questo account richiede Octi %1$s o versione successiva. Aggiorna questo dispositivo o rimuovilo dall’account.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Questo dispositivo non supporta la modalità di crittografia che questo account utilizza (%1$s). Contatta il responsabile di quel dispositivo.</string>
     <string name="sync_octiserver_legacy_encryption_account">La condivisione file non è disponibile su questo dispositivo perché questo account utilizza la crittografia legacy. Crea un nuovo account su un dispositivo aggiornato e ricollega gli altri dispositivi per utilizzare la condivisione file.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Crittografia incompatibile</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Condivisione file non disponibile</string>

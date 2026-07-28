@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">App-data bereik</string>
     <string name="sync_gdrive_type_appdata_description">Gegevens worden op Google Drive geplaatst. Deze variant gebruikt het \"app-data\" bereik. Alleen toegang tot een nieuwe map voor deze app wordt toegekend. De map is niet zichtbaar in uw drive. Dit lijkt op de werking van WhatsApp-back-ups.</string>
     <string name="sync_gdrive_add_label">Nieuwe Google Drive toevoegen</string>
+    <string name="sync_gdrive_link_label">Dit apparaat koppelen</string>
+    <string name="sync_gdrive_add_same_account_hint">Gebruik hetzelfde Google-account op elk apparaat — dat is hoe ze worden gekoppeld.</string>
+    <string name="sync_gdrive_link_same_account_warning">Meld je aan met hetzelfde Google-account dat je op je ander apparaat hebt gebruikt. Een ander account maakt een aparte, niet-gekoppelde back-up.</string>
+    <string name="sync_gdrive_link_already_connected">Dit apparaat is al gekoppeld met dat account.</string>
     <string name="sync_gdrive_add_description">Klik op de inlogknop hieronder om de toegang tot Google Drive in te stellen.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Alle Octi-data op Google Drive resetten. Uw apparaat blijft aangemeld bij Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Log uit van Google Drive en verwijder gegevens die aan dit apparaat zijn gekoppeld.</string>

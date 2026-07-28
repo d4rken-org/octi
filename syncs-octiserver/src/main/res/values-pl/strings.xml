@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Utworzyć konto?</string>
     <string name="sync_octiserver_add_create_account_desc">Na tym serwerze zostanie utworzone nowe zaszyfrowane konto synchronizacji.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">To konto wymaga Octi %1$s lub nowszego. Zaktualizuj to urządzenie lub usuń je z konta.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">To urządzenie nie obsługuje trybu szyfrowania używanego przez to konto (%1$s). Skontaktuj się z opiekunem tego urządzenia.</string>
     <string name="sync_octiserver_legacy_encryption_account">Udostępnianie plików jest niedostępne na tym urządzeniu, ponieważ to konto używa starszego szyfrowania. Utwórz nowe konto na zaktualizowanym urządzeniu i połącz ponownie swoje inne urządzenia, aby używać udostępniania plików.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Niekompatybilne szyfrowanie</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Udostępnianie plików niedostępne</string>

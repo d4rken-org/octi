@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play は利用できません</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi が Google Play に接続できません。Google Play はインストールされている環境ですか？Google アカウントにログインをしていますか？その他に Google Play アプリのキャッシュを削除して、デバイスの再起動をお試しください。</string>
     <string name="upgrades_no_purchases_found_check_account">購入履歴が見つかりません。正しいアカウントを使用していますか？</string>
+    <string name="upgrades_already_owned_error_title">既に購入済み</string>
+    <string name="upgrades_already_owned_error_description">Google Play では、このアップグレードをすでに所有していると報告されています。「購入の復元」を使用してロック解除してください。</string>
     <string name="upgrades_dashcard_title">Octi Pro を入手</string>
     <string name="upgrades_dashcard_body">アップグレードで追加機能の入手と開発を支援します！</string>
     <string name="upgrades_dashcard_upgrade_action">アップグレード</string>
@@ -11,19 +15,80 @@
         <item quantity="other">無料版は%1$dデバイスまでに制限されています。</item>
     </plurals>
     <string name="upgrade_screen_title">Octi Pro を入手</string>
+    <string name="upgrade_screen_navigate_up">上へ移動</string>
+    <string name="upgrade_screen_progress_loading">読み込み中…</string>
     <string name="upgrade_screen_preamble">Octi は無広告、ユーザーデータの販売もしません。あなたの支援で成り立っています ❤️</string>
     <string name="upgrade_screen_benefits_title">特典</string>
     <string name="upgrade_screen_benefits_body">• 3 台以上のデバイスを同期 💯\n• 様々なテーマ 🎨\n• より多くのオプション ⚙️\n• 追加の同期サーバー 🖥️\n• 開発の継続 ☕\n• 開発者のやる気 🧙</string>
     <string name="upgrade_screen_how_title">オプション</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">一回限りの購入と、より安価な年間サブスクリプションのどちらかを選べます。どちらもいつでもキャンセルできます。\n機能は同じで、価格モデルが異なるだけです。</string>
+    <string name="upgrade_screen_how_trial_hint">サブスクリプションは14日間の無料体験から始まり、その後は年に1回課金されます。</string>
     <string name="upgrade_screen_subscription_trial_action">14 日間の試用期間を開始</string>
     <string name="upgrade_screen_subscription_action">定期購入</string>
     <string name="upgrade_screen_subscription_action_hint">定期購入は年間で %s が必要です。</string>
     <string name="upgrade_screen_iap_action">1 回限りの購入</string>
     <string name="upgrade_screen_iap_action_hint">1 回限りの購入は %s が必要です。</string>
     <string name="upgrade_screen_thanks_toast">あなたは最高です！❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">アップグレードオプション</string>
+    <string name="upgrade_screen_offers_or">または</string>
+    <string name="upgrade_screen_offers_body">どちらも同じ機能を利用できます — お好みの価格を選んでください。いつでもキャンセルできます。</string>
+    <string name="upgrade_screen_subscription_offer_title">年間サブスクリプション</string>
+    <string name="upgrade_screen_subscription_offer_body">14日間の無料体験から始まり、その後はキャンセルするまで年に1回課金されます。</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">キャンセルするまで年に1回課金されます。</string>
+    <string name="upgrade_screen_iap_offer_title">1 回限りの購入</string>
+    <string name="upgrade_screen_iap_offer_body">一度の支払いで永久にあなたのもの — サブスクリプションなし。</string>
     <string name="upgrade_screen_restore_purchase_action">購入を復元</string>
+    <string name="upgrade_screen_restore_banner_title">既に Pro を購入しましたか？</string>
+    <string name="upgrade_screen_restore_banner_body">このデバイスで以前 Pro にアップグレードしたようです。アップグレードをまだ所有している場合、復元によってもう一度ロック解除されます。</string>
     <string name="upgrade_screen_restore_purchase_message">アップグレードは、同じ Google アカウントのデバイス間で有効です。</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">認識されないアップグレードのトラブルシューティングのヒント:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play ストアの同期には時間がかかる場合があります。再起動、Google Play キャッシュの消去、または暫く待ってください。</string>
     <string name="upgrade_screen_restore_multiaccount_hint">複数のアカウントがあると Google Play が混乱する可能性があります。他のアカウントをログアウトするか、Google Play のウェブサイトからインストールして特定のアカウントの関連付けを強制してください。</string>
+    <string name="upgrade_screen_restore_success_message">購入を復元しました — ありがとうございます！</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">このアカウントですでにProを購入済みですか？Google Playにこのアプリの購入履歴を再確認してもらいます。</string>
+    <string name="upgrade_screen_restore_status_title">購入ステータス</string>
+    <string name="upgrade_screen_restore_status_body">Proステータスが古くなっているように見える場合は、Google Playで購入履歴を再確認してください。</string>
+    <string name="upgrade_screen_restore_checked_message">Google Playにこのアプリの購入履歴の再確認を依頼しましたが、現在のアカウントでは確認できませんでした。</string>
+    <string name="upgrade_screen_restore_contact_hint">まだ解決しませんか？サポートにご連絡ください。解決に向けてお手伝いします。</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">あなたはOcti Proです 🎉</string>
+    <string name="upgrade_screen_owned_body">Octiをサポートしていただきありがとうございます！Pro機能がロック解除されました。</string>
+    <string name="upgrade_screen_owned_iap_title">永久購入</string>
+    <string name="upgrade_screen_owned_iap_body">一回限りのPro購入を所有しています。期限はありません。</string>
+    <string name="upgrade_screen_owned_sub_title">サブスクリプション</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">あなたのProサブスクリプションは有効で、自動的に更新されます。</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">あなたのProサブスクリプションは有効ですが、更新しないように設定されています。現在の期間の終了まで有効です。</string>
+    <string name="upgrade_screen_owned_both_title">両方を所有しています</string>
+    <string name="upgrade_screen_owned_both_warning">サブスクリプションと一回限りの購入の両方を所有しています。二重支払いを避けるには、Google Playでサブスクリプションをキャンセルしてください — 永久購入によってProは継続されます。</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">あなたはOcti Proです 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">%1$sをご購入いただきありがとうございます！Pro機能がロック解除され、期限はありません。</string>
+    <string name="upgrade_screen_owned_hero_sub_body">%1$sにご登録いただきありがとうございます！Pro機能がロック解除されました。</string>
+    <string name="upgrade_screen_manage_subscription_action">サブスクリプションを管理</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">一回限りの購入に切り替え</string>
+    <string name="upgrade_screen_switch_body">サブスクリプションではなく一回の支払いにしたいですか？一回限りのPro購入を購入して、サブスクリプションを停止できます。</string>
+    <string name="upgrade_screen_switch_locked_note">あなたのサブスクリプションはこのまま自動的に更新されます。まずGoogle Playでキャンセルしてから、戻って一回限りの購入を行ってください。ここで購入してもサブスクリプションのキャンセルや返金はされません — 同じGoogleアカウントを使用してください。</string>
+    <string name="upgrade_screen_switch_action">一回限りの購入（%1$s）を購入</string>
+    <string name="upgrade_screen_sub_still_renewing_title">サブスクリプションはまだ有効です</string>
+    <string name="upgrade_screen_sub_still_renewing_message">あなたのサブスクリプションはまだ更新されるように設定されています。二重課金を避けるためにまずGoogle Playでキャンセルしてから、一回限りの購入を行ってください。これによりサブスクリプションの返金はされません。</string>
+    <string name="upgrade_screen_sub_check_failed_title">サブスクリプションを確認できませんでした</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Playが時間内に応答しなかったため、サブスクリプション状態を安全に確認できませんでした。しばらくしてからもう一度お試しください。</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Proはまだ有効です</string>
+    <string name="upgrade_screen_grace_body">Google Playであなたの購入を確認しています。その間もPro機能はロック解除されたままです。</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Google Playであなたの購入をいまだ確認できていません。現在はPro機能はロック解除されたままです。復元を試して再接続してください。</string>
+    <string name="upgrade_screen_contact_support_action">サポートに連絡</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">現在は無料版をご利用中です</string>
+    <string name="upgrade_screen_free_status_body">Octi Proにアップグレードして、追加機能を利用し、開発をサポートしましょう。</string>
+    <string name="upgrade_screen_see_options_action">アップグレードオプションを確認</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Proステータスを確認し、アップグレードを管理</string>
 </resources>

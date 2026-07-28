@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Mô-đun meta</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Đã hoạt động %1$s</string>
+    <string name="module_meta_detail_label_label">Nhãn</string>
+    <string name="module_meta_detail_manufacturer_label">Nhà sản xuất</string>
+    <string name="module_meta_detail_model_label">Mẫu</string>
+    <string name="module_meta_detail_device_type_label">Loại thiết bị</string>
+    <string name="module_meta_detail_device_type_phone">Điện thoại</string>
+    <string name="module_meta_detail_device_type_tablet">Máy tính bảng</string>
+    <string name="module_meta_detail_device_type_desktop">Máy tính để bàn</string>
+    <string name="module_meta_detail_device_type_browser">Trình duyệt</string>
+    <string name="module_meta_detail_device_type_unknown">Không xác định</string>
+    <string name="module_meta_detail_os_label">Hệ điều hành</string>
+    <string name="module_meta_detail_android_version_label">Phiên bản Android</string>
+    <string name="module_meta_detail_api_level_label">Cấp độ API</string>
+    <string name="module_meta_detail_security_patch_label">Bản vá bảo mật</string>
+    <string name="module_meta_detail_booted_label">Khởi động</string>
+    <string name="module_meta_detail_octi_version_label">Phiên bản Octi</string>
+    <string name="module_meta_detail_git_sha_label">Commit xây dựng</string>
+    <string name="module_meta_detail_device_id_label">ID thiết bị</string>
+    <string name="module_meta_detail_last_updated_label">Cập nhật lần cuối</string>
 </resources>

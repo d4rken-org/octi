@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">היקף נתוני אפליקציה</string>
     <string name="sync_gdrive_type_appdata_description">הנתונים ממוקמים ב-Google Drive. הגרסה הספציפית הזו משתמשת בהיקף \"אפליקציה-נתונים\". גישה ניתנת רק לתיקיה חדשה רק עבור האפליקציה הזו. התיקיה אינה גלויה בכונן שלך. זה דומה לאופן שבו פועלים גיבויים של WhatsApp.</string>
     <string name="sync_gdrive_add_label">הוסף Google Drive חדש</string>
+    <string name="sync_gdrive_link_label">קשר מכשיר זה</string>
+    <string name="sync_gdrive_add_same_account_hint">השתמש באותו חשבון Google בכל מכשיר — זה מה שמקשר אותם.</string>
+    <string name="sync_gdrive_link_same_account_warning">התחבר עם חשבון Google זהה שבו השתמשת במכשיר האחר שלך. חשבון אחר יוצר גיבוי נפרד ולא קשור.</string>
+    <string name="sync_gdrive_link_already_connected">מכשיר זה כבר קשור לחשבון הזה.</string>
     <string name="sync_gdrive_add_description">לחץ על לחצן הכניסה למטה כדי להגדיר גישה ל-Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">אפס את כל נתוני Octi המאוחסנים ב-Google Drive. המכשיר שלך ישאר מחובר ל-Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">צא מ-Google Drive ומחק נתונים הקשורים למכשיר זה.</string>

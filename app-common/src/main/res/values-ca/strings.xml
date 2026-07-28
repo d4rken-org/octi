@@ -21,6 +21,7 @@
     <string name="general_reset_action">Restableix</string>
     <string name="general_disconnect_action">Desconnecta</string>
     <string name="general_upgrade_action">Millora</string>
+    <string name="general_upgrade_required_label">Es necessita millorar</string>
     <string name="general_update_action">Actualitza</string>
     <string name="general_donate_action">Donació</string>
     <string name="general_check_action">Comprova</string>
@@ -29,6 +30,10 @@
     <string name="general_close_action">Tanca</string>
     <string name="general_continue">Continua</string>
     <string name="general_show_details_action">Mostra els detalls</string>
+    <string name="general_expand_action">Expandir</string>
+    <string name="general_collapse_action">Plegar</string>
+    <string name="general_expanded_state_label">Expandit</string>
+    <string name="general_collapsed_state_label">Plegat</string>
     <string name="general_minutes_label">Minuts</string>
     <plurals name="general_minutes_quantity_label">
         <item quantity="one">%1$d minut</item>
@@ -50,6 +55,7 @@
     <string name="ui_theme_color_blue_label">Blau</string>
     <string name="ui_theme_color_sunset_label">Posta de sol</string>
     <string name="device_x_label">Dispositiu: %s</string>
+    <string name="general_sort_reverse_label">Invertir l’ordre</string>
     <!-- Widget theme presets -->
     <string name="widget_theme_material_you">Material You</string>
     <string name="widget_theme_classic_green">Verd clàssic</string>
@@ -60,6 +66,11 @@
     <!-- Widget config -->
     <string name="widget_config_title">Personalitza el widget</string>
     <string name="widget_config_apply_action">Aplica</string>
+    <string name="widget_config_upgrade_action">Millora al Octi Pro</string>
+    <string name="widget_config_pro_required_label">Aquest widget requereix Octi Pro.</string>
+    <string name="widget_config_pro_checking_label">Comprovant l’estat d’Octi Pro…</string>
+    <string name="widget_config_pro_error_label">No s’ha pogut verificar l’estat d’Octi Pro.</string>
+    <string name="widget_config_retry_action">Reintenta</string>
     <string name="widget_config_presets_label">Predefinits</string>
     <string name="widget_config_background_label">Color de fons</string>
     <string name="widget_config_accent_label">Color d\'accent</string>
@@ -73,6 +84,9 @@
     <string name="widget_config_devices_none_known">Encara no es coneix cap dispositiu de sincronització.</string>
     <string name="widget_empty_label">Cap dispositiu coincident</string>
     <string name="widget_no_sync_devices_label">Encara no hi ha dispositius de sincronització</string>
+    <string name="widget_more_items">+ %1$d més</string>
+    <string name="widget_upgrade_required_title">Octi Pro necessari</string>
+    <string name="widget_upgrade_required_action">Toqueu per actualitzar</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">No hi ha dades de %1$s per a aquest dispositiu</string>
     <string name="widget_deeplink_module_power">bateria</string>

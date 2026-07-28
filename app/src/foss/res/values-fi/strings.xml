@@ -19,4 +19,15 @@
     <string name="upgrade_screen_sponsor_action_hint">Vaihtoehtoina ovat mainokset, analytiikka ja Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Kiitos, että tuet avoimen lähdekoodin kehitystä ❤️</string>
     <string name="upgrade_screen_sponsor_too_fast_msg">Jo takaisin? Tukesi pitää Octin hengissä!</string>
+    <!-- Supporter / status (manage entry) -->
+    <string name="upgrade_screen_supporter_title">Olet kannattaja ❤️</string>
+    <string name="upgrade_screen_supporter_body">Kiitos avoimen lähdekoodin Octi-kehityksen tukemisesta!</string>
+    <string name="upgrade_screen_supporter_since">Kannattaja siitä lähtien %1$s</string>
+    <string name="upgrade_screen_open_sponsors_action">Avaa GitHub Sponsors</string>
+    <string name="upgrade_screen_free_status_title">Käytät ilmaista versiota</string>
+    <string name="upgrade_screen_free_status_body">Tule kannattajaksi lisäominaisuuksien avaamiseksi ja kehityksen jatkamisen tukemiseksi.</string>
+    <string name="upgrade_screen_see_options_action">Näytä päivitysvaihtoehdot</string>
+    <!-- Settings status row (foss) -->
+    <string name="settings_upgrade_status_title">Octi FOSS</string>
+    <string name="settings_upgrade_status_desc">Näytä kannattajatilasi</string>
 </resources>

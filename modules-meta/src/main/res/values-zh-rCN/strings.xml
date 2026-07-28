@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">元数据模块</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">已运行 %1$s</string>
+    <string name="module_meta_detail_label_label">标签</string>
+    <string name="module_meta_detail_manufacturer_label">制造商</string>
+    <string name="module_meta_detail_model_label">型号</string>
+    <string name="module_meta_detail_device_type_label">设备类型</string>
+    <string name="module_meta_detail_device_type_phone">手机</string>
+    <string name="module_meta_detail_device_type_tablet">平板电脑</string>
+    <string name="module_meta_detail_device_type_desktop">桌面</string>
+    <string name="module_meta_detail_device_type_browser">浏览器</string>
+    <string name="module_meta_detail_device_type_unknown">未知</string>
+    <string name="module_meta_detail_os_label">操作系统</string>
+    <string name="module_meta_detail_android_version_label">Android 版本</string>
+    <string name="module_meta_detail_api_level_label">API 级别</string>
+    <string name="module_meta_detail_security_patch_label">安全补丁</string>
+    <string name="module_meta_detail_booted_label">启动时间</string>
+    <string name="module_meta_detail_octi_version_label">Octi 版本</string>
+    <string name="module_meta_detail_git_sha_label">构建提交</string>
+    <string name="module_meta_detail_device_id_label">设备 ID</string>
+    <string name="module_meta_detail_last_updated_label">最后更新于</string>
 </resources>

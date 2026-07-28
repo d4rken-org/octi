@@ -19,4 +19,15 @@
     <string name="upgrade_screen_sponsor_action_hint">L\'alternativa són els anuncis, les analítiques i el Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Gràcies per donar suport al desenvolupament de codi obert ❤️</string>
     <string name="upgrade_screen_sponsor_too_fast_msg">Ja heu tornat? El vostre suport manté viu l\'Octi!</string>
+    <!-- Supporter / status (manage entry) -->
+    <string name="upgrade_screen_supporter_title">Sou un col·laborador ❤️</string>
+    <string name="upgrade_screen_supporter_body">Gràcies per donar suport al desenvolupament de codi obert d’Octi!</string>
+    <string name="upgrade_screen_supporter_since">Col·laborador des de %1$s</string>
+    <string name="upgrade_screen_open_sponsors_action">Obrir GitHub Sponsors</string>
+    <string name="upgrade_screen_free_status_title">Esteu en la versió gratuïta</string>
+    <string name="upgrade_screen_free_status_body">Convertiu-vos en col·laborador per desbloquejar funcions addicionals i patrocinar el desenvolupament continu.</string>
+    <string name="upgrade_screen_see_options_action">Consulteu les opcions d’actualització</string>
+    <!-- Settings status row (foss) -->
+    <string name="settings_upgrade_status_title">Octi FOSS</string>
+    <string name="settings_upgrade_status_desc">Consulteu el vostre estat de col·laborador</string>
 </resources>

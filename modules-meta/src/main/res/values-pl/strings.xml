@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Moduł meta</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_detail_label_label">Etykieta</string>
+    <string name="module_meta_detail_manufacturer_label">Producent</string>
+    <string name="module_meta_detail_model_label">Model</string>
+    <string name="module_meta_detail_device_type_label">Typ urządzenia</string>
+    <string name="module_meta_detail_device_type_phone">Telefon</string>
+    <string name="module_meta_detail_device_type_tablet">Tablet</string>
+    <string name="module_meta_detail_device_type_desktop">Pulpit</string>
+    <string name="module_meta_detail_device_type_browser">Przeglądarka</string>
+    <string name="module_meta_detail_device_type_unknown">Nieznane</string>
+    <string name="module_meta_detail_os_label">System operacyjny</string>
+    <string name="module_meta_detail_android_version_label">Wersja Android</string>
+    <string name="module_meta_detail_api_level_label">Poziom API</string>
+    <string name="module_meta_detail_security_patch_label">Poprawka zabezpieczeń</string>
+    <string name="module_meta_detail_booted_label">Uruchomione</string>
+    <string name="module_meta_detail_octi_version_label">Wersja Octi</string>
+    <string name="module_meta_detail_git_sha_label">Zatwierdzenie kompilacji</string>
+    <string name="module_meta_detail_device_id_label">Identyfikator urządzenia</string>
+    <string name="module_meta_detail_last_updated_label">Ostatnia aktualizacja</string>
 </resources>

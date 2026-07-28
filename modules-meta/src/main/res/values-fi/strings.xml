@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Meta-moduuli</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Käytössä %1$s</string>
+    <string name="module_meta_detail_label_label">Nimike</string>
+    <string name="module_meta_detail_manufacturer_label">Valmistaja</string>
+    <string name="module_meta_detail_model_label">Malli</string>
+    <string name="module_meta_detail_device_type_label">Laitetyyppi</string>
+    <string name="module_meta_detail_device_type_phone">Puhelin</string>
+    <string name="module_meta_detail_device_type_tablet">Tabletti</string>
+    <string name="module_meta_detail_device_type_desktop">Pöytäkone</string>
+    <string name="module_meta_detail_device_type_browser">Selain</string>
+    <string name="module_meta_detail_device_type_unknown">Tuntematon</string>
+    <string name="module_meta_detail_os_label">Käyttöjärjestelmä</string>
+    <string name="module_meta_detail_android_version_label">Android-versio</string>
+    <string name="module_meta_detail_api_level_label">API-taso</string>
+    <string name="module_meta_detail_security_patch_label">Tietoturvapäivitys</string>
+    <string name="module_meta_detail_booted_label">Käynnistetty</string>
+    <string name="module_meta_detail_octi_version_label">Octi-versio</string>
+    <string name="module_meta_detail_git_sha_label">Rakennuscommit</string>
+    <string name="module_meta_detail_device_id_label">Laite-ID</string>
+    <string name="module_meta_detail_last_updated_label">Päivitetty</string>
 </resources>

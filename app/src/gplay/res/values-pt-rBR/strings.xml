@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play indisponível</string>
     <string name="upgrades_gplay_unavailable_error_description">O Octi não pode conectar ao Google Play. O Google Play está instalado e atualizado? Sua Conta Google está conectada? Tente limpar o cache do app Google Play e reiniciar o dispositivo.</string>
     <string name="upgrades_no_purchases_found_check_account">Nenhuma compra encontrada. Você está usando a conta correta?</string>
+    <string name="upgrades_already_owned_error_title">Já adquirido</string>
+    <string name="upgrades_already_owned_error_description">Google Play informa que você já possui este upgrade. Use \'Restaurar compra\' para desbloqueá-lo.</string>
     <string name="upgrades_dashcard_title">Obter Octi Pro</string>
     <string name="upgrades_dashcard_body">Atualize para desbloquear recursos adicionais e apoiar o desenvolvimento!</string>
     <string name="upgrades_dashcard_upgrade_action">Atualizar</string>
@@ -12,19 +16,81 @@
         <item quantity="other">A versão gratuita é limitada a %1$d dispositivos.</item>
     </plurals>
     <string name="upgrade_screen_title">Obtenha o Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Voltar</string>
+    <string name="upgrade_screen_progress_loading">Carregando…</string>
     <string name="upgrade_screen_preamble">O Octi não exibe anúncios e não vende dados do usuário. Meu trabalho é financiado por você ❤️.</string>
     <string name="upgrade_screen_benefits_title">Benefícios</string>
     <string name="upgrade_screen_benefits_body">• Mais de 3 dispositivos 💯\n• Temas diferentes 🎨\n• Mais opções ⚙️\n• Servidores de sincronização extras🖥️️\n• Desenvolvimento contínuo ☕\n• Um desenvolvedor motivado 🧙</string>
     <string name="upgrade_screen_how_title">Opções</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Você pode escolher entre uma compra única e uma assinatura anual mais barata. Ambos podem ser cancelados a qualquer momento.
+Os mesmos recursos, apenas modelos de preços diferentes.</string>
+    <string name="upgrade_screen_how_trial_hint">A assinatura começa com um período de teste gratuito de 14 dias, após o qual você será cobrado uma vez por ano.</string>
     <string name="upgrade_screen_subscription_trial_action">Iniciar teste gratuito de 14 dias</string>
     <string name="upgrade_screen_subscription_action">Assinar</string>
     <string name="upgrade_screen_subscription_action_hint">A assinatura custa %s por ano.</string>
     <string name="upgrade_screen_iap_action">Compra única</string>
     <string name="upgrade_screen_iap_action_hint">A compra única custa %s.</string>
     <string name="upgrade_screen_thanks_toast">Você é o melhor! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Opções de atualização</string>
+    <string name="upgrade_screen_offers_or">ou</string>
+    <string name="upgrade_screen_offers_body">Ambos desbloqueiam os mesmos recursos — escolha o preço que preferir. Cancele a qualquer momento.</string>
+    <string name="upgrade_screen_subscription_offer_title">Assinatura anual</string>
+    <string name="upgrade_screen_subscription_offer_body">Começa com uma avaliação gratuita de 14 dias, depois é cobrado uma vez por ano até o cancelamento.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Cobrado uma vez por ano até o cancelamento.</string>
+    <string name="upgrade_screen_iap_offer_title">Compra única</string>
+    <string name="upgrade_screen_iap_offer_body">Pague uma vez, é seu para sempre — sem assinatura.</string>
     <string name="upgrade_screen_restore_purchase_action">Restaurar compra</string>
+    <string name="upgrade_screen_restore_banner_title">Já comprou Pro?</string>
+    <string name="upgrade_screen_restore_banner_body">Parece que você fez upgrade para Pro neste dispositivo antes. Se ainda possui o upgrade, restaurá-lo desbloqueará novamente.</string>
     <string name="upgrade_screen_restore_purchase_message">Sua atualização é válida em dispositivos usando a mesma Conta Google.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Dicas de solução de problemas para upgrades não reconhecidos:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">A sincronização da Play Store pode levar algum tempo. Tente reiniciar, limpar o cache do Google Play ou apenas aguarde.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Várias contas podem confundir o Google Play. Saia de outras contas ou instale pelo site do Google Play, o que força a associação a uma conta específica.</string>
+    <string name="upgrade_screen_restore_success_message">Compra restaurada — obrigado!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Já comprou Pro nesta conta? Peça ao Google Play para verificar novamente as compras deste aplicativo.</string>
+    <string name="upgrade_screen_restore_status_title">Status da compra</string>
+    <string name="upgrade_screen_restore_status_body">Verifique suas compras novamente com o Google Play se seu status de Pro parecer desatualizado.</string>
+    <string name="upgrade_screen_restore_checked_message">Pedimos ao Google Play para verificar novamente as compras deste aplicativo, mas não conseguimos confirmar uma compra para a conta atual.</string>
+    <string name="upgrade_screen_restore_contact_hint">Ainda com dúvidas? Entre em contato com o suporte e ajudaremos a resolver.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Você é Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Obrigado por apoiar o Octi! Seus recursos Pro estão desbloqueados.</string>
+    <string name="upgrade_screen_owned_iap_title">Compra vitalícia</string>
+    <string name="upgrade_screen_owned_iap_body">Você tem a compra única do Pro. Nunca expira.</string>
+    <string name="upgrade_screen_owned_sub_title">Assinatura</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Sua assinatura do Pro está ativa e se renova automaticamente.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Sua assinatura do Pro está ativa, mas definida para não se renovar. Permanece ativa até o final do período atual.</string>
+    <string name="upgrade_screen_owned_both_title">Você tem ambos</string>
+    <string name="upgrade_screen_owned_both_warning">Você tem tanto a assinatura quanto a compra única. Para evitar pagar duas vezes, cancele a assinatura no Google Play — você mantém o Pro através da compra vitalícia.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Você é Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Obrigado por comprar %1$s! Seus recursos Pro estão desbloqueados e nunca expiram.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Obrigado por se inscrever em %1$s! Seus recursos Pro estão desbloqueados.</string>
+    <string name="upgrade_screen_manage_subscription_action">Gerenciar assinatura</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Mudar para uma compra única</string>
+    <string name="upgrade_screen_switch_body">Prefere pagar uma vez em vez de se inscrever? Você pode comprar a compra única do Pro e cancelar a assinatura.</string>
+    <string name="upgrade_screen_switch_locked_note">Sua assinatura ainda se renova automaticamente. Cancele-a no Google Play primeiro e depois volte para comprar a compra única. Comprá-la aqui não cancela nem reembolsa a assinatura — use a mesma conta do Google.</string>
+    <string name="upgrade_screen_switch_action">Comprar compra única (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Assinatura ainda ativa</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Sua assinatura ainda está definida para se renovar. Cancele-a no Google Play primeiro para não ser cobrado duas vezes e depois compre a compra única. Isso não reembolsa a assinatura.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Não foi possível verificar a assinatura</string>
+    <string name="upgrade_screen_sub_check_failed_message">O Google Play não respondeu a tempo, então não conseguimos confirmar com segurança seu estado de assinatura. Tente novamente em um momento.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro ainda está ativo</string>
+    <string name="upgrade_screen_grace_body">Estamos confirmando sua compra com o Google Play. Seus recursos Pro permanecem desbloqueados enquanto isso.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Ainda não conseguimos confirmar sua compra com o Google Play. Seus recursos Pro permanecem desbloqueados por enquanto. Tente restaurar.</string>
+    <string name="upgrade_screen_contact_support_action">Entre em contato com o suporte</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Você está na versão gratuita</string>
+    <string name="upgrade_screen_free_status_body">Faça upgrade para o Octi Pro para desbloquear recursos extras e apoiar o desenvolvimento.</string>
+    <string name="upgrade_screen_see_options_action">Ver opções de upgrade</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Veja seu status de Pro e gerencie seu upgrade</string>
 </resources>

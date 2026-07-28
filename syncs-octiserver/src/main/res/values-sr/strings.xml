@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Креирај налог?</string>
     <string name="sync_octiserver_add_create_account_desc">На овом серверу биће креиран нови шифровани налог за синхронизацију.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Овај налог захтева Octi %1$s или новији. Ажурирајте овај уређај или га уклоните са налога.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Овај уређај не подржава режим шифровања који користи овај налог (%1$s). Обрати се одржаваоцу тог уређаја.</string>
     <string name="sync_octiserver_legacy_encryption_account">Дељење датотека није доступно на овом уређају јер овај налог користи застарело шифровање. Креирајте нови налог на ажурираном уређају и поново повежите остале уређаје да бисте користили дељење датотека.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Неспојиво шифровање</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Дељење датотека није доступно</string>

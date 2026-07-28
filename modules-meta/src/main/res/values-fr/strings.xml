@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Module méta</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Actif depuis %1$s</string>
+    <string name="module_meta_detail_label_label">Libellé</string>
+    <string name="module_meta_detail_manufacturer_label">Fabricant</string>
+    <string name="module_meta_detail_model_label">Modèle</string>
+    <string name="module_meta_detail_device_type_label">Type d’appareil</string>
+    <string name="module_meta_detail_device_type_phone">Téléphone</string>
+    <string name="module_meta_detail_device_type_tablet">Tablette</string>
+    <string name="module_meta_detail_device_type_desktop">Ordinateur</string>
+    <string name="module_meta_detail_device_type_browser">Navigateur</string>
+    <string name="module_meta_detail_device_type_unknown">Inconnue</string>
+    <string name="module_meta_detail_os_label">Système d’exploitation</string>
+    <string name="module_meta_detail_android_version_label">Version d’Android</string>
+    <string name="module_meta_detail_api_level_label">Niveau d’API</string>
+    <string name="module_meta_detail_security_patch_label">Correctif de sécurité</string>
+    <string name="module_meta_detail_booted_label">Démarrage</string>
+    <string name="module_meta_detail_octi_version_label">Version d’Octi</string>
+    <string name="module_meta_detail_git_sha_label">Commit de build</string>
+    <string name="module_meta_detail_device_id_label">ID de l’appareil</string>
+    <string name="module_meta_detail_last_updated_label">Dernière mise à jour</string>
 </resources>

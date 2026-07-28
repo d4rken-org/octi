@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Criar conta?</string>
     <string name="sync_octiserver_add_create_account_desc">Será criada uma nova conta de sincronização encriptada neste servidor.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Esta conta requer o Octi %1$s ou posterior. Atualize este dispositivo ou remova-o da conta.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Este dispositivo não suporta o modo de encriptação que esta conta utiliza (%1$s). Contacte o responsável desse dispositivo.</string>
     <string name="sync_octiserver_legacy_encryption_account">A partilha de ficheiros não está disponível neste dispositivo porque esta conta utiliza encriptação legada. Crie uma nova conta num dispositivo atualizado e volte a ligar os outros dispositivos para utilizar a partilha de ficheiros.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Encriptação incompatível</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Partilha de ficheiros indisponível</string>
