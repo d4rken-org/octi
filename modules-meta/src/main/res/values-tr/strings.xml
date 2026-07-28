@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Meta modülü</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">%1$s süredir açık</string>
+    <string name="module_meta_detail_label_label">Etiket</string>
+    <string name="module_meta_detail_manufacturer_label">Üretici</string>
+    <string name="module_meta_detail_model_label">Model</string>
+    <string name="module_meta_detail_device_type_label">Cihaz türü</string>
+    <string name="module_meta_detail_device_type_phone">Telefon</string>
+    <string name="module_meta_detail_device_type_tablet">Tablet</string>
+    <string name="module_meta_detail_device_type_desktop">Masaüstü</string>
+    <string name="module_meta_detail_device_type_browser">Tarayıcı</string>
+    <string name="module_meta_detail_device_type_unknown">Bilinmeyen</string>
+    <string name="module_meta_detail_os_label">İşletim sistemi</string>
+    <string name="module_meta_detail_android_version_label">Android sürümü</string>
+    <string name="module_meta_detail_api_level_label">API seviyesi</string>
+    <string name="module_meta_detail_security_patch_label">Güvenlik yaması</string>
+    <string name="module_meta_detail_booted_label">Başlatıldı</string>
+    <string name="module_meta_detail_octi_version_label">Octi sürümü</string>
+    <string name="module_meta_detail_git_sha_label">Derleme commit\'i</string>
+    <string name="module_meta_detail_device_id_label">Cihaz Kimliği</string>
+    <string name="module_meta_detail_last_updated_label">Son güncelleme</string>
 </resources>

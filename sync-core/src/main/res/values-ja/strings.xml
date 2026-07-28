@@ -30,7 +30,24 @@
     <string name="sync_connector_paused_label">同期を一時停止</string>
     <string name="sync_connector_paused_error_label">コネクターが一時停止中</string>
     <string name="sync_connector_paused_error_desc">このコネクターは一時停止中です。このアクションを実行するには再開してください。</string>
+    <string name="sync_connector_account_label">アカウント</string>
+    <string name="sync_connector_progress_syncing">同期中…</string>
+    <string name="sync_connector_progress_sync_queued">同期をキューに追加しました…</string>
+    <string name="sync_connector_progress_pausing">同期を一時停止中…</string>
+    <string name="sync_connector_progress_pause_queued">一時停止をキューに追加しました…</string>
+    <string name="sync_connector_progress_resuming">同期を再開中…</string>
+    <string name="sync_connector_progress_resume_queued">再開をキューに追加しました…</string>
+    <string name="sync_connector_progress_resetting">データをリセット中…</string>
+    <string name="sync_connector_progress_reset_queued">リセットをキューに追加しました…</string>
+    <string name="sync_connector_progress_device_updating">デバイスを更新中…</string>
+    <string name="sync_connector_progress_device_update_queued">デバイスの更新をキューに追加しました…</string>
     <string name="sync_synced_devices_label">同期済みのデバイス</string>
+    <string name="sync_link_device_action">デバイスをリンク</string>
+    <string name="sync_devices_sort_label">並び替え</string>
+    <string name="sync_devices_sort_date_added_label">追加日順</string>
+    <string name="sync_devices_sort_last_seen_label">最終確認順</string>
+    <string name="sync_devices_sort_name_label">名前順</string>
+    <string name="sync_devices_sort_app_version_label">アプリバージョン順</string>
     <plurals name="sync_stale_period_days">
         <item quantity="other">%d日</item>
     </plurals>

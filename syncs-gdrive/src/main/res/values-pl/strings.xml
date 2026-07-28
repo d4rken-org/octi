@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">Zakres danych aplikacji</string>
     <string name="sync_gdrive_type_appdata_description">Dane są umieszczane na Dysku Google. Ta konkretna wersja korzysta z zakresu „app-data”. Dostęp jest przyznawany tylko do nowego folderu, przeznaczonego tylko dla tej aplikacji. Folder nie jest widoczny na dysku. Działa to podobnie do tworzenia kopii zapasowych WhatsApp.</string>
     <string name="sync_gdrive_add_label">Dodaj nowy Dysk Google</string>
+    <string name="sync_gdrive_link_label">Połącz to urządzenie</string>
+    <string name="sync_gdrive_add_same_account_hint">Użyj tego samego konta Google na każdym urządzeniu — to właśnie linki do nich.</string>
+    <string name="sync_gdrive_link_same_account_warning">Zaloguj się za pomocą tego samego konta Google, którego używałeś na innym urządzeniu. Inne konto tworzy osobną, odłączoną kopię.</string>
+    <string name="sync_gdrive_link_already_connected">To urządzenie jest już połączone z tym kontem.</string>
     <string name="sync_gdrive_add_description">Kliknij przycisk logowania poniżej, aby skonfigurować dostęp do Dysku Google.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Zresetuj wszystkie dane Octi zapisane na Dysku Google. Twoje urządzenie pozostanie zalogowane do Dysku Google.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Wyloguj się z Dysku Google i usuń dane związane z tym urządzeniem.</string>

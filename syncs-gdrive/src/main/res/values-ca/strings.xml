@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">Àmbit de dades de l\'aplicació</string>
     <string name="sync_gdrive_type_appdata_description">Les dades s\'emmagatzemen al Google Drive. Aquesta variant utilitza l\'àmbit «app-data». Només es permet accedir a una nova carpeta exclusiva per a aquesta aplicació. Aquesta carpeta no és visible a la vostra unitat. Funciona de manera similar a les còpies de seguretat del WhatsApp.</string>
     <string name="sync_gdrive_add_label">Afegeix un Google Drive nou</string>
+    <string name="sync_gdrive_link_label">Enllaçeu aquest dispositiu</string>
+    <string name="sync_gdrive_add_same_account_hint">Utilitzeu el mateix compte de Google en tots els dispositius — és això el que els uneix.</string>
+    <string name="sync_gdrive_link_same_account_warning">Entreu amb el mateix compte de Google que vau utilitzar en l’altre dispositiu. Un compte diferent crea una còpia de seguretat separada i desvinculada.</string>
+    <string name="sync_gdrive_link_already_connected">Aquest dispositiu ja està vinculat amb aquell compte.</string>
     <string name="sync_gdrive_add_description">Feu clic al botó d\'inici de sessió a continuació per configurar l\'accés al Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Restableix totes les dades de l\'Octi emmagatzemades al Google Drive. El vostre dispositiu romandrà connectat al Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Tanca la sessió del Google Drive i suprimeix les dades relacionades amb aquest dispositiu.</string>

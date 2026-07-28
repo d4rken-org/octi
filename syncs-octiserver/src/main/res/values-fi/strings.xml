@@ -29,6 +29,7 @@ Koska sekä sovellusta että palvelinta parannetaan edelleen, se voi olla epäva
     <string name="sync_octiserver_add_create_account_title">Luo tili?</string>
     <string name="sync_octiserver_add_create_account_desc">Tälle palvelimelle luodaan uusi salattu synkronointitili.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Tämä tili vaatii Octi %1$s tai uudemman. Päivitä tämä laite tai poista se tililtä.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Tämä laite ei tue salausmenetelmää, jota tämä tili käyttää (%1$s). Ota yhteyttä kyseisen laitteen ylläpitäjään.</string>
     <string name="sync_octiserver_legacy_encryption_account">Tiedostojen jakaminen ei ole käytettävissä tällä laitteella, koska tämä tili käyttää vanhaa salausta. Luo uusi tili päivitetylle laitteelle ja yhdistä muut laitteesi uudelleen käyttääksesi tiedostojen jakamista.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Yhteensopimaton salaus</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Tiedostojen jakaminen ei ole käytettävissä</string>

@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">Programdata-omvang</string>
     <string name="sync_gdrive_type_appdata_description">Data word in Google Drive geplaas. Hierdie spesifieke variant gebruik die \"programdata\"-omvang. Toegang word slegs verleen tot \'n nuwe vouer net vir hierdie program. Die vouer is nie sigbaar in jou aandrywer nie. Dit is soortgelyk aan hoe WhatsApp-rugsteune werk.</string>
     <string name="sync_gdrive_add_label">Voeg nuwe Google Drive by</string>
+    <string name="sync_gdrive_link_label">Koppel hierdie toestel</string>
+    <string name="sync_gdrive_add_same_account_hint">Gebruik dieselfde Google-rekening op elke toestel — dit is wat hulle koppel.</string>
+    <string name="sync_gdrive_link_same_account_warning">Meld aan met dieselfde Google-rekening wat jy op jou ander toestel gebruik het. \'n Ander rekening skep \'n afsonderlike, ontkoppelde rugsteun.</string>
+    <string name="sync_gdrive_link_already_connected">Hierdie toestel is reeds met daardie rekening gekoppel.</string>
     <string name="sync_gdrive_add_description">Klik die aanmeldknoppie hieronder om Google Drive-toegang op te stel.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Herstel alle Octi-data wat op Google Drive gestoor is. Jou toestel bly aangemeld by Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Meld af van Google Drive en verwyder data wat met hierdie toestel verband hou.</string>

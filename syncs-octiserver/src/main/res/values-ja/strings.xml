@@ -29,6 +29,7 @@
     <string name="sync_octiserver_add_create_account_title">アカウントを作成?</string>
     <string name="sync_octiserver_add_create_account_desc">このサーバーに新しい暗号化された同期アカウントが作成されます。</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">このアカウントにはOcti %1$s以降が必要です。このデバイスを更新するか、アカウントから削除してください。</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">このデバイスは、このアカウントが使用している暗号化モード（%1$s）に対応していません。そのデバイスの管理者にご連絡ください。</string>
     <string name="sync_octiserver_legacy_encryption_account">このアカウントはレガシー暗号化を使用しているため、このデバイスではファイル共有を利用できません。更新されたデバイスで新しいアカウントを作成し、他のデバイスを再リンクしてファイル共有を使用してください。</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">互換性のない暗号化</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">ファイル共有は利用できません</string>

@@ -17,6 +17,10 @@
     <string name="onboarding_privacy_subtitle">Informativa sulla privacy</string>
     <string name="onboarding_privacy_body1">Octi è senza pubblicità e non vende i dati dell\'utente.</string>
     <string name="onboarding_privacy_sync_explanation">I tuoi dati vengono sincronizzati tramite Google Drive o Octi Server. Octi non ha accesso ai tuoi dati sincronizzati.</string>
+    <string name="onboarding_connect_title">Connetti i tuoi dispositivi</string>
+    <string name="onboarding_connect_body1">Octi ti mostra cosa sta accadendo sui tuoi altri dispositivi — batteria, WiFi, appunti e altro.</string>
+    <string name="onboarding_connect_body2">Per questo, Octi deve essere installato su un secondo dispositivo e connesso tramite un servizio di sincronizzazione. Senza un secondo dispositivo, non c’è molto da vedere.</string>
+    <string name="onboarding_connect_setup_action">Configura la sincronizzazione</string>
     <string name="updatecheck_setting_enabled_label">Controlla aggiornamenti</string>
     <string name="updatecheck_setting_enabled_explanation">Consenti a Octi di controllare se è disponibile una versione più recente dell\'app.</string>
     <string name="debug_debuglog_size_label">Dimensione</string>
@@ -47,6 +51,10 @@
     <string name="debug_debuglog_short_recording_stop_action">Interrompi comunque</string>
     <string name="onboarding_setupsync_title">Configura la sincronizzazione</string>
     <string name="onboarding_setupsync_message">Al momento stai vedendo solo questo dispositivo. Per collegare le tue installazioni di Octi, configura un servizio di sincronizzazione comune.</string>
+    <string name="dashboard_syncsetup_setup_action">Configura</string>
+    <string name="dashboard_syncedalone_card_title">Ora aggiungi il tuo secondo dispositivo</string>
+    <string name="dashboard_syncedalone_card_body">La sincronizzazione è pronta, ma Octi vede solo questo dispositivo finora. Installa Octi sul tuo altro dispositivo e scegli \'Aggiungi questo dispositivo\' lì.</string>
+    <string name="dashboard_syncedalone_card_action">Aggiungi un dispositivo</string>
     <string name="settings_privacy_policy_label">Informativa sulla privacy</string>
     <string name="settings_privacy_policy_desc">I dati sono gestiti responsabilmente.</string>
     <string name="settings_licenses_label">Licenze</string>
@@ -60,6 +68,17 @@
     <string name="changelog_label">Registro modifiche</string>
     <string name="settings_acknowledgements_label">Riconoscimenti</string>
     <string name="documentation_label">Documentazione</string>
+    <string name="settings_ecosystem_label">Altri modi per usare Octi</string>
+    <string name="settings_ecosystem_desc">Web, desktop e sincronizzazione self-hosted</string>
+    <string name="settings_ecosystem_header_desc">Usa Octi da un browser o da un’app desktop, connesso tramite Octi Server.</string>
+    <string name="settings_ecosystem_web_label">Octi Web</string>
+    <string name="settings_ecosystem_web_desc">Usa Octi da qualsiasi browser</string>
+    <string name="settings_ecosystem_web_source_label">Octi Web (sorgente)</string>
+    <string name="settings_ecosystem_web_source_desc">Visualizza il codice sorgente e le istruzioni per l’auto-hosting</string>
+    <string name="settings_ecosystem_desktop_label">Octi Desktop</string>
+    <string name="settings_ecosystem_desktop_desc">Client nativo per Windows, macOS e Linux</string>
+    <string name="settings_ecosystem_server_label">Octi Server</string>
+    <string name="settings_ecosystem_server_desc">Ospita il tuo backend di sincronizzazione</string>
     <string name="help_translate_label">Traduzione</string>
     <string name="help_translate_description">Aiuta a tradurre questa app nella tua lingua preferita.</string>
     <string name="issue_tracker_label">Sistema di gestione dei problemi</string>
@@ -79,10 +98,27 @@
     <string name="sync_account_label">Account</string>
     <string name="sync_services_label">Servizi di sincronizzazione</string>
     <string name="sync_add_label">Aggiungi un servizio di sincronizzazione</string>
+    <string name="sync_setup_intent_label">Configura la sincronizzazione</string>
+    <string name="sync_setup_intent_new_title">Configura una nuova sincronizzazione</string>
+    <string name="sync_setup_intent_new_desc">Crea un nuovo account. Scegli questo sul tuo primo dispositivo.</string>
+    <string name="sync_setup_intent_link_title">Aggiungi questo dispositivo</string>
+    <string name="sync_setup_intent_link_desc">Collega a una configurazione Octi che usi già su un altro dispositivo.</string>
+    <string name="sync_add_pick_create_header">Questi sono i servizi di sincronizzazione che Octi supporta attualmente. Scegline uno per iniziare — puoi aggiungerne altri o cambiare in seguito.</string>
+    <string name="sync_add_pick_link_header">Quale servizio di sincronizzazione usa il tuo altro dispositivo? I dispositivi possono vedersi solo su un servizio condiviso.</string>
+    <string name="sync_add_link_none_available">Nessuno dei tuoi servizi di sincronizzazione supporta ancora il collegamento di un dispositivo.</string>
     <string name="sync_add_help_desc">È necessario un servizio di sincronizzazione per lo scambio di informazioni tra le installazioni di Octi.
 
 I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comune!</string>
     <string name="sync_device_id_label">ID dispositivo</string>
+    <string name="sync_device_id_copied_toast">ID dispositivo copiato</string>
+    <string name="sync_device_model_label">Modello</string>
+    <string name="sync_device_android_version_label">Versione Android</string>
+    <string name="sync_device_os_label">Sistema operativo</string>
+    <string name="sync_device_security_patch_label">Patch di sicurezza</string>
+    <string name="sync_device_booted_label">Ultimo avvio</string>
+    <string name="sync_device_octi_version_label">Versione Octi</string>
+    <string name="sync_device_added_label">Aggiunto</string>
+    <string name="sync_device_last_seen_short_label">Ultimo visto</string>
     <plurals name="general_devices_count_label">
         <item quantity="one">%d dispositivo</item>
         <item quantity="other">%d dispositivi</item>
@@ -217,4 +253,7 @@ I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comu
     <string name="dashboard_device_edit_card_action">Modifica scheda</string>
     <string name="dashboard_device_move_up_action">Sposta su</string>
     <string name="dashboard_device_move_down_action">Sposta giù</string>
+    <string name="dashboard_device_remove_action">Rimuovi dispositivo</string>
+    <string name="dashboard_device_remove_picker_title">Scegli il servizio di sincronizzazione</string>
+    <string name="dashboard_device_remove_picker_message">Questo dispositivo è sincronizzato tramite più servizi. Scegli da quale rimuoverlo — dovrai confermare nella schermata successiva.</string>
 </resources>

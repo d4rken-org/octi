@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play недоступний</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi не може підключитися до Google Play. Чи встановлено і оновлено Google Play? Ви ввійшли у свій обліковий запис Google? Спробуйте очистити кеш застосунку Google Play і перезапустити пристрій.</string>
     <string name="upgrades_no_purchases_found_check_account">Покупки не знайдено. Ви використовуєте правильний обліковий запис?</string>
+    <string name="upgrades_already_owned_error_title">Вже придбано</string>
+    <string name="upgrades_already_owned_error_description">Google Play повідомляє, що ви вже маєте це оновлення. Використовуйте «Відновити покупку», щоб розблокувати його.</string>
     <string name="upgrades_dashcard_title">Отримати Octi Pro</string>
     <string name="upgrades_dashcard_body">Оновіть до Pro, щоб розблокувати додаткові функції та підтримати розвиток!</string>
     <string name="upgrades_dashcard_upgrade_action">Оновити</string>
@@ -14,19 +18,80 @@
         <item quantity="other">Безкоштовна версія обмежена %1$d пристроями.</item>
     </plurals>
     <string name="upgrade_screen_title">Отримати Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Навігація вгору</string>
+    <string name="upgrade_screen_progress_loading">Завантаження…</string>
     <string name="upgrade_screen_preamble">В Octi немає реклами й не продаються дані користувача. Моя робота фінансується вами ❤️.</string>
     <string name="upgrade_screen_benefits_title">Переваги</string>
     <string name="upgrade_screen_benefits_body">• Більше ніж 3 пристрої 💯\n• Різні теми 🎨\n• Більше опцій ⚙️\n• Додаткові сервери синхронізації🖥️️\n• Безперервна розробка ☕\n• Мотивований розробник 🧙</string>
     <string name="upgrade_screen_how_title">Варіанти</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Ви можете обрати між одноразовою покупкою та дешевшою річною підпискою. Обидві можна скасувати в будь-який момент.\nТі самі функції, лише різні моделі ціноутворення.</string>
+    <string name="upgrade_screen_how_trial_hint">Підписка починається з безкоштовного 14-денного пробного періоду, після якого з вас буде стягуватися плата раз на рік.</string>
     <string name="upgrade_screen_subscription_trial_action">Почати безкоштовний 14-денний пробний період</string>
     <string name="upgrade_screen_subscription_action">Оформити підписку</string>
     <string name="upgrade_screen_subscription_action_hint">Підписка коштує %s на рік.</string>
     <string name="upgrade_screen_iap_action">Одноразова покупка</string>
     <string name="upgrade_screen_iap_action_hint">Одноразова покупка коштує %s.</string>
     <string name="upgrade_screen_thanks_toast">Ви найкращі! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Варіанти оновлення</string>
+    <string name="upgrade_screen_offers_or">або</string>
+    <string name="upgrade_screen_offers_body">Обидва відкривають однакові функції — оберіть зручний вам варіант ціноутворення. Скасуйте в будь-який момент.</string>
+    <string name="upgrade_screen_subscription_offer_title">Річна підписка</string>
+    <string name="upgrade_screen_subscription_offer_body">Починається з безкоштовного 14-денного пробного періоду, далі сплачується раз на рік до скасування.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Сплачується раз на рік до скасування.</string>
+    <string name="upgrade_screen_iap_offer_title">Одноразова покупка</string>
+    <string name="upgrade_screen_iap_offer_body">Платіть один раз, володійте назавжди — без підписки.</string>
     <string name="upgrade_screen_restore_purchase_action">Відновити покупку</string>
+    <string name="upgrade_screen_restore_banner_title">Вже купили Pro?</string>
+    <string name="upgrade_screen_restore_banner_body">Схоже, ви раніше оновились до Pro на цьому пристрої. Якщо ви все ще маєте це оновлення, його відновлення розблокує його знову.</string>
     <string name="upgrade_screen_restore_purchase_message">Ваша покупка дійсна на всіх пристроях із цим же Google-акаунтом.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Поради щодо усунення проблем з невизнаними оновленнями:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Синхронізація Play Store може зайняти деякий час. Спробуйте перезапустити, очистити кеш Google Play або просто зачекайте.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Декілька акаунтів можуть заплутати Google Play. Вийдіть з інших акаунтів або встановлюйте через сайт Google Play, щоб прив\'язати до конкретного акаунта.</string>
+    <string name="upgrade_screen_restore_success_message">Покупку відновлено — дякуємо!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Вже купили Pro на цьому акаунті? Попросіть Google Play повторно перевірити покупки цього додатка.</string>
+    <string name="upgrade_screen_restore_status_title">Статус покупки</string>
+    <string name="upgrade_screen_restore_status_body">Повторно перевірте ваші покупки через Google Play, якщо ваш статус Pro коли-небудь виглядатиме застарілим.</string>
+    <string name="upgrade_screen_restore_checked_message">Ми попросили Google Play повторно перевірити покупки цього додатка, але не вдалося підтвердити жодної для поточного акаунту.</string>
+    <string name="upgrade_screen_restore_contact_hint">Все ще не виходить? Зв\'яжіться з підтримкою, і ми допоможемо з цим розібратися.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Ви — Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Дякуємо за підтримку Octi! Ваші функції Pro розблоковано.</string>
+    <string name="upgrade_screen_owned_iap_title">Довічна покупка</string>
+    <string name="upgrade_screen_owned_iap_body">Ви володієте одноразовою покупкою Pro. Вона ніколи не спливає.</string>
+    <string name="upgrade_screen_owned_sub_title">Підписка</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Ваша підписка Pro активна й автоматично поновлюється.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Ваша підписка Pro активна, але налаштована не продовжуватися. Вона залишається активною до кінця поточного періоду.</string>
+    <string name="upgrade_screen_owned_both_title">Ви володієте обома</string>
+    <string name="upgrade_screen_owned_both_warning">Ви володієте і підпискою, і одноразовою покупкою. Щоб не платити двічі, скасуйте підписку в Google Play — ви збережете Pro завдяки довічній покупці.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Ви — Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Дякуємо за покупку %1$s! Ваші функції Pro розблоковано і ніколи не спливають.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Дякуємо за підписку %1$s! Ваші функції Pro розблоковано.</string>
+    <string name="upgrade_screen_manage_subscription_action">Керувати підпискою</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Перейти на одноразову покупку</string>
+    <string name="upgrade_screen_switch_body">Віддаєте перевагу платити один раз замість підписки? Ви можете купити одноразову покупку Pro та зупинити підписку.</string>
+    <string name="upgrade_screen_switch_locked_note">Ваша підписка все ще продовжується автоматично. Спочатку скасуйте її в Google Play, а потім повертайтеся, щоб купити одноразову покупку. Покупка тут не скасовує та не повертає кошти за підписку — використовуйте той самий акаунт Google.</string>
+    <string name="upgrade_screen_switch_action">Купити одноразову покупку (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Підписка все ще активна</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Ваша підписка все ще налаштована на продовження. Спочатку скасуйте її в Google Play, щоб з вас не стягнули двічі, а потім купіть одноразову покупку. Це не повертає кошти за підписку.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Не вдалося перевірити підписку</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Play вчасно не відповів, тому ми не можемо безпечно підтвердити стан вашої підписки. Спробуйте ще раз трохи.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro все ще активний</string>
+    <string name="upgrade_screen_grace_body">Ми підтверджуємо вашу покупку через Google Play. Тим часом ваші функції Pro залишаються розблокованими.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Ми все ще не можемо підтвердити вашу покупку через Google Play. Ваші функції Pro поки що залишаються розблокованими. Спробуйте відновити, щоб повторно її підключити.</string>
+    <string name="upgrade_screen_contact_support_action">Зв\'язатись з підтримкою</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Ви використовуєте безкоштовну версію</string>
+    <string name="upgrade_screen_free_status_body">Оновіть до Octi Pro, щоб розблокувати додаткові функції та підтримати розробку.</string>
+    <string name="upgrade_screen_see_options_action">Переглянути варіанти оновлення</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Перегляньте статус Pro та керуйте своїм оновленням</string>
 </resources>

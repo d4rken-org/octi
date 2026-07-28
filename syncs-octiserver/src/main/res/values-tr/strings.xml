@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Hesap Oluştur?</string>
     <string name="sync_octiserver_add_create_account_desc">Bu sunucuda yeni şifreli bir eşzamanlama hesabı oluşturulacak.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Bu hesap Octi %1$s veya daha yenisini gerektiriyor. Bu cihazı güncelleyin veya hesaptan kaldırın.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Bu cihaz, bu hesabın kullandığı şifreleme modunu (%1$s) desteklemiyor. Bu cihazın geliştiricisine başvurun.</string>
     <string name="sync_octiserver_legacy_encryption_account">Bu cihazda dosya paylaşımı kullanılamıyor çünkü bu hesap eski şifreleme kullanıyor. Dosya paylaşımını kullanmak için güncellenmiş bir cihazda yeni hesap oluşturun ve diğer cihazlarınızı yeniden bağlayın.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Uyumsuz şifreleme</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Dosya paylaşımı kullanılamıyor</string>

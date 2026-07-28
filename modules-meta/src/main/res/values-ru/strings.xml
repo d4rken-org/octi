@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Мета-модуль</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_detail_label_label">Ярлык</string>
+    <string name="module_meta_detail_manufacturer_label">Производитель</string>
+    <string name="module_meta_detail_model_label">Модель</string>
+    <string name="module_meta_detail_device_type_label">Тип устройства</string>
+    <string name="module_meta_detail_device_type_phone">Телефон</string>
+    <string name="module_meta_detail_device_type_tablet">Планшет</string>
+    <string name="module_meta_detail_device_type_desktop">Компьютер</string>
+    <string name="module_meta_detail_device_type_browser">Браузер</string>
+    <string name="module_meta_detail_device_type_unknown">Неизвестно</string>
+    <string name="module_meta_detail_os_label">Операционная система</string>
+    <string name="module_meta_detail_android_version_label">Версия Android</string>
+    <string name="module_meta_detail_api_level_label">Уровень API</string>
+    <string name="module_meta_detail_security_patch_label">Патч безопасности</string>
+    <string name="module_meta_detail_booted_label">Загружено</string>
+    <string name="module_meta_detail_octi_version_label">Версия Octi</string>
+    <string name="module_meta_detail_git_sha_label">Сборка</string>
+    <string name="module_meta_detail_device_id_label">Идентификатор устройства</string>
+    <string name="module_meta_detail_last_updated_label">Последнее обновление</string>
 </resources>

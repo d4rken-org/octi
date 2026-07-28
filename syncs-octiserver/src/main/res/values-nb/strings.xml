@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Opprett konto?</string>
     <string name="sync_octiserver_add_create_account_desc">En ny kryptert synkroniseringskonto vil bli opprettet på denne serveren.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Denne kontoen krever Octi %1$s eller nyere. Oppdater denne enheten eller fjern den fra kontoen.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Denne enheten støtter ikke krypteringsmodus som denne kontoen bruker (%1$s). Kontakt enhetens vedlikeholder.</string>
     <string name="sync_octiserver_legacy_encryption_account">Fildeling er ikke tilgjengelig på denne enheten fordi denne kontoen bruker eldre kryptering. Opprett en ny konto på en oppdatert enhet og koble til de andre enhetene på nytt for å bruke fildeling.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Inkompatibel kryptering</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Fildeling ikke tilgjengelig</string>

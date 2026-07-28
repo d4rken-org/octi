@@ -29,6 +29,7 @@ Deoarece atat aplicatia cat si serverul sunt inca in dezvoltare, poate fi mai pu
     <string name="sync_octiserver_add_create_account_title">Creează cont?</string>
     <string name="sync_octiserver_add_create_account_desc">Un nou cont de sincronizare criptat va fi creat pe acest server.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Acest cont necesită Octi %1$s sau mai nou. Actualizează acest dispozitiv sau elimină-l din cont.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Acest dispozitiv nu acceptă modul de criptare pe care îl folosește acest cont (%1$s). Contactează responsabilul dispozitivului respectiv.</string>
     <string name="sync_octiserver_legacy_encryption_account">Partajarea fișierelor nu este disponibilă pe acest dispozitiv deoarece contul folosește criptare veche. Creează un cont nou pe un dispozitiv actualizat și reconectează celelalte dispozitive pentru a folosi partajarea fișierelor.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Criptare incompatibilă</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Partajarea fișierelor indisponibilă</string>

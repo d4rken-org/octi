@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play ei ole käytettävissä</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi ei voi yhdistää Google Playhin. Onko Google Play asennettu ja ajan tasalla? Onko Google-tilisi kirjautuneena? Kokeile tyhjentää Google Play -sovelluksen välimuisti ja käynnistää laite uudelleen.</string>
     <string name="upgrades_no_purchases_found_check_account">Ostoja ei löytynyt. Käytätkö oikeaa tiliä?</string>
+    <string name="upgrades_already_owned_error_title">Jo ostettu</string>
+    <string name="upgrades_already_owned_error_description">Google Play ilmoittaa, että omistat jo tämän päivityksen. Valitse \"Palauta osto\" ottaaksesi sen käyttöön.</string>
     <string name="upgrades_dashcard_title">Hanki Octi Pro</string>
     <string name="upgrades_dashcard_body">Päivitä avataksesi lisää ominaisuuksia ja tukeaksesi kehitystä!</string>
     <string name="upgrades_dashcard_upgrade_action">Päivitä</string>
@@ -12,19 +16,80 @@
         <item quantity="other">Ilmaisversio on rajoitettu %1$d laitteeseen.</item>
     </plurals>
     <string name="upgrade_screen_title">Hanki Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Siirry ylös</string>
+    <string name="upgrade_screen_progress_loading">Ladataan…</string>
     <string name="upgrade_screen_preamble">Octissa ei ole mainoksia eikä se myy käyttäjätietoja. Työni rahoitetaan sinun avullasi ❤️.</string>
     <string name="upgrade_screen_benefits_title">Hyödyt</string>
     <string name="upgrade_screen_benefits_body">• Yli 3 laitetta 💯\n• Erilaiset teemat 🎨\n• Lisää vaihtoehtoja ⚙️\n• Lisäsynkronointipalvelimet🖥️️\n• Jatkuva kehitys ☕\n• Motivoitunut kehittäjä 🧙</string>
     <string name="upgrade_screen_how_title">Vaihtoehdot</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Voit valita kertaosion ja halvemman vuosittaisen tilauksen välillä. Molemmat voidaan perua milloin tahansa.\nSamat ominaisuudet, vain eri hinnoitteluehdot.</string>
+    <string name="upgrade_screen_how_trial_hint">Tilaus alkaa ilmaisella 14 päivän kokeilujaksolla, jonka jälkeen sinulle veloitetaan kerran vuodessa.</string>
     <string name="upgrade_screen_subscription_trial_action">Aloita ilmainen 14 päivän kokeilu</string>
     <string name="upgrade_screen_subscription_action">Tilaa</string>
     <string name="upgrade_screen_subscription_action_hint">Tilauksen hinta on %s vuodessa.</string>
     <string name="upgrade_screen_iap_action">Kertamaksu</string>
     <string name="upgrade_screen_iap_action_hint">Kertamaksun hinta on %s.</string>
     <string name="upgrade_screen_thanks_toast">Olet paras! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Päivitysvaihtoehdot</string>
+    <string name="upgrade_screen_offers_or">tai</string>
+    <string name="upgrade_screen_offers_body">Molemmat vapauttavat samat ominaisuudet — valitse haluamasi hinnoittelu. Voit perua milloin tahansa.</string>
+    <string name="upgrade_screen_subscription_offer_title">Vuosittainen tilaus</string>
+    <string name="upgrade_screen_subscription_offer_body">Alkaa ilmaisella 14 päivän kokeilujaksolla, sitten laskutetaan kerran vuodessa kunnes peruutat.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Laskutetaan kerran vuodessa kunnes peruutat.</string>
+    <string name="upgrade_screen_iap_offer_title">Kertamaksu</string>
+    <string name="upgrade_screen_iap_offer_body">Maksa kerran, omaksesi ikuisesti — ei tilausta.</string>
     <string name="upgrade_screen_restore_purchase_action">Palauta osto</string>
+    <string name="upgrade_screen_restore_banner_title">Ostettu jo Pro?</string>
+    <string name="upgrade_screen_restore_banner_body">Näyttää siltä, että olet jo päivittänyt Pro-versioon tällä laitteella. Jos omistat edelleen päivityksen, sen palauttaminen avaa sen uudelleen.</string>
     <string name="upgrade_screen_restore_purchase_message">Päivityksesi on voimassa kaikilla samaa Google-tiliä käyttävillä laitteilla.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Vinkkejä jos päivitystä ei tunnisteta:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play Storen synkronointi saattaa kestää. Kokeile käynnistää uudelleen, tyhjentää Google Playn välimuisti tai odottaa hetki.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Monet tilit voivat sekoittaa Google Playn. Kirjaudu ulos muista tileistä tai asenna Google Playn verkkosivujen kautta, jolloin yhdistys tapahtuu tiettyyn tiliin.</string>
+    <string name="upgrade_screen_restore_success_message">Ostos palautettu — kiitos!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Oletko jo ostanut Pro? Pyydä Google Playta tarkistamaan tämän sovelluksen ostot uudelleen.</string>
+    <string name="upgrade_screen_restore_status_title">Ostojen tila</string>
+    <string name="upgrade_screen_restore_status_body">Tarkista ostosi Google Playn kanssa, jos Pro-tilasi näyttää vanhentuneelta.</string>
+    <string name="upgrade_screen_restore_checked_message">Pyysimme Google Playta tarkistamaan tämän sovelluksen ostot uudelleen, mutta emme voineet vahvistaa ostoa tälle tilille.</string>
+    <string name="upgrade_screen_restore_contact_hint">Olet vielä jumissa? Ota yhteyttä tukeen ja autamme sinua.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Olet Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Kiitos Octin tukemisesta! Pro-ominaisuutesi on avattu.</string>
+    <string name="upgrade_screen_owned_iap_title">Elinikäinen osto</string>
+    <string name="upgrade_screen_owned_iap_body">Omistat kertaluonteisen Pro-osion. Se ei koskaan vanhene.</string>
+    <string name="upgrade_screen_owned_sub_title">Tilaus</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Pro-tilauksesi on aktiivinen ja uusiutuu automaattisesti.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Pro-tilauksesi on aktiivinen, mutta automaattinen uusiutuminen on pois päältä. Se pysyy aktiivisena kuluvan kauden loppuun.</string>
+    <string name="upgrade_screen_owned_both_title">Omistat molemmat</string>
+    <string name="upgrade_screen_owned_both_warning">Omistat sekä tilauksen että kertaluonteisen osion. Kaksinkertaisen maksun välttämiseksi peruuta tilaus Google Playssa — säilytät Pro-tilan elinikäisen osion kautta.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Olet Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Kiitos %1$s:n ostamisesta! Pro-ominaisuutesi on avattu eivätkä ne koskaan vanhene.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Kiitos %1$s:n tilaamisesta! Pro-ominaisuutesi on avattu.</string>
+    <string name="upgrade_screen_manage_subscription_action">Hallitse tilausta</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Vaihda kertamaksuun</string>
+    <string name="upgrade_screen_switch_body">Haluaisitko maksaa kerran tilauksen sijaan? Voit ostaa kertamaksullisen Pro-version ja lopettaa tilauksen.</string>
+    <string name="upgrade_screen_switch_locked_note">Tilauksesi uusiutuu edelleen automaattisesti. Peruuta se ensin Google Play -sovelluksesta, sitten palaa ostamaan kertamaksua. Tämän ostaminen ei peruuta tai palauta tilausta — käytä samaa Google-tiliä.</string>
+    <string name="upgrade_screen_switch_action">Osta kertamaksu (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Tilaus on edelleen aktiivinen</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Tilauksesi on edelleen asetettu uusimiselle. Peruuta se ensin Google Play -sovelluksesta, jotta sinua ei veloiteta kahdesti, sitten osta kertamaksu. Tämä ei palauta tilausta.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Tilausta ei voitu vahvistaa</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Play ei vastannut ajoissa, joten emme voi varmasti vahvistaa tilauksesi tilaa. Yritä uudelleen hetken kuluttua.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro on edelleen aktiivinen</string>
+    <string name="upgrade_screen_grace_body">Vahvistamme ostoksesi Google Play:n kanssa. Pro-ominaisuudet pysyvät avattuna sillä välin.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Emme vieläkään voi vahvistaa ostoksesi Google Play:n kanssa. Pro-ominaisuudet pysyvät avattuna toistaiseksi. Yritä palauttaa ostokset yhdistääksesi ne.</string>
+    <string name="upgrade_screen_contact_support_action">Ota yhteyttä tukeen</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Käytät ilmaista versiota</string>
+    <string name="upgrade_screen_free_status_body">Päivitä Octi Proon lisäominaisuuksien avaamiseksi ja kehityksen tukemiseksi.</string>
+    <string name="upgrade_screen_see_options_action">Näytä päivitysvaihtoehdot</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Näytä Pro-statuksesi ja hallitse päivitystäsi</string>
 </resources>

@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">메타 모듈</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">부팅 이후 %1$s</string>
+    <string name="module_meta_detail_label_label">레이블</string>
+    <string name="module_meta_detail_manufacturer_label">제조사</string>
+    <string name="module_meta_detail_model_label">모델</string>
+    <string name="module_meta_detail_device_type_label">기기 유형</string>
+    <string name="module_meta_detail_device_type_phone">휴대폰</string>
+    <string name="module_meta_detail_device_type_tablet">태블릿</string>
+    <string name="module_meta_detail_device_type_desktop">데스크톱</string>
+    <string name="module_meta_detail_device_type_browser">브라우저</string>
+    <string name="module_meta_detail_device_type_unknown">알 수 없음</string>
+    <string name="module_meta_detail_os_label">운영 체제</string>
+    <string name="module_meta_detail_android_version_label">Android 버전</string>
+    <string name="module_meta_detail_api_level_label">API 레벨</string>
+    <string name="module_meta_detail_security_patch_label">보안 패치</string>
+    <string name="module_meta_detail_booted_label">부팅됨</string>
+    <string name="module_meta_detail_octi_version_label">Octi 버전</string>
+    <string name="module_meta_detail_git_sha_label">빌드 커밋</string>
+    <string name="module_meta_detail_device_id_label">기기 ID</string>
+    <string name="module_meta_detail_last_updated_label">최근 업데이트</string>
 </resources>

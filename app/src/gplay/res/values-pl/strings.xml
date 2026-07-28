@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play jest niedostępne</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi nie może połączyć się z Google Play. Czy Google Play jest zainstalowane i aktualne? Czy jesteś zalogowany na swoim koncie Google? Spróbuj wyczyścić pamięć podręczną aplikacji Google Play i zrestartować urządzenie.</string>
     <string name="upgrades_no_purchases_found_check_account">Nie znaleziono zakupów. Czy używasz właściwego konta?</string>
+    <string name="upgrades_already_owned_error_title">Już zakupiono</string>
+    <string name="upgrades_already_owned_error_description">Google Play informuje, że masz już tę aktualizację. Użyj \'Przywróć zakup\' aby je odblokować.</string>
     <string name="upgrades_dashcard_title">Uzyskaj Octi Pro</string>
     <string name="upgrades_dashcard_body">Uaktualnij, aby odblokować dodatkowe funkcje i wesprzeć rozwój!</string>
     <string name="upgrades_dashcard_upgrade_action">Uaktualnij</string>
@@ -14,19 +18,80 @@
         <item quantity="other">Darmowa wersja jest ograniczona do %1$d urządzeń.</item>
     </plurals>
     <string name="upgrade_screen_title">Uzyskaj Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Przejdź wyżej</string>
+    <string name="upgrade_screen_progress_loading">Ładowanie…</string>
     <string name="upgrade_screen_preamble">Octi nie wyświetla reklam i nie sprzedaje danych użytkowników. Moja praca jest finansowana przez ciebie ❤️.</string>
     <string name="upgrade_screen_benefits_title">Korzyści</string>
     <string name="upgrade_screen_benefits_body">• Ponad 3 urządzenia 💯\n• Różne motywy 🎨\n• Więcej opcji ⚙️\n• Dodatkowe serwery synchronizacji 🖥️️\n• Ciągły rozwój ☕\n• Motywacja programisty 🧙</string>
     <string name="upgrade_screen_how_title">Opcje</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Możesz wybrać zakup jednorazowy lub tańszą subskrypcję roczną. Obie opcje można anulować w dowolnym momencie.\nTe same funkcje, tylko różne modele cenowe.</string>
+    <string name="upgrade_screen_how_trial_hint">Subskrypcja rozpoczyna się od bezpłatnego 14-dniowego okresu próbnego, po którym będzie pobierana opłata raz w roku.</string>
     <string name="upgrade_screen_subscription_trial_action">Rozpocznij bezpłatny 14-dniowy okres próbny</string>
     <string name="upgrade_screen_subscription_action">Subskrybuj</string>
     <string name="upgrade_screen_subscription_action_hint">Subskrypcja kosztuje %s rocznie.</string>
     <string name="upgrade_screen_iap_action">Jednorazowy zakup</string>
     <string name="upgrade_screen_iap_action_hint">Jednorazowy zakup kosztuje %s.</string>
     <string name="upgrade_screen_thanks_toast">Jesteś najlepszy! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Opcje aktualizacji</string>
+    <string name="upgrade_screen_offers_or">lub</string>
+    <string name="upgrade_screen_offers_body">Obie opcje odblokowują te same funkcje — wybierz preferowaną cenę. Anuluj w dowolnym momencie.</string>
+    <string name="upgrade_screen_subscription_offer_title">Roczna subskrypcja</string>
+    <string name="upgrade_screen_subscription_offer_body">Rozpoczyna się od 14-dniowego bezpłatnego okresu próbnego, a następnie jest rozliczany raz w roku, aż do momentu anulowania.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Rozliczane raz w roku do momentu anulowania.</string>
+    <string name="upgrade_screen_iap_offer_title">Jednorazowy zakup</string>
+    <string name="upgrade_screen_iap_offer_body">Zapłać raz, na zawsze — brak subskrypcji.</string>
     <string name="upgrade_screen_restore_purchase_action">Przywróć zakup</string>
+    <string name="upgrade_screen_restore_banner_title">Już kupiłeś Pro?</string>
+    <string name="upgrade_screen_restore_banner_body">Wygląda na to, że wcześniej zaktualizowałeś do wersji Pro na tym urządzeniu. Jeśli nadal posiadasz aktualizację, przywrócenie odblokuje ją ponownie.</string>
     <string name="upgrade_screen_restore_purchase_message">Twoje uaktualnienie jest ważne na wszystkich urządzeniach korzystających z tego samego konta Google.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Wskazówki dotyczące rozwiązywania problemów w przypadku nierozpoznanych uaktualnień:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Synchronizacja Sklepu Play może zająć trochę czasu. Spróbuj uruchomić ponownie, wyczyścić pamięć podręczną Google Play lub po prostu poczekać.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Wiele kont może powodować problemy z Google Play. Wyloguj się z innych kont lub zainstaluj aplikację przez stronę Google Play, co wymusi powiązanie z konkretnym kontem.</string>
+    <string name="upgrade_screen_restore_success_message">Zakup przywrócony — dziękuję!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Kupiłeś już wersję Pro na tym koncie? Poproś Sklep Google Play o ponowne sprawdzenie zakupów w tej aplikacji.</string>
+    <string name="upgrade_screen_restore_status_title">Status zakupu</string>
+    <string name="upgrade_screen_restore_status_body">Sprawdź ponownie swoje zakupy za pomocą Sklepu Google Play, jeśli twój status Pro zawsze wygląda na aktualny.</string>
+    <string name="upgrade_screen_restore_checked_message">Zwróciliśmy się do Sklepu Google Play z prośbą o ponowne sprawdzenie zakupów dokonanych za pomocą tej aplikacji, ale nie udało nam się potwierdzić zakupów na bieżącym koncie.</string>
+    <string name="upgrade_screen_restore_contact_hint">Nadal masz problem? Skontaktuj się z pomocą techniczną, a pomożemy ci go rozwiązać.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Jesteś Octi Pro</string>
+    <string name="upgrade_screen_owned_body">Dziękuję za wsparcie Octi! Twoje funkcje Pro są odblokowane.</string>
+    <string name="upgrade_screen_owned_iap_title">Zakup dożywotni</string>
+    <string name="upgrade_screen_owned_iap_body">Jesteś właścicielem jednorazowego zakupu Pro. Nigdy nie wygasa.</string>
+    <string name="upgrade_screen_owned_sub_title">Subskrypcja</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Twoja subskrypcja Pro jest aktywna i odnawia się automatycznie.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Twoja subskrypcja Pro jest aktywna, ale ustawiona na nieodnawialną. Pozostanie aktywna do końca bieżącego okresu.</string>
+    <string name="upgrade_screen_owned_both_title">Jesteś właścicielem obu</string>
+    <string name="upgrade_screen_owned_both_warning">Posiadasz zarówno subskrypcję, jak i jednorazowy zakup. Aby uniknąć podwójnego płacenia, anuluj subskrypcję w Sklepie Google Play — trzymasz Pro przez dożywotni zakup.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Jesteś Octi Pro</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Dziękujemy za zakup %1$s! Twoje funkcje Pro są odblokowane i nigdy nie wygasają.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Dziękuję za subskrybowanie %1$s! Twoje funkcje Pro są odblokowane.</string>
+    <string name="upgrade_screen_manage_subscription_action">Zarządzaj subskrypcją</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Przełącz na jednorazowy zakup</string>
+    <string name="upgrade_screen_switch_body">Czy chcesz zapłacić raz zamiast subskrybować? Możesz kupić jednorazowy zakup i zatrzymać subskrypcję.</string>
+    <string name="upgrade_screen_switch_locked_note">Twoja subskrypcja nadal odnawia się automatycznie. Anuluj ją najpierw w Sklepie Google Play, a następnie wróć do kupna jednorazowego zakupu. Kupno tutaj nie anuluje ani nie zwraca subskrypcji — użyj tego samego konta Google.</string>
+    <string name="upgrade_screen_switch_action">Kup - jednorazowy zakup (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Subskrypcja nadal aktywna</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Twoja subskrypcja nadal jest ustawiona na odnowienie. Anuluj ją najpierw w Sklepie Google Play, aby uniknąć podwójnej opłaty, a następnie dokonaj jednorazowego zakupu. Nie spowoduje to zwrotu kosztów subskrypcji.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Nie można zweryfikować subskrypcji</string>
+    <string name="upgrade_screen_sub_check_failed_message">Sklep Google Play nie odpowiedział na czas, więc nie możemy bezpiecznie potwierdzić stanu twojej subskrypcji. Spróbuj ponownie za chwilę.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro jest nadal aktywne</string>
+    <string name="upgrade_screen_grace_body">Potwierdzamy twój zakup w Google Play. Twoje funkcje Pro są w międzyczasie odblokowane.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Nadal nie możemy potwierdzić zakupu w Sklepie Google Play. Twoje funkcje Pro pozostają na razie odblokowane. Spróbuj przywrócić połączenie.</string>
+    <string name="upgrade_screen_contact_support_action">Skontaktuj się z pomocą techniczną</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Jesteś na darmowej wersji</string>
+    <string name="upgrade_screen_free_status_body">Zaktualizuj do wersji Octi Pro, aby odblokować dodatkowe funkcje i wesprzeć rozwój.</string>
+    <string name="upgrade_screen_see_options_action">Zobacz opcje aktualizacji</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Zobacz swój status Pro i zarządzaj aktualizacją</string>
 </resources>

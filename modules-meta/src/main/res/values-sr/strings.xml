@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Мета модул</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Активан %1$s</string>
+    <string name="module_meta_detail_label_label">Ознака</string>
+    <string name="module_meta_detail_manufacturer_label">Произвођач</string>
+    <string name="module_meta_detail_model_label">Модел</string>
+    <string name="module_meta_detail_device_type_label">Врста уређаја</string>
+    <string name="module_meta_detail_device_type_phone">Телефон</string>
+    <string name="module_meta_detail_device_type_tablet">Таблет</string>
+    <string name="module_meta_detail_device_type_desktop">Десктоп</string>
+    <string name="module_meta_detail_device_type_browser">Веб-прегледач</string>
+    <string name="module_meta_detail_device_type_unknown">Непознато</string>
+    <string name="module_meta_detail_os_label">Операциони систем</string>
+    <string name="module_meta_detail_android_version_label">Верзија Android</string>
+    <string name="module_meta_detail_api_level_label">API ниво</string>
+    <string name="module_meta_detail_security_patch_label">Сигурносна закрпа</string>
+    <string name="module_meta_detail_booted_label">Покренут</string>
+    <string name="module_meta_detail_octi_version_label">Верзија Octi</string>
+    <string name="module_meta_detail_git_sha_label">Commit верзије</string>
+    <string name="module_meta_detail_device_id_label">ID уређаја</string>
+    <string name="module_meta_detail_last_updated_label">Последње ажурирање</string>
 </resources>

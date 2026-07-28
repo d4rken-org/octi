@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Meta modul</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Üzemidő %1$s</string>
+    <string name="module_meta_detail_label_label">Címke</string>
+    <string name="module_meta_detail_manufacturer_label">Gyártó</string>
+    <string name="module_meta_detail_model_label">Modell</string>
+    <string name="module_meta_detail_device_type_label">Eszköz típusa</string>
+    <string name="module_meta_detail_device_type_phone">Telefon</string>
+    <string name="module_meta_detail_device_type_tablet">Tablet</string>
+    <string name="module_meta_detail_device_type_desktop">Asztali</string>
+    <string name="module_meta_detail_device_type_browser">Böngésző</string>
+    <string name="module_meta_detail_device_type_unknown">Ismeretlen</string>
+    <string name="module_meta_detail_os_label">Operációs rendszer</string>
+    <string name="module_meta_detail_android_version_label">Android verziója</string>
+    <string name="module_meta_detail_api_level_label">API szint</string>
+    <string name="module_meta_detail_security_patch_label">Biztonsági javítás</string>
+    <string name="module_meta_detail_booted_label">Indítás</string>
+    <string name="module_meta_detail_octi_version_label">Octi verziója</string>
+    <string name="module_meta_detail_git_sha_label">Build commit</string>
+    <string name="module_meta_detail_device_id_label">Eszköz azonosítója</string>
+    <string name="module_meta_detail_last_updated_label">Utolsó frissítés</string>
 </resources>

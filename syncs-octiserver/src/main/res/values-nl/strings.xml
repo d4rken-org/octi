@@ -29,6 +29,7 @@ Da zowel de app als de server nog worden verbeterd, kan deze minder stabiel zijn
     <string name="sync_octiserver_add_create_account_title">Account aanmaken?</string>
     <string name="sync_octiserver_add_create_account_desc">Er wordt een nieuw versleuteld synchronisatieaccount aangemaakt op deze server.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Dit account vereist Octi %1$s of nieuwer. Werk dit apparaat bij of verwijder het uit het account.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Dit apparaat ondersteunt niet de versleutelingsmodus die dit account gebruikt (%1$s). Neem contact op met de beheerder van dat apparaat.</string>
     <string name="sync_octiserver_legacy_encryption_account">Bestanden delen is niet beschikbaar op dit apparaat omdat dit account verouderde versleuteling gebruikt. Maak een nieuw account aan op een bijgewerkt apparaat en koppel je andere apparaten opnieuw om bestanden te delen.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Incompatibele versleuteling</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Bestanden delen niet beschikbaar</string>

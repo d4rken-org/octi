@@ -30,7 +30,24 @@
     <string name="sync_connector_paused_label">暂停同步</string>
     <string name="sync_connector_paused_error_label">连接器已暂停</string>
     <string name="sync_connector_paused_error_desc">此连接器已暂停。请恢复后再执行此操作。</string>
+    <string name="sync_connector_account_label">账号</string>
+    <string name="sync_connector_progress_syncing">正在同步…</string>
+    <string name="sync_connector_progress_sync_queued">同步已排队…</string>
+    <string name="sync_connector_progress_pausing">正在暂停同步…</string>
+    <string name="sync_connector_progress_pause_queued">暂停已排队…</string>
+    <string name="sync_connector_progress_resuming">正在恢复同步…</string>
+    <string name="sync_connector_progress_resume_queued">恢复已排队…</string>
+    <string name="sync_connector_progress_resetting">正在重置数据…</string>
+    <string name="sync_connector_progress_reset_queued">重置已排队…</string>
+    <string name="sync_connector_progress_device_updating">正在更新设备…</string>
+    <string name="sync_connector_progress_device_update_queued">设备更新已排队…</string>
     <string name="sync_synced_devices_label">同步设备</string>
+    <string name="sync_link_device_action">链接设备</string>
+    <string name="sync_devices_sort_label">排序</string>
+    <string name="sync_devices_sort_date_added_label">按添加日期</string>
+    <string name="sync_devices_sort_last_seen_label">按最后在线时间</string>
+    <string name="sync_devices_sort_name_label">按名称</string>
+    <string name="sync_devices_sort_app_version_label">按应用版本</string>
     <plurals name="sync_stale_period_days">
         <item quantity="other">%d 天</item>
     </plurals>

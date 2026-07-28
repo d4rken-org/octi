@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play није доступан</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi не може да се повеже са Google Play-ом. Да ли је Google Play инсталиран и ажуриран? Да ли сте пријављени на свој Google налог? Покушајте да очистите кеширање апликације Google Play и поново покренете уређај.</string>
     <string name="upgrades_no_purchases_found_check_account">Нису пронађене куповине. Користите ли прави налог?</string>
+    <string name="upgrades_already_owned_error_title">Већ купљено</string>
+    <string name="upgrades_already_owned_error_description">Google Play извештава да већ поседујете ову надоградњу. Користите \'Врати куповину\' да је откључате.</string>
     <string name="upgrades_dashcard_title">Преузмите Octi Pro</string>
     <string name="upgrades_dashcard_body">Надоградите да бисте откључали додатне функције и подржали развој!</string>
     <string name="upgrades_dashcard_upgrade_action">Надогради</string>
@@ -13,19 +17,80 @@
         <item quantity="other">Бесплатна верзија је ограничена на %1$d уређаја.</item>
     </plurals>
     <string name="upgrade_screen_title">Преузмите Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Назад</string>
+    <string name="upgrade_screen_progress_loading">Учитавање…</string>
     <string name="upgrade_screen_preamble">Octi нема огласе и не продаје корисничке податке. Мој рад финансирате ви ❤️.</string>
     <string name="upgrade_screen_benefits_title">Предности</string>
     <string name="upgrade_screen_benefits_body">• Више од 3 уређаја 💯\n• Различите теме 🎨\n• Више опција ⚙️\n• Додатни сервери за синхронизацију 🖥️️\n• Континуиран развој ☕\n• Мотивациони програмер 🧙</string>
     <string name="upgrade_screen_how_title">Опције</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Можете бирати између једнократне куповине и јефтиније годишње претплате. Обе се могу отказати у било које време.\nИсте функције, само другачији модели цена.</string>
+    <string name="upgrade_screen_how_trial_hint">Претплата почиње са бесплатним пробним периодом од 14 дана, после чега ћете бити наплаћени једном годишње.</string>
     <string name="upgrade_screen_subscription_trial_action">Почните бесплатни пробни период од 14 дана</string>
     <string name="upgrade_screen_subscription_action">Претплатите се</string>
     <string name="upgrade_screen_subscription_action_hint">Претплата кошта %s годишње.</string>
     <string name="upgrade_screen_iap_action">Једнократна куповина</string>
     <string name="upgrade_screen_iap_action_hint">Једнократна куповина кошта %s.</string>
     <string name="upgrade_screen_thanks_toast">Најбољи сте! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Опције надградње</string>
+    <string name="upgrade_screen_offers_or">или</string>
+    <string name="upgrade_screen_offers_body">Обе опције пружају исте функције — изаберите цену која вам одговара. Откажите у било које време.</string>
+    <string name="upgrade_screen_subscription_offer_title">Годишња претплата</string>
+    <string name="upgrade_screen_subscription_offer_body">Почиње са бесплатним пробним периодом од 14 дана, затим се наплаћује једном годишње док се не откаже.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Наплаћује се једном годишње док се не откаже.</string>
+    <string name="upgrade_screen_iap_offer_title">Једнократна куповина</string>
+    <string name="upgrade_screen_iap_offer_body">Платите једном, ваша је заувек — без претплате.</string>
     <string name="upgrade_screen_restore_purchase_action">Вратите куповину</string>
+    <string name="upgrade_screen_restore_banner_title">Већ сте купили Pro?</string>
+    <string name="upgrade_screen_restore_banner_body">Чини се да сте се надоградили на Pro на овом уређају раније. Ако и даље поседујете надоградњу, враћање ће је поново откључати.</string>
     <string name="upgrade_screen_restore_purchase_message">Ваша надоградња важи за све уређаје са истим Google налогом.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Савети за решавање проблема са непрепознатим надоградњама:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Синхронизација са Play Store може потрајати. Покушајте да поново покренете, обришете кеш Google Play-а или само сачекајте.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Више налога може збунити Google Play. Одјавите се са других налога или инсталирајте преко Google Play сајта, што приморава повезивање са одређеним налогом.</string>
+    <string name="upgrade_screen_restore_success_message">Куповина је враћена — хвала вам!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Већ сте купили Pro на овом налогу? Замолите Google Play да поново провери куповине ове апликације.</string>
+    <string name="upgrade_screen_restore_status_title">Статус куповине</string>
+    <string name="upgrade_screen_restore_status_body">Поново проверите своје куповине помоћу Google Play ако вам статус Pro икад изгледа застарео.</string>
+    <string name="upgrade_screen_restore_checked_message">Замолили смо Google Play да поново провери куповине ове апликације, али нисмо могли да потврдимо ниједну за тренутни налог.</string>
+    <string name="upgrade_screen_restore_contact_hint">Још увек заглављени? Контактирајте подршку и помоћићемо вам да то решимо.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Ви сте Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Хвала вам што подржавате Octi! Ваше Pro функције су откључане.</string>
+    <string name="upgrade_screen_owned_iap_title">Доживотна куповина</string>
+    <string name="upgrade_screen_owned_iap_body">Поседујете једнократну Pro куповину. Никада не истиче.</string>
+    <string name="upgrade_screen_owned_sub_title">Претплата</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Ваша Pro претплата је активна и аутоматски се обнавља.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Ваша Pro претплата је активна, али подешена да се не обнови. Остаје активна до краја текућег периода.</string>
+    <string name="upgrade_screen_owned_both_title">Поседујете оба</string>
+    <string name="upgrade_screen_owned_both_warning">Поседујете и претплату и једнократну куповину. Да бисте избегли двоструко плаћање, откажите претплату у Google Play — задржавате Pro кроз доживотну куповину.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Ви сте Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Хвала вам што сте купили %1$s! Ваше Pro функције су откључане и никада не истичу.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Хвала вам што сте се претплатили на %1$s! Ваше Pro функције су откључане.</string>
+    <string name="upgrade_screen_manage_subscription_action">Управљајте претплатом</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Пребаците се на једнократну куповину</string>
+    <string name="upgrade_screen_switch_body">Желите да платите једном уместо претплаћивања? Можете купити једнократну Pro куповину и зауставити претплату.</string>
+    <string name="upgrade_screen_switch_locked_note">Ваша претплата се и даље аутоматски обнавља. Прво је откажите у Google Play, затим се вратите да купите једнократну куповину. Куповина овде не отказује нити враћа претплату — користите исти Google налог.</string>
+    <string name="upgrade_screen_switch_action">Купите једнократну куповину (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Претплата је и даље активна</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Ваша претплата је и даље подешена да се обнови. Прво је откажите у Google Play како не бисте били наплаћени два пута, затим купите једнократну куповину. Ово не враћа претплату.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Није могуће потврдити претплату</string>
+    <string name="upgrade_screen_sub_check_failed_message">Google Play није одговорио на време, па не можемо сигурно да потврдимо стање ваше претплате. Молимо покушајте поново за тренутак.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Pro је и даље активан</string>
+    <string name="upgrade_screen_grace_body">Потврђујемо вашу куповину са Google Play. Ваше Pro функције остају откључане у међувремену.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Још увек не можемо да потврдимо вашу куповину са Google Play. Ваше Pro функције остају откључане за сада. Покушајте да повратите куповину да бисте је поново повезали.</string>
+    <string name="upgrade_screen_contact_support_action">Контактирајте подршку</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Користите бесплатну верзију</string>
+    <string name="upgrade_screen_free_status_body">Надградите се на Octi Pro да откључате додатне функције и подржите развој.</string>
+    <string name="upgrade_screen_see_options_action">Погледајте опције надградње</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Погледајте свој Pro статус и управљајте својом надградњом</string>
 </resources>

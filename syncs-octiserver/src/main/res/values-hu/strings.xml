@@ -27,6 +27,7 @@
     <string name="sync_octiserver_add_create_account_title">Fiók létrehozása?</string>
     <string name="sync_octiserver_add_create_account_desc">Egy új titkosított szinkronizációs fiók jön létre ezen a szerveren.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Ez a fiók Octi %1$s vagy újabb verziót igényel. Frissítsd az eszközt, vagy távolítsd el a fiókból.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Ez az eszköz nem támogatja ezt a fiók által használt titkosítási módot (%1$s). Forduljon az eszköz karbantartójához.</string>
     <string name="sync_octiserver_legacy_encryption_account">A fájlmegosztás nem érhető el ezen az eszközön, mert a fiók örökölt titkosítást használ. Hozz létre egy új fiókot egy frissített eszközön, és kapcsold össze a többi eszközödet a fájlmegosztás használatához.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Inkompatibilis titkosítás</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Fájlmegosztás nem elérhető</string>

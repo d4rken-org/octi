@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">Phạm vi dữ liệu ứng dụng</string>
     <string name="sync_gdrive_type_appdata_description">Dữ liệu được lưu trong Google Drive. Biến thể này sử dụng phạm vi \"app-data\". Chỉ cấp quyền truy cập vào một thư mục mới dành riêng cho ứng dụng này. Thư mục này không hiển thị trong ổ đĩa của bạn. Điều này tương tự như cách sao lưu WhatsApp hoạt động.</string>
     <string name="sync_gdrive_add_label">Thêm Google Drive mới</string>
+    <string name="sync_gdrive_link_label">Liên kết thiết bị này</string>
+    <string name="sync_gdrive_add_same_account_hint">Sử dụng cùng một tài khoản Google trên mọi thiết bị — đó là cách liên kết chúng.</string>
+    <string name="sync_gdrive_link_same_account_warning">Đăng nhập bằng tài khoản Google GIỐNG NHAU mà bạn đã sử dụng trên thiết bị khác. Một tài khoản khác tạo một bản sao lưu riêng biệt, chưa được liên kết.</string>
+    <string name="sync_gdrive_link_already_connected">Thiết bị này đã được liên kết với tài khoản đó rồi.</string>
     <string name="sync_gdrive_add_description">Nhấn nút đăng nhập bên dưới để thiết lập quyền truy cập Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Đặt lại tất cả dữ liệu Octi được lưu trên Google Drive. Thiết bị của bạn vẫn đăng nhập Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Đăng xuất khỏi Google Drive và xóa dữ liệu liên quan đến thiết bị này.</string>

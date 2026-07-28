@@ -21,6 +21,7 @@
     <string name="general_reset_action">Resetează</string>
     <string name="general_disconnect_action">Deconectează</string>
     <string name="general_upgrade_action">Upgradează</string>
+    <string name="general_upgrade_required_label">Necesită upgrade</string>
     <string name="general_update_action">Actualizează</string>
     <string name="general_donate_action">Donează</string>
     <string name="general_check_action">Verifică</string>
@@ -29,6 +30,10 @@
     <string name="general_close_action">Închide</string>
     <string name="general_continue">Continuă</string>
     <string name="general_show_details_action">Afișează detalii</string>
+    <string name="general_expand_action">Extinde</string>
+    <string name="general_collapse_action">Restrânge</string>
+    <string name="general_expanded_state_label">Extins</string>
+    <string name="general_collapsed_state_label">Restrâns</string>
     <string name="general_minutes_label">Minute</string>
     <plurals name="general_minutes_quantity_label">
         <item quantity="one">%1$d minut</item>
@@ -51,6 +56,7 @@
     <string name="ui_theme_color_blue_label">Albastru</string>
     <string name="ui_theme_color_sunset_label">Apus</string>
     <string name="device_x_label">Dispozitiv: %s</string>
+    <string name="general_sort_reverse_label">Ordine inversă</string>
     <!-- Widget theme presets -->
     <string name="widget_theme_material_you">Material You</string>
     <string name="widget_theme_classic_green">Verde Clasic</string>
@@ -61,6 +67,11 @@
     <!-- Widget config -->
     <string name="widget_config_title">Personalizare widget</string>
     <string name="widget_config_apply_action">Aplică</string>
+    <string name="widget_config_upgrade_action">Actualizează la Octi Pro</string>
+    <string name="widget_config_pro_required_label">Acest widget necesită Octi Pro.</string>
+    <string name="widget_config_pro_checking_label">Se verifică statutul Octi Pro…</string>
+    <string name="widget_config_pro_error_label">Nu s-a putut verifica statutul Octi Pro.</string>
+    <string name="widget_config_retry_action">Reîncercați</string>
     <string name="widget_config_presets_label">Presetări</string>
     <string name="widget_config_background_label">Culoare de fundal</string>
     <string name="widget_config_accent_label">Culoare de accent</string>
@@ -74,6 +85,9 @@
     <string name="widget_config_devices_none_known">Nu sunt cunoscute încă dispozitive de sincronizare.</string>
     <string name="widget_empty_label">Niciun dispozitiv corespunzător</string>
     <string name="widget_no_sync_devices_label">Niciun dispozitiv de sincronizare încă</string>
+    <string name="widget_more_items">+ %1$d mai mult</string>
+    <string name="widget_upgrade_required_title">Octi Pro necesar</string>
+    <string name="widget_upgrade_required_action">Atingeți pentru a face upgrade</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Nu există date %1$s pentru acest dispozitiv</string>
     <string name="widget_deeplink_module_power">baterie</string>

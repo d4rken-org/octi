@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">מודול מטא-נתונים</string>
-    <string name="module_meta_android_name_x_label">אנדרואיד %s</string>
+    <string name="module_meta_android_name_x_label">אנדרואיד %1$s</string>
+    <string name="module_meta_detail_label_label">תווית</string>
+    <string name="module_meta_detail_manufacturer_label">יצרן</string>
+    <string name="module_meta_detail_model_label">דגם</string>
+    <string name="module_meta_detail_device_type_label">סוג המכשיר</string>
+    <string name="module_meta_detail_device_type_phone">טלפון</string>
+    <string name="module_meta_detail_device_type_tablet">טבלט</string>
+    <string name="module_meta_detail_device_type_desktop">שולחן עבודה</string>
+    <string name="module_meta_detail_device_type_browser">דפדפן</string>
+    <string name="module_meta_detail_device_type_unknown">לא ידוע</string>
+    <string name="module_meta_detail_os_label">מערכת הפעלה</string>
+    <string name="module_meta_detail_android_version_label">גרסת אנדרואיד</string>
+    <string name="module_meta_detail_api_level_label">רמת API</string>
+    <string name="module_meta_detail_security_patch_label">טלאי אבטחה</string>
+    <string name="module_meta_detail_booted_label">הופעל</string>
+    <string name="module_meta_detail_octi_version_label">גרסת Octi</string>
+    <string name="module_meta_detail_git_sha_label">קומיט הבנייה</string>
+    <string name="module_meta_detail_device_id_label">מזהה המכשיר</string>
+    <string name="module_meta_detail_last_updated_label">עדכון אחרון</string>
 </resources>

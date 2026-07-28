@@ -29,6 +29,7 @@
     <string name="sync_octiserver_add_create_account_title">创建账户?</string>
     <string name="sync_octiserver_add_create_account_desc">将在此服务器上创建一个新的加密同步账户。</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">此账户需要 Octi %1$s 或更高版本。请更新此设备或将其从账户中移除。</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">此设备不支持该账户使用的加密模式（%1$s）。请联系该设备的维护者。</string>
     <string name="sync_octiserver_legacy_encryption_account">此设备上文件共享不可用，因为此账户使用旧版加密。请在已更新的设备上创建新账户，并重新关联其他设备以使用文件共享。</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">加密不兼容</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">文件共享不可用</string>

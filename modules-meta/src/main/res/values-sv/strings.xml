@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Metamodul</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Igång i %1$s</string>
+    <string name="module_meta_detail_label_label">Namn</string>
+    <string name="module_meta_detail_manufacturer_label">Tillverkare</string>
+    <string name="module_meta_detail_model_label">Modell</string>
+    <string name="module_meta_detail_device_type_label">Enhetstyp</string>
+    <string name="module_meta_detail_device_type_phone">Telefon</string>
+    <string name="module_meta_detail_device_type_tablet">Surfplatta</string>
+    <string name="module_meta_detail_device_type_desktop">Skrivbord</string>
+    <string name="module_meta_detail_device_type_browser">Webbläsare</string>
+    <string name="module_meta_detail_device_type_unknown">Okänd</string>
+    <string name="module_meta_detail_os_label">Operativsystem</string>
+    <string name="module_meta_detail_android_version_label">Android-version</string>
+    <string name="module_meta_detail_api_level_label">API-nivå</string>
+    <string name="module_meta_detail_security_patch_label">Säkerhetspatch</string>
+    <string name="module_meta_detail_booted_label">Startad</string>
+    <string name="module_meta_detail_octi_version_label">Octi-version</string>
+    <string name="module_meta_detail_git_sha_label">Build-commit</string>
+    <string name="module_meta_detail_device_id_label">Enhets-ID</string>
+    <string name="module_meta_detail_last_updated_label">Senast uppdaterad</string>
 </resources>

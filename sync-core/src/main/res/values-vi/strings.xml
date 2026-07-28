@@ -26,7 +26,24 @@
     <string name="sync_connector_paused_label">Tạm dừng đồng bộ</string>
     <string name="sync_connector_paused_error_label">Kết nối bị tạm dừng</string>
     <string name="sync_connector_paused_error_desc">Kết nối này đang tạm dừng. Hãy tiếp tục để thực hiện hành động này.</string>
+    <string name="sync_connector_account_label">Tài khoản</string>
+    <string name="sync_connector_progress_syncing">Đang đồng bộ...</string>
+    <string name="sync_connector_progress_sync_queued">Đồng bộ đã xếp hàng...</string>
+    <string name="sync_connector_progress_pausing">Tạm dừng đồng bộ hóa...</string>
+    <string name="sync_connector_progress_pause_queued">Tạm dừng được xếp hàng...</string>
+    <string name="sync_connector_progress_resuming">Tiếp tục đồng bộ hóa...</string>
+    <string name="sync_connector_progress_resume_queued">Tiếp tục được xếp hàng...</string>
+    <string name="sync_connector_progress_resetting">Đặt lại dữ liệu...</string>
+    <string name="sync_connector_progress_reset_queued">Đặt lại được xếp hàng...</string>
+    <string name="sync_connector_progress_device_updating">Đang cập nhật thiết bị...</string>
+    <string name="sync_connector_progress_device_update_queued">Cập nhật thiết bị được xếp hàng...</string>
     <string name="sync_synced_devices_label">Thiết bị đã đồng bộ</string>
+    <string name="sync_link_device_action">Liên kết một thiết bị</string>
+    <string name="sync_devices_sort_label">Sắp xếp</string>
+    <string name="sync_devices_sort_date_added_label">Theo ngày được thêm</string>
+    <string name="sync_devices_sort_last_seen_label">Theo lần cuối cùng xem</string>
+    <string name="sync_devices_sort_name_label">Theo tên</string>
+    <string name="sync_devices_sort_app_version_label">Theo phiên bản ứng dụng</string>
     <plurals name="sync_stale_period_days">
         <item quantity="other">%d ngày</item>
     </plurals>

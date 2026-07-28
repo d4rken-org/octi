@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">Sovellustietojen laajuus</string>
     <string name="sync_gdrive_type_appdata_description">Tiedot tallennetaan Google Driveen. Tämä versio käyttää \"app-data\"-laajuutta. Käyttöoikeus myönnetään vain uuteen kansioon, joka on tarkoitettu vain tälle sovellukselle. Kansiota ei näy omassa Drivessasi. Se on samanlainen kuin WhatsApp-varmuuskopiot.</string>
     <string name="sync_gdrive_add_label">Lisää uusi Google Drive</string>
+    <string name="sync_gdrive_link_label">Yhdistä tämä laite</string>
+    <string name="sync_gdrive_add_same_account_hint">Käytä samaa Google-tiliä jokaisella laitteella – näin ne yhdistetään.</string>
+    <string name="sync_gdrive_link_same_account_warning">Kirjaudu sisään SAMALLA Google-tilillä, jota käytit toisessa laitteessasi. Eri tili luo erillisen, yhdistämättömän varmuuskopion.</string>
+    <string name="sync_gdrive_link_already_connected">Tämä laite on jo yhdistetty kyseiseen tiliin.</string>
     <string name="sync_gdrive_add_description">Napsauta alla olevaa kirjautumispainiketta määrittääksesi Google Drive -yhteyden.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Nollaa kaikki Googlen Drivelle tallennetut Octin tiedot. Laite pysyy kirjautuneena Google Driveen.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Kirjaudu ulos Google Drivesta ja poista tähän laitteeseen liittyvät tiedot.</string>

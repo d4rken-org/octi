@@ -18,4 +18,15 @@
     <string name="upgrade_screen_sponsor_action_hint">広告、アナリティクス、Google Play がその代替となります 🙁</string>
     <string name="upgrade_screen_thanks_toast">オープンソースの開発を支援していただき感謝します ❤️</string>
     <string name="upgrade_screen_sponsor_too_fast_msg">もう戻ってきましたか？あなたのサポートがOctiを支えています！</string>
+    <!-- Supporter / status (manage entry) -->
+    <string name="upgrade_screen_supporter_title">あなたはサポーターです ❤️</string>
+    <string name="upgrade_screen_supporter_body">Octiのオープンソース開発をサポートしていただきありがとうございます！</string>
+    <string name="upgrade_screen_supporter_since">%1$sからのサポーター</string>
+    <string name="upgrade_screen_open_sponsors_action">GitHub Sponsorsを開く</string>
+    <string name="upgrade_screen_free_status_title">現在は無料版をご利用中です</string>
+    <string name="upgrade_screen_free_status_body">サポーターになって、追加機能を利用し、開発の継続をスポンサーしましょう。</string>
+    <string name="upgrade_screen_see_options_action">アップグレードオプションを確認</string>
+    <!-- Settings status row (foss) -->
+    <string name="settings_upgrade_status_title">Octi FOSS</string>
+    <string name="settings_upgrade_status_desc">あなたのサポーターステータスを確認</string>
 </resources>

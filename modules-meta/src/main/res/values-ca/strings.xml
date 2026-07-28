@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Mòdul de metadades</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Actiu %1$s</string>
+    <string name="module_meta_detail_label_label">Etiqueta</string>
+    <string name="module_meta_detail_manufacturer_label">Fabricant</string>
+    <string name="module_meta_detail_model_label">Model</string>
+    <string name="module_meta_detail_device_type_label">Tipus de dispositiu</string>
+    <string name="module_meta_detail_device_type_phone">Telèfon</string>
+    <string name="module_meta_detail_device_type_tablet">Tauleta</string>
+    <string name="module_meta_detail_device_type_desktop">Escriptori</string>
+    <string name="module_meta_detail_device_type_browser">Navegador</string>
+    <string name="module_meta_detail_device_type_unknown">Desconegut</string>
+    <string name="module_meta_detail_os_label">Sistema operatiu</string>
+    <string name="module_meta_detail_android_version_label">Versió d\'Android</string>
+    <string name="module_meta_detail_api_level_label">Nivell d’API</string>
+    <string name="module_meta_detail_security_patch_label">Parxe de seguretat</string>
+    <string name="module_meta_detail_booted_label">Iniciat</string>
+    <string name="module_meta_detail_octi_version_label">Versió d’Octi</string>
+    <string name="module_meta_detail_git_sha_label">Commit de compilació</string>
+    <string name="module_meta_detail_device_id_label">ID del dispositiu</string>
+    <string name="module_meta_detail_last_updated_label">Última actualització</string>
 </resources>

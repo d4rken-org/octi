@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Το Google Play δεν είναι διαθέσιμο</string>
     <string name="upgrades_gplay_unavailable_error_description">Το Octi δεν μπορεί να συνδεθεί με το Google Play. Είναι το Google Play εγκατεστημένο και ενημερωμένο; Έχετε συνδεθεί με τον λογαριασμό σας Google; Δοκιμάστε να διαγράψετε την προσωρινή μνήμη της εφαρμογής Google Play και να επανεκκινήσετε τη συσκευή σας.</string>
     <string name="upgrades_no_purchases_found_check_account">Δεν βρέθηκαν αγορές. Χρησιμοποιείτε τον σωστό λογαριασμό;</string>
+    <string name="upgrades_already_owned_error_title">Ήδη αγορασμένο</string>
+    <string name="upgrades_already_owned_error_description">Το Google Play αναφέρει ότι ήδη κατέχετε αυτήν την αναβάθμιση. Χρησιμοποιήστε \'Επαναφορά αγοράς\' για να την ξεκλειδώσετε.</string>
     <string name="upgrades_dashcard_title">Αποκτήστε το Octi Pro</string>
     <string name="upgrades_dashcard_body">Αναβαθμίστε για να ξεκλειδώσετε επιπλέον δυνατότητες και να στηρίξετε την ανάπτυξη!</string>
     <string name="upgrades_dashcard_upgrade_action">Αναβάθμιση</string>
@@ -12,19 +16,80 @@
         <item quantity="other">Η δωρεάν έκδοση περιορίζεται σε %1$d συσκευές.</item>
     </plurals>
     <string name="upgrade_screen_title">Αποκτήστε το Octi Pro</string>
+    <string name="upgrade_screen_navigate_up">Πλοήγηση προς τα επάνω</string>
+    <string name="upgrade_screen_progress_loading">Φόρτωση…</string>
     <string name="upgrade_screen_preamble">Το Octi δεν έχει διαφημίσεις και δεν πουλάει δεδομένα χρηστών. Η δουλειά μου χρηματοδοτείται από εσάς ❤️.</string>
     <string name="upgrade_screen_benefits_title">Πλεονεκτήματα</string>
     <string name="upgrade_screen_benefits_body">• Πάνω από 3 συσκευές 💯\n• Διαφορετικά θέματα 🎨\n• Περισσότερες επιλογές ⚙️\n• Πρόσθετοι servers συγχρονισμού🖥️️\n• Συνεχής ανάπτυξη ☕\n• Ένας αφοσιωμένος προγραμματιστής 🧙</string>
     <string name="upgrade_screen_how_title">Επιλογές</string>
+    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
+         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
+         promise the trial unconditionally) can't be picked up. -->
+    <string name="upgrade_screen_how_body2">Μπορείτε να επιλέξετε ανάμεσα σε μια εφάπαξ αγορά και μια φθηνότερη ετήσια συνδρομή. Και οι δύο μπορούν να ακυρωθούν ανά πάσα στιγμή.\n Ιδιες δυνατότητες, απλώς διαφορετικά μοντέλα τιμολόγησης.</string>
+    <string name="upgrade_screen_how_trial_hint">Η συνδρομή ξεκινά με μια δωρεάν δοκιμή 14 ημερών, μετά την οποία θα χρεωθείτε μία φορά ετησίως.</string>
     <string name="upgrade_screen_subscription_trial_action">Έναρξη δωρεάν δοκιμής 14 ημερών</string>
     <string name="upgrade_screen_subscription_action">Συνδρομή</string>
     <string name="upgrade_screen_subscription_action_hint">Η συνδρομή κοστίζει %s ετησίως.</string>
     <string name="upgrade_screen_iap_action">Εφάπαξ αγορά</string>
     <string name="upgrade_screen_iap_action_hint">Η εφάπαξ αγορά κοστίζει %s.</string>
     <string name="upgrade_screen_thanks_toast">Είσαι ο καλύτερος! ❤️</string>
+    <!-- Offers box -->
+    <string name="upgrade_screen_offers_title">Επιλογές αναβάθμισης</string>
+    <string name="upgrade_screen_offers_or">ή</string>
+    <string name="upgrade_screen_offers_body">Και τα δύο ξεκλειδώνουν τα ίδια χαρακτηριστικά — επιλέξτε την τιμολόγηση που προτιμάτε. Ακυρώστε ανά πάσα στιγμή.</string>
+    <string name="upgrade_screen_subscription_offer_title">Ετήσια συνδρομή</string>
+    <string name="upgrade_screen_subscription_offer_body">Ξεκινά με δωρεάν δοκιμή 14 ημερών, στη συνέχεια χρεώνεται μία φορά ανά χρόνο μέχρι την ακύρωση.</string>
+    <string name="upgrade_screen_subscription_offer_body_no_trial">Χρεώνεται μία φορά ανά χρόνο μέχρι την ακύρωση.</string>
+    <string name="upgrade_screen_iap_offer_title">Εφάπαξ αγορά</string>
+    <string name="upgrade_screen_iap_offer_body">Πληρώστε μία φορά, δικό σας για πάντα — χωρίς συνδρομή.</string>
     <string name="upgrade_screen_restore_purchase_action">Επαναφορά αγοράς</string>
+    <string name="upgrade_screen_restore_banner_title">Έχετε ήδη αγοράσει Pro;</string>
+    <string name="upgrade_screen_restore_banner_body">Φαίνεται ότι αναβαθμίσατε σε Pro σε αυτήν τη συσκευή πριν. Εάν εξακολουθείτε να κατέχετε την αναβάθμιση, η επαναφορά θα την ξεκλειδώσει ξανά.</string>
     <string name="upgrade_screen_restore_purchase_message">Η αναβάθμισή σας ισχύει σε όλες τις συσκευές με τον ίδιο λογαριασμό Google.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Συμβουλές για μη αναγνωρισμένες αναβαθμίσεις:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Ο συγχρονισμός με το Play Store μπορεί να πάρει χρόνο. Δοκιμάστε επανεκκίνηση, εκκαθάριση της cache του Google Play ή περιμένετε λίγο.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Πολλαπλοί λογαριασμοί μπορούν να προκαλέσουν σύγχυση στο Google Play. Αποσυνδεθείτε από άλλους λογαριασμούς ή εγκαταστήστε μέσω του ιστότοπου Google Play, που συσχετίζει τον λογαριασμό συγκεκριμένα.</string>
+    <string name="upgrade_screen_restore_success_message">Η αγορά επαναφέρθηκε — ευχαριστούμε!</string>
+    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
+    <string name="upgrade_screen_restore_body">Έχετε ήδη αγοράσει Pro σε αυτόν τον λογαριασμό; Ζητήστε από το Google Play να επανελέγξει τις αγορές αυτής της εφαρμογής.</string>
+    <string name="upgrade_screen_restore_status_title">Κατάσταση αγοράς</string>
+    <string name="upgrade_screen_restore_status_body">Επανελέγξτε τις αγορές σας στο Google Play εάν η κατάστασή σας Pro φαίνεται να είναι ξεπερασμένη.</string>
+    <string name="upgrade_screen_restore_checked_message">Ζητήσαμε από το Google Play να επανελέγξει τις αγορές αυτής της εφαρμογής αλλά δεν μπορέσαμε να επιβεβαιώσουμε καμία για τον τρέχοντα λογαριασμό.</string>
+    <string name="upgrade_screen_restore_contact_hint">Ακόμα έχετε πρόβλημα; Επικοινωνήστε με την υποστήριξη και θα σας βοηθήσουμε να το λύσουμε.</string>
+    <!-- Pro status / ownership -->
+    <string name="upgrade_screen_owned_title">Είστε Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_body">Ευχαριστούμε που υποστηρίζετε το Octi! Οι δυνατότητες Pro είναι ξεκλειδωμένες.</string>
+    <string name="upgrade_screen_owned_iap_title">Ισόβια αγορά</string>
+    <string name="upgrade_screen_owned_iap_body">Κατέχετε την εφάπαξ αγορά Pro. Δεν λήγει ποτέ.</string>
+    <string name="upgrade_screen_owned_sub_title">Συνδρομή</string>
+    <string name="upgrade_screen_owned_sub_renewing_body">Η συνδρομή σας Pro είναι ενεργή και ανανεώνεται αυτόματα.</string>
+    <string name="upgrade_screen_owned_sub_not_renewing_body">Η συνδρομή σας Pro είναι ενεργή αλλά έχει οριστεί να μην ανανεωθεί. Παραμένει ενεργή μέχρι το τέλος της τρέχουσας περιόδου.</string>
+    <string name="upgrade_screen_owned_both_title">Κατέχετε και τα δύο</string>
+    <string name="upgrade_screen_owned_both_warning">Κατέχετε τόσο τη συνδρομή όσο και την εφάπαξ αγορά. Για να αποφύγετε τη διπλή χρέωση, ακυρώστε τη συνδρομή στο Google Play — διατηρείτε το Pro μέσω της ισόβιας αγοράς.</string>
+    <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <string name="upgrade_screen_owned_hero_title">Είστε Octi Pro 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Ευχαριστούμε που αγοράσατε %1$s! Οι δυνατότητες Pro είναι ξεκλειδωμένες και δεν λήγουν ποτέ.</string>
+    <string name="upgrade_screen_owned_hero_sub_body">Ευχαριστούμε που κάνατε εγγραφή στο %1$s! Οι δυνατότητες Pro είναι ξεκλειδωμένες.</string>
+    <string name="upgrade_screen_manage_subscription_action">Διαχείριση συνδρομής</string>
+    <!-- Switch subscription → one-time purchase -->
+    <string name="upgrade_screen_switch_title">Μετάβαση σε εφάπαξ αγορά</string>
+    <string name="upgrade_screen_switch_body">Προτιμάτε να πληρώσετε μία φορά αντί να κάνετε συνδρομή; Μπορείτε να αγοράσετε την εφάπαξ αγορά Pro και να σταματήσετε τη συνδρομή.</string>
+    <string name="upgrade_screen_switch_locked_note">Η συνδρομή σας εξακολουθεί να ανανεώνεται αυτόματα. Ακυρώστε την πρώτα στο Google Play, και έπειτα επιστρέψτε για να αγοράσετε την εφάπαξ αγορά. Η αγορά της εδώ δεν ακυρώνει ούτε επιστρέφει χρήματα της συνδρομής — χρησιμοποιήστε τον ίδιο λογαριασμό Google.</string>
+    <string name="upgrade_screen_switch_action">Αγορά εφάπαξ αγοράς (%1$s)</string>
+    <string name="upgrade_screen_sub_still_renewing_title">Η συνδρομή είναι ακόμα ενεργή</string>
+    <string name="upgrade_screen_sub_still_renewing_message">Η συνδρομή σας είναι ακόμα ορισμένη να ανανεωθεί. Ακυρώστε την πρώτα στο Google Play ώστε να μην χρεωθείτε δύο φορές, και στη συνέχεια αγοράστε την εφάπαξ αγορά. Αυτό δεν επιστρέφει χρήματα για τη συνδρομή.</string>
+    <string name="upgrade_screen_sub_check_failed_title">Δεν ήταν δυνατή η επαλήθευση της συνδρομής</string>
+    <string name="upgrade_screen_sub_check_failed_message">Το Google Play δεν απάντησε στην ώρα του, επομένως δεν μπορούμε να επιβεβαιώσουμε με ασφάλεια την κατάσταση της συνδρομής σας. Παρακαλώ δοκιμάστε ξανά σε λίγο.</string>
+    <!-- Grace period -->
+    <string name="upgrade_screen_grace_title">Το Pro είναι ακόμα ενεργό</string>
+    <string name="upgrade_screen_grace_body">Επιβεβαιώνουμε την αγορά σας με το Google Play. Οι δυνατότητες Pro σας παραμένουν ξεκλείδωτες στο μεταξύ.</string>
+    <string name="upgrade_screen_grace_diagnostics_body">Ακόμη δεν μπορούμε να επιβεβαιώσουμε την αγορά σας με το Google Play. Οι δυνατότητες Pro σας παραμένουν ξεκλείδωτες προς το παρόν. Δοκιμάστε να κάνετε επαναφορά για να την επανασυνδέσετε.</string>
+    <string name="upgrade_screen_contact_support_action">Επικοινωνήστε με την υποστήριξη</string>
+    <!-- Free status page (manage entry) -->
+    <string name="upgrade_screen_free_status_title">Βρίσκεστε στη δωρεάν έκδοση</string>
+    <string name="upgrade_screen_free_status_body">Αναβαθμίστε σε Octi Pro για να ξεκλειδώσετε επιπλέον δυνατότητες και να υποστηρίξετε την ανάπτυξη.</string>
+    <string name="upgrade_screen_see_options_action">Δείτε τις επιλογές αναβάθμισης</string>
+    <!-- Settings status row (gplay) -->
+    <string name="settings_upgrade_status_title">Octi Pro</string>
+    <string name="settings_upgrade_status_desc">Δείτε την κατάσταση Pro και διαχειριστείτε την αναβάθμισή σας</string>
 </resources>

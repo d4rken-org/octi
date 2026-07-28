@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_meta_label">Meta-module</string>
-    <string name="module_meta_android_name_x_label">Android %s</string>
+    <string name="module_meta_android_name_x_label">Android %1$s</string>
+    <string name="module_meta_uptime_label">Aan %1$s</string>
+    <string name="module_meta_detail_label_label">Etiket</string>
+    <string name="module_meta_detail_manufacturer_label">Vervaardiger</string>
+    <string name="module_meta_detail_model_label">Model</string>
+    <string name="module_meta_detail_device_type_label">Toestelsoort</string>
+    <string name="module_meta_detail_device_type_phone">Selfoon</string>
+    <string name="module_meta_detail_device_type_tablet">Tablet</string>
+    <string name="module_meta_detail_device_type_desktop">Rekenaar</string>
+    <string name="module_meta_detail_device_type_browser">Blaaier</string>
+    <string name="module_meta_detail_device_type_unknown">Onbekend</string>
+    <string name="module_meta_detail_os_label">Bedryfstelsel</string>
+    <string name="module_meta_detail_android_version_label">Android-weergawe</string>
+    <string name="module_meta_detail_api_level_label">API-vlak</string>
+    <string name="module_meta_detail_security_patch_label">Sekuriteitsflenter</string>
+    <string name="module_meta_detail_booted_label">Aangeskakel</string>
+    <string name="module_meta_detail_octi_version_label">Octi-weergawe</string>
+    <string name="module_meta_detail_git_sha_label">Bou-oordrag</string>
+    <string name="module_meta_detail_device_id_label">Toestel-ID</string>
+    <string name="module_meta_detail_last_updated_label">Laas opgedateer</string>
 </resources>

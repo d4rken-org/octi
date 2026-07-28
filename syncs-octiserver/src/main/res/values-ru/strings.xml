@@ -29,6 +29,7 @@
     <string name="sync_octiserver_add_create_account_title">Создать аккаунт?</string>
     <string name="sync_octiserver_add_create_account_desc">На этом сервере будет создан новый зашифрованный аккаунт синхронизации.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Этот аккаунт требует Octi %1$s или новее. Обновите это устройство или удалите его из аккаунта.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Это устройство не поддерживает режим шифрования, который использует эта учетная запись (%1$s). Свяжитесь с сервисом, обслуживающим это устройство.</string>
     <string name="sync_octiserver_legacy_encryption_account">Обмен файлами недоступен на этом устройстве, так как этот аккаунт использует устаревшее шифрование. Создайте новый аккаунт на обновлённом устройстве и повторно привяжите остальные устройства для использования обмена файлами.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">Несовместимое шифрование</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">Обмен файлами недоступен</string>

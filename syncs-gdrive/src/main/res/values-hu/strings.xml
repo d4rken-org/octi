@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">App-adat tartomány</string>
     <string name="sync_gdrive_type_appdata_description">Az adatok a Google Drive-ban tárolódnak. Ez a változat az „app-data” tartományt használja. A hozzáférés kizárólag ennek az alkalmazásnak egy új mappájához biztosított. Ez a mappa a saját drive-odon nem látható. Hasonlóan működik, mint a WhatsApp biztonsági mentések.</string>
     <string name="sync_gdrive_add_label">Új Google Drive hozzáadása</string>
+    <string name="sync_gdrive_link_label">Az eszköz összekapcsolása</string>
+    <string name="sync_gdrive_add_same_account_hint">Használja ugyanazt a Google-fiókot minden eszközön – ez köti össze őket.</string>
+    <string name="sync_gdrive_link_same_account_warning">Jelentkezzen be ugyanazzal a Google-fiókkal, amelyet más eszközén használt. Egy másik fiók egy külön, össze nem kapcsolt biztonsági másolatot hoz létre.</string>
+    <string name="sync_gdrive_link_already_connected">Ez az eszköz már össze van kapcsolva ezzel a fiókkal.</string>
     <string name="sync_gdrive_add_description">Kattints az alábbi bejelentkezés gombra a Google Drive hozzáférés beállításához.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Az összes, a Google Drive-on tárolt Octi-adat visszaállítása. Az eszköz bejelentkezve marad a Google Drive-ra.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Kijelentkezés a Google Drive-ból és az adott eszközhöz tartozó adatok törlése.</string>

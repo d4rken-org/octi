@@ -29,6 +29,7 @@
     <string name="sync_octiserver_add_create_account_title">계정 만들기?</string>
     <string name="sync_octiserver_add_create_account_desc">이 서버에 새로운 암호화된 동기화 계정이 생성됩니다.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">이 계정을 사용하려면 Octi %1$s 이상이 필요합니다. 이 기기를 업데이트하거나 계정에서 제거하세요.</string>
+    <string name="sync_octiserver_encryption_compatibility_unsupported_mode">이 기기는 이 계정이 사용하는 암호화 방식(%1$s)을 지원하지 않습니다. 해당 기기의 관리자에게 문의하세요.</string>
     <string name="sync_octiserver_legacy_encryption_account">이 계정은 레거시 암호화를 사용하기 때문에 이 기기에서 파일 공유를 사용할 수 없습니다. 파일 공유를 사용하려면 업데이트된 기기에서 새 계정을 만들고 다른 기기를 다시 연결하세요.</string>
     <string name="sync_octiserver_issues_type_encryption_compatibility">호환되지 않는 암호화</string>
     <string name="sync_octiserver_issues_type_legacy_encryption">파일 공유 사용 불가</string>

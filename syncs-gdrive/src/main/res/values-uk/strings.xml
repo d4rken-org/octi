@@ -8,6 +8,10 @@
     <string name="sync_gdrive_appdata_label">Обсяг даних додатку</string>
     <string name="sync_gdrive_type_appdata_description">Дані розміщуються на Google Drive. Ця конкретна версія використовує обсяг \"app-data\". Доступ дозволяється лише до нової папки, призначеної лише для цього додатку. Папка невидима на вашому диску. Це схоже на те, як працюють резервні копії WhatsApp.</string>
     <string name="sync_gdrive_add_label">Додати новий Google Drive</string>
+    <string name="sync_gdrive_link_label">Пов\'язати цей пристрій</string>
+    <string name="sync_gdrive_add_same_account_hint">Використовуйте один і той же акаунт Google на кожному пристрої — так вони пов\'язуються.</string>
+    <string name="sync_gdrive_link_same_account_warning">Увійдіть на той же самий акаунт Google, який ви використовували на іншому пристрої. Інший акаунт створює окрему, не пов\'язану резервну копію.</string>
+    <string name="sync_gdrive_link_already_connected">Цей пристрій уже пов\'язаний із цим акаунтом.</string>
     <string name="sync_gdrive_add_description">Натисніть кнопку входу нижче, щоб налаштувати доступ до Google Drive.</string>
     <string name="sync_gdrive_reset_confirmation_desc">Скинути всі дані Octi, збережені на Google Drive. Ваш пристрій залишиться ввійшеним у Google Drive.</string>
     <string name="sync_gdrive_disconnect_confirmation_desc">Вийти з Google Drive і видалити дані, пов\'язані з цим пристроєм.</string>
