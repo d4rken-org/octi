@@ -1320,6 +1320,99 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
     }
 
     @Nested
+    inner class `device metadata resilience` {
+
+        private val deviceA = DeviceId("device-a")
+        private val deviceB = DeviceId("device-b")
+
+        private fun folder(fileId: String, fileName: String, parentId: String?) = GDriveFile().apply {
+            id = fileId
+            name = fileName
+            mimeType = "application/vnd.google-apps.folder"
+            parentId?.let { parents = listOf(it) }
+        }
+
+        private fun file(fileId: String, fileName: String, parentId: String, modifiedAt: Long) = GDriveFile().apply {
+            id = fileId
+            name = fileName
+            mimeType = "application/octet-stream"
+            parents = listOf(parentId)
+            modifiedTime = DateTime(modifiedAt)
+        }
+
+        /** Drive permits duplicate names: device-a's directory holds two `_device.json` entries. */
+        private fun setupListingWithDuplicateManifest() {
+            val root = folder("appDataFolder", "appDataFolder", null)
+            val entries = listOf(
+                folder("devices-dir-id", "devices", "appDataFolder"),
+                folder("device-a-dir-id", deviceA.id, "devices-dir-id"),
+                folder("device-b-dir-id", deviceB.id, "devices-dir-id"),
+                file("a-power-file-id", power.id, "device-a-dir-id", 1000L),
+                file("a-info-file-id-1", "_device.json", "device-a-dir-id", 1500L),
+                file("a-info-file-id-2", "_device.json", "device-a-dir-id", 1700L),
+                file("b-power-file-id", power.id, "device-b-dir-id", 2000L),
+                file("b-info-file-id", "_device.json", "device-b-dir-id", 2500L),
+            )
+            val payloads = mapOf(
+                "a-power-file-id" to "power-a",
+                "a-info-file-id-1" to """{"version":"1","platform":"android","label":"Device A"}""",
+                "a-info-file-id-2" to """{"version":"2","platform":"android","label":"Device A duplicate"}""",
+                "b-power-file-id" to "power-b",
+                "b-info-file-id" to """{"version":"3","platform":"android","label":"Device B"}""",
+            )
+
+            val rootGet = mockk<Drive.Files.Get>(relaxed = true).also {
+                every { it.setFields(any<String>()) } returns it
+                every { it.execute() } returns root
+            }
+            val getsById = entries.associate { entry ->
+                entry.id to mockk<Drive.Files.Get>(relaxed = true).also {
+                    every { it.setFields(any<String>()) } returns it
+                    every { it.execute() } returns entry
+                    every { it.executeMediaAndDownloadTo(any()) } answers {
+                        firstArg<java.io.OutputStream>().write(payloads[entry.id].orEmpty().toByteArray())
+                    }
+                }
+            }
+            every { mockFiles.get(any()) } answers {
+                when (val fileId = firstArg<String>()) {
+                    "appDataFolder" -> rootGet
+                    else -> getsById[fileId] ?: mockk(relaxed = true)
+                }
+            }
+            every { mockFilesList.execute() } returns FileList().apply { files = entries }
+        }
+
+        @Test
+        fun `a duplicate device manifest does not abort the metadata read`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupListingWithDuplicateManifest()
+
+            connector.sync(SyncOptions(stats = true, readData = true, writeData = false))
+
+            val metadata = connector.state.first().deviceMetadata
+            metadata shouldHaveSize 2
+
+            // The ambiguous manifest is skipped, not fatal.
+            val ambiguous = metadata.single { it.deviceId == deviceA }
+            ambiguous.version.shouldBeNull()
+            ambiguous.label.shouldBeNull()
+            ambiguous.platform.shouldBeNull()
+            ambiguous.capabilities.shouldBeNull()
+            // Both duplicates are ordinary files, so they still count towards lastSeen.
+            ambiguous.lastSeen shouldBe kotlin.time.Instant.fromEpochMilliseconds(1700L)
+
+            // The other device is untouched by its neighbour's broken directory.
+            val healthy = metadata.single { it.deviceId == deviceB }
+            healthy.version shouldBe "3"
+            healthy.platform shouldBe "android"
+            healthy.label shouldBe "Device B"
+            healthy.lastSeen shouldBe kotlin.time.Instant.fromEpochMilliseconds(2500L)
+        }
+    }
+
+    @Nested
     inner class `blob store cache` {
 
         private val blobDevice = DeviceId("blob-device")

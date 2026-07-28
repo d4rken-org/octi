@@ -567,8 +567,15 @@ class GDriveAppDataConnector @AssistedInject constructor(
         deviceDirs.map { dir ->
             async(dispatcherProvider.IO) {
                 val deviceId = DeviceId(id = dir.name)
-                val infoFile = index.child(dir, DEVICE_INFO_FILE)?.also {
-                    deviceInfoFileIdCache[deviceId] = it.id
+                // Drive allows duplicate names, index.child(...) throws on those. A single broken
+                // device directory must not abort metadata for every other device.
+                val infoFile = try {
+                    index.child(dir, DEVICE_INFO_FILE)?.also {
+                        deviceInfoFileIdCache[deviceId] = it.id
+                    }
+                } catch (e: Exception) {
+                    log(TAG, WARN) { "readDeviceMetadata(): Failed to resolve $DEVICE_INFO_FILE for ${dir.name}: ${e.message}" }
+                    null
                 }
                 val info = try {
                     infoFile?.readData()?.let {
