@@ -1715,9 +1715,12 @@ private fun DashboardDeviceCard(
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                             }
+                            // Two separate signals: this timestamp is "device last seen / data last
+                            // written, whichever is newer", while the staleness warning badge next
+                            // to it stays driven purely by the age of the module data.
                             Text(
                                 text = DateUtils.getRelativeTimeSpanString(
-                                    device.meta.modifiedAt.clampToNow().toEpochMilliseconds()
+                                    device.lastActivityAt.clampToNow().toEpochMilliseconds()
                                 ).toString(),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = badgeColor ?: Color.Unspecified,
@@ -2217,6 +2220,8 @@ private fun DashboardScreenPreview() = PreviewWrapper {
                     isCollapsed = false,
                     isLimited = false,
                     isCurrentDevice = false,
+                    // Seen more recently than its data changed — the card shows this.
+                    lastSeen = now - 30.seconds,
                 ),
             ),
             deviceCount = 1,
@@ -2277,6 +2282,7 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
         type: MetaInfo.DeviceType,
         batteryLevel: Int,
         isCollapsed: Boolean,
+        lastSeen: Instant?,
     ) = DashboardVM.DeviceItem(
         now = now,
         deviceId = deviceId,
@@ -2317,13 +2323,15 @@ private fun DashboardScreenMultiDevicePreview() = PreviewWrapper {
         isCollapsed = isCollapsed,
         isLimited = false,
         isCurrentDevice = false,
+        lastSeen = lastSeen,
     )
 
     DashboardScreen(
         state = DashboardVM.State(
             devices = listOf(
-                previewDevice(deviceId1, "Pixel 8", MetaInfo.DeviceType.PHONE, 75, false),
-                previewDevice(deviceId2, "Galaxy Tab S9", MetaInfo.DeviceType.TABLET, 42, true),
+                // Distinct sightings: one seen just now, one not seen since before its last write.
+                previewDevice(deviceId1, "Pixel 8", MetaInfo.DeviceType.PHONE, 75, false, now - 45.seconds),
+                previewDevice(deviceId2, "Galaxy Tab S9", MetaInfo.DeviceType.TABLET, 42, true, now - 7200.seconds),
             ),
             deviceCount = 2,
             syncStatus = DashboardVM.SyncStatus.Idle(
