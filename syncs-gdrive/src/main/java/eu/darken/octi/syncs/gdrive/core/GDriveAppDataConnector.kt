@@ -322,6 +322,9 @@ class GDriveAppDataConnector @AssistedInject constructor(
                     file.deleteAll()
                 }
         }
+        // Our device directory is gone, so the next write has to recreate _device.json. Without
+        // this the content-equality check below would still consider it written and skip it.
+        lastWrittenDeviceInfo = null
         syncState.clearConnector(identifier)
         _state.updateBlocking { copy(deviceMetadata = emptyList(), lastFullReadAt = null) }
         syncCache.removeDeviceMetadata(identifier)
@@ -343,6 +346,8 @@ class GDriveAppDataConnector @AssistedInject constructor(
             if (deviceId == syncSettings.deviceId) {
                 log(TAG, WARN) { "We just deleted ourselves, this connector is dead now" }
                 clearPathCaches()
+                // Same reason as handleReset(): our _device.json no longer exists.
+                lastWrittenDeviceInfo = null
                 _state.updateBlocking { copy(isDead = true) }
             }
         }
@@ -562,18 +567,21 @@ class GDriveAppDataConnector @AssistedInject constructor(
         deviceDirs.map { dir ->
             async(dispatcherProvider.IO) {
                 val deviceId = DeviceId(id = dir.name)
+                val infoFile = index.child(dir, DEVICE_INFO_FILE)?.also {
+                    deviceInfoFileIdCache[deviceId] = it.id
+                }
                 val info = try {
-                    index.child(dir, DEVICE_INFO_FILE)?.also {
-                        deviceInfoFileIdCache[deviceId] = it.id
-                    }?.readData()?.let {
+                    infoFile?.readData()?.let {
                         json.decodeFromString<GDriveDeviceInfo>(it.utf8())
                     }
                 } catch (e: Exception) {
                     log(TAG, WARN) { "readDeviceMetadata(): Failed to read $DEVICE_INFO_FILE for ${dir.name}: ${e.message}" }
                     null
                 }
+                // The manifest counts too: a peer that only touched _device.json (label change,
+                // capability update) was just as much "seen" as one that wrote a module file.
                 val lastSeen = index.children(dir)
-                    .filter { it.name != DEVICE_INFO_FILE && !it.isDirectory }
+                    .filter { !it.isDirectory }
                     .maxOfOrNull { Instant.fromEpochMilliseconds(it.modifiedTime.value) }
                 val capabilities = info?.capabilities?.let {
                     try {
@@ -820,15 +828,19 @@ class GDriveAppDataConnector @AssistedInject constructor(
                 var wroteData = false
                 if (options.writeData && options.writePayload.isNotEmpty()) {
                     log(TAG) { "handleSync(): Writing ${options.writePayload.size} cached modules (batched)" }
-                    writeDrive(SyncWriteContainer(
-                        deviceId = syncSettings.deviceId,
-                        modules = options.writePayload.map { it.module },
-                    ))
+                    // Per module, not per batch: one failing upload must not discard the hashes of
+                    // the modules that already landed, or they rewrite on every following trigger.
+                    val expectedHashes = options.writePayload.associate { it.module.moduleId to it.expectedHash }
+                    writeDrive(
+                        data = SyncWriteContainer(
+                            deviceId = syncSettings.deviceId,
+                            modules = options.writePayload.map { it.module },
+                        ),
+                        onModuleWritten = { moduleId ->
+                            expectedHashes[moduleId]?.let { syncState.setHash(identifier, moduleId, it) }
+                        },
+                    )
                     wroteData = true
-                    // writeDrive returned without throwing — record hashes for all written modules
-                    options.writePayload.forEach { mw ->
-                        syncState.setHash(identifier, mw.module.moduleId, mw.expectedHash)
-                    }
                 }
 
                 try {
@@ -935,8 +947,16 @@ class GDriveAppDataConnector @AssistedInject constructor(
      * `withContext(NonCancellable)`, which makes any bound placed around the command inert: a
      * `withTimeout` around a non-cancellable body does not return until that body completes. Only
      * the state commit below stays non-cancellable, mirroring `OctiServerConnector.runServerAction`.
+     *
+     * [onModuleWritten] fires per module, as soon as that module's upload succeeded. Modules are
+     * uploaded in parallel and `awaitAll` rethrows the first failure, so anything reported only
+     * after this call returns would be lost for the modules that did land — and they would be
+     * rewritten on every subsequent trigger. Called from the upload coroutines: must be thread-safe.
      */
-    private suspend fun GDriveEnvironment.writeDrive(data: SyncWrite) {
+    private suspend fun GDriveEnvironment.writeDrive(
+        data: SyncWrite,
+        onModuleWritten: (ModuleId) -> Unit = {},
+    ) {
         log(TAG, DEBUG) { "writeDrive(): $data" }
 
         // TODO cache write data for when we are online again?
@@ -979,6 +999,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                         fileIdCache[cacheKey]?.let { cachedId ->
                             try {
                                 cachedDriveFile(cachedId, module.moduleId.id).writeData(module.payload)
+                                onModuleWritten(module.moduleId)
                                 return@withPermit
                             } catch (e: com.google.api.client.googleapis.json.GoogleJsonResponseException) {
                                 if (e.statusCode != 404) throw e
@@ -993,6 +1014,7 @@ class GDriveAppDataConnector @AssistedInject constructor(
                             }
                         cacheModuleFileId(data.deviceId, module.moduleId, moduleFile.id)
                         moduleFile.writeData(module.payload)
+                        onModuleWritten(module.moduleId)
                     }
                 }
             }.awaitAll()
