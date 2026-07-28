@@ -73,6 +73,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
     private lateinit var mockFilesGet: Drive.Files.Get
 
     private lateinit var syncSettings: SyncSettings
+    private lateinit var syncState: ConnectorSyncState
 
     @BeforeEach
     fun setup() {
@@ -99,6 +100,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
         every { mockFilesGet.setFields(any<String>()) } returns mockFilesGet
 
         syncSettings = mockk(relaxed = true)
+        syncState = ConnectorSyncState()
     }
 
     private fun TestScope.createConnector(
@@ -137,7 +139,7 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
             networkStateProvider = mockNetworkState,
             supportedModuleIds = setOf(power, wifi),
             syncSettings = syncSettings,
-            syncState = ConnectorSyncState(),
+            syncState = syncState,
             syncCache = cache,
             json = json,
             capabilitiesProvider = DeviceCapabilitiesProvider(
@@ -824,7 +826,8 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
             metadata.version shouldBe "1"
             metadata.platform shouldBe "android"
             metadata.label shouldBe "Device A"
-            metadata.lastSeen shouldBe kotlin.time.Instant.fromEpochMilliseconds(1000L)
+            // _device.json (1500) is newer than the power module file (1000) and counts too.
+            metadata.lastSeen shouldBe kotlin.time.Instant.fromEpochMilliseconds(1500L)
         }
 
         @Test
@@ -1087,6 +1090,232 @@ class GDriveAppDataConnectorSyncTest : BaseTest() {
             verify(exactly = 0) { mockFiles.get(any()) }
             verify(exactly = 1) { mockFiles.list() }
             verify(exactly = 0) { mockFiles.create(any<GDriveFile>()) }
+        }
+    }
+
+    @Nested
+    inner class `self device writes` {
+
+        private val selfDevice = DeviceId("test-device")
+        private val selfPowerFileId = "self-power-file-id"
+        private val selfWifiFileId = "self-wifi-file-id"
+        private val selfInfoFileId = "self-device-info-id"
+
+        private fun rootFile() = GDriveFile().apply {
+            id = "appDataFolder"
+            name = "appDataFolder"
+            mimeType = "application/vnd.google-apps.folder"
+        }
+
+        private fun devicesDir() = GDriveFile().apply {
+            id = "devices-dir-id"
+            name = "devices"
+            mimeType = "application/vnd.google-apps.folder"
+            parents = listOf("appDataFolder")
+        }
+
+        private fun deviceDir() = GDriveFile().apply {
+            id = "self-device-dir-id"
+            name = selfDevice.id
+            mimeType = "application/vnd.google-apps.folder"
+            parents = listOf("devices-dir-id")
+        }
+
+        private fun moduleFile(fileId: String, module: ModuleId, modifiedAt: Long) = GDriveFile().apply {
+            id = fileId
+            name = module.id
+            mimeType = "application/octet-stream"
+            parents = listOf("self-device-dir-id")
+            modifiedTime = DateTime(modifiedAt)
+        }
+
+        private fun infoFile(modifiedAt: Long) = GDriveFile().apply {
+            id = selfInfoFileId
+            name = "_device.json"
+            mimeType = "application/octet-stream"
+            parents = listOf("self-device-dir-id")
+            modifiedTime = DateTime(modifiedAt)
+        }
+
+        private fun stubFileGets(entries: List<GDriveFile>) {
+            val root = rootFile()
+            val rootGet = mockk<Drive.Files.Get>(relaxed = true).also {
+                every { it.setFields(any<String>()) } returns it
+                every { it.execute() } returns root
+            }
+            val getsById = entries.associate { entry ->
+                entry.id to mockk<Drive.Files.Get>(relaxed = true).also {
+                    every { it.setFields(any<String>()) } returns it
+                    every { it.execute() } returns entry
+                    every { it.executeMediaAndDownloadTo(any()) } answers {
+                        val payload = when (entry.name) {
+                            "_device.json" -> """{"version":"1","platform":"android","label":"Self"}"""
+                            else -> "payload-${entry.name}"
+                        }
+                        firstArg<java.io.OutputStream>().write(payload.toByteArray())
+                    }
+                }
+            }
+            every { mockFiles.get(any()) } answers {
+                when (val fileId = firstArg<String>()) {
+                    "appDataFolder" -> rootGet
+                    else -> getsById[fileId] ?: mockk(relaxed = true)
+                }
+            }
+        }
+
+        /** Flat app-data listing, the shape [listAppDataFiles] returns during a full read. */
+        private fun setupFullListing(
+            powerModifiedAt: Long = 1000L,
+            wifiModifiedAt: Long = 1000L,
+            infoModifiedAt: Long = 1500L,
+        ) {
+            val entries = listOf(
+                devicesDir(),
+                deviceDir(),
+                moduleFile(selfPowerFileId, power, powerModifiedAt),
+                moduleFile(selfWifiFileId, wifi, wifiModifiedAt),
+                infoFile(infoModifiedAt),
+            )
+            stubFileGets(entries)
+            every { mockFilesList.execute() } returns FileList().apply { files = entries }
+        }
+
+        /**
+         * The mock cannot filter a listing by the request's name query, and `child()` throws on more
+         * than one match — so hand out one result per lookup, in traversal order.
+         */
+        private fun setupChildLookups(vararg results: GDriveFile) {
+            var call = 0
+            every { mockFilesList.execute() } answers {
+                val next = results.getOrNull(call++)
+                FileList().apply { files = listOfNotNull(next) }
+            }
+        }
+
+        private fun setupUpdates(updateIds: MutableList<String>, failingIds: Set<String> = emptySet()) {
+            every {
+                mockFiles.update(
+                    any<String>(),
+                    any<GDriveFile>(),
+                    any<com.google.api.client.http.AbstractInputStreamContent>(),
+                )
+            } answers {
+                val fileId = firstArg<String>()
+                updateIds += fileId
+                mockk<Drive.Files.Update>(relaxed = true).also {
+                    every { it.setFields(any<String>()) } returns it
+                    if (fileId in failingIds) {
+                        every { it.execute() } throws RuntimeException("upload failed: $fileId")
+                    } else {
+                        every { it.execute() } returns GDriveFile().apply {
+                            id = fileId
+                            name = "updated"
+                        }
+                    }
+                }
+            }
+        }
+
+        private fun moduleWrite(module: ModuleId, payloadText: String): SyncOptions.ModuleWrite {
+            val written = object : SyncWrite.Device.Module {
+                override val moduleId: ModuleId = module
+                override val payload = payloadText.encodeUtf8()
+            }
+            return SyncOptions.ModuleWrite(module = written, expectedHash = "hash-${module.id}")
+        }
+
+        private fun writeSync(vararg writes: SyncOptions.ModuleWrite) = SyncOptions(
+            stats = false,
+            readData = false,
+            writeData = true,
+            writePayload = writes.toList(),
+        )
+
+        @Test
+        fun `a failing module upload keeps the hashes of the ones that landed`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupFullListing()
+
+            // Warm the file id caches so the write goes straight to update().
+            connector.sync(SyncOptions(stats = true, readData = true, writeData = false))
+
+            io.mockk.clearMocks(
+                mockFiles,
+                mockFilesGet,
+                mockFilesList,
+                answers = false,
+                childMocks = false,
+                exclusionRules = false,
+            )
+            val updateIds = mutableListOf<String>()
+            setupUpdates(updateIds, failingIds = setOf(selfWifiFileId))
+
+            runCatching {
+                connector.sync(writeSync(moduleWrite(power, "power-written"), moduleWrite(wifi, "wifi-written")))
+            }.isFailure shouldBe true
+
+            updateIds.contains(selfPowerFileId) shouldBe true
+            syncState.getRecord(connector.identifier, power)?.hash shouldBe "hash-${power.id}"
+            syncState.getRecord(connector.identifier, wifi).shouldBeNull()
+        }
+
+        @Test
+        fun `device info is rewritten after a reset even when its content is unchanged`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupFullListing()
+
+            connector.sync(SyncOptions(stats = true, readData = true, writeData = false))
+
+            val firstWriteIds = mutableListOf<String>()
+            setupUpdates(firstWriteIds)
+            connector.sync(writeSync(moduleWrite(power, "v1")))
+            firstWriteIds.contains(selfInfoFileId) shouldBe true
+
+            // Reset deletes our device dir — this listing leaves nothing for the deletion walk.
+            setupEmptyDriveRead()
+            connector.execute(ConnectorCommand.Reset)
+
+            // Caches were cleared, so the next write walks the tree again.
+            stubFileGets(listOf(devicesDir(), deviceDir()))
+            setupChildLookups(
+                devicesDir(),
+                deviceDir(),
+                moduleFile(selfPowerFileId, power, 2000L),
+                infoFile(2000L),
+            )
+            val secondWriteIds = mutableListOf<String>()
+            setupUpdates(secondWriteIds)
+
+            connector.sync(writeSync(moduleWrite(power, "v1")))
+
+            secondWriteIds.contains(selfInfoFileId) shouldBe true
+        }
+
+        @Test
+        fun `lastSeen counts the device info manifest`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupFullListing(powerModifiedAt = 1000L, wifiModifiedAt = 1000L, infoModifiedAt = 4000L)
+
+            connector.sync(SyncOptions(stats = true, readData = true, writeData = false))
+
+            val metadata = connector.state.first().deviceMetadata.single { it.deviceId == selfDevice }
+            metadata.lastSeen shouldBe kotlin.time.Instant.fromEpochMilliseconds(4000L)
+        }
+
+        @Test
+        fun `lastSeen uses the newest module file when it beats the manifest`() = runTest {
+            val connector = createConnector()
+            setupStartPageToken("start-token")
+            setupFullListing(powerModifiedAt = 5000L, wifiModifiedAt = 1000L, infoModifiedAt = 1500L)
+
+            connector.sync(SyncOptions(stats = true, readData = true, writeData = false))
+
+            val metadata = connector.state.first().deviceMetadata.single { it.deviceId == selfDevice }
+            metadata.lastSeen shouldBe kotlin.time.Instant.fromEpochMilliseconds(5000L)
         }
     }
 
