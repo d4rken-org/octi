@@ -1,24 +1,32 @@
-<i>Octi</i> synkroniserar information mellan flera Androidenheter.
+<i>Octi</i> visar dig vad som händer på dina andra Android-enheter.
 
-Tillgängliga informationsmoduler:
+Kolla din surfplattas batteri utan att resa dig. Kopiera på din telefon, klistra in på din surfplatta. Få en avisering när din andra telefon får lågt batteri.
 
-* Enhets & Android OS detaljer
-* Batteristatus
-* Wi-Fi anslutning
-* Installerade applikationer
-* Urklippsdelning
-* Fildelning mellan enheter
-* Och mer... om du har en bra idé, låt mig veta!
+<b>Vad Octi kan göra:</b>
 
-Du kan välja olika sätt att synkronisera informationen:
+* Batterinivå och laddningsstatus för varje enhet
+* WiFi- och nätverksstatus i ett ögonkast
+* Urklippssynk: kopiera på en enhet, klistra in på en annan
+* Skicka filer mellan dina enheter
+* Se vilka appar som är installerade på dina andra enheter
+* Batteriaviseringar för dina andra enheter
+* Hemskärmswidgetar för batteri, nätverk och urklipp
+* Enhetsdetaljer: modell, Android-version, drifttid och mer
 
-* Din Google Drive
-* En gratis server som jag är värd för (end-to-end-krypterad)
-* Kör din egen server (end-to-end-krypterad)
+<b>Så här fungerar det:</b>
 
-Synkroniseringsinställningar kan bli mixade och matchade.
+Installera Octi på två eller fler enheter och länka dem på några minuter:
 
-Hemskärmswidgetar visar batteri, urklipp och nätverksstatus på ett ögonblick.
+* Google Drive — logga in med samma konto på varje enhet, klart
+* Octi Server — gratis och anonymt, inget konto behövs; enheter länkas via QR-kod och data är totalsträckskrypterad, endast dina enheter kan läsa den
+* Kör din egen Octi Server (öppen källkod)
 
-Octi är öppen källkod, har inga reklamer och spårar dig inte.
-Du kan göra ett köp i appen för att få extra funktioner och stödja apputveckling.
+Synkalternativ kan blandas och matchas.
+
+<b>Integritet först:</b>
+
+* Öppen källkod
+* Ingen reklam, ingen spårning, ingen data säljs
+* Inget konto eller e-post krävs
+
+Octi är gratis. Ett valfritt köp i appen låser upp några extra funktioner och stödjer utvecklingen.

@@ -1,24 +1,32 @@
-<i>Octi</i> synkroniserer informasjon mellom flere Android-enheter.
+<i>Octi</i> viser deg hva som skjer på dine andre Android-enheter.
 
-Tilgjengelige informasjonsmoduler:
+Sjekk batteristatusen på nettbrettet ditt uten å reise deg. Kopier på telefonen, lim inn på nettbrettet. Få en varsel når batteriet på den andre telefonen blir lavt.
 
-* Enhets- og Android OS-detaljer
-* Batteristatus
-* WiFi-tilkobling
-* Installerte applikasjoner
-* Utklippstavledeling
-* Fildeling mellom enheter
-* og mer... Har du en god idé, så hør gjerne fra deg!
+<b>Hva Octi kan gjøre:</b>
 
-Du kan velge mellom ulike måter å synkronisere informasjonen på:
+* Batterinivå og ladestatus for hver enhet
+* WiFi- og nettverksstatus på et øyeblikk
+* Utklippstavle-synkronisering: kopier på en enhet, lim inn på en annen
+* Send filer mellom enhetene dine
+* Se hvilke apper som er installert på dine andre enheter
+* Batterivarslinger for dine andre enheter
+* Startsidewidgeter for batteri, nettverk og utklippstavle
+* Enhetsdetaljer: modell, Android-versjon, oppetid og mer
 
-* Din Google Drive
-* En gratis server driftet av meg (ende-til-ende-kryptert)
-* Kjør din egen server (ende-til-ende-kryptert)
+<b>Slik fungerer det:</b>
 
-Synkroniseringsalternativer kan kombineres fritt.
+Installer Octi på to eller flere enheter og koble dem sammen på minutter:
 
-Hjemskjerm-widgeter viser batteri, utklippstavle og nettverksstatus med ett blikk.
+* Google Drive – logg inn med samme konto på hver enhet, ferdig
+* Octi Server – gratis og anonym, ingen konto kreves; enheter kobles sammen via QR-kode og data er kryptert ende til ende, bare dine enheter kan lese det
+* Kjør din egen Octi Server (åpen kildekode)
 
-Octi er åpen kildekode, har ingen reklame og sporer deg ikke.
-Du kan kjøpe et innkjøp i appen for å få noen ekstra funksjoner og støtte apputviklingen.
+Synkalternativer kan kombineres fritt.
+
+<b>Personvern først:</b>
+
+* Åpen kildekode
+* Ingen annonser, ingen sporing, ingen data solgt
+* Ingen konto eller e-post kreves
+
+Octi er gratis. Et valgfritt kjøp i appen låser opp noen ekstra funksjoner og støtter utvikling.

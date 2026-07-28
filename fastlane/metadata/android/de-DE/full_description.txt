@@ -1,24 +1,32 @@
-<i>Octi</i> synchronisiert Informationen zwischen mehreren Android-Geräten.
+<i>Octi</i> zeigt dir, was auf deinen anderen Android-Geräten passiert.
 
-Verfügbare Informationsmodule:
+Überprüfe den Akkustand deines Tablets, ohne aufzustehen. Kopiere auf deinem Telefon, füge auf deinem Tablet ein. Erhalte eine Benachrichtigung, wenn dein zweites Telefon schwach wird.
 
-* Gerät- und Android-OS-Details
-* Batteriestatus
-* WLAN-Konnektivität
-* Installierte Anwendungen
-* Zwischenablage-Freigabe
-* Dateifreigabe zwischen Geräten
-* und mehr... wenn Sie eine gute Idee haben, lassen Sie es mich wissen!
+<b>Das kann Octi tun:</b>
 
-Sie können verschiedene Wege wählen, um die Informationen zu synchronisieren:
+* Akkustand und Ladestatus aller Geräte
+* WLAN- und Netzwerkstatus auf einen Blick
+* Zwischenablage-Sync: Kopiere auf einem Gerät, füge auf dem anderen ein
+* Sende Dateien zwischen deinen Geräten
+* Sehe, welche Apps auf deinen anderen Geräten installiert sind
+* Akku-Benachrichtigungen für deine anderen Geräte
+* Startbildschirm-Widgets für Akku, Netzwerk und Zwischenablage
+* Gerätedetails: Modell, Android-Version, Betriebszeit und mehr
 
-* Ihr Google Drive
-* Ein kostenloser Server, der von mir gehostet wird (Ende-zu-Ende-verschlüsselt)
-* Eigenen Server selbst hosten (Ende-zu-Ende-verschlüsselt)
+<b>So funktioniert es:</b>
 
-Synchronisationsoptionen können gemischt und angepasst werden.
+Installiere Octi auf zwei oder mehr Geräten und verknüpfe sie in wenigen Minuten:
 
-Startbildschirm-Widgets zeigen auf einen Blick Akku-, Zwischenablage- und Netzwerkstatus an.
+* Google Drive — melde dich auf jedem Gerät mit demselben Konto an, fertig
+* Octi Server – kostenlos und anonym, kein Konto erforderlich; Geräte werden über QR-Code verknüpft und Daten sind Ende-zu-Ende-verschlüsselt, nur deine Geräte können sie lesen
+* Betreibe deinen eigenen Octi Server (Open Source)
 
-Octi ist Open-Source, hat keine Werbung und verfolgt Sie nicht.
-Sie können einen In-App-Kauf tätigen, um einige zusätzliche Funktionen zu erhalten und die App-Entwicklung zu unterstützen.
+Sync-Optionen können beliebig kombiniert werden.
+
+<b>Datenschutz steht an erster Stelle:</b>
+
+* Open Source
+* Keine Werbung, kein Tracking, keine Datenverkäufe
+* Kein Konto oder E-Mail erforderlich
+
+Octi ist kostenlos. Ein optionaler In-App-Kauf schaltet ein paar zusätzliche Funktionen frei und unterstützt die Entwicklung.

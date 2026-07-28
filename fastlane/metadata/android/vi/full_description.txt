@@ -1,24 +1,32 @@
-<i>Octi</i> đồng bộ thông tin giữa nhiều thiết bị Android.
+<i>Octi</i> cho bạn biết những gì đang xảy ra trên các thiết bị Android khác của bạn.
 
-Các mô-đun thông tin khả dụng:
+Kiểm tra pin máy tính bảng của bạn mà không cần dậy. Sao chép trên điện thoại của bạn, dán trên máy tính bảng. Nhận cảnh báo khi điện thoại thứ hai của bạn sắp hết pin.
 
-* Chi tiết thiết bị & hệ điều hành Android
-* Trạng thái pin
-* Kết nối WiFi
-* Ứng dụng đã cài đặt
-* Chia sẻ bộ nhớ tạm
-* Chia sẻ tệp giữa các thiết bị
-* và nhiều hơn nữa... nếu bạn có ý tưởng hay, hãy cho tôi biết!
+<b>Octi có thể làm gì:</b>
 
-Bạn có thể chọn nhiều cách khác nhau để đồng bộ thông tin:
+* Mức pin và trạng thái sạc của mỗi thiết bị
+* Xem nhanh trạng thái WiFi và mạng
+* Đồng bộ hóa clipboard: sao chép trên thiết bị này, dán trên thiết bị khác
+* Gửi tệp giữa các thiết bị của bạn
+* Xem ứng dụng nào được cài đặt trên các thiết bị khác của bạn
+* Cảnh báo pin cho các thiết bị khác của bạn
+* Tiện ích màn hình chính cho pin, mạng và clipboard
+* Chi tiết thiết bị: mô hình, phiên bản Android, thời gian hoạt động và hơn thế nữa
 
-* Google Drive của bạn
-* Một máy chủ miễn phí do tôi lưu trữ (mã hóa đầu cuối)
-* Tự lưu trữ máy chủ của riêng bạn (mã hóa đầu cuối)
+<b>Nó hoạt động như thế nào:</b>
 
-Các tùy chọn đồng bộ có thể kết hợp linh hoạt.
+Cài đặt Octi trên hai hoặc nhiều thiết bị và liên kết chúng trong vài phút:
 
-Widget màn hình chính hiển thị trạng thái pin, clipboard và mạng trong nháy mắt.
+* Google Drive — đăng nhập bằng cùng một tài khoản trên mỗi thiết bị, xong
+* Octi Server — miễn phí và ẩn danh, không cần tài khoản; các thiết bị liên kết qua mã QR và dữ liệu được mã hóa end-to-end, chỉ các thiết bị của bạn mới có thể đọc được
+* Tự lưu trữ Octi Server của riêng bạn (nguồn mở)
 
-Octi là mã nguồn mở, không có quảng cáo và không theo dõi bạn.
-Bạn có thể mua tính năng trong ứng dụng để có thêm một số tính năng và hỗ trợ phát triển ứng dụng.
+Các tùy chọn đồng bộ có thể được kết hợp và phối hợp.
+
+<b>Bảo mật là ưu tiên hàng đầu:</b>
+
+* Nguồn mở
+* Không quảng cáo, không theo dõi, không bán dữ liệu
+* Không yêu cầu tài khoản hoặc email
+
+Octi miễn phí. Mua tùy chọn trong ứng dụng để mở khóa một số tính năng bổ sung và hỗ trợ phát triển.

@@ -1,24 +1,32 @@
-<i>Octi</i> synchronizuje informace mezi více zařízeními se systémem Android.
+<i>Octi</i> vám ukazuje, co se děje na vašich ostatních zařízeních Android.
 
-Dostupné informační moduly:
+Zkontrolujte baterii svého tabletu bez vstání. Kopírujte na telefonu, vložte na tabletu. Získejte upozornění, když má váš druhý telefon nízkou baterii.
 
-* Podrobnosti o zařízení a operačním systému Android
-* Stav baterie
-* Připojení Wi-Fi
-* Nainstalované aplikace
-* Sdílení schránky
-* Sdílení souborů mezi zařízeními
-* a další... pokud máte nějaký dobrý nápad, dejte mi vědět!
+<b>Co může Octi dělat:</b>
 
-Můžete zvolit různé způsoby synchronizace informací:
+* Úroveň baterie a stav nabíjení každého zařízení
+* Stav WiFi a sítě na první pohled
+* Synchronizace schránky: kopírovat na jednom zařízení, vkládat na jiném
+* Posílat soubory mezi svými zařízeními
+* Vidět, které aplikace jsou nainstalovány na tvých ostatních zařízeních
+* Upozornění na baterii pro tvá ostatní zařízení
+* Widgety domovské obrazovky pro baterii, síť a schránku
+* Detaily zařízení: model, verze Androidu, doba běhu a další
 
-* Váš Disk Google
-* Bezplatný server hostovaný mnou (koncově šifrovaný)
-* Hostujte svůj vlastní server (koncově šifrovaný)
+<b>Jak to funguje:</b>
+
+Nainstaluj Octi na dvě nebo více zařízení a propoj je za pár minut:
+
+* Google Drive — přihlas se stejným účtem na každém zařízení, hotovo
+* Octi Server — zdarma a anonymně, není potřeba účet; zařízení se propojují přes QR kód a data jsou end-to-end šifrovaná, pouze tvá zařízení to mohou přečíst
+* Hostit si Octi Server (otevřený zdroj)
 
 Možnosti synchronizace lze kombinovat.
 
-Widgety domovské obrazovky zobrazují v přehledu stav baterie, schránky a sítě.
+<b>Soukromí má prioritu:</b>
 
-Octi je open-source, neobsahuje reklamy a nesleduje vás.
-Nákupem v aplikaci získáte několik dalších funkcí a podpoříte vývoj aplikace.
+* Otevřený zdroj
+* Žádné reklamy, žádné sledování, žádná prodaná data
+* Není potřeba účet nebo e-mail
+
+Octi je zdarma. Volitelný nákup v aplikaci odemýká několik dalších funkcí a podporuje vývoj.
