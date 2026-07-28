@@ -1,24 +1,32 @@
-<i>Octi</i> synchroniseert informatie tussen meerdere Android-apparaten.
+<i>Octi</i> laat je zien wat er gebeurt op je andere Android-apparaten.
 
-Beschikbare informatiemodules:
+Controleer de batterij van je tablet zonder op te staan. Kopieer op je telefoon, plak op je tablet. Ontvang een melding wanneer je tweede telefoon bijna leeg is.
 
-* Apparaat- en Android OS-details
-* Batterijstatus
-* WiFi-connectiviteit
-* Geïnstalleerde applicaties
-* Klembord delen
-* Bestanden delen tussen apparaten
-* en meer... als je een goed idee hebt, laat het me weten!
+<b>Wat Octi kan doen:</b>
 
-Je kunt verschillende manieren kiezen om de informatie te synchroniseren:
+* Batterijniveau en laadstatus van elk apparaat
+* WiFi- en netwerkstatus in één oogopslag
+* Klembordsynchronisatie: kopiëren op het ene apparaat, plakken op het andere
+* Bestanden verzenden tussen je apparaten
+* Zie welke apps op je andere apparaten zijn geïnstalleerd
+* Batterijwaarschuwingen voor je andere apparaten
+* Widgets op het startscherm voor batterij, netwerk en klembord
+* Apparaatgegevens: model, Android-versie, bedrijfstijd en meer
 
-* Je Google Drive
-* Een gratis server gehost door mij (end-to-end versleuteld)
-* Host je eigen server zelf (end-to-end versleuteld)
+<b>Hoe het werkt:</b>
 
-Synchronisatieopties kunnen worden gemengd en gematcht.
+Installeer Octi op twee of meer apparaten en koppel ze in enkele minuten:
 
-Startschermwidgets tonen in één oogopslag de batterij-, klembord- en netwerkstatus.
+* Google Drive — meld je aan met hetzelfde account op elk apparaat, klaar
+* Octi Server — gratis en anoniem, geen account nodig; apparaten koppelen via QR-code en gegevens zijn end-to-end versleuteld, alleen jouw apparaten kunnen het lezen
+* Host je eigen Octi Server zelf (open source)
 
-Octi is open-source, heeft geen advertenties en volgt je niet.
-Je kunt een in-app aankoop doen om enkele extra functies te krijgen en app-ontwikkeling te ondersteunen.
+Je kunt sync-opties naar wens combineren.
+
+<b>Privacy staat voorop:</b>
+
+* Open source
+* Geen reclame, geen tracking, geen gegevens verkocht
+* Geen account of e-mailadres vereist
+
+Octi is gratis. Een optionele in-app-aankoop ontgrendelt enkele extra functies en ondersteunt de ontwikkeling.

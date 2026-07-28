@@ -1,24 +1,32 @@
-<i>Octi</i> szinkronizálja az információkat több Android-eszköz között.
+<i>Octi</i> megjeleníti, mi történik az Ön többi Android-eszközén.
 
-Elérhető információs modulok:
+Ellenőrizze tablettája akkumulátorát anélkül, hogy felkelne. Másolja a telefonján, illessze be a tablettáján. Kapjon riasztást, ha a második telefon akkumulátora lemerül.
 
-* Eszköz- és Android OS-adatok
-* Akkumulátor állapota
-* WiFi-kapcsolat
-* Telepített alkalmazások
-* Vágólap megosztása
-* Fájlmegosztás eszközök között
-* és még több... ha van egy jó ötleted, szólj!
+<b>Mit tud az Octi:</b>
 
-Többféle szinkronizálási módszer közül választhatsz:
+* Minden eszköz akkumulátorszintje és töltési állapota
+* WiFi- és hálózati állapot egy pillantásra
+* Vágólap szinkronizálása: másolás egy eszközön, beillesztés egy másikon
+* Fájlok küldése az eszközök között
+* Lásd meg, mely alkalmazások vannak telepítve a többi eszközödön
+* Akkumulátor értesítések az egyéb eszközeidhez
+* Widgetek a kezdőképernyőhöz: akkumulátor, hálózat és vágólap
+* Eszköz adatai: modell, Android verzió, üzemidő és egyebek
 
-* A Google Drive-od
-* Egy általam üzemeltetett ingyenes szerver (végpontok közötti titkosítással)
-* Saját szerver üzemeltetése (végpontok közötti titkosítással)
+<b>Hogyan működik:</b>
 
-A szinkronizálási lehetőségek tetszőlegesen kombinálhatók.
+Telepítsd az Octit két vagy több eszközre, és kapcsold össze őket néhány perc alatt:
 
-A kezdőképernyő widgetek egy pillantásra megmutatják az akkumulátor, a vágólap és a hálózat állapotát.
+* Google Drive — jelentkezz be ugyanazzal a fiókkal minden eszközön, és kész
+* Octi Server — ingyenes és anonim, nincs szükség fiókra; az eszközök QR-kódon keresztül csatlakoznak, az adatok végpontok közötti titkosítással vannak titkosítva, csak az eszközeid olvashatják
+* Saját Octi Server üzemeltetése (nyílt forráskódú)
 
-Az Octi nyílt forráskódú, nincs benne hirdetés, és nem követ téged.
-Vásárolhatsz alkalmazáson belüli kiegészítőt, hogy néhány extra funkciót kapj, és támogasd az alkalmazás fejlesztését.
+A szinkronizálási lehetőségek szabadon kombinálhatók.
+
+<b>Az adatvédelem az első:</b>
+
+* Nyílt forráskódú
+* Nincs hirdetés, nincs követés, nincs adatértékesítés
+* Nincs szükség fiók vagy e-mail címre
+
+Az Octi ingyenes. Az opcionális alkalmazáson belüli vásárlás feloldja a néhány további funkciót és támogatja a fejlesztést.

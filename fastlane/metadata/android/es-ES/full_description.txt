@@ -1,24 +1,32 @@
-<i>Octi</i> sincroniza la información entre varios dispositivos en Android.
+<i>Octi</i> te muestra qué está ocurriendo en tus otros dispositivos Android.
 
-Módulos de información disponibles:
+Comprueba la batería de tu tableta sin levantarte. Copia en tu teléfono, pega en tu tableta. Recibe una alerta cuando la batería de tu segundo teléfono se agota.
 
-* Dispositivo y detalles del sistema operativo Android
-* Estado de la batería
-* Conectividad Wi-Fi
-* Aplicaciones instaladas
-* Compartir portapapeles
-* Compartir archivos entre dispositivos
-* y más... si tienes una buena idea, ¡avísame!
+<b>Lo que Octi puede hacer:</b>
 
-Puedes elegir diferentes formas de sincronizar la información:
+* Nivel de batería y estado de carga de cada dispositivo
+* Estado de WiFi y red de un vistazo
+* Sincronización del portapapeles: copia en un dispositivo, pega en otro
+* Enviar archivos entre tus dispositivos
+* Ver qué aplicaciones están instaladas en tus otros dispositivos
+* Alertas de batería para tus otros dispositivos
+* Widgets de pantalla de inicio para batería, red y portapapeles
+* Detalles del dispositivo: modelo, versión de Android, tiempo activo y más
 
-* Tu Google Drive
-* Un servidor gratuito alojado por mí (cifrado de extremo a extremo)
-* Aloja tu propio servidor (cifrado de extremo a extremo)
+<b>Cómo funciona:</b>
+
+Instala Octi en dos o más dispositivos y vincúlalos en minutos:
+
+* Google Drive — inicia sesión con la misma cuenta en cada dispositivo, listo
+* Octi Server — gratuito y anónimo, no se requiere cuenta; los dispositivos se vinculan mediante código QR y los datos están cifrados de extremo a extremo, solo tus dispositivos pueden leerlo
+* Aloja tu propio servidor Octi (código abierto)
 
 Las opciones de sincronización se pueden mezclar y combinar.
 
-Los widgets de la pantalla de inicio muestran el estado de batería, portapapeles y red de un vistazo.
+<b>La privacidad es lo primero:</b>
 
-Octi es de código abierto, no tiene anuncios y no te rastrea.
-Puedes realizar una compra en la aplicación para obtener algunas funciones adicionales y apoyar el desarrollo de la aplicación.
+* Código abierto
+* Sin anuncios, sin seguimiento, sin venta de datos
+* No se requiere cuenta ni correo electrónico
+
+Octi es gratuito. Una compra opcional en la aplicación desbloquea algunas funciones adicionales y apoya el desarrollo.

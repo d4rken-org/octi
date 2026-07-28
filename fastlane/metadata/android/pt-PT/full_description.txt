@@ -1,24 +1,32 @@
-<i>Octi</i> sincroniza informações entre vários dispositivos Android.
+O <i>Octi</i> mostra-lhe o que se está a passar nos seus outros dispositivos Android.
 
-Módulos de informação disponíveis:
+Verifique a bateria do seu tablet sem se levantar. Copie no seu telemóvel, cole no seu tablet. Receba um aviso quando a bateria do seu segundo telemóvel estiver baixa.
 
-* Detalhes do dispositivo e sistema operativo Android
-* Estado da bateria
-* Conectividade WiFi
-* Aplicações instaladas
-* Partilha de área de transferência
-* Partilha de ficheiros entre dispositivos
-* e mais... se tiver uma boa ideia, informe-me!
+<b>O que o Octi pode fazer:</b>
 
-Pode escolher diferentes formas de sincronizar as informações:
+* Nível de bateria e estado de carregamento de cada dispositivo
+* Estado de WiFi e rede num relance
+* Sincronização da área de transferência: copie num dispositivo, cole noutro
+* Enviar ficheiros entre os seus dispositivos
+* Ver quais aplicações estão instaladas nos seus outros dispositivos
+* Alertas de bateria para os seus outros dispositivos
+* Widgets do ecrã inicial para bateria, rede e área de transferência
+* Detalhes do dispositivo: modelo, versão do Android, tempo de atividade e mais
 
-* O seu Google Drive
-* Um servidor gratuito alojado por mim (encriptado de ponta a ponta)
-* Aloje o seu próprio servidor (encriptado de ponta a ponta)
+<b>Como funciona:</b>
 
-As opções de sincronização podem ser misturadas e combinadas.
+Instale o Octi em dois ou mais dispositivos e associe-os em minutos:
 
-Os widgets do ecrã inicial mostram o estado da bateria, área de transferência e rede num relance.
+* Google Drive — inicie sessão com a mesma conta em cada dispositivo, pronto
+* Octi Server — gratuito e anónimo, nenhuma conta necessária; os dispositivos associam-se através de código QR e os dados são encriptados de ponta a ponta, apenas os seus dispositivos podem lê-los
+* Aloje o seu próprio Octi Server (código aberto)
 
-Octi é código aberto, não tem anúncios e não o rastreia.
-Pode fazer uma compra na aplicação para obter algumas funcionalidades extra e apoiar o desenvolvimento da aplicação.
+As opções de sincronização podem ser combinadas.
+
+<b>A privacidade em primeiro lugar:</b>
+
+* Código aberto
+* Sem anúncios, sem rastreio, sem venda de dados
+* Não é necessária conta nem email
+
+O Octi é gratuito. Uma compra opcional na aplicação desbloqueia algumas funcionalidades extra e apoia o desenvolvimento.

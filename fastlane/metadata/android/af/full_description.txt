@@ -1,24 +1,32 @@
-<i>Octi</i> sinkroniseer inligting tussen verskeie Android-toestelle.
+<i>Octi</i> wys jou wat op jou ander Android-toestelle gebeur.
 
-Beskikbare inligtingsmodules:
+Kontroleer jou tablet se battery sonder om op te staan. Kopieer op jou selfoon, plak op jou tablet. Kry 'n waarskuwing wanneer jou tweede selfoon laag loop.
 
-* Toestel- en Android OS-besonderhede
-* Batterystatus
-* WiFi-konnektiwiteit
-* Geïnstalleerde programme
-* Knipbord-deling
-* Lêerdeling tussen toestelle
-* en meer... As jy 'n goeie idee het, laat my weet!
+<b>Wat Octi kan doen:</b>
 
-Jy kan verskillende maniere kies om die inligting te sinkroniseer:
+* Batteryvlak en laadstatus van elke toestel
+* WiFi- en netwerkstatus oorsigtelik
+* Knipbordsink: kopieer op een toestel, plak op 'n ander
+* Stuur lêers tussen jou toestelle
+* Kyk watter programme op jou ander toestelle geïnstalleer is
+* Batterywaarskuwings vir jou ander toestelle
+* Tuis-skerm-widjette vir battery, netwerk en klipbord
+* Toestel-besonderhede: model, Android-weergawe, bedryftyd en meer
 
-* Jou Google Drive
-* 'n Gratis bediener deur my aangebied (end-tot-end-geënkripteer)
-* Huisves jou eie bediener self (end-tot-end-geënkripteer)
+<b>Hoe dit werk:</b>
 
-Sinkronisasie-opsies kan na wense gekombineer word.
+Installeer Octi op twee of meer toestelle en skakel hulle in minute:
 
-Tuisskerm-widgets wys battery-, knipbord- en netwerkstatus met een oogopslag.
+* Google Drive — teken in met dieselfde rekening op elke toestel, klaar
+* Octi Server — gratis en anoniem, geen rekening nodig; toestelle skakel via QR-kode en data is end-to-end geënkripteer, slegs jou toestelle kan dit lees
+* Self-host jou eie Octi Server (oop bron)
 
-Octi is oopbron, het geen advertensies nie en volg jou nie.
-Jy kan 'n in-app-aankoop doen om 'n paar ekstra funksies te kry en die app-ontwikkeling te ondersteun.
+Sinkronisasie-opsies kan gemeng en gepaar word.
+
+<b>Privaatheid kom eerste:</b>
+
+* Oop bron
+* Geen advertensies, geen opsporing, geen data verkoop
+* Geen rekening of e-pos nodig
+
+Octi is gratis. Opsionele in-program aankope ontsluit 'n paar ekstra funksies en ondersteun ontwikkeling.

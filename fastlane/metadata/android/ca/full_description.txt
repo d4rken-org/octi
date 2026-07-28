@@ -1,24 +1,32 @@
-L'<i>Octi</i> sincronitza la informació entre diversos dispositius Android.
+<i>Octi</i> us mostra què està passant als vostres altres dispositius Android.
 
-Mòduls d'informació disponibles:
+Comproveu la bateria de la vostra tauleta sense moure-us. Copieu al vostre telèfon, enganxeu a la vostra tauleta. Rebeu una notificació quan la bateria del vostre segon telèfon sigui baixa.
 
-* Detalls del dispositiu i del sistema operatiu Android
-* Estat de la bateria
-* Connectivitat Wi-Fi
-* Aplicacions instal·lades
-* Compartició de porta-retalls
-* Compartició de fitxers entre dispositius
-* i molt més... si teniu una bona idea, fes-m'ho saber!
+<b>Què pot fer Octi:</b>
 
-Podeu triar diferents maneres de sincronitzar la informació:
+* Nivell de bateria i estat de càrrega de cada dispositiu
+* Estat de WiFi i xarxa d’una ullada
+* Sincronització del porta-retalls: copieu en un dispositiu, enganxeu en un altre
+* Envieu fitxers entre els vostres dispositius
+* Veure quines aplicacions estan instal·lades en els vostres altres dispositius
+* Alertes de bateria per als vostres altres dispositius
+* Ginys de pantalla d’inici per a la bateria, la xarxa i el porta-retalls
+* Detalls del dispositiu: model, versió d’Android, temps de funcionament i més
 
-* El vostre Google Drive
-* Un servidor gratuït allotjat per mi (xifrat d'extrem a extrem)
-* Allotgeu el vostre propi servidor (xifrat d'extrem a extrem)
+<b>Com funciona:</b>
 
-Les opcions de sincronització es poden combinar i mesclar.
+Instal·leu Octi en dos o més dispositius i vinculeu-los en minuts:
 
-Els ginys de la pantalla d'inici mostren l'estat de la bateria, el porta-retalls i la xarxa d'un cop d'ull.
+* Google Drive — inicieu sessió amb el mateix compte en cada dispositiu, i prou
+* Octi Server — gratuït i anònim, sense compte necessari; els dispositius es vinculen via codi QR i les dades estan xifrades d’extrem a extrem, només els vostres dispositius poden llegir-ho
+* Allotjar el vostre propi Octi Server (de codi obert)
 
-L'Octi és de codi obert, no té anuncis i no us fa seguiment.
-Podeu realitzar una compra des de l'aplicació per obtenir algunes funcions addicionals i donar suport al desenvolupament d'aplicacions.
+Es pot barrejar i combinar les opcions de sincronització.
+
+<b>La privacitat va primer:</b>
+
+* Codi obert
+* Cap publicitat, sense seguiment, sense venda de dades
+* Cap compte ni correu electrònic requerits
+
+Octi és gratuïta. Una compra opcional dins de l’aplicació desbloqueja algunes funcions addicionals i dona suport al desenvolupament.

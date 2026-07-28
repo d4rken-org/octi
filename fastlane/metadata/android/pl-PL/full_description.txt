@@ -1,24 +1,32 @@
-<i>Octi</i> synchronizuje informacje między wieloma urządzeniami Android.
+<i>Octi</i> pokazuje, co dzieje się na innych urządzeniach z systemem Android.
 
-Dostępne moduły informacyjne:
+Sprawdź baterię tabletu bez wstawania. Skopiuj na telefonie, wklej na tablecie. Otrzymuj powiadomienie, gdy drugi telefon działa na niskim poziomie.
 
-* Szczegóły urządzenia i systemu Android
-* Stan baterii
-* Łączność WiFi
-* Zainstalowane aplikacje
-* Udostępnianie schowka
-* Udostępnianie plików między urządzeniami
-* i więcej... jeśli masz dobry pomysł, daj mi znać!
+<b>Co Octi może zrobić:</b>
 
-Możesz wybrać różne sposoby synchronizacji informacji:
+* Poziom baterii i stan ładowania każdego urządzenia
+* Wi-Fi i stan sieci w skrócie
+* Synchronizacja ze schowkiem: skopiuj na jednym urządzeniu, wklej na innym urządzeniu
+* Wysyłaj pliki pomiędzy urządzeniami
+* Zobacz, które aplikacje są zainstalowane na innych urządzeniach
+* Powiadomienia o baterii dla innych urządzeń
+* Widżety ekranu głównego dla baterii, sieci i schowka
+* Szczegóły urządzenia: model, wersja Androida, czas pracy i więcej
 
-* Twój Dysk Google
-* Bezpłatny serwer hostowany przeze mnie (szyfrowanie end-to-end)
-* Samodzielnie hostuj własny serwer (szyfrowanie end-to-end)
+<b>Jak to działa:</b>
 
-Opcje synchronizacji można mieszać i dopasowywać.
+Zainstaluj Octi na dwóch lub więcej urządzeniach i podłącz je w minutach:
 
-Widżety ekranu głównego pokazują jednym rzutem oka poziom baterii, schowek i stan sieci.
+* Dysk Google - zaloguj się na to samo konto na każdym urządzeniu, wykonano
+* Serwer Octi — darmowy i anonimowy, żadne konto nie jest potrzebne; łącze urządzeń za pomocą kodu QR, a dane są szyfrowane end-to-end, tylko twoje urządzenia mogą je odczytywać
+* Samodzielny serwer Octi (otwarte źródło)
 
-Octi jest otwarto-źródłowy, nie ma reklam i nie śledzi cię.
-Możesz dokonać zakupu w aplikacji, aby uzyskać kilka dodatkowych funkcji i wesprzeć rozwój aplikacji.
+Opcje synchronizacji mogą być mieszane i dopasowane.
+
+<b>Prywatność pojawia się najpierw:</b>
+
+* Otwarte źródło
+* Brak reklam, brak śledzenia, brak sprzedanych danych
+* Konto lub e-mail nie są wymagane
+
+Octi jest darmowy. Opcjonalny zakup w aplikacji odblokowuje kilka dodatkowych funkcji i wspiera rozwój.

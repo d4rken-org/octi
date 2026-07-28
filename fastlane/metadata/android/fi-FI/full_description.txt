@@ -1,24 +1,32 @@
-<i>Octi</i> synkronoi tietoja useiden Android-laitteiden välillä.
+<i>Octi</i> näyttää, mitä tapahtuu muissa Android-laitteissasi.
 
-Käytettävissä olevat tietomoduulit:
+Tarkista tabletin akun varaustila ilman nousematta. Kopioi puhelimessa, liitä tabletissa. Saat hälytyksen, kun toisen puhelimen akku vähenee.
 
-* Laite- ja Android-käyttöjärjestelmätiedot
-* Akun tila
-* WiFi-yhteys
-* Asennetut sovellukset
-* Leikepöydän jakaminen
-* Tiedostojen jakaminen laitteiden välillä
-* ja lisää... jos sinulla on hyvä idea, kerro siitä minulle!
+<b>Mitä Octi voi tehdä:</b>
 
-Voit valita eri tapoja synkronoida tiedot:
+* Jokaisen laitteen akun varaustila ja latauksen tila
+* WiFi- ja verkon tila yhdellä silmäyksellä
+* Leikepöydän synkronointi: kopioi yhdellä laitteella, liitä toisella
+* Lähetä tiedostoja laitteidesi välillä
+* Näe, mitkä sovellukset on asennettu muille laitteillesi
+* Akun varoitukset muille laitteillesi
+* Kotiruutuwidgetit akuille, verkolle ja leikepöydälle
+* Laitteen tiedot: malli, Android-versio, käyttöaika ja paljon muuta
 
-* Oma Google Drive
-* Ilmainen palvelin, jonka isännöin itse (päästä päähän salattu)
-* Isännöi omaa palvelintasi itse (päästä päähän salattu)
+<b>Miten se toimii:</b>
 
-Synkronointivaihtoehtoja voi yhdistellä vapaasti.
+Asenna Octi kahteen tai useampaan laitteeseen ja yhdistä ne minuuteissa:
 
-Aloitusnäytön widgetit näyttävät akun, leikepöydän ja verkon tilan yhdellä silmäyksellä.
+* Google Drive — kirjaudu samalla tilillä jokaisella laitteella, valmis
+* Octi Server — ilmainen ja anonyymi, tiliä ei tarvita; laitteet yhdistetään QR-koodin avulla ja tiedot ovat päästä päähän salattuja, vain laitteesi voivat lukea ne
+* Isännöi oma Octi Server -palvelimesi (avoimen lähdekoodin)
 
-Octi on avoimen lähdekoodin sovellus, jossa ei ole mainoksia eikä seurantaa.
-Voit ostaa sovellussisäisen ostoksen saadaksesi lisäominaisuuksia ja tukeaksesi sovelluksen kehitystä.
+Synkronointivaihtoehdot voidaan yhdistää vapaasti.
+
+<b>Yksityisyys on tärkeintä:</b>
+
+* Avoimen lähdekoodin
+* Ei mainoksia, ei seurantaa, tietoja ei myydä
+* Tiliä tai sähköpostia ei vaadita
+
+Octi on ilmainen. Valinnainen osto avaa muutaman lisäominaisuuden ja tukee kehitystä.

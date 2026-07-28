@@ -1,24 +1,32 @@
-<i>Octi</i> birden fazla Android cihaz arasında bilgileri senkronize eder.
+<i>Octi</i>, diğer Android cihazlarınızda neler olup bittiğini gösterir.
 
-Mevcut bilgi modülleri:
+Tabletinizin pilini yerinizden kalkmadan kontrol edin. Telefonunuzda kopyalayın, tabletinize yapıştırın. İkinci telefonunuzun pili azaldığında uyarı alın.
 
-* Cihaz ve Android İşletim Sistemi ayrıntıları
-* Pil durumu
-* WiFi bağlantısı
-* Yüklü uygulamalar
-* Pano paylaşımı
-* Cihazlar arasında dosya paylaşımı
-* ve daha fazlası... eğer iyi bir fikriniz varsa, bana bildirin!
+<b>Octi neler yapabilir:</b>
 
-Bilgileri senkronize etmek için farklı yollar seçebilirsiniz:
+* Tüm cihazların pil seviyesi ve şarj durumu
+* WiFi ve ağ durumunu bir bakışta görün
+* Pano senkronizasyonu: bir cihazda kopyala, diğerinde yapıştır
+* Cihazlarınız arasında dosya gönder
+* Diğer cihazlarınızda hangi uygulamaların yüklü olduğunu görün
+* Diğer cihazlarınız için pil uyarıları
+* Pil, ağ ve pano için ana ekran widget'ları
+* Cihaz detayları: model, Android sürümü, çalışma süresi ve daha fazlası
 
-* Google Drive'ınız
-* Tarafımdan barındırılan ücretsiz bir sunucu (uçtan uca şifreli)
-* Kendi sunucunuzu barındırın (uçtan uca şifreli)
+<b>Nasıl çalışır:</b>
 
-Senkronizasyon seçenekleri karıştırılabilir ve eşleştirilebilir.
+Octi'yi iki veya daha fazla cihaza kurun ve bunları dakikalar içinde bağlayın:
 
-Ana ekran widget'ları pil, pano ve ağ durumunu bir bakışta gösterir.
+* Google Drive — her cihazda aynı hesapla oturum açın, bitti
+* Octi Server — ücretsiz ve anonim, hesap gerekmez; cihazlar QR kodu aracılığıyla bağlanır ve veriler uçtan uca şifreli, yalnızca cihazlarınız okuyabilir
+* Kendi Octi Server'ınızı barındırın (açık kaynak)
 
-Octi açık kaynaklıdır, reklam içermez ve sizi takip etmez.
-Birkaç ekstra özellik almak ve uygulama geliştirmeyi desteklemek için uygulama içi satın alma yapabilirsiniz.
+Senkronizasyon seçenekleri karıştırılıp eşleştirilebilir.
+
+<b>Gizlilik ilk sırada gelir:</b>
+
+* Açık kaynak
+* Reklam yok, takip yok, satılan veri yok
+* Hesap veya e-posta gerekmez
+
+Octi ücretsizdir. İsteğe bağlı bir uygulama içi satın alma, birkaç ekstra özelliği açar ve geliştirmeyi destekler.

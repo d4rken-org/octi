@@ -1,24 +1,32 @@
-<i>Octi</i> synchronise l’infomation entre plusieurs appareils Android.
+<i>Octi</i> vous montre ce qui se passe sur vos autres appareils Android.
 
-Modules d’information proposés :
+Vérifiez la batterie de votre tablette sans vous lever. Copiez sur votre téléphone, collez sur votre tablette. Recevez une alerte quand la batterie de votre second téléphone est faible.
 
-* Détails de l’appareil et du système Android
-* État de la batterie
-* Connectivité Wi-Fi
-* Applications installées
-* Partage du presse-papiers
-* Partage de fichiers entre appareils
-* et plus encore… Si vous avez une bonne idée, faites-le-moi savoir.
+<b>Ce qu’Octi peut faire :</b>
 
-Vous pouvez choisir différentes façons de synchroniser l’information :
+* Niveau de batterie et état de charge de chaque appareil
+* État WiFi et réseau en un coup d’œil
+* Synchronisation du presse-papiers : copiez sur un appareil, collez sur un autre
+* Envoyez des fichiers entre vos appareils
+* Consultez les applications installées sur vos autres appareils
+* Alertes de batterie pour vos autres appareils
+* Widgets d’écran d’accueil pour la batterie, le réseau et le presse-papiers
+* Détails de l’appareil : modèle, version Android, durée de fonctionnement et plus
 
-* Votre Disque Google Drive ;
-* Un serveur gratuit hébergé par moi (chiffrement de bout en bout)
-* Hébergez votre propre serveur (chiffrement de bout en bout)
+<b>Comment ça marche :</b>
+
+Installez Octi sur deux appareils ou plus et connectez-les en quelques minutes :
+
+* Google Drive — connectez-vous avec le même compte sur chaque appareil, c’est fait
+* Octi Server — gratuit et anonyme, aucun compte nécessaire ; les appareils se connectent via code QR et les données sont chiffrées de bout en bout, seuls vos appareils peuvent les lire
+* Hébergez votre propre Octi Server (open source)
 
 Les options de synchronisation peuvent être combinées et assorties.
 
-Les widgets de l'écran d'accueil affichent d'un coup d'œil la batterie, le presse-papiers et l'état du réseau.
+<b>La confidentialité d’abord :</b>
 
-Octi est une appli libre, sans publicité, qui ne vous suit pas à la trace.
-Vous pouvez effectuer un achat intégré dans l’appli pour obtenir quelques fonctions supplémentaires et financer le développement de l’appli.
+* Open source
+* Aucune publicité, aucun suivi, aucune donnée vendue
+* Aucun compte ou e-mail requis
+
+Octi est gratuit. Un achat intégré optionnel déverrouille quelques fonctions supplémentaires et soutient le développement.

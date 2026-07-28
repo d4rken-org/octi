@@ -1,24 +1,32 @@
-<i>Octi</i> sincronizează informații între mai multe dispozitive Android.
+<i>Octi</i> ți arată ce se întâmplă pe celelalte tale dispozitive Android.
 
-Module de informații disponibile:
+Verifică bateria tabletei fără să te ridici. Copiază pe telefon, lipește pe tabletă. Primești o alertă când al doilea telefon se descarcă.
 
-* Detalii despre dispozitiv și sistemul de operare Android
-* Starea bateriei
-* Conectivitate WiFi
-* Aplicații instalate
-* Partajarea clipboard-ului
-* Partajarea fișierelor între dispozitive
-* și multe altele... dacă ai o idee bună, spune-mi!
+<b>Ce poate face Octi:</b>
 
-Poți alege diferite metode de sincronizare a informațiilor:
+* Nivel baterie și stare de încărcare a fiecărui dispozitiv
+* WiFi și starea rețelei dintr-o privire
+* Sincronizare din clipboard: copiază pe un dispozitiv, lipește pe altul
+* Trimite fișiere între dispozitivele tale
+* Vezi ce aplicații sunt instalate pe celelalte dispozitive ale tale
+* Alerte de baterie pentru celelalte dispozitive ale tale
+* Widget-uri pe ecranul de pornire pentru baterie, rețea și clipboard
+* Detalii dispozitiv: model, versiune Android, timp de funcționare și mai mult
 
-* Google Drive-ul tău
-* Un server gratuit găzduit de mine (criptat end-to-end)
-* Găzduiește-ți propriul server (criptat end-to-end)
+<b>Cum funcționează:</b>
 
-Opțiunile de sincronizare pot fi combinate după preferință.
+Instalează Octi pe două sau mai multe dispozitive și conectează-le în câteva minute:
 
-Widget-urile ecranului de pornire afișează dintr-o privire starea bateriei, clipboard-ului și rețelei.
+* Google Drive — conectează-te cu același cont pe fiecare dispozitiv, gata
+* Octi Server — gratuit și anonim, nu este necesar cont; dispozitivele se conectează prin cod QR și datele sunt criptate end-to-end, doar dispozitivele tale pot citi datele
+* Găzduiește-ți propriul Octi Server (sursă deschisă)
 
-Octi este open-source, nu conține reclame și nu te urmărește.
-Poți achiziționa un produs în aplicație pentru câteva funcții suplimentare și pentru a susține dezvoltarea aplicației.
+Opțiunile de sincronizare pot fi combinate și asortate.
+
+<b>Confidențialitatea pe primul loc:</b>
+
+* Sursă deschisă
+* Fără anunțuri, fără urmărire, fără vânzare de date
+* Niciun cont sau email necesar
+
+Octi este gratuit. O achiziție opțională din aplicație deblochează câteva funcții suplimentare și sprijină dezvoltarea.
