@@ -210,12 +210,25 @@ class DashboardVM @Inject constructor(
         val infos: List<ConnectorIssue> = emptyList(),
         val placeholder: PlaceholderData? = null,
         val removalTargets: List<DeviceRemovalTarget> = emptyList(),
+        /**
+         * Newest `DeviceMetadata.lastSeen` any active connector reports for this device — when the
+         * device was last observed at all, independent of whether its module payloads changed.
+         */
+        val lastSeen: Instant? = null,
         val displayLabel: String = meta?.data?.labelOrFallback
             ?: placeholder?.metadata?.label
             ?: deviceId.shortLabel,
     ) {
         val baseLabel: String
             get() = meta?.data?.labelOrFallback ?: placeholder?.metadata?.label ?: deviceId.shortLabel
+
+        /**
+         * What the card's timestamp shows: device last seen or data last written, whichever is
+         * newer. The write time is a lower bound on purpose — stale cached metadata arriving after
+         * a cache-only render must never move the card backwards in time.
+         */
+        val lastActivityAt: Instant
+            get() = maxOf(lastSeen ?: Instant.DISTANT_PAST, meta?.modifiedAt ?: Instant.DISTANT_PAST)
 
         val isPlaceholder: Boolean get() = placeholder != null
         val isDegraded: Boolean get() = placeholder?.kind == PlaceholderData.Kind.DEGRADED
@@ -673,6 +686,7 @@ class DashboardVM @Inject constructor(
     ) { now, byDevice, missingPermissions, activeConnectors, activeStates, busyIds, alerts, _, fileShare, pausedIds ->
         val statesList = activeStates.toList()
         val statesMap = activeConnectors.zip(statesList).associate { (c, s) -> c.identifier to s }
+        val lastSeenById = lastSeenByDevice(statesList)
         val fileDeleteRequests = byDevice.devices.values
             .flatMap { moduleDatas ->
                 moduleDatas.mapNotNull { it.data as? FileShareInfo }
@@ -754,6 +768,7 @@ class DashboardVM @Inject constructor(
                     isCollapsed = false, // Will be updated when applying preferences
                     isLimited = false, // Will be updated when applying preferences based on position
                     isCurrentDevice = metaModule.deviceId == syncSettings.deviceId,
+                    lastSeen = lastSeenById[deviceId],
                 )
             }
 
@@ -933,6 +948,20 @@ class DashboardVM @Inject constructor(
             .filter { (id, _) -> id in blobCapableConnectorIds }
             .flatMap { (_, state) -> state.deviceMetadata.asSequence().map { it.deviceId } }
             .toSet()
+
+        /**
+         * Newest sighting per device across every active connector's state.
+         *
+         * Flattened rather than joined per connector: a device can be reported by more than one
+         * connector, and the freshest sighting wins no matter which one saw it.
+         */
+        internal fun lastSeenByDevice(
+            states: Collection<SyncConnectorState>,
+        ): Map<DeviceId, Instant> = states
+            .flatMap { it.deviceMetadata }
+            .mapNotNull { metadata -> metadata.lastSeen?.let { metadata.deviceId to it } }
+            .groupBy({ it.first }, { it.second })
+            .mapValues { (_, sightings) -> sightings.max() }
 
         /** Most-optimistic-first: a holder that may still deliver data outranks a settled one. */
         private val placeholderKindOptimism = listOf(
