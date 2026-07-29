@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class UpgradeNavigation @Inject constructor() : NavigationEntry {
     override fun EntryProviderScope<NavKey>.setup() {
-        entry<Nav.Main.Upgrade> { key -> UpgradeScreenHost(forced = key.forced, manage = key.manage) }
+        entry<Nav.Main.Upgrade> { key -> UpgradeScreenHost(route = key) }
     }
 
     @Module
