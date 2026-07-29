@@ -21,6 +21,7 @@ import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.PermissionState
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.isHardLocked
 import eu.darken.octi.main.core.GeneralSettings
 import eu.darken.octi.main.core.updater.UpdateChecker
 import eu.darken.octi.main.core.updater.UpdateService
@@ -464,6 +465,12 @@ class DashboardVM @Inject constructor(
         // Collect all known module IDs for normalization
         val allModuleIds = ALL_MODULE_IDS
 
+        // The device limit is only enforced when the entitlement is DEFINITIVELY non-Pro (settled,
+        // error-free, not Pro — the hard-lock state). On a GPlay cold start the seed reports non-Pro
+        // while unsettled; treating that as free here would flash the limit at a paying user before
+        // billing settles. An error state also fails open for the same reason.
+        val entitlementLocked = upgradeInfo.isHardLocked()
+
         // Apply device limit status and tile layout dynamically based on position after reordering
         val orderedDeviceItems = deviceItemsWithOrder.mapIndexed { index, item ->
             val deviceIdStr = item.deviceId.id
@@ -472,7 +479,7 @@ class DashboardVM @Inject constructor(
                 tileLayout = effectiveLayout,
                 isCollapsed = cleanedConfig.isCollapsed(deviceIdStr),
                 infos = buildDeviceInfos(item, issues),
-                isLimited = !upgradeInfo.isPro && index >= DEVICE_LIMIT,
+                isLimited = entitlementLocked && index >= DEVICE_LIMIT,
             )
         }
 
@@ -488,7 +495,7 @@ class DashboardVM @Inject constructor(
             missingPermissions = filteredPermissions,
             update = update,
             upgradeInfo = upgradeInfo,
-            deviceLimitReached = orderedDeviceItems.size > DEVICE_LIMIT && !upgradeInfo.isPro,
+            deviceLimitReached = orderedDeviceItems.size > DEVICE_LIMIT && entitlementLocked,
             issues = issues,
         )
     }

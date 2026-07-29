@@ -13,6 +13,7 @@ import eu.darken.octi.common.PrivacyPolicy
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
@@ -22,16 +23,23 @@ import eu.darken.octi.common.debug.recording.core.RecorderModule
 import eu.darken.octi.common.flow.DynamicStateFlow
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.uix.ViewModel4
+import eu.darken.octi.common.upgrade.UpgradeDiagnostics
 import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.main.core.CurriculumVitae
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class ContactSupportVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val sessionManager: DebugSessionManager,
     private val upgradeRepo: UpgradeRepo,
+    private val curriculumVitae: CurriculumVitae,
+    private val upgradeDiagnostics: UpgradeDiagnostics,
     private val webpageTool: WebpageTool,
     @ApplicationContext private val context: Context,
 ) : ViewModel4(dispatcherProvider) {
@@ -174,8 +182,16 @@ class ContactSupportVM @Inject constructor(
                 false
             }
 
+            // Two independent best-effort diagnostic reads, each on its own timeout: the pro-state
+            // counters and the flavor billing diagnostics live in different stores, so one being
+            // slow or broken must not suppress the other — and neither must stop the email. Read in
+            // this suspend path (VMs launch on Default, so no runBlocking) before the non-suspend
+            // buildBody. A cancelled send is never turned into a "successful" email.
+            val proHistory = readDiagnostic("proHistory") { curriculumVitae.proHistory().toString() }
+            val diagnostics = readDiagnostic("debugInfo") { upgradeDiagnostics.debugInfo() }
+
             val subject = buildSubject(currentState)
-            val body = buildBody(currentState, isPro)
+            val body = buildBody(currentState, isPro, proHistory, diagnostics)
 
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = if (zipUri != null) "application/zip" else "message/rfc822"
@@ -216,7 +232,24 @@ class ContactSupportVM @Inject constructor(
         return raw.replace("\n", " ").replace("\\s+".toRegex(), " ").take(120)
     }
 
-    private fun buildBody(state: State, isPro: Boolean): String = buildString {
+    // Best-effort diagnostic read: bounded by a short timeout and swallowing any failure so a slow
+    // or broken store can never block or fail the support email. Cancellation is preserved so a
+    // cancelled send doesn't continue as if it succeeded.
+    private suspend fun readDiagnostic(label: String, block: suspend () -> String?): String? = try {
+        withTimeoutOrNull(DIAGNOSTICS_TIMEOUT) { block() }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        log(TAG, WARN) { "Diagnostic read '$label' failed: ${e.asLog()}" }
+        null
+    }
+
+    private fun buildBody(
+        state: State,
+        isPro: Boolean,
+        proHistory: String?,
+        diagnostics: String?,
+    ): String = buildString {
         appendLine(state.description.trim())
 
         if (state.category == Category.BUG_REPORT && state.expectedBehavior.isNotBlank()) {
@@ -231,11 +264,19 @@ class ContactSupportVM @Inject constructor(
         appendLine("App: $proIndicator ${BuildConfigWrap.VERSION_DESCRIPTION}")
         appendLine("Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
         appendLine("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
+
+        if (proHistory != null || diagnostics != null) {
+            appendLine()
+            appendLine("--- Billing Diagnostics ---")
+            proHistory?.let { appendLine("ProHistory: $it") }
+            diagnostics?.let { appendLine(it) }
+        }
     }
 
     companion object {
         private val TAG = logTag("Settings", "Support", "Contact", "VM")
         private const val MAX_PICKER_SESSIONS = 3
+        private val DIAGNOSTICS_TIMEOUT = 2.seconds
 
         fun wordCount(text: String): Int {
             return text.trim().split("\\s+".toRegex()).filter { it.isNotEmpty() }.size

@@ -2068,7 +2068,10 @@ private data class PreviewUpgradeInfo(
     override val type: UpgradeRepo.Type = UpgradeRepo.Type.FOSS,
     override val isPro: Boolean = false,
     override val upgradedAt: Instant? = null,
-) : UpgradeRepo.Info
+) : UpgradeRepo.Info {
+    override val isSettled: Boolean = true
+    override val error: Throwable? = null
+}
 
 @Preview2
 @Composable

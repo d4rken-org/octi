@@ -51,4 +51,11 @@ dependencies {
     implementation("io.kotest:kotest-runner-junit5:5.9.1")
     implementation("io.kotest:kotest-assertions-core-jvm:5.9.1")
     implementation("io.kotest:kotest-property-jvm:5.9.1")
+
+    // JVM Compose UI testing under Robolectric: the base class + downstream screen tests need
+    // createComposeRule() on the unit-test classpath (the -android artifact, not the multiplatform
+    // ui-test-junit4 which resolves only for androidTest).
+    api(platform("androidx.compose:compose-bom:${Versions.Compose.bom}"))
+    api("androidx.compose.ui:ui-test-junit4-android")
+    api("org.robolectric:robolectric:4.16.1")
 }

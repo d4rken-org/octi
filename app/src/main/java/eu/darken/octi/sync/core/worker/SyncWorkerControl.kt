@@ -63,13 +63,27 @@ class SyncWorkerControl @Inject constructor(
         .setupCommonEventHandlers(TAG) { "workerState" }
         .shareLatest(scope)
 
+    /**
+     * Reactive, three-way read of the Pro entitlement for scheduling. [UNDETERMINED] is distinct
+     * from [FREE] on purpose: on a GPlay cold start (or a billing error) the entitlement is not yet
+     * definitive, and treating that as free would cancel a paying user's charging worker until
+     * billing settles. Only a settled, error-free non-Pro state is a real [FREE].
+     */
+    private enum class ProEntitlement { PRO, FREE, UNDETERMINED }
+
+    private fun UpgradeRepo.Info.toEntitlement(): ProEntitlement = when {
+        isPro -> ProEntitlement.PRO
+        error != null || !isSettled -> ProEntitlement.UNDETERMINED
+        else -> ProEntitlement.FREE
+    }
+
     private data class SchedulerConfig(
         val isEnabled: Boolean,
         val interval: Int,
         val onMobile: Boolean,
         val chargingEnabled: Boolean,
         val chargingInterval: Int,
-        val isPro: Boolean,
+        val entitlement: ProEntitlement,
     )
 
     fun start() {
@@ -88,7 +102,7 @@ class SyncWorkerControl @Inject constructor(
                 onMobile = onMobile,
                 chargingEnabled = chargingEnabled,
                 chargingInterval = chargingInterval,
-                isPro = upgradeInfo.isPro,
+                entitlement = upgradeInfo.toEntitlement(),
             )
         }
             .distinctUntilChanged()
@@ -132,35 +146,42 @@ class SyncWorkerControl @Inject constructor(
             Bugs.report(e)
         }
 
-        // Charging worker
-        try {
-            if (config.chargingEnabled && config.isPro) {
-                val constraints = Constraints.Builder()
-                    .setRequiredNetworkType(networkType)
-                    .setRequiresCharging(true)
-                    .build()
+        // Charging worker (Pro-gated). Entitlement drives a three-way decision so a not-yet-settled
+        // billing state can't cancel a paying user's charging sync on a cold start.
+        if (config.entitlement == ProEntitlement.UNDETERMINED) {
+            // Not definitive yet (cold-start seed or billing error): preserve whatever charging work
+            // already exists until the entitlement resolves one way or the other.
+            log(TAG, INFO) { "Charging worker: entitlement undetermined, preserving existing work." }
+        } else {
+            try {
+                if (config.chargingEnabled && config.entitlement == ProEntitlement.PRO) {
+                    val constraints = Constraints.Builder()
+                        .setRequiredNetworkType(networkType)
+                        .setRequiresCharging(true)
+                        .build()
 
-                val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(
-                    config.chargingInterval.coerceAtLeast(15).minutes.toJavaDuration()
-                ).apply {
-                    setConstraints(constraints)
-                }.build()
+                    val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(
+                        config.chargingInterval.coerceAtLeast(15).minutes.toJavaDuration()
+                    ).apply {
+                        setConstraints(constraints)
+                    }.build()
 
-                log(TAG, VERBOSE) { "Charging worker request: $workRequest" }
+                    log(TAG, VERBOSE) { "Charging worker request: $workRequest" }
 
-                workerManager.enqueueUniquePeriodicWork(
-                    WORKER_NAME_CHARGING,
-                    ExistingPeriodicWorkPolicy.UPDATE,
-                    workRequest,
-                )
-                log(TAG, INFO) { "Charging worker enqueued" }
-            } else {
-                workerManager.cancelUniqueWork(WORKER_NAME_CHARGING)
-                log(TAG, INFO) { "Charging worker canceled." }
+                    workerManager.enqueueUniquePeriodicWork(
+                        WORKER_NAME_CHARGING,
+                        ExistingPeriodicWorkPolicy.UPDATE,
+                        workRequest,
+                    )
+                    log(TAG, INFO) { "Charging worker enqueued" }
+                } else {
+                    workerManager.cancelUniqueWork(WORKER_NAME_CHARGING)
+                    log(TAG, INFO) { "Charging worker canceled." }
+                }
+            } catch (e: Exception) {
+                log(TAG, ERROR) { "Charging worker operation failed: ${e.asLog()}" }
+                Bugs.report(e)
             }
-        } catch (e: Exception) {
-            log(TAG, ERROR) { "Charging worker operation failed: ${e.asLog()}" }
-            Bugs.report(e)
         }
     }
 

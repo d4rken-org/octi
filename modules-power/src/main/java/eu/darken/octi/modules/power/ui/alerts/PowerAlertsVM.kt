@@ -10,7 +10,7 @@ import eu.darken.octi.common.flow.SingleEventFlow
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
-import eu.darken.octi.common.upgrade.isPro
+import eu.darken.octi.common.upgrade.isProForUi
 import eu.darken.octi.modules.meta.core.MetaRepo
 import eu.darken.octi.sync.core.DeviceId
 import eu.darken.octi.sync.core.disambiguateDeviceLabels
@@ -93,7 +93,7 @@ class PowerAlertsVM @Inject constructor(
     fun setBatteryLowAlert(threshold: Float) = launch {
         val deviceId = deviceIdFlow.value ?: return@launch
         log(TAG) { "setBatteryLowAlert($threshold)" }
-        if (!upgradeRepo.isPro()) {
+        if (!upgradeRepo.isProForUi()) {
             navTo(Nav.Main.Upgrade())
             return@launch
         }
@@ -104,7 +104,7 @@ class PowerAlertsVM @Inject constructor(
     fun setBatteryHighAlert(threshold: Float) = launch {
         val deviceId = deviceIdFlow.value ?: return@launch
         log(TAG) { "setBatteryHighAlert($threshold)" }
-        if (!upgradeRepo.isPro()) {
+        if (!upgradeRepo.isProForUi()) {
             navTo(Nav.Main.Upgrade())
             return@launch
         }

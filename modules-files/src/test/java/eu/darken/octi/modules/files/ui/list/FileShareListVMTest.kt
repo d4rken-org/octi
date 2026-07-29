@@ -40,6 +40,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
@@ -187,14 +188,22 @@ class FileShareListVMTest : BaseTest() {
         val info = object : UpgradeRepo.Info {
             override val type = UpgradeRepo.Type.FOSS
             override val isPro = isPro
+            override val isSettled = true
             override val upgradedAt: kotlin.time.Instant? = null
+            override val error: Throwable? = null
         }
+        // Hot flow (not flowOf): the settled-gate helpers wait on `first { it.isPro }`, and a cold
+        // completing flow would surface NoSuchElementException (mis-read as fail-open) for a
+        // never-Pro user instead of the intended timeout-then-deny.
         return mockk<UpgradeRepo>(relaxed = true).apply {
-            every { upgradeInfo } returns flowOf(info)
+            every { upgradeInfo } returns MutableStateFlow(info)
         }
     }
 
-    private fun makeVM(upgradeRepo: UpgradeRepo = fakeUpgradeRepo(isPro = true)) = FileShareListVM(
+    private fun makeVM(
+        upgradeRepo: UpgradeRepo = fakeUpgradeRepo(isPro = true),
+        dispatcherProvider: DispatcherProvider = this.dispatcherProvider,
+    ) = FileShareListVM(
         dispatcherProvider = dispatcherProvider,
         appScope = CoroutineScope(SupervisorJob()),
         fileShareRepo = fileShareRepo,
@@ -708,7 +717,12 @@ class FileShareListVMTest : BaseTest() {
     @Test
     fun `free user with 1 own file - onShareFile emits AtLimit and skips upload`() = runTest2 {
         setupBaseMocks(selfFiles = listOf(makeFile(blobKey = "self-1")))
-        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        // Bind the VM to the test scheduler so isProSettled's 5s withTimeoutOrNull advances in
+        // virtual time instead of a real wall-clock wait.
+        val vm = makeVM(
+            fakeUpgradeRepo(isPro = false),
+            dispatcherProvider = TestDispatcherProvider(UnconfinedTestDispatcher(testScheduler)),
+        )
         vm.initialize(null)
         val uri = mockk<android.net.Uri>(relaxed = true)
 
@@ -727,7 +741,12 @@ class FileShareListVMTest : BaseTest() {
         val uriC = mockk<android.net.Uri>(relaxed = true)
         coEvery { fileShareService.shareFile(any()) } returns FileShareService.ShareResult.Success
 
-        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        // Bind the VM to the test scheduler so isProSettled's 5s withTimeoutOrNull advances in
+        // virtual time instead of a real wall-clock wait.
+        val vm = makeVM(
+            fakeUpgradeRepo(isPro = false),
+            dispatcherProvider = TestDispatcherProvider(UnconfinedTestDispatcher(testScheduler)),
+        )
         vm.initialize(null)
         vm.onShareFilesSequential(listOf(uriA, uriB, uriC))
 
@@ -744,7 +763,12 @@ class FileShareListVMTest : BaseTest() {
         setupBaseMocks(selfFiles = listOf(makeFile(blobKey = "self-1")))
         val uri = mockk<android.net.Uri>(relaxed = true)
 
-        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        // Bind the VM to the test scheduler so isProSettled's 5s withTimeoutOrNull advances in
+        // virtual time instead of a real wall-clock wait.
+        val vm = makeVM(
+            fakeUpgradeRepo(isPro = false),
+            dispatcherProvider = TestDispatcherProvider(UnconfinedTestDispatcher(testScheduler)),
+        )
         vm.initialize(null)
         vm.onShareFilesSequential(listOf(uri))
 
@@ -759,7 +783,12 @@ class FileShareListVMTest : BaseTest() {
         val uri = mockk<android.net.Uri>(relaxed = true)
         val token = incomingShareInbox.enqueue(listOf(uri))
 
-        val vm = makeVM(fakeUpgradeRepo(isPro = false))
+        // Bind the VM to the test scheduler so isProSettled's 5s withTimeoutOrNull advances in
+        // virtual time instead of a real wall-clock wait.
+        val vm = makeVM(
+            fakeUpgradeRepo(isPro = false),
+            dispatcherProvider = TestDispatcherProvider(UnconfinedTestDispatcher(testScheduler)),
+        )
         vm.initialize(null)
         vm.consumeIncomingShare(token)
 

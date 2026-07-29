@@ -7,7 +7,7 @@ import eu.darken.octi.common.datastore.value
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
-import eu.darken.octi.common.upgrade.isPro
+import eu.darken.octi.common.upgrade.isProForUi
 import eu.darken.octi.sync.core.SyncSettings
 import eu.darken.octi.common.flow.combine
 import javax.inject.Inject
@@ -90,7 +90,7 @@ class SyncSettingsVM @Inject constructor(
     }
 
     private suspend fun requirePro(): Boolean {
-        if (upgradeRepo.isPro()) return true
+        if (upgradeRepo.isProForUi()) return true
         navTo(Nav.Main.Upgrade())
         return false
     }

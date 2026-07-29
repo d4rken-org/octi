@@ -44,7 +44,7 @@ import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.common.upgrade.ProState
 import eu.darken.octi.common.upgrade.UpgradeLauncher
 import eu.darken.octi.common.upgrade.UpgradeRepo
-import eu.darken.octi.common.upgrade.isPro
+import eu.darken.octi.common.upgrade.isProForUi
 import eu.darken.octi.common.upgrade.proState
 import eu.darken.octi.common.widget.WidgetConfigAction
 import eu.darken.octi.common.widget.WidgetConfigDevice
@@ -154,7 +154,7 @@ class ClipboardWidgetConfigActivity : androidx.activity.ComponentActivity() {
                         val appContext = applicationContext
                         lifecycleScope.launch {
                             // Defence-in-depth: re-check Pro before committing the bind.
-                            if (!upgradeRepo.isPro()) {
+                            if (!upgradeRepo.isProForUi()) {
                                 upgradeLauncher.launch(this@ClipboardWidgetConfigActivity)
                                 return@launch
                             }
