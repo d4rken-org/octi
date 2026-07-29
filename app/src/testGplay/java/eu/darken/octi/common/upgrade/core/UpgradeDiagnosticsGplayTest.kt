@@ -1,9 +1,12 @@
 package eu.darken.octi.common.upgrade.core
 
 import eu.darken.octi.main.core.CurriculumVitae
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
@@ -103,5 +106,53 @@ class UpgradeDiagnosticsGplayTest : BaseTest() {
 
         info shouldContain "lastProStateSku=${OurSku.Iap.PRO_UPGRADE.id}"
         info shouldContain "ProHistory=unavailable"
+    }
+
+    @Test
+    fun `a cancelled billing cache read is not swallowed`() = runTest {
+        val diag = UpgradeDiagnosticsGplay(
+            billingCache = mockk<BillingCache>().apply {
+                coEvery { snapshot() } throws CancellationException("scope died")
+            },
+            curriculumVitae = mockk<CurriculumVitae>().apply { coEvery { proHistory() } returns proHistory },
+        )
+
+        shouldThrow<CancellationException> { diag.debugInfo() }
+    }
+
+    @Test
+    fun `a cancelled history read is not swallowed`() = runTest {
+        // Symmetric to the cache read: cancellation is not a diagnostics failure, it means the
+        // caller's scope died and the header read must unwind with it.
+        val diag = UpgradeDiagnosticsGplay(
+            billingCache = mockk<BillingCache>().apply {
+                coEvery { snapshot() } returns BillingCache.Snapshot(
+                    lastProStateAt = 0L,
+                    lastProStateSku = "",
+                    proUnconfirmedSince = 0L,
+                )
+            },
+            curriculumVitae = mockk<CurriculumVitae>().apply {
+                coEvery { proHistory() } throws CancellationException("scope died")
+            },
+        )
+
+        shouldThrow<CancellationException> { diag.debugInfo() }
+    }
+
+    @Test
+    fun `a wedged billing cache is reported as unavailable, not as a never-pro install`() = runTest {
+        // End-to-end over a real BillingCache whose store never answers: the bounded read throws,
+        // and the header must say the evidence is missing instead of claiming "never bought".
+        val diag = UpgradeDiagnosticsGplay(
+            billingCache = BillingCache(HangingPreferencesDataStore()).apply { cacheTimeoutMs = 50L },
+            curriculumVitae = mockk<CurriculumVitae>().apply { coEvery { proHistory() } returns proHistory },
+        )
+
+        val info = diag.debugInfo()
+
+        info shouldContain "BillingCache=unavailable"
+        info shouldNotContain "lastProStateAt=never"
+        info shouldContain "ProHistory=$proHistory"
     }
 }

@@ -116,7 +116,7 @@ class ContactSupportVMDiagnosticsTest {
         val cv = mockk<CurriculumVitae>().apply { coEvery { proHistory() } returns proHistory }
         val diag = mockk<UpgradeDiagnostics>().apply {
             coEvery { debugInfo() } coAnswers {
-                delay(30_000) // far longer than the 2s diagnostics timeout
+                delay(30_000) // far longer than the diagnostics timeout
                 "TOO-SLOW"
             }
         }
