@@ -28,6 +28,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -57,6 +59,11 @@ internal object UpgradeScreenTags {
     const val ACTIONS = "upgrade_actions"
     const val MASCOT_HAPPY = "upgrade_mascot_happy"
     const val MASCOT_GRUMPY = "upgrade_mascot_grumpy"
+    const val FOSS_SPONSOR = "upgrade_foss_sponsor"
+    const val FOSS_STATUS_FREE = "upgrade_foss_status_free"
+    const val FOSS_STATUS_UPGRADED = "upgrade_foss_status_upgraded"
+    const val FOSS_SHOW_OPTIONS = "upgrade_foss_show_options"
+    const val FOSS_DONATE = "upgrade_foss_donate"
     const val GPLAY_SUBSCRIPTION = "upgrade_gplay_subscription"
     const val GPLAY_SUBSCRIPTION_SPINNER = "upgrade_gplay_subscription_spinner"
     const val GPLAY_IAP = "upgrade_gplay_iap"
@@ -95,6 +102,7 @@ internal fun upgradeScreenTitle(upgraded: Boolean): AnnotatedString = buildAnnot
 internal fun UpgradeScreenScaffold(
     title: AnnotatedString,
     onNavigateUp: () -> Unit,
+    snackbarHostState: SnackbarHostState? = null,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val topAppBarState = rememberTopAppBarState()
@@ -115,6 +123,9 @@ internal fun UpgradeScreenScaffold(
                 },
                 scrollBehavior = scrollBehavior,
             )
+        },
+        snackbarHost = {
+            snackbarHostState?.let { SnackbarHost(it) }
         },
         content = content,
     )
