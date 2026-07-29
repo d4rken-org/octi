@@ -160,6 +160,7 @@ dependencies {
 
     implementation(project(":app-common"))
     testImplementation(project(":app-common-test"))
+    testImplementation("org.robolectric:robolectric:4.16.1")
     implementation(project(":sync-core"))
     implementation(project(":syncs-gdrive"))
     implementation(project(":syncs-octiserver"))
@@ -194,8 +195,8 @@ dependencies {
 
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
-    "gplayImplementation"("com.android.billingclient:billing:8.0.0")
-    "gplayImplementation"("com.android.billingclient:billing-ktx:8.0.0")
+    "gplayImplementation"("com.android.billingclient:billing:8.3.0")
+    "gplayImplementation"("com.android.billingclient:billing-ktx:8.3.0")
 
     implementation("io.github.z4kn4fein:semver:1.4.2")
 

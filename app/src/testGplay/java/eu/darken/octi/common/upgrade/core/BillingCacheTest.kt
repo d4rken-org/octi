@@ -1,102 +1,69 @@
 package eu.darken.octi.common.upgrade.core
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.test.core.app.ApplicationProvider
 import eu.darken.octi.common.datastore.value
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import testhelpers.BaseTest
-import java.io.File
+import testhelpers.TestApplication
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [33], application = TestApplication::class)
 class BillingCacheTest : BaseTest() {
 
-    @TempDir
-    lateinit var tempDir: File
+    // One test method on purpose: BillingCache is a @Singleton in production, and DataStore
+    // forbids two active instances on the same file — a second BillingCache in this process
+    // would crash, not exercise anything real.
+    @Test
+    fun `stampLastProState round-trips through the DataStoreValues`() = runTest {
+        // Real DataStore, no mocks: this catches an encoding mismatch between the raw keys the
+        // atomic stamp transaction writes and the keys/types the DataStoreValues read.
+        val cache = BillingCache(ApplicationProvider.getApplicationContext())
 
-    private fun cache(scope: TestScope): BillingCache = BillingCache(
-        PreferenceDataStoreFactory.create(
-            scope = scope,
-            produceFile = { File(tempDir, "billing.preferences_pb") },
+        cache.lastProStateAt.value() shouldBe 0L
+        cache.lastProStateSku.value() shouldBe ""
+
+        // Defaults on a never-Pro install: this exact triple is what the debug-log header reports
+        // as "never / unknown-legacy / none", and it's the signal that separates a never-bought
+        // install from one whose entitlement went missing.
+        cache.snapshot() shouldBe BillingCache.Snapshot(
+            lastProStateAt = 0L,
+            lastProStateSku = "",
+            proUnconfirmedSince = 0L,
         )
-    )
 
-    @Test
-    fun `stamp sets anchor and clears any open episode`() = runTest {
-        val cache = cache(this)
+        cache.stampLastProState(OurSku.Iap.PRO_UPGRADE.id, 1234L)
 
-        cache.recordProUnconfirmed(0L) // no-op: no prior confirmation
-        cache.proUnconfirmedAt.value() shouldBe 0L
-
-        cache.stampLastProState(OurSku.Iap.PRO_UPGRADE.id, 1_000_000L)
-        cache.lastProStateAt.value() shouldBe 1_000_000L
+        cache.lastProStateAt.value() shouldBe 1234L
         cache.lastProStateSku.value() shouldBe OurSku.Iap.PRO_UPGRADE.id
-        cache.proUnconfirmedAt.value() shouldBe 0L
-    }
 
-    @Test
-    fun `stamp with null sku keeps the previous sku`() = runTest {
-        val cache = cache(this)
-        cache.stampLastProState(OurSku.Iap.PRO_UPGRADE.id, 1_000_000L)
+        cache.stampLastProState(OurSku.Sub.PRO_UPGRADE.id, 5678L)
 
-        cache.stampLastProState(null, 2_000_000L)
+        cache.lastProStateAt.value() shouldBe 5678L
+        cache.lastProStateSku.value() shouldBe OurSku.Sub.PRO_UPGRADE.id
 
-        cache.lastProStateAt.value() shouldBe 2_000_000L
-        cache.lastProStateSku.value() shouldBe OurSku.Iap.PRO_UPGRADE.id
-    }
+        // Occurrence-aware episode clear: a confirmation closes an episode that began at or before
+        // it, but must leave a NEWER episode intact — a connection failure that occurred after this
+        // confirmation but was processed out of order opened a still-valid episode.
+        cache.proUnconfirmedSince.value(4_000L)
+        cache.stampLastProState(OurSku.Iap.PRO_UPGRADE.id, 5_000L) // confirmation newer than episode
+        cache.proUnconfirmedSince.value() shouldBe 0L
 
-    @Test
-    fun `unconfirmed is a no-op without a prior confirmation`() = runTest {
-        val cache = cache(this)
-        cache.recordProUnconfirmed(5_000_000L)
-        cache.proUnconfirmedAt.value() shouldBe 0L
-    }
+        cache.proUnconfirmedSince.value(9_000L)
+        cache.stampLastProState(OurSku.Iap.PRO_UPGRADE.id, 8_000L) // confirmation older than episode
+        cache.proUnconfirmedSince.value() shouldBe 9_000L
 
-    @Test
-    fun `unconfirmed is rejected within the confirmation-age guard`() = runTest {
-        val cache = cache(this)
-        cache.stampLastProState("sku", 1_000_000L)
-
-        // 30s after confirmation < MIN_CONFIRMATION_AGE_MS (60s): treated as emission reordering.
-        cache.recordProUnconfirmed(1_000_000L + 30_000L)
-        cache.proUnconfirmedAt.value() shouldBe 0L
-    }
-
-    @Test
-    fun `unconfirmed opens the episode once and does not push it out`() = runTest {
-        val cache = cache(this)
-        cache.stampLastProState("sku", 1_000_000L)
-
-        val first = 1_000_000L + 120_000L
-        cache.recordProUnconfirmed(first)
-        cache.proUnconfirmedAt.value() shouldBe first
-
-        // A follow-up failure must NOT move the diagnostics threshold.
-        cache.recordProUnconfirmed(first + 500_000L)
-        cache.proUnconfirmedAt.value() shouldBe first
-    }
-
-    @Test
-    fun `stamp closes an open episode atomically`() = runTest {
-        val cache = cache(this)
-        cache.stampLastProState("sku", 1_000_000L)
-        cache.recordProUnconfirmed(1_000_000L + 120_000L)
-        cache.proUnconfirmedAt.value() shouldBe 1_120_000L
-
-        cache.stampLastProState("sku", 2_000_000L)
-        cache.proUnconfirmedAt.value() shouldBe 0L
-    }
-
-    @Test
-    fun `unconfirmed repairs a corrupt episode stamp`() = runTest {
-        val cache = cache(this)
-        cache.stampLastProState("sku", 5_000_000L)
-
-        // Corrupt: an episode start at/older than the last confirmation can't be real.
-        cache.proUnconfirmedAt.value(4_000_000L)
-
-        cache.recordProUnconfirmed(5_200_000L)
-        cache.proUnconfirmedAt.value() shouldBe 5_200_000L
+        // snapshot() must agree with the individual reads. It exists so the debug-log header reads
+        // all three in ONE DataStore emission: three separate reads can straddle a concurrent
+        // stampLastProState and report a combination that never existed.
+        cache.snapshot() shouldBe BillingCache.Snapshot(
+            lastProStateAt = 8_000L,
+            lastProStateSku = OurSku.Iap.PRO_UPGRADE.id,
+            proUnconfirmedSince = 9_000L,
+        )
     }
 }

@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import eu.darken.octi.common.upgrade.core.UpgradeDiagnosticsFoss
 import eu.darken.octi.common.upgrade.core.UpgradeRepoFoss
 import javax.inject.Singleton
 
@@ -14,4 +15,7 @@ abstract class UpgradeModule {
     @Singleton
     abstract fun control(foss: UpgradeRepoFoss): UpgradeRepo
 
+    @Binds
+    @Singleton
+    abstract fun diagnostics(foss: UpgradeDiagnosticsFoss): UpgradeDiagnostics
 }

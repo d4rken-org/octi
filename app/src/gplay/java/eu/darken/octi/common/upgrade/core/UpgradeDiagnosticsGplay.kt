@@ -1,0 +1,64 @@
+package eu.darken.octi.common.upgrade.core
+
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
+import eu.darken.octi.common.debug.logging.asLog
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.upgrade.UpgradeDiagnostics
+import eu.darken.octi.main.core.CurriculumVitae
+import kotlinx.coroutines.CancellationException
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.time.Instant
+
+/**
+ * Reports the local billing cache and the lifetime Pro-state history into the debug log header.
+ *
+ * `lastProStateAt > 0` is the "this install once confirmed a real Pro purchase" bit. It predates
+ * the CurriculumVitae pro-state counters and lives in a DataStore that was never migrated or
+ * renamed, so it survives update chains that the newer counters can't speak to. Without it in the
+ * header, a purchase complaint can't be told apart from a never-bought install.
+ *
+ * Depends on [BillingCache] and [CurriculumVitae] alone -- see [UpgradeDiagnostics] for why this
+ * must not pull in UpgradeRepoGplay.
+ */
+@Singleton
+class UpgradeDiagnosticsGplay @Inject constructor(
+    private val billingCache: BillingCache,
+    private val curriculumVitae: CurriculumVitae,
+) : UpgradeDiagnostics {
+
+    override suspend fun debugInfo(): String {
+        val cache = try {
+            val snapshot = billingCache.snapshot()
+            val lastProAt =
+                snapshot.lastProStateAt.takeIf { it > 0 }?.let { Instant.fromEpochMilliseconds(it) } ?: "never"
+            val lastProSku = snapshot.lastProStateSku.takeIf { it.isNotEmpty() } ?: "unknown/legacy"
+            val unconfirmedSince =
+                snapshot.proUnconfirmedSince.takeIf { it > 0 }?.let { Instant.fromEpochMilliseconds(it) } ?: "none"
+            "BillingCache(lastProStateAt=$lastProAt, lastProStateSku=$lastProSku, " +
+                "proUnconfirmedSince=$unconfirmedSince)"
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            log(TAG, WARN) { "Billing cache unavailable: ${e.asLog()}" }
+            "BillingCache=unavailable"
+        }
+        // Separate boundary from the cache read above on purpose: these are different DataStores,
+        // and the counters only cover installs new enough to have them. A failure to read one must
+        // not suppress the other's independent evidence.
+        val history = try {
+            curriculumVitae.proHistory().toString()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            log(TAG, WARN) { "Pro history unavailable: ${e.asLog()}" }
+            "unavailable"
+        }
+        return "$cache, ProHistory=$history"
+    }
+
+    companion object {
+        private val TAG = logTag("Upgrade", "Gplay", "Diagnostics")
+    }
+}

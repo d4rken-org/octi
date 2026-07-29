@@ -12,7 +12,7 @@ import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
-import eu.darken.octi.common.upgrade.isPro
+import eu.darken.octi.common.upgrade.isProForUi
 import eu.darken.octi.sync.core.ConnectorId
 import eu.darken.octi.sync.core.ConnectorIssue
 import eu.darken.octi.sync.core.ConnectorOperation
@@ -137,7 +137,7 @@ class SyncListVM @Inject constructor(
         log(TAG) { "togglePause($connectorId)" }
         val pauseReason = syncSettings.pauseReason(connectorId)
         val isRepairResume = pauseReason == ConnectorPauseReason.AuthIssue
-        if (!upgradeRepo.isPro() && !isRepairResume) {
+        if (!upgradeRepo.isProForUi() && !isRepairResume) {
             navTo(Nav.Main.Upgrade())
             return@launch
         }

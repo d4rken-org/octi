@@ -24,7 +24,9 @@ class UpgradeRepoFoss @Inject constructor(
     private val fossCache: FossCache,
     private val webpageTool: WebpageTool,
 ) : UpgradeRepo {
-    override val mainWebsite: String = SITE
+    override val storeSite: String = STORE_SITE
+    override val upgradeSite: String = UPGRADE_SITE
+    override val betaSite: String = BETA_SITE
 
     private val refreshTrigger = MutableStateFlow(UUID.randomUUID())
 
@@ -46,7 +48,7 @@ class UpgradeRepoFoss @Inject constructor(
 
     fun openSponsorsPage() {
         log(TAG) { "openSponsorsPage()" }
-        appScope.launch { webpageTool.open(mainWebsite) }
+        appScope.launch { webpageTool.open(upgradeSite) }
     }
 
     fun unlockUpgrade() {
@@ -68,10 +70,16 @@ class UpgradeRepoFoss @Inject constructor(
         val fossUpgradeType: FossUpgrade.Type? = null,
     ) : UpgradeRepo.Info {
         override val type: UpgradeRepo.Type = UpgradeRepo.Type.FOSS
+
+        // FOSS reads a synchronous local cache — every emission is a definitive entitlement result.
+        override val isSettled: Boolean = true
+        override val error: Throwable? = null
     }
 
     companion object {
-        private const val SITE = "https://github.com/sponsors/d4rken"
+        private const val STORE_SITE = "https://github.com/d4rken-org/octi"
+        private const val UPGRADE_SITE = "https://github.com/sponsors/d4rken"
+        private const val BETA_SITE = "https://github.com/d4rken-org/octi/releases"
         private val TAG = logTag("Upgrade", "Foss", "Repo")
     }
 }

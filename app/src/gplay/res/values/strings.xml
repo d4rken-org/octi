@@ -12,6 +12,15 @@
     <string name="upgrades_already_owned_error_title">Already purchased</string>
     <string name="upgrades_already_owned_error_description">Google Play reports that you already own this upgrade. Use \'Restore purchase\' to unlock it.</string>
 
+    <string name="upgrades_gplay_billing_error_label">Google Play Issue</string>
+    <string name="upgrades_gplay_billing_error_description">There was a problem with Google Play. Please try again later or restart your device.\n\nDetails: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Google Play error</string>
+    <string name="upgrades_gplay_internal_error_description">An internal Google Play error occurred. Please try the following:\n\n• Restart your device\n• Clear Google Play Store cache\n• Try again later</string>
+    <string name="upgrades_gplay_network_error_title">Connection error</string>
+    <string name="upgrades_gplay_network_error_description">Unable to connect to Google Play. Please check your internet connection and try again.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Offer unavailable</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play is currently not offering this upgrade option. Please try again later or check the Google Play Store.</string>
+
     <string name="upgrades_dashcard_title">Get Octi Pro</string>
     <string name="upgrades_dashcard_body">Upgrade to unlock additional features and support development!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgrade</string>
@@ -61,6 +70,7 @@
     <string name="upgrade_screen_restore_status_body">Re-check your purchases with Google Play if your Pro status ever looks out of date.</string>
     <string name="upgrade_screen_restore_checked_message">We asked Google Play to re-check this app\'s purchases but couldn\'t confirm one for the current account.</string>
     <string name="upgrade_screen_restore_contact_hint">Still stuck? Contact support and we\'ll help sort it out.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">The check with Google Play didn\'t finish in time, so your purchase status is still unknown. Nothing has changed on your account.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">You are Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Thanks for supporting Octi! Your Pro features are unlocked.</string>

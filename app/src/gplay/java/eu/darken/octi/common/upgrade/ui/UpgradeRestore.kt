@@ -14,25 +14,29 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.R
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 
 // Described restore section, shared by all restore audiences (copy and emphasis differ, wiring
-// doesn't). Deliberately NO contact-support action here: escalation is offered only after a restore
-// came up empty (the failed-restore dialog), so self-service gets its chance first.
+// doesn't). Deliberately NO contact-support action here: escalation is offered only after a
+// restore came up empty (the failed-restore dialog), so self-service gets its chance first.
 @Composable
 internal fun UpgradeRestoreSection(
     title: String,
     body: String,
     onRestore: () -> Unit,
     modifier: Modifier = Modifier,
-    // Manual restore in flight -> spinner. `busy` disables the button for ANY in-flight operation
-    // (manual/auto restore, purchase) since the guard rejects a second one anyway.
-    restoreInProgress: Boolean = false,
-    busy: Boolean = false,
+    busy: BusyOp? = null,
     emphasized: Boolean = false,
+    restoreTag: String = UpgradeScreenTags.GPLAY_RESTORE,
 ) {
+    // Any running entitlement action (purchase included) blocks a restore — they all reconcile the
+    // same Play account state. Only a running RESTORE shows the spinner.
+    val restoreInProgress = busy == BusyOp.RESTORE
     UpgradeSectionCard(
         title = title,
         icon = Icons.TwoTone.Restore,
@@ -49,20 +53,30 @@ internal fun UpgradeRestoreSection(
         if (emphasized) {
             // Plain Text: the tinted container brings its own content color, the muted
             // UpgradeSectionBody tone is for neutral surface cards only.
-            Text(text = body, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = body,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        } else {
+            UpgradeSectionBody(text = body)
+        }
+        if (emphasized) {
             Button(
                 onClick = onRestore,
-                enabled = !busy,
-                modifier = Modifier.fillMaxWidth(),
+                enabled = busy == null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(restoreTag),
             ) {
                 RestoreButtonLabel(restoreInProgress = restoreInProgress)
             }
         } else {
-            UpgradeSectionBody(text = body)
             OutlinedButton(
                 onClick = onRestore,
-                enabled = !busy,
-                modifier = Modifier.fillMaxWidth(),
+                enabled = busy == null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(restoreTag),
             ) {
                 RestoreButtonLabel(restoreInProgress = restoreInProgress)
             }
@@ -73,8 +87,37 @@ internal fun UpgradeRestoreSection(
 @Composable
 private fun RestoreButtonLabel(restoreInProgress: Boolean) {
     if (restoreInProgress) {
-        CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+        CircularProgressIndicator(
+            modifier = Modifier.size(18.dp),
+            strokeWidth = 2.dp,
+        )
         Spacer(modifier = Modifier.width(8.dp))
     }
-    Text(text = stringResource(R.string.upgrade_screen_restore_purchase_action))
+    Text(stringResource(R.string.upgrade_screen_restore_purchase_action))
+}
+
+@Preview2
+@Composable
+private fun UpgradeRestoreSectionPreview() {
+    PreviewWrapper {
+        UpgradeRestoreSection(
+            title = "Already bought Pro?",
+            body = "Restoring asks Google Play to re-check this app's purchases for the current account.",
+            onRestore = {},
+        )
+    }
+}
+
+@Preview2
+@Composable
+private fun UpgradeRestoreSectionEmphasizedPreview() {
+    PreviewWrapper {
+        UpgradeRestoreSection(
+            title = "Already bought Pro?",
+            body = "It looks like you upgraded to Pro on this device before.",
+            onRestore = {},
+            emphasized = true,
+            busy = BusyOp.RESTORE,
+        )
+    }
 }

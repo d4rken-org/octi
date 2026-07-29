@@ -42,7 +42,7 @@ import eu.darken.octi.common.theming.ThemeState
 import eu.darken.octi.common.upgrade.ProState
 import eu.darken.octi.common.upgrade.UpgradeLauncher
 import eu.darken.octi.common.upgrade.UpgradeRepo
-import eu.darken.octi.common.upgrade.isPro
+import eu.darken.octi.common.upgrade.isProForUi
 import eu.darken.octi.common.upgrade.proState
 import eu.darken.octi.common.widget.WidgetConfigAction
 import eu.darken.octi.common.widget.WidgetConfigDevice
@@ -152,7 +152,7 @@ class NetworkWidgetConfigActivity : androidx.activity.ComponentActivity() {
                         lifecycleScope.launch {
                             // Defence-in-depth: re-check Pro before committing the bind. Activity
                             // may have been backgrounded long enough for Pro state to flip.
-                            if (!upgradeRepo.isPro()) {
+                            if (!upgradeRepo.isProForUi()) {
                                 upgradeLauncher.launch(this@NetworkWidgetConfigActivity)
                                 return@launch
                             }

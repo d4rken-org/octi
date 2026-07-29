@@ -5,10 +5,8 @@ import eu.darken.octi.common.ca.toCaString
 import eu.darken.octi.common.error.HasLocalizedError
 import eu.darken.octi.common.error.LocalizedError
 
-// Play reports the upgrade as already owned when the buy flow is launched — the stale-state
-// returning buyer. Points the user at "Restore purchase" instead of a generic error.
-class ItemAlreadyOwnedBillingException(cause: Throwable? = null) :
-    BillingException("Purchase is reported as already owned.", cause), HasLocalizedError {
+class ItemAlreadyOwnedBillingException(cause: Throwable) :
+    BillingException("Item is already owned.", cause), HasLocalizedError {
 
     override fun getLocalizedError(): LocalizedError = LocalizedError(
         throwable = this,

@@ -17,7 +17,8 @@ import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
-import eu.darken.octi.common.upgrade.isPro
+import eu.darken.octi.common.upgrade.isProForUi
+import eu.darken.octi.common.upgrade.isProSettled
 import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleManager
@@ -414,7 +415,7 @@ class FileShareListVM @Inject constructor(
      * Avoids opening the SAF picker when we'd just refuse the upload afterwards.
      */
     fun onShareClick(auto: Boolean = false) = launch {
-        if (!canUpload()) {
+        if (!canUploadForUi()) {
             uiEvents.tryEmit(UiEvent.AtLimit(auto = auto))
             return@launch
         }
@@ -436,7 +437,7 @@ class FileShareListVM @Inject constructor(
      */
     fun enqueueShareFile(uri: Uri) {
         appScope.launch(dispatcherProvider.IO) {
-            if (!canUpload()) {
+            if (!canUploadSettled()) {
                 log(TAG, WARN) { "enqueueShareFile: blocked by free-tier limit" }
                 return@launch
             }
@@ -463,7 +464,7 @@ class FileShareListVM @Inject constructor(
      * the buffered events are simply not collected, which is acceptable.
      */
     fun onShareFile(uri: Uri) = launch {
-        if (!canUpload()) {
+        if (!canUploadSettled()) {
             uiEvents.tryEmit(UiEvent.AtLimit())
             return@launch
         }
@@ -528,12 +529,11 @@ class FileShareListVM @Inject constructor(
      */
     fun onShareFilesSequential(uris: List<Uri>) = launch {
         if (uris.isEmpty()) return@launch
-        val isPro = upgradeRepo.isPro()
-        val remaining = if (isPro) {
-            uris.size
-        } else {
-            (FileSharePolicy.FREE_TIER_OWN_FILE_LIMIT - ownFileCount()).coerceAtLeast(0)
-        }
+        val freeRemaining = (FileSharePolicy.FREE_TIER_OWN_FILE_LIMIT - ownFileCount()).coerceAtLeast(0)
+        // Only pay the settled entitlement check when the batch would exceed the free tier — a free
+        // user whose whole batch fits their remaining slots is never made to wait out the gate.
+        val allowFullBatch = uris.size > freeRemaining && upgradeRepo.isProSettled()
+        val remaining = if (allowFullBatch) uris.size else freeRemaining
         if (remaining == 0) {
             uiEvents.tryEmit(UiEvent.AtLimit())
             return@launch
@@ -707,8 +707,21 @@ class FileShareListVM @Inject constructor(
             ?.count { it.expiresAt > now } ?: 0
     }
 
-    private suspend fun canUpload(): Boolean =
-        upgradeRepo.isPro() || ownFileCount() < FileSharePolicy.FREE_TIER_OWN_FILE_LIMIT
+    /**
+     * Picker-gate (UI) upload check. Uses the snappy [isProForUi] entitlement read so a free user's
+     * tap routes to the picker or the limit message without waiting out the backend gate's timeout.
+     * The free-tier slot check runs first so a user with room is never made to wait on billing.
+     */
+    private suspend fun canUploadForUi(): Boolean =
+        ownFileCount() < FileSharePolicy.FREE_TIER_OWN_FILE_LIMIT || upgradeRepo.isProForUi()
+
+    /**
+     * Upload-execution gate. Uses the stricter [isProSettled] entitlement read — the enforcement
+     * boundary that rescues a genuinely Pro user from the GPlay cold-start race before an upload is
+     * refused. The free-tier slot check runs first so only a user AT the limit pays the settled cost.
+     */
+    private suspend fun canUploadSettled(): Boolean =
+        ownFileCount() < FileSharePolicy.FREE_TIER_OWN_FILE_LIMIT || upgradeRepo.isProSettled()
 
     companion object {
         private val TAG = logTag("Module", "Files", "List", "VM")

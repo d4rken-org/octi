@@ -14,8 +14,14 @@ import java.io.IOException
 
 class ProStateTest : BaseTest() {
 
-    private fun info(isPro: Boolean): UpgradeRepo.Info = mockk<UpgradeRepo.Info>().also {
+    private fun info(
+        isPro: Boolean = false,
+        isSettled: Boolean = true,
+        error: Throwable? = null,
+    ): UpgradeRepo.Info = mockk<UpgradeRepo.Info>().also {
         every { it.isPro } returns isPro
+        every { it.isSettled } returns isSettled
+        every { it.error } returns error
     }
 
     @Test
@@ -39,13 +45,39 @@ class ProStateTest : BaseTest() {
     }
 
     @Test
-    fun `maps isPro=false to Locked`() = runTest2 {
+    fun `maps a settled error-free non-pro Info to Locked`() = runTest2 {
         val repo = mockk<UpgradeRepo>()
-        every { repo.upgradeInfo } returns flowOf(info(isPro = false))
+        every { repo.upgradeInfo } returns flowOf(info(isPro = false, isSettled = true))
 
         val emissions = repo.proState().toList()
 
         emissions shouldBe listOf(ProState.Checking, ProState.Locked)
+    }
+
+    @Test
+    fun `maps an unsettled Info to Checking`() = runTest2 {
+        // The GPlay cold-start seed: not Pro yet, but billing hasn't settled — must render as
+        // Checking rather than flashing Locked at a paying user.
+        val repo = mockk<UpgradeRepo>()
+        every { repo.upgradeInfo } returns flowOf(info(isPro = false, isSettled = false))
+
+        val emissions = repo.proState().toList()
+
+        emissions shouldBe listOf(ProState.Checking, ProState.Checking)
+    }
+
+    @Test
+    fun `maps a settled error Info to Error`() = runTest2 {
+        val boom = IOException("billing broke")
+        val repo = mockk<UpgradeRepo>()
+        every { repo.upgradeInfo } returns flowOf(info(isPro = false, isSettled = true, error = boom))
+
+        val emissions = repo.proState().toList()
+
+        emissions[0] shouldBe ProState.Checking
+        val error = emissions[1]
+        error.shouldBeInstanceOf<ProState.Error>()
+        error.cause shouldBe boom
     }
 
     @Test

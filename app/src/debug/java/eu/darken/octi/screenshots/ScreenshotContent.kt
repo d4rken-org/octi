@@ -119,7 +119,10 @@ private data class PreviewUpgradeInfo(
     override val type: UpgradeRepo.Type = UpgradeRepo.Type.GPLAY,
     override val isPro: Boolean = true,
     override val upgradedAt: Instant? = NOW - 30.hours,
-) : UpgradeRepo.Info
+) : UpgradeRepo.Info {
+    override val isSettled: Boolean = true
+    override val error: Throwable? = null
+}
 
 @Composable
 internal fun DashboardContent() = PreviewWrapper {

@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -50,6 +51,29 @@ import androidx.compose.ui.unit.dp
 import eu.darken.octi.R
 import eu.darken.octi.common.compose.OctiMascot
 import eu.darken.octi.common.R as CommonR
+
+internal object UpgradeScreenTags {
+    const val LOADING = "upgrade_loading"
+    const val ACTIONS = "upgrade_actions"
+    const val MASCOT_HAPPY = "upgrade_mascot_happy"
+    const val MASCOT_GRUMPY = "upgrade_mascot_grumpy"
+    const val GPLAY_SUBSCRIPTION = "upgrade_gplay_subscription"
+    const val GPLAY_SUBSCRIPTION_SPINNER = "upgrade_gplay_subscription_spinner"
+    const val GPLAY_IAP = "upgrade_gplay_iap"
+    const val GPLAY_IAP_SPINNER = "upgrade_gplay_iap_spinner"
+    const val GPLAY_RESTORE = "upgrade_gplay_restore"
+    const val GPLAY_RESTORE_BANNER = "upgrade_gplay_restore_banner"
+    const val GPLAY_RESTORE_BANNER_ACTION = "upgrade_gplay_restore_banner_action"
+    const val GPLAY_UNAVAILABLE = "upgrade_gplay_unavailable"
+    const val GPLAY_RETRY = "upgrade_gplay_retry"
+    const val GPLAY_OWNED_HERO = "upgrade_gplay_owned_hero"
+    const val GPLAY_OWNED_IAP = "upgrade_gplay_owned_iap"
+    const val GPLAY_OWNED_SUB = "upgrade_gplay_owned_sub"
+    const val GPLAY_MANAGE_SUB = "upgrade_gplay_manage_sub"
+    const val GPLAY_GRACE = "upgrade_gplay_grace"
+    const val GPLAY_GRACE_SPINNER = "upgrade_gplay_grace_spinner"
+    const val GPLAY_GRACE_RESTORE = "upgrade_gplay_grace_restore"
+}
 
 // "Octi" + a colored "Pro" postfix while Pro is active. The postfix is its own translatable string
 // (RTL/localized upgrade words reorder), so we never locate a substring inside a combined name.
@@ -126,18 +150,26 @@ internal fun UpgradeScreenContent(
     }
 }
 
+// Octi has a single mascot, so `happy` selects only the test tag (the visual is identical) — it
+// keeps the canonical happy/grumpy contract that the screen tests assert against.
 @Composable
 internal fun UpgradeMascot(
     size: Dp,
     modifier: Modifier = Modifier,
+    happy: Boolean = true,
 ) {
-    OctiMascot(modifier = modifier.size(size))
+    OctiMascot(
+        modifier = modifier
+            .size(size)
+            .testTag(if (happy) UpgradeScreenTags.MASCOT_HAPPY else UpgradeScreenTags.MASCOT_GRUMPY),
+    )
 }
 
 @Composable
 internal fun UpgradeHeader(
     mascotSize: Dp,
     modifier: Modifier = Modifier,
+    happy: Boolean = true,
 ) {
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -150,6 +182,7 @@ internal fun UpgradeHeader(
             UpgradeMascot(
                 size = mascotSize,
                 modifier = Modifier.padding(16.dp),
+                happy = happy,
             )
         }
     }
@@ -210,6 +243,8 @@ internal fun UpgradeSectionCard(
     }
 }
 
+// The icon+title header every section card leads with — also usable standalone so headerless cards
+// (like the offers action card) can join the same visual pattern.
 @Composable
 internal fun UpgradeSectionHeader(
     title: String,
@@ -355,7 +390,8 @@ internal fun UpgradeLoadingBlock(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 18.dp),
+            .padding(vertical = 18.dp)
+            .testTag(UpgradeScreenTags.LOADING),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -379,7 +415,7 @@ internal fun UpgradeInlineStateCard(
     UpgradeSectionCard(
         title = title,
         icon = icon,
-        modifier = modifier,
+        modifier = modifier.testTag(UpgradeScreenTags.GPLAY_UNAVAILABLE),
         iconTint = MaterialTheme.colorScheme.onErrorContainer,
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.errorContainer,

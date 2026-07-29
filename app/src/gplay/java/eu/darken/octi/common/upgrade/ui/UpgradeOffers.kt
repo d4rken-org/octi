@@ -17,29 +17,30 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import eu.darken.octi.R
-import eu.darken.octi.common.R as CommonR
+import eu.darken.octi.common.compose.Preview2
+import eu.darken.octi.common.compose.PreviewWrapper
 
-// The acquisition offers box: header, offer rows, "or" divider, parity footnote. A product whose
-// offer failed to load shows disabled with a "Refresh offers" action so the user isn't stuck.
+// The acquisition offers box: header, offer rows, "or" divider, parity footnote. Own file so the
+// box can be iterated via the previews below.
 @Composable
 internal fun LoadedOffers(
-    state: UpgradeUiState.Loaded,
+    uiState: GplayUpgradeUiState.Loaded,
     onIap: () -> Unit,
     onSubscription: () -> Unit,
     onSubscriptionTrial: () -> Unit,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(UpgradeScreenTags.ACTIONS),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         UpgradeSectionHeader(
@@ -47,14 +48,23 @@ internal fun LoadedOffers(
             icon = Icons.TwoTone.Stars,
         )
 
+        val subscriptionText = stringResource(
+            when (uiState.subscriptionAction) {
+                SubscriptionAction.TRIAL -> R.string.upgrade_screen_subscription_trial_action
+                SubscriptionAction.STANDARD,
+                SubscriptionAction.UNAVAILABLE,
+                    -> R.string.upgrade_screen_subscription_action
+            }
+        )
+
         Spacer(modifier = Modifier.height(8.dp))
 
         UpgradeOfferRow(
             title = stringResource(R.string.upgrade_screen_subscription_offer_title),
-            price = state.subscriptionPrice,
+            price = uiState.subscriptionPrice,
             // Only promise the trial when Play actually returned the trial offer.
             hint = stringResource(
-                if (state.subscriptionAction == SubscriptionAction.TRIAL) {
+                if (uiState.subscriptionAction == SubscriptionAction.TRIAL) {
                     R.string.upgrade_screen_subscription_offer_body
                 } else {
                     R.string.upgrade_screen_subscription_offer_body_no_trial
@@ -62,16 +72,30 @@ internal fun LoadedOffers(
             ),
         ) {
             Button(
-                onClick = if (state.subscriptionAction == SubscriptionAction.TRIAL) onSubscriptionTrial else onSubscription,
-                enabled = state.subscriptionEnabled,
-                modifier = Modifier.fillMaxWidth(),
+                onClick = when (uiState.subscriptionAction) {
+                    SubscriptionAction.TRIAL -> onSubscriptionTrial
+                    SubscriptionAction.STANDARD,
+                    SubscriptionAction.UNAVAILABLE,
+                        -> onSubscription
+                },
+                // Locked while ANY entitlement action runs: two concurrent billing launches (or a
+                // launch racing a restore) must not be startable from here.
+                enabled = uiState.subscriptionEnabled && uiState.busy == null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(UpgradeScreenTags.GPLAY_SUBSCRIPTION),
             ) {
-                Text(
-                    text = stringResource(
-                        if (state.subscriptionAction == SubscriptionAction.TRIAL) R.string.upgrade_screen_subscription_trial_action
-                        else R.string.upgrade_screen_subscription_action
-                    ),
-                )
+                // The spinner marks the action the user actually started, never a sibling one.
+                if (uiState.busy == BusyOp.SUBSCRIPTION) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(18.dp)
+                            .testTag(UpgradeScreenTags.GPLAY_SUBSCRIPTION_SPINNER),
+                        strokeWidth = 2.dp,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(subscriptionText)
             }
         }
 
@@ -93,16 +117,23 @@ internal fun LoadedOffers(
 
         UpgradeOfferRow(
             title = stringResource(R.string.upgrade_screen_iap_offer_title),
-            price = state.iapPrice,
+            price = uiState.iapPrice,
             hint = stringResource(R.string.upgrade_screen_iap_offer_body),
         ) {
             OutlinedButton(
                 onClick = onIap,
-                enabled = state.iapEnabled,
-                modifier = Modifier.fillMaxWidth(),
+                enabled = uiState.iapEnabled && uiState.busy == null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(UpgradeScreenTags.GPLAY_IAP),
             ) {
-                if (state.verificationInProgress) {
-                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                if (uiState.busy == BusyOp.IAP) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(18.dp)
+                            .testTag(UpgradeScreenTags.GPLAY_IAP_SPINNER),
+                        strokeWidth = 2.dp,
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
                 Text(stringResource(R.string.upgrade_screen_iap_action))
@@ -112,24 +143,12 @@ internal fun LoadedOffers(
         Spacer(modifier = Modifier.height(12.dp))
 
         UpgradeHintText(text = stringResource(R.string.upgrade_screen_offers_body))
-
-        // One product's offer didn't load: keep the other actionable, but give a way to re-fetch the
-        // missing one without leaving the screen (retry re-runs both queries).
-        if (!state.subAvailable || !state.iapAvailable) {
-            TextButton(
-                onClick = onRetry,
-                enabled = !state.anyOperationInProgress,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(stringResource(CommonR.string.general_refresh_action))
-            }
-        }
     }
 }
 
 // Title and price share one line ("·"-joined in code: direction-neutral punctuation, not
-// translatable copy), terms follow as body text, then the action — the terms must not repeat the
-// button label.
+// translatable copy), terms follow as body text, then the action — the terms must not repeat
+// the button label.
 @Composable
 internal fun UpgradeOfferRow(
     title: String,
@@ -138,7 +157,9 @@ internal fun UpgradeOfferRow(
     hint: String? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+    ) {
         Text(
             text = listOfNotNull(title, price).joinToString(" · "),
             style = MaterialTheme.typography.titleMedium,
@@ -147,5 +168,46 @@ internal fun UpgradeOfferRow(
         hint?.let { UpgradeSectionBody(text = it) }
         Spacer(modifier = Modifier.height(8.dp))
         content()
+    }
+}
+
+private fun previewLoadedOffersState(
+    subscriptionAction: SubscriptionAction = SubscriptionAction.TRIAL,
+) = GplayUpgradeUiState.Loaded(
+    subscriptionAction = subscriptionAction,
+    subscriptionEnabled = true,
+    subscriptionPrice = "$12.99",
+    iapEnabled = true,
+    iapPrice = "$24.99",
+)
+
+@Preview2
+@Composable
+private fun LoadedOffersPreview() {
+    PreviewWrapper {
+        // Inside the real container so spacing and colors match the device.
+        UpgradeActionCard {
+            LoadedOffers(
+                uiState = previewLoadedOffersState(),
+                onIap = {},
+                onSubscription = {},
+                onSubscriptionTrial = {},
+            )
+        }
+    }
+}
+
+@Preview2
+@Composable
+private fun LoadedOffersNoTrialPreview() {
+    PreviewWrapper {
+        UpgradeActionCard {
+            LoadedOffers(
+                uiState = previewLoadedOffersState(subscriptionAction = SubscriptionAction.STANDARD),
+                onIap = {},
+                onSubscription = {},
+                onSubscriptionTrial = {},
+            )
+        }
     }
 }
