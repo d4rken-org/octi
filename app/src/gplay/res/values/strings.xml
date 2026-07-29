@@ -49,6 +49,8 @@
     <string name="upgrade_screen_thanks_toast">You are the best! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Upgrade options</string>
+    <string name="upgrade_screen_offers_unavailable_title">Prices unavailable</string>
+    <string name="upgrade_screen_offers_unavailable_message">Prices couldn\'t be loaded right now. Check Google Play and try again in a moment.</string>
     <string name="upgrade_screen_offers_or">or</string>
     <string name="upgrade_screen_offers_body">Both unlock the same features — pick whichever pricing you prefer. Cancel anytime.</string>
     <string name="upgrade_screen_subscription_offer_title">Yearly subscription</string>

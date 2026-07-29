@@ -118,6 +118,117 @@ class GplayUpgradeViewModelTest : BaseTest() {
     }
 
     @Test
+    fun `onResume retries the query after a failure`() = runTest2(
+        context = testDispatcher,
+    ) {
+        // Octi has no app-level resume refresh -- coming back to the screen after a Play outage has
+        // to re-run the screen-local SKU query.
+        val repo = mockRepo()
+        coEvery { repo.querySkus(any()) } throws GplayServiceUnavailableException(RuntimeException("Play hiccup"))
+        val vm = buildVm(repo)
+
+        // WhileSubscribed: without a live subscriber the retry has no upstream to re-run.
+        backgroundScope.launch(start = CoroutineStart.UNDISPATCHED) { vm.state.collect { } }
+        advanceUntilIdle()
+
+        vm.state.value.shouldBeInstanceOf<GplayUpgradeUiState.Unavailable>()
+        coVerify(exactly = 1) { repo.querySkus(OurSku.Iap.PRO_UPGRADE) }
+        coVerify(exactly = 1) { repo.querySkus(OurSku.Sub.PRO_UPGRADE) }
+
+        vm.onResume()
+        advanceUntilIdle()
+
+        coVerify(exactly = 2) { repo.querySkus(OurSku.Iap.PRO_UPGRADE) }
+        coVerify(exactly = 2) { repo.querySkus(OurSku.Sub.PRO_UPGRADE) }
+    }
+
+    @Test
+    fun `onResume does not re-query when offers are already loaded`() = runTest2(
+        context = testDispatcher,
+    ) {
+        val repo = mockRepo()
+        coEvery { repo.querySkus(any()) } returns emptyList()
+        val vm = buildVm(repo)
+
+        backgroundScope.launch(start = CoroutineStart.UNDISPATCHED) { vm.state.collect { } }
+        advanceUntilIdle()
+
+        vm.state.value.shouldBeInstanceOf<GplayUpgradeUiState.Loaded>()
+        coVerify(exactly = 2) { repo.querySkus(any()) }
+
+        vm.onResume()
+        advanceUntilIdle()
+
+        coVerify(exactly = 2) { repo.querySkus(any()) }
+    }
+
+    @Test
+    fun `onResume refreshes the subscription of a loaded owner`() = runTest2(
+        context = testDispatcher,
+    ) {
+        // The octi-specific half of the dual-purpose resume: returning from Play's management page
+        // must heal a just-cancelled renewal, otherwise the switch button stays locked.
+        val repo = mockRepo()
+        every { repo.upgradeInfo } returns MutableStateFlow(
+            proInfo(mockPurchase(OurSku.Sub.PRO_UPGRADE.id, autoRenewing = true))
+        )
+        coEvery { repo.querySkus(any()) } returns emptyList()
+        val vm = buildVm(repo)
+
+        backgroundScope.launch(start = CoroutineStart.UNDISPATCHED) { vm.state.collect { } }
+        advanceUntilIdle()
+
+        vm.state.value.shouldBeInstanceOf<GplayUpgradeUiState.Loaded>()
+
+        vm.onResume()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { repo.queryCurrentSubscriptions() }
+    }
+
+    @Test
+    fun `onResume does not refresh the subscription of a loaded non-owner`() = runTest2(
+        context = testDispatcher,
+    ) {
+        // No subscription to heal -- a Play round-trip here would be pure noise.
+        val repo = mockRepo()
+        coEvery { repo.querySkus(any()) } returns emptyList()
+        val vm = buildVm(repo)
+
+        backgroundScope.launch(start = CoroutineStart.UNDISPATCHED) { vm.state.collect { } }
+        advanceUntilIdle()
+
+        vm.state.value.shouldBeInstanceOf<GplayUpgradeUiState.Loaded>()
+
+        vm.onResume()
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { repo.queryCurrentSubscriptions() }
+    }
+
+    @Test
+    fun `onResume in the unavailable state retries the skus without a subscription refresh`() = runTest2(
+        context = testDispatcher,
+    ) {
+        // The two branches are mutually exclusive: there is no ownership data to refresh while the
+        // screen couldn't even load its offers.
+        val repo = mockRepo()
+        coEvery { repo.querySkus(any()) } throws GplayServiceUnavailableException(RuntimeException("Play hiccup"))
+        val vm = buildVm(repo)
+
+        backgroundScope.launch(start = CoroutineStart.UNDISPATCHED) { vm.state.collect { } }
+        advanceUntilIdle()
+
+        vm.state.value.shouldBeInstanceOf<GplayUpgradeUiState.Unavailable>()
+
+        vm.onResume()
+        advanceUntilIdle()
+
+        coVerify(exactly = 2) { repo.querySkus(OurSku.Iap.PRO_UPGRADE) }
+        coVerify(exactly = 0) { repo.queryCurrentSubscriptions() }
+    }
+
+    @Test
     fun `a single failed product type keeps the screen loaded and surfaces the error once`() = runTest2(
         context = testDispatcher,
     ) {
