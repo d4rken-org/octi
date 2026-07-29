@@ -179,6 +179,35 @@ class FossUpgradeViewModelTest : BaseTest() {
         upgradedView.await().view shouldBe FossUpgradeView.STATUS_UPGRADED
     }
 
+    /**
+     * Forced routes (widget configuration) never auto-close, so an upgraded user has to land on the
+     * status view — leaving them on the pitch would let its ARMED sponsor button rewrite the
+     * supporter-since date on a later long visit.
+     */
+    @Test
+    fun `forced route switches an upgrading user to the upgraded status without navigating`() = runTest2(
+        context = testDispatcher,
+    ) {
+        val info = MutableStateFlow(UpgradeRepoFoss.Info())
+        val vm = buildVm(repo = mockRepo(info))
+
+        val navEvents = mutableListOf<NavEvent>()
+        val collector = launch(start = CoroutineStart.UNDISPATCHED) { vm.navEvents.collect { navEvents.add(it) } }
+
+        val pitchView = async { vm.state.first { it.view != null } }
+        vm.bindRoute(Nav.Main.Upgrade(forced = true))
+        advanceUntilIdle()
+        pitchView.await().view shouldBe FossUpgradeView.PITCH
+
+        val upgradedView = async { vm.state.first { it.view == FossUpgradeView.STATUS_UPGRADED } }
+        info.value = upgradedInfo()
+        advanceUntilIdle()
+
+        upgradedView.await().view shouldBe FossUpgradeView.STATUS_UPGRADED
+        navEvents.shouldBeEmpty()
+        collector.cancel()
+    }
+
     @Test
     fun `default route bounces an upgraded user out of the screen`() = runTest2(context = testDispatcher) {
         val vm = buildVm(repo = mockRepo(MutableStateFlow(upgradedInfo())))
