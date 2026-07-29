@@ -51,7 +51,10 @@ class UpgradeViewModel @Inject constructor(
     ) { route, info, showOptions ->
         val view = when {
             route == null -> null
-            route.manage && info.isPro -> FossUpgradeView.STATUS_UPGRADED
+            // Forced routes (widget configuration) never auto-close, so an upgraded user has to land
+            // on the status view — leaving them on the pitch would let its ARMED sponsor button
+            // rewrite the supporter-since date on a later long visit.
+            info.isPro && (route.manage || route.forced) -> FossUpgradeView.STATUS_UPGRADED
             route.manage && !showOptions -> FossUpgradeView.STATUS_FREE
             else -> FossUpgradeView.PITCH
         }
