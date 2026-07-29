@@ -369,7 +369,17 @@ class UpgradeViewModel @Inject constructor(
     // Octi has no app-level activity-resume refresh: returning from Play's subscription-management
     // page must heal the renewal state here, otherwise a disabled switch button (it can't re-run
     // its own gate) would stay locked against a just-cancelled renewal.
+    //
+    // Dual purpose — the two states are mutually exclusive: returning to the screen is also the
+    // user's own "try again", so a transient Play outage doesn't leave the retry card up until it's
+    // tapped by hand. Only re-queries from the unavailable state — a loaded or still-loading screen
+    // has nothing to retry.
     fun onResume() {
+        log(TAG) { "onResume()" }
+        if (state.value is GplayUpgradeUiState.Unavailable) {
+            retrySkuQuery()
+            return
+        }
         val current = state.value as? GplayUpgradeUiState.Loaded
         if (current?.ownership?.subscription == null) return
         launch {
