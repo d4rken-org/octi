@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
 
     <string name="upgrades_gplay_unavailable_error_title">Google Play is unavailable</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi can\'t connect to Google Play. Is Google Play installed and up to date? Is your Google Account logged in? Try clearing the cache of the Google Play app and rebooting your device.</string>
@@ -30,8 +28,6 @@
     </plurals>
 
     <string name="upgrade_screen_title">Get Octi Pro</string>
-    <string name="upgrade_screen_navigate_up">Navigate up</string>
-    <string name="upgrade_screen_progress_loading">Loading…</string>
     <string name="upgrade_screen_preamble">Octi has no ads and doesn\'t sell user data. My work is financed by you ❤️.</string>
     <string name="upgrade_screen_benefits_title">Benefits</string>
     <string name="upgrade_screen_benefits_body">• More than 3 devices 💯\n• Different themes 🎨\n• More options ⚙️\n• Extra sync servers🖥️️\n• Continued development ☕\n• A motivated developer 🧙</string>
