@@ -276,7 +276,10 @@ class ContactSupportVM @Inject constructor(
     companion object {
         private val TAG = logTag("Settings", "Support", "Contact", "VM")
         private const val MAX_PICKER_SESSIONS = 3
-        private val DIAGNOSTICS_TIMEOUT = 2.seconds
+        // Must stay above the diagnostics' own internal bounds (BillingCache reads are bounded at 2s,
+        // the pro-state history read follows) — an outer budget that expires first would cancel the
+        // read and drop the diagnostic instead of carrying its "unavailable" verdict into the email.
+        private val DIAGNOSTICS_TIMEOUT = 5.seconds
 
         fun wordCount(text: String): Int {
             return text.trim().split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
