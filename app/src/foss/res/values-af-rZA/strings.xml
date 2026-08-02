@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi FOSS</string>
     <string name="upgrade_feature_requires_pro">Vereis Octi Pro</string>
     <string name="upgrades_dashcard_title">Kry Octi Pro</string>
     <string name="upgrades_dashcard_body">Ontsluit ekstra kenmerke en word \'n ondersteuner om voortdurende ontwikkeling te help!</string>

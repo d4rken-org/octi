@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi FOSS</string>
     <string name="upgrade_feature_requires_pro">דורש Octi פרימיום</string>
     <string name="upgrades_dashcard_title">קבל את Octi פרמיום</string>
     <string name="upgrades_dashcard_body">פתח תכונות נוספות והפוך לפטרון לתמיכה בהמשך הפיתוח!</string>
