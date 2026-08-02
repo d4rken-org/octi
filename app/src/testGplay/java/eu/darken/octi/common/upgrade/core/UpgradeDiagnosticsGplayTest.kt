@@ -2,12 +2,17 @@ package eu.darken.octi.common.upgrade.core
 
 import eu.darken.octi.main.core.CurriculumVitae
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.longs.shouldBeLessThan
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Test
 import testhelpers.BaseTest
 
@@ -154,5 +159,39 @@ class UpgradeDiagnosticsGplayTest : BaseTest() {
         info shouldContain "BillingCache=unavailable"
         info shouldNotContain "lastProStateAt=never"
         info shouldContain "ProHistory=$proHistory"
+    }
+
+    @Test
+    fun `a wedged history is reported as unavailable`() = runTest {
+        // Counterpart to the wedged cache above: a never-answering CurriculumVitae store would hold
+        // the debug-log header -- and with it the start of the recording -- forever.
+        val diagnostics = UpgradeDiagnosticsGplay(
+            billingCache = mockk<BillingCache>().apply {
+                coEvery { snapshot() } returns BillingCache.Snapshot(
+                    lastProStateAt = 0L,
+                    lastProStateSku = "",
+                    proUnconfirmedSince = 0L,
+                )
+            },
+            curriculumVitae = mockk<CurriculumVitae>().apply {
+                coEvery { proHistory() } coAnswers { awaitCancellation() }
+            },
+        ).apply { historyTimeoutMs = 50L }
+
+        // Real time on purpose: the bound below runs on real dispatchers, virtual time would skip it.
+        // The outer envelope is independent of the seam -- if the bound is ignored entirely, this
+        // fails as a timeout instead of hanging the suite.
+        withContext(Dispatchers.IO) {
+            val start = System.currentTimeMillis()
+            val info = withTimeout(10_000L) { diagnostics.debugInfo() }
+            val elapsed = System.currentTimeMillis() - start
+
+            // Materially below the 2s production bound: proves the seam was honoured, with plenty
+            // of CI margin over the 50ms it was set to.
+            elapsed shouldBeLessThan 1_000L
+            // The cache read is independent evidence and must still be reported.
+            info shouldContain "BillingCache(lastProStateAt=never"
+            info shouldContain "ProHistory=unavailable"
+        }
     }
 }

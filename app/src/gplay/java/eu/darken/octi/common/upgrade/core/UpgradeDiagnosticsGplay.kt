@@ -7,6 +7,7 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.upgrade.UpgradeDiagnostics
 import eu.darken.octi.main.core.CurriculumVitae
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Instant
@@ -28,6 +29,10 @@ class UpgradeDiagnosticsGplay @Inject constructor(
     private val curriculumVitae: CurriculumVitae,
 ) : UpgradeDiagnostics {
 
+    // Test seam: the bounded read below runs on real dispatchers, so a virtual-time test cannot
+    // advance the production bound. Same pattern as BillingCache.cacheTimeoutMs.
+    internal var historyTimeoutMs: Long = HISTORY_TIMEOUT_MS
+
     override suspend fun debugInfo(): String {
         val cache = try {
             val snapshot = billingCache.snapshot()
@@ -48,7 +53,12 @@ class UpgradeDiagnosticsGplay @Inject constructor(
         // and the counters only cover installs new enough to have them. A failure to read one must
         // not suppress the other's independent evidence.
         val history = try {
-            curriculumVitae.proHistory().toString()
+            // Bounded like the cache read above: a wedged DataStore file lock would otherwise hold
+            // the debug-log header - and with it the start of the recording - forever.
+            withTimeoutOrNull(historyTimeoutMs) { curriculumVitae.proHistory().toString() } ?: run {
+                log(TAG, WARN) { "Pro history timed out after ${historyTimeoutMs}ms" }
+                "unavailable"
+            }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -59,6 +69,7 @@ class UpgradeDiagnosticsGplay @Inject constructor(
     }
 
     companion object {
+        private const val HISTORY_TIMEOUT_MS = 2_000L
         private val TAG = logTag("Upgrade", "Gplay", "Diagnostics")
     }
 }
