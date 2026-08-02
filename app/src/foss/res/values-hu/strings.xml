@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi FOSS</string>
     <string name="upgrade_feature_requires_pro">Octi Pro szükséges</string>
     <string name="upgrades_dashcard_title">Szerezze be az Octi Pro-t</string>
     <string name="upgrades_dashcard_body">Oldjon fel további funkciókat és legyen támogató a folyamatos fejlesztéshez!</string>

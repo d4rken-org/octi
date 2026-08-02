@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi, version libre</string>
     <string name="upgrade_feature_requires_pro">Seulement avec Octi Pro</string>
     <string name="upgrades_dashcard_title">Obtenir Octi Pro</string>
     <string name="upgrades_dashcard_body">Accédez à des fonctions supplémentaires et financez le développement permanent de l’appli</string>

@@ -14,6 +14,7 @@ import eu.darken.octi.R
 import eu.darken.octi.common.compose.PreviewWrapper
 import io.kotest.matchers.shouldBe
 import org.junit.Test
+import org.robolectric.annotation.Config
 import testhelpers.compose.BaseComposeRobolectricTest
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -96,6 +97,9 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
             UpgradeScreen(view = FossUpgradeView.STATUS_UPGRADED, supporterSince = since)
         }
 
+        // Literal on purpose: the resource-derived helper would follow a wrong postfix along. FOSS
+        // has no "Pro" to sell, so the upgraded title has to read "Octi FOSS".
+        composeRule.onAllNodesWithText("Octi FOSS").assertCountEquals(1)
         composeRule.onAllNodesWithText(upgradedTitle).assertCountEquals(1)
         composeRule.onAllNodesWithTag(UpgradeScreenTags.FOSS_STATUS_UPGRADED).assertCountEquals(1)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_supporter_body))
@@ -147,6 +151,29 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
             unarmed shouldBe true
             armed shouldBe false
         }
+    }
+
+    /**
+     * "FOSS" is the flavor's name, not prose. French and Arabic used to translate the upgraded app
+     * name, which also broke DashboardScreen's two-tone title: it colours the second of exactly two
+     * space-separated tokens, and "Octi, version libre" / the four-token Arabic variant fall out of
+     * that branch entirely. These resolve through the real resource merger, so a stray locale copy
+     * coming back would fail here.
+     */
+    @Test
+    @Config(qualifiers = "fr")
+    fun `the upgraded app name is not translated in french`() {
+        context.getString(R.string.app_name_upgraded) shouldBe "Octi FOSS"
+        context.getString(R.string.app_name_upgrade_postfix) shouldBe "FOSS"
+        context.getString(R.string.app_name_upgraded).split(" ").size shouldBe 2
+    }
+
+    @Test
+    @Config(qualifiers = "ar")
+    fun `the upgraded app name is not translated in arabic`() {
+        context.getString(R.string.app_name_upgraded) shouldBe "Octi FOSS"
+        context.getString(R.string.app_name_upgrade_postfix) shouldBe "FOSS"
+        context.getString(R.string.app_name_upgraded).split(" ").size shouldBe 2
     }
 }
 

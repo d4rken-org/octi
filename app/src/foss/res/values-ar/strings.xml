@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">أوكتي حر ومفتوح المصدر</string>
     <string name="upgrade_feature_requires_pro">يتطلب أوكتي احترافي</string>
     <string name="upgrades_dashcard_title">احصل على أوكتي احترافي</string>
     <string name="upgrades_dashcard_body">افتح ميزات إضافية وكن راعيًا لدعم التطوير المستمر!</string>

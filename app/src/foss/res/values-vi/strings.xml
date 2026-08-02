@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi FOSS</string>
     <string name="upgrade_feature_requires_pro">Yêu cầu Octi Pro</string>
     <string name="upgrades_dashcard_title">Nhận Octi Pro</string>
     <string name="upgrades_dashcard_body">Mở khóa các tính năng bổ sung và trở thành nhà bảo trợ để hỗ trợ phát triển liên tục!</string>
