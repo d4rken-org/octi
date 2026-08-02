@@ -1,17 +1,14 @@
 package eu.darken.octi.common.upgrade.core
 
 import eu.darken.octi.common.WebpageTool
-import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.datastore.valueBlocking
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.upgrade.UpgradeRepo
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,7 +17,6 @@ import kotlin.time.Instant
 
 @Singleton
 class UpgradeRepoFoss @Inject constructor(
-    @AppScope private val appScope: CoroutineScope,
     private val fossCache: FossCache,
     private val webpageTool: WebpageTool,
 ) : UpgradeRepo {
@@ -46,9 +42,11 @@ class UpgradeRepoFoss @Inject constructor(
     }
         .setupCommonEventHandlers(TAG) { "upgradeInfo" }
 
-    fun openGithubSponsorsPage() {
+    // Synchronous so the caller learns whether the page actually opened: the FOSS unlock heuristic
+    // only arms on a successful launch, and a fire-and-forget coroutine can't report that back.
+    fun openGithubSponsorsPage(): Boolean {
         log(TAG) { "openGithubSponsorsPage()" }
-        appScope.launch { webpageTool.open(upgradeSite) }
+        return webpageTool.open(upgradeSite)
     }
 
     fun persistUpgrade() {

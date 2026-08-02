@@ -62,6 +62,7 @@ class FossUpgradeViewModelTest : BaseTest() {
         info: MutableStateFlow<UpgradeRepoFoss.Info> = MutableStateFlow(UpgradeRepoFoss.Info()),
     ): UpgradeRepoFoss = mockk<UpgradeRepoFoss>(relaxed = true).apply {
         every { upgradeInfo } returns info
+        every { openGithubSponsorsPage() } returns true
     }
 
     private fun buildVm(
@@ -342,5 +343,93 @@ class FossUpgradeViewModelTest : BaseTest() {
         val after = async { vm.state.first { it.view != null } }
         advanceUntilIdle()
         after.await().supporterSince shouldBe upgradedAt
+    }
+
+    @Test
+    fun `a long sponsor visit by an already upgraded user does not re-persist the upgrade`() = runTest2(
+        context = testDispatcher,
+    ) {
+        // Persisting again would rewrite upgradedAt and visibly reset the "supporter since" date the
+        // status screen shows — and the thanks toast belongs to the unlock, which already happened.
+        val repo = mockRepo(MutableStateFlow(upgradedInfo()))
+        val vm = buildVm(repo = repo)
+
+        val nudges = mutableListOf<Int>()
+        val thanks = mutableListOf<Int>()
+        val snackbarCollector = launch(start = CoroutineStart.UNDISPATCHED) {
+            vm.snackbarEvents.collect { nudges.add(it) }
+        }
+        val toastCollector = launch(start = CoroutineStart.UNDISPATCHED) { vm.toastEvents.collect { thanks.add(it) } }
+
+        vm.goGithubSponsors()
+        ShadowSystemClock.advanceBy(Duration.ofSeconds(6))
+        vm.checkSponsorReturn()
+        advanceUntilIdle()
+
+        verify(exactly = 0) { repo.persistUpgrade() }
+        nudges.shouldBeEmpty()
+        thanks.shouldBeEmpty()
+        // Consumed even though nothing happened: a later resume must not re-run the unlock.
+        vm.hasPendingSponsorLaunch() shouldBe false
+
+        vm.checkSponsorReturn()
+        advanceUntilIdle()
+
+        verify(exactly = 0) { repo.persistUpgrade() }
+        nudges.shouldBeEmpty()
+        thanks.shouldBeEmpty()
+        snackbarCollector.cancel()
+        toastCollector.cancel()
+    }
+
+    @Test
+    fun `a sponsor page that never opened arms nothing and a later retry still works`() = runTest2(
+        context = testDispatcher,
+    ) {
+        // A silently failed launch must not leave the heuristic armed: an unrelated later
+        // background round-trip would otherwise hand out supporter status for free.
+        val repo = mockRepo()
+        every { repo.openGithubSponsorsPage() } returns false
+        val vm = buildVm(repo = repo)
+
+        vm.goGithubSponsors()
+        advanceUntilIdle()
+
+        vm.hasPendingSponsorLaunch() shouldBe false
+
+        // And the failure must not brick the button either — the next working attempt arms as usual.
+        every { repo.openGithubSponsorsPage() } returns true
+        vm.goGithubSponsors()
+        advanceUntilIdle()
+
+        vm.hasPendingSponsorLaunch() shouldBe true
+    }
+
+    @Test
+    fun `a second sponsor tap while a launch is pending opens the page only once`() = runTest2(
+        context = testDispatcher,
+    ) {
+        // The suppressed tap must also leave the armed timestamp alone: rewriting it would restart
+        // the five second window, so a genuine long visit would come back as "too quick".
+        val repo = mockRepo()
+        val vm = buildVm(repo = repo)
+
+        // Collected, not awaited: a regression must fail on the assertion below instead of hanging
+        // this test on a toast that never arrives.
+        val thanks = mutableListOf<Int>()
+        val toastCollector = launch(start = CoroutineStart.UNDISPATCHED) { vm.toastEvents.collect { thanks.add(it) } }
+
+        vm.goGithubSponsors()
+        ShadowSystemClock.advanceBy(Duration.ofSeconds(4))
+        vm.goGithubSponsors()
+        ShadowSystemClock.advanceBy(Duration.ofSeconds(2))
+        vm.checkSponsorReturn()
+        advanceUntilIdle()
+
+        // 6s since the FIRST tap: the second one neither reopened the page nor rearmed the clock.
+        verify(exactly = 1) { repo.persistUpgrade() }
+        verify(exactly = 1) { repo.openGithubSponsorsPage() }
+        thanks shouldBe listOf(R.string.upgrade_screen_thanks_toast)
+        toastCollector.cancel()
     }
 }
