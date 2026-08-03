@@ -26,7 +26,6 @@ import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Clock
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @Singleton
@@ -45,6 +44,11 @@ class RecorderModule @Inject constructor(
         )
     }
 
+    // Test seams for the two clocks the recording heuristics use: the durations are
+    // wall-clock/monotonic, so virtual time cannot drive them.
+    internal var wallClock: () -> Long = { Clock.System.now().toEpochMilliseconds() }
+    internal var monotonicClock: () -> Long = android.os.SystemClock::elapsedRealtime
+
     private val internalState = DynamicStateFlow(TAG, appScope + dispatcherProvider.IO) {
         val triggerFileExists = triggerFile.exists()
         State(shouldRecord = triggerFileExists)
@@ -60,6 +64,14 @@ class RecorderModule @Inject constructor(
 
                 internalState.updateBlocking {
                     if (shouldRecord && !isRecording) {
+                        // Keyed on the trigger file, NOT on directory reuse: leftover unzipped
+                        // session dirs from a failed compression are picked up again by LIVE
+                        // recordings, so their stale mtime must not decide a fresh recording's
+                        // duration. Only a trigger that already existed before this start sequence
+                        // means the process died mid-recording and we are resuming it — the one
+                        // case with no usable monotonic base.
+                        val isProcessResume = triggerFile.exists()
+
                         val (sessionDir, startedAt) = findOrCreateSession(lastSession)
                         val newRecorder = Recorder()
                         newRecorder.start(sessionDir)
@@ -68,6 +80,10 @@ class RecorderModule @Inject constructor(
                         copy(
                             recorder = newRecorder,
                             recordingStartedAt = startedAt,
+                            // A fresh start that reuses an old session dir gets BOTH bases: the
+                            // scanned wall stamp above and this monotonic one. The heuristic prefers
+                            // the monotonic base, so the stale mtime never decides a live recording.
+                            recordingStartedAtMonotonic = if (isProcessResume) null else monotonicClock(),
                         )
                     } else if (!shouldRecord && isRecording) {
                         val recorderSessionDir = recorder?.sessionDir
@@ -83,6 +99,7 @@ class RecorderModule @Inject constructor(
                             recorder = null,
                             lastSession = session,
                             recordingStartedAt = null,
+                            recordingStartedAtMonotonic = null,
                         )
                     } else {
                         this
@@ -147,7 +164,9 @@ class RecorderModule @Inject constructor(
         if (lines.size < 2) return null
         val sessionDir = File(lines[0])
         val startedAt = lines[1].toLongOrNull() ?: return null
-        if (startedAt !in 1..Clock.System.now().toEpochMilliseconds()) return null
+        // The trigger file stores wall-clock timestamps: it has to survive reboots, which monotonic
+        // time does not.
+        if (startedAt !in 1..wallClock()) return null
         return sessionDir to startedAt
     }
 
@@ -165,12 +184,12 @@ class RecorderModule @Inject constructor(
 
         val existingDir = findExistingSessionDir(lastSession)
         if (existingDir != null) {
-            val startedAt = existingDir.lastModified().takeIf { it > 0 } ?: Clock.System.now().toEpochMilliseconds()
+            val startedAt = existingDir.lastModified().takeIf { it > 0 } ?: wallClock()
             log(TAG, INFO) { "Legacy resume from scan: ${existingDir.name}" }
             return existingDir to startedAt
         }
 
-        return createSessionDir() to Clock.System.now().toEpochMilliseconds()
+        return createSessionDir() to wallClock()
     }
 
     internal fun findExistingSessionDir(lastSession: LogSession? = null): File? {
@@ -234,8 +253,12 @@ class RecorderModule @Inject constructor(
         if (!currentState.isRecording) return StopResult.NotRecording
 
         val sessionDir = currentState.recorder?.sessionDir ?: return StopResult.NotRecording
-        val elapsed = Clock.System.now().toEpochMilliseconds() - (currentState.recordingStartedAt ?: 0L)
-        if (elapsed.milliseconds < MIN_RECORDING) return StopResult.TooShort
+        val elapsed = currentState.recordingStartedAtMonotonic
+            ?.let { monotonicClock() - it }             // live session: immune to wall-clock adjustments
+            ?: (wallClock() - (currentState.recordingStartedAt ?: 0L))  // resumed: persisted/derived wall start only
+        // Negative = wall clock moved backward across a resume; fail open (no warning) rather than
+        // trap the user in TooShort.
+        if (elapsed in 0 until MIN_RECORDING.inWholeMilliseconds) return StopResult.TooShort
 
         stopRecorder()
         return StopResult.Stopped(LogSession(sessionDir))
@@ -252,6 +275,11 @@ class RecorderModule @Inject constructor(
         internal val recorder: Recorder? = null,
         val lastSession: LogSession? = null,
         val recordingStartedAt: Long? = null,
+        // Monotonic base for the duration heuristic, null when there is none: a session resumed
+        // after process death has only the persisted wall-clock start, and a monotonic value from a
+        // previous process or boot is meaningless. Nullable rather than 0L — 0 is a legal
+        // elapsedRealtime near boot.
+        val recordingStartedAtMonotonic: Long? = null,
     ) {
         val isRecording: Boolean
             get() = recorder != null
@@ -263,6 +291,18 @@ class RecorderModule @Inject constructor(
     companion object {
         internal val TAG = logTag("Debug", "Log", "Recorder", "Module")
         private const val FORCE_FILE = "force_debug_run"
-        internal val MIN_RECORDING = 5.seconds
+
+        /**
+         * Duration heuristic for "did you forget to reproduce the issue?". A recording stopped
+         * this quickly usually contains nothing but the recorder starting and stopping, which
+         * costs a support round-trip to re-request.
+         *
+         * It stays a prompt because short recordings can be perfectly valid: a crash is logged
+         * and flushed immediately, so the reproduction is already on disk. The
+         * [StopResult.TooShort] consumers (the Support and ContactSupport screens) turn it into
+         * their short-recording warning, and its "stop anyway" answer goes through the direct
+         * force-stop path, which has no duration check.
+         */
+        internal val MIN_RECORDING = 10.seconds
     }
 }
