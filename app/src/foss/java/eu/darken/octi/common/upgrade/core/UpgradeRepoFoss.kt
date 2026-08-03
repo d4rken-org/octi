@@ -1,7 +1,7 @@
 package eu.darken.octi.common.upgrade.core
 
 import eu.darken.octi.common.WebpageTool
-import eu.darken.octi.common.datastore.valueBlocking
+import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.setupCommonEventHandlers
@@ -49,12 +49,36 @@ class UpgradeRepoFoss @Inject constructor(
         return webpageTool.open(upgradeSite)
     }
 
-    fun persistUpgrade() {
+    /**
+     * Create-only-if-absent inside the store transaction: an existing record (and its upgradedAt —
+     * the user-visible "supporter since" date) is never replaced. The VM-level isPro guard alone is
+     * not race-free: it reads a shareIn replay that can be stale. Note the kept record is still
+     * re-encoded through the current schema — decoded fields are preserved exactly.
+     *
+     * Caveat, verified for this app: the kotlinx `createValue` decode fallback DEFAULTS TO FALSE and
+     * [FossCache] passes nothing, so a stored record that fails to decode makes this transaction
+     * THROW instead of reading as absent. The persist then fails outright and the caller restores
+     * its pending-return marker for a later retry — there is NO clobber path here, unlike the
+     * fleet's leaves that enable the fallback.
+     *
+     * @return true if a new record was created, false if an existing record was kept.
+     */
+    suspend fun persistUpgrade(): Boolean {
         log(TAG) { "persistUpgrade()" }
-        fossCache.upgrade.valueBlocking = FossUpgrade(
-            upgradedAt = Clock.System.now(),
-            upgradeType = FossUpgrade.Type.GITHUB_SPONSORS,
-        )
+        val updated = fossCache.upgrade.update { existing ->
+            existing ?: FossUpgrade(
+                upgradedAt = Clock.System.now(),
+                upgradeType = FossUpgrade.Type.GITHUB_SPONSORS,
+            )
+        }
+        // Cross-module property (app-common Updated.old): smart cast refused.
+        val previous = updated.old
+        return if (previous == null) {
+            true
+        } else {
+            log(TAG, WARN) { "persistUpgrade(): Record already exists (upgradedAt=${previous.upgradedAt}), keeping it" }
+            false
+        }
     }
 
     override suspend fun refresh() {

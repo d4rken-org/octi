@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.upgrade.core.UpgradeRepoFoss
 import io.kotest.matchers.shouldBe
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +40,7 @@ class FossUpgradeScreenHostTest : BaseTest() {
     private fun mockRepo(): UpgradeRepoFoss = mockk<UpgradeRepoFoss>(relaxed = true).apply {
         every { upgradeInfo } returns MutableStateFlow(UpgradeRepoFoss.Info())
         every { openGithubSponsorsPage() } returns true
-        every { persistUpgrade() } answers { persisted++ }
+        coEvery { persistUpgrade() } answers { persisted++; true }
     }
 
     private fun buildVm(
