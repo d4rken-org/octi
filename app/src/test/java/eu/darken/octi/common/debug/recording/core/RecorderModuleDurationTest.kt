@@ -5,6 +5,7 @@ import android.content.Context
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.debug.logging.Logging
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -14,6 +15,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -373,6 +375,46 @@ class RecorderModuleDurationTest : BaseTest() {
             state.isRecording shouldBe false
             state.shouldRecord shouldBe false
             state.startFailure.shouldBeInstanceOf<FileNotFoundException>()
+        }
+    }
+
+    /**
+     * A cancellation coming out of the start sequence is not necessarily OUR cancellation - a
+     * dependency can let one escape while the module's scope is perfectly alive. Stored and
+     * rethrown unchanged, it reaches the caller as their own cancellation: the requesting launch
+     * ends "normally" and the error handler that would have shown the failure never runs. It has to
+     * arrive as an ordinary exception instead, with the original kept as the cause.
+     */
+    @Test
+    fun `a foreign cancellation during start surfaces as an ordinary failure`() {
+        val clocks = TestClocks(wall = WALL_BASE, monotonic = 100_000L)
+        val recorder = spyk(Recorder())
+        coEvery { recorder.start(any()) } throws CancellationException("dependency cancelled mid-start")
+
+        withModule(clocks, recorderOverride = recorder) { module ->
+            val error = shouldThrow<RecorderModule.RecorderStartFailedException> { module.startRecorder() }
+            // Walked along the chain rather than read off error.cause directly: stack-trace recovery
+            // may hand back a copy that wraps the wrapper.
+            generateSequence(error.cause) { it.cause }
+                .filterIsInstance<CancellationException>()
+                .map { it.message }
+                .toList() shouldContain "dependency cancelled mid-start"
+
+            val failed = module.state.first()
+            failed.isRecording shouldBe false
+            failed.shouldRecord shouldBe false
+            failed.startFailure.shouldBeInstanceOf<RecorderModule.RecorderStartFailedException>()
+
+            // A fresh real recorder for the retry - the double's start stays broken. The collector
+            // survived the foreign cancellation, so this request is answered instead of wedged.
+            module.recorderFactory = { Recorder() }
+
+            val session = module.startRecorder()
+            session.sessionDir.isDirectory shouldBe true
+
+            val started = module.state.first()
+            started.isRecording shouldBe true
+            started.startFailure.shouldBeNull()
         }
     }
 
