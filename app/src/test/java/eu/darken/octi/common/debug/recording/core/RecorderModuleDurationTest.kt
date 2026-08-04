@@ -4,10 +4,15 @@ import android.app.Application
 import android.content.Context
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.debug.logging.Logging
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -25,6 +30,8 @@ import org.robolectric.annotation.Config
 import testhelpers.BaseTest
 import testhelpers.coroutine.TestDispatcherProvider
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
 import kotlin.time.Clock
 
 /**
@@ -37,6 +44,9 @@ import kotlin.time.Clock
  *
  * Robolectric with the REAL [Recorder]: the module constructs it directly, and its FileLogger
  * needs android.util.Log.
+ *
+ * The start/stop failure cases live here too: they need exactly this harness — a real recorder
+ * whose globally installed loggers are accounted for, inside a hard timeout envelope.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE, application = Application::class)
@@ -63,10 +73,14 @@ class RecorderModuleDurationTest : BaseTest() {
      * construction, so seeding afterwards would race the init collector. The clock seams are
      * installed immediately after construction, so a resume's trigger validation may still see the
      * real clock — the resume cases anchor their timestamps near real time for exactly that reason.
+     *
+     * [recorderOverride] is installed after construction as well, so it only reaches attempts the
+     * test itself requests, not one a seeded trigger starts during construction.
      */
     private fun withModule(
         clocks: TestClocks,
         awaitRecording: Boolean = false,
+        recorderOverride: Recorder? = null,
         seed: (externalDir: File) -> Unit = {},
         block: suspend (RecorderModule) -> Unit,
     ) {
@@ -92,6 +106,7 @@ class RecorderModuleDurationTest : BaseTest() {
                 ).apply {
                     wallClock = { clocks.wall }
                     monotonicClock = { clocks.monotonic }
+                    recorderOverride?.let { override -> recorderFactory = { override } }
                 }
                 module = created
                 // Envelope: a wedged start or stop must fail in seconds, not hold the gradle worker.
@@ -259,6 +274,131 @@ class RecorderModuleDurationTest : BaseTest() {
 
             module.requestStopRecorder() shouldBe RecorderModule.StopResult.TooShort
             module.state.first().isRecording shouldBe true
+        }
+    }
+
+    /**
+     * A DIRECTORY at the trigger path: [RecorderModule.readTriggerFile] tolerates it (it reads as
+     * "no resumable session"), but the trigger write at the end of the start sequence cannot open
+     * it. That is the last step of the start branch, so the recorder is already live and globally
+     * installed when it throws — the orphan case.
+     *
+     * Note this also makes `triggerFile.exists()` true, so the module treats it as a process
+     * resume and starts recording during construction; [withModule] is therefore driven with
+     * awaitRecording=false.
+     */
+    private fun seedBlockedTrigger(externalDir: File): File =
+        File(externalDir, "force_debug_run").also { check(it.mkdirs()) { "Failed to seed trigger dir" } }
+
+    @Test
+    fun `a failed start surfaces the error instead of hanging`() {
+        val clocks = TestClocks(wall = WALL_BASE, monotonic = 100_000L)
+
+        withModule(clocks, seed = { seedBlockedTrigger(it) }) { module ->
+            // Asserted INSIDE the envelope and on the concrete exception type: a wedged await
+            // fails with TimeoutCancellationException, which must not be able to satisfy this.
+            shouldThrow<FileNotFoundException> { module.startRecorder() }
+
+            val state = module.state.first()
+            state.isRecording shouldBe false
+            state.shouldRecord shouldBe false
+            state.startFailure.shouldBeInstanceOf<FileNotFoundException>()
+            // No leaked logger: the harness asserts it, and it is the proof that the recorder the
+            // failed attempt had already started was rolled back instead of orphaned.
+        }
+    }
+
+    @Test
+    fun `the recorder recovers after a failed start`() {
+        val clocks = TestClocks(wall = WALL_BASE, monotonic = 100_000L)
+        var blockedTrigger: File? = null
+
+        withModule(clocks, seed = { blockedTrigger = seedBlockedTrigger(it) }) { module ->
+            shouldThrow<FileNotFoundException> { module.startRecorder() }
+
+            // The blocker was NOT created by the failed attempt, so its rollback left it alone.
+            blockedTrigger!!.delete() shouldBe true
+
+            // Collector still alive and re-armed: shouldRecord was reset by the failure, so this
+            // request is a fresh edge.
+            val session = module.startRecorder()
+            session.sessionDir.isDirectory shouldBe true
+
+            val started = module.state.first()
+            started.isRecording shouldBe true
+            started.startFailure.shouldBeNull()
+
+            module.stopRecorder().shouldNotBeNull()
+            module.state.first().isRecording shouldBe false
+        }
+    }
+
+    @Test
+    fun `a boot trigger that cannot start settles instead of wedging`() {
+        val clocks = TestClocks(wall = WALL_BASE, monotonic = 100_000L)
+
+        withModule(clocks, seed = { seedBlockedTrigger(it) }) { module ->
+            // Nobody is waiting on this attempt — it is the one the module makes on its own during
+            // construction. It has to settle rather than crash the app scope or spin.
+            val settled = module.state.first { it.startFailure != null }
+            settled.isRecording shouldBe false
+            settled.shouldRecord shouldBe false
+            settled.startFailure.shouldBeInstanceOf<FileNotFoundException>()
+        }
+    }
+
+    @Test
+    fun `a start that cannot open the log file surfaces the error`() {
+        val clocks = TestClocks(wall = WALL_BASE, monotonic = 100_000L)
+
+        withModule(
+            clocks,
+            seed = { externalDir ->
+                // An existing session whose core.log is a DIRECTORY: the file logger cannot open a
+                // writer for it. This fails inside the start operation itself, before the trigger
+                // write, and it used to be swallowed into a successful start with a logger that
+                // wrote nowhere.
+                val sessionDir = File(externalDir, "debug/logs/${BuildConfigWrap.APPLICATION_ID}_1.0_blocked")
+                    .also { it.mkdirs() }
+                check(File(sessionDir, "core.log").mkdirs()) { "Failed to seed core.log dir" }
+            },
+        ) { module ->
+            shouldThrow<FileNotFoundException> { module.startRecorder() }
+
+            val state = module.state.first()
+            state.isRecording shouldBe false
+            state.shouldRecord shouldBe false
+            state.startFailure.shouldBeInstanceOf<FileNotFoundException>()
+        }
+    }
+
+    @Test
+    fun `a stop that fails still completes`() {
+        val clocks = TestClocks(wall = WALL_BASE, monotonic = 100_000L)
+        val loggersBefore = Logging.loggers.toSet()
+        val recorder = spyk(Recorder())
+
+        withModule(clocks, recorderOverride = recorder) { module ->
+            module.startRecorder()
+            module.state.first().isRecording shouldBe true
+
+            coEvery { recorder.stop() } throws IOException("Simulated stop failure")
+
+            try {
+                // Bounded by the envelope: a throwing stop must not strand the caller, and the
+                // module commits the cleared state anyway — the session is reported as stopped
+                // exactly once, which is what the compression downstream keys off.
+                module.stopRecorder().shouldNotBeNull()
+
+                val state = module.state.first()
+                state.isRecording shouldBe false
+                state.shouldRecord shouldBe false
+            } finally {
+                // The double throws INSTEAD of running the real stop, so the loggers the real start
+                // installed are uninstalled here. Recorder.stop() itself guarantees that removal
+                // even when a step fails, but that guarantee cannot be driven through this double.
+                (Logging.loggers - loggersBefore).forEach { Logging.remove(it) }
+            }
         }
     }
 

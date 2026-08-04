@@ -14,14 +14,19 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.DynamicStateFlow
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -49,6 +54,14 @@ class RecorderModule @Inject constructor(
     internal var wallClock: () -> Long = { Clock.System.now().toEpochMilliseconds() }
     internal var monotonicClock: () -> Long = android.os.SystemClock::elapsedRealtime
 
+    // Test seam for the recorder itself: a failing stop() has no reachable production trigger, so
+    // the guarantee that a failed stop still completes cannot be driven without substituting one.
+    internal var recorderFactory: () -> Recorder = { Recorder() }
+
+    // Serializes the public request surface: without it two concurrent callers can observe each
+    // other's start failure, or a stale one, instead of their own attempt's outcome.
+    private val requestMutex = Mutex()
+
     private val internalState = DynamicStateFlow(TAG, appScope + dispatcherProvider.IO) {
         val triggerFileExists = triggerFile.exists()
         State(shouldRecord = triggerFileExists)
@@ -72,27 +85,106 @@ class RecorderModule @Inject constructor(
                         // case with no usable monotonic base.
                         val isProcessResume = triggerFile.exists()
 
-                        val (sessionDir, startedAt) = findOrCreateSession(lastSession)
-                        val newRecorder = Recorder()
-                        newRecorder.start(sessionDir)
-                        writeTriggerFile(sessionDir, startedAt)
+                        // Rollback bookkeeping: a start that throws half-way must leave nothing
+                        // behind that this module can no longer reach - neither a running recorder
+                        // with globally installed loggers, nor a trigger file that re-runs the
+                        // failing start on every process launch.
+                        var pendingRecorder: Recorder? = null
+                        var createdSessionDir: File? = null
+                        var triggerWriteStarted = false
 
-                        copy(
-                            recorder = newRecorder,
-                            recordingStartedAt = startedAt,
-                            // A fresh start that reuses an old session dir gets BOTH bases: the
-                            // scanned wall stamp above and this monotonic one. The heuristic prefers
-                            // the monotonic base, so the stale mtime never decides a live recording.
-                            recordingStartedAtMonotonic = if (isProcessResume) null else monotonicClock(),
-                        )
+                        try {
+                            val target = findOrCreateSession(lastSession)
+                            if (target.isNewDir) createdSessionDir = target.sessionDir
+
+                            // Bound BEFORE start() so a throw from inside start() still has
+                            // something to roll back.
+                            val newRecorder = recorderFactory().also { pendingRecorder = it }
+                            newRecorder.start(target.sessionDir)
+
+                            triggerWriteStarted = true
+                            writeTriggerFile(target.sessionDir, target.startedAt)
+
+                            copy(
+                                recorder = newRecorder,
+                                recordingStartedAt = target.startedAt,
+                                // A fresh start that reuses an old session dir gets BOTH bases: the
+                                // scanned wall stamp above and this monotonic one. The heuristic prefers
+                                // the monotonic base, so the stale mtime never decides a live recording.
+                                recordingStartedAtMonotonic = if (isProcessResume) null else monotonicClock(),
+                                startFailure = null,
+                            )
+                        } catch (e: Throwable) {
+                            withContext(NonCancellable) {
+                                pendingRecorder?.let { orphan ->
+                                    try {
+                                        orphan.stop()
+                                    } catch (stopError: Throwable) {
+                                        e.addSuppressed(stopError)
+                                    }
+                                }
+                                // Only a trigger this attempt created: one that was already there
+                                // belongs to the session we were resuming.
+                                if (triggerWriteStarted && !isProcessResume) {
+                                    try {
+                                        if (triggerFile.exists() && !triggerFile.delete()) {
+                                            log(TAG, ERROR) { "Failed to delete trigger file after failed start" }
+                                        }
+                                    } catch (cleanupError: Throwable) {
+                                        e.addSuppressed(cleanupError)
+                                    }
+                                }
+                                // Resumed session dirs are the user's existing log and are kept.
+                                createdSessionDir?.let { dir ->
+                                    try {
+                                        if (dir.isDirectory && !dir.deleteRecursively()) {
+                                            log(TAG, ERROR) { "Failed to delete session dir after failed start: $dir" }
+                                        }
+                                    } catch (cleanupError: Throwable) {
+                                        e.addSuppressed(cleanupError)
+                                    }
+                                }
+                            }
+
+                            log(TAG, ERROR) { "Failed to start recording: ${e.asLog()}" }
+
+                            // Our own scope being cancelled must propagate; a CancellationException
+                            // that merely came out of the start sequence must not, it would kill
+                            // this collector and leave every future request unanswered.
+                            currentCoroutineContext().ensureActive()
+
+                            // shouldRecord is reset so the edge-triggered collector is re-armed for
+                            // a retry, and the failure is committed so a waiting startRecorder()
+                            // observes it instead of waiting forever.
+                            copy(
+                                shouldRecord = false,
+                                startFailure = e,
+                                recorder = null,
+                                recordingStartedAt = null,
+                                recordingStartedAtMonotonic = null,
+                            )
+                        }
                     } else if (!shouldRecord && isRecording) {
                         val recorderSessionDir = recorder?.sessionDir
                             ?: return@updateBlocking this
                         val session = LogSession(recorderSessionDir)
-                        recorder.stop()
 
-                        if (triggerFile.exists() && !triggerFile.delete()) {
-                            log(TAG, ERROR) { "Failed to delete trigger file" }
+                        // Both steps are best-effort: a stop that cannot complete is logged, but the
+                        // cleared state is committed regardless so a waiting stopRecorder() returns.
+                        try {
+                            recorder.stop()
+                        } catch (e: Throwable) {
+                            currentCoroutineContext().ensureActive()
+                            log(TAG, ERROR) { "Failed to stop the recorder: ${e.asLog()}" }
+                        }
+
+                        try {
+                            if (triggerFile.exists() && !triggerFile.delete()) {
+                                log(TAG, ERROR) { "Failed to delete trigger file" }
+                            }
+                        } catch (e: Throwable) {
+                            currentCoroutineContext().ensureActive()
+                            log(TAG, ERROR) { "Failed to delete trigger file: ${e.asLog()}" }
                         }
 
                         copy(
@@ -170,14 +262,24 @@ class RecorderModule @Inject constructor(
         return sessionDir to startedAt
     }
 
-    internal fun findOrCreateSession(lastSession: LogSession? = null): Pair<File, Long> {
+    /**
+     * [isNewDir] separates a directory this call created from one it resumed into: only the former
+     * may be deleted again when the start sequence fails.
+     */
+    internal data class SessionTarget(
+        val sessionDir: File,
+        val startedAt: Long,
+        val isNewDir: Boolean,
+    )
+
+    internal fun findOrCreateSession(lastSession: LogSession? = null): SessionTarget {
         val triggerData = readTriggerFile()
         if (triggerData != null) {
             val (sessionDir, startedAt) = triggerData
             val coreLog = File(sessionDir, "core.log")
             if (sessionDir.isDirectory && coreLog.exists()) {
                 log(TAG, INFO) { "Resuming session: ${sessionDir.name}, startedAt=$startedAt" }
-                return sessionDir to startedAt
+                return SessionTarget(sessionDir, startedAt, isNewDir = false)
             }
             log(TAG, WARN) { "Trigger references missing session: $sessionDir, creating new" }
         }
@@ -186,10 +288,10 @@ class RecorderModule @Inject constructor(
         if (existingDir != null) {
             val startedAt = existingDir.lastModified().takeIf { it > 0 } ?: wallClock()
             log(TAG, INFO) { "Legacy resume from scan: ${existingDir.name}" }
-            return existingDir to startedAt
+            return SessionTarget(existingDir, startedAt, isNewDir = false)
         }
 
-        return createSessionDir() to wallClock()
+        return SessionTarget(createSessionDir(), wallClock(), isNewDir = true)
     }
 
     internal fun findExistingSessionDir(lastSession: LogSession? = null): File? {
@@ -228,24 +330,28 @@ class RecorderModule @Inject constructor(
         return dirs
     }
 
-    suspend fun startRecorder(): LogSession {
+    suspend fun startRecorder(): LogSession = requestMutex.withLock {
+        // Clearing the failure is what keeps a STALE one from satisfying this attempt's await.
         internalState.updateBlocking {
-            copy(shouldRecord = true)
+            copy(shouldRecord = true, startFailure = null)
         }
-        val recordingState = internalState.flow.filter { it.isRecording }.first()
-        val sessionDir = checkNotNull(recordingState.recorder?.sessionDir) { "Recorder started but sessionDir is null" }
-        return LogSession(sessionDir)
+
+        val settled = internalState.flow.first { it.isRecording || it.startFailure != null }
+        settled.startFailure?.let { throw it }
+
+        val sessionDir = checkNotNull(settled.recorder?.sessionDir) { "Recorder started but sessionDir is null" }
+        LogSession(sessionDir)
     }
 
-    suspend fun stopRecorder(): LogSession? {
+    suspend fun stopRecorder(): LogSession? = requestMutex.withLock {
         val currentState = internalState.value()
-        val sessionDir = currentState.recorder?.sessionDir ?: return null
+        val sessionDir = currentState.recorder?.sessionDir ?: return@withLock null
 
         internalState.updateBlocking {
             copy(shouldRecord = false)
         }
-        internalState.flow.filter { !it.isRecording }.first()
-        return LogSession(sessionDir)
+        internalState.flow.first { !it.isRecording }
+        LogSession(sessionDir)
     }
 
     suspend fun requestStopRecorder(): StopResult {
@@ -280,6 +386,13 @@ class RecorderModule @Inject constructor(
         // previous process or boot is meaningless. Nullable rather than 0L — 0 is a legal
         // elapsedRealtime near boot.
         val recordingStartedAtMonotonic: Long? = null,
+        /**
+         * The exception that ended the last start attempt, cleared when a new one is requested.
+         * Identity is per-attempt on purpose: the state flow is distinctUntilChanged, so a failure
+         * has to produce a value distinct from its predecessor or a waiting [startRecorder] never
+         * wakes up. Throwable's reference equality provides that.
+         */
+        val startFailure: Throwable? = null,
     ) {
         val isRecording: Boolean
             get() = recorder != null

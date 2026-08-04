@@ -13,6 +13,11 @@ import kotlin.time.Clock
 class FileLogger(private val logFile: File) : Logging.Logger {
     private var logWriter: OutputStreamWriter? = null
 
+    /**
+     * Throws if the writer could not be initialized. Swallowing the failure here would install a
+     * logger that silently writes nowhere, and the recorder would report a successful start for a
+     * recording that can never produce a log file.
+     */
     @SuppressLint("SetWorldReadable")
     @Synchronized
     fun start() {
@@ -26,19 +31,31 @@ class FileLogger(private val logFile: File) : Logging.Logger {
             Log.i(TAG, "Debug run log read permission set")
         }
 
-        try {
-            logWriter = OutputStreamWriter(FileOutputStream(logFile, true))
-            logWriter!!.write("=== BEGIN ===\n")
-            logWriter!!.write("Logfile: $logFile\n")
-            logWriter!!.flush()
-            Log.i(TAG, "File logger started.")
+        val writer = try {
+            OutputStreamWriter(FileOutputStream(logFile, true))
         } catch (e: IOException) {
-            e.printStackTrace()
-
+            Log.e(TAG, "File logger could not open $logFile", e)
             logFile.delete()
-            if (logWriter != null) logWriter!!.close()
+            throw e
         }
 
+        try {
+            writer.write("=== BEGIN ===\n")
+            writer.write("Logfile: $logFile\n")
+            writer.flush()
+        } catch (e: IOException) {
+            Log.e(TAG, "File logger could not write to $logFile", e)
+            try {
+                writer.close()
+            } catch (closeError: IOException) {
+                e.addSuppressed(closeError)
+            }
+            logFile.delete()
+            throw e
+        }
+
+        logWriter = writer
+        Log.i(TAG, "File logger started.")
     }
 
     @Synchronized
