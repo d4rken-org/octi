@@ -31,7 +31,7 @@
     <string name="upgrade_screen_title_template">Get %1$s</string>
     <string name="upgrade_screen_preamble">Octi has no ads and doesn\'t sell user data. My work is financed by you ❤️.</string>
     <string name="upgrade_screen_benefits_title">Benefits</string>
-    <string name="upgrade_screen_benefits_body">• More than 3 devices 💯\n• Different themes 🎨\n• More options ⚙️\n• Extra sync servers 🖥️️\n• Continued development ☕\n• A motivated developer 🧙</string>
+    <string name="upgrade_screen_benefits_body">• More than 3 devices 💯\n• Different themes 🎨\n• More options ⚙️\n• Extra sync servers 🖥️\n• Continued development ☕\n• A motivated developer 🧙</string>
     <string name="upgrade_screen_how_title">Options</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
