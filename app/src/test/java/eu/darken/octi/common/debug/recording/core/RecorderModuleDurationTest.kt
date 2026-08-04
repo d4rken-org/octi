@@ -8,6 +8,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
 import io.mockk.every
@@ -16,7 +17,10 @@ import io.mockk.spyk
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -398,6 +402,73 @@ class RecorderModuleDurationTest : BaseTest() {
                 // installed are uninstalled here. Recorder.stop() itself guarantees that removal
                 // even when a step fails, but that guarantee cannot be driven through this double.
                 (Logging.loggers - loggersBefore).forEach { Logging.remove(it) }
+            }
+        }
+    }
+
+    @Test
+    fun `concurrent stop requests stop the session exactly once`() {
+        val clocks = TestClocks(wall = WALL_BASE, monotonic = 100_000L)
+
+        withModule(clocks) { module ->
+            module.startRecorder()
+            clocks.monotonic += 30_000L
+
+            val results = coroutineScope {
+                (1..4).map { async(Dispatchers.IO) { module.requestStopRecorder() } }.awaitAll()
+            }
+
+            // Deciding outside the request lock let every caller read "recording" and then report a
+            // stop that only one of them performed.
+            results.count { it is RecorderModule.StopResult.Stopped } shouldBe 1
+            results.count { it == RecorderModule.StopResult.NotRecording } shouldBe 3
+            module.state.first().isRecording shouldBe false
+        }
+    }
+
+    @Test
+    fun `a force stop racing a stop request stops the session exactly once`() {
+        val clocks = TestClocks(wall = WALL_BASE, monotonic = 100_000L)
+
+        withModule(clocks) { module ->
+            module.startRecorder()
+            clocks.monotonic += 30_000L
+
+            val (forced, requested) = coroutineScope {
+                val force = async(Dispatchers.IO) { module.stopRecorder() }
+                val request = async(Dispatchers.IO) { module.requestStopRecorder() }
+                force.await() to request.await()
+            }
+
+            listOf(
+                forced != null,
+                requested is RecorderModule.StopResult.Stopped,
+            ).count { it } shouldBe 1
+            module.state.first().isRecording shouldBe false
+        }
+    }
+
+    @Test
+    fun `a stop request racing a start never claims the live session`() {
+        val clocks = TestClocks(wall = WALL_BASE, monotonic = 100_000L)
+
+        withModule(clocks) { module ->
+            module.startRecorder()
+            clocks.monotonic += 30_000L
+
+            val (requested, restarted) = coroutineScope {
+                val request = async(Dispatchers.IO) { module.requestStopRecorder() }
+                val start = async(Dispatchers.IO) { module.startRecorder() }
+                request.await() to start.await()
+            }
+
+            requested.shouldBeInstanceOf<RecorderModule.StopResult.Stopped>()
+            // Either order is legal, but the reported stop and a still-live session can never be
+            // the same one - that pairing is what an unsynchronized read produced.
+            if (module.state.first().isRecording) {
+                requested.session.sessionDir shouldNotBe restarted.sessionDir
+            } else {
+                requested.session.sessionDir shouldBe restarted.sessionDir
             }
         }
     }

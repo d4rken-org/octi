@@ -12,6 +12,7 @@ import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.common.error.addSuppressedSafely
 import eu.darken.octi.common.flow.DynamicStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
@@ -120,7 +121,7 @@ class RecorderModule @Inject constructor(
                                     try {
                                         orphan.stop()
                                     } catch (stopError: Throwable) {
-                                        e.addSuppressed(stopError)
+                                        e.addSuppressedSafely(stopError)
                                     }
                                 }
                                 // Only a trigger this attempt created: one that was already there
@@ -131,7 +132,7 @@ class RecorderModule @Inject constructor(
                                             log(TAG, ERROR) { "Failed to delete trigger file after failed start" }
                                         }
                                     } catch (cleanupError: Throwable) {
-                                        e.addSuppressed(cleanupError)
+                                        e.addSuppressedSafely(cleanupError)
                                     }
                                 }
                                 // Resumed session dirs are the user's existing log and are kept.
@@ -141,7 +142,7 @@ class RecorderModule @Inject constructor(
                                             log(TAG, ERROR) { "Failed to delete session dir after failed start: $dir" }
                                         }
                                     } catch (cleanupError: Throwable) {
-                                        e.addSuppressed(cleanupError)
+                                        e.addSuppressedSafely(cleanupError)
                                     }
                                 }
                             }
@@ -223,21 +224,47 @@ class RecorderModule @Inject constructor(
         }
     }
 
-    private fun createSessionDir(): File {
+    /**
+     * [created] is what the rollback of a failed start keys off, so it reports what actually
+     * happened on disk, never the intent: a directory that was already there belongs to an earlier
+     * session and deleting it would take that session's logs with it.
+     */
+    private data class NewSessionDir(
+        val dir: File,
+        val created: Boolean,
+    )
+
+    private fun createSessionDir(): NewSessionDir {
         val sanitizedVersion = BuildConfigWrap.VERSION_NAME.replace(Regex("[^A-Za-z0-9._-]"), "_")
-        val dirName = "${BuildConfigWrap.APPLICATION_ID}_${sanitizedVersion}_${Clock.System.now().toEpochMilliseconds()}"
+        val dirName = "${BuildConfigWrap.APPLICATION_ID}_${sanitizedVersion}_${wallClock()}"
 
         val baseDir = getPreferredLogDir()
-        val sessionDir = File(baseDir, dirName)
+        createUniqueDir(baseDir, dirName)?.let { return NewSessionDir(it, created = true) }
 
-        if (!sessionDir.mkdirs() && !sessionDir.isDirectory) {
-            log(TAG, WARN) { "Failed to create session dir at $sessionDir, trying fallback" }
-            val fallbackDir = File(File(context.cacheDir, "debug/logs"), dirName)
-            fallbackDir.mkdirs()
-            return fallbackDir
+        log(TAG, WARN) { "Failed to create session dir for $dirName in $baseDir, trying fallback" }
+        val fallbackBase = File(context.cacheDir, "debug/logs")
+        createUniqueDir(fallbackBase, dirName)?.let { return NewSessionDir(it, created = true) }
+
+        // Nothing was created, so nothing may be rolled back either; the start attempt fails on the
+        // unusable directory further down instead.
+        log(TAG, ERROR) { "Failed to create a session dir for $dirName in $fallbackBase" }
+        return NewSessionDir(File(fallbackBase, dirName), created = false)
+    }
+
+    /**
+     * mkdirs() reports false for a directory that already exists, so the candidate that wins is
+     * always one this call brought into existence. A name collision (two starts within the same
+     * millisecond, or a leftover directory of that name) walks to a suffixed name rather than
+     * adopting - and later deleting - somebody else's session.
+     */
+    private fun createUniqueDir(baseDir: File, dirName: String): File? {
+        for (attempt in 0..NAME_COLLISION_LIMIT) {
+            val candidate = File(baseDir, if (attempt == 0) dirName else "${dirName}_$attempt")
+            if (candidate.mkdirs()) return candidate
+            // Not a collision but an unusable base directory: further suffixes cannot help.
+            if (!candidate.exists()) return null
         }
-
-        return sessionDir
+        return null
     }
 
     internal fun writeTriggerFile(sessionDir: File, startedAt: Long) {
@@ -263,8 +290,8 @@ class RecorderModule @Inject constructor(
     }
 
     /**
-     * [isNewDir] separates a directory this call created from one it resumed into: only the former
-     * may be deleted again when the start sequence fails.
+     * [isNewDir] separates a directory this call actually created from one it resumed into or found
+     * already present: only the former may be deleted again when the start sequence fails.
      */
     internal data class SessionTarget(
         val sessionDir: File,
@@ -291,7 +318,8 @@ class RecorderModule @Inject constructor(
             return SessionTarget(existingDir, startedAt, isNewDir = false)
         }
 
-        return SessionTarget(createSessionDir(), wallClock(), isNewDir = true)
+        val fresh = createSessionDir()
+        return SessionTarget(fresh.dir, wallClock(), isNewDir = fresh.created)
     }
 
     internal fun findExistingSessionDir(lastSession: LogSession? = null): File? {
@@ -343,31 +371,39 @@ class RecorderModule @Inject constructor(
         LogSession(sessionDir)
     }
 
-    suspend fun stopRecorder(): LogSession? = requestMutex.withLock {
+    suspend fun stopRecorder(): LogSession? = requestMutex.withLock { stopRecorderLocked() }
+
+    /**
+     * Requires [requestMutex]. Reading the current session, publishing the request and observing
+     * the stop have to happen without another caller in between, or two callers report having
+     * stopped the same session - or a session that is still running.
+     */
+    private suspend fun stopRecorderLocked(): LogSession? {
         val currentState = internalState.value()
-        val sessionDir = currentState.recorder?.sessionDir ?: return@withLock null
+        val sessionDir = currentState.recorder?.sessionDir ?: return null
 
         internalState.updateBlocking {
             copy(shouldRecord = false)
         }
         internalState.flow.first { !it.isRecording }
-        LogSession(sessionDir)
+        return LogSession(sessionDir)
     }
 
-    suspend fun requestStopRecorder(): StopResult {
+    suspend fun requestStopRecorder(): StopResult = requestMutex.withLock {
         val currentState = internalState.value()
-        if (!currentState.isRecording) return StopResult.NotRecording
+        if (!currentState.isRecording) return@withLock StopResult.NotRecording
 
-        val sessionDir = currentState.recorder?.sessionDir ?: return StopResult.NotRecording
         val elapsed = currentState.recordingStartedAtMonotonic
             ?.let { monotonicClock() - it }             // live session: immune to wall-clock adjustments
             ?: (wallClock() - (currentState.recordingStartedAt ?: 0L))  // resumed: persisted/derived wall start only
         // Negative = wall clock moved backward across a resume; fail open (no warning) rather than
         // trap the user in TooShort.
-        if (elapsed in 0 until MIN_RECORDING.inWholeMilliseconds) return StopResult.TooShort
+        if (elapsed in 0 until MIN_RECORDING.inWholeMilliseconds) return@withLock StopResult.TooShort
 
-        stopRecorder()
-        return StopResult.Stopped(LogSession(sessionDir))
+        // The delegated stop decides what was stopped: reporting the session read above would claim
+        // a stop that a concurrent caller had already performed on a different one.
+        val stopped = stopRecorderLocked() ?: return@withLock StopResult.NotRecording
+        StopResult.Stopped(stopped)
     }
 
     sealed class StopResult {
@@ -404,6 +440,13 @@ class RecorderModule @Inject constructor(
     companion object {
         internal val TAG = logTag("Debug", "Log", "Recorder", "Module")
         private const val FORCE_FILE = "force_debug_run"
+
+        /**
+         * Suffixes tried when the timestamped session dir name is already taken. A handful is
+         * plenty: the name is millisecond-stamped, so a collision means a leftover directory or a
+         * second start in the same millisecond, not a long run of them.
+         */
+        private const val NAME_COLLISION_LIMIT = 8
 
         /**
          * Duration heuristic for "did you forget to reproduce the issue?". A recording stopped
