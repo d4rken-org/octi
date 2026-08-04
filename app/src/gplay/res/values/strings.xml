@@ -19,6 +19,9 @@
     <string name="upgrades_gplay_offer_unavailable_title">Offer unavailable</string>
     <string name="upgrades_gplay_offer_unavailable_description">Google Play is currently not offering this upgrade option. Please try again later or check the Google Play Store.</string>
 
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">Google Play is not installed.</string>
+
     <string name="upgrades_dashcard_title">Get Octi Pro</string>
     <string name="upgrades_dashcard_body">Upgrade to unlock additional features and support development!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgrade</string>
