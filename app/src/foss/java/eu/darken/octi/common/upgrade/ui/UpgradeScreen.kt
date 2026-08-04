@@ -112,12 +112,11 @@ internal fun UpgradeScreen(
     onNavigateUp: () -> Unit = {},
 ) {
     UpgradeScreenScaffold(
-        // Status views describe the existing install, not a support ask — they get the composed
-        // flavor title, with the postfix highlighted for supporters like the dashboard does it.
-        title = if (view == FossUpgradeView.PITCH) {
-            AnnotatedString(stringResource(R.string.upgrade_screen_title))
-        } else {
-            upgradeScreenTitle(upgraded = view == FossUpgradeView.STATUS_UPGRADED)
+        // The pitch and the free status keep the plain ask; only the supporter status gets the
+        // composed flavor title, with the postfix highlighted like the dashboard does it.
+        title = when (view) {
+            FossUpgradeView.STATUS_UPGRADED -> upgradeScreenTitle(upgraded = true)
+            else -> AnnotatedString(stringResource(R.string.upgrade_screen_title))
         },
         onNavigateUp = onNavigateUp,
         snackbarHostState = snackbarHostState,
@@ -151,11 +150,7 @@ private fun UpgradePitchContent(
     UpgradeScreenContent(
         paddingValues = paddingValues,
     ) {
-        UpgradeHeader(
-            mascotSize = 104.dp,
-        )
-
-        UpgradePreambleCard(
+        UpgradeHeroCard(
             text = stringResource(R.string.upgrade_screen_preamble),
             colors = CardDefaults.elevatedCardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,

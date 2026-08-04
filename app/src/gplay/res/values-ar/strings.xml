@@ -19,7 +19,6 @@
         <item quantity="many">النسخة المجانية مقتصرة على %1$d جهازًا.</item>
         <item quantity="other">النسخة المجانية مقتصرة على %1$d جهاز.</item>
     </plurals>
-    <string name="upgrade_screen_title">احصل على أوكتي احترافي</string>
     <string name="upgrade_screen_navigate_up">الانتقال للأعلى</string>
     <string name="upgrade_screen_progress_loading">جارٍ التحميل…</string>
     <string name="upgrade_screen_preamble">أوكتي خالٍ من الإعلانات ولا يبيع بيانات المستخدمين. عملي يُموَّل بكم ❤️.</string>

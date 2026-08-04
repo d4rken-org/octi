@@ -46,6 +46,8 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_sponsor_action_hint))
             .assertCountEquals(1)
         composeRule.onAllNodesWithTag(UpgradeScreenTags.FOSS_SPONSOR).assertCountEquals(1)
+        // The pitch leads with the hero card: mascot and preamble in one card, no standalone header.
+        composeRule.onAllNodesWithTag(UpgradeScreenTags.HERO).assertCountEquals(1)
     }
 
     @Test
@@ -74,6 +76,8 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_preamble)).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_title)).assertCountEquals(1)
         composeRule.onAllNodesWithText(upgradedTitle).assertCountEquals(0)
+        // The status views keep the standalone mascot header — the hero card belongs to the pitch.
+        composeRule.onAllNodesWithTag(UpgradeScreenTags.HERO).assertCountEquals(0)
     }
 
     @Test
@@ -110,6 +114,7 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithTag(UpgradeScreenTags.FOSS_DONATE).assertCountEquals(1)
         composeRule.onAllNodesWithTag(UpgradeScreenTags.FOSS_SHOW_OPTIONS).assertCountEquals(0)
         composeRule.onAllNodesWithTag(UpgradeScreenTags.FOSS_SPONSOR).assertCountEquals(0)
+        composeRule.onAllNodesWithTag(UpgradeScreenTags.HERO).assertCountEquals(0)
     }
 
     @Test

@@ -15,7 +15,6 @@
         <item quantity="one">La versione gratuita è limitata a %1$d dispositivo.</item>
         <item quantity="other">La versione gratuita è limitata a %1$d dispositivi.</item>
     </plurals>
-    <string name="upgrade_screen_title">Ottieni Octi Pro</string>
     <string name="upgrade_screen_navigate_up">Naviga su</string>
     <string name="upgrade_screen_progress_loading">Caricamento…</string>
     <string name="upgrade_screen_preamble">Octi non ha annunci e non vende dati utente. il mio lavoro è finanziato da voi.</string>

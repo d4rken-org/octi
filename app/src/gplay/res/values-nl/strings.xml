@@ -15,7 +15,6 @@
         <item quantity="one">De gratis versie is beperkt tot %1$d apparaat.</item>
         <item quantity="other">De gratis versie is beperkt tot %1$d apparaten.</item>
     </plurals>
-    <string name="upgrade_screen_title">Krijg Octi Pro</string>
     <string name="upgrade_screen_navigate_up">Omhoog navigeren</string>
     <string name="upgrade_screen_progress_loading">Laden…</string>
     <string name="upgrade_screen_preamble">Octi bevat geen advertenties en verkoopt geen gebruikersdata. Mijn werk wordt door jou gefinancierd ❤️.</string>

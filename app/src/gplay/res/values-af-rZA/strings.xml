@@ -15,7 +15,6 @@
         <item quantity="one">Die gratis weergawe is beperk tot %1$d toestel.</item>
         <item quantity="other">Die gratis weergawe is beperk tot %1$d toestelle.</item>
     </plurals>
-    <string name="upgrade_screen_title">Kry Octi Pro</string>
     <string name="upgrade_screen_navigate_up">Navigeer op</string>
     <string name="upgrade_screen_progress_loading">Laai…</string>
     <string name="upgrade_screen_preamble">Octi het geen advertensies nie en verkoop nie gebruikersdata nie. My werk word deur jou gefinansier ❤️.</string>

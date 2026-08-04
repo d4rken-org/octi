@@ -2,6 +2,8 @@ package eu.darken.octi.common.upgrade.ui
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
@@ -23,6 +25,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
+import org.robolectric.annotation.Config
 import testhelpers.compose.BaseComposeRobolectricTest
 
 class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
@@ -30,10 +33,84 @@ class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
     private val context: Context
         get() = ApplicationProvider.getApplicationContext()
 
+    private val composedBrand: String
+        get() = "${context.getString(CommonR.string.app_name)} ${context.getString(R.string.app_name_upgrade_postfix)}"
+
     private fun appNameWithPostfixedHeroBody(bodyRes: Int): String = context.getString(
         bodyRes,
-        "${context.getString(CommonR.string.app_name)} ${context.getString(R.string.app_name_upgrade_postfix)}",
+        composedBrand,
     )
+
+    // What the acquisition top bar must render: the translated pitch pattern with the composed
+    // brand formatted into it.
+    private val acquisitionTitle: String
+        get() = context.getString(R.string.upgrade_screen_title_template, composedBrand)
+
+    private fun acquisitionState() = GplayUpgradeUiState.Loaded(
+        subscriptionAction = SubscriptionAction.STANDARD,
+        subscriptionEnabled = true,
+        subscriptionPrice = "$12.99",
+        iapEnabled = true,
+        iapPrice = "$24.99",
+    )
+
+    @Test
+    fun `acquisition titles the screen with the brand inside the pitch sentence`() {
+        composeRule.setUpgradeContent {
+            UpgradeScreen(uiState = acquisitionState())
+        }
+
+        composeRule.onAllNodesWithText(acquisitionTitle).assertCountEquals(1)
+    }
+
+    @Test
+    fun `the acquisition title colors exactly the brand postfix`() {
+        composeRule.setUpgradeContent {
+            UpgradeScreen(uiState = acquisitionState())
+        }
+
+        // The pitch splices in the SAME styled brand the status title uses: the upgraded color must
+        // land on the postfix only, never on the surrounding sentence.
+        val rendered = composeRule.onNodeWithText(acquisitionTitle)
+            .fetchSemanticsNode()
+            .config[SemanticsProperties.Text]
+            .single()
+        val postfix = context.getString(R.string.app_name_upgrade_postfix)
+
+        rendered.text shouldBe acquisitionTitle
+        rendered.spanStyles.size shouldBe 1
+        val span = rendered.spanStyles.single()
+        span.item.color shouldBe Color(context.getColor(R.color.colorUpgraded))
+        rendered.text.substring(span.start, span.end) shouldBe postfix
+        // Pins the range rather than just its content: only one candidate position exists.
+        rendered.text.indexOf(postfix) shouldBe span.start
+        rendered.text.lastIndexOf(postfix) shouldBe span.start
+    }
+
+    @Test
+    @Config(qualifiers = "ar")
+    fun `the spliced title carries the translated postfix in arabic`() {
+        // A translated postfix is exactly what a substring search inside a combined name would lose:
+        // the brand is composed from the resources and spliced in, so the color follows it.
+        composeRule.setUpgradeContent {
+            UpgradeScreen(uiState = acquisitionState())
+        }
+
+        val postfix = context.getString(R.string.app_name_upgrade_postfix)
+        postfix shouldBe "احترافي"
+
+        val rendered = composeRule.onNodeWithText(acquisitionTitle)
+            .fetchSemanticsNode()
+            .config[SemanticsProperties.Text]
+            .single()
+
+        rendered.text.contains(postfix) shouldBe true
+        rendered.spanStyles.size shouldBe 1
+        val span = rendered.spanStyles.single()
+        rendered.text.substring(span.start, span.end) shouldBe postfix
+        rendered.text.indexOf(postfix) shouldBe span.start
+        rendered.text.lastIndexOf(postfix) shouldBe span.start
+    }
 
     @Test
     fun `loading state shows progress and hides actions`() {
@@ -45,6 +122,18 @@ class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithTag(UpgradeScreenTags.ACTIONS).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_preamble)).assertCountEquals(1)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_benefits_title)).assertCountEquals(1)
+        // Preamble and mascot ship together in the hero card outside grace.
+        composeRule.onAllNodesWithTag(UpgradeScreenTags.HERO).assertCountEquals(1)
+    }
+
+    @Test
+    fun `acquisition leads with the hero card`() {
+        composeRule.setUpgradeContent {
+            UpgradeScreen(uiState = acquisitionState())
+        }
+
+        composeRule.onAllNodesWithTag(UpgradeScreenTags.HERO).assertCountEquals(1)
+        composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_preamble)).assertCountEquals(1)
     }
 
     @Test
@@ -386,7 +475,9 @@ class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_switch_locked_note)).assertCountEquals(1)
         composeRule.onNodeWithTag(UpgradeScreenTags.GPLAY_IAP).assertIsNotEnabled()
         composeRule.runOnIdle { check(iapClicks == 0) { "locked offer must not be clickable" } }
-        // No acquisition upsell copy anywhere on the ownership screen.
+        // No acquisition upsell copy anywhere on the ownership screen — the congrats hero is the
+        // ownership view's own card, not the acquisition hero.
+        composeRule.onAllNodesWithTag(UpgradeScreenTags.HERO).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_preamble)).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_benefits_title)).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_offers_title)).assertCountEquals(0)
@@ -484,6 +575,8 @@ class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithTag(UpgradeScreenTags.GPLAY_IAP).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_preamble)).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_benefits_title)).assertCountEquals(0)
+        // Grace keeps the standalone mascot header: there is no preamble to pair it with.
+        composeRule.onAllNodesWithTag(UpgradeScreenTags.HERO).assertCountEquals(0)
     }
 
     @Test
@@ -529,6 +622,7 @@ class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithTag(UpgradeScreenTags.GPLAY_IAP).assertCountEquals(1)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_preamble)).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_benefits_title)).assertCountEquals(0)
+        composeRule.onAllNodesWithTag(UpgradeScreenTags.HERO).assertCountEquals(0)
         composeRule.onNodeWithTag(UpgradeScreenTags.GPLAY_GRACE_RESTORE).performScrollTo().performClick()
         composeRule.runOnIdle { check(restoreClicks == 1) { "expected 1 restore click, got $restoreClicks" } }
     }

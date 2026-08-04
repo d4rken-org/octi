@@ -16,7 +16,6 @@
         <item quantity="few">Бесплатна верзија је ограничена на %1$d уређаја.</item>
         <item quantity="other">Бесплатна верзија је ограничена на %1$d уређаја.</item>
     </plurals>
-    <string name="upgrade_screen_title">Преузмите Octi Pro</string>
     <string name="upgrade_screen_navigate_up">Назад</string>
     <string name="upgrade_screen_progress_loading">Учитавање…</string>
     <string name="upgrade_screen_preamble">Octi нема огласе и не продаје корисничке податке. Мој рад финансирате ви ❤️.</string>

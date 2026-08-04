@@ -15,7 +15,6 @@
         <item quantity="one">%1$d cihaz</item>
         <item quantity="other">Ücretsiz sürüm %1$d cihazla sınırlıdır.</item>
     </plurals>
-    <string name="upgrade_screen_title">Octi Pro Al</string>
     <string name="upgrade_screen_navigate_up">Yukarı git</string>
     <string name="upgrade_screen_progress_loading">Yükleniyor…</string>
     <string name="upgrade_screen_preamble">Octi\'de reklam yoktur ve kullanıcı verilerini satmaz. Çalışmalarım sizin tarafınızdan finanse edilmektedir ❤️.</string>

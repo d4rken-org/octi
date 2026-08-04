@@ -14,7 +14,6 @@
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="other">無料版は%1$dデバイスまでに制限されています。</item>
     </plurals>
-    <string name="upgrade_screen_title">Octi Pro を入手</string>
     <string name="upgrade_screen_navigate_up">上へ移動</string>
     <string name="upgrade_screen_progress_loading">読み込み中…</string>
     <string name="upgrade_screen_preamble">Octi は無広告、ユーザーデータの販売もしません。あなたの支援で成り立っています ❤️</string>

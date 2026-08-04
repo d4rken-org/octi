@@ -15,7 +15,6 @@
         <item quantity="one">Gratisversjonen er begrenset til %1$d enhet.</item>
         <item quantity="other">Gratisversjonen er begrenset til %1$d enheter.</item>
     </plurals>
-    <string name="upgrade_screen_title">Få Octi Pro</string>
     <string name="upgrade_screen_navigate_up">Gå opp</string>
     <string name="upgrade_screen_progress_loading">Laster inn…</string>
     <string name="upgrade_screen_preamble">Octi har ingen annonser og selger ikke brukerdata. Mitt arbeid finansieres av deg ❤️.</string>
