@@ -12,8 +12,6 @@
     <string name="upgrade_screen_preamble">Το Octi δεν έχει διαφημίσεις και δεν πουλάει δεδομένα χρηστών. Η δουλειά μου χρηματοδοτείται από εσάς ❤️</string>
     <string name="upgrade_screen_how_title">Τι να κάνετε</string>
     <string name="upgrade_screen_how_body">Γίνετε υποστηρικτής και σπόνσορας της ανάπτυξης! Πατήστε το παρακάτω κουμπί για να ενεργοποιήσετε όλες τις επιπλέον λειτουργίες και να ανοίξετε το προφίλ των χορηγιών μου στο GitHub.</string>
-    <string name="upgrade_screen_why_title">Οφέλη 🪄</string>
-    <string name="upgrade_screen_benefits_body">• Πάνω από 3 συσκευές 💯\n• Διαφορετικά θέματα 🎨\n• Περισσότερες επιλογές ⚙️\n• Πρόσθετοι servers συγχρονισμού🖥️\n• Συνεχής ανάπτυξη ανοιχτού κώδικα 🧙</string>
     <string name="upgrade_screen_sponsor_action">Χορηγήστε την ανάπτυξη</string>
     <string name="upgrade_screen_sponsor_action_hint">Η εναλλακτική είναι διαφημίσεις, αναλύσεις και Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Σας ευχαριστούμε που στηρίζετε την ανάπτυξη ανοιχτού κώδικα ❤️</string>

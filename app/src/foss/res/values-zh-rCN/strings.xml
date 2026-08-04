@@ -11,8 +11,6 @@
     <string name="upgrade_screen_preamble">Octi 没有广告，也不会出售用户数据。我的工作由你资助 ❤️</string>
     <string name="upgrade_screen_how_title">该怎么办</string>
     <string name="upgrade_screen_how_body">成为赞助人并赞助开发！点击下面的按钮以激活所有额外功能并打开我的 GitHub 赞助商资料。</string>
-    <string name="upgrade_screen_why_title">好处🪄</string>
-    <string name="upgrade_screen_benefits_body">• 超过 3 台设备 💯\n• 不同主题 🎨\n• 更多选项 ⚙️\n• 额外的同步服务器🖥️\n• 继续开源开发 🧙</string>
     <string name="upgrade_screen_sponsor_action">赞助发展</string>
     <string name="upgrade_screen_sponsor_action_hint">替代方案是广告、分析和 Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">感谢您支持开源开发❤️</string>

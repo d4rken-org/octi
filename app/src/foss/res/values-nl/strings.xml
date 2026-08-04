@@ -12,8 +12,6 @@
     <string name="upgrade_screen_preamble">Octi heeft geen advertenties en verkoopt geen gebruikersgegevens. Mijn werk wordt door jou gefinancierd ❤️</string>
     <string name="upgrade_screen_how_title">Wat te doen</string>
     <string name="upgrade_screen_how_body">Word een sponsor en steun de ontwikkeling! Tik op de knop hieronder om alle extra functies te activeren en mijn GitHub Sponsors-profiel te openen.</string>
-    <string name="upgrade_screen_why_title">Voordelen 🪄</string>
-    <string name="upgrade_screen_benefits_body">• Meer dan 3 apparaten 💯\n• Verschillende thema\'s 🎨\n• Meer opties ⚙️\n• Extra synchronisatie-servers🖥️\n• Voortgezette open source-ontwikkeling 🧙</string>
     <string name="upgrade_screen_sponsor_action">Sponsor ontwikkeling</string>
     <string name="upgrade_screen_sponsor_action_hint">Het alternatief is advertenties, analytics en Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Bedankt voor het ondersteunen van open-source ontwikkeling ❤️</string>
