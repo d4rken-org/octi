@@ -11,8 +11,6 @@
     <string name="upgrade_screen_preamble">Octi は無広告、ユーザーデータの販売もしません。あなたの支援で成り立っています ❤️</string>
     <string name="upgrade_screen_how_title">何をしますか</string>
     <string name="upgrade_screen_how_body">支援者になって開発者のスポンサーになりましょう！下のボタンをタップしてすべての追加機能を有効化し、私の GitHub スポンサープロフィールを開いてください。</string>
-    <string name="upgrade_screen_why_title">利点 🪄</string>
-    <string name="upgrade_screen_benefits_body">• 3 台以上のデバイスを同期 💯\n• 様々なテーマ 🎨\n• より多くのオプション ⚙️\n• 追加の同期サーバー 🖥️\n• オープンソース開発の継続 🧙</string>
     <string name="upgrade_screen_sponsor_action">開発者への支援</string>
     <string name="upgrade_screen_sponsor_action_hint">広告、アナリティクス、Google Play がその代替となります 🙁</string>
     <string name="upgrade_screen_thanks_toast">オープンソースの開発を支援していただき感謝します ❤️</string>

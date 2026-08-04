@@ -18,8 +18,8 @@
     <string name="upgrade_screen_preamble">Octi has no ads and doesn\'t sell user data. My work is financed by you ❤️</string>
     <string name="upgrade_screen_how_title">What to do</string>
     <string name="upgrade_screen_how_body">Become a patron and sponsor development! Tap the button below to activate all extra features and open my GitHub Sponsors profile.</string>
-    <string name="upgrade_screen_why_title">Benefits 🪄</string>
-    <string name="upgrade_screen_benefits_body">More than 3 devices 💯\n• Different themes 🎨\n• More options ⚙️\n• Extra sync servers🖥️\n• Continued open source development 🧙</string>
+    <string name="upgrade_screen_why_title">Benefits</string>
+    <string name="upgrade_screen_benefits_body">• More than 3 devices 💯\n• Different themes 🎨\n• More options ⚙️\n• Extra sync servers 🖥️\n• Continued open source development ☕\n• A motivated developer 🧙</string>
     <string name="upgrade_screen_sponsor_action">Sponsor development</string>
     <string name="upgrade_screen_sponsor_action_hint">The alternative are ads, analytics and Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Thank you for supporting open-source development ❤️</string>

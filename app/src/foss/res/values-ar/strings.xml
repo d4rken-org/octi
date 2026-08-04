@@ -16,8 +16,6 @@
     <string name="upgrade_screen_preamble">أوكتي خالٍ من الإعلانات ولا يبيع بيانات المستخدمين. عملي يُموَّل بكم ❤️</string>
     <string name="upgrade_screen_how_title">الخطوات</string>
     <string name="upgrade_screen_how_body">كن راعيًا وادعم التطوير! انقر على الزر أدناه لتفعيل كل الميزات الإضافية وفتح صفحة رعاة جيثب الخاصة بي.</string>
-    <string name="upgrade_screen_why_title">المزايا 🪄</string>
-    <string name="upgrade_screen_benefits_body">أكثر من 3 أجهزة 💯\n• سمات مختلفة 🎨\n• المزيد من الخيارات ⚙️\n• خوادم مزامنة إضافية🖥️\n• تطوير مستمر مفتوح المصدر 🧙 •</string>
     <string name="upgrade_screen_sponsor_action">ادعم التطوير</string>
     <string name="upgrade_screen_sponsor_action_hint">البديل هو الإعلانات والتحليلات و Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">شكرًا لدعمك التطوير مفتوح المصدر ❤️</string>
