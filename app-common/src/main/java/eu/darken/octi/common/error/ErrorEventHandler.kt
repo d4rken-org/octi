@@ -63,7 +63,7 @@ private fun ComposeErrorDialog(
             localizedError.fixAction != null -> {
                 {
                     TextButton(onClick = onDismiss) {
-                        Text(text = stringResource(R.string.general_cancel_action))
+                        Text(text = stringResource(R.string.general_dismiss_action))
                     }
                 }
             }
