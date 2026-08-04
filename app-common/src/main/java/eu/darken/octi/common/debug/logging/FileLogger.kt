@@ -2,6 +2,7 @@ package eu.darken.octi.common.debug.logging
 
 import android.annotation.SuppressLint
 import android.util.Log
+import eu.darken.octi.common.error.addSuppressedSafely
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -24,7 +25,11 @@ class FileLogger(private val logFile: File) : Logging.Logger {
         if (logWriter != null) return
 
         logFile.parentFile!!.mkdirs()
-        if (logFile.createNewFile()) {
+        // Only a log file THIS attempt created may be deleted again when the start fails: a session
+        // being resumed already holds the recording the user made, and dropping it on a failed
+        // restart destroys the very data they were collecting.
+        val createdHere = logFile.createNewFile()
+        if (createdHere) {
             Log.i(TAG, "File logger writing to " + logFile.path)
         }
         if (logFile.setReadable(true, false)) {
@@ -35,7 +40,7 @@ class FileLogger(private val logFile: File) : Logging.Logger {
             OutputStreamWriter(FileOutputStream(logFile, true))
         } catch (e: IOException) {
             Log.e(TAG, "File logger could not open $logFile", e)
-            logFile.delete()
+            if (createdHere) logFile.delete()
             throw e
         }
 
@@ -48,9 +53,9 @@ class FileLogger(private val logFile: File) : Logging.Logger {
             try {
                 writer.close()
             } catch (closeError: IOException) {
-                e.addSuppressed(closeError)
+                e.addSuppressedSafely(closeError)
             }
-            logFile.delete()
+            if (createdHere) logFile.delete()
             throw e
         }
 

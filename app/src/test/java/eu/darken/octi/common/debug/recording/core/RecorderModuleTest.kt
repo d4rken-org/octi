@@ -8,6 +8,7 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import io.mockk.every
 import io.mockk.mockk
@@ -156,9 +157,11 @@ class RecorderModuleTest : BaseTest() {
             val startedAt = Clock.System.now().toEpochMilliseconds() - 120_000
             module.writeTriggerFile(sessionDir, startedAt)
 
-            val (resultDir, resultStartedAt) = module.findOrCreateSession()
-            resultDir shouldBe sessionDir
-            resultStartedAt shouldBe startedAt
+            val target = module.findOrCreateSession()
+            target.sessionDir shouldBe sessionDir
+            target.startedAt shouldBe startedAt
+            // Resumed, not created: a failed start must never roll this directory away.
+            target.isNewDir shouldBe false
         }
 
         @Test
@@ -201,10 +204,31 @@ class RecorderModuleTest : BaseTest() {
 
         @Test
         fun `creates fresh session when no trigger and no existing dirs`() {
-            val (resultDir, resultStartedAt) = module.findOrCreateSession()
-            resultDir.isDirectory shouldBe true
-            resultDir.name shouldContain BuildConfigWrap.APPLICATION_ID
-            resultStartedAt shouldBeGreaterThan 0L
+            val target = module.findOrCreateSession()
+            target.sessionDir.isDirectory shouldBe true
+            target.sessionDir.name shouldContain BuildConfigWrap.APPLICATION_ID
+            target.startedAt shouldBeGreaterThan 0L
+            // Actually created by this call, so its rollback may delete it again.
+            target.isNewDir shouldBe true
+        }
+
+        @Test
+        fun `a name collision takes a new dir instead of adopting the existing one`() {
+            val stamp = 1_700_000_000_000L
+            module.wallClock = { stamp }
+            val sanitizedVersion = BuildConfigWrap.VERSION_NAME.replace(Regex("[^A-Za-z0-9._-]"), "_")
+            val collidingName = "${BuildConfigWrap.APPLICATION_ID}_${sanitizedVersion}_$stamp"
+            // No core.log, so the scan skips it and the create path runs straight into the name.
+            val existing = File(logDir, collidingName).also { it.mkdirs() }
+
+            val target = module.findOrCreateSession()
+
+            // Adopting it would mark somebody else's directory as created-by-this-attempt, and a
+            // failed start would then delete it.
+            target.sessionDir shouldNotBe existing
+            target.sessionDir.name shouldBe "${collidingName}_1"
+            target.isNewDir shouldBe true
+            existing.isDirectory shouldBe true
         }
     }
 

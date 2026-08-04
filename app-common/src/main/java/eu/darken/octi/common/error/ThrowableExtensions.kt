@@ -40,3 +40,12 @@ fun Throwable.getStackTraceString(): String {
 
 fun Throwable.tryUnwrap(kClass: KClass<RuntimeException> = RuntimeException::class): Throwable =
     if (!kClass.isInstance(this)) this else cause ?: this
+
+/**
+ * Suppressing a throwable on itself is an [IllegalArgumentException], which would replace the
+ * failure we are trying to report with one from the cleanup path. Cleanup that rethrows the very
+ * error it is cleaning up after is exactly where that happens.
+ */
+fun Throwable.addSuppressedSafely(other: Throwable) {
+    if (this !== other) addSuppressed(other)
+}
