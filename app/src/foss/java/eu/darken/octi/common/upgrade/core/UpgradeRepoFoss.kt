@@ -59,6 +59,9 @@ class UpgradeRepoFoss @Inject constructor(
     // previously seen Info instead of on a fresh (free) one.
     override val upgradeInfo: Flow<UpgradeRepo.Info> = refreshTrigger
         .flatMapLatest {
+            // Per-inner-subscription failure-episode counter. A refresh resubscription builds a new
+            // inner flow and therefore starts a fresh counter.
+            var episodeAttempts = 0L
             fossCache.upgrade.flow
                 .map { data ->
                     if (data == null) {
@@ -73,16 +76,27 @@ class UpgradeRepoFoss @Inject constructor(
                 }
                 // Same coroutine as the throw below, so the ordering is guaranteed. Only
                 // successfully mapped elements pass here — retry emissions go straight downstream
-                // and never record themselves as a last known state.
-                .onEach { lastKnownInfo = it }
-                .retryWhen { cause, attempt ->
+                // and never record themselves as a last known state. A successful read also ends the
+                // current failure episode, so the next failure reports and backs off from scratch.
+                .onEach {
+                    lastKnownInfo = it
+                    episodeAttempts = 0L
+                }
+                .retryWhen { cause, _ ->
                     if (cause is CancellationException) throw cause
-                    log(TAG, WARN) { "upgradeInfo read failed (attempt=$attempt): ${cause.asLog()}" }
+                    log(TAG, WARN) { "upgradeInfo read failed (attempt=$episodeAttempts): ${cause.asLog()}" }
                     // Once per failure episode, not once per attempt: the FOSS ViewModel raises an
                     // error dialog for every non-Pro error emission, and a per-attempt emission
-                    // would re-raise that dialog on every backoff wake-up.
-                    if (attempt == 0L) emit((lastKnownInfo ?: Info()).copy(error = cause))
-                    delay(retryDelayMs(attempt))
+                    // would re-raise that dialog on every backoff wake-up. An episode is a run of
+                    // CONSECUTIVE failures ending on a successful read (a refresh resubscription
+                    // starts a fresh inner flow and counter), so a later, separate episode reports
+                    // itself again instead of failing silently. The library's own attempt parameter
+                    // is deliberately unused: it counts every retry of the whole inner collection
+                    // and never resets on a successful emission, which would both mute every episode
+                    // after the first and resume the backoff at an already escalated index.
+                    if (episodeAttempts == 0L) emit((lastKnownInfo ?: Info()).copy(error = cause))
+                    delay(retryDelayMs(episodeAttempts))
+                    episodeAttempts++
                     true
                 }
         }

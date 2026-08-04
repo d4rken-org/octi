@@ -265,4 +265,68 @@ class UpgradeRepoFossTest : BaseTest() {
             scope.cancel()
         }
     }
+
+    @Test
+    fun `a second failure episode surfaces its own error`(): Unit = runBlocking {
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        try {
+            // Fail, recover, fail again, recover — all within ONE inner subscription chain. The
+            // library's retry attempt counter never resets on a successful emission, so gating on it
+            // would leave the second episode completely silent: the UI would never learn.
+            val subscriptions = AtomicInteger(0)
+            val upgradeValue = createUpgradeValue(
+                flow {
+                    when (subscriptions.getAndIncrement()) {
+                        0 -> throw IOException("cache broken")
+                        1 -> {
+                            emit(record)
+                            throw IOException("cache broken again")
+                        }
+
+                        else -> emit(record)
+                    }
+                }
+            )
+            val repo = createRepo(scope, upgradeValue)
+            repo.retryDelayMs = { 10L }
+
+            val received = Channel<UpgradeRepo.Info>(Channel.UNLIMITED)
+            scope.launch { repo.upgradeInfo.collect { received.send(it) } }
+
+            withTimeout(10_000) {
+                val infos = mutableListOf<UpgradeRepo.Info>()
+
+                // Episode 1: the very first read fails.
+                infos.add(received.receive())
+                infos[0].error.shouldBeInstanceOf<IOException>()
+
+                // Recovery, then the read that starts episode 2.
+                infos.add(received.receive())
+                infos[1].apply {
+                    isPro shouldBe true
+                    error shouldBe null
+                }
+
+                // Episode 2 has to report itself too. It rides lastKnownInfo, so the entitlement
+                // seen right before it survives the failure.
+                infos.add(received.receive())
+                infos[2].apply {
+                    error.shouldBeInstanceOf<IOException>()
+                    isPro shouldBe true
+                }
+
+                // And the loop keeps healing afterwards.
+                infos.add(received.receive())
+                infos[3].apply {
+                    isPro shouldBe true
+                    error shouldBe null
+                }
+
+                // Exactly one error report per episode: neither muted nor re-raised per wake-up.
+                infos.count { it.error != null } shouldBe 2
+            }
+        } finally {
+            scope.cancel()
+        }
+    }
 }
