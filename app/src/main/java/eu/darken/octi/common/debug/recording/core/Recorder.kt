@@ -25,40 +25,64 @@ class Recorder @Inject constructor() {
     var path: File? = null
         private set
 
-    suspend fun start(sessionDir: File) = mutex.withLock {
+    /**
+     * Nothing is published and no logger is installed until the writer is live: a failing
+     * [FileLogger.start] would otherwise leave this recorder claiming to record into a file that
+     * receives nothing.
+     */
+    suspend fun start(sessionDir: File): Unit = mutex.withLock {
         if (fileLogger != null) return@withLock
-        this.sessionDir = sessionDir
         sessionDir.mkdirs()
         val logFile = File(sessionDir, "core.log")
+
+        val logger = FileLogger(logFile)
+        logger.start()
+
+        this.sessionDir = sessionDir
         this.path = logFile
-        fileLogger = FileLogger(logFile)
-        fileLogger?.let { logger ->
-            if (Logging.loggers.none { it is LogCatLogger }) {
-                log(TAG, INFO) { "Adding LogCatLogger: $this" }
-                LogCatLogger().apply {
-                    Logging.install(this)
-                    logcatLogger = this
-                }
+        fileLogger = logger
+
+        if (Logging.loggers.none { it is LogCatLogger }) {
+            log(TAG, INFO) { "Adding LogCatLogger: $this" }
+            LogCatLogger().apply {
+                Logging.install(this)
+                logcatLogger = this
             }
-            logger.start()
-            Logging.install(logger)
-            log(TAG, INFO) { "Now logging to file in $sessionDir" }
         }
+        Logging.install(logger)
+        log(TAG, INFO) { "Now logging to file in $sessionDir" }
     }
 
-    suspend fun stop() = mutex.withLock {
-        fileLogger?.let {
-            log(TAG, INFO) { "Stopping file-logger-tree: $it" }
-            Logging.remove(it)
-            it.stop()
-            fileLogger = null
-            this.path = null
-            this.sessionDir = null
-        }
-        logcatLogger?.let {
-            log(TAG, INFO) { "Stopping LogCatLogger: $it" }
-            Logging.remove(it)
-            logcatLogger = null
+    /**
+     * Uninstalling the loggers, closing the writer and clearing the published state are guarded
+     * independently: whatever fails, this recorder must not stay globally installed while the
+     * module reports it as stopped.
+     */
+    suspend fun stop(): Unit = mutex.withLock {
+        try {
+            fileLogger?.let { logger ->
+                log(TAG, INFO) { "Stopping file-logger-tree: $logger" }
+                try {
+                    Logging.remove(logger)
+                } finally {
+                    try {
+                        logger.stop()
+                    } finally {
+                        fileLogger = null
+                        this.path = null
+                        this.sessionDir = null
+                    }
+                }
+            }
+        } finally {
+            logcatLogger?.let { logger ->
+                log(TAG, INFO) { "Stopping LogCatLogger: $logger" }
+                try {
+                    Logging.remove(logger)
+                } finally {
+                    logcatLogger = null
+                }
+            }
         }
     }
 
