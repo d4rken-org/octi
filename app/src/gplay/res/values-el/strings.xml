@@ -15,7 +15,6 @@
         <item quantity="one">Η δωρεάν έκδοση περιορίζεται σε %1$d συσκευή.</item>
         <item quantity="other">Η δωρεάν έκδοση περιορίζεται σε %1$d συσκευές.</item>
     </plurals>
-    <string name="upgrade_screen_title">Αποκτήστε το Octi Pro</string>
     <string name="upgrade_screen_navigate_up">Πλοήγηση προς τα επάνω</string>
     <string name="upgrade_screen_progress_loading">Φόρτωση…</string>
     <string name="upgrade_screen_preamble">Το Octi δεν έχει διαφημίσεις και δεν πουλάει δεδομένα χρηστών. Η δουλειά μου χρηματοδοτείται από εσάς ❤️.</string>

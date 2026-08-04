@@ -27,7 +27,8 @@
         <item quantity="other">The free version is limited to %1$d devices.</item>
     </plurals>
 
-    <string name="upgrade_screen_title">Get Octi Pro</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">Get %1$s</string>
     <string name="upgrade_screen_preamble">Octi has no ads and doesn\'t sell user data. My work is financed by you ❤️.</string>
     <string name="upgrade_screen_benefits_title">Benefits</string>
     <string name="upgrade_screen_benefits_body">• More than 3 devices 💯\n• Different themes 🎨\n• More options ⚙️\n• Extra sync servers🖥️️\n• Continued development ☕\n• A motivated developer 🧙</string>

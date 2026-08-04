@@ -14,7 +14,6 @@
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="other">免費版限制最多 %1$d 台裝置。</item>
     </plurals>
-    <string name="upgrade_screen_title">取得 Octi Pro</string>
     <string name="upgrade_screen_navigate_up">向上導覽</string>
     <string name="upgrade_screen_progress_loading">正在載入…</string>
     <string name="upgrade_screen_preamble">Octi 沒有廣告，也不販售使用者資料。我的工作由你贊助 ❤️。</string>

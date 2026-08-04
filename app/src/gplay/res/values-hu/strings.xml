@@ -15,7 +15,6 @@
         <item quantity="one">%1$d eszközre korlátozódik az ingyenes verzió.</item>
         <item quantity="other">%1$d eszközre korlátozódik az ingyenes verzió.</item>
     </plurals>
-    <string name="upgrade_screen_title">Szerezze be az Octi Pro-t</string>
     <string name="upgrade_screen_navigate_up">Vissza</string>
     <string name="upgrade_screen_progress_loading">Betöltés…</string>
     <string name="upgrade_screen_preamble">Az Octi nem tartalmaz hirdetéseket és nem árul felhasználói adatokat. A munkámat te finanszírozod ❤️.</string>

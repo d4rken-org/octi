@@ -17,7 +17,6 @@
         <item quantity="many">Bezplatná verze je omezena na %1$d zařízení.</item>
         <item quantity="other">Bezplatná verze je omezena na %1$d zařízení.</item>
     </plurals>
-    <string name="upgrade_screen_title">Získat Octi Pro</string>
     <string name="upgrade_screen_navigate_up">Přejít nahoru</string>
     <string name="upgrade_screen_progress_loading">Načítání…</string>
     <string name="upgrade_screen_preamble">Octi neobsahuje žádné reklamy a neprodává data uživatelů. Mou práci financujete vy ❤️.</string>

@@ -5,12 +5,14 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.AutoAwesome
 import androidx.compose.material.icons.twotone.WarningAmber
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -230,6 +232,15 @@ internal fun RestoreInconclusiveDialog(
     )
 }
 
+// The acquisition pitch inserts the SAME composed brand the status title uses, postfix colored —
+// one brand rendering for both. Word-order-proof: the brand is spliced into the TRANSLATED pattern,
+// so Android's formatter owns placeholder semantics (numbering, reordering, escaping).
+@Composable
+private fun upgradeAcquisitionTitle(): AnnotatedString = spliceBrandTitle(
+    formatted = stringResource(R.string.upgrade_screen_title_template, BRAND_TITLE_MARKER),
+    brand = upgradeScreenTitle(upgraded = true),
+)
+
 @Composable
 internal fun UpgradeScreen(
     uiState: GplayUpgradeUiState = GplayUpgradeUiState.Loading,
@@ -248,13 +259,14 @@ internal fun UpgradeScreen(
     val ownedState = loaded?.takeIf { it.ownership.ownsAnything }
 
     UpgradeScreenScaffold(
-        // Grace users are still Pro: they get the status title too — "Get Octi Pro" on the status
-        // screen would contradict the rest of the app, which behaves upgraded. The postfix is
-        // highlighted like the dashboard title does it.
+        // Grace users are still Pro: they get the bare status title — "Get Octi Pro" on the status
+        // screen would contradict the rest of the app, which behaves upgraded. Acquisition wraps
+        // that same brand in the pitch sentence. Either way the postfix is highlighted like the
+        // dashboard title does it.
         title = if (ownedState != null || loaded?.grace != null) {
             upgradeScreenTitle(upgraded = true)
         } else {
-            AnnotatedString(stringResource(R.string.upgrade_screen_title))
+            upgradeAcquisitionTitle()
         },
         onNavigateUp = onNavigateUp,
     ) { paddingValues ->
@@ -267,10 +279,24 @@ internal fun UpgradeScreen(
                 // episode ages into the diagnostics stage, the mascot joins the mood: unimpressed
                 // at Google Play, matching the setup card's "needs your attention" face. The young
                 // episode keeps the happy face — its message is that nothing is wrong.
-                UpgradeHeader(
-                    mascotSize = 88.dp,
-                    happy = loaded?.grace?.showDiagnostics != true,
-                )
+                if (loaded?.grace != null) {
+                    // Grace users never see the preamble (sales copy contradicts "still active"),
+                    // so there is nothing to pair the mascot with — it stays a standalone header
+                    // above the grace card.
+                    UpgradeHeader(
+                        mascotSize = 88.dp,
+                        happy = loaded.grace.showDiagnostics != true,
+                    )
+                } else {
+                    UpgradeHeroCard(
+                        text = stringResource(R.string.upgrade_screen_preamble),
+                        mascotSize = 88.dp,
+                        colors = CardDefaults.elevatedCardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        ),
+                    )
+                }
             }
 
             if (ownedState != null) {
@@ -319,14 +345,6 @@ private fun UpgradeAcquisitionContent(
     // blip) shows calm status only, an aged one (likely really gone) adds restore AND the offers,
     // so an expired subscriber can switch without waiting out the full grace window.
     if (!inGrace) {
-        UpgradePreambleCard(
-            text = stringResource(R.string.upgrade_screen_preamble),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            ),
-        )
-
         if (uiState is GplayUpgradeUiState.Loaded && uiState.wasPreviouslyPro) {
             // The targeted returning-buyer nudge: prominent placement and emphasis, and the ONLY
             // restore affordance on the screen — a second one below would make the screen feel
@@ -403,6 +421,7 @@ private fun UpgradeOffersBox(
                 // the user re-run the offer queries instead of leaving a dead screen.
                 // No reset needed: this composable unmounts the moment the state leaves Unavailable.
                 var retryTapped by remember { mutableStateOf(false) }
+                val retryEnabled = !retryTapped
                 OutlinedButton(
                     // Guard inside the callback, not just via `enabled`: `enabled` only takes effect
                     // after recomposition, so two taps in the same frame would both fire.
@@ -412,10 +431,20 @@ private fun UpgradeOffersBox(
                             onRetry()
                         }
                     },
-                    enabled = !retryTapped,
+                    enabled = retryEnabled,
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag(UpgradeScreenTags.GPLAY_RETRY),
+                    // The button sits on the errorContainer card, so the default primary-on-surface
+                    // outlined colors read as a foreign element with poor contrast.
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                        disabledContentColor = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.38f),
+                    ),
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.onErrorContainer.copy(alpha = if (retryEnabled) 1f else 0.1f),
+                    ),
                 ) {
                     Text(stringResource(CommonR.string.general_refresh_action))
                 }

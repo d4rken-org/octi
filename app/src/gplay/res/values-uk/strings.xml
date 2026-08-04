@@ -17,7 +17,6 @@
         <item quantity="many">Безкоштовна версія обмежена %1$d пристроями.</item>
         <item quantity="other">Безкоштовна версія обмежена %1$d пристроями.</item>
     </plurals>
-    <string name="upgrade_screen_title">Отримати Octi Pro</string>
     <string name="upgrade_screen_navigate_up">Навігація вгору</string>
     <string name="upgrade_screen_progress_loading">Завантаження…</string>
     <string name="upgrade_screen_preamble">В Octi немає реклами й не продаються дані користувача. Моя робота фінансується вами ❤️.</string>

@@ -15,7 +15,6 @@
         <item quantity="one">Ilmaisversio on rajoitettu %1$d laitteeseen.</item>
         <item quantity="other">Ilmaisversio on rajoitettu %1$d laitteeseen.</item>
     </plurals>
-    <string name="upgrade_screen_title">Hanki Octi Pro</string>
     <string name="upgrade_screen_navigate_up">Siirry ylös</string>
     <string name="upgrade_screen_progress_loading">Ladataan…</string>
     <string name="upgrade_screen_preamble">Octissa ei ole mainoksia eikä se myy käyttäjätietoja. Työni rahoitetaan sinun avullasi ❤️.</string>
