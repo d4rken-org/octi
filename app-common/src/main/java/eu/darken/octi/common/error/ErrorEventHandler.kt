@@ -13,6 +13,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import eu.darken.octi.common.R
+import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.octi.common.debug.logging.asLog
+import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 
 @Composable
 fun ErrorEventHandler(source: ErrorEventSource) {
@@ -38,16 +42,26 @@ private fun ComposeErrorDialog(
     val localizedError = throwable.localized(context)
     val activity = context as? Activity
 
+    fun dispatchAndDismiss(action: (Activity) -> Unit) {
+        // Error actions are arbitrary third-party code (intent launches, deep links): a throw here
+        // would crash the UI thread from inside a click handler, and skipping onDismiss() would
+        // leave the dialog latched on the current error with no way out.
+        try {
+            activity?.let { action(it) }
+        } catch (e: Exception) {
+            log(TAG, ERROR) { "Error action failed: ${e.asLog()}" }
+        } finally {
+            onDismiss()
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = localizedError.label.get(context)) },
         text = { Text(text = localizedError.description.get(context)) },
         confirmButton = {
             if (localizedError.fixAction != null && activity != null) {
-                TextButton(onClick = {
-                    localizedError.fixAction.invoke(activity)
-                    onDismiss()
-                }) {
+                TextButton(onClick = { dispatchAndDismiss(localizedError.fixAction) }) {
                     Text(
                         text = localizedError.fixActionLabel?.get(context)
                             ?: stringResource(android.R.string.ok)
@@ -69,10 +83,7 @@ private fun ComposeErrorDialog(
             }
             localizedError.infoAction != null && activity != null -> {
                 {
-                    TextButton(onClick = {
-                        localizedError.infoAction.invoke(activity)
-                        onDismiss()
-                    }) {
+                    TextButton(onClick = { dispatchAndDismiss(localizedError.infoAction) }) {
                         Text(text = stringResource(R.string.general_show_details_action))
                     }
                 }
@@ -81,3 +92,5 @@ private fun ComposeErrorDialog(
         },
     )
 }
+
+private val TAG = logTag("Error", "EventHandler")
