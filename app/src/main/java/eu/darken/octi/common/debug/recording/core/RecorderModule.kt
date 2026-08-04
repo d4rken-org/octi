@@ -14,6 +14,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.error.addSuppressedSafely
 import eu.darken.octi.common.flow.DynamicStateFlow
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
@@ -159,7 +160,7 @@ class RecorderModule @Inject constructor(
                             // observes it instead of waiting forever.
                             copy(
                                 shouldRecord = false,
-                                startFailure = e,
+                                startFailure = asStartFailure(e),
                                 recorder = null,
                                 recordingStartedAt = null,
                                 recordingStartedAtMonotonic = null,
@@ -200,6 +201,24 @@ class RecorderModule @Inject constructor(
                 }
             }
             .launchIn(appScope)
+    }
+
+    /**
+     * A start failure that arrived as a [CancellationException] while this module's own scope was
+     * still alive - a bounded read inside the start sequence timing out, for example. Stored and
+     * rethrown unchanged it makes every caller treat it as their OWN cancellation: the launch that
+     * requested the start ends "normally" and the error handler that would have surfaced the
+     * failure never runs.
+     */
+    class RecorderStartFailedException(cause: Throwable) : IllegalStateException("Failed to start recording", cause)
+
+    /**
+     * Runs AFTER [ensureActive] has confirmed the scope is alive, so a cancellation seen here can
+     * only be a foreign one. Everything else is committed unchanged.
+     */
+    private fun asStartFailure(error: Throwable): Throwable = when (error) {
+        is CancellationException -> RecorderStartFailedException(error)
+        else -> error
     }
 
     private fun getPreferredLogDir(): File {
