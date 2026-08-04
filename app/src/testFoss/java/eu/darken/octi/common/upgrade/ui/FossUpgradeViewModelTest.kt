@@ -389,9 +389,10 @@ class FossUpgradeViewModelTest : BaseTest() {
     fun `a thrown entitlement read restores the pending sponsor launch`() = runTest2(context = testDispatcher) {
         // The guard's entitlement read happens after the marker was consumed, so it can eat the
         // sponsor visit just as a failed write can. Installed after arming: the ViewModel's own init
-        // collectors already hold the working flow, so the only failing read is the guard's. Octi's
-        // upgradeInfo is a PLAIN combine without shareIn, so a thrown cache read propagates straight
-        // into the guard's first() — the widened catch covers this app fully.
+        // collectors already hold the working flow, so the only failing read is the guard's. The
+        // repo is mocked here on purpose — the real upgradeInfo settles read failures into an error
+        // Info instead of throwing, so this pins the VM-level contract: whatever throws into the
+        // guard's first() must hand the sponsor visit back.
         val repo = mockRepo()
         val vm = buildVm(repo = repo)
 
@@ -480,6 +481,25 @@ class FossUpgradeViewModelTest : BaseTest() {
         // the one stored, the failed older attempt must not have written its own back over it.
         handle.get<Long>("sponsor_pressed_at") shouldBe newerPressedAt
         errors.single().shouldBeInstanceOf<IOException>()
+
+        errorCollector.cancel()
+    }
+
+    @Test
+    fun `a settled error Info raises an error event`() = runTest2(context = testDispatcher) {
+        // The repo now settles a failed cache read into an error-carrying Info instead of letting
+        // the flow die. That emission is what the screen's error dialog hangs off, so the init
+        // collector that forwards it has to be live.
+        val info = MutableStateFlow(UpgradeRepoFoss.Info())
+        val vm = buildVm(repo = mockRepo(info))
+
+        val errors = mutableListOf<Throwable>()
+        val errorCollector = launch(start = CoroutineStart.UNDISPATCHED) { vm.errorEvents.collect { errors.add(it) } }
+
+        info.value = UpgradeRepoFoss.Info(error = IOException("cache broken"))
+        advanceUntilIdle()
+
+        errors.single().shouldBeInstanceOf<IOException>().message shouldBe "cache broken"
 
         errorCollector.cancel()
     }
