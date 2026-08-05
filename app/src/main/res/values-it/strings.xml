@@ -257,8 +257,6 @@ I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comu
     <string name="dashboard_device_remove_picker_title">Scegli il servizio di sincronizzazione</string>
     <string name="dashboard_device_remove_picker_message">Questo dispositivo è sincronizzato tramite più servizi. Scegli da quale rimuoverlo — dovrai confermare nella schermata successiva.</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Torna su</string>
     <string name="upgrade_screen_progress_loading">Caricamento…</string>
 </resources>

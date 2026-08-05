@@ -291,8 +291,6 @@
     <string name="dashboard_device_remove_picker_title">اختر خدمة المزامنة</string>
     <string name="dashboard_device_remove_picker_message">تتم مزامنة هذا الجهاز عبر خدمات متعددة. اختر الخدمة التي تريد إزالته منها — ستؤكد ذلك في الشاشة التالية.</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">احترافي</string>
     <string name="upgrade_screen_navigate_up">التنقل لأعلى</string>
     <string name="upgrade_screen_progress_loading">جاري التحميل…</string>
 </resources>
