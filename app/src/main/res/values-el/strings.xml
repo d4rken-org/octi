@@ -217,8 +217,8 @@
     <string name="support_contact_no_email_app">Δεν βρέθηκε εφαρμογή email σε αυτή τη συσκευή.</string>
     <string name="support_debuglog_folder_label">Φάκελος αρχείων καταγραφής σφαλμάτων</string>
     <plurals name="support_debuglog_folder_desc">
-        <item quantity="one">%1$d αποθηκευμένη συνεδρία καταγραφής σφαλμάτων (%2$s)</item>
-        <item quantity="other">%1$d αποθηκευμένες συνεδρίες καταγραφής σφαλμάτων (%2$s)</item>
+        <item quantity="one">%d αποθηκευμένη συνεδρία καταγραφής σφαλμάτων (%s)</item>
+        <item quantity="other">%d αποθηκευμένες συνεδρίες καταγραφής σφαλμάτων (%s)</item>
     </plurals>
     <string name="support_debuglog_folder_empty_desc">Δεν υπάρχουν αποθηκευμένα αρχεία καταγραφής σφαλμάτων</string>
     <string name="support_debuglog_folder_delete_confirmation_title">Διαγραφή όλων των αρχείων καταγραφής σφαλμάτων;</string>
@@ -254,4 +254,9 @@
     <string name="dashboard_device_remove_action">Αφαίρεση συσκευής</string>
     <string name="dashboard_device_remove_picker_title">Επιλέξτε υπηρεσία συγχρονισμού</string>
     <string name="dashboard_device_remove_picker_message">Αυτή η συσκευή συγχρονίζεται μέσω πολλαπλών υπηρεσιών. Επιλέξτε από ποια θα την καταργήσετε — θα επιβεβαιώσετε στην επόμενη οθόνη.</string>
+    <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
+    <string name="upgrade_screen_navigate_up">Πλοήγηση προς τα πάνω</string>
+    <string name="upgrade_screen_progress_loading">Φόρτωση…</string>
 </resources>

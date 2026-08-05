@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play није доступан</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi не може да се повеже са Google Play-ом. Да ли је Google Play инсталиран и ажуриран? Да ли сте пријављени на свој Google налог? Покушајте да очистите кеширање апликације Google Play и поново покренете уређај.</string>
     <string name="upgrades_no_purchases_found_check_account">Нису пронађене куповине. Користите ли прави налог?</string>
     <string name="upgrades_already_owned_error_title">Већ купљено</string>
     <string name="upgrades_already_owned_error_description">Google Play извештава да већ поседујете ову надоградњу. Користите \'Врати куповину\' да је откључате.</string>
+    <string name="upgrades_gplay_billing_error_label">Проблем са Google Play</string>
+    <string name="upgrades_gplay_billing_error_description">Дошло је до проблема са Google Play. Молимо покушајте касније или рестартујте уређај.\n\nДеталји: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Грешка Google Play</string>
+    <string name="upgrades_gplay_internal_error_description">Дошло је до интерне грешке Google Play. Молимо покушајте следеће:\n\n• Рестартујте уређај\n• Очистите кеш Google Play Store\n• Покушајте касније</string>
+    <string name="upgrades_gplay_network_error_title">Грешка приликом повезивања</string>
+    <string name="upgrades_gplay_network_error_description">Није могуће повезати се на Google Play. Молимо проверите вашу интернет конекцију и покушајте поново.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Понуда није доступна</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play тренутно не нуди ову опцију надградње. Молимо покушајте касније или проверите Google Play Store.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">Не може се отворити Google Play. Могуће је да недостаје, да је онемогућена или ограничена на овом уређају.</string>
     <string name="upgrades_dashcard_title">Преузмите Octi Pro</string>
     <string name="upgrades_dashcard_body">Надоградите да бисте откључали додатне функције и подржали развој!</string>
     <string name="upgrades_dashcard_upgrade_action">Надогради</string>
@@ -16,11 +24,11 @@
         <item quantity="few">Бесплатна верзија је ограничена на %1$d уређаја.</item>
         <item quantity="other">Бесплатна верзија је ограничена на %1$d уређаја.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">Назад</string>
-    <string name="upgrade_screen_progress_loading">Учитавање…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">Набавите %1$s</string>
     <string name="upgrade_screen_preamble">Octi нема огласе и не продаје корисничке податке. Мој рад финансирате ви ❤️.</string>
     <string name="upgrade_screen_benefits_title">Предности</string>
-    <string name="upgrade_screen_benefits_body">• Више од 3 уређаја 💯\n• Различите теме 🎨\n• Више опција ⚙️\n• Додатни сервери за синхронизацију 🖥️️\n• Континуиран развој ☕\n• Мотивациони програмер 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Више од 3 уређаја 💯\n• Различите теме 🎨\n• Више опција ⚙️\n• Додатни сервери за синхронизацију 🖥️\n• Континуиран развој ☕\n• Мотивациони програмер 🧙</string>
     <string name="upgrade_screen_how_title">Опције</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -35,6 +43,8 @@
     <string name="upgrade_screen_thanks_toast">Најбољи сте! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Опције надградње</string>
+    <string name="upgrade_screen_offers_unavailable_title">Цене нису доступне</string>
+    <string name="upgrade_screen_offers_unavailable_message">Цене се не могу учитати управо сада. Проверите Google Play и покушајте поново за тренутак.</string>
     <string name="upgrade_screen_offers_or">или</string>
     <string name="upgrade_screen_offers_body">Обе опције пружају исте функције — изаберите цену која вам одговара. Откажите у било које време.</string>
     <string name="upgrade_screen_subscription_offer_title">Годишња претплата</string>
@@ -56,6 +66,7 @@
     <string name="upgrade_screen_restore_status_body">Поново проверите своје куповине помоћу Google Play ако вам статус Pro икад изгледа застарео.</string>
     <string name="upgrade_screen_restore_checked_message">Замолили смо Google Play да поново провери куповине ове апликације, али нисмо могли да потврдимо ниједну за тренутни налог.</string>
     <string name="upgrade_screen_restore_contact_hint">Још увек заглављени? Контактирајте подршку и помоћићемо вам да то решимо.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">Провера са Google Play није завршена на време, па је статус ваше куповине и даље непознат. Ништа се није променило на вашем налогу.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">Ви сте Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Хвала вам што подржавате Octi! Ваше Pro функције су откључане.</string>

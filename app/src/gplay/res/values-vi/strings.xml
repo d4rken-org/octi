@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play không khả dụng</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi không thể kết nối với Google Play. Google Play đã được cài đặt và cập nhật chưa? Bạn đã đăng nhập tài khoản Google chưa? Hãy thử xóa bộ nhớ cache của ứng dụng Google Play và khởi động lại thiết bị.</string>
     <string name="upgrades_no_purchases_found_check_account">Không tìm thấy giao dịch mua nào. Bạn có dùng đúng tài khoản không?</string>
     <string name="upgrades_already_owned_error_title">Đã mua</string>
     <string name="upgrades_already_owned_error_description">Google Play báo cáo rằng bạn đã sở hữu bản nâng cấp này. Sử dụng \'Khôi phục mua hàng\' để mở khóa nó.</string>
+    <string name="upgrades_gplay_billing_error_label">Sự cố Google Play</string>
+    <string name="upgrades_gplay_billing_error_description">Đã xảy ra sự cố với Google Play. Vui lòng thử lại sau hoặc khởi động lại thiết bị của bạn.\n\nChi tiết: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Lỗi Google Play</string>
+    <string name="upgrades_gplay_internal_error_description">Đã xảy ra lỗi nội bộ của Google Play. Vui lòng thử những điều sau:\n\n• Khởi động lại thiết bị của bạn\n• Xóa bộ nhớ cache của Google Play Store\n• Thử lại sau</string>
+    <string name="upgrades_gplay_network_error_title">Lỗi kết nối</string>
+    <string name="upgrades_gplay_network_error_description">Không thể kết nối với Google Play. Vui lòng kiểm tra kết nối internet của bạn và thử lại.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Ưu đãi không có sẵn</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play hiện tại không cung cấp tùy chọn nâng cấp này. Vui lòng thử lại sau hoặc kiểm tra Google Play Store.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">Không thể mở Google Play. Ứng dụng có thể bị thiếu, vô hiệu hóa hoặc bị hạn chế trên thiết bị này.</string>
     <string name="upgrades_dashcard_title">Nhận Octi Pro</string>
     <string name="upgrades_dashcard_body">Nâng cấp để mở khóa các tính năng bổ sung và hỗ trợ phát triển!</string>
     <string name="upgrades_dashcard_upgrade_action">Nâng cấp</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="other">Phiên bản miễn phí bị giới hạn ở %1$d thiết bị.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">Quay lại</string>
-    <string name="upgrade_screen_progress_loading">Đang tải…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">Nhận %1$s</string>
     <string name="upgrade_screen_preamble">Octi không có quảng cáo và không bán dữ liệu người dùng. Công việc của tôi được tài trợ bởi bạn ❤️.</string>
     <string name="upgrade_screen_benefits_title">Lợi ích</string>
-    <string name="upgrade_screen_benefits_body">• Hơn 3 thiết bị 💯\n• Chủ đề khác nhau 🎨\n• Nhiều tùy chọn hơn ⚙️\n• Máy chủ đồng bộ hóa bổ sung 🖥️️\n• Tiếp tục phát triển ☕\n• Nhà phát triển đầy nhiệt huyết 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Hơn 3 thiết bị 💯\n• Chủ đề khác nhau 🎨\n• Nhiều tùy chọn hơn ⚙️\n• Máy chủ đồng bộ hóa bổ sung 🖥️\n• Tiếp tục phát triển ☕\n• Nhà phát triển đầy nhiệt huyết 🧙</string>
     <string name="upgrade_screen_how_title">Tùy chọn</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -34,6 +42,8 @@ Các tính năng giống nhau, chỉ khác các mô hình giá.</string>
     <string name="upgrade_screen_thanks_toast">Bạn là tuyệt nhất! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Tùy chọn nâng cấp</string>
+    <string name="upgrade_screen_offers_unavailable_title">Giá không có sẵn</string>
+    <string name="upgrade_screen_offers_unavailable_message">Không thể tải giá lúc này. Kiểm tra Google Play và thử lại trong giây lát.</string>
     <string name="upgrade_screen_offers_or">hoặc</string>
     <string name="upgrade_screen_offers_body">Cả hai đều mở khóa các tính năng giống nhau — chọn mức giá bạn thích. Hủy bất kỳ lúc nào.</string>
     <string name="upgrade_screen_subscription_offer_title">Gói đăng ký hàng năm</string>
@@ -55,6 +65,7 @@ Các tính năng giống nhau, chỉ khác các mô hình giá.</string>
     <string name="upgrade_screen_restore_status_body">Kiểm tra lại các lần mua của bạn với Google Play nếu trạng thái Pro của bạn trông không cập nhật.</string>
     <string name="upgrade_screen_restore_checked_message">Chúng tôi đã yêu cầu Google Play kiểm tra lại các lần mua của ứng dụng này, nhưng không thể xác nhận lần mua cho tài khoản hiện tại.</string>
     <string name="upgrade_screen_restore_contact_hint">Vẫn gặp vấn đề? Liên hệ hỗ trợ và chúng tôi sẽ giúp bạn giải quyết.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">Kiểm tra với Google Play không kết thúc kịp thời, vì vậy trạng thái mua hàng của bạn vẫn chưa được xác định. Không có thay đổi nào trên tài khoản của bạn.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">Bạn là Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Cảm ơn bạn đã hỗ trợ Octi! Các tính năng Pro của bạn đã được mở khóa.</string>

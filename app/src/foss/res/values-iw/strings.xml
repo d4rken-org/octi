@@ -4,10 +4,18 @@
     <string name="upgrades_dashcard_title">קבל את Octi פרמיום</string>
     <string name="upgrades_dashcard_body">פתח תכונות נוספות והפוך לפטרון לתמיכה בהמשך הפיתוח!</string>
     <string name="upgrades_dashcard_upgrade_action">שדרוג</string>
+    <plurals name="upgrades_dashcard_device_limit_hint">
+        <item quantity="one">הגרסה החינמית מוגבלת ל-%1$d מכשיר</item>
+        <item quantity="two">הגרסה החינמית מוגבלת ל-%1$d מכשירים</item>
+        <item quantity="many">הגרסה החינמית מוגבלת ל-%1$d מכשירים</item>
+        <item quantity="other">הגרסה החינמית מוגבלת ל-%1$d מכשירים</item>
+    </plurals>
     <string name="upgrade_screen_title">שדרג ל-Octi פרמיום</string>
     <string name="upgrade_screen_preamble">Octi לא מכילה מודעות ואיננו מוכרים נתוני משתמשים. העבודה שלי ממומנת על ידך ❤️</string>
     <string name="upgrade_screen_how_title">מה לעשות</string>
     <string name="upgrade_screen_how_body">הפוך לפטרון ונותן חסות לפיתוח! הקש על הלחצן למטה כדי להפעיל את כל התכונות הנוספות ולפתוח את פרופיל התומכים ב- GitHub שלי.</string>
+    <string name="upgrade_screen_why_title">יתרונות</string>
+    <string name="upgrade_screen_benefits_body">• יותר מ־3 מכשירים 💯\n• ערכות נושא שונות 🎨\n• אפשרויות נוספות ⚙️\n• שרתי סנכרון נוספים 🖥️\n• המשך פיתוח קוד פתוח ☕\n• מוטיבציה להמשך הפיתוח 🧙</string>
     <string name="upgrade_screen_sponsor_action">חסות פיתוח</string>
     <string name="upgrade_screen_sponsor_action_hint">האלטרנטיבה הן מודעות, אנליטיקס ו-Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">תודה שתמכת בפיתוח קוד פתוח ❤️</string>
@@ -16,6 +24,8 @@
     <string name="upgrade_screen_supporter_title">אתה תומך ❤️</string>
     <string name="upgrade_screen_supporter_body">תודה על תמיכה בפיתוח הקוד הפתוח של Octi!</string>
     <string name="upgrade_screen_supporter_since">תומך מאז %1$s</string>
+    <string name="upgrade_screen_recurring_title">תמך בהמשך</string>
+    <string name="upgrade_screen_recurring_body">Octi ממשיכה להתפתח דרך עדכונים ותיקונים. אם אתה רוצה לתמוך בכך, שקול תרומה חוזרת דרך GitHub Sponsors.</string>
     <string name="upgrade_screen_open_sponsors_action">פתח את GitHub Sponsors</string>
     <string name="upgrade_screen_free_status_title">אתה משתמש בגרסה החינם</string>
     <string name="upgrade_screen_free_status_body">הפוך לתומך כדי לפתוח תכונות נוספות ולממן פיתוח מתמשך.</string>

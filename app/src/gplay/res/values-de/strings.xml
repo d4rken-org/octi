@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Keine Verbindung zu Google Play</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi kann sich nicht mit Google Play verbinden. Ist Google Play installiert und aktuell? Bist du angemeldet bei Google Play? Versuche den Cache von der Google Play App zu bereinigen und starte dein Gerät neu.</string>
     <string name="upgrades_no_purchases_found_check_account">Keine Zahlung gefunden. Benutzt du den richtigen Account?</string>
     <string name="upgrades_already_owned_error_title">Bereits gekauft</string>
     <string name="upgrades_already_owned_error_description">Google Play meldet, dass du dieses Upgrade bereits besitzt. Verwende \'Kauf wiederherstellen\', um es freizuschalten.</string>
+    <string name="upgrades_gplay_billing_error_label">Google Play Problem</string>
+    <string name="upgrades_gplay_billing_error_description">Es gab ein Problem mit Google Play. Bitte versuche es später erneut oder starte dein Gerät neu.\n\nDetails: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Google Play Fehler</string>
+    <string name="upgrades_gplay_internal_error_description">Ein interner Fehler bei Google Play ist aufgetreten. Bitte versuche Folgendes:\n\n• Starte dein Gerät neu\n• Leere den Cache des Google Play Stores\n• Versuche es später erneut</string>
+    <string name="upgrades_gplay_network_error_title">Verbindungsfehler</string>
+    <string name="upgrades_gplay_network_error_description">Verbindung zu Google Play nicht möglich. Bitte überprüfe Deine Internetverbindung und versuche es erneut.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Angebot nicht verfügbar</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play bietet diese Upgrade-Option derzeit nicht an. Bitte versuche es später noch einmal oder überprüfe den Google Play Store.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">Google Play konnte nicht geöffnet werden. Möglicherweise ist die App auf diesem Gerät nicht installiert, deaktiviert oder der Zugriff darauf wurde eingeschränkt.</string>
     <string name="upgrades_dashcard_title">Hole dir Octi Pro</string>
     <string name="upgrades_dashcard_body">Freischalten für weitere Funktionen und Unterstützung des Entwicklers!</string>
     <string name="upgrades_dashcard_upgrade_action">Freischalten</string>
@@ -15,11 +23,11 @@
         <item quantity="one">Die kostenlose Version ist auf %1$d Gerät beschränkt.</item>
         <item quantity="other">Die kostenlose Version ist auf %1$d Geräte beschränkt.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">Nach oben navigieren</string>
-    <string name="upgrade_screen_progress_loading">Lädt…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">Hol dir %1$s</string>
     <string name="upgrade_screen_preamble">Octi zeigt keine Werbung an und verkauft keine Nutzerdaten.  Mein Werk wird von dir finanziert❤️.</string>
     <string name="upgrade_screen_benefits_title">Vorteile</string>
-    <string name="upgrade_screen_benefits_body">• Mehr als 3 Geräte 💯\n• Verschiedene Skins</string>
+    <string name="upgrade_screen_benefits_body">• Mehr als 3 Geräte 💯\n• Verschiedene Designs 🎨\n• Mehr Optionen ⚙️\n• Zusätzliche Sync-Server 🖥️\n• Kontinuierliche Entwicklung ☕\n• Ein motivierter Entwickler 🧙</string>
     <string name="upgrade_screen_how_title">Optionen</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -34,6 +42,8 @@
     <string name="upgrade_screen_thanks_toast">Du bist der Beste! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Upgrade-Möglichkeiten</string>
+    <string name="upgrade_screen_offers_unavailable_title">Preise nicht verfügbar</string>
+    <string name="upgrade_screen_offers_unavailable_message">Die Preise konnten gerade nicht geladen werden. Überprüfe Google Play und versuche es gleich noch einmal.</string>
     <string name="upgrade_screen_offers_or">oder</string>
     <string name="upgrade_screen_offers_body">Beide schalten die gleichen Funktionen frei — wähle das Preismodell, das dir gefällt. Jederzeit kündbar.</string>
     <string name="upgrade_screen_subscription_offer_title">Jährliches Abonnement</string>
@@ -55,6 +65,7 @@
     <string name="upgrade_screen_restore_status_body">Überprüfe deine Käufe mit Google Play, falls dein Pro-Status jemals veraltet aussieht.</string>
     <string name="upgrade_screen_restore_checked_message">Wir haben Google Play gebeten, die App-Käufe erneut zu überprüfen, konnten aber keinen für das aktuelle Konto bestätigen.</string>
     <string name="upgrade_screen_restore_contact_hint">Immer noch festgefahren? Kontaktiere den Support und wir helfen dir, alles zu klären.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">Die Überprüfung mit Google Play wurde nicht rechtzeitig abgeschlossen, daher ist dein Kaufstatus weiterhin unbekannt. An deinem Konto wurde nichts geändert.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">Du bist Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Danke für deine Unterstützung bei Octi! Deine Pro-Funktionen sind freigeschaltet.</string>

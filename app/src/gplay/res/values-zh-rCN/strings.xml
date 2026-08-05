@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">专业版</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play不可用</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi 无法连接到 Google Play。Google Play 是否已安装并更新？您的 Google 帐户是否已登录？尝试清除 Google Play 应用的缓存并重新启动您的设备。</string>
     <string name="upgrades_no_purchases_found_check_account">未找到任何购买记录。您使用的是正确的帐户吗？</string>
     <string name="upgrades_already_owned_error_title">已购买</string>
     <string name="upgrades_already_owned_error_description">Google Play 报告您已拥有此升级。使用“恢复购买”将其解锁。</string>
+    <string name="upgrades_gplay_billing_error_label">Google Play 问题</string>
+    <string name="upgrades_gplay_billing_error_description">Google Play 出现了问题。请稍后再试或重启您的设备。\n\n详情：%s</string>
+    <string name="upgrades_gplay_internal_error_title">Google Play 错误</string>
+    <string name="upgrades_gplay_internal_error_description">发生了内部 Google Play 错误。请尝试以下操作：\n\n• 重启您的设备\n• 清除 Google Play Store 缓存\n• 稍后重试</string>
+    <string name="upgrades_gplay_network_error_title">连接错误</string>
+    <string name="upgrades_gplay_network_error_description">无法连接到 Google Play。请检查您的互联网连接，然后重试。</string>
+    <string name="upgrades_gplay_offer_unavailable_title">优惠不可用</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play 目前不提供此升级选项。请稍后重试或检查 Google Play Store。</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">无法打开 Google Play。此设备上可能缺少、禁用或限制了该应用。</string>
     <string name="upgrades_dashcard_title">获取Octi Pro</string>
     <string name="upgrades_dashcard_body">升级以解锁附加功能并支持开发！</string>
     <string name="upgrades_dashcard_upgrade_action">升级</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="other">免费版最多支持 %1$d 台设备。</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">向上导航</string>
-    <string name="upgrade_screen_progress_loading">正在加载…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">获取 %1$s</string>
     <string name="upgrade_screen_preamble">Octi 没有广告，也不会出售用户数据。我的工作由您资助 ❤️。</string>
     <string name="upgrade_screen_benefits_title">优势</string>
-    <string name="upgrade_screen_benefits_body">• 超过 3 台设备 💯\n• 不同主题 🎨\n• 更多选项 ⚙️\n• 额外的同步服务器🖥️️\n• 持续开发 ☕\n• 积极进取的开发者 🧙</string>
+    <string name="upgrade_screen_benefits_body">• 超过 3 台设备 💯\n• 不同主题 🎨\n• 更多选项 ⚙️\n• 额外的同步服务器 🖥️\n• 持续开发 ☕\n• 积极进取的开发者 🧙</string>
     <string name="upgrade_screen_how_title">选项</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -33,6 +41,8 @@
     <string name="upgrade_screen_thanks_toast">你是最棒的！❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">升级选项</string>
+    <string name="upgrade_screen_offers_unavailable_title">价格不可用</string>
+    <string name="upgrade_screen_offers_unavailable_message">目前无法加载价格。检查 Google Play，稍后重试。</string>
     <string name="upgrade_screen_offers_or">或</string>
     <string name="upgrade_screen_offers_body">两者都可解锁相同的功能——选择您更喜欢的定价方式。可随时取消。</string>
     <string name="upgrade_screen_subscription_offer_title">年度订阅</string>
@@ -54,6 +64,7 @@
     <string name="upgrade_screen_restore_status_body">如果您的专业版状态看起来已过时，请使用 Google Play 重新检查您的购买记录。</string>
     <string name="upgrade_screen_restore_checked_message">我们已请求 Google Play 重新检查此应用的购买记录，但无法确认当前账户存在购买记录。</string>
     <string name="upgrade_screen_restore_contact_hint">仍然无法解决？请联系支持团队，我们将帮您解决。</string>
+    <string name="upgrade_screen_restore_inconclusive_message">与 Google Play 的检查没有及时完成，因此您的购买状态仍然未知。您的账户没有任何改变。</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">您已拥有 Octi 专业版 🎉</string>
     <string name="upgrade_screen_owned_body">感谢您对 Octi 的支持！您的专业版功能已解锁。</string>

@@ -254,4 +254,9 @@
     <string name="dashboard_device_remove_action">Eszköz eltávolítása</string>
     <string name="dashboard_device_remove_picker_title">Szinkronizálási szolgáltatás kiválasztása</string>
     <string name="dashboard_device_remove_picker_message">Ez az eszköz több szolgáltatáson keresztül szinkronizálódik. Válassza ki, melyikből szeretné eltávolítani – a következő képernyőn megerősíthet.</string>
+    <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
+    <string name="upgrade_screen_navigate_up">Vissza</string>
+    <string name="upgrade_screen_progress_loading">Betöltés…</string>
 </resources>

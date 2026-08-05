@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play kullanılamıyor</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi Google Play\'e bağlanamıyor. Google Play yüklü ve güncel mi? Google Hesabınız ile oturum açtınız mı? Google Play uygulamasının önbelleğini temizlemeyi ve cihazınızı yeniden başlatmayı deneyin.</string>
     <string name="upgrades_no_purchases_found_check_account">Satın alma bulunamadı. Doğru hesabı mı kullanıyorsunuz?</string>
     <string name="upgrades_already_owned_error_title">Zaten satın alındı</string>
     <string name="upgrades_already_owned_error_description">Google Play, bu yükseltmeyi zaten sahip olduğunuzu bildiriyor. Kilidini açmak için \'Satın Alma İşlemini Geri Yükle\' seçeneğini kullanın.</string>
+    <string name="upgrades_gplay_billing_error_label">Google Play Sorunu</string>
+    <string name="upgrades_gplay_billing_error_description">Google Play ile ilgili bir sorun oluştu. Lütfen daha sonra tekrar deneyin veya cihazınızı yeniden başlatın.\n\nDetaylar: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Google Play Hatası</string>
+    <string name="upgrades_gplay_internal_error_description">Bir dahili Google Play hatası oluştu. Lütfen aşağıdakileri deneyin:\n\n• Cihazınızı yeniden başlatın\n• Google Play Store önbelleğini temizleyin\n• Daha sonra tekrar deneyin</string>
+    <string name="upgrades_gplay_network_error_title">Bağlantı hatası</string>
+    <string name="upgrades_gplay_network_error_description">Google Play\'e bağlanılamıyor. Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Teklif kullanılamıyor</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play şu anda bu yükseltme seçeneğini sunmuyor. Lütfen daha sonra tekrar deneyin veya Google Play Store\'u kontrol edin.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">Google Play açılamadı. Cihazda eksik, devre dışı bırakılmış veya kısıtlanmış olabilir.</string>
     <string name="upgrades_dashcard_title">Octi Pro Al</string>
     <string name="upgrades_dashcard_body">Ek özelliklerin kilidini açmak ve geliştirmeyi desteklemek için yükseltin!</string>
     <string name="upgrades_dashcard_upgrade_action">Yükselt</string>
@@ -15,11 +23,11 @@
         <item quantity="one">%1$d cihaz</item>
         <item quantity="other">Ücretsiz sürüm %1$d cihazla sınırlıdır.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">Yukarı git</string>
-    <string name="upgrade_screen_progress_loading">Yükleniyor…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">%1$s Al</string>
     <string name="upgrade_screen_preamble">Octi\'de reklam yoktur ve kullanıcı verilerini satmaz. Çalışmalarım sizin tarafınızdan finanse edilmektedir ❤️.</string>
     <string name="upgrade_screen_benefits_title">Avantajlar</string>
-    <string name="upgrade_screen_benefits_body">- 3\'ten fazla cihaz 💯\n- Farklı temalar 🎨\n- Daha fazla seçenek ⚙️\n- Ekstra senkronizasyon sunucuları🖥️️\n- Sürekli devam eden geliştirme ☕\n- Motive olmuş bir geliştirici 🧙</string>
+    <string name="upgrade_screen_benefits_body">• 3\'ten fazla cihaz 💯\n• Farklı temalar 🎨\n• Daha fazla seçenek ⚙️\n• Ekstra senkronizasyon sunucuları 🖥️\n• Sürekli devam eden geliştirme ☕\n• Motive olmuş bir geliştirici 🧙</string>
     <string name="upgrade_screen_how_title">Şeçenekler</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -35,6 +43,8 @@ Aynı özellikler, sadece farklı fiyatlandırma modelleri.</string>
     <string name="upgrade_screen_thanks_toast">Çok teşekkürler! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Yükseltme seçenekleri</string>
+    <string name="upgrade_screen_offers_unavailable_title">Fiyatlar kullanılamıyor</string>
+    <string name="upgrade_screen_offers_unavailable_message">Fiyatlar şu anda yüklenemedi. Google Play\'i kontrol edin ve birazdan tekrar deneyin.</string>
     <string name="upgrade_screen_offers_or">veya</string>
     <string name="upgrade_screen_offers_body">Her ikisi de aynı özellikleri açar — istediğiniz fiyatlandırmayı seçin. Dilediğiniz zaman iptal edebilirsiniz.</string>
     <string name="upgrade_screen_subscription_offer_title">Yıllık abonelik</string>
@@ -56,6 +66,7 @@ Aynı özellikler, sadece farklı fiyatlandırma modelleri.</string>
     <string name="upgrade_screen_restore_status_body">Pro durumunuz güncel görünmüyorsa, satın almalarınızı Google Play ile yeniden kontrol edin.</string>
     <string name="upgrade_screen_restore_checked_message">Bu uygulamanın satın almalarını yeniden kontrol etmesi için Google Play\'den istedik ancak mevcut hesap için birini doğrulayamadık.</string>
     <string name="upgrade_screen_restore_contact_hint">Hâlâ sorun mu yaşıyorsunuz? Destek ekibiyle iletişime geçin, sorunu birlikte çözelim.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">Google Play ile yapılan kontrol zamanında tamamlanmadığından, satın alma durumunuz hala bilinmiyor. Hesabınızda hiçbir şey değişmedi.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">Octi Pro\'sunuz 🎉</string>
     <string name="upgrade_screen_owned_body">Octi\'yi desteklediğiniz için teşekkürler! Pro özellikleriniz açıldı.</string>

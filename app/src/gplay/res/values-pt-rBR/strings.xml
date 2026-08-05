@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play indisponível</string>
     <string name="upgrades_gplay_unavailable_error_description">O Octi não pode conectar ao Google Play. O Google Play está instalado e atualizado? Sua Conta Google está conectada? Tente limpar o cache do app Google Play e reiniciar o dispositivo.</string>
     <string name="upgrades_no_purchases_found_check_account">Nenhuma compra encontrada. Você está usando a conta correta?</string>
     <string name="upgrades_already_owned_error_title">Já adquirido</string>
     <string name="upgrades_already_owned_error_description">Google Play informa que você já possui este upgrade. Use \'Restaurar compra\' para desbloqueá-lo.</string>
+    <string name="upgrades_gplay_billing_error_label">Problema do Google Play</string>
+    <string name="upgrades_gplay_billing_error_description">Houve um problema com o Google Play. Por favor, tente novamente mais tarde ou reinicie o seu dispositivo.\n\nDetalhes: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Erro do Google Play</string>
+    <string name="upgrades_gplay_internal_error_description">Ocorreu um erro interno do Google Play. Tente o seguinte:\n\n• Reinicie seu dispositivo\n• Limpe o cache da Google Play Store\n• Tente novamente mais tarde</string>
+    <string name="upgrades_gplay_network_error_title">Erro de conexão</string>
+    <string name="upgrades_gplay_network_error_description">Não foi possível conectar ao Google Play. Verifique sua conexão com a internet e tente novamente.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Oferta indisponível</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play não está oferecendo essa opção de upgrade no momento. Tente novamente mais tarde ou verifique a Google Play Store.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">Não foi possível abrir o Google Play. Ele pode estar ausente, desabilitado ou restrito neste dispositivo.</string>
     <string name="upgrades_dashcard_title">Obter Octi Pro</string>
     <string name="upgrades_dashcard_body">Atualize para desbloquear recursos adicionais e apoiar o desenvolvimento!</string>
     <string name="upgrades_dashcard_upgrade_action">Atualizar</string>
@@ -15,11 +23,11 @@
         <item quantity="one">A versão gratuita é limitada a %1$d dispositivo.</item>
         <item quantity="other">A versão gratuita é limitada a %1$d dispositivos.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">Voltar</string>
-    <string name="upgrade_screen_progress_loading">Carregando…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">Obter %1$s</string>
     <string name="upgrade_screen_preamble">O Octi não exibe anúncios e não vende dados do usuário. Meu trabalho é financiado por você ❤️.</string>
     <string name="upgrade_screen_benefits_title">Benefícios</string>
-    <string name="upgrade_screen_benefits_body">• Mais de 3 dispositivos 💯\n• Temas diferentes 🎨\n• Mais opções ⚙️\n• Servidores de sincronização extras🖥️️\n• Desenvolvimento contínuo ☕\n• Um desenvolvedor motivado 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Mais de 3 dispositivos 💯\n• Temas diferentes 🎨\n• Mais opções ⚙️\n• Servidores de sincronização extras 🖥️\n• Desenvolvimento contínuo ☕\n• Um desenvolvedor motivado 🧙</string>
     <string name="upgrade_screen_how_title">Opções</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -35,6 +43,8 @@ Os mesmos recursos, apenas modelos de preços diferentes.</string>
     <string name="upgrade_screen_thanks_toast">Você é o melhor! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Opções de atualização</string>
+    <string name="upgrade_screen_offers_unavailable_title">Preços indisponíveis</string>
+    <string name="upgrade_screen_offers_unavailable_message">Não foi possível carregar os preços neste momento. Verifique o Google Play e tente novamente em breve.</string>
     <string name="upgrade_screen_offers_or">ou</string>
     <string name="upgrade_screen_offers_body">Ambos desbloqueiam os mesmos recursos — escolha o preço que preferir. Cancele a qualquer momento.</string>
     <string name="upgrade_screen_subscription_offer_title">Assinatura anual</string>
@@ -56,6 +66,7 @@ Os mesmos recursos, apenas modelos de preços diferentes.</string>
     <string name="upgrade_screen_restore_status_body">Verifique suas compras novamente com o Google Play se seu status de Pro parecer desatualizado.</string>
     <string name="upgrade_screen_restore_checked_message">Pedimos ao Google Play para verificar novamente as compras deste aplicativo, mas não conseguimos confirmar uma compra para a conta atual.</string>
     <string name="upgrade_screen_restore_contact_hint">Ainda com dúvidas? Entre em contato com o suporte e ajudaremos a resolver.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">A verificação com o Google Play não foi concluída a tempo, portanto seu status de compra ainda é desconhecido. Nada foi alterado em sua conta.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">Você é Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Obrigado por apoiar o Octi! Seus recursos Pro estão desbloqueados.</string>

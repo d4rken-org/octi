@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">A Google Play nem elérhető</string>
     <string name="upgrades_gplay_unavailable_error_description">Az Octi nem tud csatlakozni a Google Playhez. Telepítve és naprakész a Google Play? Be vagy jelentkezve Google-fiókkal? Próbáld meg törölni a Google Play alkalmazás gyorsítótárát és indítsd újra az eszközt.</string>
     <string name="upgrades_no_purchases_found_check_account">Nem találhatók vásárlások. Biztosan a megfelelő fiókot használod?</string>
     <string name="upgrades_already_owned_error_title">Már megvásárolva</string>
     <string name="upgrades_already_owned_error_description">A Google Play szerint már megvásároltad ezt a frissítést. Használd a „Vásárlás visszaállítása\" lehetőséget feloldásához.</string>
+    <string name="upgrades_gplay_billing_error_label">Google Play-probléma</string>
+    <string name="upgrades_gplay_billing_error_description">Probléma merült fel a Google Play-vel. Próbáld később vagy indítsd újra az eszközöd.\n\nRészletek: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Google Play-hiba</string>
+    <string name="upgrades_gplay_internal_error_description">Belső Google Play hiba történt. Próbáld meg a következőket:\n\n• Indítsd újra az eszközöd\n• Tisztítsd meg a Google Play Store gyorsítótárát\n• Próbáld később</string>
+    <string name="upgrades_gplay_network_error_title">Csatlakozási hiba</string>
+    <string name="upgrades_gplay_network_error_description">Nem lehet csatlakozni a Google Play-hez. Ellenőrizd az internet-kapcsolatodat és próbáld újra.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Ajánlat nem elérhető</string>
+    <string name="upgrades_gplay_offer_unavailable_description">A Google Play jelenleg nem kínálja ezt az upgrade opciót. Próbáld később vagy ellenőrizd a Google Play Store-t.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">Nem sikerült a Google Play megnyitása. Az alkalmazás hiányozhat, letiltott lehet vagy korlátozott ezen az eszközön.</string>
     <string name="upgrades_dashcard_title">Szerezze be az Octi Pro-t</string>
     <string name="upgrades_dashcard_body">Frissíts további funkciók eléréséhez és a fejlesztés támogatásához!</string>
     <string name="upgrades_dashcard_upgrade_action">Frissítés</string>
@@ -15,11 +23,11 @@
         <item quantity="one">%1$d eszközre korlátozódik az ingyenes verzió.</item>
         <item quantity="other">%1$d eszközre korlátozódik az ingyenes verzió.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">Vissza</string>
-    <string name="upgrade_screen_progress_loading">Betöltés…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">Szerezd meg az %1$s-t</string>
     <string name="upgrade_screen_preamble">Az Octi nem tartalmaz hirdetéseket és nem árul felhasználói adatokat. A munkámat te finanszírozod ❤️.</string>
     <string name="upgrade_screen_benefits_title">Előnyök</string>
-    <string name="upgrade_screen_benefits_body">• Több mint 3 eszköz 💯\n• Különböző témák 🎨\n• Több lehetőség ⚙️\n• Extra szinkronizáló szerverek🖥️️\n• Folyamatos fejlesztés ☕\n• Elkötelezett fejlesztő 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Több mint 3 eszköz 💯\n• Különböző témák 🎨\n• Több lehetőség ⚙️\n• Extra szinkronizáló szerverek 🖥️\n• Folyamatos fejlesztés ☕\n• Elkötelezett fejlesztő 🧙</string>
     <string name="upgrade_screen_how_title">Lehetőségek</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -34,6 +42,8 @@
     <string name="upgrade_screen_thanks_toast">Te vagy a legjobb! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Frissítési lehetőségek</string>
+    <string name="upgrade_screen_offers_unavailable_title">Árak nem érhetők el</string>
+    <string name="upgrade_screen_offers_unavailable_message">Az árakat jelenleg nem lehetett betölteni. Ellenőrizd a Google Play-t és próbáld később.</string>
     <string name="upgrade_screen_offers_or">vagy</string>
     <string name="upgrade_screen_offers_body">Mindkettő ugyanazokat a funkciókat oldja fel — válaszd az általad preferált árazást. Bármikor lemondható.</string>
     <string name="upgrade_screen_subscription_offer_title">Éves előfizetés</string>
@@ -55,6 +65,7 @@
     <string name="upgrade_screen_restore_status_body">Ellenőrizd újra a vásárlásaidat a Google Play-ben, ha a Pro státuszod elavultnak tűnik.</string>
     <string name="upgrade_screen_restore_checked_message">Megkértük a Google Play-t, hogy ellenőrizze újra az alkalmazás vásárlásait, de nem tudtunk megerősíteni vásárlást az aktuális fiók számára.</string>
     <string name="upgrade_screen_restore_contact_hint">Még mindig nem működik? Fordulj az ügyfélszolgálathoz, és segítünk rendezni.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">A Google Play-vel való ellenőrzés nem fejeződött be időben, ezért a vásárlási állapot továbbra sem ismert. Semmi sem változott a fiókodon.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">Te vagy az Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Köszönjük az Octi támogatásáért! A Pro funkciók feloldottak.</string>

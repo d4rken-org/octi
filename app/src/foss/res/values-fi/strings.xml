@@ -12,6 +12,8 @@
     <string name="upgrade_screen_preamble">Octi ei sisällä mainoksia eikä myy käyttäjätietoja. Työni rahoitetaan sinun avullasi ❤️</string>
     <string name="upgrade_screen_how_title">Mitä tehdä</string>
     <string name="upgrade_screen_how_body">Ryhdy tukijaksi ja sponsoroi kehitystä! Napauta alapuolella olevaa painiketta aktivoidaksesi kaikki lisäominaisuudet ja avataksesi GitHub Sponsorini profiilin.</string>
+    <string name="upgrade_screen_why_title">Hyödyt</string>
+    <string name="upgrade_screen_benefits_body">• Yli 3 laitetta 💯\n• Erilaiset teemat 🎨\n• Lisää asetuksia ⚙️\n• Lisäsynkronointipalvelimet 🖥️\n• Jatkuva avoimen lähdekoodin kehitys ☕\n• Motivoitunut kehittäjä 🧙</string>
     <string name="upgrade_screen_sponsor_action">Sponsoroi kehitystä</string>
     <string name="upgrade_screen_sponsor_action_hint">Vaihtoehtoina ovat mainokset, analytiikka ja Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Kiitos, että tuet avoimen lähdekoodin kehitystä ❤️</string>
@@ -20,6 +22,8 @@
     <string name="upgrade_screen_supporter_title">Olet kannattaja ❤️</string>
     <string name="upgrade_screen_supporter_body">Kiitos avoimen lähdekoodin Octi-kehityksen tukemisesta!</string>
     <string name="upgrade_screen_supporter_since">Kannattaja siitä lähtien %1$s</string>
+    <string name="upgrade_screen_recurring_title">Pidä se käynnissä</string>
+    <string name="upgrade_screen_recurring_body">Octi kehittyy jatkuvasti päivitysten ja korjausten kautta. Jos haluat tukea sitä, harkitse säännöllistä lahjoitusta GitHub Sponsorsilla.</string>
     <string name="upgrade_screen_open_sponsors_action">Avaa GitHub Sponsors</string>
     <string name="upgrade_screen_free_status_title">Käytät ilmaista versiota</string>
     <string name="upgrade_screen_free_status_body">Tule kannattajaksi lisäominaisuuksien avaamiseksi ja kehityksen jatkamisen tukemiseksi.</string>

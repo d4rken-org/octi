@@ -254,4 +254,9 @@
     <string name="dashboard_device_remove_action">Verwijder apparaat</string>
     <string name="dashboard_device_remove_picker_title">Kies synchronisatiedienst</string>
     <string name="dashboard_device_remove_picker_message">Dit apparaat is gesynchroniseerd via meerdere diensten. Kies van welke dienst je het wilt verwijderen — je bevestigt dit op het volgende scherm.</string>
+    <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
+    <string name="upgrade_screen_navigate_up">Navigeer omhoog</string>
+    <string name="upgrade_screen_progress_loading">Aan het laden…</string>
 </resources>
