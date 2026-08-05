@@ -255,8 +255,6 @@
     <string name="dashboard_device_remove_picker_title">Επιλέξτε υπηρεσία συγχρονισμού</string>
     <string name="dashboard_device_remove_picker_message">Αυτή η συσκευή συγχρονίζεται μέσω πολλαπλών υπηρεσιών. Επιλέξτε από ποια θα την καταργήσετε — θα επιβεβαιώσετε στην επόμενη οθόνη.</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Πλοήγηση προς τα πάνω</string>
     <string name="upgrade_screen_progress_loading">Φόρτωση…</string>
 </resources>

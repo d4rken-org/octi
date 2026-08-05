@@ -255,8 +255,6 @@
     <string name="dashboard_device_remove_picker_title">Sync-Dienst wählen</string>
     <string name="dashboard_device_remove_picker_message">Dieses Gerät wird über mehrere Dienste synchronisiert. Wähle aus, von welchem du es entfernen möchtest – die Bestätigung erfolgt auf dem nächsten Bildschirm.</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Nach oben navigieren</string>
     <string name="upgrade_screen_progress_loading">Wird geladen…</string>
 </resources>

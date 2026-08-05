@@ -270,8 +270,6 @@
     <string name="dashboard_device_remove_picker_title">בחר שירות סנכרון</string>
     <string name="dashboard_device_remove_picker_message">מכשיר זה מסונכרן דרך שירותים מרובים. בחר מאיזה שירות להסיר אותו — תאשר בעמוד הבא.</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">פרו</string>
     <string name="upgrade_screen_navigate_up">עלה</string>
     <string name="upgrade_screen_progress_loading">טוען…</string>
 </resources>

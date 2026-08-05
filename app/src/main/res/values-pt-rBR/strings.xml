@@ -255,8 +255,6 @@
     <string name="dashboard_device_remove_picker_title">Escolha o serviço de sincronização</string>
     <string name="dashboard_device_remove_picker_message">Este dispositivo é sincronizado através de múltiplos serviços. Escolha de qual remover — você confirmará na próxima tela.</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Navegar para cima</string>
     <string name="upgrade_screen_progress_loading">Carregando…</string>
 </resources>
