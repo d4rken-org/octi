@@ -198,6 +198,9 @@ dependencies {
     "gplayImplementation"("com.android.billingclient:billing:8.3.0")
     "gplayImplementation"("com.android.billingclient:billing-ktx:8.3.0")
 
+    "gplayImplementation"("com.google.android.play:review:2.0.2")
+    "gplayImplementation"("com.google.android.play:review-ktx:2.0.2")
+
     implementation("io.github.z4kn4fein:semver:1.4.2")
 
     "screenshotTestImplementation"(platform("androidx.compose:compose-bom:${Versions.Compose.bom}"))
