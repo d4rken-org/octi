@@ -1,1 +1,1 @@
-Sledování a synchronizace informací mezi více zařízeními se systémem Android
+Sledujte ostatní zařízení s Androidem: baterie, WiFi, schránka a další

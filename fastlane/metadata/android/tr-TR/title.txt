@@ -1,1 +1,1 @@
-Octi - Çoklu Cihaz Monitörü
+Octi - Çok Cihazlı Senkron
