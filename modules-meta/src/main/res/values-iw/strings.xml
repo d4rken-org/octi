@@ -2,6 +2,7 @@
 <resources>
     <string name="module_meta_label">מודול מטא-נתונים</string>
     <string name="module_meta_android_name_x_label">אנדרואיד %1$s</string>
+    <string name="module_meta_uptime_label">עד %1$s</string>
     <string name="module_meta_detail_label_label">תווית</string>
     <string name="module_meta_detail_manufacturer_label">יצרן</string>
     <string name="module_meta_detail_model_label">דגם</string>

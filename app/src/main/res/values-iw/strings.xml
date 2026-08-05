@@ -37,6 +37,12 @@
     <string name="debug_debuglog_screen_sensitive_title">מידע רגיש</string>
     <string name="debug_debuglog_screen_session_path_label">נתיב הפעלה</string>
     <string name="debug_debuglog_screen_log_files_label">קבצי יומן</string>
+    <plurals name="debug_debuglog_screen_log_files_ready">
+        <item quantity="one">%1$d קובץ מוכן (%2$s) · %3$s</item>
+        <item quantity="two">%1$d קבצים מוכנים (%2$s) · %3$s</item>
+        <item quantity="many">%1$d קבצים מוכנים (%2$s) · %3$s</item>
+        <item quantity="other">%1$d קבצים מוכנים (%2$s) · %3$s</item>
+    </plurals>
     <string name="debug_debuglog_duration_minutes_seconds">%1$dדק %2$dשנ</string>
     <string name="debug_debuglog_duration_seconds">%1$dשנ</string>
     <string name="debug_debuglog_short_recording_title">ההקלטה קצרה מדי</string>
@@ -119,6 +125,18 @@
     <string name="sync_device_compatibility_hint">בעיית תאימות</string>
     <string name="sync_issues_errors_title">שגיאות</string>
     <string name="sync_issues_warnings_title">אזהרות</string>
+    <plurals name="sync_issues_errors_count">
+        <item quantity="one">%d שגיאה</item>
+        <item quantity="two">%d שגיאות</item>
+        <item quantity="many">%d שגיאות</item>
+        <item quantity="other">%d שגיאות</item>
+    </plurals>
+    <plurals name="sync_issues_warnings_count">
+        <item quantity="one">%d אזהרה</item>
+        <item quantity="two">%d אזהרות</item>
+        <item quantity="many">%d אזהרות</item>
+        <item quantity="other">%d אזהרות</item>
+    </plurals>
     <string name="sync_device_added_at_label">נוסף %1$s</string>
     <plurals name="general_unique_devices_count_label">
         <item quantity="one">%d ייחודי, זמין רק כאן</item>
@@ -200,11 +218,23 @@
     <string name="support_contact_description_bug_hint">תאר מה קרה וכיצד לשחזר על הבעיה. אנא היי ספציפי (מינימום 20 מילים).</string>
     <string name="support_contact_expected_label">התנהגות צפויה</string>
     <string name="support_contact_expected_hint">תאר מה צפית שיקרה (מינימום 10 מילים).</string>
+    <plurals name="support_contact_word_count">
+        <item quantity="one">%1$d / %2$d מילה</item>
+        <item quantity="two">%1$d / %2$d מילים</item>
+        <item quantity="many">%1$d / %2$d מילים</item>
+        <item quantity="other">%1$d / %2$d מילים</item>
+    </plurals>
     <string name="support_contact_welcome">אני קורא כל הודעה בעצמי ועושה כמיטב להשיב, אבל מכיוון שאני עובד על זה לבד, זה עשוי לקחת קצת זמן. תודה על הבנתך.</string>
     <string name="support_contact_footer">ההודעה שלך תשלח באמצעות אימייל. מידע המכשיר וההגדרות מצורף אוטומטית. אפשר לצרף צילומי מסך או סרטון לאימייל. חלקים מהאימייל יהיו באנגלית כדי שהמפתח יוכל להבין אותו בקלות.</string>
     <string name="support_contact_send_action">פתח אפליקציית דואר אלקטרוני</string>
     <string name="support_contact_no_email_app">לא נמצאה אפליקציית דואר אלקטרוני במכשיר זה.</string>
     <string name="support_debuglog_folder_label">תיקיית יומן איתור</string>
+    <plurals name="support_debuglog_folder_desc">
+        <item quantity="one">%1$d קובץ המשתמש ב-%2$s</item>
+        <item quantity="two">%1$d קבצים המשתמשים ב-%2$s</item>
+        <item quantity="many">%1$d קבצים המשתמשים ב-%2$s</item>
+        <item quantity="other">%1$d קבצים המשתמשים ב-%2$s</item>
+    </plurals>
     <string name="support_debuglog_folder_empty_desc">אין יומני איתור שמורים</string>
     <string name="support_debuglog_folder_delete_confirmation_title">למחוק את כל יומני האיתור?</string>
     <string name="support_debuglog_folder_delete_confirmation_message">פעולה זו תמחק לצמיתת את כל סשני יומן האיתור השמורים. לא ניתן לבטל פעולה זו.</string>
@@ -239,4 +269,9 @@
     <string name="dashboard_device_remove_action">הסרת התקן</string>
     <string name="dashboard_device_remove_picker_title">בחר שירות סנכרון</string>
     <string name="dashboard_device_remove_picker_message">מכשיר זה מסונכרן דרך שירותים מרובים. בחר מאיזה שירות להסיר אותו — תאשר בעמוד הבא.</string>
+    <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">פרו</string>
+    <string name="upgrade_screen_navigate_up">עלה</string>
+    <string name="upgrade_screen_progress_loading">טוען…</string>
 </resources>

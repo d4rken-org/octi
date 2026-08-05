@@ -272,4 +272,9 @@
     <string name="dashboard_device_remove_action">Odebrat zařízení</string>
     <string name="dashboard_device_remove_picker_title">Vyberte synchronizační službu</string>
     <string name="dashboard_device_remove_picker_message">Toto zařízení je synchronizováno přes více služeb. Vyberte, ze které ho chcete odebrat – potvrdíte na další obrazovce.</string>
+    <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
+    <string name="upgrade_screen_navigate_up">Přejít nahoru</string>
+    <string name="upgrade_screen_progress_loading">Načítání…</string>
 </resources>

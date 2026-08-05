@@ -14,6 +14,8 @@
     <string name="upgrade_screen_preamble">В Octi нет рекламы, и он не продаёт данные пользователей. Моя работа финансируется вами ❤️</string>
     <string name="upgrade_screen_how_title">Что нужно сделать</string>
     <string name="upgrade_screen_how_body">Станьте спонсором и поддержите разработку! Нажмите кнопку ниже, чтобы активировать все дополнительные функции и открыть мой профиль GitHub Sponsors.</string>
+    <string name="upgrade_screen_why_title">Преимущества</string>
+    <string name="upgrade_screen_benefits_body">• Более 3 устройств 💯\n• Разные темы 🎨\n• Ещё опции ⚙️\n• Дополнительные серверы синхронизации 🖥️\n• Постоянное развитие открытого исходного кода ☕\n• Мотивированный разработчик 🧙</string>
     <string name="upgrade_screen_sponsor_action">Спонсировать разработку</string>
     <string name="upgrade_screen_sponsor_action_hint">Альтернатива — реклама, аналитика и Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Спасибо за поддержку разработки с открытым исходным кодом ❤️</string>
@@ -22,6 +24,8 @@
     <string name="upgrade_screen_supporter_title">Вы нас поддерживаете ❤️</string>
     <string name="upgrade_screen_supporter_body">Спасибо за поддержку разработки Octi с открытым исходным кодом ❤️!</string>
     <string name="upgrade_screen_supporter_since">Вы нас поддерживаете с %1$s</string>
+    <string name="upgrade_screen_recurring_title">Поддержите развитие</string>
+    <string name="upgrade_screen_recurring_body">Octi постоянно развивается через обновления и исправления. Если Вы хотите осуществить поддержку, рассмотрите возможность регулярного пожертвования через GitHub Sponsors.</string>
     <string name="upgrade_screen_open_sponsors_action">Открыть GitHub Sponsors</string>
     <string name="upgrade_screen_free_status_title">Вы используете бесплатную версию</string>
     <string name="upgrade_screen_free_status_body">Поддержите нас, чтобы разблокировать дополнительные функции и спонсировать дальнейшую разработку.</string>

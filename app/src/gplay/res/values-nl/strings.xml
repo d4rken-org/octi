@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play is niet beschikbaar</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi kan geen verbinding maken met Google Play. Is Google Play geïnstalleerd en up-to-date? Is je Google-account aangemeld? Probeer de cache van de Google Play-app te wissen en je apparaat opnieuw op te starten.</string>
     <string name="upgrades_no_purchases_found_check_account">Geen aankopen gevonden. Gebruik je het juiste account?</string>
     <string name="upgrades_already_owned_error_title">Reeds gekocht</string>
     <string name="upgrades_already_owned_error_description">Google Play meldt dat je deze upgrade al bezit. Gebruik \'Aankoop herstellen\' om deze te ontgrendelen.</string>
+    <string name="upgrades_gplay_billing_error_label">Google Play Probleem</string>
+    <string name="upgrades_gplay_billing_error_description">Er was een probleem met Google Play. Probeer het later opnieuw of herstart uw apparaat.\n\nDetails: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Google Play-fout</string>
+    <string name="upgrades_gplay_internal_error_description">Er is een interne Google Play-fout opgetreden. Probeer het volgende:\n\n• Herstart je apparaat\n• Wis de cache van de Google Play Store\n• Probeer het later opnieuw</string>
+    <string name="upgrades_gplay_network_error_title">Verbindingsfout</string>
+    <string name="upgrades_gplay_network_error_description">Kan geen verbinding maken met Google Play. Controleer je internetverbinding en probeer het opnieuw.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Aanbieding niet beschikbaar</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play biedt deze upgrade-optie momenteel niet aan. Probeer het later opnieuw of raadpleeg de Google Play Store.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">Kon Google Play niet openen. Het kan ontbreken, uitgeschakeld of beperkt zijn op dit apparaat.</string>
     <string name="upgrades_dashcard_title">Krijg Octi Pro</string>
     <string name="upgrades_dashcard_body">Upgrade om extra functies te ontgrendelen en de ontwikkeling te steunen!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgraden</string>
@@ -15,11 +23,11 @@
         <item quantity="one">De gratis versie is beperkt tot %1$d apparaat.</item>
         <item quantity="other">De gratis versie is beperkt tot %1$d apparaten.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">Omhoog navigeren</string>
-    <string name="upgrade_screen_progress_loading">Laden…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">Haal %1$s</string>
     <string name="upgrade_screen_preamble">Octi bevat geen advertenties en verkoopt geen gebruikersdata. Mijn werk wordt door jou gefinancierd ❤️.</string>
     <string name="upgrade_screen_benefits_title">Voordelen</string>
-    <string name="upgrade_screen_benefits_body">• Meer dan 3 apparaten 💯\n• Verschillende thema\'s 🎨\n• Meer opties ⚙️\n• Extra synchronisatie-servers🖥️️\n• Voortgezette ontwikkeling ☕\n• Een gemotiveerde ontwikkelaar 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Meer dan 3 apparaten 💯\n• Verschillende thema\'s 🎨\n• Meer opties ⚙️\n• Extra synchronisatie-servers 🖥️\n• Voortgezette ontwikkeling ☕\n• Een gemotiveerde ontwikkelaar 🧙</string>
     <string name="upgrade_screen_how_title">Opties</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -35,6 +43,8 @@ Dezelfde functies, gewoon verschillende prijsmodellen.</string>
     <string name="upgrade_screen_thanks_toast">Je bent de beste! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Upgrade-opties</string>
+    <string name="upgrade_screen_offers_unavailable_title">Prijzen niet beschikbaar</string>
+    <string name="upgrade_screen_offers_unavailable_message">Prijzen kunnen op dit moment niet worden geladen. Controleer Google Play en probeer het straks opnieuw.</string>
     <string name="upgrade_screen_offers_or">of</string>
     <string name="upgrade_screen_offers_body">Beide ontgrendelen dezelfde functies — kies de prijs die je wilt. Je kunt op elk moment stoppen.</string>
     <string name="upgrade_screen_subscription_offer_title">Jaarlijks abonnement</string>
@@ -56,6 +66,7 @@ Dezelfde functies, gewoon verschillende prijsmodellen.</string>
     <string name="upgrade_screen_restore_status_body">Controleer je aankopen opnieuw met Google Play als je Pro-status verouderd lijkt.</string>
     <string name="upgrade_screen_restore_checked_message">We hebben Google Play gevraagd de aankopen van deze app opnieuw te controleren, maar konden geen aankoop voor dit account bevestigen.</string>
     <string name="upgrade_screen_restore_contact_hint">Zit je nog vast? Neem contact op met support en we helpen je graag.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">De controle bij Google Play is niet op tijd voltooid, waardoor de status van je aankoop nog steeds onbekend is. Er is niets gewijzigd in je account.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">Je bent Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Bedankt dat je Octi ondersteunt! Je Pro-functies zijn ontgrendeld.</string>

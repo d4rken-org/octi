@@ -12,6 +12,8 @@
     <string name="upgrade_screen_preamble">L\'Octi no té anuncis i no ven dades d\'usuari. El meu treball està finançat per usuaris com vós ❤️</string>
     <string name="upgrade_screen_how_title">Que fer?</string>
     <string name="upgrade_screen_how_body">Convertiu-vos en mecenes i patrocinadors del desenvolupament! Toqueu el botó següent per activar totes les funcions addicionals i obrir el meu perfil de patrocinadors del GitHub.</string>
+    <string name="upgrade_screen_why_title">Beneficis</string>
+    <string name="upgrade_screen_benefits_body">• Més de 3 dispositius 💯\n• Temes diferents 🎨\n• Més opcions ⚙️\n• Servidors de sincronització addicionals 🖥️\n• Desenvolupament continu de codi obert ☕\n• Un desenvolupador motivat 🧙</string>
     <string name="upgrade_screen_sponsor_action">Desenvolupament del patrocinador</string>
     <string name="upgrade_screen_sponsor_action_hint">L\'alternativa són els anuncis, les analítiques i el Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Gràcies per donar suport al desenvolupament de codi obert ❤️</string>
@@ -20,6 +22,8 @@
     <string name="upgrade_screen_supporter_title">Sou un col·laborador ❤️</string>
     <string name="upgrade_screen_supporter_body">Gràcies per donar suport al desenvolupament de codi obert d’Octi!</string>
     <string name="upgrade_screen_supporter_since">Col·laborador des de %1$s</string>
+    <string name="upgrade_screen_recurring_title">Mantén-ho en marxa</string>
+    <string name="upgrade_screen_recurring_body">Octi continua evolucionant mitjançant actualitzacions i correccions. Si vols sostenir-lo, considera fer una donació recurrent via GitHub Sponsors.</string>
     <string name="upgrade_screen_open_sponsors_action">Obrir GitHub Sponsors</string>
     <string name="upgrade_screen_free_status_title">Esteu en la versió gratuïta</string>
     <string name="upgrade_screen_free_status_body">Convertiu-vos en col·laborador per desbloquejar funcions addicionals i patrocinar el desenvolupament continu.</string>

@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">أوكتي احترافي</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">احترافي</string>
     <string name="upgrades_gplay_unavailable_error_title">جوجل بلاي غير متوفر</string>
     <string name="upgrades_gplay_unavailable_error_description">لا يمكن لأوكتي الاتصال بـ جوجل بلاي. هل جوجل بلاي مثبت ومحدث؟ هل حساب جوجل الخاص بك مسجل الدخول؟ حاول مسح ذاكرة التخزين المؤقت لتطبيق جوجل بلاي وأعد تشغيل جهازك.</string>
     <string name="upgrades_no_purchases_found_check_account">لم يتم العثور على مشتريات. هل تستخدم الحساب الصحيح؟</string>
     <string name="upgrades_already_owned_error_title">تم الشراء بالفعل</string>
     <string name="upgrades_already_owned_error_description">يخبرك Google Play أنك تملك بالفعل هذه الترقية. استخدم \'استرجاع الشراء\' لفتحها.</string>
+    <string name="upgrades_gplay_billing_error_label">هناك مشكلة مع المتجر التطبيقات Google Play</string>
+    <string name="upgrades_gplay_billing_error_description">واجهنا مشكلة مع Google Play، المرجو المحاولة ثانية لاحقا أو إعادة تشغيل جهازك. \n\nالتفاصيل: %s</string>
+    <string name="upgrades_gplay_internal_error_title">خطأ Google Play</string>
+    <string name="upgrades_gplay_internal_error_description">حدث خطأ داخلي في Google Play. يرجى تجربة ما يلي:\n\n• أعد تشغيل جهازك\n• امسح ذاكرة تخزين متجر Google Play\n• حاول لاحقاً</string>
+    <string name="upgrades_gplay_network_error_title">خطأ في الاتصال</string>
+    <string name="upgrades_gplay_network_error_description">غير قادر على الاتصال بـ Google Play. يرجى التحقق من اتصالك بالإنترنت وحاول مجدداً.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">العرض غير متاح</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play لا يقدم حالياً خيار الترقية هذا. يرجى المحاولة لاحقاً أو التحقق من متجر Google Play.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">تعذر فتح Google Play. قد يكون التطبيق مفقوداً أو معطلاً أو مقيداً على هذا الجهاز.</string>
     <string name="upgrades_dashcard_title">احصل على أوكتي احترافي</string>
     <string name="upgrades_dashcard_body">قم بالترقية لفتح ميزات إضافية ودعم التطوير!</string>
     <string name="upgrades_dashcard_upgrade_action">ترقية</string>
@@ -19,11 +27,11 @@
         <item quantity="many">النسخة المجانية مقتصرة على %1$d جهازًا.</item>
         <item quantity="other">النسخة المجانية مقتصرة على %1$d جهاز.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">الانتقال للأعلى</string>
-    <string name="upgrade_screen_progress_loading">جارٍ التحميل…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">احصل على %1$s</string>
     <string name="upgrade_screen_preamble">أوكتي خالٍ من الإعلانات ولا يبيع بيانات المستخدمين. عملي يُموَّل بكم ❤️.</string>
     <string name="upgrade_screen_benefits_title">المزايا</string>
-    <string name="upgrade_screen_benefits_body">• أكثر من 3 أجهزة 💯\n• سمات مختلفة 🎨\n• المزيد من الخيارات ⚙️\n• خوادم مزامنة إضافية🖥️️\n• تطوير مستمر ☕\n• مطور متحمس 🧙</string>
+    <string name="upgrade_screen_benefits_body">• أكثر من 3 أجهزة 💯\n• سمات مختلفة 🎨\n• المزيد من الخيارات ⚙️\n• خوادم مزامنة إضافية 🖥️\n• تطوير مستمر ☕\n• مطور متحمس 🧙</string>
     <string name="upgrade_screen_how_title">الخيارات</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -38,6 +46,8 @@
     <string name="upgrade_screen_thanks_toast">أنت الأفضل! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">خيارات الترقية</string>
+    <string name="upgrade_screen_offers_unavailable_title">الأسعار غير متاحة</string>
+    <string name="upgrade_screen_offers_unavailable_message">لا يمكن تحميل الأسعار الآن. تحقق من متجر Google Play وحاول مجدداً بعد قليل.</string>
     <string name="upgrade_screen_offers_or">أو</string>
     <string name="upgrade_screen_offers_body">كلاهما يتيح نفس الميزات — اختر التسعير الذي تفضله. يمكن الإلغاء في أي وقت.</string>
     <string name="upgrade_screen_subscription_offer_title">اشتراك سنوي</string>
@@ -59,6 +69,7 @@
     <string name="upgrade_screen_restore_status_body">أعد التحقق من مشترياتك عبر Google Play إذا بدت حالة Pro قديمة في أي وقت.</string>
     <string name="upgrade_screen_restore_checked_message">طلبنا من Google Play إعادة التحقق من مشتريات هذا التطبيق لكن لم نتمكن من تأكيد أي شراء للحساب الحالي.</string>
     <string name="upgrade_screen_restore_contact_hint">لا تزال تواجه مشكلة؟ تواصل مع الدعم وسنساعدك في حلها.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">لم ينته التحقق مع Google Play في الوقت المناسب، لذا حالة شرائك لا تزال غير معروفة. لم يتغير شيء في حسابك.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">أنت مستخدم Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">شكرًا لدعمك Octi! ميزات Pro مفتوحة الآن.</string>

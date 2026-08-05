@@ -12,6 +12,8 @@
     <string name="upgrade_screen_preamble">Az Octi nem tartalmaz hirdetéseket és nem árulja felhasználói adatokat. A munkámat te finanszírozod ❤️</string>
     <string name="upgrade_screen_how_title">Mit kell tenni</string>
     <string name="upgrade_screen_how_body">Légy támogató és szponzoráld a fejlesztést! Érintsd meg az alábbi gombot minden extra funkció aktiválásához és a GitHub Sponsors profilom megnyitásához.</string>
+    <string name="upgrade_screen_why_title">Előnyök</string>
+    <string name="upgrade_screen_benefits_body">• Több mint 3 eszköz 💯\n• Különböző témák 🎨\n• Több lehetőség ⚙️\n• Extra szinkronizáló szerverek 🖥️\n• Folyamatos nyílt forráskódú fejlesztés ☕\n• Elkötelezett fejlesztő 🧙</string>
     <string name="upgrade_screen_sponsor_action">Fejlesztés szponzorálása</string>
     <string name="upgrade_screen_sponsor_action_hint">Az alternatíva hirdetések, analitika és Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Köszönjük, hogy támogatod a nyílt forráskódú fejlesztést ❤️</string>
@@ -20,6 +22,8 @@
     <string name="upgrade_screen_supporter_title">Támogató vagy ❤️</string>
     <string name="upgrade_screen_supporter_body">Köszönjük, hogy támogatod az Octi nyílt forráskódú fejlesztését!</string>
     <string name="upgrade_screen_supporter_since">Támogató %1$s óta</string>
+    <string name="upgrade_screen_recurring_title">Tartsd mozgásban</string>
+    <string name="upgrade_screen_recurring_body">Az Octi folyamatosan fejlődik frissítések és javítások révén. Ha szeretnéd ezt támogatni, fontolgatd meg az ismétlődő adományt a GitHub Sponsors-on keresztül.</string>
     <string name="upgrade_screen_open_sponsors_action">Nyisd meg a GitHub Sponsors-t</string>
     <string name="upgrade_screen_free_status_title">A szabad verzión vagy</string>
     <string name="upgrade_screen_free_status_body">Támogatóvá válva extra funkciókhoz juthatsz és támogathatod a fejlesztést.</string>

@@ -20,7 +20,7 @@
     <string name="onboarding_connect_title">Подключите Ваши устройства</string>
     <string name="onboarding_connect_body1">Octi показывает, что происходит на других Ваших устройствах — батарея, WiFi, буфер обмена и многое другое.</string>
     <string name="onboarding_connect_body2">Для этого Octi должен быть установлен на втором устройстве и подключен через службу синхронизации. Без второго устройства многое не видно.</string>
-    <string name="onboarding_connect_setup_action">Настройте синхронихацию</string>
+    <string name="onboarding_connect_setup_action">Настройте синхронизацию</string>
     <string name="updatecheck_setting_enabled_label">Проверка обновлений</string>
     <string name="updatecheck_setting_enabled_explanation">Разрешить Octi проверять обновления, чтобы уведомлять вас о доступности новой версии.</string>
     <string name="debug_debuglog_size_label">Размер</string>
@@ -272,4 +272,9 @@
     <string name="dashboard_device_remove_action">Удалить устройство</string>
     <string name="dashboard_device_remove_picker_title">Выберите службу синхронизации</string>
     <string name="dashboard_device_remove_picker_message">Это устройство синхронизируется через несколько сервисов. Выберите один из них, чтобы удалить его — подтвердите на следующем экране.</string>
+    <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
+    <string name="upgrade_screen_navigate_up">Перейти вверх</string>
+    <string name="upgrade_screen_progress_loading">Загрузка…</string>
 </resources>

@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">El Google Play no està disponible</string>
     <string name="upgrades_gplay_unavailable_error_description">L\'Octi no es pot connectar al Google Play. El Google Play està instal·lat i actualitzat? Heu iniciat sessió amb el vostre compte de Google? Proveu d\'esborrar la memòria cau de l\'aplicació Google Play i reinicieu el dispositiu.</string>
     <string name="upgrades_no_purchases_found_check_account">No s\'han trobat compres. Esteu utilitzant el compte correcte?</string>
     <string name="upgrades_already_owned_error_title">Ja comprat</string>
     <string name="upgrades_already_owned_error_description">Google Play indica que ja posseïu aquesta actualització. Utilitzeu «Restaurar la compra» per desbloquejar-la.</string>
+    <string name="upgrades_gplay_billing_error_label">Problema del Google Play</string>
+    <string name="upgrades_gplay_billing_error_description">S\'ha produït un problema amb el Google Play. Torneu-ho a provar més tard o reinicieu el dispositiu.\n\nDetalls: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Error del Google Play</string>
+    <string name="upgrades_gplay_internal_error_description">S\'ha produït un error intern del Google Play. Proveu el següent:\n\n• Reinicieu el dispositiu\n• Esborreu la memòria cau del Google Play Store\n• Torneu-ho a provar més tard</string>
+    <string name="upgrades_gplay_network_error_title">Error de connexió</string>
+    <string name="upgrades_gplay_network_error_description">No es pot connectar al Google Play. Comproveu la connexió a Internet i torneu-ho a provar.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Oferta no disponible</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play actualment no ofereix aquesta opció de millora. Si us plau, torna a intentar més tard o consulta la Google Play Store.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">No s\'ha pogut obrir Google Play. Podria estar absent, desactivat o restringit en aquest dispositiu.</string>
     <string name="upgrades_dashcard_title">Obtén l\'Octi Pro</string>
     <string name="upgrades_dashcard_body">Actualitzeu per desbloquejar funcions addicionals i donar suport al desenvolupament!</string>
     <string name="upgrades_dashcard_upgrade_action">Millora</string>
@@ -15,11 +23,11 @@
         <item quantity="one">La versió gratuïta està limitada a %1$d dispositiu.</item>
         <item quantity="other">La versió gratuïta està limitada a %1$d dispositius.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">Navegueu cap amunt</string>
-    <string name="upgrade_screen_progress_loading">S’està carregant…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">Aconsegueix %1$s</string>
     <string name="upgrade_screen_preamble">L\'Octi no té anuncis i no ven dades d\'usuari. El meu treball està finançat per usuaris com vós ❤️.</string>
     <string name="upgrade_screen_benefits_title">Avantatges</string>
-    <string name="upgrade_screen_benefits_body">• Més de 3 dispositius 💯\n• Temes diferents 🎨\n• Més opcions ⚙️\n• Servidors de sincronització addicionals🖥️️\n• Desenvolupament continu ☕\n• Un desenvolupador motivat 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Més de 3 dispositius 💯\n• Temes diferents 🎨\n• Més opcions ⚙️\n• Servidors de sincronització addicionals 🖥️\n• Desenvolupament continu ☕\n• Un desenvolupador motivat 🧙</string>
     <string name="upgrade_screen_how_title">Opcions</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -34,6 +42,8 @@
     <string name="upgrade_screen_thanks_toast">Sou el millor! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Opcions d’actualització</string>
+    <string name="upgrade_screen_offers_unavailable_title">Preus no disponibles</string>
+    <string name="upgrade_screen_offers_unavailable_message">Els preus no s\'han pogut carregar ara. Consulta Google Play i torna a intentar en un moment.</string>
     <string name="upgrade_screen_offers_or">o</string>
     <string name="upgrade_screen_offers_body">Tots dos desbloquegen les mateixes funcions — escolliu el preu que preferiu. Podeu cancel·lar en qualsevol moment.</string>
     <string name="upgrade_screen_subscription_offer_title">Subscripció anual</string>
@@ -55,6 +65,7 @@
     <string name="upgrade_screen_restore_status_body">Reviseu les vostres compres a Google Play si l’estat de Pro us sembla desfasat.</string>
     <string name="upgrade_screen_restore_checked_message">Hem demanat a Google Play que revisés les compres d’aquesta aplicació però no hem pogut confirmar cap compra per al compte actual.</string>
     <string name="upgrade_screen_restore_contact_hint">Seguiu tenint problemes? Contacteu amb el suport i us ajudarem a resoldre-ho.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">La verificació amb Google Play no s\'ha completat a temps, de manera que l\'estat de la teva compra és encara desconegut. Res ha canviat al teu compte.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">Sou Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Gràcies per donar suport a Octi! Les vostres funcionalitats Pro estan desbloquejades.</string>

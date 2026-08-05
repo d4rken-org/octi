@@ -254,4 +254,9 @@
     <string name="dashboard_device_remove_action">Cihazı kaldır</string>
     <string name="dashboard_device_remove_picker_title">Senkronizasyon hizmeti seçin</string>
     <string name="dashboard_device_remove_picker_message">Bu cihaz birden fazla hizmet aracılığıyla eşitleniyor. Hangisinden kaldırmak istediğinizi seçin — sonraki ekranda onaylayacaksınız.</string>
+    <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
+    <string name="upgrade_screen_navigate_up">Yukarı Git</string>
+    <string name="upgrade_screen_progress_loading">Yükleniyor…</string>
 </resources>

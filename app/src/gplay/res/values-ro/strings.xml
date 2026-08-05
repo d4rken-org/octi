@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play indisponibil</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi nu se poate conecta la Google Play. Este Google Play instalat și actualizat? Contul tău Google este conectat? Încearcă să ștergi memoria cache a aplicației Google Play și să repornești dispozitivul.</string>
     <string name="upgrades_no_purchases_found_check_account">Nu au fost găsite achiziții. Folosiți contul corect?</string>
     <string name="upgrades_already_owned_error_title">Deja cumpărat</string>
     <string name="upgrades_already_owned_error_description">Google Play raportează că deja dețineți această actualizare. Utilizați \'Restabilire cumpărare\' pentru a o debloca.</string>
+    <string name="upgrades_gplay_billing_error_label">Problemă din partea Google Play</string>
+    <string name="upgrades_gplay_billing_error_description">A fost o problemă cu Google Play. Vă rugăm să încercați din nou mai târziu sau să reporniți dispozitivul.\n\nDetalii: %s</string>
+    <string name="upgrades_gplay_internal_error_title">Eroare Google Play</string>
+    <string name="upgrades_gplay_internal_error_description">A apărut o eroare internă a Google Play. Încercați următoarele:\n\n• Reporniți dispozitivul\n• Ștergeți memoria cache a Google Play Store\n• Încercați din nou mai târziu</string>
+    <string name="upgrades_gplay_network_error_title">Eroare de conexiune</string>
+    <string name="upgrades_gplay_network_error_description">Nu se poate conecta la Google Play. Verificați conexiunea la internet și încercați din nou.</string>
+    <string name="upgrades_gplay_offer_unavailable_title">Ofertă indisponibilă</string>
+    <string name="upgrades_gplay_offer_unavailable_description">Google Play nu oferă în prezent această opțiune de upgrade. Încercați din nou mai târziu sau verificați Google Play Store.</string>
+    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
+    <string name="upgrades_gplay_not_installed_message">Nu se poate deschide Google Play. E posibil să lipsească, să fie dezactivat sau restricționat pe acest dispozitiv.</string>
     <string name="upgrades_dashcard_title">Obține Octi Pro</string>
     <string name="upgrades_dashcard_body">Fă upgrade pentru a debloca funcții suplimentare și a sprijini dezvoltarea!</string>
     <string name="upgrades_dashcard_upgrade_action">Actualizează</string>
@@ -16,11 +24,11 @@
         <item quantity="few">Versiunea gratuită este limitată la %1$d dispozitive.</item>
         <item quantity="other">Versiunea gratuită este limitată la %1$d de dispozitive.</item>
     </plurals>
-    <string name="upgrade_screen_navigate_up">Navighează sus</string>
-    <string name="upgrade_screen_progress_loading">Se încarcă…</string>
+    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
+    <string name="upgrade_screen_title_template">Obțineți %1$s</string>
     <string name="upgrade_screen_preamble">Octi nu are reclame și nu vinde datele utilizatorilor. Munca mea este finanțată de tine ❤️.</string>
     <string name="upgrade_screen_benefits_title">Beneficii</string>
-    <string name="upgrade_screen_benefits_body">• Mai mult de 3 dispozitive 💯\n• Teme diferite 🎨\n• Mai multe opțiuni ⚙️\n• Servere suplimentare de sincronizare🖥️️\n• Dezvoltare continuă ☕\n• Un dezvoltator motivat 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Mai mult de 3 dispozitive 💯\n• Teme diferite 🎨\n• Mai multe opțiuni ⚙️\n• Servere suplimentare de sincronizare 🖥️\n• Dezvoltare continuă ☕\n• Un dezvoltator motivat 🧙</string>
     <string name="upgrade_screen_how_title">Opțiuni</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -35,6 +43,8 @@
     <string name="upgrade_screen_thanks_toast">Ești cel mai bun! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Opțiuni de upgrade</string>
+    <string name="upgrade_screen_offers_unavailable_title">Prețuri indisponibile</string>
+    <string name="upgrade_screen_offers_unavailable_message">Prețurile nu au putut fi încărcate acum. Verificați Google Play și încercați din nou într-o clipă.</string>
     <string name="upgrade_screen_offers_or">sau</string>
     <string name="upgrade_screen_offers_body">Ambele deblochează aceleași funcții — alege prețul care îți place. Anulează oricând.</string>
     <string name="upgrade_screen_subscription_offer_title">Abonament anual</string>
@@ -56,6 +66,7 @@
     <string name="upgrade_screen_restore_status_body">Re-verifică achizițiile tale cu Google Play dacă starea ta Pro apare vreodată depășit.</string>
     <string name="upgrade_screen_restore_checked_message">Am cerut Google Play să re-verifice achizițiile acestei aplicații, dar nu am putut confirma vreuna pentru contul curent.</string>
     <string name="upgrade_screen_restore_contact_hint">Încă blocat? Contactează asistența și te vom ajuta să rezolvi problema.</string>
+    <string name="upgrade_screen_restore_inconclusive_message">Verificarea cu Google Play nu s-a finalizat la timp, deci starea achiziției dvs. este încă necunoscută. Nimic nu s-a schimbat în contul dvs.</string>
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_title">Ești Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_body">Mulțumesc pentru suportul acordat Octi! Caracteristicile tale Pro sunt deblocate.</string>

@@ -12,6 +12,8 @@
     <string name="upgrade_screen_preamble">Octi hat keine Werbung und verkauft keine Nutzerdaten. Meine Arbeit wird von dir finanziert ❤️</string>
     <string name="upgrade_screen_how_title">Was ist zu tun</string>
     <string name="upgrade_screen_how_body">Werde ein Förderer und sponsere die Entwicklung! Tippe auf die Schaltfläche unten, um alle zusätzlichen Funktionen zu aktivieren und mein GitHub-Sponsorenprofil zu öffnen.</string>
+    <string name="upgrade_screen_why_title">Vorteile</string>
+    <string name="upgrade_screen_benefits_body">• Mehr als 3 Geräte 💯\n• Verschiedene Designs 🎨\n• Mehr Optionen ⚙️\n• Zusätzliche Sync-Server 🖥️\n• Kontinuierliche Open-Source-Entwicklung ☕\n• Ein motivierter Entwickler 🧙</string>
     <string name="upgrade_screen_sponsor_action">Entwicklung sponsern</string>
     <string name="upgrade_screen_sponsor_action_hint">Die Alternative sind Anzeigen, Analysen und Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Vielen Dank für die Unterstützung von Open-Source Software ❤️</string>
@@ -20,6 +22,8 @@
     <string name="upgrade_screen_supporter_title">Du bist ein Unterstützer ❤️</string>
     <string name="upgrade_screen_supporter_body">Danke, dass du die Open-Source-Entwicklung von Octi unterstützt!</string>
     <string name="upgrade_screen_supporter_since">Unterstützer seit %1$s</string>
+    <string name="upgrade_screen_recurring_title">Projekt unterstützen</string>
+    <string name="upgrade_screen_recurring_body">Octi entwickelt sich durch Updates und Fehlerbehebungen kontinuierlich weiter. Wenn du das unterstützen möchtest, ziehe eine wiederkehrende Spende über GitHub Sponsors in Betracht.</string>
     <string name="upgrade_screen_open_sponsors_action">GitHub Sponsors öffnen</string>
     <string name="upgrade_screen_free_status_title">Du nutzt die kostenlose Version</string>
     <string name="upgrade_screen_free_status_body">Werde ein Unterstützer, um zusätzliche Funktionen freizuschalten und die weitere Entwicklung zu unterstützen.</string>
