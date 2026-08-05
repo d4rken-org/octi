@@ -1,1 +1,1 @@
-Octi - Multienhedsovervågning
+Octi - Synk mellem enheder

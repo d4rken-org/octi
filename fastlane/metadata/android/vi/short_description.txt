@@ -1,1 +1,1 @@
-Theo dõi và đồng bộ thông tin giữa nhiều thiết bị Android
+Theo dõi các thiết bị Android khác: pin, WiFi, bảng nhớ tạm và nhiều hơn

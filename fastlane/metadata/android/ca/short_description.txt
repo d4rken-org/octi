@@ -1,1 +1,1 @@
-Superviseu i sincronitzeu la informació entre diversos dispositius Android
+Controleu els altres dispositius Android: bateria, WiFi, porta-retalls i més

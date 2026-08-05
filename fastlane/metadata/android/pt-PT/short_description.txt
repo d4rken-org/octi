@@ -1,1 +1,1 @@
-Monitorize e sincronize informações entre vários dispositivos Android
+Vigie os seus dispositivos Android: bateria, WiFi, área de transferência e mais

@@ -1,1 +1,1 @@
-Octi - Monitor více zařízení
+Octi - Sync více zařízení
