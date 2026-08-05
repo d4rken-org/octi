@@ -157,7 +157,8 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
     NavigationEventHandler(vm)
 
     val context = LocalContext.current
-    val mainVm: MainActivityVM = hiltViewModel(context as androidx.activity.ComponentActivity)
+    val activity = context as androidx.activity.ComponentActivity
+    val mainVm: MainActivityVM = hiltViewModel(activity)
 
     val snackbarHostState = remember { SnackbarHostState() }
     val hostScope = rememberCoroutineScope()
@@ -336,6 +337,8 @@ fun DashboardScreenHost(vm: DashboardVM = hiltViewModel()) {
             onMoveDeviceUp = { vm.moveDeviceUp(it) },
             onMoveDeviceDown = { vm.moveDeviceDown(it) },
             onRemoveDevice = { connectorId, deviceId -> vm.goToDeviceDetails(connectorId, deviceId) },
+            onReviewLater = { vm.reviewDismiss() },
+            onReview = { vm.reviewNow(activity) },
             externalSheetTarget = externalSheetTarget,
             onExternalSheetHandled = { externalSheetTarget = null },
         )
@@ -379,6 +382,8 @@ fun DashboardScreen(
     onMoveDeviceUp: (String) -> Unit = {},
     onMoveDeviceDown: (String) -> Unit = {},
     onRemoveDevice: (ConnectorId, DeviceId) -> Unit = { _, _ -> },
+    onReviewLater: () -> Unit = {},
+    onReview: () -> Unit = {},
     externalSheetTarget: DashboardVM.ModuleItem? = null,
     onExternalSheetHandled: () -> Unit = {},
 ) {
@@ -603,6 +608,14 @@ fun DashboardScreen(
                     SyncedAloneCard(
                         onLater = onSnoozeSyncedAlone,
                         onAddDevice = onSetupSync,
+                    )
+                }
+            }
+            if (state.showReviewCard) {
+                item(key = "review", span = { GridItemSpan(maxLineSpan) }) {
+                    ReviewCard(
+                        onLater = onReviewLater,
+                        onReview = onReview,
                     )
                 }
             }
@@ -1341,6 +1354,45 @@ private fun SyncSetupCard(
                 }
                 TextButton(onClick = onSetup) {
                     Text(stringResource(R.string.dashboard_syncsetup_setup_action))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReviewCard(
+    onLater: () -> Unit,
+    onReview: () -> Unit,
+) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.TwoTone.Stars,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = stringResource(R.string.review_app_body),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                TextButton(onClick = onLater) {
+                    Text(stringResource(CommonR.string.general_maybe_later_action))
+                }
+                TextButton(onClick = onReview) {
+                    Text(stringResource(R.string.review_app_review_action))
                 }
             }
         }
@@ -2089,6 +2141,52 @@ private fun DashboardScreenEmptyPreview() = PreviewWrapper {
             update = null,
             upgradeInfo = PreviewUpgradeInfo(),
             deviceLimitReached = false,
+        ),
+        onRefresh = {},
+        onSyncServices = {},
+        onPlaceholderClick = {},
+        onIssueClick = {},
+        onConnectorDevices = {},
+        onUpgrade = {},
+        onSettings = {},
+        onSnoozeSyncSetup = {},
+        onSnoozeSyncedAlone = {},
+        onSetupSync = {},
+        onGrantPermission = {},
+        onDismissPermission = {},
+        onDismissUpdate = {},
+        onViewUpdate = {},
+        onStartUpdate = {},
+        onToggleSyncExpanded = {},
+        onToggleDeviceCollapsed = {},
+        onPowerAlerts = {},
+        onAppsList = {},
+        onInstallLatestApp = {},
+        onClearClipboard = {},
+        onShareClipboard = {},
+        onCopyClipboard = {},
+        onFileShareClicked = {},
+        onWifiPermissionGrant = {},
+    )
+}
+
+@Preview2
+@Composable
+private fun DashboardScreenReviewPreview() = PreviewWrapper {
+    DashboardScreen(
+        state = DashboardVM.State(
+            devices = emptyList(),
+            deviceCount = 0,
+            syncStatus = null,
+            isOffline = false,
+            showSyncSetup = false,
+            showSyncedAlone = false,
+            hasConnectors = true,
+            missingPermissions = emptyList(),
+            update = null,
+            upgradeInfo = PreviewUpgradeInfo(),
+            deviceLimitReached = false,
+            showReviewCard = true,
         ),
         onRefresh = {},
         onSyncServices = {},

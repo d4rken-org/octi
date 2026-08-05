@@ -1,6 +1,7 @@
 package eu.darken.octi.main.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.WebpageTool
@@ -19,6 +20,7 @@ import eu.darken.octi.common.navigation.NavigationDestination
 import eu.darken.octi.common.network.NetworkStateProvider
 import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.PermissionState
+import eu.darken.octi.common.review.ReviewTool
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import eu.darken.octi.common.upgrade.isHardLocked
@@ -68,6 +70,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -109,6 +112,7 @@ class DashboardVM @Inject constructor(
     private val storageStatusManager: StorageStatusManager,
     private val connectorContributions: Map<ConnectorType, @JvmSuppressWildcards ConnectorUiContribution>,
     private val cardSnoozer: DashboardCardSnoozer,
+    private val reviewTool: ReviewTool,
 ) : ViewModel4(dispatcherProvider = dispatcherProvider) {
 
     init {
@@ -197,6 +201,7 @@ class DashboardVM @Inject constructor(
         val deviceLimitReached: Boolean,
         val deviceLimit: Int = DEVICE_LIMIT,
         val issues: List<ConnectorIssue> = emptyList(),
+        val showReviewCard: Boolean = false,
     )
 
     data class DeviceItem(
@@ -415,7 +420,7 @@ class DashboardVM @Inject constructor(
         val snoozedCards: Set<DashboardCardSnoozer.Card>,
     )
 
-    val state: Flow<State> = combine(
+    private val baseState: Flow<State> = combine(
         tickerUiRefresh,
         networkStateProvider.networkState,
         syncHintCtx,
@@ -497,6 +502,24 @@ class DashboardVM @Inject constructor(
             upgradeInfo = upgradeInfo,
             deviceLimitReached = orderedDeviceItems.size > DEVICE_LIMIT && entitlementLocked,
             issues = issues,
+        )
+    }
+
+    /**
+     * The review prompt is the lowest-priority card on the dashboard: it only appears once the user
+     * has nothing else to act on. Anything that asks for a decision (sync setup, a missing
+     * permission, a pending update) suppresses it, so we never interrupt a task to ask for a favor.
+     */
+    val state: Flow<State> = kotlinx.coroutines.flow.combine(
+        baseState,
+        // A failing review backend is a decoration failure: it must not take the dashboard down.
+        reviewTool.state.catch { emit(ReviewTool.State()) },
+    ) { state, review ->
+        state.copy(
+            showReviewCard = review.shouldAskForReview &&
+                !state.showSyncSetup &&
+                state.missingPermissions.isEmpty() &&
+                state.update == null,
         )
     }
         .setupCommonEventHandlers(TAG, logValues = false) { "state" }
@@ -677,6 +700,16 @@ class DashboardVM @Inject constructor(
 
     fun startUpdate() = launch {
         state.first().update?.let { updateService.startUpdate(it) }
+    }
+
+    fun reviewNow(activity: Activity) = launch {
+        log(TAG) { "reviewNow($activity)" }
+        reviewTool.reviewNow(activity)
+    }
+
+    fun reviewDismiss() = launch {
+        log(TAG) { "reviewDismiss()" }
+        reviewTool.dismiss()
     }
 
     private fun deviceItems(): Flow<List<DeviceItem>> = combine(
