@@ -2,6 +2,9 @@ package eu.darken.octi.main.ui.dashboard
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onNodeWithText
@@ -40,6 +43,7 @@ class DashboardReviewCardRenderTest : BaseComposeRobolectricTest() {
 
     @Composable
     private fun ReviewDashboard(
+        showReviewCard: Boolean = true,
         onReviewLater: () -> Unit = {},
         onReview: () -> Unit = {},
     ) {
@@ -56,7 +60,7 @@ class DashboardReviewCardRenderTest : BaseComposeRobolectricTest() {
                 update = null,
                 upgradeInfo = upgradeInfo,
                 deviceLimitReached = false,
-                showReviewCard = true,
+                showReviewCard = showReviewCard,
             ),
             onRefresh = {},
             onSyncServices = {},
@@ -150,6 +154,35 @@ class DashboardReviewCardRenderTest : BaseComposeRobolectricTest() {
             reviewTaps shouldBe 1
             laterTaps shouldBe 0
         }
+    }
+
+    @Test
+    fun `the latch resets when the card leaves and returns`() {
+        var laterTaps = 0
+        var reviewTaps = 0
+        var visible by mutableStateOf(true)
+        composeRule.setContent {
+            PreviewWrapper {
+                ReviewDashboard(
+                    showReviewCard = visible,
+                    onReviewLater = { laterTaps++ },
+                    onReview = { reviewTaps++ },
+                )
+            }
+        }
+
+        composeRule.onNodeWithText(laterAction).performClick()
+        composeRule.runOnIdle { laterTaps shouldBe 1 }
+
+        // A transient gate (update banner, sync setup, permissions) can pull the card out of the
+        // lazy grid and put it back within the same process. The latch protects a sub-second
+        // window, so it must not survive that: the card would come back permanently dead.
+        composeRule.runOnIdle { visible = false }
+        composeRule.onNodeWithText(laterAction).assertDoesNotExist()
+        composeRule.runOnIdle { visible = true }
+
+        composeRule.onNodeWithText(laterAction).assertIsEnabled()
+        composeRule.onNodeWithText(reviewAction).assertIsEnabled()
     }
 
     @Test

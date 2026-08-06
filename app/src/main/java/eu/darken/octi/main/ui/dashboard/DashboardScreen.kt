@@ -1370,8 +1370,11 @@ private fun ReviewCard(
     // the review bookkeeping with a snooze) and a review after a dismiss. A repeated review tap is
     // harmless, the tool's single-flight lock absorbs it, and blocking it here would leave a dead
     // card whenever a Play request fails and nothing gets persisted.
-    var dismissLocked by rememberSaveable { mutableStateOf(false) }
-    var fullyLatched by rememberSaveable { mutableStateOf(false) }
+    // Plain remember, not rememberSaveable: the lazy grid host retains saveable state for a removed
+    // item key and would re-add the card still latched. Disposal-on-removal is the intended reset,
+    // and the latch only guards a sub-second window, so surviving recreation is not worth that.
+    var dismissLocked by remember { mutableStateOf(false) }
+    var fullyLatched by remember { mutableStateOf(false) }
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
