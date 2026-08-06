@@ -14,13 +14,13 @@ import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
-import eu.darken.octi.common.flow.setupCommonEventHandlers
 import eu.darken.octi.common.flow.throttleLatest
 import eu.darken.octi.common.upgrade.UpgradeRepo
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -28,7 +28,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
@@ -36,6 +38,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -51,6 +54,23 @@ class GplayReviewTool @Inject constructor(
     // cannot advance the production bound. Same pattern as UpgradeRepoGplay.launchTimeoutMs.
     internal var probeRetryDelay: Duration = PROBE_RETRY_DELAY
 
+    // Test seam: same reason, the cooldown between failed probe rounds is a production sized wait.
+    internal var probeFailureCooldown: Duration = PROBE_FAILURE_COOLDOWN
+
+    // Test seam: the launch duration is wall-clock measured, so a virtual-time test cannot reach
+    // the production bound either.
+    internal var reviewMinDuration: Duration = REVIEW_MIN_DURATION
+
+    // Test seam: a hung Play call would otherwise have to be waited out for the production bound.
+    internal var requestTimeout: Duration = REQUEST_TIMEOUT
+
+    // Test seam: same reason, the review sheet bound is minutes long.
+    internal var launchTimeout: Duration = LAUNCH_TIMEOUT
+
+    // Test seam: eligibility is a function of wall-clock time, a virtual-time test needs to be able
+    // to move "now" itself. Only used for eligibility, the persisted timestamps stay real.
+    internal var nowProvider: () -> Instant = { Clock.System.now() }
+
     // Local bookkeeping only: decided without talking to Play, so an ineligible user never
     // triggers a Play round-trip.
     private val isLocallyEligible: Flow<Boolean> = combine(
@@ -58,64 +78,134 @@ class GplayReviewTool @Inject constructor(
         settings.reviewedAt.flow,
         upgradeRepo.upgradeInfo,
     ) { lastDismissed, reviewedAt, upgradeInfo ->
-        val now = Clock.System.now()
-
-        // Free trial is 14 days, only ask for review after the user has paid something
-        val hasPaidForPro = (now - (upgradeInfo.upgradedAt ?: now)) > 21.days
-        val isSnoozed = (now - (lastDismissed ?: Instant.DISTANT_PAST)) < 14.days
-        val hasReviewed = reviewedAt != null
-
-        log(TAG) { "Eligibility: hasPaidForPro=$hasPaidForPro (${upgradeInfo.upgradedAt})" }
-        log(TAG) { "Eligibility: isSnoozed=$isSnoozed ($lastDismissed), hasReviewed=$hasReviewed ($reviewedAt)" }
-
-        hasPaidForPro && !isSnoozed && !hasReviewed
+        EligibilityInputs(
+            lastDismissed = lastDismissed,
+            reviewedAt = reviewedAt,
+            upgradedAt = upgradeInfo.upgradedAt,
+        )
     }
+        // Eligibility depends on time, not just on the inputs: a snooze that runs out while the
+        // process is alive has to flip the verdict, otherwise the card only reappears after a
+        // restart. Re-evaluated at the upcoming boundaries, an input change restarts the whole
+        // schedule via flatMapLatest.
+        .flatMapLatest { inputs ->
+            flow {
+                var wakes = 0
+                while (true) {
+                    val now = nowProvider()
+                    emit(inputs.isEligibleAt(now))
+
+                    val nextBoundary = inputs.boundariesAfter(now).minOrNull()
+                    if (nextBoundary == null || wakes == MAX_BOUNDARY_WAKES) break
+
+                    wakes++
+                    val wakeIn = (nextBoundary - now) + BOUNDARY_WAKE_MARGIN
+                    log(TAG) { "Eligibility: Re-evaluating in $wakeIn (boundary $nextBoundary)" }
+                    delay(wakeIn)
+                }
+            }
+        }
         .distinctUntilChanged()
-        // Has to sit upstream of the shares below: a failure there would kill the sharing
-        // coroutine on AppScope (no handler = process crash) instead of reaching any collector.
+        // Upstream of the shares below: an exception there would kill the sharing coroutine on
+        // AppScope (crashing the process) instead of reaching any downstream `catch`.
         .catch { e ->
             if (e is CancellationException) throw e
             log(TAG, ERROR) { "Eligibility failed: ${e.asLog()}" }
             emit(false)
         }
 
+    // Play's definitive answers are worth exactly one round-trip per process: quota is limited and
+    // the verdict doesn't change while the app runs. Survives eligibility flips, unlike the share.
+    @Volatile private var cachedVerdict: Verdict? = null
+
+    // Process-wide on purpose: the eligibility flatMapLatest below restarts this branch on every
+    // input change (a billing flicker flipping upgradedAt is enough), and a restart must not hand
+    // out a fresh round budget.
+    @Volatile private var probeRoundsStarted: Int = 0
+
     // Only probed once the user is eligible: Play counts requests against the app's quota, and an
     // `isNoOp` answer is Play's deliberate verdict, i.e. an answer and not a failure to retry.
-    private val isReviewAvailable: Flow<Boolean> = isLocallyEligible
+    // `null` means no probe ran (not eligible), which is not a Play answer and is never cached.
+    // No setupCommonEventHandlers here, deliberately breaking the repo's always-chain convention:
+    // its catch swallows CancellationException instead of rethrowing it, and a swallowed
+    // cancellation would complete this Lazily shared flow for the rest of the process.
+    private val reviewAvailability: Flow<Verdict?> = isLocallyEligible
         .flatMapLatest { eligible ->
-            if (!eligible) return@flatMapLatest flowOf(false)
+            if (!eligible) return@flatMapLatest flowOf<Verdict?>(null)
 
             flow {
-                for (attempt in 1..PROBE_ATTEMPTS) {
-                    val info = try {
-                        manager.requestReview()
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Exception) {
-                        log(TAG, WARN) { "Probe $attempt/$PROBE_ATTEMPTS failed: ${e.asLog()}" }
-                        if (attempt < PROBE_ATTEMPTS) delay(probeRetryDelay)
-                        continue
-                    }
-                    log(TAG) { "Probe $attempt/$PROBE_ATTEMPTS returned ${info.desc()}" }
-                    emit(info.canShow)
+                cachedVerdict?.let {
+                    log(TAG) { "Reusing cached probe verdict: $it" }
+                    emit(it)
                     return@flow
                 }
-                // Re-probed when eligibility changes or on the next process start
-                log(TAG, WARN) { "Probe gave up after $PROBE_ATTEMPTS attempts" }
-                emit(false)
+
+                while (true) {
+                    if (probeRoundsStarted == FAILURE_RETRY_ROUNDS + 1) {
+                        log(TAG, WARN) { "Probe failed in all ${FAILURE_RETRY_ROUNDS + 1} rounds, giving up" }
+                        emit(Verdict.TRANSIENT_FAILURE)
+                        return@flow
+                    }
+                    if (probeRoundsStarted > 0) delay(probeFailureCooldown)
+
+                    val round = probeRoundsStarted
+                    probeRoundsStarted++
+
+                    val verdict = probeRound(round)
+                    emit(verdict)
+
+                    if (verdict != Verdict.TRANSIENT_FAILURE) {
+                        // Play answered, that answer holds for the rest of the process
+                        cachedVerdict = verdict
+                        return@flow
+                    }
+                }
             }
         }
-        .setupCommonEventHandlers(TAG) { "isReviewAvailable" }
-        .replayingShare(appScope)
+        // Lazily, not WhileSubscribed: a re-subscription must not spend another Play request on a
+        // question that was already answered (or given up on) in this process.
+        .shareIn(appScope, SharingStarted.Lazily, replay = 1)
 
+    private suspend fun probeRound(round: Int): Verdict {
+        for (attempt in 1..PROBE_ATTEMPTS) {
+            val info = try {
+                // withTimeoutOrNull, never withTimeout: TimeoutCancellationException IS-A
+                // CancellationException and would escape through the rethrow below.
+                withTimeoutOrNull(requestTimeout) { manager.requestReview() }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                log(TAG, WARN) { "Probe $round:$attempt/$PROBE_ATTEMPTS failed: ${e.asLog()}" }
+                if (attempt < PROBE_ATTEMPTS) delay(probeRetryDelay)
+                continue
+            }
+
+            if (info == null) {
+                // Our timeout does not cancel the underlying Play Task: an immediate retry would
+                // stack concurrent quota-consuming requests against an already hung service, so the
+                // whole round is abandoned. The orphaned Task is tolerated, its completion resumes
+                // a cancelled continuation and is discarded.
+                log(TAG, WARN) { "Probe $round:$attempt/$PROBE_ATTEMPTS timed out, abandoning the round" }
+                return Verdict.TRANSIENT_FAILURE
+            }
+
+            log(TAG) { "Probe $round:$attempt/$PROBE_ATTEMPTS returned ${info.desc()}" }
+            return if (info.canShow) Verdict.AVAILABLE else Verdict.UNAVAILABLE_BY_PLAY
+        }
+        log(TAG, WARN) { "Probe round $round gave up after $PROBE_ATTEMPTS attempts" }
+        return Verdict.TRANSIENT_FAILURE
+    }
+
+    // No setupCommonEventHandlers here either, for the same reason as reviewAvailability above:
+    // cancellation has to propagate through this flow instead of being logged and swallowed.
     override val state: Flow<ReviewTool.State> = combine(
         isLocallyEligible,
-        isReviewAvailable,
+        reviewAvailability,
         settings.reviewedAt.flow,
-    ) { eligible, available, reviewedAt ->
-        log(TAG) { "State: eligible=$eligible, available=$available, reviewedAt=$reviewedAt" }
+    ) { eligible, verdict, reviewedAt ->
+        log(TAG) { "State: eligible=$eligible, verdict=$verdict, reviewedAt=$reviewedAt" }
         ReviewTool.State(
-            shouldAskForReview = eligible && available,
+            shouldAskForReview = eligible && verdict == Verdict.AVAILABLE,
             hasReviewed = reviewedAt != null,
         )
     }
@@ -126,15 +216,21 @@ class GplayReviewTool @Inject constructor(
             log(TAG, ERROR) { "State failed: ${e.asLog()}" }
             emit(ReviewTool.State())
         }
-        .setupCommonEventHandlers(TAG) { "state" }
         .replayingShare(appScope)
 
     // Single-flight: a second tap must not queue up behind the first, or Play's flow would be
     // launched again the moment the user returns from it.
     private val reviewLock = Mutex()
 
+    // Tap race backstop: a dismiss can land while a reviewNow is waiting on Play. In-memory on
+    // purpose, re-reading the persisted timestamp would race the write it is supposed to observe.
+    @Volatile private var dismissGeneration: Int = 0
+
     override suspend fun dismiss() {
         log(TAG, INFO) { "dismiss()" }
+        // Bumped before the write: an in-flight reviewNow has to see the dismiss immediately,
+        // not once DataStore has persisted it.
+        dismissGeneration++
         settings.lastDismissed.value(Clock.System.now())
     }
 
@@ -147,10 +243,12 @@ class GplayReviewTool @Inject constructor(
         }
 
         try {
+            val generation = dismissGeneration
+
             // ReviewInfo is short lived, Google wants it requested shortly before the launch,
             // a token cached at process start is likely stale by the time the user taps.
             val reviewInfo = try {
-                manager.requestReview()
+                withTimeoutOrNull(requestTimeout) { manager.requestReview() }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -158,7 +256,18 @@ class GplayReviewTool @Inject constructor(
                 log(TAG, ERROR) { "Failed to get a fresh ReviewInfo: ${e.asLog()}" }
                 return
             }
+
+            if (reviewInfo == null) {
+                // A hang is not user intent either: persist nothing, the next tap retries
+                log(TAG, ERROR) { "Timed out requesting a fresh ReviewInfo" }
+                return
+            }
             log(TAG) { "reviewNow(...): Fresh ${reviewInfo.desc()}" }
+
+            if (dismissGeneration != generation) {
+                log(TAG, WARN) { "Dismissed while we were requesting a fresh ReviewInfo, aborting" }
+                return
+            }
 
             if (!reviewInfo.canShow) {
                 // Play's quota verdict, asking again right away would be pointless
@@ -172,19 +281,34 @@ class GplayReviewTool @Inject constructor(
                 return
             }
 
+            if (dismissGeneration != generation) {
+                log(TAG, WARN) { "Dismissed before we could launch, aborting" }
+                return
+            }
+
             val reviewTime = measureTimeMillis {
-                try {
-                    manager.launchReview(activity, reviewInfo)
+                val launched = try {
+                    // withTimeoutOrNull for the same reason as the probe: a withTimeout would be
+                    // rethrown as cancellation by the branch below.
+                    withTimeoutOrNull(launchTimeout) { manager.launchReview(activity, reviewInfo) }
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
                     log(TAG, ERROR) { "Failed to launch review flow: ${e.asLog()}" }
                     return
                 }
+
+                if (launched == null) {
+                    // Far beyond any real review session: the sheet's Task is hung and must not hold
+                    // the single-flight lock forever. The outcome is unknown, so nothing is persisted
+                    // and the duration heuristic below is skipped.
+                    log(TAG, WARN) { "Timed out waiting for the review flow to finish" }
+                    return
+                }
             }
             log(TAG) { "Review completed after ${reviewTime}ms" }
 
-            if (reviewTime >= REVIEW_MIN_DURATION.inWholeMilliseconds) {
+            if (reviewTime.milliseconds >= reviewMinDuration) {
                 log(TAG, INFO) { "Marking review as completed" }
                 settings.reviewedAt.value(Clock.System.now())
             } else {
@@ -196,6 +320,29 @@ class GplayReviewTool @Inject constructor(
         }
     }
 
+    private data class EligibilityInputs(
+        val lastDismissed: Instant?,
+        val reviewedAt: Instant?,
+        val upgradedAt: Instant?,
+    )
+
+    private fun EligibilityInputs.isEligibleAt(now: Instant): Boolean {
+        // Free trial is 14 days, only ask for review after the user has paid something
+        val hasPaidForPro = (now - (upgradedAt ?: now)) > PRO_GRACE_PERIOD
+        val isSnoozed = (now - (lastDismissed ?: Instant.DISTANT_PAST)) < SNOOZE_PERIOD
+        val hasReviewed = reviewedAt != null
+
+        log(TAG) { "Eligibility: hasPaidForPro=$hasPaidForPro ($upgradedAt)" }
+        log(TAG) { "Eligibility: isSnoozed=$isSnoozed ($lastDismissed), hasReviewed=$hasReviewed ($reviewedAt)" }
+
+        return hasPaidForPro && !isSnoozed && !hasReviewed
+    }
+
+    private fun EligibilityInputs.boundariesAfter(now: Instant): List<Instant> = listOfNotNull(
+        lastDismissed?.plus(SNOOZE_PERIOD),
+        upgradedAt?.plus(PRO_GRACE_PERIOD),
+    ).filter { it > now }
+
     private val ReviewInfo.canShow: Boolean
         get() = when {
             toString().contains("isNoOp=true") -> false
@@ -206,10 +353,29 @@ class GplayReviewTool @Inject constructor(
         return "ReviewInfo(canShow=$canShow, ${toString()})"
     }
 
+    private enum class Verdict {
+        // Play answered with a usable ReviewInfo
+        AVAILABLE,
+
+        // Play answered with an isNoOp ReviewInfo, i.e. a deliberate "no"
+        UNAVAILABLE_BY_PLAY,
+
+        // No answer: attempts exhausted by exceptions, or the round was abandoned on a timeout
+        TRANSIENT_FAILURE,
+    }
+
     companion object {
         private val TAG = logTag("Review", "Tool", "Gplay")
         private const val PROBE_ATTEMPTS = 3
+        private const val FAILURE_RETRY_ROUNDS = 3
         private val PROBE_RETRY_DELAY = 30.seconds
+        private val PROBE_FAILURE_COOLDOWN = 15.minutes
         private val REVIEW_MIN_DURATION = 2.seconds
+        private val REQUEST_TIMEOUT = 10.seconds
+        private val LAUNCH_TIMEOUT = 10.minutes
+        private val SNOOZE_PERIOD = 14.days
+        private val PRO_GRACE_PERIOD = 21.days
+        private const val MAX_BOUNDARY_WAKES = 4
+        private val BOUNDARY_WAKE_MARGIN = 1.seconds
     }
 }
