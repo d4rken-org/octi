@@ -266,8 +266,6 @@
     <string name="review_app_review_action">Оцени</string>
     <string name="review_app_body">Желиш ли оставити рецензију за Octi? ❤️</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Назад</string>
     <string name="upgrade_screen_progress_loading">Учитавање…</string>
 </resources>

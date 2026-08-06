@@ -265,8 +265,6 @@
     <string name="dashboard_device_remove_picker_message">Acest dispozitiv este sincronizat prin mai multe servicii. Alege din care dintre acestea să-l elimini — vei confirma pe următorul ecran.</string>
     <string name="review_app_body">Ai vrea să lași aplicației Octi o recenzie? ❤️</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Navigare sus</string>
     <string name="upgrade_screen_progress_loading">Se încarcă…</string>
 </resources>
