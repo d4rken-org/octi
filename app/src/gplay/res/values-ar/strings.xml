@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">أوكتي احترافي</string>
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">احترافي</string>
     <string name="upgrades_gplay_unavailable_error_title">جوجل بلاي غير متوفر</string>
     <string name="upgrades_gplay_unavailable_error_description">لا يمكن لأوكتي الاتصال بـ جوجل بلاي. هل جوجل بلاي مثبت ومحدث؟ هل حساب جوجل الخاص بك مسجل الدخول؟ حاول مسح ذاكرة التخزين المؤقت لتطبيق جوجل بلاي وأعد تشغيل جهازك.</string>
     <string name="upgrades_no_purchases_found_check_account">لم يتم العثور على مشتريات. هل تستخدم الحساب الصحيح؟</string>
