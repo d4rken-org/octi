@@ -254,7 +254,11 @@
     <string name="dashboard_device_remove_action">Verwyder toestel</string>
     <string name="dashboard_device_remove_picker_title">Kies sinkronisasiediens</string>
     <string name="dashboard_device_remove_picker_message">Hierdie toestel word deur verskeie dienste gesinkroniseer. Kies watter een jy daarvan wil verwyder — jy sal dit op die volgende skerm bevestig.</string>
+    <string name="review_app_review_action">Hersien</string>
+    <string name="review_app_body">Wil jy graag vir Octi \'n hersiening los? ❤️</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Navigeer op</string>
     <string name="upgrade_screen_progress_loading">Laai…</string>
 </resources>

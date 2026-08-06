@@ -32,6 +32,8 @@
     <string name="sync_connector_account_label">Konto</string>
     <string name="sync_connector_progress_syncing">Synchronizowanie...</string>
     <string name="sync_connector_progress_sync_queued">Synchronizacja w kolejce...</string>
+    <string name="sync_connector_progress_pausing">Wstrzymywanie synchronizacji...</string>
+    <string name="sync_connector_progress_pause_queued">Wstrzymaj w kolejce...</string>
     <string name="sync_connector_progress_resuming">Wznawianie synchronizacji...</string>
     <string name="sync_connector_progress_resetting">Resetowanie danych...</string>
     <string name="sync_connector_progress_device_updating">Aktualizowanie urządzeń...</string>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play er utilgjengelig</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi kan ikke koble til Google Play. Er Google Play installert og oppdatert? Er Google-kontoen din pålogget? Prøv å tømme hurtigbufferen for Google Play-appen og start enheten på nytt.</string>
     <string name="upgrades_no_purchases_found_check_account">Ingen kjøp funnet. Bruker du riktig konto?</string>

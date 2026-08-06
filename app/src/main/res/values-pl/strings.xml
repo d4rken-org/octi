@@ -272,7 +272,11 @@
     <string name="dashboard_device_remove_action">Usuń urządzenie</string>
     <string name="dashboard_device_remove_picker_title">Wybierz usługę synchronizacji</string>
     <string name="dashboard_device_remove_picker_message">To urządzenie jest zsynchronizowane przez wiele usług. Wybierz jedno z nich do usunięcia — potwierdzisz na następnym ekranie.</string>
+    <string name="review_app_review_action">Oceń</string>
+    <string name="review_app_body">Wystawisz opinię dla Octi? ❤️</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Przejdź wyżej</string>
     <string name="upgrade_screen_progress_loading">Ładowanie…</string>
 </resources>

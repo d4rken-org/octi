@@ -70,8 +70,11 @@
     <string name="changelog_label">יומן שינויים</string>
     <string name="settings_acknowledgements_label">קרדיטים</string>
     <string name="documentation_label">תיעוד</string>
+    <string name="settings_ecosystem_label">עוד דרכים לשימוש ב-Octi</string>
     <string name="settings_ecosystem_desc">סנכרון ברשת, בדסקטופ, ומאורח עצמי</string>
+    <string name="settings_ecosystem_header_desc">ניתן להשתמש ב-Octi דרך דפדפן או אפליקציית שולחן עבודה, באמצעות Octi Server.</string>
     <string name="settings_ecosystem_web_label">Octi Web</string>
+    <string name="settings_ecosystem_web_desc">ניתן להשתמש ב-Octi מכל דפדפן</string>
     <string name="settings_ecosystem_web_source_label">Octi Web (מקור)</string>
     <string name="settings_ecosystem_web_source_desc">צפה בקוד המקור והוראות אירוח עצמי</string>
     <string name="settings_ecosystem_desktop_label">Octi Desktop</string>
@@ -269,7 +272,11 @@
     <string name="dashboard_device_remove_action">הסרת התקן</string>
     <string name="dashboard_device_remove_picker_title">בחר שירות סנכרון</string>
     <string name="dashboard_device_remove_picker_message">מכשיר זה מסונכרן דרך שירותים מרובים. בחר מאיזה שירות להסיר אותו — תאשר בעמוד הבא.</string>
+    <string name="review_app_review_action">סקירה</string>
+    <string name="review_app_body">האם יש לך עניין להשאיר ביקורת ל-Octi? ❤️</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">פרו</string>
     <string name="upgrade_screen_navigate_up">עלה</string>
     <string name="upgrade_screen_progress_loading">טוען…</string>
 </resources>

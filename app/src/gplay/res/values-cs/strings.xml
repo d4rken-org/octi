@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Služba Google Play není k dispozici</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi se nemůže připojit k Google Play. Je Google Play nainstalován a aktuální? Je váš účet Google přihlášen? Zkuste vyčistit mezipaměť aplikace Google Play a restartovat zařízení.</string>
     <string name="upgrades_no_purchases_found_check_account">Nebyly nalezeny žádné nákupy. Používáte správný účet?</string>
