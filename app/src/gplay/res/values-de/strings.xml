@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_upgraded">Octi Pro</string>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
-    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Keine Verbindung zu Google Play</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi kann sich nicht mit Google Play verbinden. Ist Google Play installiert und aktuell? Bist du angemeldet bei Google Play? Versuche den Cache von der Google Play App zu bereinigen und starte dein Gerät neu.</string>
     <string name="upgrades_no_purchases_found_check_account">Keine Zahlung gefunden. Benutzt du den richtigen Account?</string>

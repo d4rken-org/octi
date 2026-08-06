@@ -245,7 +245,11 @@
     <string name="dashboard_device_remove_action">移除裝置</string>
     <string name="dashboard_device_remove_picker_title">選擇同步服務</string>
     <string name="dashboard_device_remove_picker_message">此裝置透過多個服務進行同步。選擇要將其移除的服務 — 您將在下一個畫面確認。</string>
+    <string name="review_app_review_action">評論</string>
+    <string name="review_app_body">你想為 Octi 留下評論嗎？❤️</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">專業版</string>
     <string name="upgrade_screen_navigate_up">向上導航</string>
     <string name="upgrade_screen_progress_loading">正在載入</string>
 </resources>

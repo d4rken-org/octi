@@ -254,7 +254,11 @@
     <string name="dashboard_device_remove_action">Fjern enhed</string>
     <string name="dashboard_device_remove_picker_title">Vælg synkroniseringstjeneste</string>
     <string name="dashboard_device_remove_picker_message">Denne enhed synkroniseres gennem flere tjenester. Vælg hvilken du vil fjerne den fra — du bekræfter på næste skærm.</string>
+    <string name="review_app_review_action">Bedøm</string>
+    <string name="review_app_body">Har du lyst til at give Octi en anmeldelse? ❤️</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Naviger op</string>
     <string name="upgrade_screen_progress_loading">Indlæser…</string>
 </resources>

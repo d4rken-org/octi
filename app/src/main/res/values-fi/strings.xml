@@ -254,7 +254,11 @@
     <string name="dashboard_device_remove_action">Poista laite</string>
     <string name="dashboard_device_remove_picker_title">Valitse synkronointipalvelu</string>
     <string name="dashboard_device_remove_picker_message">Tämä laite on synkronoitu useiden palveluiden kautta. Valitse, mistä palvelusta haluat poistaa sen – vahvistat valinnan seuraavalla näytöllä.</string>
+    <string name="review_app_review_action">Arvostele</string>
+    <string name="review_app_body">Haluaisitko jättää Octille arvostelun? ❤️</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
+    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
+    <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrade_screen_navigate_up">Siirry ylös</string>
     <string name="upgrade_screen_progress_loading">Ladataan…</string>
 </resources>
