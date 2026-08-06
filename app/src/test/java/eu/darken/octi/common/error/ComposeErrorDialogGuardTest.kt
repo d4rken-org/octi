@@ -39,21 +39,29 @@ class ComposeErrorDialogGuardTest : BaseTest() {
         override val errorEvents = SingleEventFlow<Throwable>()
     }
 
-    private class ThrowingFixError(private val onFix: () -> Unit) : Exception("fix error"), HasLocalizedError {
+    private class ThrowingFixError(
+        private val onFix: () -> Unit,
+        private val fixErrorMessage: String? = null,
+    ) : Exception("fix error"), HasLocalizedError {
         override fun getLocalizedError(): LocalizedError = LocalizedError(
             throwable = this,
             label = "Fix error".toCaString(),
             description = "Something wants fixing".toCaString(),
             fixActionLabel = FIX_LABEL.toCaString(),
             fixAction = { onFix() },
+            fixActionErrorMessage = fixErrorMessage?.toCaString(),
         )
     }
 
-    private class InfoActionError(private val onInfo: () -> Unit) : Exception("info error"), HasLocalizedError {
+    private class InfoActionError(
+        private val onInfo: () -> Unit,
+        private val fixErrorMessage: String? = null,
+    ) : Exception("info error"), HasLocalizedError {
         override fun getLocalizedError(): LocalizedError = LocalizedError(
             throwable = this,
             label = "Info error".toCaString(),
             description = "Something needs a closer look".toCaString(),
+            fixActionErrorMessage = fixErrorMessage?.toCaString(),
             infoAction = { onInfo() },
         )
     }
@@ -110,6 +118,55 @@ class ComposeErrorDialogGuardTest : BaseTest() {
         infoClicks shouldBe 1
         composeRule.onAllNodesWithText(context.getString(android.R.string.ok)).assertCountEquals(0)
     }
+
+    @Test
+    fun `a throwing fix action with its own message keeps the dialog open and shows it inline`() {
+        // A Toast caps at 2 lines and clipped this kind of message; the dialog body has no cap.
+        showError(
+            ThrowingFixError(
+                onFix = { throw IllegalStateException("fix action exploded") },
+                fixErrorMessage = FIX_ERROR_MESSAGE,
+            )
+        )
+
+        composeRule.onNodeWithText(FIX_LABEL).performClick()
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithText(FIX_ERROR_MESSAGE).assertExists()
+        composeRule.onNodeWithText(FIX_LABEL).assertExists()
+        // Not latched: the way out stays available while the message is shown.
+        composeRule.onNodeWithText(context.getString(CommonR.string.general_dismiss_action)).performClick()
+        composeRule.waitForIdle()
+
+        composeRule.onAllNodesWithText(FIX_LABEL).assertCountEquals(0)
+        composeRule.onAllNodesWithText(FIX_ERROR_MESSAGE).assertCountEquals(0)
+    }
+
+    @Test
+    fun `a throwing info action never borrows the fix action's failure message`() {
+        // The failure copy belongs to the fix action's dispatch, not to the error: the info button
+        // dispatches without one and must keep the plain log-then-dismiss behaviour. Octi never
+        // renders both buttons at once, so the message rides on an info-only error here — which is
+        // exactly the shape that would break if the dialog read it off the error instead.
+        var infoClicks = 0
+        showError(
+            InfoActionError(
+                onInfo = {
+                    infoClicks++
+                    throw IllegalStateException("info action exploded")
+                },
+                fixErrorMessage = FIX_ERROR_MESSAGE,
+            )
+        )
+
+        composeRule.onNodeWithText(context.getString(CommonR.string.general_show_details_action)).performClick()
+        composeRule.waitForIdle()
+
+        infoClicks shouldBe 1
+        composeRule.onAllNodesWithText(context.getString(android.R.string.ok)).assertCountEquals(0)
+        composeRule.onAllNodesWithText(FIX_ERROR_MESSAGE).assertCountEquals(0)
+    }
 }
 
 private const val FIX_LABEL = "Boom"
+private const val FIX_ERROR_MESSAGE = "Fixing it did not work"

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import eu.darken.octi.R
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.Test
@@ -17,7 +18,8 @@ import testhelpers.TestApplication
 
 /**
  * The error dialog's "Google Play" button runs on an activity context: a device where the launch is
- * refused - or where there is nothing to launch - must get a toast, not a crash.
+ * refused - or where there is nothing to launch - must get the failure reported through the dialog
+ * (which can show the full message), not a clipped toast and not a crash.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33], application = TestApplication::class)
@@ -39,20 +41,33 @@ class GplayFixActionTest : BaseTest() {
 
     private fun <T : Activity> activityOf(clazz: Class<T>): T = Robolectric.buildActivity(clazz).setup().get()
 
-    private fun assertToastInsteadOfCrash(activity: Activity) {
-        fixAction.invoke(activity)
+    @Test
+    fun `a denied launch reports through the dialog instead of a toast`() {
+        val activity = activityOf(DeniedLaunchActivity::class.java)
 
-        ShadowToast.getTextOfLatestToast() shouldBe
-            activity.getString(R.string.upgrades_gplay_not_installed_message)
+        shouldThrow<SecurityException> { fixAction.invoke(activity) }
+
+        // A toast caps at 2 lines and clipped this message (French lost a whole condition
+        // mid-word) — the dialog renders it inline instead.
+        ShadowToast.getLatestToast() shouldBe null
     }
 
     @Test
-    fun `a denied launch shows the not-installed toast instead of crashing`() {
-        assertToastInsteadOfCrash(activityOf(DeniedLaunchActivity::class.java))
+    fun `an unresolvable launch reports through the dialog instead of a toast`() {
+        val activity = activityOf(UnresolvedLaunchActivity::class.java)
+
+        shouldThrow<ActivityNotFoundException> { fixAction.invoke(activity) }
+
+        ShadowToast.getLatestToast() shouldBe null
     }
 
     @Test
-    fun `an unresolvable launch shows the not-installed toast instead of crashing`() {
-        assertToastInsteadOfCrash(activityOf(UnresolvedLaunchActivity::class.java))
+    fun `the failure message travels with the error for the dialog to show`() {
+        val activity = activityOf(Activity::class.java)
+
+        val message = GplayServiceUnavailableException(RuntimeException("Play hiccup"))
+            .getLocalizedError().fixActionErrorMessage.shouldNotBeNull()
+
+        message.get(activity) shouldBe activity.getString(R.string.upgrades_gplay_not_installed_message)
     }
 }
