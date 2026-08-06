@@ -1365,6 +1365,13 @@ private fun ReviewCard(
     onLater: () -> Unit,
     onReview: () -> Unit,
 ) {
+    // The card only disappears with the next state emission, so the tap targets need a latch. It is
+    // asymmetric on purpose: the harmful orderings are a dismiss after a review (which overwrites
+    // the review bookkeeping with a snooze) and a review after a dismiss. A repeated review tap is
+    // harmless, the tool's single-flight lock absorbs it, and blocking it here would leave a dead
+    // card whenever a Play request fails and nothing gets persisted.
+    var dismissLocked by rememberSaveable { mutableStateOf(false) }
+    var fullyLatched by rememberSaveable { mutableStateOf(false) }
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -1388,10 +1395,27 @@ private fun ReviewCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
-                TextButton(onClick = onLater) {
+                TextButton(
+                    onClick = {
+                        if (!fullyLatched && !dismissLocked) {
+                            dismissLocked = true
+                            fullyLatched = true
+                            onLater()
+                        }
+                    },
+                    enabled = !fullyLatched && !dismissLocked,
+                ) {
                     Text(stringResource(CommonR.string.general_maybe_later_action))
                 }
-                TextButton(onClick = onReview) {
+                TextButton(
+                    onClick = {
+                        if (!fullyLatched) {
+                            dismissLocked = true
+                            onReview()
+                        }
+                    },
+                    enabled = !fullyLatched,
+                ) {
                     Text(stringResource(R.string.review_app_review_action))
                 }
             }
