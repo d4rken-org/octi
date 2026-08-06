@@ -2,6 +2,8 @@ package eu.darken.octi.main.ui.dashboard
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
@@ -98,7 +100,7 @@ class DashboardReviewCardRenderTest : BaseComposeRobolectricTest() {
     }
 
     @Test
-    fun `both review card actions report back`() {
+    fun `a dismissed card ignores a later review tap`() {
         var laterTaps = 0
         var reviewTaps = 0
         composeRule.setContent {
@@ -110,12 +112,70 @@ class DashboardReviewCardRenderTest : BaseComposeRobolectricTest() {
             }
         }
 
+        // The card only disappears with the next state emission, so both targets are still on
+        // screen: a review after a dismiss would re-open what the user just closed.
         composeRule.onNodeWithText(laterAction).performClick()
+        composeRule.runOnIdle { laterTaps shouldBe 1 }
+
+        composeRule.onNodeWithText(reviewAction).assertIsNotEnabled()
         composeRule.onNodeWithText(reviewAction).performClick()
 
         composeRule.runOnIdle {
             laterTaps shouldBe 1
+            reviewTaps shouldBe 0
+        }
+    }
+
+    @Test
+    fun `a reviewed card ignores a later dismiss tap`() {
+        var laterTaps = 0
+        var reviewTaps = 0
+        composeRule.setContent {
+            PreviewWrapper {
+                ReviewDashboard(
+                    onReviewLater = { laterTaps++ },
+                    onReview = { reviewTaps++ },
+                )
+            }
+        }
+
+        composeRule.onNodeWithText(reviewAction).performClick()
+        composeRule.runOnIdle { reviewTaps shouldBe 1 }
+
+        // A dismiss after a review would overwrite the completed-review bookkeeping with a snooze.
+        composeRule.onNodeWithText(laterAction).assertIsNotEnabled()
+        composeRule.onNodeWithText(laterAction).performClick()
+
+        composeRule.runOnIdle {
             reviewTaps shouldBe 1
+            laterTaps shouldBe 0
+        }
+    }
+
+    @Test
+    fun `repeated review taps are not absorbed by the card`() {
+        var laterTaps = 0
+        var reviewTaps = 0
+        composeRule.setContent {
+            PreviewWrapper {
+                ReviewDashboard(
+                    onReviewLater = { laterTaps++ },
+                    onReview = { reviewTaps++ },
+                )
+            }
+        }
+
+        composeRule.onNodeWithText(reviewAction).performClick()
+        composeRule.runOnIdle { reviewTaps shouldBe 1 }
+
+        // A failed Play request persists nothing and leaves the card up, so the retry has to work.
+        // Duplicates are the tool's problem, it holds a single-flight lock for exactly this.
+        composeRule.onNodeWithText(reviewAction).assertIsEnabled()
+        composeRule.onNodeWithText(reviewAction).performClick()
+
+        composeRule.runOnIdle {
+            reviewTaps shouldBe 2
+            laterTaps shouldBe 0
         }
     }
 }
