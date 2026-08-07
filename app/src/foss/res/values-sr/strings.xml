@@ -30,6 +30,5 @@
     <string name="upgrade_screen_free_status_body">Постаните подржавач да откључате додатне функције и спонзоришете наставак развоја.</string>
     <string name="upgrade_screen_see_options_action">Погледајте опције надградње</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi FOSS</string>
     <string name="settings_upgrade_status_desc">Погледајте свој статус подржавача</string>
 </resources>

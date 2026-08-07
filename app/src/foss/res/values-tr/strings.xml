@@ -29,6 +29,5 @@
     <string name="upgrade_screen_free_status_body">Ek özelliklerin kilidini açmak ve devam eden geliştirmeyi sponsorlamak için bir destekçi olun.</string>
     <string name="upgrade_screen_see_options_action">Yükseltme seçeneklerini görün</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi FOSS</string>
     <string name="settings_upgrade_status_desc">Destekçi durumunuzu görün</string>
 </resources>

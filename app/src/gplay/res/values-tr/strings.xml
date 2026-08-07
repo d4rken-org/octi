@@ -102,6 +102,5 @@ Aynı özellikler, sadece farklı fiyatlandırma modelleri.</string>
     <string name="upgrade_screen_free_status_body">Octi Pro\'ya yükseltin, ek özelliklerin kilidini açın ve geliştirmeyi destekleyin.</string>
     <string name="upgrade_screen_see_options_action">Yükseltme seçeneklerini görün</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">Pro durumunuzu görün ve yükseltmenizi yönetin</string>
 </resources>

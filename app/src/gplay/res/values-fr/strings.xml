@@ -102,6 +102,5 @@ Mêmes fonctions, juste des modèles tarifaires différents.</string>
     <string name="upgrade_screen_free_status_body">Passez à Octi Pro pour débloquer des fonctions supplémentaires et financer le développement.</string>
     <string name="upgrade_screen_see_options_action">Voir les options de mise à niveau</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">Consultez votre statut Pro et gérez votre mise à niveau</string>
 </resources>

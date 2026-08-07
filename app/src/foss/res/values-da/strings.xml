@@ -29,6 +29,5 @@
     <string name="upgrade_screen_free_status_body">Bliv supporter for at få ekstra funktioner og sponsorere fortsat udvikling.</string>
     <string name="upgrade_screen_see_options_action">Se opgraderingsmuligheder</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi FOSS</string>
     <string name="settings_upgrade_status_desc">Se din supporterstatus</string>
 </resources>

@@ -100,6 +100,5 @@
     <string name="upgrade_screen_free_status_body">升级到 Octi 专业版以解锁额外功能并支持开发。</string>
     <string name="upgrade_screen_see_options_action">查看升级选项</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">查看您的专业版状态并管理升级</string>
 </resources>

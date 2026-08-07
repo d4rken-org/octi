@@ -102,6 +102,5 @@ Os mesmos recursos, apenas modelos de preços diferentes.</string>
     <string name="upgrade_screen_free_status_body">Faça upgrade para o Octi Pro para desbloquear recursos extras e apoiar o desenvolvimento.</string>
     <string name="upgrade_screen_see_options_action">Ver opções de upgrade</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">Veja seu status de Pro e gerencie seu upgrade</string>
 </resources>

@@ -102,6 +102,5 @@ Dezelfde functies, gewoon verschillende prijsmodellen.</string>
     <string name="upgrade_screen_free_status_body">Upgrade naar Octi Pro om extra functies te ontgrendelen en de ontwikkeling te ondersteunen.</string>
     <string name="upgrade_screen_see_options_action">Bekijk upgrade-opties</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">Bekijk je Pro-status en beheer je upgrade</string>
 </resources>
