@@ -31,6 +31,5 @@
     <string name="upgrade_screen_free_status_body">הפוך לתומך כדי לפתוח תכונות נוספות ולממן פיתוח מתמשך.</string>
     <string name="upgrade_screen_see_options_action">הצג אפשרויות שדרוג</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi FOSS</string>
     <string name="settings_upgrade_status_desc">הצג את סטטוס התומך שלך</string>
 </resources>

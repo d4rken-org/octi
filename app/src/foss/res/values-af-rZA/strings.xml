@@ -29,6 +29,5 @@
     <string name="upgrade_screen_free_status_body">Raak \'n ondersteuner om ekstra funksies te ontgrendel en voortgesette ontwikkeling te ondersteun.</string>
     <string name="upgrade_screen_see_options_action">Sien opgraad-opsies</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi FOSS</string>
     <string name="settings_upgrade_status_desc">Sien jou ondersteuner-status</string>
 </resources>

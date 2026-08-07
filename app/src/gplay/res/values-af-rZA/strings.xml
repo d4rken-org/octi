@@ -101,6 +101,5 @@
     <string name="upgrade_screen_free_status_body">Voer op tot Octi Pro om ekstra funksies te ontgrendel en ontwikkeling te ondersteun.</string>
     <string name="upgrade_screen_see_options_action">Sien opgraad-opsies</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">Sien jou Pro-status en bestuur jou opgraad</string>
 </resources>

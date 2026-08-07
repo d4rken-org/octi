@@ -100,6 +100,5 @@
     <string name="upgrade_screen_free_status_body">Octi Proにアップグレードして、追加機能を利用し、開発をサポートしましょう。</string>
     <string name="upgrade_screen_see_options_action">アップグレードオプションを確認</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">Proステータスを確認し、アップグレードを管理</string>
 </resources>

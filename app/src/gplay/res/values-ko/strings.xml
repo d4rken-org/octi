@@ -100,6 +100,5 @@
     <string name="upgrade_screen_free_status_body">Octi Pro로 업그레이드하면 추가 기능을 잠금 해제하고 개발을 지원할 수 있습니다.</string>
     <string name="upgrade_screen_see_options_action">업그레이드 옵션 보기</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">Pro 상태 확인 및 업그레이드 관리</string>
 </resources>

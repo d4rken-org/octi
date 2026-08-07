@@ -29,6 +29,5 @@
     <string name="upgrade_screen_free_status_body">Word supporter om extra functies te ontgrendelen en de verdere ontwikkeling te steunen.</string>
     <string name="upgrade_screen_see_options_action">Bekijk upgrade-opties</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi FOSS</string>
     <string name="settings_upgrade_status_desc">Bekijk je supporterstatus</string>
 </resources>

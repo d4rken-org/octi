@@ -28,6 +28,5 @@
     <string name="upgrade_screen_free_status_body">Trở thành người ủng hộ để mở khóa các tính năng bổ sung và ủng hộ phát triển tiếp tục.</string>
     <string name="upgrade_screen_see_options_action">Xem các tùy chọn nâng cấp</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi FOSS</string>
     <string name="settings_upgrade_status_desc">Xem trạng thái người ủng hộ của bạn</string>
 </resources>

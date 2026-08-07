@@ -101,6 +101,5 @@
     <string name="upgrade_screen_free_status_body">Frissítsd az Octi Pro-ra az extra funkciók feloldásához és a fejlesztés támogatásához.</string>
     <string name="upgrade_screen_see_options_action">Tekintsd meg a frissítési lehetőségeket</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">Tekintsd meg a Pro státuszod és kezeld a frissítésed</string>
 </resources>

@@ -29,6 +29,5 @@
     <string name="upgrade_screen_free_status_body">Devenez un soutien pour déverrouiller des fonctions supplémentaires et soutenir le développement continu.</string>
     <string name="upgrade_screen_see_options_action">Voir les options de mise à niveau</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi, version libre</string>
     <string name="settings_upgrade_status_desc">Voir votre statut de soutien</string>
 </resources>

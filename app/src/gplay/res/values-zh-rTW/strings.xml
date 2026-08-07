@@ -101,6 +101,5 @@
     <string name="upgrade_screen_free_status_body">升級到 Octi Pro 以解鎖額外功能並支持開發。</string>
     <string name="upgrade_screen_see_options_action">查看升級選項</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">查看您的 Pro 狀態並管理您的升級</string>
 </resources>

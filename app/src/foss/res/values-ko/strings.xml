@@ -28,6 +28,5 @@
     <string name="upgrade_screen_free_status_body">후원자가 되어 추가 기능을 잠금 해제하고 지속적인 개발을 후원하세요.</string>
     <string name="upgrade_screen_see_options_action">업그레이드 옵션 보기</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi FOSS</string>
     <string name="settings_upgrade_status_desc">후원자 상태 보기</string>
 </resources>

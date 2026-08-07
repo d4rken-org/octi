@@ -29,6 +29,5 @@
     <string name="upgrade_screen_free_status_body">Convertiu-vos en col·laborador per desbloquejar funcions addicionals i patrocinar el desenvolupament continu.</string>
     <string name="upgrade_screen_see_options_action">Consulteu les opcions d’actualització</string>
     <!-- Settings status row (foss) -->
-    <string name="settings_upgrade_status_title">Octi FOSS</string>
     <string name="settings_upgrade_status_desc">Consulteu el vostre estat de col·laborador</string>
 </resources>

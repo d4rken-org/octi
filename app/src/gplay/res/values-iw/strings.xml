@@ -103,6 +103,5 @@
     <string name="upgrade_screen_free_status_body">שדרג ל-Octi Pro כדי לפתוח תכונות נוספות ולתמוך בפיתוח.</string>
     <string name="upgrade_screen_see_options_action">הצג אפשרויות שדרוג</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi פרימיום</string>
     <string name="settings_upgrade_status_desc">הצג את סטטוס Pro שלך ונהל את השדרוג שלך</string>
 </resources>

@@ -102,6 +102,5 @@
     <string name="upgrade_screen_free_status_body">Fă upgrade la Octi Pro pentru a debloca funcții suplimentare și a sprijini dezvoltarea.</string>
     <string name="upgrade_screen_see_options_action">Vezi opțiuni de upgrade</string>
     <!-- Settings status row (gplay) -->
-    <string name="settings_upgrade_status_title">Octi Pro</string>
     <string name="settings_upgrade_status_desc">Vezi starea ta Pro și gestionează upgradul</string>
 </resources>

@@ -35,6 +35,7 @@ import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.navigation.NavigationEventHandler
 import eu.darken.octi.common.settings.SettingsBaseItem
 import eu.darken.octi.common.settings.SettingsCategoryHeader
+import eu.darken.octi.common.upgrade.ui.brandTitleText
 
 @Composable
 fun SettingsIndexScreenHost(vm: SettingsIndexVM = hiltViewModel()) {
@@ -122,7 +123,7 @@ fun SettingsIndexScreen(
             }
             item {
                 SettingsBaseItem(
-                    title = stringResource(R.string.settings_upgrade_status_title),
+                    title = brandTitleText(includeQualifier = true),
                     subtitle = stringResource(R.string.settings_upgrade_status_desc),
                     icon = Icons.TwoTone.Stars,
                     onClick = onUpgradeStatus,
