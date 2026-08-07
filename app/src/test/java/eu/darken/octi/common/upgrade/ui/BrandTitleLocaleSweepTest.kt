@@ -44,13 +44,17 @@ class BrandTitleLocaleSweepTest : BaseComposeRobolectricTest() {
         locales.forEach { locale ->
             RuntimeEnvironment.setQualifiers("+$locale")
 
-            val template = context.getString(R.string.app_name_upgraded_template)
-
             withClue(locale) {
+                val template = context.getString(R.string.app_name_upgraded_template)
+
+                // `%%` is an escaped literal percent and is legitimate punctuation for a translator
+                // to use, so it is removed before the leftover-percent check rather than failing it.
+                val unescaped = template.replace("%%", "")
+
                 // Exactly one of each slot, and nothing else that getString would try to expand.
-                Regex(Regex.escape("%1\$s")).findAll(template).count() shouldBe 1
-                Regex(Regex.escape("%2\$s")).findAll(template).count() shouldBe 1
-                template.replace("%1\$s", "").replace("%2\$s", "") shouldNotContain "%"
+                Regex(Regex.escape("%1\$s")).findAll(unescaped).count() shouldBe 1
+                Regex(Regex.escape("%2\$s")).findAll(unescaped).count() shouldBe 1
+                unescaped.replace("%1\$s", "").replace("%2\$s", "") shouldNotContain "%"
             }
         }
     }
@@ -74,25 +78,27 @@ class BrandTitleLocaleSweepTest : BaseComposeRobolectricTest() {
         locales.forEach { locale ->
             RuntimeEnvironment.setQualifiers("+$locale")
 
-            val name = context.getString(CommonR.string.app_name)
-            val qualifier = context.getString(R.string.app_name_upgrade_postfix)
-            val composed = context.getString(R.string.app_name_upgraded_template, name, qualifier)
-
-            val result = spliceTitleTemplate(
-                formatted = context.getString(
-                    R.string.app_name_upgraded_template,
-                    BRAND_TITLE_MARKER,
-                    BRAND_QUALIFIER_MARKER,
-                ),
-                name = AnnotatedString(name),
-                qualifier = buildAnnotatedString {
-                    pushStyle(SpanStyle(color = Color.Red))
-                    append(qualifier)
-                    pop()
-                },
-            )
-
+            // Formatting is inside the clue on purpose: a malformed `%1$d` or `%3$s` throws out of
+            // getString rather than failing an assertion, and that throw has to name the locale too.
             withClue(locale) {
+                val name = context.getString(CommonR.string.app_name)
+                val qualifier = context.getString(R.string.app_name_upgrade_postfix)
+                val composed = context.getString(R.string.app_name_upgraded_template, name, qualifier)
+
+                val result = spliceTitleTemplate(
+                    formatted = context.getString(
+                        R.string.app_name_upgraded_template,
+                        BRAND_TITLE_MARKER,
+                        BRAND_QUALIFIER_MARKER,
+                    ),
+                    name = AnnotatedString(name),
+                    qualifier = buildAnnotatedString {
+                        pushStyle(SpanStyle(color = Color.Red))
+                        append(qualifier)
+                        pop()
+                    },
+                )
+
                 name.isNotBlank() shouldBe true
                 qualifier.isNotBlank() shouldBe true
                 result.text shouldBe composed
@@ -107,9 +113,13 @@ class BrandTitleLocaleSweepTest : BaseComposeRobolectricTest() {
 
     // Kotest's own withClue pulls in the assertions-core dependency; this keeps the failure message
     // locale-tagged without adding one, since a bare failure in a 44-iteration loop is unreadable.
+    //
+    // Catches Throwable, not just AssertionError: the failure mode this sweep exists to catch is a
+    // malformed format specifier, which throws IllegalFormatException out of getString instead of
+    // failing an assertion. Narrowing to AssertionError would let exactly that case lose its locale.
     private inline fun withClue(clue: String, block: () -> Unit) = try {
         block()
-    } catch (e: AssertionError) {
-        throw AssertionError("[locale=$clue] ${e.message}", e)
+    } catch (e: Throwable) {
+        throw AssertionError("[locale=$clue] ${e::class.simpleName}: ${e.message}", e)
     }
 }
