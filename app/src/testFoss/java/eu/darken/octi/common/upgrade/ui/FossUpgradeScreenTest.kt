@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.text.AnnotatedString
 import androidx.test.core.app.ApplicationProvider
 import eu.darken.octi.R
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -159,26 +160,56 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
     }
 
     /**
-     * "FOSS" is the flavor's name, not prose. French and Arabic used to translate the upgraded app
-     * name, which also broke DashboardScreen's two-tone title: it colours the second of exactly two
-     * space-separated tokens, and "Octi, version libre" / the four-token Arabic variant fall out of
-     * that branch entirely. These resolve through the real resource merger, so a stray locale copy
-     * coming back would fail here.
+     * "FOSS" is the flavor's name, not prose, and the FOSS build must never pick up a translated
+     * copy of it — that regression shipped once already, when the postfix lived in the shared
+     * resource file and the merger handed FOSS a locale's translated value.
+     *
+     * These resolve through the real resource merger. They assert span boundaries rather than token
+     * counts: the branch this replaced coloured the second of exactly two space-separated tokens,
+     * so a locale that composed its title differently either lost the flavor name entirely or put
+     * the highlight on the wrong word while still rendering correct-looking text.
      */
     @Test
     @Config(qualifiers = "fr")
-    fun `the upgraded app name is not translated in french`() {
-        context.getString(R.string.app_name_upgraded) shouldBe "Octi FOSS"
+    fun `the flavor qualifier is not translated in french`() {
         context.getString(R.string.app_name_upgrade_postfix) shouldBe "FOSS"
-        context.getString(R.string.app_name_upgraded).split(" ").size shouldBe 2
+        context.getString(R.string.app_name_upgraded_template) shouldBe "%1\$s %2\$s"
+
+        val result = captureBrandTitle()
+
+        result.text shouldBe "Octi FOSS"
+        result.spanStyles.size shouldBe 1
+        val span = result.spanStyles.single()
+        result.text.substring(span.start, span.end) shouldBe "FOSS"
     }
 
+    /**
+     * Arabic is the one locale that translates `app_name`, so the composed FOSS title localizes the
+     * brand while the flavor qualifier stays pinned to "FOSS". That is the title the FOSS upgrade
+     * screen already rendered here — the dashboard used to disagree with it by reading an atomic,
+     * non-translatable composed string.
+     */
     @Test
     @Config(qualifiers = "ar")
-    fun `the upgraded app name is not translated in arabic`() {
-        context.getString(R.string.app_name_upgraded) shouldBe "Octi FOSS"
+    fun `the flavor qualifier is not translated in arabic`() {
         context.getString(R.string.app_name_upgrade_postfix) shouldBe "FOSS"
-        context.getString(R.string.app_name_upgraded).split(" ").size shouldBe 2
+        context.getString(R.string.app_name_upgraded_template) shouldBe "%1\$s %2\$s"
+
+        val result = captureBrandTitle()
+
+        result.text shouldBe "أوكتي FOSS"
+        result.spanStyles.size shouldBe 1
+        val span = result.spanStyles.single()
+        result.text.substring(span.start, span.end) shouldBe "FOSS"
+    }
+
+    private fun captureBrandTitle(): AnnotatedString {
+        lateinit var captured: AnnotatedString
+        composeRule.setUpgradeContent {
+            captured = brandTitle(includeQualifier = true, highlightQualifier = true)
+        }
+        composeRule.waitForIdle()
+        return captured
     }
 }
 
