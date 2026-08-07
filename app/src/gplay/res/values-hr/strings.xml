@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play nije dostupan</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi se ne može povezati s Google Playom. Je li Google Play instaliran i ažuriran? Jeste li prijavljeni na svoj Google račun? Pokušajte izbrisati predmemoriju aplikacije Google Play i ponovno pokrenuti uređaj.</string>
     <string name="upgrades_no_purchases_found_check_account">Nema pronađenih kupnji. Koristite li pravi račun?</string>

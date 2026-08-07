@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play қолжетімсіз</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi Google Play қызметіне қосыла алмайды. Google Play орнатылған және жаңартылған ба? Google есептік жазбаңызға кіргенсіз бе? Google Play қолданбасының кэшін тазалап, құрылғыны қайта іске қосып көріңіз.</string>
     <string name="upgrades_no_purchases_found_check_account">Сатып алулар табылмады. Дұрыс есептік жазбаны пайдаланудасыз ба?</string>

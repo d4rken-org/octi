@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi Pro</string>
     <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
     <string name="app_name_upgrade_postfix">Pro</string>
+    <!-- Upgraded app title. %1$s is the app name, %2$s the tier qualifier ("Pro"). Reorder or repunctuate for your language; both placeholders must appear exactly once. -->
+    <string name="app_name_upgraded_template">%1$s %2$s</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play недоступний</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi не може підключитися до Google Play. Чи встановлено і оновлено Google Play? Ви ввійшли у свій обліковий запис Google? Спробуйте очистити кеш застосунку Google Play і перезапустити пристрій.</string>
     <string name="upgrades_no_purchases_found_check_account">Покупки не знайдено. Ви використовуєте правильний обліковий запис?</string>

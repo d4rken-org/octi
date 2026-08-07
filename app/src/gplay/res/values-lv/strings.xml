@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name_upgraded">Octi Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play nav pieejams</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi nevar izveidot savienojumu ar Google Play. Vai Google Play ir instalēts un atjaunināts? Vai jūsu Google konts ir pieslēgts? Mēģiniet notīrīt Google Play lietotnes kešatmiņu un restartēt ierīci.</string>
     <string name="upgrades_no_purchases_found_check_account">Netika atrasti pirkumi. Vai izmantojat pareizo kontu?</string>

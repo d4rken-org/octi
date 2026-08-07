@@ -79,17 +79,13 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -110,6 +106,7 @@ import eu.darken.octi.common.permissions.Permission
 import eu.darken.octi.common.permissions.descriptionRes
 import eu.darken.octi.common.permissions.labelRes
 import eu.darken.octi.common.upgrade.UpgradeRepo
+import eu.darken.octi.common.upgrade.ui.brandTitle
 import eu.darken.octi.main.ui.dashboard.editor.TileEditorCard
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleId
@@ -1155,39 +1152,20 @@ private fun SyncDetailConnectorRow(
 
 @Composable
 private fun DashboardToolbarTitle(upgradeInfo: UpgradeRepo.Info) {
-    val appName = stringResource(CommonR.string.app_name)
-    val titleText = when {
-        upgradeInfo.isPro -> stringResource(R.string.app_name_upgraded)
-        else -> appName
-    }
+    val isPro = upgradeInfo.isPro
+    val titleText = brandTitle(includeQualifier = isPro, highlightQualifier = isPro)
     val buildChannelLabel = LocalDashboardBuildChannelLabel.current
-
-    val titleParts = titleText.split(" ").filter { it.isNotEmpty() }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (titleParts.size == 2) {
-            Text(
-                text = buildAnnotatedString {
-                    append("${titleParts[0]} ")
-                    withStyle(SpanStyle(color = colorResource(R.color.colorUpgraded))) {
-                        append(titleParts[1])
-                    }
-                },
-                modifier = Modifier.weight(1f, fill = false),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        } else {
-            Text(
-                text = appName,
-                modifier = Modifier.weight(1f, fill = false),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            text = titleText,
+            modifier = Modifier.weight(1f, fill = false),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
 
         if (buildChannelLabel != null) {
             BuildChannelChip(label = buildChannelLabel)
