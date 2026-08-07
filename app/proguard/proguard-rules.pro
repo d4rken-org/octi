@@ -11,3 +11,5 @@
 -dontwarn org.openjsse.javax.net.ssl.SSLParameters
 -dontwarn org.openjsse.javax.net.ssl.SSLSocket
 -dontwarn org.openjsse.net.ssl.OpenJSSE
+# Play Core KTX references this compile-time-only GMS annotation not on the runtime classpath
+-dontwarn com.google.android.gms.common.annotation.NoNullnessRewrite
