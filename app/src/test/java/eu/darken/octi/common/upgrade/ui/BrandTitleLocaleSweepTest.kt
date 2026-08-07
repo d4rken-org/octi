@@ -45,7 +45,7 @@ class BrandTitleLocaleSweepTest : BaseComposeRobolectricTest() {
             RuntimeEnvironment.setQualifiers("+$locale")
 
             withClue(locale) {
-                val template = context.getString(R.string.app_name_upgraded_template)
+                val template = context.getString(CommonR.string.app_name_upgraded_template)
 
                 // `%%` is an escaped literal percent and is legitimate punctuation for a translator
                 // to use, so it is removed before the leftover-percent check rather than failing it.
@@ -83,11 +83,11 @@ class BrandTitleLocaleSweepTest : BaseComposeRobolectricTest() {
             withClue(locale) {
                 val name = context.getString(CommonR.string.app_name)
                 val qualifier = context.getString(R.string.app_name_upgrade_postfix)
-                val composed = context.getString(R.string.app_name_upgraded_template, name, qualifier)
+                val composed = context.getString(CommonR.string.app_name_upgraded_template, name, qualifier)
 
                 val result = spliceTitleTemplate(
                     formatted = context.getString(
-                        R.string.app_name_upgraded_template,
+                        CommonR.string.app_name_upgraded_template,
                         BRAND_TITLE_MARKER,
                         BRAND_QUALIFIER_MARKER,
                     ),

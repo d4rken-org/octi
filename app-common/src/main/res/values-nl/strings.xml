@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Octi</string>
+    <!-- Upgraded app title. %1$s is the app name, %2$s the tier qualifier ("Pro" or "FOSS"). Reorder or repunctuate for your language; both placeholders must appear exactly once. -->
+    <string name="app_name_upgraded_template">%1$s %2$s</string>
     <string name="general_error_label">Fout</string>
     <string name="general_error_no_compatible_app_found_msg">Er is geen compatibele app gevonden om dit verzoek te verwerken.</string>
     <string name="general_share_action">Delen</string>

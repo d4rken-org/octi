@@ -168,19 +168,24 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
      * counts: the branch this replaced coloured the second of exactly two space-separated tokens,
      * so a locale that composed its title differently either lost the flavor name entirely or put
      * the highlight on the wrong word while still rendering correct-looking text.
+     *
+     * The expected text is *derived* from the resolved template rather than hardcoded. Arrangement
+     * is a language property, not a flavor one — the template lives in `app-common` and is
+     * translatable, so a locale may legitimately reorder or repunctuate the title, and FOSS
+     * inherits that. What must not vary is the qualifier itself.
      */
     @Test
     @Config(qualifiers = "fr")
     fun `the flavor qualifier is not translated in french`() {
-        context.getString(R.string.app_name_upgrade_postfix) shouldBe "FOSS"
-        context.getString(R.string.app_name_upgraded_template) shouldBe "%1\$s %2\$s"
+        val qualifier = context.getString(R.string.app_name_upgrade_postfix)
+        qualifier shouldBe "FOSS"
 
         val result = captureBrandTitle()
 
-        result.text shouldBe "Octi FOSS"
+        result.text shouldBe composedTitle(qualifier)
         result.spanStyles.size shouldBe 1
         val span = result.spanStyles.single()
-        result.text.substring(span.start, span.end) shouldBe "FOSS"
+        result.text.substring(span.start, span.end) shouldBe qualifier
     }
 
     /**
@@ -192,16 +197,25 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
     @Test
     @Config(qualifiers = "ar")
     fun `the flavor qualifier is not translated in arabic`() {
-        context.getString(R.string.app_name_upgrade_postfix) shouldBe "FOSS"
-        context.getString(R.string.app_name_upgraded_template) shouldBe "%1\$s %2\$s"
+        val qualifier = context.getString(R.string.app_name_upgrade_postfix)
+        qualifier shouldBe "FOSS"
+        // The reason this locale is worth its own case: it is the only one that localizes the brand.
+        context.getString(CommonR.string.app_name) shouldBe "أوكتي"
 
         val result = captureBrandTitle()
 
-        result.text shouldBe "أوكتي FOSS"
+        result.text shouldBe composedTitle(qualifier)
         result.spanStyles.size shouldBe 1
         val span = result.spanStyles.single()
-        result.text.substring(span.start, span.end) shouldBe "FOSS"
+        result.text.substring(span.start, span.end) shouldBe qualifier
     }
+
+    /** The title the current locale's template composes — whatever order it puts the parts in. */
+    private fun composedTitle(qualifier: String): String = context.getString(
+        CommonR.string.app_name_upgraded_template,
+        context.getString(CommonR.string.app_name),
+        qualifier,
+    )
 
     private fun captureBrandTitle(): AnnotatedString {
         lateinit var captured: AnnotatedString

@@ -2,8 +2,6 @@
 <resources>
     <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
     <string name="app_name_upgrade_postfix">专业版</string>
-    <!-- Upgraded app title. %1$s is the app name, %2$s the tier qualifier ("Pro"). Reorder or repunctuate for your language; both placeholders must appear exactly once. -->
-    <string name="app_name_upgraded_template">%1$s %2$s</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play不可用</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi 无法连接到 Google Play。Google Play 是否已安装并更新？您的 Google 帐户是否已登录？尝试清除 Google Play 应用的缓存并重新启动您的设备。</string>
     <string name="upgrades_no_purchases_found_check_account">未找到任何购买记录。您使用的是正确的帐户吗？</string>
