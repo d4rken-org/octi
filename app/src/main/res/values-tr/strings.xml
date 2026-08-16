@@ -136,6 +136,10 @@
     </plurals>
     <string name="updates_dashcard_title">Güncelleme mevcut</string>
     <string name="updates_dashcard_body">Bir güncelleme mevcut. Cihazınızda %1$s yüklü fakat en son sürüm %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Octi\'yi yükselt</string>
     <string name="sync_settings_label">Senkronizasyon</string>
     <string name="sync_settings_desc">Cihaz adı, zamanlama ve tetikleme koşulları.</string>
     <string name="sync_setting_devicelabel_label">Cihaz etiketi</string>
@@ -181,6 +185,13 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Şu anda %1$d senkronize edilmiş cihazınız var.</item>
         <item quantity="other">Şu anda %1$d senkronize edilmiş cihazınız var.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">%1$d\'den fazla cihazı görüntülemek için yükselt veya cihazları kaldır.</item>
+        <item quantity="other">%1$d\'den fazla cihazı görüntülemek için yükselt veya cihazları kaldır.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Bu cihazın kaldırılması verilerini silecek ancak erişimi iptal etmeyecektir. Erişimi iptal etmek için cihazdaki Octi bağlantısını kesin.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Bu cihazın silinmesi, verilerini kaldıracak ve erişimini iptal edecektir.</string>

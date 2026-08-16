@@ -68,6 +68,15 @@
     <!-- Widget config -->
     <string name="widget_config_title">Προσαρμογή Widget</string>
     <string name="widget_config_apply_action">Εφαρμογή</string>
+    <!-- Replaces widget_config_pro_required_label / widget_config_pro_checking_label /
+         widget_config_pro_error_label, which named the Google Play tier ("Octi Pro") even in the FOSS
+         build, where the tier is called "Octi FOSS". This module is shared by both flavors and cannot
+         know which tier is meant, so the copy names none: keep it tier-free when translating, and do
+         not reintroduce a product name. The old widget_config_upgrade_action ("Upgrade to Octi Pro")
+         is gone too; its button now uses the existing general_upgrade_action. -->
+    <string name="widget_config_upgrade_required_label">Αυτό το widget απαιτεί αναβάθμιση.</string>
+    <string name="widget_config_upgrade_checking_label">Ελέγχεται η κατάσταση αναβάθμισής σας…</string>
+    <string name="widget_config_upgrade_error_label">Δεν ήταν δυνατό να επαληθεύσουμε την κατάσταση αναβάθμισής σας.</string>
     <string name="widget_config_retry_action">Δοκιμάστε ξανά</string>
     <string name="widget_config_presets_label">Προεπιλογές</string>
     <string name="widget_config_background_label">Χρώμα φόντου</string>
@@ -83,6 +92,9 @@
     <string name="widget_empty_label">Δεν υπάρχουν αντίστοιχες συσκευές</string>
     <string name="widget_no_sync_devices_label">Δεν υπάρχουν ακόμη συσκευές συγχρονισμού</string>
     <string name="widget_more_items">+ %1$d ακόμη</string>
+    <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
+         Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
+    <string name="widget_upgrade_required_headline">Απαιτείται αναβάθμιση</string>
     <string name="widget_upgrade_required_action">Αγγίξτε για αναβάθμιση</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Δεν υπάρχουν δεδομένα %1$s για αυτή τη συσκευή</string>

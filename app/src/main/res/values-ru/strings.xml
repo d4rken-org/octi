@@ -146,6 +146,10 @@
     </plurals>
     <string name="updates_dashcard_title">Доступно обновление</string>
     <string name="updates_dashcard_body">Доступно обновление. У Вас версия %1$s, а последняя версия %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Обновление Octi</string>
     <string name="sync_settings_label">Синхронизация</string>
     <string name="sync_settings_desc">Имя устройства, время и условия запуска.</string>
     <string name="sync_setting_devicelabel_label">Метка устройства</string>
@@ -193,6 +197,15 @@
         <item quantity="few">У вас сейчас %1$d синхронизированных устройства.</item>
         <item quantity="many">У вас сейчас %1$d синхронизированных устройств.</item>
         <item quantity="other">У вас сейчас %1$d синхронизированных устройств.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Чтобы просматривать более %1$d устройства, обновитесь или удалите устройства.</item>
+        <item quantity="few">Чтобы просматривать более %1$d устройства, обновитесь или удалите устройства.</item>
+        <item quantity="many">Чтобы просматривать более %1$d устройств, обновитесь или удалите устройства.</item>
+        <item quantity="other">Чтобы просматривать более %1$d устройств, обновитесь или удалите устройства.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Удаление этого устройства удалит его данные, но не отзовет доступ. Чтобы отозвать доступ, отключите Octi на устройстве.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Удаление этого устройства удалит его данные и отзовет его доступ.</string>
@@ -264,7 +277,7 @@
     <string name="dashboard_device_remove_picker_title">Выберите службу синхронизации</string>
     <string name="dashboard_device_remove_picker_message">Это устройство синхронизируется через несколько сервисов. Выберите один из них, чтобы удалить его — подтвердите на следующем экране.</string>
     <string name="review_app_review_action">Отзыв</string>
-    <string name="review_app_body">Хочешь оставить отзыв для Octi? ❤️</string>
+    <string name="review_app_body">Хотите оставить отзыв на Octi? ❤️</string>
     <!-- Shared upgrade screen chrome (used by both flavors' upgrade screens). -->
     <string name="upgrade_screen_navigate_up">Перейти вверх</string>
     <string name="upgrade_screen_progress_loading">Загрузка…</string>

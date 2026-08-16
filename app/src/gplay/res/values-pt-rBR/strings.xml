@@ -76,6 +76,12 @@ Os mesmos recursos, apenas modelos de preços diferentes.</string>
     <string name="upgrade_screen_owned_both_title">Você tem ambos</string>
     <string name="upgrade_screen_owned_both_warning">Você tem tanto a assinatura quanto a compra única. Para evitar pagar duas vezes, cancele a assinatura no Google Play — você mantém o Pro através da compra vitalícia.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
+         ("You are Octi Pro") instead of that they own it. %1$s is the complete localized tier name,
+         already composed from the app name and the tier qualifier - never translate it here. Render
+         the sentence idiomatically if that reads better in your language ("%1$s is active", "Your
+         %1$s access is active"), as long as the placeholder survives. -->
+    <string name="upgrade_screen_owned_hero_brand_title">Você tem %1$s 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Obrigado por comprar %1$s! Seus recursos Pro estão desbloqueados e nunca expiram.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Obrigado por se inscrever em %1$s! Seus recursos Pro estão desbloqueados.</string>
     <string name="upgrade_screen_manage_subscription_action">Gerenciar assinatura</string>

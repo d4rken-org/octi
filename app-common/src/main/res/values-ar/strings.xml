@@ -72,6 +72,15 @@
     <!-- Widget config -->
     <string name="widget_config_title">تخصيص الأداة</string>
     <string name="widget_config_apply_action">تطبيق</string>
+    <!-- Replaces widget_config_pro_required_label / widget_config_pro_checking_label /
+         widget_config_pro_error_label, which named the Google Play tier ("Octi Pro") even in the FOSS
+         build, where the tier is called "Octi FOSS". This module is shared by both flavors and cannot
+         know which tier is meant, so the copy names none: keep it tier-free when translating, and do
+         not reintroduce a product name. The old widget_config_upgrade_action ("Upgrade to Octi Pro")
+         is gone too; its button now uses the existing general_upgrade_action. -->
+    <string name="widget_config_upgrade_required_label">تتطلب هذه الودجة ترقية.</string>
+    <string name="widget_config_upgrade_checking_label">جارٍ التحقق من حالة الترقية…</string>
+    <string name="widget_config_upgrade_error_label">تعذّر التحقق من حالة الترقية.</string>
     <string name="widget_config_retry_action">أعد المحاولة</string>
     <string name="widget_config_presets_label">الإعدادات المسبقة</string>
     <string name="widget_config_background_label">لون الخلفية</string>
@@ -87,6 +96,9 @@
     <string name="widget_empty_label">لا توجد أجهزة مطابقة</string>
     <string name="widget_no_sync_devices_label">لا توجد أجهزة مزامنة بعد</string>
     <string name="widget_more_items">+ %1$d آخر</string>
+    <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
+         Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
+    <string name="widget_upgrade_required_headline">الترقية مطلوبة</string>
     <string name="widget_upgrade_required_action">اضغط للترقية</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">لا توجد بيانات %1$s لهذا الجهاز</string>

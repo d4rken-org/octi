@@ -156,6 +156,10 @@
     </plurals>
     <string name="updates_dashcard_title">تحديث متوفر</string>
     <string name="updates_dashcard_body">يتوفر تحديث. لديك الإصدار %1$s وأحدث إصدار هو %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">ترقية Octi</string>
     <string name="sync_settings_label">المزامنة</string>
     <string name="sync_settings_desc">اسم الجهاز والتوقيت وشروط التشغيل.</string>
     <string name="sync_setting_devicelabel_label">تسمية الجهاز</string>
@@ -205,6 +209,17 @@
         <item quantity="few">لديك حاليًا %1$d أجهزة متزامنة.</item>
         <item quantity="many">لديك حاليًا %1$d جهازًا متزامنًا.</item>
         <item quantity="other">لديك حاليًا %1$d جهازًا متزامنًا.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="zero">لعرض أكثر من %1$d جهاز، قم بالترقية أو احذف بعض الأجهزة.</item>
+        <item quantity="one">لعرض أكثر من جهاز واحد، قم بالترقية أو احذف بعض الأجهزة.</item>
+        <item quantity="two">لعرض أكثر من جهازين، قم بالترقية أو احذف بعض الأجهزة.</item>
+        <item quantity="few">لعرض أكثر من %1$d أجهزة، قم بالترقية أو احذف بعض الأجهزة.</item>
+        <item quantity="many">لعرض أكثر من %1$d جهازًا، قم بالترقية أو احذف بعض الأجهزة.</item>
+        <item quantity="other">لعرض أكثر من %1$d جهاز، قم بالترقية أو احذف بعض الأجهزة.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">إزالة هذا الجهاز ستحذف بياناته ولكن لن تلغي الوصول. لإلغاء الوصول، افصل أوكتي على الجهاز.</string>
     <string name="sync_delete_device_revokeaccess_caveat">حذف هذا الجهاز سيزيل بياناته ويلغي وصوله.</string>

@@ -146,6 +146,10 @@
     </plurals>
     <string name="updates_dashcard_title">Aktualizace k dispozici</string>
     <string name="updates_dashcard_body">K dispozici je aktualizace. Máte %1$s a nejnovější verze je %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Upgraduj Octi</string>
     <string name="sync_settings_label">Synchronizace</string>
     <string name="sync_settings_desc">Název zařízení, časování a podmínky spouštění.</string>
     <string name="sync_setting_devicelabel_label">Název zařízení</string>
@@ -193,6 +197,15 @@
         <item quantity="few">Aktuálně máte %1$d synchronizovaná zařízení.</item>
         <item quantity="many">Aktuálně máte %1$d synchronizovaných zařízení.</item>
         <item quantity="other">Aktuálně máte %1$d synchronizovaných zařízení.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Chceš-li zobrazit více než %1$d zařízení, upgraduj nebo odeber zařízení.</item>
+        <item quantity="few">Chceš-li zobrazit více než %1$d zařízení, upgraduj nebo odeber zařízení.</item>
+        <item quantity="many">Chceš-li zobrazit více než %1$d zařízení, upgraduj nebo odeber zařízení.</item>
+        <item quantity="other">Chceš-li zobrazit více než %1$d zařízení, upgraduj nebo odeber zařízení.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Odebráním tohoto zařízení smažete jeho data, ale nebude odvolán přístup. Chcete-li odvolat přístup, odpojte aplikaci Octi na zařízení.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Smazáním tohoto zařízení se odstraní jeho data a zruší se jeho přístup.</string>

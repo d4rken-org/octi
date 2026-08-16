@@ -131,6 +131,10 @@
     </plurals>
     <string name="updates_dashcard_title">最新のバージョンが利用可能です</string>
     <string name="updates_dashcard_body">更新を利用可能です。現在は %1$s を使用中、%2$s が最新のバージョンです。</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Octiをアップグレード</string>
     <string name="sync_settings_label">同期</string>
     <string name="sync_settings_desc">デバイス名、タイミングとトリガーの条件を設定します。</string>
     <string name="sync_setting_devicelabel_label">デバイスラベル</string>
@@ -175,6 +179,12 @@
     <string name="pro_device_limit_reached_title">デバイスの上限に達しました</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="other">現在 %1$d 台の同期済みデバイスがあります。</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="other">%1$d台を超えるデバイスを表示するには、アップグレードするかデバイスを削除してください。</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">このデバイスを削除するとデータは削除されますが、アクセスは取り消されません。アクセスを取り消すにはデバイス上の Octi を切断してください。</string>
     <string name="sync_delete_device_revokeaccess_caveat">このデバイスを削除するとデータが削除され、アクセスが取り消されます。</string>

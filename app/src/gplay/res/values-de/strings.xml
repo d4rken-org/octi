@@ -54,10 +54,10 @@
     <string name="upgrade_screen_restore_purchase_action">Zahlungen wiederherstellen</string>
     <string name="upgrade_screen_restore_banner_title">Bereits Pro gekauft?</string>
     <string name="upgrade_screen_restore_banner_body">Es sieht so aus, als hättest du auf diesem Gerät schon einmal ein Upgrade auf Pro durchgeführt. Falls du das Upgrade noch besitzt, wird die Wiederherstellung es erneut freischalten.</string>
-    <string name="upgrade_screen_restore_purchase_message">Ihr Upgrade ist für alle Geräte auf demselben Google-Konto gültig.</string>
+    <string name="upgrade_screen_restore_purchase_message">Dein Upgrade ist für alle Geräte auf demselben Google-Konto gültig.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Tipps zur Fehlerbehebung für unbekannte Upgrades:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Die Synchronisierung des Play Store kann etwas dauern. Versuche das Gerät neu zu starten, den Google Play-Cache zu leeren oder warte einfach ab.</string>
-    <string name="upgrade_screen_restore_multiaccount_hint">Mehrere Konten können Google Play verwirren. Melden Sie sich aus anderen Konten ab, oder installieren Sie über die Google Play-Website, was Verbindungen mit einem bestimmten Konto erzwingt.</string>
+    <string name="upgrade_screen_restore_multiaccount_hint">Mehrere Konten können Google Play verwirren. Melde dich aus anderen Konten ab, oder installiere über die Google Play-Website, was Verbindungen mit einem bestimmten Konto erzwingt.</string>
     <string name="upgrade_screen_restore_success_message">Kauf wiederhergestellt — danke!</string>
     <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
     <string name="upgrade_screen_restore_body">Hast du Pro bereits auf diesem Konto gekauft? Frag Google Play, die Käufe dieser App erneut zu überprüfen.</string>
@@ -75,6 +75,12 @@
     <string name="upgrade_screen_owned_both_title">Du besitzt beides</string>
     <string name="upgrade_screen_owned_both_warning">Du besitzt sowohl das Abonnement als auch den Einmalkauf. Um doppelte Zahlungen zu vermeiden, kündige das Abonnement in Google Play – du behältst Pro durch den Einmalkauf.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
+         ("You are Octi Pro") instead of that they own it. %1$s is the complete localized tier name,
+         already composed from the app name and the tier qualifier - never translate it here. Render
+         the sentence idiomatically if that reads better in your language ("%1$s is active", "Your
+         %1$s access is active"), as long as the placeholder survives. -->
+    <string name="upgrade_screen_owned_hero_brand_title">Du hast %1$s 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Danke, dass du %1$s gekauft hast! Deine Pro-Funktionen sind freigeschaltet und verfallen nie.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Danke, dass du %1$s abonniert hast! Deine Pro-Funktionen sind freigeschaltet.</string>
     <string name="upgrade_screen_manage_subscription_action">Abo verwalten</string>

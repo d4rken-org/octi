@@ -68,6 +68,15 @@
     <!-- Widget config -->
     <string name="widget_config_title">Personnaliser le widget</string>
     <string name="widget_config_apply_action">Appliquer</string>
+    <!-- Replaces widget_config_pro_required_label / widget_config_pro_checking_label /
+         widget_config_pro_error_label, which named the Google Play tier ("Octi Pro") even in the FOSS
+         build, where the tier is called "Octi FOSS". This module is shared by both flavors and cannot
+         know which tier is meant, so the copy names none: keep it tier-free when translating, and do
+         not reintroduce a product name. The old widget_config_upgrade_action ("Upgrade to Octi Pro")
+         is gone too; its button now uses the existing general_upgrade_action. -->
+    <string name="widget_config_upgrade_required_label">Ce widget nécessite une mise à niveau.</string>
+    <string name="widget_config_upgrade_checking_label">Vérification de ton statut de mise à niveau…</string>
+    <string name="widget_config_upgrade_error_label">Impossible de vérifier ton statut de mise à niveau.</string>
     <string name="widget_config_retry_action">Réessayer</string>
     <string name="widget_config_presets_label">Préréglages</string>
     <string name="widget_config_background_label">Couleur d\'arrière-plan</string>
@@ -83,6 +92,9 @@
     <string name="widget_empty_label">Aucun appareil correspondant</string>
     <string name="widget_no_sync_devices_label">Aucun appareil de synchronisation pour l\'instant</string>
     <string name="widget_more_items">+ %1$d autres</string>
+    <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
+         Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
+    <string name="widget_upgrade_required_headline">Mise à niveau requise</string>
     <string name="widget_upgrade_required_action">Appuyer pour mettre à niveau</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Aucune donnée %1$s pour cet appareil</string>

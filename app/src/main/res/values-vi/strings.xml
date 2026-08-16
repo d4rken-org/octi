@@ -131,6 +131,10 @@
     </plurals>
     <string name="updates_dashcard_title">Đã có bản cập nhật</string>
     <string name="updates_dashcard_body">Một bản cập nhật có sẵn. Bạn có %1$s, bản mới nhất là %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Nâng cấp Octi</string>
     <string name="sync_settings_label">Đồng bộ</string>
     <string name="sync_settings_desc">Tên thiết bị, lịch trình và điều kiện kích hoạt.</string>
     <string name="sync_setting_devicelabel_label">Nhãn thiết bị</string>
@@ -175,6 +179,12 @@
     <string name="pro_device_limit_reached_title">Đã đạt giới hạn thiết bị</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="other">Bạn hiện có %1$d thiết bị đã đồng bộ.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="other">Để xem hơn %1$d thiết bị, hãy nâng cấp hoặc xóa thiết bị.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Xóa thiết bị này sẽ xóa dữ liệu nhưng không thu hồi quyền truy cập. Để thu hồi quyền, hãy ngắt Octi trên thiết bị.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Xóa thiết bị này sẽ xóa dữ liệu và thu hồi cả quyền truy cập.</string>

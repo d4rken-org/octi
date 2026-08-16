@@ -136,6 +136,10 @@
     </plurals>
     <string name="updates_dashcard_title">Actualització disponible</string>
     <string name="updates_dashcard_body">Hi ha una actualització disponible. Teniu la versió %1$s i la darrera és %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Millora Octi</string>
     <string name="sync_settings_label">Sincronització</string>
     <string name="sync_settings_desc">Nom del dispositiu, temps i condicions d\'activació.</string>
     <string name="sync_setting_devicelabel_label">Etiqueta del dispositiu</string>
@@ -181,6 +185,13 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Actualment teniu %1$d dispositiu sincronitzat.</item>
         <item quantity="other">Actualment teniu %1$d dispositius sincronitzats.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Per veure més de %1$d dispositiu, millorar o eliminar els dispositius.</item>
+        <item quantity="other">Per veure més de %1$d dispositius, millorar o eliminar els dispositius.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">En suprimir aquest dispositiu, se suprimiran les seves dades, però no se\'n revocarà l\'accés. Per revocar l\'accés, desconnecteu l\'Octi al dispositiu.</string>
     <string name="sync_delete_device_revokeaccess_caveat">En suprimir aquest dispositiu, se n\'eliminaran les dades i se\'n revocarà l\'accés.</string>

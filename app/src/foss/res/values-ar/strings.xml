@@ -10,6 +10,10 @@
         <item quantity="many">النسخة المجانية مقتصرة على %1$d جهازًا.</item>
         <item quantity="other">النسخة المجانية مقتصرة على %1$d جهاز.</item>
     </plurals>
+    <!-- Replaces upgrade_screen_title ("Upgrade to Octi Pro"), which sold the Google Play tier by name
+         inside the FOSS build, where the tier is called "Octi FOSS" and the ask is sponsorship rather
+         than a purchase. Keep it tier-free: name no product edition when translating. -->
+    <string name="upgrade_screen_support_title">ادعم Octi</string>
     <string name="upgrade_screen_preamble">أوكتي خالٍ من الإعلانات ولا يبيع بيانات المستخدمين. عملي يُموَّل بكم ❤️</string>
     <string name="upgrade_screen_how_title">الخطوات</string>
     <string name="upgrade_screen_how_body">كن راعيًا وادعم التطوير! انقر على الزر أدناه لتفعيل كل الميزات الإضافية وفتح صفحة رعاة جيثب الخاصة بي.</string>
