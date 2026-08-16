@@ -42,8 +42,8 @@ class UpgradeViewModel @Inject constructor(
 
     // Which presentation the screen shows. The manage route (settings "upgrade status" entry)
     // gets a status view first; the pitch only appears once a free user asks for the upgrade
-    // options. Upgrading wins over that choice — completing the sponsor flow from the pitch must
-    // land on the upgraded status, not back on the ask. null until the route is bound.
+    // options. Upgrading wins on EVERY route, not just manage: completing the sponsor flow from the
+    // pitch must land on the upgraded status, not back on the ask. null until the route is bound.
     internal val state: StateFlow<State> = combine(
         routeFlow,
         upgradeRepo.upgradeInfo,
@@ -51,10 +51,12 @@ class UpgradeViewModel @Inject constructor(
     ) { route, info, showOptions ->
         val view = when {
             route == null -> null
-            // Forced routes (widget configuration) never auto-close, so an upgraded user has to land
-            // on the status view — leaving them on the pitch would let its ARMED sponsor button
-            // rewrite the supporter-since date on a later long visit.
-            info.isPro && (route.manage || route.forced) -> FossUpgradeView.STATUS_UPGRADED
+            // Route-independent, like the gplay flavor: routes that never auto-close (forced, e.g.
+            // widget configuration) keep an upgraded user on screen, and leaving them on the pitch
+            // reads as "sponsoring didn't work" — the thanks toast alone is too transient for a
+            // money moment. It would also let the pitch's ARMED sponsor button rewrite the
+            // supporter-since date on a later long visit.
+            info.isPro -> FossUpgradeView.STATUS_UPGRADED
             route.manage && !showOptions -> FossUpgradeView.STATUS_FREE
             else -> FossUpgradeView.PITCH
         }
