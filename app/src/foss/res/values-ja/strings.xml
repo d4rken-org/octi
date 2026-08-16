@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="upgrade_feature_requires_pro">Octi Pro が必要です</string>
-    <string name="upgrades_dashcard_title">Octi Pro を入手</string>
     <string name="upgrades_dashcard_body">追加機能の入手と支援者になって断続的な開発をサポートしましょう！</string>
     <string name="upgrades_dashcard_upgrade_action">アップグレード</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="other">無料版は%1$dデバイスまでに制限されています。</item>
     </plurals>
-    <string name="upgrade_screen_title">Octi Pro にアップグレード</string>
     <string name="upgrade_screen_preamble">Octi は無広告、ユーザーデータの販売もしません。あなたの支援で成り立っています ❤️</string>
     <string name="upgrade_screen_how_title">何をしますか</string>
     <string name="upgrade_screen_how_body">支援者になって開発者のスポンサーになりましょう！下のボタンをタップしてすべての追加機能を有効化し、私の GitHub スポンサープロフィールを開いてください。</string>

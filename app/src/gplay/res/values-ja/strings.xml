@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Google Playは現在、このアップグレードオプションを提供していません。後でもう一度試すか、Google Play Storeを確認してください。</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Google Play を開けませんでした。このデバイスでは見つからないか、無効になっているか、制限されている可能性があります。</string>
-    <string name="upgrades_dashcard_title">Octi Pro を入手</string>
     <string name="upgrades_dashcard_body">アップグレードで追加機能の入手と開発を支援します！</string>
     <string name="upgrades_dashcard_upgrade_action">アップグレード</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -67,8 +66,6 @@
     <string name="upgrade_screen_restore_contact_hint">まだ解決しませんか？サポートにご連絡ください。解決に向けてお手伝いします。</string>
     <string name="upgrade_screen_restore_inconclusive_message">Google Playでの確認がタイムアウトしました。購入ステータスはまだ不明です。アカウントには何も変わっていません。</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">あなたはOcti Proです 🎉</string>
-    <string name="upgrade_screen_owned_body">Octiをサポートしていただきありがとうございます！Pro機能がロック解除されました。</string>
     <string name="upgrade_screen_owned_iap_title">永久購入</string>
     <string name="upgrade_screen_owned_iap_body">一回限りのPro購入を所有しています。期限はありません。</string>
     <string name="upgrade_screen_owned_sub_title">サブスクリプション</string>
@@ -77,7 +74,6 @@
     <string name="upgrade_screen_owned_both_title">両方を所有しています</string>
     <string name="upgrade_screen_owned_both_warning">サブスクリプションと一回限りの購入の両方を所有しています。二重支払いを避けるには、Google Playでサブスクリプションをキャンセルしてください — 永久購入によってProは継続されます。</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">あなたはOcti Proです 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">%1$sをご購入いただきありがとうございます！Pro機能がロック解除され、期限はありません。</string>
     <string name="upgrade_screen_owned_hero_sub_body">%1$sにご登録いただきありがとうございます！Pro機能がロック解除されました。</string>
     <string name="upgrade_screen_manage_subscription_action">サブスクリプションを管理</string>

@@ -70,10 +70,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">התאם אישית את הווידג\'ט</string>
     <string name="widget_config_apply_action">החל</string>
-    <string name="widget_config_upgrade_action">שדרג ל-Octi פרמיום</string>
-    <string name="widget_config_pro_required_label">ווידג׳ט זה דורש Octi Pro.</string>
-    <string name="widget_config_pro_checking_label">בדיקת סטטוס Octi Pro שלך…</string>
-    <string name="widget_config_pro_error_label">לא ניתן היה לאמת את סטטוס Octi Pro שלך.</string>
     <string name="widget_config_retry_action">נסה שוב</string>
     <string name="widget_config_presets_label">הגדרות קבועות מראש</string>
     <string name="widget_config_background_label">צבע רקע</string>
@@ -89,7 +85,6 @@
     <string name="widget_empty_label">אין מכשירים מתאימים</string>
     <string name="widget_no_sync_devices_label">עדיין אין מכשירי סנכרון</string>
     <string name="widget_more_items">+ עוד %1$d</string>
-    <string name="widget_upgrade_required_title">Octi Pro נדרש</string>
     <string name="widget_upgrade_required_action">הקש לשדרג</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">אין נתוני %1$s עבור מכשיר זה</string>

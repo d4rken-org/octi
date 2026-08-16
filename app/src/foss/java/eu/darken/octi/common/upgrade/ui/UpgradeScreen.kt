@@ -116,7 +116,7 @@ internal fun UpgradeScreen(
         // composed flavor title, with the postfix highlighted like the dashboard does it.
         title = when (view) {
             FossUpgradeView.STATUS_UPGRADED -> upgradeScreenTitle(upgraded = true)
-            else -> AnnotatedString(stringResource(R.string.upgrade_screen_title))
+            else -> AnnotatedString(stringResource(R.string.upgrade_screen_support_title))
         },
         onNavigateUp = onNavigateUp,
         snackbarHostState = snackbarHostState,

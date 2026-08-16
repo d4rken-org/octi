@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="upgrade_feature_requires_pro">Octi Pro gereklidir</string>
-    <string name="upgrades_dashcard_title">Octi Pro Al</string>
     <string name="upgrades_dashcard_body">Ek özelliklerin kilidini açın ve sürekli gelişimi desteklemek için bir patron olun!</string>
     <string name="upgrades_dashcard_upgrade_action">Yükselt</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="one">%1$d cihaz</item>
         <item quantity="other">Ücretsiz sürüm %1$d cihazla sınırlıdır.</item>
     </plurals>
-    <string name="upgrade_screen_title">Octi Pro\'ya Yükselt</string>
     <string name="upgrade_screen_preamble">Octi\'de reklam yoktur ve kullanıcı verilerini satmaz. Çalışmalarım sizin tarafınızdan finanse edilmektedir ❤️</string>
     <string name="upgrade_screen_how_title">Ne yapmalı</string>
     <string name="upgrade_screen_how_body">Haminiz olun ve gelişime sponsor olun! Tüm ekstra özellikleri etkinleştirmek ve GitHub Sponsorları profilimi açmak için aşağıdaki düğmeye dokunun.</string>

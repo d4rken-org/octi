@@ -69,10 +69,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">Personalizare widget</string>
     <string name="widget_config_apply_action">Aplică</string>
-    <string name="widget_config_upgrade_action">Actualizează la Octi Pro</string>
-    <string name="widget_config_pro_required_label">Acest widget necesită Octi Pro.</string>
-    <string name="widget_config_pro_checking_label">Se verifică statutul Octi Pro…</string>
-    <string name="widget_config_pro_error_label">Nu s-a putut verifica statutul Octi Pro.</string>
     <string name="widget_config_retry_action">Reîncercați</string>
     <string name="widget_config_presets_label">Presetări</string>
     <string name="widget_config_background_label">Culoare de fundal</string>
@@ -88,7 +84,6 @@
     <string name="widget_empty_label">Niciun dispozitiv corespunzător</string>
     <string name="widget_no_sync_devices_label">Niciun dispozitiv de sincronizare încă</string>
     <string name="widget_more_items">+ %1$d mai mult</string>
-    <string name="widget_upgrade_required_title">Octi Pro necesar</string>
     <string name="widget_upgrade_required_action">Atingeți pentru a face upgrade</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Nu există date %1$s pentru acest dispozitiv</string>

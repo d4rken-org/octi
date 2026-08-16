@@ -4,9 +4,6 @@
     <string name="label_help">Aide</string>
     <string name="general_manage_devices_action">Gérer les appareils</string>
     <string name="onboarding_welcome_subtitle">Le compagnon de vos appareils</string>
-    <string name="onboarding_welcome_body1">Octi est un outil pour les personnes qui utilisent plusieurs appareils Android.</string>
-    <string name="onboarding_welcome_body2">Avec Octi installé sur votre téléphone, votre tablette ou sur tout autre gadget Android, connaissez l’état de vos appareils en un coup d’œil,.</string>
-    <string name="onboarding_welcome_body3">Passez à Octi Pro pour débloquer des fonctions supplémentaires et financer le développement.</string>
     <string name="onboarding_welcome_beta_hint">Ceci est une version bêta. Faites preuve de patience alors que je continue d\'améliorer l\'appli.</string>
     <string name="onboarding_features_page1_title">Tous vos appareils en un coup d\'œil</string>
     <string name="onboarding_features_page1_body">Consultez la batterie, le Wi-Fi et la connectivité sur tous vos appareils Android.</string>
@@ -184,10 +181,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">%1$d appareil est synchronisé actuellement.</item>
         <item quantity="other">%1$d appareils sont synchronisés actuellement.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Pour afficher plus de %1$d appareil, passez à Octi Pro ou supprimez des périphériques.</item>
-        <item quantity="other">Pour afficher plus de %1$d appareils, passez à Octi Pro ou supprimez des périphériques.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Supprimer cet appareil supprimera ses données, mais ne révoquera pas son accès. Pour révoquer l\'accès, déconnectez Octi sur l\'appareil en question.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Supprimer cet appareil supprimera ses données et révoquera son accès.</string>

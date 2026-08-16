@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import eu.darken.octi.R
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
-import eu.darken.octi.common.R as CommonR
 
 // Ownership presentation for users who already own a Pro entitlement. Subscribers without the
 // one-time purchase always see the switch offer — but LOCKED while the subscription still
@@ -158,8 +157,9 @@ private fun UpgradeOwnedHero(
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
+                val brand = brandTitleText(includeQualifier = true)
                 Text(
-                    text = stringResource(R.string.upgrade_screen_owned_hero_title),
+                    text = stringResource(R.string.upgrade_screen_owned_hero_brand_title, brand),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -168,7 +168,7 @@ private fun UpgradeOwnedHero(
                     text = stringResource(
                         if (ownership.hasIap) R.string.upgrade_screen_owned_hero_iap_body
                         else R.string.upgrade_screen_owned_hero_sub_body,
-                        "${stringResource(CommonR.string.app_name)} ${stringResource(R.string.app_name_upgrade_postfix)}",
+                        brand,
                     ),
                     style = MaterialTheme.typography.bodyMedium,
                 )

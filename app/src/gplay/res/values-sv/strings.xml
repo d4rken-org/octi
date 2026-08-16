@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Google Play erbjuder för närvarande inte det här uppgraderingsalternativet. Försök igen senare eller kontrollera Google Play Store.</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Kunde inte öppna Google Play. Det kanske saknas, är inaktiverat eller begränsat på denna enhet.</string>
-    <string name="upgrades_dashcard_title">Skaffa Octi Pro</string>
     <string name="upgrades_dashcard_body">Uppgradera för att låsa upp fler funktioner och stödja utvecklingen!</string>
     <string name="upgrades_dashcard_upgrade_action">Uppgradera</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -68,8 +67,6 @@
     <string name="upgrade_screen_restore_contact_hint">Fortfarande fast? Kontakta supporten så hjälper vi dig att lösa det.</string>
     <string name="upgrade_screen_restore_inconclusive_message">Kontrollen med Google Play avslutades inte i tid, så din köpstatus är fortfarande okänd. Ingenting har ändrats på ditt konto.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">Du är Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">Tack för att du stödjer Octi! Dina Pro-funktioner är upplåsta.</string>
     <string name="upgrade_screen_owned_iap_title">Livstidsköp</string>
     <string name="upgrade_screen_owned_iap_body">Du äger engångsköpet av Pro. Det upphör aldrig att gälla.</string>
     <string name="upgrade_screen_owned_sub_title">Prenumeration</string>
@@ -78,7 +75,6 @@
     <string name="upgrade_screen_owned_both_title">Du äger båda</string>
     <string name="upgrade_screen_owned_both_warning">Du äger både prenumerationen och engångsköpet. För att undvika att betala två gånger, avsluta prenumerationen i Google Play — du behåller Pro genom livstidsköpet.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">Du är Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Tack för att du köpte %1$s! Dina Pro-funktioner är upplåsta och upphör aldrig att gälla.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Tack för att du prenumererar på %1$s! Dina Pro-funktioner är upplåsta.</string>
     <string name="upgrade_screen_manage_subscription_action">Hantera prenumeration</string>

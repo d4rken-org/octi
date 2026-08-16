@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="upgrade_feature_requires_pro">يتطلب أوكتي احترافي</string>
-    <string name="upgrades_dashcard_title">احصل على أوكتي احترافي</string>
     <string name="upgrades_dashcard_body">افتح ميزات إضافية وكن راعيًا لدعم التطوير المستمر!</string>
     <string name="upgrades_dashcard_upgrade_action">ترقية</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -12,7 +10,6 @@
         <item quantity="many">النسخة المجانية مقتصرة على %1$d جهازًا.</item>
         <item quantity="other">النسخة المجانية مقتصرة على %1$d جهاز.</item>
     </plurals>
-    <string name="upgrade_screen_title">الترقية إلى أوكتي احترافي</string>
     <string name="upgrade_screen_preamble">أوكتي خالٍ من الإعلانات ولا يبيع بيانات المستخدمين. عملي يُموَّل بكم ❤️</string>
     <string name="upgrade_screen_how_title">الخطوات</string>
     <string name="upgrade_screen_how_body">كن راعيًا وادعم التطوير! انقر على الزر أدناه لتفعيل كل الميزات الإضافية وفتح صفحة رعاة جيثب الخاصة بي.</string>

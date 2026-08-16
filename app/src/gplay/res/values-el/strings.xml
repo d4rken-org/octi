@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Το Google Play δεν προσφέρει αυτή τη στιγμή αυτή την επιλογή αναβάθμισης. Δοκιμάστε ξανά αργότερα ή ελέγξτε το Google Play Store.</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Δεν ήταν δυνατό να ανοιχθεί το Google Play. Ενδέχεται να λείπει, να είναι απενεργοποιημένο ή να είναι περιορισμένο σε αυτή τη συσκευή.</string>
-    <string name="upgrades_dashcard_title">Αποκτήστε το Octi Pro</string>
     <string name="upgrades_dashcard_body">Αναβαθμίστε για να ξεκλειδώσετε επιπλέον δυνατότητες και να στηρίξετε την ανάπτυξη!</string>
     <string name="upgrades_dashcard_upgrade_action">Αναβάθμιση</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -68,8 +67,6 @@
     <string name="upgrade_screen_restore_contact_hint">Ακόμα έχετε πρόβλημα; Επικοινωνήστε με την υποστήριξη και θα σας βοηθήσουμε να το λύσουμε.</string>
     <string name="upgrade_screen_restore_inconclusive_message">Ο έλεγχος με το Google Play δεν ολοκληρώθηκε εγκαίρως, επομένως η κατάσταση της αγοράς σας παραμένει άγνωστη. Τίποτα δεν έχει αλλάξει στο λογαριασμό σας.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">Είστε Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">Ευχαριστούμε που υποστηρίζετε το Octi! Οι δυνατότητες Pro είναι ξεκλειδωμένες.</string>
     <string name="upgrade_screen_owned_iap_title">Ισόβια αγορά</string>
     <string name="upgrade_screen_owned_iap_body">Κατέχετε την εφάπαξ αγορά Pro. Δεν λήγει ποτέ.</string>
     <string name="upgrade_screen_owned_sub_title">Συνδρομή</string>
@@ -78,7 +75,6 @@
     <string name="upgrade_screen_owned_both_title">Κατέχετε και τα δύο</string>
     <string name="upgrade_screen_owned_both_warning">Κατέχετε τόσο τη συνδρομή όσο και την εφάπαξ αγορά. Για να αποφύγετε τη διπλή χρέωση, ακυρώστε τη συνδρομή στο Google Play — διατηρείτε το Pro μέσω της ισόβιας αγοράς.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">Είστε Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Ευχαριστούμε που αγοράσατε %1$s! Οι δυνατότητες Pro είναι ξεκλειδωμένες και δεν λήγουν ποτέ.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Ευχαριστούμε που κάνατε εγγραφή στο %1$s! Οι δυνατότητες Pro είναι ξεκλειδωμένες.</string>
     <string name="upgrade_screen_manage_subscription_action">Διαχείριση συνδρομής</string>

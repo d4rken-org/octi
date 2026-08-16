@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">В настоящее время Google Play не предлагает эту опцию обновления. Пожалуйста, повторите попытку позже или проверьте Google Play Store.</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Не удалось открыть Google Play. Возможно, он отсутствует, отключен или недоступен на этом устройстве.</string>
-    <string name="upgrades_dashcard_title">Получить Octi Pro</string>
     <string name="upgrades_dashcard_body">Обновитесь, чтобы разблокировать дополнительные функции и поддержать развитие!</string>
     <string name="upgrades_dashcard_upgrade_action">Обновить</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -70,8 +69,6 @@
     <string name="upgrade_screen_restore_contact_hint">Всё ещё не получается? Обратитесь в службу поддержки и мы поможем разобраться.</string>
     <string name="upgrade_screen_restore_inconclusive_message">Проверка с Google Play не закончилась вовремя, поэтому статус покупки до сих пор неизвестен. В Вашей учетной записи ничего не изменилось.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">Вы с Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">Спасибо за поддержку Octi! Ваши функции Pro разблокированы.</string>
     <string name="upgrade_screen_owned_iap_title">Единовременная покупка</string>
     <string name="upgrade_screen_owned_iap_body">У Вас есть единовременная покупка Pro. Она никогда не истекает.</string>
     <string name="upgrade_screen_owned_sub_title">Подписка</string>
@@ -80,7 +77,6 @@
     <string name="upgrade_screen_owned_both_title">У Вас оба варианта</string>
     <string name="upgrade_screen_owned_both_warning">У Вас есть как подписка, так и единоразовая покупка. Чтобы избежать двойной оплаты, отмените подписку в Google Play — Вы обладатель Pro посредством покупки.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">Вы с Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Спасибо за покупку %1$s! Ваши функции Pro разблокированы и никогда не заканчиваются.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Спасибо за подписку на %1$s! Ваши функции Pro разблокированы.</string>
     <string name="upgrade_screen_manage_subscription_action">Управлять подпиской</string>

@@ -4,9 +4,6 @@
     <string name="label_help">Hjälp</string>
     <string name="general_manage_devices_action">Hantera enheter</string>
     <string name="onboarding_welcome_subtitle">Din enhetskompis</string>
-    <string name="onboarding_welcome_body1">Octi är ett verktyg för personer med flera Android-enheter.</string>
-    <string name="onboarding_welcome_body2">Håller dig uppdaterad med alla dina enheter. Det gäller din telefon, surfplatta eller vilken annan Octi-enhet som helst – du får viktiga detaljer direkt.</string>
-    <string name="onboarding_welcome_body3">Uppgradera till Octi Pro för extra funktioner och stöd utvecklingen.</string>
     <string name="onboarding_welcome_beta_hint">Bara så du vet, detta är en betaversion – tack för ditt tålamod medan jag fortsätter förbättra appen!</string>
     <string name="onboarding_features_page1_title">Alla dina enheter i översikt</string>
     <string name="onboarding_features_page1_body">Se batteri, WiFi och anslutning för alla dina Android-enheter.</string>
@@ -184,10 +181,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Du har för närvarande %1$d synkroniserad enhet.</item>
         <item quantity="other">Du har för närvarande %1$d synkroniserade enheter.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">För att se fler än %1$d enhet, uppgradera till Octi Pro eller ta bort enheter.</item>
-        <item quantity="other">För att se fler än %1$d enheter, uppgradera till Octi Pro eller ta bort enheter.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Att ta bort denna enhet tar bort dess data men tar inte bort åtkomst. För att ta bort åtkomst måste du koppla loss Octi på enheten.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Ta bort denna enhet raderar dess data och tar bort dess åtkomst.</string>

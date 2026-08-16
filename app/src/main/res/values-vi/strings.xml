@@ -4,9 +4,6 @@
     <string name="label_help">Trợ giúp</string>
     <string name="general_manage_devices_action">Quản lý thiết bị</string>
     <string name="onboarding_welcome_subtitle">Người bạn thiết bị của bạn</string>
-    <string name="onboarding_welcome_body1">Octi là công cụ dành cho người dùng sở hữu nhiều thiết bị Android.</string>
-    <string name="onboarding_welcome_body2">Giúp bạn cập nhật thông tin với tất cả thiết bị của mình. Dù là điện thoại, máy tính bảng hay bất kỳ thiết bị nào có cài Octi, bạn sẽ xem ngay được thông tin quan trọng.</string>
-    <string name="onboarding_welcome_body3">Nâng cấp lên Octi Pro để có thêm tính năng và hỗ trợ phát triển.</string>
     <string name="onboarding_welcome_beta_hint">Thông báo: Đây là phiên bản beta, cảm ơn bạn đã kiên nhẫn khi tôi tiếp tục hoàn thiện ứng dụng!</string>
     <string name="onboarding_features_page1_title">Tất cả thiết bị của bạn trong tầm tay</string>
     <string name="onboarding_features_page1_body">Xem pin, WiFi và kết nối trên tất cả thiết bị Android của bạn.</string>
@@ -178,9 +175,6 @@
     <string name="pro_device_limit_reached_title">Đã đạt giới hạn thiết bị</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="other">Bạn hiện có %1$d thiết bị đã đồng bộ.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="other">Để xem nhiều hơn %1$d thiết bị, hãy nâng cấp lên Octi Pro hoặc xóa bớt thiết bị.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Xóa thiết bị này sẽ xóa dữ liệu nhưng không thu hồi quyền truy cập. Để thu hồi quyền, hãy ngắt Octi trên thiết bị.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Xóa thiết bị này sẽ xóa dữ liệu và thu hồi cả quyền truy cập.</string>

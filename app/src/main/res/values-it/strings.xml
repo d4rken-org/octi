@@ -4,9 +4,6 @@
     <string name="label_help">Aiuto</string>
     <string name="general_manage_devices_action">Gestisci dispositivi</string>
     <string name="onboarding_welcome_subtitle">Il tuo dispositivo</string>
-    <string name="onboarding_welcome_body1">Octi è uno strumento per possessori di più dispositivi Android.</string>
-    <string name="onboarding_welcome_body2">Ti mantiene aggiornato su tutti i tuoi dispositivi. Che sia un telefono, tablet o qualsiasi altro gadget con Octi installato, potrai avere sott\'occhio le info importanti.</string>
-    <string name="onboarding_welcome_body3">Passa a Octi Pro per ottenere funzionalità extra e supportare lo sviluppo.</string>
     <string name="onboarding_welcome_beta_hint">Avviso. Questa è una versione beta, grazie per la pazienza mentre continuerò a migliorare l\'app!</string>
     <string name="onboarding_features_page1_title">Tutti i tuoi dispositivi in un colpo d\'occhio</string>
     <string name="onboarding_features_page1_body">Visualizza batteria, WiFi e connettività su tutti i tuoi dispositivi Android.</string>
@@ -186,10 +183,6 @@ I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comu
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Hai attualmente %1$d dispositivo sincronizzato.</item>
         <item quantity="other">Hai attualmente %1$d dispositivi sincronizzati.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Per visualizzare più di %1$d dispositivo, passa a Octi Pro o rimuovi dispositivi.</item>
-        <item quantity="other">Per visualizzare più di %1$d dispositivi, passa a Octi Pro o rimuovi dispositivi.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Rimuovere questo dispositivo cancellerà i suoi dati, ma non revoca l\'accesso. Per revocare l\'accesso, disconnetti Octi dal dispositivo.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Eliminare questo dispositivo rimuoverà i suoi dati e revocerà il suo accesso.</string>

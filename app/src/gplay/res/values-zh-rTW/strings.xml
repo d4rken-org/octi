@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Google Play 目前不提供此升級選項。請稍後重試或查看 Google Play 商店。</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">無法開啟 Google Play。應用程式可能已遺失、被停用或在此裝置上受到限制。</string>
-    <string name="upgrades_dashcard_title">取得 Octi Pro</string>
     <string name="upgrades_dashcard_body">升級以解鎖額外功能並支持開發！</string>
     <string name="upgrades_dashcard_upgrade_action">升級</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -68,8 +67,6 @@
     <string name="upgrade_screen_restore_contact_hint">還是卡住？聯絡支援，我們會幫您解決。</string>
     <string name="upgrade_screen_restore_inconclusive_message">與 Google Play 的檢查未能及時完成，因此您的購買狀態仍未知。您的帳戶未有任何變更。</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">您是 Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">感謝您支持 Octi！您的 Pro 功能已解鎖。</string>
     <string name="upgrade_screen_owned_iap_title">終身購買</string>
     <string name="upgrade_screen_owned_iap_body">您擁有一次性 Pro 購買。它永不過期。</string>
     <string name="upgrade_screen_owned_sub_title">訂閱</string>
@@ -78,7 +75,6 @@
     <string name="upgrade_screen_owned_both_title">您同時擁有兩者</string>
     <string name="upgrade_screen_owned_both_warning">您同時擁有訂閱和一次性購買。為避免重複付款，請在 Google Play 中取消訂閱 — 您將透過終身購買保留 Pro。</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">您是 Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">感謝您購買 %1$s！您的 Pro 功能已解鎖，永不過期。</string>
     <string name="upgrade_screen_owned_hero_sub_body">感謝您訂閱 %1$s！您的 Pro 功能已解鎖。</string>
     <string name="upgrade_screen_manage_subscription_action">管理訂閱</string>

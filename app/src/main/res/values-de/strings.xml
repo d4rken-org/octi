@@ -4,9 +4,6 @@
     <string name="label_help">Hilfe</string>
     <string name="general_manage_devices_action">Geräte verwalten</string>
     <string name="onboarding_welcome_subtitle">Dein Geräte Partner</string>
-    <string name="onboarding_welcome_body1">Octi ist eine App für Menschen mit mehreren Androidgeräten.</string>
-    <string name="onboarding_welcome_body2">Es hält dich über alle deine Geräte auf dem Laufenden. Ob es sich um dein Telefon, Tablet oder ein anderes Gerät mit installiertem Octi handelt, du erhältst wichtige Details auf einen Blick.</string>
-    <string name="onboarding_welcome_body3">Du kannst auf Octi Pro upgraden, um zusätzliche Funktionen zu erhalten und die Entwicklung zu unterstützen.</string>
     <string name="onboarding_welcome_beta_hint">Nur zur Information, dies ist eine Beta-Version, also danke für deine Geduld, während ich die App weiter verbessere!</string>
     <string name="onboarding_features_page1_title">Alle deine Geräte auf einen Blick</string>
     <string name="onboarding_features_page1_body">Sieh Akku, WLAN und Konnektivität aller deiner Android-Geräte.</string>
@@ -184,10 +181,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Du hast derzeit %1$d synchronisiertes Gerät.</item>
         <item quantity="other">Du hast derzeit %1$d synchronisierte Geräte.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Um mehr als %1$d Gerät anzuzeigen, upgrade auf Octi Pro oder entferne Geräte.</item>
-        <item quantity="other">Um mehr als %1$d Geräte anzuzeigen, upgrade auf Octi Pro oder entferne Geräte.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Das Entfernen dieses Geräts löscht seine Daten, widerruft aber nicht den Zugriff. Um den Zugriff zu widerrufen, trennen Sie Octi auf dem Gerät.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Das Löschen dieses Geräts entfernt seine Daten und widerruft seinen Zugriff.</string>

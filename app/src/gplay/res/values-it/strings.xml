@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Google Play attualmente non offre questa opzione di upgrade. Riprova più tardi o controlla Google Play Store.</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Impossibile aprire Google Play. Potrebbe mancare, essere disabilitato o limitato su questo dispositivo.</string>
-    <string name="upgrades_dashcard_title">Ottieni Octi Pro</string>
     <string name="upgrades_dashcard_body">Aggiorna per sbloccare funzionalità aggiuntive e supportare lo sviluppo!</string>
     <string name="upgrades_dashcard_upgrade_action">Aggiorna</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -69,8 +68,6 @@
     <string name="upgrade_screen_restore_contact_hint">Ancora bloccato? Contatta il supporto e ti aiuteremo a risolvere.</string>
     <string name="upgrade_screen_restore_inconclusive_message">La verifica con Google Play non è stata completata in tempo, quindi il tuo stato di acquisto è ancora sconosciuto. Nulla è cambiato sul tuo account.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">Sei Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">Grazie per aver supportato Octi! Le tue funzionalità Pro sono sbloccate.</string>
     <string name="upgrade_screen_owned_iap_title">Acquisto permanente</string>
     <string name="upgrade_screen_owned_iap_body">Possiedi l’acquisto Pro permanente. Non scade mai.</string>
     <string name="upgrade_screen_owned_sub_title">Abbonamento</string>
@@ -79,7 +76,6 @@
     <string name="upgrade_screen_owned_both_title">Possiedi entrambi</string>
     <string name="upgrade_screen_owned_both_warning">Possiedi sia l’abbonamento che l’acquisto una tantum. Per evitare di pagare due volte, annulla l’abbonamento in Google Play — manterrai Pro tramite l’acquisto a vita.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">Sei Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Grazie per aver acquistato %1$s! Le tue funzioni Pro sono sbloccate e non scadono mai.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Grazie per aver sottoscritto %1$s! Le tue funzioni Pro sono sbloccate.</string>
     <string name="upgrade_screen_manage_subscription_action">Gestisci l’abbonamento</string>

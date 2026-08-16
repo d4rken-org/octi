@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="upgrade_feature_requires_pro">Vyžaduje Octi Pro</string>
-    <string name="upgrades_dashcard_title">Získat Octi Pro</string>
     <string name="upgrades_dashcard_body">Odemkněte další funkce a staňte se patronem, který podpoří další vývoj!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgradovat</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -10,7 +8,6 @@
         <item quantity="many">Bezplatná verze je omezena na %1$d zařízení.</item>
         <item quantity="other">Bezplatná verze je omezena na %1$d zařízení.</item>
     </plurals>
-    <string name="upgrade_screen_title">Upgradovat na Octi Pro</string>
     <string name="upgrade_screen_preamble">Octi neobsahuje žádné reklamy a neprodává data uživatelů. Moji práci financujete vy ❤️</string>
     <string name="upgrade_screen_how_title">Co dělat</string>
     <string name="upgrade_screen_how_body">Staňte se patronem a sponzorem vývoje! Klepnutím na tlačítko níže aktivujete všechny další funkce a otevřete můj profil sponzora na GitHubu.</string>

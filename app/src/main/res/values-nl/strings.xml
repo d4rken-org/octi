@@ -4,9 +4,6 @@
     <string name="label_help">Help</string>
     <string name="general_manage_devices_action">Apparaten beheren</string>
     <string name="onboarding_welcome_subtitle">Uw apparaat-buddy</string>
-    <string name="onboarding_welcome_body1">Octi is een hulpmiddel voor mensen met meerdere Android-apparaten.</string>
-    <string name="onboarding_welcome_body2">Het houdt u op de hoogte van al uw apparaten. Of het nu uw telefoon, tablet of een ander apparaat is met Octi geïnstalleerd, u krijgt belangrijke details in één oogopslag.</string>
-    <string name="onboarding_welcome_body3">Upgrade naar Octi Pro voor extra functies en om de ontwikkeling te ondersteunen.</string>
     <string name="onboarding_welcome_beta_hint">Ter info, dit is een bètaversie, dus bedankt voor uw geduld terwijl ik de app blijf verbeteren!</string>
     <string name="onboarding_features_page1_title">Al je apparaten in één oogopslag</string>
     <string name="onboarding_features_page1_body">Bekijk batterij, WiFi en connectiviteit op al je Android-apparaten.</string>
@@ -184,10 +181,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">U heeft momenteel %1$d gesynchroniseerd apparaat.</item>
         <item quantity="other">U heeft momenteel %1$d gesynchroniseerde apparaten.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Om meer dan %1$d apparaat te bekijken, upgrade naar Octi Pro of verwijder apparaten.</item>
-        <item quantity="other">Om meer dan %1$d apparaten te bekijken, upgrade naar Octi Pro of verwijder apparaten.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Dit apparaat verwijderen zal de gegevens wissen maar toegang niet intrekken. Om toegang in te trekken, koppel Octi los op het apparaat.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Dit apparaat verwijderen zal de gegevens verwijderen en toegang intrekken.</string>

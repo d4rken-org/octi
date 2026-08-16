@@ -4,9 +4,6 @@
     <string name="label_help">Βοήθεια</string>
     <string name="general_manage_devices_action">Διαχείριση συσκευών</string>
     <string name="onboarding_welcome_subtitle">Ο Συνοδός της Συσκευής σας</string>
-    <string name="onboarding_welcome_body1">Το Octi είναι ένα εργαλείο για άτομα με πολλαπλές συσκευές Android.</string>
-    <string name="onboarding_welcome_body2">Σας κρατά ενήμερους για όλες τις συσκευές σας. Είτε είναι το τηλέφωνό σας, το tablet σας ή οποιαδήποτε άλλη συσκευή με εγκατεστημένο το Octi, βλέπετε βασικές πληροφορίες με μια ματιά.</string>
-    <string name="onboarding_welcome_body3">Αναβαθμίστε στο Octi Pro για επιπλέον λειτουργίες και υποστήριξη της ανάπτυξης.</string>
     <string name="onboarding_welcome_beta_hint">Ενημερωτικά: αυτή είναι έκδοση beta, ευχαριστώ για την υπομονή σας καθώς συνεχίζω να βελτιώνω την εφαρμογή!</string>
     <string name="onboarding_features_page1_title">Όλες οι συσκευές σας με μια ματιά</string>
     <string name="onboarding_features_page1_body">Δείτε μπαταρία, WiFi και συνδεσιμότητα σε όλες τις Android συσκευές σας.</string>
@@ -184,10 +181,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Αυτή τη στιγμή έχετε %1$d συγχρονισμένη συσκευή.</item>
         <item quantity="other">Αυτή τη στιγμή έχετε %1$d συγχρονισμένες συσκευές.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Για να δείτε περισσότερες από %1$d συσκευή, αναβαθμίστε στο Octi Pro ή αφαιρέστε συσκευές.</item>
-        <item quantity="other">Για να δείτε περισσότερες από %1$d συσκευές, αναβαθμίστε στο Octi Pro ή αφαιρέστε συσκευές.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Η κατάργηση αυτής της συσκευής διαγράφει τα δεδομένα της αλλά δεν αφαιρεί την πρόσβαση. Για να αφαιρέσετε την πρόσβαση, αποσυνδέστε το Octi στη συσκευή.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Διαγράφοντας αυτή τη συσκευή διαγράφονται τα δεδομένα και ακυρώνεται η πρόσβαση.</string>

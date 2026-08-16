@@ -70,10 +70,15 @@
     <!-- Widget config -->
     <string name="widget_config_title">Customize Widget</string>
     <string name="widget_config_apply_action">Apply</string>
-    <string name="widget_config_upgrade_action">Upgrade to Octi Pro</string>
-    <string name="widget_config_pro_required_label">This widget requires Octi Pro.</string>
-    <string name="widget_config_pro_checking_label">Checking your Octi Pro status…</string>
-    <string name="widget_config_pro_error_label">Couldn\'t verify your Octi Pro status.</string>
+    <!-- Replaces widget_config_pro_required_label / widget_config_pro_checking_label /
+         widget_config_pro_error_label, which named the Google Play tier ("Octi Pro") even in the FOSS
+         build, where the tier is called "Octi FOSS". This module is shared by both flavors and cannot
+         know which tier is meant, so the copy names none: keep it tier-free when translating, and do
+         not reintroduce a product name. The old widget_config_upgrade_action ("Upgrade to Octi Pro")
+         is gone too; its button now uses the existing general_upgrade_action. -->
+    <string name="widget_config_upgrade_required_label">This widget requires an upgrade.</string>
+    <string name="widget_config_upgrade_checking_label">Checking your upgrade status…</string>
+    <string name="widget_config_upgrade_error_label">Couldn\'t verify your upgrade status.</string>
     <string name="widget_config_retry_action">Retry</string>
     <string name="widget_config_presets_label">Presets</string>
     <string name="widget_config_background_label">Background color</string>
@@ -90,7 +95,9 @@
     <string name="widget_empty_label">No matching devices</string>
     <string name="widget_no_sync_devices_label">No sync devices yet</string>
     <string name="widget_more_items">+ %1$d more</string>
-    <string name="widget_upgrade_required_title">Octi Pro required</string>
+    <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
+         Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
+    <string name="widget_upgrade_required_headline">Upgrade required</string>
     <string name="widget_upgrade_required_action">Tap to upgrade</string>
 
     <!-- Widget deeplink -->

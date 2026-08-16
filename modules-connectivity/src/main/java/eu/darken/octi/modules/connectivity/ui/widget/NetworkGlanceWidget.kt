@@ -148,7 +148,7 @@ private fun NetworkWidgetUpgradeRequired(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = ctx.getString(CommonR.string.widget_upgrade_required_title),
+                text = ctx.getString(CommonR.string.widget_upgrade_required_headline),
                 style = TextStyle(
                     color = onContainerColor,
                     fontWeight = FontWeight.Bold,

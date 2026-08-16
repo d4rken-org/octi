@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Google Play n\'offre actuellement pas cette option de mise à jour. Veuillez réessayer plus tard ou vérifier le Google Play Store.</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Impossible d\'ouvrir Google Play. Il se peut qu\'il soit manquant, désactivé ou restreint sur cet appareil.</string>
-    <string name="upgrades_dashcard_title">Obtenir Octi Pro</string>
     <string name="upgrades_dashcard_body">Surclassez Octi pour débloquer des fonctions supplémentaires et financer le développement.</string>
     <string name="upgrades_dashcard_upgrade_action">Surclasser</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -69,8 +68,6 @@ Mêmes fonctions, juste des modèles tarifaires différents.</string>
     <string name="upgrade_screen_restore_contact_hint">Toujours bloqué ? Contactez le support et nous vous aiderons à résoudre le problème.</string>
     <string name="upgrade_screen_restore_inconclusive_message">La vérification avec Google Play n\'a pas abouti à temps, votre statut d\'achat est donc toujours inconnu. Rien n\'a changé sur votre compte.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">Vous êtes Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">Merci de soutenir Octi ! Vos fonctionnalités Pro sont déverrouillées.</string>
     <string name="upgrade_screen_owned_iap_title">Achat unique</string>
     <string name="upgrade_screen_owned_iap_body">Vous possédez l’achat Pro unique. Il n’expire jamais.</string>
     <string name="upgrade_screen_owned_sub_title">Abonnement</string>
@@ -79,7 +76,6 @@ Mêmes fonctions, juste des modèles tarifaires différents.</string>
     <string name="upgrade_screen_owned_both_title">Vous possédez les deux</string>
     <string name="upgrade_screen_owned_both_warning">Vous possédez à la fois l’abonnement et l’achat unique. Pour éviter de payer deux fois, annulez l’abonnement dans Google Play — vous conservez Pro grâce à l’achat unique.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">Vous êtes Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Merci d’avoir acheté %1$s ! Vos fonctionnalités Pro sont déverrouillées et n’expirent jamais.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Merci de votre abonnement à %1$s ! Vos fonctionnalités Pro sont déverrouillées.</string>
     <string name="upgrade_screen_manage_subscription_action">Gérer l’abonnement</string>

@@ -3,7 +3,6 @@
     <string name="upgrades_gplay_unavailable_error_title">Google Play ไม่พร้อมใช้งาน</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi ไม่สามารถเชื่อมต่อกับ Google Play ได้ ติดตั้งและอัปเดต Google Play แล้วหรือยัง? คุณเข้าสู่ระบบด้วยบัญชี Google หรือไม่? ลองล้างแคชของแอป Google Play และรีสตาร์ทอุปกรณ์ของคุณ</string>
     <string name="upgrades_no_purchases_found_check_account">ไม่พบการซื้อ คุณใช้บัญชีที่ถูกต้องหรือไม่?</string>
-    <string name="upgrades_dashcard_title">รับ Octi Pro</string>
     <string name="upgrades_dashcard_body">อัปเกรดเพื่อปลดล็อกฟีเจอร์เพิ่มเติมและสนับสนุนการพัฒนา!</string>
     <string name="upgrades_dashcard_upgrade_action">อัปเกรด</string>
     <string name="upgrade_screen_preamble">Octi ไม่มีโฆษณาและไม่ขายข้อมูลผู้ใช้ งานของฉันได้รับเงินสนับสนุนจากคุณ ❤️</string>

@@ -250,7 +250,7 @@ private fun WidgetConfigFooter(
         WidgetConfigAction.Upgrade -> {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = stringResource(R.string.widget_config_pro_required_label),
+                    text = stringResource(R.string.widget_config_upgrade_required_label),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -258,7 +258,7 @@ private fun WidgetConfigFooter(
                     onClick = onUpgrade,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text(stringResource(R.string.widget_config_upgrade_action))
+                    Text(stringResource(R.string.general_upgrade_action))
                 }
             }
         }
@@ -273,7 +273,7 @@ private fun WidgetConfigFooter(
                 CircularProgressIndicator(modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.size(12.dp))
                 Text(
-                    text = stringResource(R.string.widget_config_pro_checking_label),
+                    text = stringResource(R.string.widget_config_upgrade_checking_label),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -282,7 +282,7 @@ private fun WidgetConfigFooter(
         is WidgetConfigAction.ErrorRetry -> {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = action.message.ifBlank { stringResource(R.string.widget_config_pro_error_label) },
+                    text = action.message.ifBlank { stringResource(R.string.widget_config_upgrade_error_label) },
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(modifier = Modifier.height(12.dp))

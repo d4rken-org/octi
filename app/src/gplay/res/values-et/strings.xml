@@ -3,7 +3,6 @@
     <string name="upgrades_gplay_unavailable_error_title">Google Play pole saadaval</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi ei saa Google Playga ühendust. Kas Google Play on paigaldatud ja ajakohane? Kas Sinu Google\'i konto on sisse logitud? Proovi Google Play rakenduse vahemälu tühjendada ja seadme taaskäivitada.</string>
     <string name="upgrades_no_purchases_found_check_account">Ostud ei leitud. Kas kasutad õiget kontot?</string>
-    <string name="upgrades_dashcard_title">Hangi Octi Pro</string>
     <string name="upgrades_dashcard_body">Uuenda, et avada lisafunktsioone ja toetada arendust!</string>
     <string name="upgrades_dashcard_upgrade_action">Uuenda</string>
     <string name="upgrade_screen_preamble">Octil pole reklaame ega müü ta kasutajaandmeid. Minu tööd rahastad Sina ❤️.</string>

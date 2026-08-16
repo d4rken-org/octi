@@ -3,7 +3,6 @@
     <string name="upgrades_gplay_unavailable_error_title">Google Play nepasiekiama</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi nepavyksta prisijungti prie Google Play. Ar Google Play įdiegta ir atnaujinta? Ar jūsų Google paskyra yra prisijungusi? Pabandykite išvalyti Google Play programos podėlį ir paleisti įrenginį iš naujo.</string>
     <string name="upgrades_no_purchases_found_check_account">Nerasta jokių pirkinių. Ar naudojate tinkamą paskyrą?</string>
-    <string name="upgrades_dashcard_title">Gauti Octi Pro</string>
     <string name="upgrades_dashcard_body">Atnaujinkite, kad atrakintumėte papildomas funkcijas ir palaikytumėte tobulinimą!</string>
     <string name="upgrades_dashcard_upgrade_action">Atnaujinti</string>
     <string name="upgrade_screen_preamble">Octi neturi reklamų ir neparduoda naudotojų duomenų. Mano darbą finansuojate jūs ❤️.</string>

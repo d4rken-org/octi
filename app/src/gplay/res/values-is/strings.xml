@@ -3,7 +3,6 @@
     <string name="upgrades_gplay_unavailable_error_title">Google Play er ekki í boði</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi getur ekki tengst Google Play. Er Google Play uppsett og uppfært? Er Google-aðgangurinn þinn virkur? Prófaðu að hreinsa skyndiminni fyrir Google Play og endurræsa tækið.</string>
     <string name="upgrades_no_purchases_found_check_account">Engar kaupfundust. Ertu að nota rétta reikninginn?</string>
-    <string name="upgrades_dashcard_title">Fá Octi Pro</string>
     <string name="upgrades_dashcard_body">Uppfærðu til að opna fleiri eiginleika og styðja við þróunina!</string>
     <string name="upgrades_dashcard_upgrade_action">Uppfæra</string>
     <string name="upgrade_screen_preamble">Octi er án auglýsinga og selur ekki notendagögn. Verk mitt er fjármagnað af þér ❤️.</string>
