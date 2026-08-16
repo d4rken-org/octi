@@ -35,4 +35,12 @@
     <string name="sync_octiserver_add_link_existing_action">Koble til eksisterende konto</string>
     <string name="sync_octiserver_add_select_server_label">Velg server</string>
     <string name="sync_octiserver_add_custom_server_label">Egendefinert server</string>
+    <string name="sync_octiserver_link_code_invalid_label">Koblingskode ufullstendig</string>
+    <string name="sync_octiserver_link_code_invalid_description">Denne koblingskoden er ufullstendig eller ble endret underveis. Kopier hele koden fra den andre enheten og lim den inn uten å skrive den på nytt, eller skann QR-koden i stedet.</string>
+    <string name="sync_octiserver_link_code_copied_message">Koblingskode kopiert</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d tegn</item>
+        <item quantity="other">%d tegn</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Begge enhetene må vise samme antall.</string>
 </resources>

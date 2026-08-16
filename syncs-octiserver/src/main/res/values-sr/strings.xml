@@ -35,4 +35,13 @@
     <string name="sync_octiserver_add_link_existing_action">Повежи са постојећим налогом</string>
     <string name="sync_octiserver_add_select_server_label">Изабери сервер</string>
     <string name="sync_octiserver_add_custom_server_label">Прилагођени сервер</string>
+    <string name="sync_octiserver_link_code_invalid_label">Код за повезивање непотпун</string>
+    <string name="sync_octiserver_link_code_invalid_description">Овај код за повезивање је непотпун или је измењен током преноса. Копирај цео код са другог уређаја и налепи га без поновног куцања, или уместо тога скенирај QR код.</string>
+    <string name="sync_octiserver_link_code_copied_message">Код за повезивање копиран</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d карактер</item>
+        <item quantity="few">%d карактера</item>
+        <item quantity="other">%d карактера</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Оба уређаја морају приказивати исти број.</string>
 </resources>

@@ -92,6 +92,11 @@ Dezelfde functies, gewoon verschillende prijsmodellen.</string>
     <string name="upgrade_screen_switch_action">Eenmalige aankoop kopen (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonnement nog actief</string>
     <string name="upgrade_screen_sub_still_renewing_message">Je abonnement is nog steeds ingesteld om te vernieuwen. Annuleer het eerst in Google Play zodat je niet dubbel wordt belast, koop dan de eenmalige aankoop. Dit vergoedt het abonnement niet.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play reageerde niet op tijd, dus we kunnen je aankoopstatus niet veilig bevestigen. Probeer het straks nog eens.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Betaling in behandeling</string>
+    <string name="upgrade_screen_pending_card_body">Google Play verwerkt je betaling nog. Pro wordt automatisch ontgrendeld zodra de betaling is voltooid. Sommige betaalmethoden kunnen even duren. Je hoeft verder niets te doen.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play heeft een aankoop met een betaling in behandeling gevonden en verwerkt deze nog. Pro wordt automatisch ontgrendeld zodra de betaling is voltooid.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro is nog actief</string>
     <string name="upgrade_screen_grace_body">We bevestigen je aankoop met Google Play. Je Pro-functies blijven in de tussentijd ontgrendeld.</string>

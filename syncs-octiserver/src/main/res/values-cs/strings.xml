@@ -35,4 +35,14 @@
     <string name="sync_octiserver_add_link_existing_action">Připojit existující účet</string>
     <string name="sync_octiserver_add_select_server_label">Vybrat server</string>
     <string name="sync_octiserver_add_custom_server_label">Vlastní server</string>
+    <string name="sync_octiserver_link_code_invalid_label">Nekompletní propojovací kód</string>
+    <string name="sync_octiserver_link_code_invalid_description">Tento propojovací kód je nekompletní nebo byl při přenosu pozměněn. Zkopíruj celý kód z druhého zařízení a vlož ho bez přepisování, nebo místo toho naskenuj QR kód.</string>
+    <string name="sync_octiserver_link_code_copied_message">Propojovací kód zkopírován</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d znak</item>
+        <item quantity="few">%d znaky</item>
+        <item quantity="many">%d znaku</item>
+        <item quantity="other">%d znaků</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Obě zařízení musí zobrazovat stejný počet.</string>
 </resources>

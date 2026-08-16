@@ -91,6 +91,11 @@
     <string name="upgrade_screen_switch_action">Osta kertamaksu (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Tilaus on edelleen aktiivinen</string>
     <string name="upgrade_screen_sub_still_renewing_message">Tilauksesi on edelleen asetettu uusimiselle. Peruuta se ensin Google Play -sovelluksesta, jotta sinua ei veloiteta kahdesti, sitten osta kertamaksu. Tämä ei palauta tilausta.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play ei vastannut ajoissa, joten emme voi varmistaa ostotilannettasi turvallisesti. Yritä hetken kuluttua uudelleen.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Maksu vireillä</string>
+    <string name="upgrade_screen_pending_card_body">Google Play käsittelee maksuasi. Pro avataan automaattisesti, kun maksu on suoritettu. Jotkut maksutavat voivat kestää kauan. Sinun ei tarvitse tehdä mitään muuta.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play löysi oston, jolla on odottava maksu, ja käsittelee sitä vielä. Pro avataan automaattisesti, kun maksu on suoritettu.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro on edelleen aktiivinen</string>
     <string name="upgrade_screen_grace_body">Vahvistamme ostoksesi Google Play:n kanssa. Pro-ominaisuudet pysyvät avattuna sillä välin.</string>

@@ -35,4 +35,12 @@
     <string name="sync_octiserver_add_link_existing_action">Relier à un compte existant</string>
     <string name="sync_octiserver_add_select_server_label">Choisir le serveur</string>
     <string name="sync_octiserver_add_custom_server_label">Serveur personnalisé</string>
+    <string name="sync_octiserver_link_code_invalid_label">Code de lien incomplet</string>
+    <string name="sync_octiserver_link_code_invalid_description">Ce code de lien est incomplet ou a été modifié en chemin. Copie le code complet depuis l\'autre appareil et colle-le sans le retaper, ou scanne plutôt le code QR.</string>
+    <string name="sync_octiserver_link_code_copied_message">Code de lien copié</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d caractère</item>
+        <item quantity="other">%d caractères</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Les deux appareils doivent afficher le même nombre.</string>
 </resources>

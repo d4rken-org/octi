@@ -91,6 +91,11 @@
     <string name="upgrade_screen_switch_action">Vásárold meg az egyszeri verziót (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Az előfizetés még aktív</string>
     <string name="upgrade_screen_sub_still_renewing_message">Az előfizetésed továbbra is megújulásra van beállítva. Először töröld le a Google Play-ben, hogy ne legyél kétszer felszámítva, majd vásárold meg az egyszeri verziót. Ez nem téríti vissza az előfizetést.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">A Google Play nem válaszolt időben, így nem tudjuk biztonságosan megerősíteni a vásárlásod állapotát. Kérjük, próbáld újra egy kicsit később.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Fizetés folyamatban</string>
+    <string name="upgrade_screen_pending_card_body">A Google Play még feldolgozza a fizetésedet. A Pro automatikusan feloldódik, amint a fizetés megtörténik. Egyes fizetési módoknál ez eltarthat egy ideig. Nincs más teendőd.</string>
+    <string name="upgrade_screen_pending_dialog_message">A Google Play talált egy vásárlást függőben lévő fizetéssel, és még feldolgozza azt. A Pro automatikusan feloldódik, amint a fizetés megtörténik.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">A Pro továbbra is aktív</string>
     <string name="upgrade_screen_grace_body">Megerősítjük a vásárlásodat a Google Play-ben. A Pro funkciók addig is feloldva maradnak.</string>

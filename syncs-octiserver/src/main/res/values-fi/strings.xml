@@ -37,4 +37,12 @@ Koska sekä sovellusta että palvelinta parannetaan edelleen, se voi olla epäva
     <string name="sync_octiserver_add_link_existing_action">Linkitä olemassa olevaan tiliin</string>
     <string name="sync_octiserver_add_select_server_label">Valitse palvelin</string>
     <string name="sync_octiserver_add_custom_server_label">Mukautettu palvelin</string>
+    <string name="sync_octiserver_link_code_invalid_label">Linkkikoodi epätäydellinen</string>
+    <string name="sync_octiserver_link_code_invalid_description">Tämä linkkikoodi on epätäydellinen tai sitä muutettiin matkalla. Kopioi koodi kokonaisuudessaan toisesta laitteesta ja liitä se, älä kirjoita sitä uudelleen, tai skannaa QR-koodi sen sijaan.</string>
+    <string name="sync_octiserver_link_code_copied_message">Linkkikoodi kopioitu</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d merkki</item>
+        <item quantity="other">%d merkkiä</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Molempien laitteiden on näytettävä sama merkkilukumäärä.</string>
 </resources>

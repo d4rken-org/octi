@@ -35,4 +35,12 @@
     <string name="sync_octiserver_add_link_existing_action">Verbinde zu vorhandenem Konto</string>
     <string name="sync_octiserver_add_select_server_label">Server auswählen</string>
     <string name="sync_octiserver_add_custom_server_label">Benutzerdefinierter Server</string>
+    <string name="sync_octiserver_link_code_invalid_label">Link-Code unvollständig</string>
+    <string name="sync_octiserver_link_code_invalid_description">Dieser Link-Code ist unvollständig oder wurde bei der Übertragung verändert. Kopiere den vollständigen Code vom anderen Gerät und füge ihn ein, ohne ihn erneut einzutippen, oder scanne stattdessen den QR-Code.</string>
+    <string name="sync_octiserver_link_code_copied_message">Link-Code kopiert</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d Zeichen</item>
+        <item quantity="other">%d Zeichen</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Beide Geräte müssen dieselbe Anzahl anzeigen.</string>
 </resources>

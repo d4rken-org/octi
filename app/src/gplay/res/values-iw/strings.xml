@@ -93,6 +93,11 @@
     <string name="upgrade_screen_switch_action">קנה רכישה חד-פעמית (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">המנוי עדיין פעיל</string>
     <string name="upgrade_screen_sub_still_renewing_message">המנוי שלך עדיין מוגדר להתחדש. בטל אותו ב-Google Play תחילה כדי שלא תחויב פעמיים, ואז קנה את הרכישה החד-פעמית. זה לא מחזיר כסף עבור המנוי.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">‏Google Play לא הגיב בזמן, ולכן לא ניתן לאשר בבטחה את מצב הרכישה שלך. כדאי לנסות שוב בעוד רגע.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">תשלום בהמתנה</string>
+    <string name="upgrade_screen_pending_card_body">‏Google Play עדיין מעבד את התשלום שלך. גרסת Pro תיפתח באופן אוטומטי לאחר אישור התשלום. חלק מאמצעי התשלום עשויים לקחת זמן. אין צורך לעשות שום דבר נוסף.</string>
+    <string name="upgrade_screen_pending_dialog_message">‏Google Play מצא רכישה עם תשלום הממתין לאישור והוא עדיין מעבד אותה. גרסת Pro תיפתח באופן אוטומטי לאחר אישור התשלום.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro עדיין פעיל</string>
     <string name="upgrade_screen_grace_body">אנחנו מאשרים את הרכישה שלך עם Google Play. תכונות Pro שלך נשארות פתוחות בינתיים.</string>

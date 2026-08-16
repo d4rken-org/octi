@@ -92,6 +92,11 @@
     <string name="upgrade_screen_switch_action">Cumpără achiziția unică (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonament încă activ</string>
     <string name="upgrade_screen_sub_still_renewing_message">Abonamentul tău este încă setat să se reînnoiască. Anulează-l mai întâi în Google Play pentru a nu fi taxat de două ori, apoi cumpără achiziția unică. Aceasta nu returnează abonamentul.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play nu a răspuns la timp, deci nu putem confirma în siguranță starea achiziției tale. Te rog, încearcă din nou peste puțin.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Plată în așteptare</string>
+    <string name="upgrade_screen_pending_card_body">Google Play procesează plata ta. Pro se deblochează automat odată ce plata se efectuează. Unele metode de plată pot dura mai mult. Nu mai ai nimic de făcut.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play a găsit o achiziție cu plată în așteptare și o procesează. Pro se deblochează automat odată ce plata se efectuează.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro este încă activ</string>
     <string name="upgrade_screen_grace_body">Confirmăm achiziția ta cu Google Play. Funcțiile tale Pro rămân deblocate deocamdată.</string>

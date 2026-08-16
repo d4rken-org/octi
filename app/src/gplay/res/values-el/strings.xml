@@ -91,6 +91,11 @@
     <string name="upgrade_screen_switch_action">Αγορά εφάπαξ αγοράς (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Η συνδρομή είναι ακόμα ενεργή</string>
     <string name="upgrade_screen_sub_still_renewing_message">Η συνδρομή σας είναι ακόμα ορισμένη να ανανεωθεί. Ακυρώστε την πρώτα στο Google Play ώστε να μην χρεωθείτε δύο φορές, και στη συνέχεια αγοράστε την εφάπαξ αγορά. Αυτό δεν επιστρέφει χρήματα για τη συνδρομή.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Το Google Play δεν ανταποκρίθηκε έγκαιρα, γι\' αυτό δεν μπορούμε να επιβεβαιώσουμε με ασφάλεια την κατάστασή σου. Προσπάθησε ξανά σε λίγο.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Εκκρεμή πληρωμή</string>
+    <string name="upgrade_screen_pending_card_body">Το Google Play επεξεργάζεται ακόμη την πληρωμή σου. Το Pro θα ξεκλειδωθεί αυτόματα μόλις η πληρωμή ολοκληρωθεί. Ορισμένες μέθοδοι πληρωμής μπορεί να χρειάσουν χρόνο. Δεν χρειάζεται να κάνεις κάτι άλλο.</string>
+    <string name="upgrade_screen_pending_dialog_message">Το Google Play βρήκε μια αγορά με εκκρεμή πληρωμή και εξακολουθεί να την επεξεργάζεται. Το Pro θα ξεκλειδωθεί αυτόματα μόλις η πληρωμή ολοκληρωθεί.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Το Pro είναι ακόμα ενεργό</string>
     <string name="upgrade_screen_grace_body">Επιβεβαιώνουμε την αγορά σας με το Google Play. Οι δυνατότητες Pro σας παραμένουν ξεκλείδωτες στο μεταξύ.</string>

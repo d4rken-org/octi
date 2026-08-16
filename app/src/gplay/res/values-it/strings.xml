@@ -92,6 +92,11 @@
     <string name="upgrade_screen_switch_action">Acquista l’acquisto una tantum (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abbonamento ancora attivo</string>
     <string name="upgrade_screen_sub_still_renewing_message">Il tuo abbonamento è ancora impostato per il rinnovo. Annullalo prima su Google Play in modo da non essere addebitato due volte, quindi acquista l’acquisto una tantum. Questo non rimborsa l’abbonamento.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play non ha risposto in tempo, quindi non possiamo confermare in modo sicuro lo stato del tuo acquisto. Riprova tra un momento.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Pagamento in sospeso</string>
+    <string name="upgrade_screen_pending_card_body">Google Play sta ancora elaborando il tuo pagamento. Pro si sblocca automaticamente non appena il pagamento va a buon fine. Alcuni metodi di pagamento possono richiedere del tempo. Non devi fare nient\'altro.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play ha trovato un acquisto con un pagamento in sospeso e lo sta ancora elaborando. Pro si sblocca automaticamente non appena il pagamento va a buon fine.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro è ancora attivo</string>
     <string name="upgrade_screen_grace_body">Stiamo confermando il tuo acquisto con Google Play. Le tue funzioni Pro rimangono sbloccate nel frattempo.</string>

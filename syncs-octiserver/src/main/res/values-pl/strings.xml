@@ -35,4 +35,14 @@
     <string name="sync_octiserver_add_link_existing_action">Połącz z istniejącym kontem</string>
     <string name="sync_octiserver_add_select_server_label">Wybierz serwer</string>
     <string name="sync_octiserver_add_custom_server_label">Niestandardowy serwer</string>
+    <string name="sync_octiserver_link_code_invalid_label">Kod linku niekompletny</string>
+    <string name="sync_octiserver_link_code_invalid_description">Ten kod linku jest niekompletny lub został zmieniony w drodze. Skopiuj cały kod z drugiego urządzenia i wklej go bez ponownego wpisywania, albo zamiast tego zeskanuj kod QR.</string>
+    <string name="sync_octiserver_link_code_copied_message">Kod linku skopiowany</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d znak</item>
+        <item quantity="few">%d znaki</item>
+        <item quantity="many">%d znaków</item>
+        <item quantity="other">%d znaków</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Oba urządzenia muszą wyświetlać tę samą liczbę.</string>
 </resources>

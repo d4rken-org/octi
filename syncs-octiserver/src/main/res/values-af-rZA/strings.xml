@@ -37,4 +37,12 @@ Aangesien beide die app en die bediener nog verbeter word, kan dit minder stabie
     <string name="sync_octiserver_add_link_existing_action">Koppel aan bestaande rekening</string>
     <string name="sync_octiserver_add_select_server_label">Kies bediener</string>
     <string name="sync_octiserver_add_custom_server_label">Persoonlike bediener</string>
+    <string name="sync_octiserver_link_code_invalid_label">Skakelkode onvolledig</string>
+    <string name="sync_octiserver_link_code_invalid_description">Hierdie skakelkode is onvolledig of is onderweg verander. Kopieer die hele kode van die ander toestel en plak dit sonder om dit oortik nie, of skandeer eerder die QR-kode.</string>
+    <string name="sync_octiserver_link_code_copied_message">Skakelkode gekopieer</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d karakter</item>
+        <item quantity="other">%d karakters</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Beide toestelle moet dieselfde aantal wys.</string>
 </resources>

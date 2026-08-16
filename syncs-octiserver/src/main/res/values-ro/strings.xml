@@ -37,4 +37,13 @@ Deoarece atat aplicatia cat si serverul sunt inca in dezvoltare, poate fi mai pu
     <string name="sync_octiserver_add_link_existing_action">Conectează la cont existent</string>
     <string name="sync_octiserver_add_select_server_label">Selectează server</string>
     <string name="sync_octiserver_add_custom_server_label">Server personalizat</string>
+    <string name="sync_octiserver_link_code_invalid_label">Cod de legare incomplet</string>
+    <string name="sync_octiserver_link_code_invalid_description">Acest cod de legare este incomplet sau a fost modificat în tranzit. Copiază codul complet de pe celălalt dispozitiv și lipește-l fără să-l retipezi, sau scanează codul QR în schimb.</string>
+    <string name="sync_octiserver_link_code_copied_message">Cod de legare copiat</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d caracter</item>
+        <item quantity="few">%d caractere</item>
+        <item quantity="other">%d caractere</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Ambele dispozitive trebuie să arate același număr.</string>
 </resources>

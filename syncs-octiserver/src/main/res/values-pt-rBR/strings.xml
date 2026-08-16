@@ -35,4 +35,12 @@
     <string name="sync_octiserver_add_link_existing_action">Vincular a conta existente</string>
     <string name="sync_octiserver_add_select_server_label">Selecionar servidor</string>
     <string name="sync_octiserver_add_custom_server_label">Servidor personalizado</string>
+    <string name="sync_octiserver_link_code_invalid_label">Código de link incompleto</string>
+    <string name="sync_octiserver_link_code_invalid_description">Este código de link está incompleto ou foi alterado durante a transmissão. Copie o código completo do outro dispositivo e cole-o sem redigitar, ou escaneie o código QR em vez disso.</string>
+    <string name="sync_octiserver_link_code_copied_message">Código de link copiado</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d caractere</item>
+        <item quantity="other">%d caracteres</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Os dois dispositivos devem mostrar a mesma contagem.</string>
 </resources>

@@ -35,4 +35,12 @@
     <string name="sync_octiserver_add_link_existing_action">Enlace a cuenta ya existente</string>
     <string name="sync_octiserver_add_select_server_label">Seleccionar un servidor</string>
     <string name="sync_octiserver_add_custom_server_label">Servidor personalizado</string>
+    <string name="sync_octiserver_link_code_invalid_label">Código de vinculación incompleto</string>
+    <string name="sync_octiserver_link_code_invalid_description">Este código de vinculación está incompleto o se alteró durante la transmisión. Copia el código completo del otro dispositivo y pégalo sin volver a escribirlo, o escanea el código QR.</string>
+    <string name="sync_octiserver_link_code_copied_message">Código de vinculación copiado</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d carácter</item>
+        <item quantity="other">%d caracteres</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Ambos dispositivos deben mostrar el mismo número.</string>
 </resources>
