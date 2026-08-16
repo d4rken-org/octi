@@ -87,7 +87,6 @@
     <string name="upgrade_screen_switch_action">קנה רכישה חד-פעמית (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">המנוי עדיין פעיל</string>
     <string name="upgrade_screen_sub_still_renewing_message">המנוי שלך עדיין מוגדר להתחדש. בטל אותו ב-Google Play תחילה כדי שלא תחויב פעמיים, ואז קנה את הרכישה החד-פעמית. זה לא מחזיר כסף עבור המנוי.</string>
-    <string name="upgrade_screen_sub_check_failed_title">לא היה ניתן לאמת את המנוי</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro עדיין פעיל</string>
     <string name="upgrade_screen_grace_body">אנחנו מאשרים את הרכישה שלך עם Google Play. תכונות Pro שלך נשארות פתוחות בינתיים.</string>

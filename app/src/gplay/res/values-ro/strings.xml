@@ -86,7 +86,6 @@
     <string name="upgrade_screen_switch_action">Cumpără achiziția unică (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonament încă activ</string>
     <string name="upgrade_screen_sub_still_renewing_message">Abonamentul tău este încă setat să se reînnoiască. Anulează-l mai întâi în Google Play pentru a nu fi taxat de două ori, apoi cumpără achiziția unică. Aceasta nu returnează abonamentul.</string>
-    <string name="upgrade_screen_sub_check_failed_title">Nu am putut verifica abonamentul</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro este încă activ</string>
     <string name="upgrade_screen_grace_body">Confirmăm achiziția ta cu Google Play. Funcțiile tale Pro rămân deblocate deocamdată.</string>

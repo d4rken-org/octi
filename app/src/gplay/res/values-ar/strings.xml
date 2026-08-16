@@ -89,7 +89,6 @@
     <string name="upgrade_screen_switch_action">شراء لمرة واحدة (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">الاشتراك لا يزال نشطًا</string>
     <string name="upgrade_screen_sub_still_renewing_message">لا يزال اشتراكك مضبوطًا على التجديد. ألغِه عبر Google Play أولاً حتى لا تُحاسب مرتين، ثم اشترِ الشراء لمرة واحدة. هذا لا يسترد الاشتراك.</string>
-    <string name="upgrade_screen_sub_check_failed_title">تعذّر التحقق من الاشتراك</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro لا يزال نشطًا</string>
     <string name="upgrade_screen_grace_body">نحن نؤكد عملية شرائك مع Google Play. تبقى ميزات Pro مفتوحة في هذه الأثناء.</string>

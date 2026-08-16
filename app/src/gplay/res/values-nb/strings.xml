@@ -86,7 +86,6 @@ Samme funksjoner, bare forskjellige prismodeller.</string>
     <string name="upgrade_screen_switch_action">Kjøp engangsbetaling (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonnement fortsatt aktivt</string>
     <string name="upgrade_screen_sub_still_renewing_message">Abonnementet ditt er fortsatt satt til å fornyes. Avbryt det i Google Play først slik at du ikke blir belastet to ganger, deretter kjøper du engangsbetalingen. Dette refunderer ikke abonnementet.</string>
-    <string name="upgrade_screen_sub_check_failed_title">Kunne ikke verifisere abonnement</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro er fortsatt aktivt</string>
     <string name="upgrade_screen_grace_body">Vi bekrefter kjøpet ditt med Google Play. Pro-funksjonene dine forblir låst opp i mellomtiden.</string>
