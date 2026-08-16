@@ -2,9 +2,7 @@
 <resources>
     <string name="app_name_upgrade_postfix" translatable="false">FOSS</string>
     <string name="upgrade_badge_label" translatable="false">FOSS</string>
-    <string name="upgrade_feature_requires_pro">Requires Octi Pro</string>
 
-    <string name="upgrades_dashcard_title">Get Octi Pro</string>
     <string name="upgrades_dashcard_body">Unlock additional features and become a patron to support continued development!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgrade</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -12,7 +10,10 @@
         <item quantity="other">The free version is limited to %1$d devices.</item>
     </plurals>
 
-    <string name="upgrade_screen_title">Upgrade to Octi Pro</string>
+    <!-- Replaces upgrade_screen_title ("Upgrade to Octi Pro"), which sold the Google Play tier by name
+         inside the FOSS build, where the tier is called "Octi FOSS" and the ask is sponsorship rather
+         than a purchase. Keep it tier-free: name no product edition when translating. -->
+    <string name="upgrade_screen_support_title">Support Octi</string>
     <string name="upgrade_screen_preamble">Octi has no ads and doesn\'t sell user data. My work is financed by you ❤️</string>
     <string name="upgrade_screen_how_title">What to do</string>
     <string name="upgrade_screen_how_body">Become a patron and sponsor development! Tap the button below to activate all extra features and open my GitHub Sponsors profile.</string>

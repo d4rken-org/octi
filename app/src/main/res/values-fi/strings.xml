@@ -4,9 +4,6 @@
     <string name="label_help">Ohjeet</string>
     <string name="general_manage_devices_action">Hallitse laitteita</string>
     <string name="onboarding_welcome_subtitle">Laitetoverisi</string>
-    <string name="onboarding_welcome_body1">Octi on työkalu ihmisille, joilla on useita Android-laitteita.</string>
-    <string name="onboarding_welcome_body2">Se pitää sinut ajan tasalla kaikista laitteistasi. Olipa kyse puhelimesta, tabletista tai muusta laitteesta, jossa Octi on asennettuna, näet tärkeimmät tiedot yhdellä silmäyksellä.</string>
-    <string name="onboarding_welcome_body3">Päivitä Octi Prohon saadaksesi lisäominaisuuksia ja tukeaksesi kehitystä.</string>
     <string name="onboarding_welcome_beta_hint">Huom! Tämä on beta-versio, joten kiitos kärsivällisyydestäsi kun parannan sovellusta jatkuvasti!</string>
     <string name="onboarding_features_page1_title">Kaikki laitteesi yhdellä silmäyksellä</string>
     <string name="onboarding_features_page1_body">Näe akku, WiFi ja yhteys kaikilla Android-laitteillasi.</string>
@@ -184,10 +181,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Sinulla on tällä hetkellä %1$d synkronoitu laite.</item>
         <item quantity="other">Sinulla on tällä hetkellä %1$d synkronoitua laitetta.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Nähdäksesi enemmän kuin %1$d laitteen, päivitä Octi Prohon tai poista laitteita.</item>
-        <item quantity="other">Nähdäksesi enemmän kuin %1$d laitetta, päivitä Octi Prohon tai poista laitteita.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Tämän laitteen poistaminen poistaa sen tiedot, mutta ei poista käyttöoikeutta. Poistaaksesi käyttöoikeuden, irrota Octi laitteessa.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Tämän laitteen poistaminen poistaa sen tiedot ja käyttöoikeudet.</string>

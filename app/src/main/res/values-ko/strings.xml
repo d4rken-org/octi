@@ -4,9 +4,6 @@
     <string name="label_help">도움말</string>
     <string name="general_manage_devices_action">기기 관리</string>
     <string name="onboarding_welcome_subtitle">기기의 동반자</string>
-    <string name="onboarding_welcome_body1">Octi는 여러 Android 기기를 가진 사람들을 위한 도구입니다.</string>
-    <string name="onboarding_welcome_body2">모든 기기의 정보를 한눈에 확인할 수 있습니다. 휴대폰, 태블릿, 기타 Octi가 설치된 기기 등 주요 정보를 쉽게 볼 수 있습니다.</string>
-    <string name="onboarding_welcome_body3">Octi Pro로 업그레이드하여 추가 기능을 사용하고 개발을 지원하세요.</string>
     <string name="onboarding_welcome_beta_hint">참고: 이 앱은 베타버전입니다. 계속 개선하고 있으니 양해해 주세요!</string>
     <string name="onboarding_features_page1_title">한눈에 보는 내 모든 기기</string>
     <string name="onboarding_features_page1_body">모든 안드로이드 기기의 배터리, WiFi, 연결 상태를 확인하세요.</string>
@@ -178,9 +175,6 @@
     <string name="pro_device_limit_reached_title">기기 제한에 도달함</string>
     <plurals name="pro_device_limit_current_description">
         <item quantity="other">현재 %1$d개의 동기화된 기기가 있습니다.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="other">%1$d개 이상의 기기를 보려면 Octi Pro로 업그레이드하거나 기기를 제거하세요.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">이 기기를 삭제하면 데이터는 지워지나 접근 권한은 남아있습니다. 접근권한을 해제하려면 해당 기기에서 Octi 연결을 해제하세요.</string>
     <string name="sync_delete_device_revokeaccess_caveat">이 기기를 삭제하면 데이터와 접근 권한 모두 삭제됩니다.</string>

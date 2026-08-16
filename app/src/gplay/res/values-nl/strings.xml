@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Google Play biedt deze upgrade-optie momenteel niet aan. Probeer het later opnieuw of raadpleeg de Google Play Store.</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Kon Google Play niet openen. Het kan ontbreken, uitgeschakeld of beperkt zijn op dit apparaat.</string>
-    <string name="upgrades_dashcard_title">Krijg Octi Pro</string>
     <string name="upgrades_dashcard_body">Upgrade om extra functies te ontgrendelen en de ontwikkeling te steunen!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgraden</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -69,8 +68,6 @@ Dezelfde functies, gewoon verschillende prijsmodellen.</string>
     <string name="upgrade_screen_restore_contact_hint">Zit je nog vast? Neem contact op met support en we helpen je graag.</string>
     <string name="upgrade_screen_restore_inconclusive_message">De controle bij Google Play is niet op tijd voltooid, waardoor de status van je aankoop nog steeds onbekend is. Er is niets gewijzigd in je account.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">Je bent Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">Bedankt dat je Octi ondersteunt! Je Pro-functies zijn ontgrendeld.</string>
     <string name="upgrade_screen_owned_iap_title">Levenslange aankoop</string>
     <string name="upgrade_screen_owned_iap_body">Je hebt de eenmalige Pro-aankoop. Deze verloopt nooit.</string>
     <string name="upgrade_screen_owned_sub_title">Abonnement</string>
@@ -79,7 +76,6 @@ Dezelfde functies, gewoon verschillende prijsmodellen.</string>
     <string name="upgrade_screen_owned_both_title">Je hebt beide</string>
     <string name="upgrade_screen_owned_both_warning">Je hebt zowel het abonnement als de eenmalige aankoop. Om dubbel betalen te vermijden, annuleer het abonnement in Google Play — je houdt Pro door de levenslange aankoop.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">Je bent Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Bedankt voor het kopen van %1$s! Je Pro-functies zijn ontgrendeld en verlopen nooit.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Bedankt voor het abonneren op %1$s! Je Pro-functies zijn ontgrendeld.</string>
     <string name="upgrade_screen_manage_subscription_action">Abonnement beheren</string>

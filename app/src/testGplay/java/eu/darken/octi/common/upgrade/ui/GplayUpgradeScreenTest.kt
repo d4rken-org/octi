@@ -22,6 +22,8 @@ import eu.darken.octi.common.compose.PreviewWrapper
 import eu.darken.octi.common.upgrade.core.OurSku
 import eu.darken.octi.common.upgrade.core.billing.SkuDetails
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
@@ -33,8 +35,15 @@ class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
     private val context: Context
         get() = ApplicationProvider.getApplicationContext()
 
+    // Composed through the translated template, never by gluing the parts with a literal space: a
+    // space is what the production code used to hardcode, so an expectation built that way would
+    // agree with the bug instead of catching it.
     private val composedBrand: String
-        get() = "${context.getString(CommonR.string.app_name)} ${context.getString(R.string.app_name_upgrade_postfix)}"
+        get() = context.getString(
+            CommonR.string.app_name_upgraded_template,
+            context.getString(CommonR.string.app_name),
+            context.getString(R.string.app_name_upgrade_postfix),
+        )
 
     private fun appNameWithPostfixedHeroBody(bodyRes: Int): String = context.getString(
         bodyRes,
@@ -466,7 +475,7 @@ class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithTag(UpgradeScreenTags.GPLAY_MANAGE_SUB).assertCountEquals(1)
         composeRule.onAllNodesWithTag(UpgradeScreenTags.GPLAY_SUBSCRIPTION).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_owned_sub_renewing_body)).assertCountEquals(1)
-        composeRule.onAllNodesWithText("${context.getString(CommonR.string.app_name)} ${context.getString(R.string.app_name_upgrade_postfix)}").assertCountEquals(1)
+        composeRule.onAllNodesWithText(composedBrand).assertCountEquals(1)
         // The congrats hero names the variant.
         composeRule.onAllNodesWithTag(UpgradeScreenTags.GPLAY_OWNED_HERO).assertCountEquals(1)
         composeRule.onAllNodesWithText(appNameWithPostfixedHeroBody(R.string.upgrade_screen_owned_hero_sub_body))
@@ -506,6 +515,71 @@ class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_switch_locked_note)).assertCountEquals(0)
         composeRule.onNodeWithTag(UpgradeScreenTags.GPLAY_IAP).performScrollTo().performClick()
         composeRule.runOnIdle { check(iapClicks == 1) { "expected 1 iap click, got $iapClicks" } }
+    }
+
+    /**
+     * The headline is two nested translations and both have to be honoured: the outer sentence
+     * ("You have %1$s 🎉") and the brand template it receives ("%1$s %2$s"). The expectation is built
+     * from both resources, so hardcoding either — the sentence, or a space between name and
+     * qualifier — fails here rather than shipping a title no translator wrote.
+     *
+     * Verified by sabotage: dropping %1$s from the outer string makes this fail on
+     * `"You have 🎉" should include substring "Octi Pro"`.
+     */
+    @Test
+    fun `the owned hero headline composes the outer sentence around the templated brand`() {
+        composeRule.setUpgradeContent {
+            UpgradeScreen(uiState = ownedState(Ownership(hasIap = true)))
+        }
+
+        val expected = context.getString(R.string.upgrade_screen_owned_hero_brand_title, composedBrand)
+        composeRule.onAllNodesWithText(expected).assertCountEquals(1)
+
+        // Assert the property, never re-derive `expected` from the same resource: formatting it a
+        // second time is a tautology. Drop %1$s from the outer string and getString discards the
+        // surplus argument on both sides, so the screen silently loses the brand while every
+        // re-derived expectation still agrees. These two guards fail instead.
+        //
+        // First: the expectation has to actually carry the brand, and carry it inside a sentence
+        // rather than being nothing but the brand.
+        expected shouldContain composedBrand
+        expected shouldNotBe composedBrand
+
+        // Second: the unformatted pattern must never reach the screen. That is what a call site
+        // which forgot to pass the argument would render (a literal "%1$s"), and it is also what
+        // the rendered text collapses to once the placeholder is gone.
+        composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_owned_hero_brand_title))
+            .assertCountEquals(0)
+    }
+
+    /**
+     * Arabic reorders nothing here, but it is the one locale that translates `app_name` AND the
+     * qualifier, so it proves the headline carries localized parts rather than a baked-in "Octi Pro".
+     */
+    @Test
+    @Config(qualifiers = "ar")
+    fun `the owned hero headline carries the translated brand in arabic`() {
+        composeRule.setUpgradeContent {
+            UpgradeScreen(uiState = ownedState(Ownership(hasIap = true)))
+        }
+
+        val name = context.getString(CommonR.string.app_name)
+        val qualifier = context.getString(R.string.app_name_upgrade_postfix)
+        name shouldBe "أوكتي"
+        qualifier shouldBe "احترافي"
+
+        val expected = context.getString(R.string.upgrade_screen_owned_hero_brand_title, composedBrand)
+        composeRule.onAllNodesWithText(expected).assertCountEquals(1)
+
+        // Pinning the two components in isolation only proves the resources exist. What matters is
+        // that the headline the user actually sees contains them, so read it back off the node.
+        val rendered = composeRule.onNodeWithText(expected)
+            .fetchSemanticsNode()
+            .config[SemanticsProperties.Text]
+            .single()
+            .text
+        rendered shouldContain name
+        rendered shouldContain qualifier
     }
 
     @Test
@@ -568,7 +642,7 @@ class GplayUpgradeScreenTest : BaseComposeRobolectricTest() {
         // must not undercut the calm quiet stage with its own restore CTA.
         composeRule.onAllNodesWithTag(UpgradeScreenTags.GPLAY_RESTORE).assertCountEquals(0)
         // Grace users are still Pro: neutral status title, not the acquisition pitch title.
-        composeRule.onAllNodesWithText("${context.getString(CommonR.string.app_name)} ${context.getString(R.string.app_name_upgrade_postfix)}").assertCountEquals(1)
+        composeRule.onAllNodesWithText(composedBrand).assertCountEquals(1)
         // A young episode is treated as a blip: calm status only — no offers, no sales pitch.
         // The offers return with the aged (diagnostics) stage.
         composeRule.onAllNodesWithTag(UpgradeScreenTags.GPLAY_SUBSCRIPTION).assertCountEquals(0)

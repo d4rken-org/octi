@@ -68,10 +68,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">Mukauta widgettiä</string>
     <string name="widget_config_apply_action">Käytä</string>
-    <string name="widget_config_upgrade_action">Päivitä Octi Pro:hon</string>
-    <string name="widget_config_pro_required_label">Tämä widget vaatii Octi Pro -versiota.</string>
-    <string name="widget_config_pro_checking_label">Tarkistetaan Octi Pro -tilaasi…</string>
-    <string name="widget_config_pro_error_label">Octi Pro -tilaasi tarkistaminen epäonnistui.</string>
     <string name="widget_config_retry_action">Yritä uudelleen</string>
     <string name="widget_config_presets_label">Esiasetukset</string>
     <string name="widget_config_background_label">Taustaväri</string>
@@ -87,7 +83,6 @@
     <string name="widget_empty_label">Ei vastaavia laitteita</string>
     <string name="widget_no_sync_devices_label">Ei synkronoitavia laitteita vielä</string>
     <string name="widget_more_items">+ %1$d lisää</string>
-    <string name="widget_upgrade_required_title">Octi Pro vaaditaan</string>
     <string name="widget_upgrade_required_action">Napauta päivittyäksesi</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Ei %1$s-tietoja tältä laitteelta</string>

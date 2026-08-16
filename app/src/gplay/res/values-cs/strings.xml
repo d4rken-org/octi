@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Google Play v současné době nenabízí tuto možnost upgradu. Prosím, zkuste to později nebo zkontrolujte obchod Google Play.</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Nelze otevřít Google Play. Aplikace chybí, je deaktivovaná nebo omezená na tomto zařízení.</string>
-    <string name="upgrades_dashcard_title">Získat Octi Pro</string>
     <string name="upgrades_dashcard_body">Upgradujte a odemkněte další funkce a podpořte vývoj!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgradovat</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -70,8 +69,6 @@
     <string name="upgrade_screen_restore_contact_hint">Stále máte problém? Kontaktujte podporu a pomůžeme vám to vyřešit.</string>
     <string name="upgrade_screen_restore_inconclusive_message">Kontrola s Google Play se nedokončila včas, takže stav vašeho nákupu je stále neznámý. Nic se na vašem účtu nezměnilo.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">Jste Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">Děkujeme za podporu Octi! Vaše funkce Pro jsou nyní dostupné.</string>
     <string name="upgrade_screen_owned_iap_title">Nákup na doživotí</string>
     <string name="upgrade_screen_owned_iap_body">Vlastníte jednorázový nákup Pro. Nikdy nevyprší.</string>
     <string name="upgrade_screen_owned_sub_title">Předplatné</string>
@@ -80,7 +77,6 @@
     <string name="upgrade_screen_owned_both_title">Vlastníte obojí</string>
     <string name="upgrade_screen_owned_both_warning">Vlastníte jak předplatné, tak jednorázový nákup. Abyste se vyhnuli zaplacení dvakrát, zrušte předplatné v Google Play — Pro si ponecháte díky nákupu na doživotí.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">Jste Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Děkujeme za nákup %1$s! Vaše funkce Pro jsou odemčeny a nikdy nevyprší.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Děkujeme za přihlášení k odběru %1$s! Vaše funkce Pro jsou odemčeny.</string>
     <string name="upgrade_screen_manage_subscription_action">Spravovat předplatné</string>

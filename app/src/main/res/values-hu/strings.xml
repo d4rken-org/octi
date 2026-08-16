@@ -4,9 +4,6 @@
     <string name="label_help">Súgó</string>
     <string name="general_manage_devices_action">Eszközök kezelése</string>
     <string name="onboarding_welcome_subtitle">Készülék-segéded</string>
-    <string name="onboarding_welcome_body1">Az Octi több Android-eszközzel rendelkező felhasználóknak készült.</string>
-    <string name="onboarding_welcome_body2">Minden eszközödről tájékoztat. Legyen telefon, tablet vagy bármilyen Octival ellátott eszközöd, egy pillantással látod a főbb információkat.</string>
-    <string name="onboarding_welcome_body3">Frissíts Octi Próra, hogy extra funkciókat kapj és támogasd a fejlesztést.</string>
     <string name="onboarding_welcome_beta_hint">Ez egy béta verzió, köszönöm a türelmed, miközben folyamatosan fejlesztem az alkalmazást!</string>
     <string name="onboarding_features_page1_title">Minden eszköze egy helyen</string>
     <string name="onboarding_features_page1_body">Tekintse meg az összes Android-eszköze akkumulátorát, Wi-Fi-jét és kapcsolódási állapotát.</string>
@@ -184,10 +181,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Jelenleg %1$d szinkronizált eszközöd van.</item>
         <item quantity="other">Jelenleg %1$d szinkronizált eszközöd van.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Több mint %1$d eszköz megtekintéséhez frissíts Octi Próra, vagy távolíts el eszközöket.</item>
-        <item quantity="other">Több mint %1$d eszköz megtekintéséhez frissíts Octi Próra, vagy távolíts el eszközöket.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Az eszköz eltávolításakor annak adatai törlődnek, de a hozzáférést nem vonja vissza. A hozzáférés visszavonásához válaszd le az Octit az eszközön.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Ez az eszköz törlésekor az adatait és a hozzáférését is törlöd.</string>

@@ -23,7 +23,6 @@
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Couldn\'t open Google Play. It may be missing, disabled or restricted on this device.</string>
 
-    <string name="upgrades_dashcard_title">Get Octi Pro</string>
     <string name="upgrades_dashcard_body">Upgrade to unlock additional features and support development!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgrade</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -75,8 +74,6 @@
     <string name="upgrade_screen_restore_contact_hint">Still stuck? Contact support and we\'ll help sort it out.</string>
     <string name="upgrade_screen_restore_inconclusive_message">The check with Google Play didn\'t finish in time, so your purchase status is still unknown. Nothing has changed on your account.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">You are Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">Thanks for supporting Octi! Your Pro features are unlocked.</string>
     <string name="upgrade_screen_owned_iap_title">Lifetime purchase</string>
     <string name="upgrade_screen_owned_iap_body">You own the one-time Pro purchase. It never expires.</string>
     <string name="upgrade_screen_owned_sub_title">Subscription</string>
@@ -85,7 +82,12 @@
     <string name="upgrade_screen_owned_both_title">You own both</string>
     <string name="upgrade_screen_owned_both_warning">You own both the subscription and the one-time purchase. To avoid paying twice, cancel the subscription in Google Play — you keep Pro through the lifetime purchase.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">You are Octi Pro 🎉</string>
+    <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
+         ("You are Octi Pro") instead of that they own it. %1$s is the complete localized tier name,
+         already composed from the app name and the tier qualifier - never translate it here. Render
+         the sentence idiomatically if that reads better in your language ("%1$s is active", "Your
+         %1$s access is active"), as long as the placeholder survives. -->
+    <string name="upgrade_screen_owned_hero_brand_title">You have %1$s 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Thanks for buying %1$s! Your Pro features are unlocked and never expire.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Thanks for subscribing to %1$s! Your Pro features are unlocked.</string>
     <string name="upgrade_screen_manage_subscription_action">Manage subscription</string>

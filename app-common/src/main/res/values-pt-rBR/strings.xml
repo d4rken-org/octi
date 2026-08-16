@@ -68,10 +68,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">Personalizar Widget</string>
     <string name="widget_config_apply_action">Aplicar</string>
-    <string name="widget_config_upgrade_action">Atualize para Octi Pro</string>
-    <string name="widget_config_pro_required_label">Este widget requer Octi Pro.</string>
-    <string name="widget_config_pro_checking_label">Verificando seu status do Octi Pro…</string>
-    <string name="widget_config_pro_error_label">Não foi possível verificar seu status do Octi Pro.</string>
     <string name="widget_config_retry_action">Tentar novamente</string>
     <string name="widget_config_presets_label">Predefinições</string>
     <string name="widget_config_background_label">Cor de fundo</string>
@@ -87,7 +83,6 @@
     <string name="widget_empty_label">Nenhum dispositivo correspondente</string>
     <string name="widget_no_sync_devices_label">Nenhum dispositivo de sincronização ainda</string>
     <string name="widget_more_items">+ %1$d mais</string>
-    <string name="widget_upgrade_required_title">Octi Pro obrigatório</string>
     <string name="widget_upgrade_required_action">Toque para atualizar</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Sem dados de %1$s para este dispositivo</string>

@@ -68,10 +68,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">Pas legstuk aan</string>
     <string name="widget_config_apply_action">Pas toe</string>
-    <string name="widget_config_upgrade_action">Opgradeer na Octi Pro</string>
-    <string name="widget_config_pro_required_label">Hierdie widget vereis Octi Pro.</string>
-    <string name="widget_config_pro_checking_label">Kontroleer jou Octi Pro-status…</string>
-    <string name="widget_config_pro_error_label">Kon nie jou Octi Pro-status verifieer nie.</string>
     <string name="widget_config_retry_action">Probeer weer</string>
     <string name="widget_config_presets_label">Voorkeure</string>
     <string name="widget_config_background_label">Agtergrondkleur</string>
@@ -87,7 +83,6 @@
     <string name="widget_empty_label">Geen ooreenstemmende toestelle nie</string>
     <string name="widget_no_sync_devices_label">Nog geen sinchronisasie-toestelle nie</string>
     <string name="widget_more_items">+ %1$d meer</string>
-    <string name="widget_upgrade_required_title">Octi Pro nodig</string>
     <string name="widget_upgrade_required_action">Tik om op te gradeer</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Geen %1$s-data vir hierdie toestel nie</string>

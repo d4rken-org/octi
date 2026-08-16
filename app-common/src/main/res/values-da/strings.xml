@@ -68,10 +68,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">Tilpas widget</string>
     <string name="widget_config_apply_action">Anvend</string>
-    <string name="widget_config_upgrade_action">Opgrader til Octi Pro</string>
-    <string name="widget_config_pro_required_label">Denne widget kræver Octi Pro.</string>
-    <string name="widget_config_pro_checking_label">Kontrollerer din Octi Pro-status…</string>
-    <string name="widget_config_pro_error_label">Kunne ikke bekræfte din Octi Pro-status.</string>
     <string name="widget_config_retry_action">Prøv igen</string>
     <string name="widget_config_presets_label">Forudindstillinger</string>
     <string name="widget_config_background_label">Baggrundsfarve</string>
@@ -87,7 +83,6 @@
     <string name="widget_empty_label">Ingen matchende enheder</string>
     <string name="widget_no_sync_devices_label">Ingen synkroniseringsenheder endnu</string>
     <string name="widget_more_items">+ %1$d mere</string>
-    <string name="widget_upgrade_required_title">Octi Pro påkrævet</string>
     <string name="widget_upgrade_required_action">Tryk for at opgradere</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Ingen %1$s-data for denne enhed</string>

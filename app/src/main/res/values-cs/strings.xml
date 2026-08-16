@@ -4,9 +4,6 @@
     <string name="label_help">Nápověda</string>
     <string name="general_manage_devices_action">Spravovat zařízení</string>
     <string name="onboarding_welcome_subtitle">Váš kamarád v zařízení</string>
-    <string name="onboarding_welcome_body1">Octi je nástroj pro uživatele s více zařízeními se systémem Android.</string>
-    <string name="onboarding_welcome_body2">Díky němu budete mít přehled o všech svých zařízeních. Ať už se jedná o telefon, tablet nebo jakýkoli jiný přístroj s nainstalovanou aplikací Octi, na první pohled získáte klíčové informace.</string>
-    <string name="onboarding_welcome_body3">Upgradujte na Octi Pro, abyste získali další funkce a podpořili vývoj.</string>
     <string name="onboarding_welcome_beta_hint">Jen upozorňuji, že se jedná o beta verzi, takže děkuji za trpělivost, protože aplikaci stále vylepšuji!</string>
     <string name="onboarding_features_page1_title">Všechna vaše zařízení na jednom místě</string>
     <string name="onboarding_features_page1_body">Sledujte stav baterie, Wi-Fi a připojení na všech svých zařízeních Android.</string>
@@ -196,12 +193,6 @@
         <item quantity="few">Aktuálně máte %1$d synchronizovaná zařízení.</item>
         <item quantity="many">Aktuálně máte %1$d synchronizovaných zařízení.</item>
         <item quantity="other">Aktuálně máte %1$d synchronizovaných zařízení.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Chcete-li zobrazit více než %1$d zařízení, upgradujte na Octi Pro nebo zařízení odeberte.</item>
-        <item quantity="few">Chcete-li zobrazit více než %1$d zařízení, upgradujte na Octi Pro nebo zařízení odeberte.</item>
-        <item quantity="many">Chcete-li zobrazit více než %1$d zařízení, upgradujte na Octi Pro nebo zařízení odeberte.</item>
-        <item quantity="other">Chcete-li zobrazit více než %1$d zařízení, upgradujte na Octi Pro nebo zařízení odeberte.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Odebráním tohoto zařízení smažete jeho data, ale nebude odvolán přístup. Chcete-li odvolat přístup, odpojte aplikaci Octi na zařízení.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Smazáním tohoto zařízení se odstraní jeho data a zruší se jeho přístup.</string>

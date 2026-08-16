@@ -28,8 +28,11 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
     private val context: Context
         get() = ApplicationProvider.getApplicationContext()
 
+    // Composed through the translated template, never by gluing the parts with a literal space: a
+    // space is what the production code used to hardcode, so an expectation built that way would
+    // agree with the bug instead of catching it.
     private val upgradedTitle: String
-        get() = "${context.getString(CommonR.string.app_name)} ${context.getString(R.string.app_name_upgrade_postfix)}"
+        get() = composedTitle(context.getString(R.string.app_name_upgrade_postfix))
 
     @Test
     fun `renders the pitch content without duplicated app bar title`() {
@@ -37,7 +40,7 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
             UpgradeScreen()
         }
 
-        composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_title)).assertCountEquals(1)
+        composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_support_title)).assertCountEquals(1)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_preamble)).assertCountEquals(1)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_how_title)).assertCountEquals(1)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_how_body)).assertCountEquals(1)
@@ -75,7 +78,7 @@ class FossUpgradeScreenTest : BaseComposeRobolectricTest() {
         composeRule.onAllNodesWithTag(UpgradeScreenTags.FOSS_SHOW_OPTIONS).assertCountEquals(1)
         composeRule.onAllNodesWithTag(UpgradeScreenTags.FOSS_SPONSOR).assertCountEquals(0)
         composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_preamble)).assertCountEquals(0)
-        composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_title)).assertCountEquals(1)
+        composeRule.onAllNodesWithText(context.getString(R.string.upgrade_screen_support_title)).assertCountEquals(1)
         composeRule.onAllNodesWithText(upgradedTitle).assertCountEquals(0)
         // The status views keep the standalone mascot header — the hero card belongs to the pitch.
         composeRule.onAllNodesWithTag(UpgradeScreenTags.HERO).assertCountEquals(0)

@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="upgrade_feature_requires_pro">Octi Pro szükséges</string>
-    <string name="upgrades_dashcard_title">Szerezze be az Octi Pro-t</string>
     <string name="upgrades_dashcard_body">Oldjon fel további funkciókat és legyen támogató a folyamatos fejlesztéshez!</string>
     <string name="upgrades_dashcard_upgrade_action">Frissítés</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="one">%1$d eszközre korlátozódik az ingyenes verzió.</item>
         <item quantity="other">%1$d eszközre korlátozódik az ingyenes verzió.</item>
     </plurals>
-    <string name="upgrade_screen_title">Frissítés Octi Pro-ra</string>
     <string name="upgrade_screen_preamble">Az Octi nem tartalmaz hirdetéseket és nem árulja felhasználói adatokat. A munkámat te finanszírozod ❤️</string>
     <string name="upgrade_screen_how_title">Mit kell tenni</string>
     <string name="upgrade_screen_how_body">Légy támogató és szponzoráld a fejlesztést! Érintsd meg az alábbi gombot minden extra funkció aktiválásához és a GitHub Sponsors profilom megnyitásához.</string>

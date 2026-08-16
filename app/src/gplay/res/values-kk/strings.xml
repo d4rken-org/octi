@@ -3,7 +3,6 @@
     <string name="upgrades_gplay_unavailable_error_title">Google Play қолжетімсіз</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi Google Play қызметіне қосыла алмайды. Google Play орнатылған және жаңартылған ба? Google есептік жазбаңызға кіргенсіз бе? Google Play қолданбасының кэшін тазалап, құрылғыны қайта іске қосып көріңіз.</string>
     <string name="upgrades_no_purchases_found_check_account">Сатып алулар табылмады. Дұрыс есептік жазбаны пайдаланудасыз ба?</string>
-    <string name="upgrades_dashcard_title">Octi Pro алыңыз</string>
     <string name="upgrades_dashcard_body">Қосымша мүмкіндіктерді ашу және дамуды қолдау үшін жаңартыңыз!</string>
     <string name="upgrades_dashcard_upgrade_action">Жаңарту</string>
     <string name="upgrade_screen_preamble">Octi жарнамаларды көрсетпейді және пайдаланушы деректерін сатпайды. Менің жұмысым сіздің қолдауыңызбен қаржыландырылады ❤️.</string>

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="upgrade_feature_requires_pro">Требуется Octi Pro</string>
-    <string name="upgrades_dashcard_title">Получить Octi Pro</string>
     <string name="upgrades_dashcard_body">Разблокируйте дополнительные функции и станьте спонсором для поддержки дальнейшей разработки!</string>
     <string name="upgrades_dashcard_upgrade_action">Обновить</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -10,7 +8,6 @@
         <item quantity="many">Бесплатная версия ограничена %1$d устройствами.</item>
         <item quantity="other">Бесплатная версия ограничена %1$d устройствами.</item>
     </plurals>
-    <string name="upgrade_screen_title">Обновить до Octi Pro</string>
     <string name="upgrade_screen_preamble">В Octi нет рекламы, и он не продаёт данные пользователей. Моя работа финансируется вами ❤️</string>
     <string name="upgrade_screen_how_title">Что нужно сделать</string>
     <string name="upgrade_screen_how_body">Станьте спонсором и поддержите разработку! Нажмите кнопку ниже, чтобы активировать все дополнительные функции и открыть мой профиль GitHub Sponsors.</string>

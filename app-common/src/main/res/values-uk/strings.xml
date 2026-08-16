@@ -70,10 +70,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">Налаштувати віджет</string>
     <string name="widget_config_apply_action">Застосувати</string>
-    <string name="widget_config_upgrade_action">Оновити до Octi Pro</string>
-    <string name="widget_config_pro_required_label">Цей віджет вимагає Octi Pro.</string>
-    <string name="widget_config_pro_checking_label">Перевірка вашого статусу Octi Pro…</string>
-    <string name="widget_config_pro_error_label">Не вдалось перевірити ваш статус Octi Pro.</string>
     <string name="widget_config_retry_action">Повторити спробу</string>
     <string name="widget_config_presets_label">Попередні налаштування</string>
     <string name="widget_config_background_label">Колір фону</string>
@@ -89,7 +85,6 @@
     <string name="widget_empty_label">Немає відповідних пристроїв</string>
     <string name="widget_no_sync_devices_label">Ще немає пристроїв синхронізації</string>
     <string name="widget_more_items">+ %1$d ще</string>
-    <string name="widget_upgrade_required_title">Octi Pro обов\'язковий</string>
     <string name="widget_upgrade_required_action">Тисніть, щоб оновити</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Немає даних %1$s для цього пристрою</string>

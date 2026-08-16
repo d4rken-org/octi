@@ -68,10 +68,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">Widget aanpassen</string>
     <string name="widget_config_apply_action">Toepassen</string>
-    <string name="widget_config_upgrade_action">Upgrade naar Octi Pro</string>
-    <string name="widget_config_pro_required_label">Deze widget vereist Octi Pro.</string>
-    <string name="widget_config_pro_checking_label">Je Octi Pro-status controleren…</string>
-    <string name="widget_config_pro_error_label">Kon je Octi Pro-status niet verifiëren.</string>
     <string name="widget_config_retry_action">Opnieuw proberen</string>
     <string name="widget_config_presets_label">Voorinstellingen</string>
     <string name="widget_config_background_label">Achtergrondkleur</string>
@@ -87,7 +83,6 @@
     <string name="widget_empty_label">Geen overeenkomende apparaten</string>
     <string name="widget_no_sync_devices_label">Nog geen synchronisatieapparaten</string>
     <string name="widget_more_items">+ %1$d meer</string>
-    <string name="widget_upgrade_required_title">Octi Pro vereist</string>
     <string name="widget_upgrade_required_action">Tik om te upgraden</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Geen %1$s-gegevens voor dit apparaat</string>

@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Google Play ei tällä hetkellä tarjoa tätä päivitysvaihtoehtoa. Yritä myöhemmin tai tarkista Google Play Store.</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Ei voitu avata Google Playta. Se saattaa puuttua, olla poissa käytöstä tai rajoitettu tällä laitteella.</string>
-    <string name="upgrades_dashcard_title">Hanki Octi Pro</string>
     <string name="upgrades_dashcard_body">Päivitä avataksesi lisää ominaisuuksia ja tukeaksesi kehitystä!</string>
     <string name="upgrades_dashcard_upgrade_action">Päivitä</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -68,8 +67,6 @@
     <string name="upgrade_screen_restore_contact_hint">Olet vielä jumissa? Ota yhteyttä tukeen ja autamme sinua.</string>
     <string name="upgrade_screen_restore_inconclusive_message">Google Play -tarkistus ei valmistunut ajoissa, joten ostotilasi on edelleen tuntematon. Tilillä ei ole tapahtunut muutoksia.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">Olet Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">Kiitos Octin tukemisesta! Pro-ominaisuutesi on avattu.</string>
     <string name="upgrade_screen_owned_iap_title">Elinikäinen osto</string>
     <string name="upgrade_screen_owned_iap_body">Omistat kertaluonteisen Pro-osion. Se ei koskaan vanhene.</string>
     <string name="upgrade_screen_owned_sub_title">Tilaus</string>
@@ -78,7 +75,6 @@
     <string name="upgrade_screen_owned_both_title">Omistat molemmat</string>
     <string name="upgrade_screen_owned_both_warning">Omistat sekä tilauksen että kertaluonteisen osion. Kaksinkertaisen maksun välttämiseksi peruuta tilaus Google Playssa — säilytät Pro-tilan elinikäisen osion kautta.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">Olet Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Kiitos %1$s:n ostamisesta! Pro-ominaisuutesi on avattu eivätkä ne koskaan vanhene.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Kiitos %1$s:n tilaamisesta! Pro-ominaisuutesi on avattu.</string>
     <string name="upgrade_screen_manage_subscription_action">Hallitse tilausta</string>

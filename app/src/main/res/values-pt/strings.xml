@@ -4,9 +4,6 @@
     <string name="label_help">Ajuda</string>
     <string name="general_manage_devices_action">Gerir dispositivos</string>
     <string name="onboarding_welcome_subtitle">Seu companheiro de dispositivos</string>
-    <string name="onboarding_welcome_body1">Octi é uma ferramenta para pessoas com múltiplos dispositivos Android.</string>
-    <string name="onboarding_welcome_body2">Ele mantém você informado sobre todos os seus dispositivos. Seja seu telefone, tablet ou qualquer outro dispositivo com Octi instalado, você terá detalhes importantes rapidamente.</string>
-    <string name="onboarding_welcome_body3">Atualize para o Octi Pro para obter funcionalidades extra e apoiar o desenvolvimento.</string>
     <string name="onboarding_welcome_beta_hint">Só para avisar, esta é uma versão beta, então obrigado pela paciência enquanto continuo melhorando o app!</string>
     <string name="onboarding_features_page1_title">Todos os seus dispositivos num relance</string>
     <string name="onboarding_features_page1_body">Veja a bateria, WiFi e conectividade em todos os seus dispositivos Android.</string>
@@ -184,10 +181,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Tem atualmente %1$d dispositivo sincronizado.</item>
         <item quantity="other">Tem atualmente %1$d dispositivos sincronizados.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">Para ver mais do que %1$d dispositivo, atualize para o Octi Pro ou remova dispositivos.</item>
-        <item quantity="other">Para ver mais do que %1$d dispositivos, atualize para o Octi Pro ou remova dispositivos.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Remover este dispositivo deletará seus dados mas não revogará o acesso. Para revogar o acesso, desconecte Octi no dispositivo.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Deletar este dispositivo removerá seus dados e revogará seu acesso.</string>

@@ -1564,7 +1564,7 @@ private fun DeviceLimitCard(
             val body = buildString {
                 append(pluralStringResource(R.plurals.pro_device_limit_current_description, current, current))
                 append(" ")
-                append(pluralStringResource(R.plurals.pro_device_limit_maximum_description, maximum, maximum))
+                append(pluralStringResource(R.plurals.pro_device_limit_maximum_hint, maximum, maximum))
             }
             Text(
                 text = body,
@@ -1606,7 +1606,7 @@ private fun UpgradeCard(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = stringResource(R.string.upgrades_dashcard_title),
+                    text = stringResource(R.string.upgrades_dashcard_headline),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }

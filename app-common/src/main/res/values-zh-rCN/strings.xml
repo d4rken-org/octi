@@ -67,10 +67,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">自定义小部件</string>
     <string name="widget_config_apply_action">应用</string>
-    <string name="widget_config_upgrade_action">升级至 Octi Pro</string>
-    <string name="widget_config_pro_required_label">此小部件需要 Octi 专业版。</string>
-    <string name="widget_config_pro_checking_label">正在检查您的 Octi 专业版状态…</string>
-    <string name="widget_config_pro_error_label">无法验证您的 Octi 专业版状态。</string>
     <string name="widget_config_retry_action">重试</string>
     <string name="widget_config_presets_label">预设</string>
     <string name="widget_config_background_label">背景颜色</string>
@@ -86,7 +82,6 @@
     <string name="widget_empty_label">无匹配设备</string>
     <string name="widget_no_sync_devices_label">尚无同步设备</string>
     <string name="widget_more_items">+ %1$d 更多</string>
-    <string name="widget_upgrade_required_title">需要 Octi 专业版</string>
     <string name="widget_upgrade_required_action">点击升级</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">此设备没有 %1$s 数据</string>

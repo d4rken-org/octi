@@ -70,10 +70,6 @@
     <!-- Widget config -->
     <string name="widget_config_title">Přizpůsobit widget</string>
     <string name="widget_config_apply_action">Použít</string>
-    <string name="widget_config_upgrade_action">Upgradovat na Octi Pro</string>
-    <string name="widget_config_pro_required_label">Tento widget vyžaduje Octi Pro.</string>
-    <string name="widget_config_pro_checking_label">Ověřování vašeho stavu Octi Pro…</string>
-    <string name="widget_config_pro_error_label">Nepodařilo se ověřit váš stav Octi Pro.</string>
     <string name="widget_config_retry_action">Opakovat</string>
     <string name="widget_config_presets_label">Předvolby</string>
     <string name="widget_config_background_label">Barva pozadí</string>
@@ -89,7 +85,6 @@
     <string name="widget_empty_label">Žádná odpovídající zařízení</string>
     <string name="widget_no_sync_devices_label">Zatím žádná zařízení k synchronizaci</string>
     <string name="widget_more_items">+ %1$d další</string>
-    <string name="widget_upgrade_required_title">Vyžaduje se Octi Pro</string>
     <string name="widget_upgrade_required_action">Klepněte pro upgrade</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Pro toto zařízení nejsou k dispozici žádná data %1$s</string>

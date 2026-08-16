@@ -4,9 +4,6 @@
     <string name="label_help">Hjælp</string>
     <string name="general_manage_devices_action">Administrer enheder</string>
     <string name="onboarding_welcome_subtitle">Din Enhedsgenbo</string>
-    <string name="onboarding_welcome_body1">Octi er et værktøj til folk med flere Android-enheder.</string>
-    <string name="onboarding_welcome_body2">Den holder dig opdateret med alle dine enheder. Uanset om det er din telefon, tablet eller en anden Octi-enhed, får du det vigtigste samlet ét sted.</string>
-    <string name="onboarding_welcome_body3">Opgrader til Octi Pro for at få ekstra funktioner og støtte udviklingen.</string>
     <string name="onboarding_welcome_beta_hint">Bare en lille note: Dette er en betaversion, så tak for din tålmodighed, mens jeg fortsætter med at forbedre appen!</string>
     <string name="onboarding_features_page1_title">Alle dine enheder på et øjeblik</string>
     <string name="onboarding_features_page1_body">Se batteri, WiFi og forbindelse på tværs af alle dine Android-enheder.</string>
@@ -184,10 +181,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Du har i øjeblikket %1$d synkroniseret enhed.</item>
         <item quantity="other">Du har i øjeblikket %1$d synkroniserede enheder.</item>
-    </plurals>
-    <plurals name="pro_device_limit_maximum_description">
-        <item quantity="one">For at se mere end %1$d enhed, opgrader til Octi Pro eller fjern enheder.</item>
-        <item quantity="other">For at se mere end %1$d enheder, opgrader til Octi Pro eller fjern enheder.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Fjernelse af denne enhed sletter data, men fjerner ikke adgang. For at fjerne adgang, afbryd Octi på enheden.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Sletning af enheden fjerner både data og adgang.</string>

@@ -3,7 +3,6 @@
     <string name="upgrades_gplay_unavailable_error_title">Google Play не е наличен</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi не може да се свърже с Google Play. Инсталиран и актуализиран ли е Google Play? Влезли ли сте с вашия Google акаунт? Опитайте да изчистите кеша на приложението Google Play и рестартирайте устройството си.</string>
     <string name="upgrades_no_purchases_found_check_account">Не са намерени покупки. Използвате ли правилния акаунт?</string>
-    <string name="upgrades_dashcard_title">Вземете Octi Pro</string>
     <string name="upgrades_dashcard_body">Актуализирайте, за да отключите допълнителни функции и да подкрепите развитието!</string>
     <string name="upgrades_dashcard_upgrade_action">Актуализация</string>
     <string name="upgrade_screen_preamble">Octi няма реклами и не продава потребителски данни. Моята работа се финансира от вас ❤️.</string>

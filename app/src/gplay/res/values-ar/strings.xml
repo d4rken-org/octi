@@ -17,7 +17,6 @@
     <string name="upgrades_gplay_offer_unavailable_description">Google Play لا يقدم حالياً خيار الترقية هذا. يرجى المحاولة لاحقاً أو التحقق من متجر Google Play.</string>
     <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">تعذر فتح Google Play. قد يكون التطبيق مفقوداً أو معطلاً أو مقيداً على هذا الجهاز.</string>
-    <string name="upgrades_dashcard_title">احصل على أوكتي احترافي</string>
     <string name="upgrades_dashcard_body">قم بالترقية لفتح ميزات إضافية ودعم التطوير!</string>
     <string name="upgrades_dashcard_upgrade_action">ترقية</string>
     <plurals name="upgrades_dashcard_device_limit_hint">
@@ -72,8 +71,6 @@
     <string name="upgrade_screen_restore_contact_hint">لا تزال تواجه مشكلة؟ تواصل مع الدعم وسنساعدك في حلها.</string>
     <string name="upgrade_screen_restore_inconclusive_message">لم ينته التحقق مع Google Play في الوقت المناسب، لذا حالة شرائك لا تزال غير معروفة. لم يتغير شيء في حسابك.</string>
     <!-- Pro status / ownership -->
-    <string name="upgrade_screen_owned_title">أنت مستخدم Octi Pro 🎉</string>
-    <string name="upgrade_screen_owned_body">شكرًا لدعمك Octi! ميزات Pro مفتوحة الآن.</string>
     <string name="upgrade_screen_owned_iap_title">شراء مدى الحياة</string>
     <string name="upgrade_screen_owned_iap_body">أنت تملك شراء Pro لمرة واحدة. لا تنتهي صلاحيته أبدًا.</string>
     <string name="upgrade_screen_owned_sub_title">اشتراك</string>
@@ -82,7 +79,6 @@
     <string name="upgrade_screen_owned_both_title">تملك كليهما</string>
     <string name="upgrade_screen_owned_both_warning">تملك كلاً من الاشتراك والشراء لمرة واحدة. لتجنب الدفع مرتين، ألغِ الاشتراك عبر Google Play — ستحتفظ بـ Pro من خلال الشراء مدى الحياة.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <string name="upgrade_screen_owned_hero_title">أنت مستخدم Octi Pro 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">شكرًا لشرائك %1$s! ميزات Pro مفتوحة الآن ولن تنتهي أبدًا.</string>
     <string name="upgrade_screen_owned_hero_sub_body">شكرًا لاشتراكك في %1$s! ميزات Pro مفتوحة الآن.</string>
     <string name="upgrade_screen_manage_subscription_action">إدارة الاشتراك</string>
