@@ -9,6 +9,7 @@ import eu.darken.octi.common.navigation.Nav
 import eu.darken.octi.common.uix.ViewModel4
 import eu.darken.octi.syncs.octiserver.core.OctiServerHub
 import eu.darken.octi.syncs.octiserver.core.LinkingData
+import eu.darken.octi.syncs.octiserver.core.linkCodeShape
 import eu.darken.octi.syncs.octiserver.ui.link.OctiServerLinkOption
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
@@ -43,11 +44,16 @@ class OctiServerLinkClientVM @Inject constructor(
     }
 
     fun onCodeEntered(rawCode: String) = launch {
-        log(TAG) { "onCodeEntered(rawCode=$rawCode)" }
+        // Never log the code itself: it carries the account's payload encryption keyset and the
+        // server link credential, and debug recordings are shared with support. This fingerprint is
+        // enough to tell truncation from a typo from a wrong-format paste.
+        log(TAG) { "onCodeEntered(${rawCode.trim().linkCodeShape()})" }
         _state.value = _state.value.copy(isBusy = true)
         try {
+            // Server address only. Logging the whole container pulled in the redacted-but-still
+            // key-derived prefixes that LinkCode and KeySet put in their toString().
             val linkContainer = LinkingData.fromEncodedString(json, rawCode).also {
-                log(TAG) { "Got container: $it" }
+                log(TAG) { "Decoded link code for ${it.serverAdress.address}" }
             }
 
             kServerHub.linkAcount(linkContainer)
