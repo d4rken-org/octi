@@ -46,6 +46,7 @@ import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
+import eu.darken.octi.syncs.octiserver.core.linkCodeShape
 import eu.darken.octi.syncs.octiserver.R as OctiServerR
 import eu.darken.octi.common.compose.Preview2
 import eu.darken.octi.common.compose.PreviewWrapper
@@ -61,7 +62,8 @@ fun OctiServerLinkClientScreenHost(vm: OctiServerLinkClientVM = hiltViewModel())
 
     val barcodeLauncher = rememberLauncherForActivityResult(ScanContract()) { result ->
         if (result.contents != null) {
-            log(TAG) { "QRCode scanned: ${result.contents}" }
+            // Shape only, never the code: it carries the account's encryption keyset.
+            log(TAG) { "QRCode scanned: ${result.contents.linkCodeShape()}" }
             vm.onCodeEntered(result.contents)
         } else {
             log(TAG) { "QRCode scan was cancelled." }
