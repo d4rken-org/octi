@@ -26,9 +26,30 @@ data class LinkingData(
         .base64()
 
     companion object {
-        fun fromEncodedString(json: Json, encoded: String): LinkingData = (encoded
-            .decodeBase64() ?: throw IllegalArgumentException("Invalid link code: not valid base64"))
-            .fromGzip()
-            .let { json.decodeFromString<LinkingData>(it.utf8()) }
+        /**
+         * @throws InvalidLinkCodeException if [encoded] is not a complete, unaltered link code.
+         * Surrounding whitespace is tolerated: share targets and clipboards routinely add it.
+         */
+        fun fromEncodedString(json: Json, encoded: String): LinkingData {
+            // Staged rather than one try/catch: which stage failed is the whole diagnostic, and it
+            // is the only part of the failure that is safe to log.
+            val compressed = try {
+                encoded.trim().decodeBase64() ?: throw IllegalArgumentException("Not valid base64")
+            } catch (e: Exception) {
+                throw InvalidLinkCodeException(InvalidLinkCodeException.Stage.BASE64, e)
+            }
+
+            val plaintext = try {
+                compressed.fromGzip()
+            } catch (e: Exception) {
+                throw InvalidLinkCodeException(InvalidLinkCodeException.Stage.GZIP, e)
+            }
+
+            return try {
+                json.decodeFromString<LinkingData>(plaintext.utf8())
+            } catch (e: Exception) {
+                throw InvalidLinkCodeException(InvalidLinkCodeException.Stage.JSON, e)
+            }
+        }
     }
 }
