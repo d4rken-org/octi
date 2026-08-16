@@ -136,6 +136,10 @@
     </plurals>
     <string name="updates_dashcard_title">Opdatering tilgængelig</string>
     <string name="updates_dashcard_body">En opdatering er tilgængelig. Du har %1$s og den seneste version er %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Opgrader Octi</string>
     <string name="sync_settings_label">Synkronisering</string>
     <string name="sync_settings_desc">Enhedsnavn, timing og betingelser for udløsning.</string>
     <string name="sync_setting_devicelabel_label">Enhedsetiket</string>
@@ -181,6 +185,13 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Du har i øjeblikket %1$d synkroniseret enhed.</item>
         <item quantity="other">Du har i øjeblikket %1$d synkroniserede enheder.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">For at se mere end %1$d enhed skal du opgradere eller fjerne enheder.</item>
+        <item quantity="other">For at se mere end %1$d enheder skal du opgradere eller fjerne enheder.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Fjernelse af denne enhed sletter data, men fjerner ikke adgang. For at fjerne adgang, afbryd Octi på enheden.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Sletning af enheden fjerner både data og adgang.</string>

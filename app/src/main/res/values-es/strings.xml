@@ -136,6 +136,10 @@
     </plurals>
     <string name="updates_dashcard_title">Actualización disponible</string>
     <string name="updates_dashcard_body">Una actualización está disponible. Tienes %1$s y la última versión es %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Actualiza Octi</string>
     <string name="sync_settings_label">Sincronización</string>
     <string name="sync_settings_desc">Nombre del dispositivo, tiempo y condiciones de activación.</string>
     <string name="sync_setting_devicelabel_label">Etiqueta del dispositivo</string>
@@ -181,6 +185,13 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Actualmente tienes %1$d dispositivo sincronizado.</item>
         <item quantity="other">Actualmente tienes %1$d dispositivos sincronizados.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Para ver más de %1$d dispositivo, actualiza o elimina dispositivos.</item>
+        <item quantity="other">Para ver más de %1$d dispositivos, actualiza o elimina dispositivos.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Eliminar este dispositivo borrará sus datos pero no revocará el acceso. Para revocar el acceso, desconecta Octi en el dispositivo.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Eliminar este dispositivo removerá sus datos y revocará su acceso.</string>

@@ -136,6 +136,10 @@
     </plurals>
     <string name="updates_dashcard_title">Une mise à jour est proposée</string>
     <string name="updates_dashcard_body">Une mise à jour est proposée. Vous utilisez %1$s, la version la plus récente est %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Mettre à niveau Octi</string>
     <string name="sync_settings_label">Synchronisation</string>
     <string name="sync_settings_desc">Nom de l’appareil, synchronisation et conditions de déclenchement.</string>
     <string name="sync_setting_devicelabel_label">Étiquette de l’appareil</string>
@@ -181,6 +185,13 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">%1$d appareil est synchronisé actuellement.</item>
         <item quantity="other">%1$d appareils sont synchronisés actuellement.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Pour afficher plus de %1$d appareil, mettre à niveau ou supprimer des appareils.</item>
+        <item quantity="other">Pour afficher plus de %1$d appareils, mettre à niveau ou supprimer des appareils.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Supprimer cet appareil supprimera ses données, mais ne révoquera pas son accès. Pour révoquer l\'accès, déconnectez Octi sur l\'appareil en question.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Supprimer cet appareil supprimera ses données et révoquera son accès.</string>

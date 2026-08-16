@@ -5,6 +5,10 @@
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="other">無料版は%1$dデバイスまでに制限されています。</item>
     </plurals>
+    <!-- Replaces upgrade_screen_title ("Upgrade to Octi Pro"), which sold the Google Play tier by name
+         inside the FOSS build, where the tier is called "Octi FOSS" and the ask is sponsorship rather
+         than a purchase. Keep it tier-free: name no product edition when translating. -->
+    <string name="upgrade_screen_support_title">Octiをサポート</string>
     <string name="upgrade_screen_preamble">Octi は無広告、ユーザーデータの販売もしません。あなたの支援で成り立っています ❤️</string>
     <string name="upgrade_screen_how_title">何をしますか</string>
     <string name="upgrade_screen_how_body">支援者になって開発者のスポンサーになりましょう！下のボタンをタップしてすべての追加機能を有効化し、私の GitHub スポンサープロフィールを開いてください。</string>

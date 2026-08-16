@@ -136,6 +136,10 @@
     </plurals>
     <string name="updates_dashcard_title">Frissítés elérhető</string>
     <string name="updates_dashcard_body">Új frissítés érhető el. A te verziód: %1$s, legújabb: %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Octi frissítése</string>
     <string name="sync_settings_label">Szinkronizáció</string>
     <string name="sync_settings_desc">Eszköz neve, időzítés, és feltételek.</string>
     <string name="sync_setting_devicelabel_label">Eszközcímke</string>
@@ -181,6 +185,13 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Jelenleg %1$d szinkronizált eszközöd van.</item>
         <item quantity="other">Jelenleg %1$d szinkronizált eszközöd van.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Több mint %1$d eszköz megtekintéséhez frissítsd vagy távolíts el eszközöket.</item>
+        <item quantity="other">Több mint %1$d eszköz megtekintéséhez frissítsd vagy távolíts el eszközöket.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Az eszköz eltávolításakor annak adatai törlődnek, de a hozzáférést nem vonja vissza. A hozzáférés visszavonásához válaszd le az Octit az eszközön.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Ez az eszköz törlésekor az adatait és a hozzáférését is törlöd.</string>

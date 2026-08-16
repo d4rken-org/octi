@@ -7,6 +7,10 @@
         <item quantity="few">Versiunea gratuită este limitată la %1$d dispozitive.</item>
         <item quantity="other">Versiunea gratuită este limitată la %1$d de dispozitive.</item>
     </plurals>
+    <!-- Replaces upgrade_screen_title ("Upgrade to Octi Pro"), which sold the Google Play tier by name
+         inside the FOSS build, where the tier is called "Octi FOSS" and the ask is sponsorship rather
+         than a purchase. Keep it tier-free: name no product edition when translating. -->
+    <string name="upgrade_screen_support_title">Susține Octi</string>
     <string name="upgrade_screen_preamble">Octi nu are reclame și nu vinde datele utilizatorului. Munca mea este finanțată de tine ❤️</string>
     <string name="upgrade_screen_how_title">Ce să faci</string>
     <string name="upgrade_screen_how_body">Devino patron și sponsorizează dezvoltarea! Atinge butonul de mai jos pentru a activa toate funcțiile suplimentare și a deschide profilul meu GitHub Sponsors.</string>

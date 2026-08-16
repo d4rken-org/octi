@@ -136,6 +136,10 @@
     </plurals>
     <string name="updates_dashcard_title">Atualização disponível</string>
     <string name="updates_dashcard_body">Uma atualização está disponível. Você tem a versão %1$s e a mais recente é %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Atualizar Octi</string>
     <string name="sync_settings_label">Sincronização</string>
     <string name="sync_settings_desc">Nome do dispositivo, intervalo e condições de sincronização.</string>
     <string name="sync_setting_devicelabel_label">Rótulo do dispositivo</string>
@@ -181,6 +185,13 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Você tem atualmente %1$d dispositivo sincronizado.</item>
         <item quantity="other">Você tem atualmente %1$d dispositivos sincronizados.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Para visualizar mais de %1$d dispositivo, atualize ou remova dispositivos.</item>
+        <item quantity="other">Para visualizar mais de %1$d dispositivos, atualize ou remova dispositivos.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Remover este dispositivo apagará seus dados, mas não revogará o acesso. Para revogar o acesso, desconecte Octi no dispositivo.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Apagar este dispositivo removerá seus dados e revogará o acesso.</string>

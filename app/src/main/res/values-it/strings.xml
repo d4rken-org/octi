@@ -138,6 +138,10 @@ I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comu
     </plurals>
     <string name="updates_dashcard_title">Aggiornamento disponibile</string>
     <string name="updates_dashcard_body">È disponibile un aggiornamento. Hai la versione %1$s e l\'ultima versione è la %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Aggiorna Octi</string>
     <string name="sync_settings_label">Sincronizzazione</string>
     <string name="sync_settings_desc">Nome del dispositivo, tempistica e condizioni di attivazione.</string>
     <string name="sync_setting_devicelabel_label">Etichetta dispositivo</string>
@@ -183,6 +187,13 @@ I dispositivi possono vedersi solo se hanno un servizio di sincronizzazione comu
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Hai attualmente %1$d dispositivo sincronizzato.</item>
         <item quantity="other">Hai attualmente %1$d dispositivi sincronizzati.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Per visualizzare più di %1$d dispositivo, aggiorna o rimuovi dispositivi.</item>
+        <item quantity="other">Per visualizzare più di %1$d dispositivi, aggiorna o rimuovi dispositivi.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Rimuovere questo dispositivo cancellerà i suoi dati, ma non revoca l\'accesso. Per revocare l\'accesso, disconnetti Octi dal dispositivo.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Eliminare questo dispositivo rimuoverà i suoi dati e revocerà il suo accesso.</string>

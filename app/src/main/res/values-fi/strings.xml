@@ -136,6 +136,10 @@
     </plurals>
     <string name="updates_dashcard_title">Päivitys saatavilla</string>
     <string name="updates_dashcard_body">Päivitys saatavilla. Sinulla on %1$s, uusin versio on %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Päivitä Octi</string>
     <string name="sync_settings_label">Synkronointi</string>
     <string name="sync_settings_desc">Laitteen nimi, ajoitus ja ehdot.</string>
     <string name="sync_setting_devicelabel_label">Laiteotsikko</string>
@@ -181,6 +185,13 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Sinulla on tällä hetkellä %1$d synkronoitu laite.</item>
         <item quantity="other">Sinulla on tällä hetkellä %1$d synkronoitua laitetta.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Nähdäksesi enemmän kuin %1$d laitetta, päivitä tai poista laitteita.</item>
+        <item quantity="other">Nähdäksesi enemmän kuin %1$d laitetta, päivitä tai poista laitteita.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Tämän laitteen poistaminen poistaa sen tiedot, mutta ei poista käyttöoikeutta. Poistaaksesi käyttöoikeuden, irrota Octi laitteessa.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Tämän laitteen poistaminen poistaa sen tiedot ja käyttöoikeudet.</string>

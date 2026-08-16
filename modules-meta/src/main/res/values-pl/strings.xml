@@ -2,7 +2,7 @@
 <resources>
     <string name="module_meta_label">Moduł meta</string>
     <string name="module_meta_android_name_x_label">Android %1$s</string>
-    <string name="module_meta_uptime_label">Działanie %1$s</string>
+    <string name="module_meta_uptime_label">Czas działania %1$s</string>
     <string name="module_meta_detail_label_label">Etykieta</string>
     <string name="module_meta_detail_manufacturer_label">Producent</string>
     <string name="module_meta_detail_model_label">Model</string>

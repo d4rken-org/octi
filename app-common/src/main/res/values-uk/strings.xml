@@ -70,6 +70,15 @@
     <!-- Widget config -->
     <string name="widget_config_title">Налаштувати віджет</string>
     <string name="widget_config_apply_action">Застосувати</string>
+    <!-- Replaces widget_config_pro_required_label / widget_config_pro_checking_label /
+         widget_config_pro_error_label, which named the Google Play tier ("Octi Pro") even in the FOSS
+         build, where the tier is called "Octi FOSS". This module is shared by both flavors and cannot
+         know which tier is meant, so the copy names none: keep it tier-free when translating, and do
+         not reintroduce a product name. The old widget_config_upgrade_action ("Upgrade to Octi Pro")
+         is gone too; its button now uses the existing general_upgrade_action. -->
+    <string name="widget_config_upgrade_required_label">Цей віджет потребує оновлення.</string>
+    <string name="widget_config_upgrade_checking_label">Перевірка статусу оновлення…</string>
+    <string name="widget_config_upgrade_error_label">Не вдалося перевірити статус оновлення.</string>
     <string name="widget_config_retry_action">Повторити спробу</string>
     <string name="widget_config_presets_label">Попередні налаштування</string>
     <string name="widget_config_background_label">Колір фону</string>
@@ -85,6 +94,9 @@
     <string name="widget_empty_label">Немає відповідних пристроїв</string>
     <string name="widget_no_sync_devices_label">Ще немає пристроїв синхронізації</string>
     <string name="widget_more_items">+ %1$d ще</string>
+    <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
+         Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
+    <string name="widget_upgrade_required_headline">Потрібне оновлення</string>
     <string name="widget_upgrade_required_action">Тисніть, щоб оновити</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Немає даних %1$s для цього пристрою</string>

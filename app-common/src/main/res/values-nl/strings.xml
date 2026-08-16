@@ -68,6 +68,15 @@
     <!-- Widget config -->
     <string name="widget_config_title">Widget aanpassen</string>
     <string name="widget_config_apply_action">Toepassen</string>
+    <!-- Replaces widget_config_pro_required_label / widget_config_pro_checking_label /
+         widget_config_pro_error_label, which named the Google Play tier ("Octi Pro") even in the FOSS
+         build, where the tier is called "Octi FOSS". This module is shared by both flavors and cannot
+         know which tier is meant, so the copy names none: keep it tier-free when translating, and do
+         not reintroduce a product name. The old widget_config_upgrade_action ("Upgrade to Octi Pro")
+         is gone too; its button now uses the existing general_upgrade_action. -->
+    <string name="widget_config_upgrade_required_label">Voor deze widget is een upgrade vereist.</string>
+    <string name="widget_config_upgrade_checking_label">Je upgradestatus wordt gecontroleerd…</string>
+    <string name="widget_config_upgrade_error_label">Je upgradestatus kon niet worden geverifieerd.</string>
     <string name="widget_config_retry_action">Opnieuw proberen</string>
     <string name="widget_config_presets_label">Voorinstellingen</string>
     <string name="widget_config_background_label">Achtergrondkleur</string>
@@ -83,6 +92,9 @@
     <string name="widget_empty_label">Geen overeenkomende apparaten</string>
     <string name="widget_no_sync_devices_label">Nog geen synchronisatieapparaten</string>
     <string name="widget_more_items">+ %1$d meer</string>
+    <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
+         Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
+    <string name="widget_upgrade_required_headline">Upgrade vereist</string>
     <string name="widget_upgrade_required_action">Tik om te upgraden</string>
     <!-- Widget deeplink -->
     <string name="widget_deeplink_no_data_msg">Geen %1$s-gegevens voor dit apparaat</string>

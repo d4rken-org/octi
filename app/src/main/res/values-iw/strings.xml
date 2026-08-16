@@ -146,6 +146,10 @@
     </plurals>
     <string name="updates_dashcard_title">יש עדכון זמין</string>
     <string name="updates_dashcard_body">עדכון זמין. מותקן לך %1$s והגרסה האחרונה היא %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">שדרוג Octi</string>
     <string name="sync_settings_label">סנכרון</string>
     <string name="sync_settings_desc">שם מכשיר, תזמון ותנאי הפעלה.</string>
     <string name="sync_setting_devicelabel_label">תווית מכשיר</string>
@@ -193,6 +197,15 @@
         <item quantity="two">יש לך כרגע %1$d מכשירים מסונכרנים.</item>
         <item quantity="many">יש לך כרגע %1$d מכשירים מסונכרנים.</item>
         <item quantity="other">יש לך כרגע %1$d מכשירים מסונכרנים.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">כדי לצפות ביותר מ-%1$d מכשיר, יש לשדרג או להסיר מכשירים.</item>
+        <item quantity="two">כדי לצפות ביותר מ-%1$d מכשירים, יש לשדרג או להסיר מכשירים.</item>
+        <item quantity="many">כדי לצפות ביותר מ-%1$d מכשירים, יש לשדרג או להסיר מכשירים.</item>
+        <item quantity="other">כדי לצפות ביותר מ-%1$d מכשירים, יש לשדרג או להסיר מכשירים.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">הסרת מכשיר זה תמחק את הנתונים שלו אך לא תבטל את הגישה. כדי לבטל גישה, נתק את Octi במכשיר.</string>
     <string name="sync_delete_device_revokeaccess_caveat">מחיקת המכשיר הזה תסיר את הנתונים שלו ותבטל את הגישה שלו.</string>

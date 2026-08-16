@@ -5,6 +5,10 @@
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="other">Phiên bản miễn phí bị giới hạn ở %1$d thiết bị.</item>
     </plurals>
+    <!-- Replaces upgrade_screen_title ("Upgrade to Octi Pro"), which sold the Google Play tier by name
+         inside the FOSS build, where the tier is called "Octi FOSS" and the ask is sponsorship rather
+         than a purchase. Keep it tier-free: name no product edition when translating. -->
+    <string name="upgrade_screen_support_title">Hỗ trợ Octi</string>
     <string name="upgrade_screen_preamble">Octi không có quảng cáo và không bán dữ liệu người dùng. Công việc của tôi được tài trợ bởi bạn ❤️</string>
     <string name="upgrade_screen_how_title">Nên làm gì</string>
     <string name="upgrade_screen_how_body">Trở thành nhà bảo trợ và tài trợ cho phát triển! Nhấn nút bên dưới để kích hoạt tất cả các tính năng bổ sung và mở trang hồ sơ GitHub Sponsors của tôi.</string>

@@ -141,6 +141,10 @@
     </plurals>
     <string name="updates_dashcard_title">Actualizare disponibilă</string>
     <string name="updates_dashcard_body">Există o actualizare disponibilă. Ai %1$s și ultima versiune este %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Fă upgrade la Octi</string>
     <string name="sync_settings_label">Sincronizare</string>
     <string name="sync_settings_desc">Numele dispozitivului, orarul și condițiile de declanșare.</string>
     <string name="sync_setting_devicelabel_label">Etichetă dispozitiv</string>
@@ -187,6 +191,14 @@
         <item quantity="one">Ai în prezent %1$d dispozitiv sincronizat.</item>
         <item quantity="few">Ai în prezent %1$d dispozitive sincronizate.</item>
         <item quantity="other">Ai în prezent %1$d dispozitive sincronizate.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Pentru a vedea mai mult de %1$d dispozitiv, fă upgrade sau elimină dispozitive.</item>
+        <item quantity="few">Pentru a vedea mai mult de %1$d dispozitive, fă upgrade sau elimină dispozitive.</item>
+        <item quantity="other">Pentru a vedea mai mult de %1$d de dispozitive, fă upgrade sau elimină dispozitive.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Eliminarea acestui dispozitiv îi va șterge datele, dar nu va revoca accesul. Pentru a revoca accesul, deconectează Octi pe acel dispozitiv.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Ștergând acest dispozitiv îi elimini datele și îi revoci accesul.</string>

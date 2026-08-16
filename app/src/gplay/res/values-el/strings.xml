@@ -75,6 +75,12 @@
     <string name="upgrade_screen_owned_both_title">Κατέχετε και τα δύο</string>
     <string name="upgrade_screen_owned_both_warning">Κατέχετε τόσο τη συνδρομή όσο και την εφάπαξ αγορά. Για να αποφύγετε τη διπλή χρέωση, ακυρώστε τη συνδρομή στο Google Play — διατηρείτε το Pro μέσω της ισόβιας αγοράς.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
+    <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
+         ("You are Octi Pro") instead of that they own it. %1$s is the complete localized tier name,
+         already composed from the app name and the tier qualifier - never translate it here. Render
+         the sentence idiomatically if that reads better in your language ("%1$s is active", "Your
+         %1$s access is active"), as long as the placeholder survives. -->
+    <string name="upgrade_screen_owned_hero_brand_title">Έχετε %1$s 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Ευχαριστούμε που αγοράσατε %1$s! Οι δυνατότητες Pro είναι ξεκλειδωμένες και δεν λήγουν ποτέ.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Ευχαριστούμε που κάνατε εγγραφή στο %1$s! Οι δυνατότητες Pro είναι ξεκλειδωμένες.</string>
     <string name="upgrade_screen_manage_subscription_action">Διαχείριση συνδρομής</string>

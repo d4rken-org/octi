@@ -136,6 +136,10 @@
     </plurals>
     <string name="updates_dashcard_title">Ενημέρωση διαθέσιμη</string>
     <string name="updates_dashcard_body">Υπάρχει διαθέσιμη ενημέρωση. Έχετε την έκδοση %1$s και η τελευταία έκδοση είναι %2$s.</string>
+    <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
+         tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
+         so it lives here instead of being declared twice. Keep it tier-free when translating. -->
+    <string name="upgrades_dashcard_headline">Αναβαθμίστε το Octi</string>
     <string name="sync_settings_label">Συγχρονισμός</string>
     <string name="sync_settings_desc">Όνομα συσκευής, χρονισμός και προϋποθέσεις ενεργοποίησης.</string>
     <string name="sync_setting_devicelabel_label">Όνομα συσκευής</string>
@@ -181,6 +185,13 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">Αυτή τη στιγμή έχετε %1$d συγχρονισμένη συσκευή.</item>
         <item quantity="other">Αυτή τη στιγμή έχετε %1$d συγχρονισμένες συσκευές.</item>
+    </plurals>
+    <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
+         Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
+         Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
+    <plurals name="pro_device_limit_maximum_hint">
+        <item quantity="one">Για να δείτε περισσότερες από %1$d συσκευή, αναβαθμίστε ή αφαιρέστε συσκευές.</item>
+        <item quantity="other">Για να δείτε περισσότερες από %1$d συσκευές, αναβαθμίστε ή αφαιρέστε συσκευές.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Η κατάργηση αυτής της συσκευής διαγράφει τα δεδομένα της αλλά δεν αφαιρεί την πρόσβαση. Για να αφαιρέσετε την πρόσβαση, αποσυνδέστε το Octi στη συσκευή.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Διαγράφοντας αυτή τη συσκευή διαγράφονται τα δεδομένα και ακυρώνεται η πρόσβαση.</string>
