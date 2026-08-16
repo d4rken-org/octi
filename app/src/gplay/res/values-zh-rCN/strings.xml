@@ -90,6 +90,11 @@
     <string name="upgrade_screen_switch_action">购买一次性购买（%1$s）</string>
     <string name="upgrade_screen_sub_still_renewing_title">订阅仍在活跃</string>
     <string name="upgrade_screen_sub_still_renewing_message">您的订阅仍设置为自动续订。请先在 Google Play 中取消，以免重复收费，然后再购买一次性购买。此操作不会退还订阅费用。</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play 没有及时响应，因此我们无法安全地确认你的购买状态。请稍后再试。</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">付款处理中</string>
+    <string name="upgrade_screen_pending_card_body">Google Play 仍在处理你的付款。付款完成后，Pro 会自动解锁。某些付款方式可能需要一些时间。你无需再做任何操作。</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play 发现一笔付款仍在处理中的购买，正在继续处理。付款完成后，Pro 会自动解锁。</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">专业版仍在激活中</string>
     <string name="upgrade_screen_grace_body">我们正在与 Google Play 确认您的购买。在此期间，您的专业版功能保持解锁。</string>

@@ -91,6 +91,11 @@
     <string name="upgrade_screen_switch_action">Koop eenmalige aankoop (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Inskrywing nog aktief</string>
     <string name="upgrade_screen_sub_still_renewing_message">Jou inskrywing is nog steeds ingestel om te verleng. Kanselleer dit eers in Google Play sodat jy nie twee keer gehef word nie, koop dan die eenmalige aankoop. Dit terugbetaal nie die inskrywing nie.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play het nie betyds gereageer nie, dus kan ons jou aankoopstatus nie veilig bevestig nie. Probeer asseblief oor \'n oomblik weer.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Betaling in afwagting</string>
+    <string name="upgrade_screen_pending_card_body">Google Play verwerk steeds jou betaling. Pro ontsluit outomaties sodra die betaling deurloop. Sommige betalingsmetodes kan \'n tyd duur. Daar is niks anders wat jy moet doen nie.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play het \'n aankoop met \'n betaling in afwagting gevind en verwerk dit steeds. Pro ontsluit outomaties sodra die betaling deurloop.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro is nog aktief</string>
     <string name="upgrade_screen_grace_body">Ons bevestig jou aankoop met Google Play. Jou Pro-funksies bly ondertussen ontgrendel.</string>

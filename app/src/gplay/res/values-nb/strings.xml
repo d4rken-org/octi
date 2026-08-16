@@ -92,6 +92,11 @@ Samme funksjoner, bare forskjellige prismodeller.</string>
     <string name="upgrade_screen_switch_action">Kjøp engangsbetaling (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonnement fortsatt aktivt</string>
     <string name="upgrade_screen_sub_still_renewing_message">Abonnementet ditt er fortsatt satt til å fornyes. Avbryt det i Google Play først slik at du ikke blir belastet to ganger, deretter kjøper du engangsbetalingen. Dette refunderer ikke abonnementet.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play svarte ikke i tide, så vi kan ikke bekrefte kjøpsstatusen din på en sikker måte. Prøv igjen om litt.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Betaling venter</string>
+    <string name="upgrade_screen_pending_card_body">Google Play behandler fortsatt betalingen din. Pro låses opp automatisk når betalingen er gjennomført. Enkelte betalingsmetoder kan ta litt tid. Du trenger ikke å gjøre noe mer.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play fant et kjøp med en betaling som venter, og behandler den fortsatt. Pro låses opp automatisk når betalingen er gjennomført.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro er fortsatt aktivt</string>
     <string name="upgrade_screen_grace_body">Vi bekrefter kjøpet ditt med Google Play. Pro-funksjonene dine forblir låst opp i mellomtiden.</string>

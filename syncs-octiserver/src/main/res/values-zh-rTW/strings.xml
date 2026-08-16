@@ -37,4 +37,11 @@
     <string name="sync_octiserver_add_link_existing_action">連接現有帳號</string>
     <string name="sync_octiserver_add_select_server_label">選擇伺服器</string>
     <string name="sync_octiserver_add_custom_server_label">自訂伺服器</string>
+    <string name="sync_octiserver_link_code_invalid_label">連結代碼不完整</string>
+    <string name="sync_octiserver_link_code_invalid_description">此連結代碼不完整，或在傳輸過程中被更改。請從另一台裝置複製完整代碼並貼上，不要重新輸入，或改用掃描 QR 碼。</string>
+    <string name="sync_octiserver_link_code_copied_message">連結代碼已複製</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="other">%d 個字元</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">兩台裝置必須顯示相同的數字。</string>
 </resources>

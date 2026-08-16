@@ -95,6 +95,11 @@
     <string name="upgrade_screen_switch_action">شراء لمرة واحدة (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">الاشتراك لا يزال نشطًا</string>
     <string name="upgrade_screen_sub_still_renewing_message">لا يزال اشتراكك مضبوطًا على التجديد. ألغِه عبر Google Play أولاً حتى لا تُحاسب مرتين، ثم اشترِ الشراء لمرة واحدة. هذا لا يسترد الاشتراك.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play لم تستجب في الوقت المناسب، لذا لا يمكننا التأكد من حالة عملية الشراء. حاول مجدداً بعد قليل.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">الدفع قيد الانتظار</string>
+    <string name="upgrade_screen_pending_card_body">Google Play تعالج الدفع الآن. سيتم فتح Pro تلقائياً عند اكتمال الدفع. قد تستغرق بعض طرق الدفع وقتاً أطول. لا تحتاج إلى فعل أي شيء.</string>
+    <string name="upgrade_screen_pending_dialog_message">وجدت Google Play عملية شراء برصيد معلق وتعالجها الآن. سيتم فتح Pro تلقائياً عند اكتمال الدفع.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro لا يزال نشطًا</string>
     <string name="upgrade_screen_grace_body">نحن نؤكد عملية شرائك مع Google Play. تبقى ميزات Pro مفتوحة في هذه الأثناء.</string>

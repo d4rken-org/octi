@@ -37,4 +37,16 @@
     <string name="sync_octiserver_add_link_existing_action">الربط بحساب موجود</string>
     <string name="sync_octiserver_add_select_server_label">اختر الخادم</string>
     <string name="sync_octiserver_add_custom_server_label">خادم مخصص</string>
+    <string name="sync_octiserver_link_code_invalid_label">كود الربط غير مكتمل</string>
+    <string name="sync_octiserver_link_code_invalid_description">كود الربط هذا غير مكتمل أو أنه تغيّر في الطريق. انسخ الكود بالكامل من الجهاز الآخر والصقه كما هو دون إعادة كتابته، أو امسح رمز QR بدلاً من ذلك.</string>
+    <string name="sync_octiserver_link_code_copied_message">تم نسخ كود الربط</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="zero">%d حرف</item>
+        <item quantity="one">حرف واحد</item>
+        <item quantity="two">حرفان</item>
+        <item quantity="few">%d أحرف</item>
+        <item quantity="many">%d حرفًا</item>
+        <item quantity="other">%d حرف</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">يجب أن يعرض كلا الجهازين نفس العدد.</string>
 </resources>

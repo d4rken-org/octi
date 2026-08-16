@@ -90,6 +90,11 @@
     <string name="upgrade_screen_switch_action">一回限りの購入（%1$s）を購入</string>
     <string name="upgrade_screen_sub_still_renewing_title">サブスクリプションはまだ有効です</string>
     <string name="upgrade_screen_sub_still_renewing_message">あなたのサブスクリプションはまだ更新されるように設定されています。二重課金を避けるためにまずGoogle Playでキャンセルしてから、一回限りの購入を行ってください。これによりサブスクリプションの返金はされません。</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play からの応答がなかったため、購入状況を安全に確認できませんでした。しばらくしてからもう一度お試しください。</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">支払い処理中</string>
+    <string name="upgrade_screen_pending_card_body">Google Play が支払いを処理しています。支払いが完了すると、Pro は自動的にアンロックされます。決済方法によっては時間がかかることがあります。ほかに操作は必要ありません。</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play で保留中の支払いのある購入が見つかり、現在処理中です。支払いが完了すると、Pro は自動的にアンロックされます。</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Proはまだ有効です</string>
     <string name="upgrade_screen_grace_body">Google Playであなたの購入を確認しています。その間もPro機能はロック解除されたままです。</string>

@@ -149,7 +149,7 @@
     <!-- Replaces the per-flavor upgrades_dashcard_title ("Get Octi Pro"), which named the Google Play
          tier in the FOSS build too. Now that the wording names no tier it is the same in both flavors,
          so it lives here instead of being declared twice. Keep it tier-free when translating. -->
-    <string name="upgrades_dashcard_headline">Ulepsz Octi</string>
+    <string name="upgrades_dashcard_headline">Zaktualizuj Octi</string>
     <string name="sync_settings_label">Synchronizacja</string>
     <string name="sync_settings_desc">Nazwa urządzenia, harmonogram i warunki wyzwalania.</string>
     <string name="sync_setting_devicelabel_label">Etykieta urządzenia</string>
@@ -202,10 +202,10 @@
          Octi Pro") on a screen shared by both flavors, where the FOSS tier is called "Octi FOSS".
          Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
     <plurals name="pro_device_limit_maximum_hint">
-        <item quantity="one">Aby wyświetlić więcej niż %1$d urządzenie, uaktualnij lub usuń urządzenia.</item>
-        <item quantity="few">Aby wyświetlić więcej niż %1$d urządzenia, uaktualnij lub usuń urządzenia.</item>
-        <item quantity="many">Aby wyświetlić więcej niż %1$d urządzeń, uaktualnij lub usuń urządzenia.</item>
-        <item quantity="other">Aby wyświetlić więcej niż %1$d urządzenia, uaktualnij lub usuń urządzenia.</item>
+        <item quantity="one">Aby wyświetlić więcej niż %1$d urządzenie, zaktualizuj lub usuń urządzenia.</item>
+        <item quantity="few">Aby wyświetlić więcej niż %1$d urządzenia, zaktualizuj lub usuń urządzenia.</item>
+        <item quantity="many">Aby wyświetlić więcej niż %1$d urządzeń, zaktualizuj lub usuń urządzenia.</item>
+        <item quantity="other">Aby wyświetlić więcej niż %1$d urządzenia, zaktualizuj lub usuń urządzenia.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">Usunięcie tego urządzenia usunie jego dane, ale nie cofnie dostępu. Aby cofnąć dostęp, rozłącz Octi na urządzeniu.</string>
     <string name="sync_delete_device_revokeaccess_caveat">Usunięcie tego urządzenia usunie jego dane i cofnie jego dostęp.</string>

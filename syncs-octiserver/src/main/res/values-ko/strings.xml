@@ -37,4 +37,11 @@
     <string name="sync_octiserver_add_link_existing_action">기존 계정에 연결</string>
     <string name="sync_octiserver_add_select_server_label">서버 선택</string>
     <string name="sync_octiserver_add_custom_server_label">사용자 서버</string>
+    <string name="sync_octiserver_link_code_invalid_label">연결 코드 불완전</string>
+    <string name="sync_octiserver_link_code_invalid_description">이 연결 코드가 불완전하거나 전송 중 변경되었습니다. 다른 기기에서 코드 전체를 복사해 다시 입력하지 말고 그대로 붙여넣거나, 대신 QR 코드를 스캔해 주세요.</string>
+    <string name="sync_octiserver_link_code_copied_message">연결 코드가 복사되었습니다</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="other">%d자</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">두 기기에 표시되는 개수가 같아야 합니다.</string>
 </resources>

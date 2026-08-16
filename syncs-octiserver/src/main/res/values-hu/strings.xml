@@ -35,4 +35,12 @@
     <string name="sync_octiserver_add_link_existing_action">Kapcsolódás meglévő fiókhoz</string>
     <string name="sync_octiserver_add_select_server_label">Szerver kiválasztása</string>
     <string name="sync_octiserver_add_custom_server_label">Egyéni szerver</string>
+    <string name="sync_octiserver_link_code_invalid_label">Hiányos összekapcsolási kód</string>
+    <string name="sync_octiserver_link_code_invalid_description">Ez az összekapcsolási kód hiányos, vagy megváltozott útközben. Másold ki a teljes kódot a másik eszközről, és illeszd be újragépelés nélkül, vagy inkább olvasd be a QR-kódot.</string>
+    <string name="sync_octiserver_link_code_copied_message">Összekapcsolási kód másolva</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d karakter</item>
+        <item quantity="other">%d karakter</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Mindkét eszközön ugyanannak a számnak kell megjelennie.</string>
 </resources>

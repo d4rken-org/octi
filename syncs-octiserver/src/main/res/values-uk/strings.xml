@@ -37,4 +37,14 @@
     <string name="sync_octiserver_add_link_existing_action">Додати існуючий акаунт</string>
     <string name="sync_octiserver_add_select_server_label">Вибрати сервер</string>
     <string name="sync_octiserver_add_custom_server_label">Індивідуальний сервер</string>
+    <string name="sync_octiserver_link_code_invalid_label">Код зв\'язування неповний</string>
+    <string name="sync_octiserver_link_code_invalid_description">Цей код зв\'язування неповний або був змінений під час передавання. Скопіюй увесь код з іншого пристрою і встав його, не передруковуючи, або натомість відскануй QR-код.</string>
+    <string name="sync_octiserver_link_code_copied_message">Код зв\'язування скопійовано</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d символ</item>
+        <item quantity="few">%d символи</item>
+        <item quantity="many">%d символів</item>
+        <item quantity="other">%d символа</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">На обох пристроях має відображатися однакова кількість.</string>
 </resources>

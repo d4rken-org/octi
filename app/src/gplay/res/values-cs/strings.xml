@@ -93,6 +93,11 @@
     <string name="upgrade_screen_switch_action">Koupit jednorázový nákup (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Předplatné je stále aktivní</string>
     <string name="upgrade_screen_sub_still_renewing_message">Vaše předplatné je stále nastaveno na obnovení. Nejdříve jej zrušte v Obchodě Play, abyste nebyli účtováni dvakrát, poté si koupte jednorázový nákup. To nevrátí peníze za předplatné.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play včas neodpověděl, takže nemůžeme bezpečně potvrdit stav tvého nákupu. Zkus to prosím za chvíli znovu.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Platba čeká na zpracování</string>
+    <string name="upgrade_screen_pending_card_body">Google Play stále zpracovává tvou platbu. Jakmile bude platba dokončena, Pro se odemkne automaticky. U některých platebních metod to může chvíli trvat. Nic dalšího nemusíš dělat.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play našel nákup s čekající platbou a stále ho zpracovává. Jakmile bude platba dokončena, Pro se odemkne automaticky.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro je stále aktivní</string>
     <string name="upgrade_screen_grace_body">Potvrzujeme váš nákup pomocí Obchodu Play. Vaše funkce Pro zatím zůstávají odemčené.</string>

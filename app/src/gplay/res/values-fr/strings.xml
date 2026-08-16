@@ -92,6 +92,11 @@ Mêmes fonctions, juste des modèles tarifaires différents.</string>
     <string name="upgrade_screen_switch_action">Acheter l’accès unique (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonnement toujours actif</string>
     <string name="upgrade_screen_sub_still_renewing_message">Votre abonnement est toujours configuré pour se renouveler. Annulez-le d’abord dans Google Play pour ne pas être facturé deux fois, puis achetez l’accès unique. Cela ne rembourse pas l’abonnement.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play n\'a pas répondu à temps, donc on ne peut pas confirmer en toute sécurité l\'état de ton achat. Réessaie dans un instant.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Paiement en attente</string>
+    <string name="upgrade_screen_pending_card_body">Google Play est toujours en train de traiter ton paiement. Pro se déverrouille automatiquement une fois le paiement accepté. Certains modes de paiement peuvent prendre du temps. Tu n\'as rien d\'autre à faire.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play a trouvé un achat avec un paiement en attente et le traite toujours. Pro se déverrouille automatiquement une fois le paiement accepté.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro est toujours actif</string>
     <string name="upgrade_screen_grace_body">Nous confirmons votre achat auprès de Google Play. Vos fonctions Pro restent déverrouillées en attendant.</string>

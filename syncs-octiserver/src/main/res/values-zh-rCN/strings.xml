@@ -37,4 +37,11 @@
     <string name="sync_octiserver_add_link_existing_action">链接到现有帐户</string>
     <string name="sync_octiserver_add_select_server_label">选择服务器</string>
     <string name="sync_octiserver_add_custom_server_label">自定义服务器</string>
+    <string name="sync_octiserver_link_code_invalid_label">链接代码不完整</string>
+    <string name="sync_octiserver_link_code_invalid_description">此链接代码不完整，或在传输过程中被更改。请从另一台设备复制完整代码并直接粘贴，不要手动输入，或者改用扫描二维码的方式。</string>
+    <string name="sync_octiserver_link_code_copied_message">链接代码已复制</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="other">%d 个字符</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">两台设备显示的数量必须一致。</string>
 </resources>

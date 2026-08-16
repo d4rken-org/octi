@@ -77,8 +77,8 @@
          not reintroduce a product name. The old widget_config_upgrade_action ("Upgrade to Octi Pro")
          is gone too; its button now uses the existing general_upgrade_action. -->
     <string name="widget_config_upgrade_required_label">Ten widżet wymaga uaktualnienia.</string>
-    <string name="widget_config_upgrade_checking_label">Sprawdzanie statusu uaktualnienia…</string>
-    <string name="widget_config_upgrade_error_label">Nie można zweryfikować statusu uaktualnienia.</string>
+    <string name="widget_config_upgrade_checking_label">Sprawdzanie statusu aktualizacji…</string>
+    <string name="widget_config_upgrade_error_label">Nie można zweryfikować statusu aktualizacji.</string>
     <string name="widget_config_retry_action">Ponów</string>
     <string name="widget_config_presets_label">Ustawienia wstępne</string>
     <string name="widget_config_background_label">Kolor tła</string>

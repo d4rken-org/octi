@@ -37,4 +37,14 @@
     <string name="sync_octiserver_add_link_existing_action">Привязать к существующему аккаунту</string>
     <string name="sync_octiserver_add_select_server_label">Выбрать сервер</string>
     <string name="sync_octiserver_add_custom_server_label">Пользовательский сервер</string>
+    <string name="sync_octiserver_link_code_invalid_label">Код связи неполный</string>
+    <string name="sync_octiserver_link_code_invalid_description">Этот код связи неполный или был изменён при передаче. Скопируй код целиком с другого устройства и вставь его, не набирая вручную, либо отсканируй QR-код.</string>
+    <string name="sync_octiserver_link_code_copied_message">Код связи скопирован</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d символ</item>
+        <item quantity="few">%d символа</item>
+        <item quantity="many">%d символов</item>
+        <item quantity="other">%d символа</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">На обоих устройствах должно отображаться одинаковое количество.</string>
 </resources>

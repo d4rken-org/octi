@@ -35,4 +35,12 @@
     <string name="sync_octiserver_add_link_existing_action">Mevcut hesaba bağlantı</string>
     <string name="sync_octiserver_add_select_server_label">Sunucu seç</string>
     <string name="sync_octiserver_add_custom_server_label">Özel sunucu</string>
+    <string name="sync_octiserver_link_code_invalid_label">Bağlantı kodu eksik</string>
+    <string name="sync_octiserver_link_code_invalid_description">Bu bağlantı kodu eksik veya aktarım sırasında değişmiş. Kodun tamamını diğer cihazdan kopyalayıp yeniden yazmadan yapıştır ya da bunun yerine QR kodunu tara.</string>
+    <string name="sync_octiserver_link_code_copied_message">Bağlantı kodu kopyalandı</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d karakter</item>
+        <item quantity="other">%d karakter</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Her iki cihaz da aynı sayıyı göstermeli.</string>
 </resources>

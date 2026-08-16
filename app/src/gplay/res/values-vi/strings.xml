@@ -91,6 +91,11 @@ Các tính năng giống nhau, chỉ khác các mô hình giá.</string>
     <string name="upgrade_screen_switch_action">Mua một lần (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Đăng ký vẫn hoạt động</string>
     <string name="upgrade_screen_sub_still_renewing_message">Đăng ký của bạn vẫn được đặt để gia hạn. Vui lòng hủy nó trên Google Play trước để bạn không bị tính phí hai lần, sau đó mua một lần. Điều này không hoàn tiền cho đăng ký.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play không phản hồi kịp thời, vì vậy chúng tôi không thể xác nhận trạng thái mua hàng của bạn một cách an toàn. Vui lòng thử lại sau.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Thanh toán đang chờ xử lý</string>
+    <string name="upgrade_screen_pending_card_body">Google Play vẫn đang xử lý khoản thanh toán của bạn. Pro sẽ tự động mở khóa ngay khi thanh toán hoàn tất. Một số phương thức thanh toán có thể mất một thời gian. Bạn không cần làm gì thêm.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play đã tìm thấy một giao dịch mua với khoản thanh toán đang chờ xử lý và vẫn đang xử lý. Pro sẽ tự động mở khóa ngay khi thanh toán hoàn tất.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro vẫn hoạt động</string>
     <string name="upgrade_screen_grace_body">Chúng tôi đang xác nhận lệnh mua của bạn với Google Play. Các tính năng Pro của bạn vẫn được mở khóa trong lúc đó.</string>

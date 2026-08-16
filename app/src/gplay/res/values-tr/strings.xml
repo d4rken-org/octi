@@ -92,6 +92,11 @@ Aynı özellikler, sadece farklı fiyatlandırma modelleri.</string>
     <string name="upgrade_screen_switch_action">Tek Seferlik Satın Al (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonelik Hâlâ Etkin</string>
     <string name="upgrade_screen_sub_still_renewing_message">Aboneliğiniz hâlâ yenilenecek şekilde ayarlanmıştır. Önce Google Play\'de iptal edin, böylece iki kez ücretlendirilmezsiniz, ardından tek seferlik satın alma yapın. Bu işlem aboneliğin para iadesini içermez.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play zamanında yanıt vermedi, bu yüzden satın alma durumunu güvenli bir şekilde onaylayamıyoruz. Lütfen bir süre sonra tekrar dene.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Ödeme bekliyor</string>
+    <string name="upgrade_screen_pending_card_body">Google Play ödemeni hâlâ işliyor. Ödeme tamamlandığında Pro otomatik olarak açılır. Bazı ödeme yöntemleri biraz zaman alabilir. Yapman gereken başka bir şey yok.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play, ödemesi bekleyen bir satın alma buldu ve hâlâ işliyor. Ödeme tamamlandığında Pro otomatik olarak açılır.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro hâlâ etkin</string>
     <string name="upgrade_screen_grace_body">Satın alımınızı Google Play ile doğruluyoruz. Pro özellikleriniz bu arada açık kalır.</string>

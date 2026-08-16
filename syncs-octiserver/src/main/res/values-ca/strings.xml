@@ -37,4 +37,12 @@ Com que tant l’aplicació com el servidor encara s’estan millorant, pot ser 
     <string name="sync_octiserver_add_link_existing_action">Enllaça a un compte ja existent</string>
     <string name="sync_octiserver_add_select_server_label">Seleccioneu un servidor</string>
     <string name="sync_octiserver_add_custom_server_label">Servidor personalitzat</string>
+    <string name="sync_octiserver_link_code_invalid_label">Codi d\'enllaç incomplet</string>
+    <string name="sync_octiserver_link_code_invalid_description">Aquest codi d\'enllaç és incomplet o s\'ha alterat pel camí. Copia tot el codi de l\'altre dispositiu i enganxa\'l sense tornar-lo a escriure, o bé escaneja el codi QR.</string>
+    <string name="sync_octiserver_link_code_copied_message">Codi d\'enllaç copiat</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d caràcter</item>
+        <item quantity="other">%d caràcters</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Els dos dispositius han de mostrar el mateix nombre.</string>
 </resources>

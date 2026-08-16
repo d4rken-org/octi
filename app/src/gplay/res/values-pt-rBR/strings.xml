@@ -92,6 +92,11 @@ Os mesmos recursos, apenas modelos de preços diferentes.</string>
     <string name="upgrade_screen_switch_action">Comprar compra única (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Assinatura ainda ativa</string>
     <string name="upgrade_screen_sub_still_renewing_message">Sua assinatura ainda está definida para se renovar. Cancele-a no Google Play primeiro para não ser cobrado duas vezes e depois compre a compra única. Isso não reembolsa a assinatura.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play não respondeu a tempo, então não conseguimos confirmar sua compra com segurança. Tente novamente em um instante.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Pagamento pendente</string>
+    <string name="upgrade_screen_pending_card_body">Google Play ainda está processando seu pagamento. Pro será desbloqueado automaticamente quando o pagamento for processado. Alguns métodos de pagamento podem demorar mais. Não precisa fazer mais nada.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play encontrou uma compra com pagamento pendente e ainda está processando. Pro será desbloqueado automaticamente quando o pagamento for processado.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro ainda está ativo</string>
     <string name="upgrade_screen_grace_body">Estamos confirmando sua compra com o Google Play. Seus recursos Pro permanecem desbloqueados enquanto isso.</string>

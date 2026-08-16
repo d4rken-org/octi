@@ -37,4 +37,12 @@ Da zowel de app als de server nog worden verbeterd, kan deze minder stabiel zijn
     <string name="sync_octiserver_add_link_existing_action">Koppelen aan bestaand account</string>
     <string name="sync_octiserver_add_select_server_label">Server selecteren</string>
     <string name="sync_octiserver_add_custom_server_label">Aangepaste server</string>
+    <string name="sync_octiserver_link_code_invalid_label">Linkcode onvolledig</string>
+    <string name="sync_octiserver_link_code_invalid_description">Deze linkcode is onvolledig of is onderweg gewijzigd. Kopieer de volledige code van het andere apparaat en plak deze zonder opnieuw te typen, of scan in plaats daarvan de QR-code.</string>
+    <string name="sync_octiserver_link_code_copied_message">Linkcode gekopieerd</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d teken</item>
+        <item quantity="other">%d tekens</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Beide apparaten moeten hetzelfde aantal tonen.</string>
 </resources>

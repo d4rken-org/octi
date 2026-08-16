@@ -35,4 +35,11 @@
     <string name="sync_octiserver_add_link_existing_action">Liên kết tài khoản hiện có</string>
     <string name="sync_octiserver_add_select_server_label">Chọn máy chủ</string>
     <string name="sync_octiserver_add_custom_server_label">Máy chủ tùy chỉnh</string>
+    <string name="sync_octiserver_link_code_invalid_label">Mã liên kết chưa đầy đủ</string>
+    <string name="sync_octiserver_link_code_invalid_description">Mã liên kết này chưa đầy đủ hoặc đã bị thay đổi trong quá trình truyền. Hãy sao chép toàn bộ mã từ thiết bị kia và dán vào mà không gõ lại, hoặc quét mã QR thay thế.</string>
+    <string name="sync_octiserver_link_code_copied_message">Đã sao chép mã liên kết</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="other">%d ký tự</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Cả hai thiết bị phải hiển thị cùng một số lượng.</string>
 </resources>

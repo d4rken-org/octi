@@ -35,4 +35,8 @@
     <string name="sync_octiserver_add_link_existing_action">קישור לחשבון קיים</string>
     <string name="sync_octiserver_add_select_server_label">בחר שרת</string>
     <string name="sync_octiserver_add_custom_server_label">שרת מותאם אישית</string>
+    <string name="sync_octiserver_link_code_invalid_label">קוד הקישור לא שלם</string>
+    <string name="sync_octiserver_link_code_invalid_description">קוד הקישור הזה אינו שלם או שהשתנה בדרך. יש להעתיק את הקוד המלא מהמכשיר האחר ולהדביק אותו בלי להקליד אותו מחדש, או לסרוק את קוד ה-QR במקום זאת.</string>
+    <string name="sync_octiserver_link_code_copied_message">קוד הקישור הועתק</string>
+    <string name="sync_octiserver_link_code_character_count_hint">שני המכשירים צריכים להציג את אותו המספר.</string>
 </resources>

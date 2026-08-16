@@ -91,6 +91,11 @@
     <string name="upgrade_screen_switch_action">Comprar compra única (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Subscrição ainda ativa</string>
     <string name="upgrade_screen_sub_still_renewing_message">A sua subscrição ainda está definida para renovar. Cancele-a primeiro no Google Play para não ser cobrado duas vezes e depois compre a compra única. Isto não reembolsa a subscrição.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">O Google Play não respondeu a tempo, por isso não conseguimos confirmar com segurança o estado da tua compra. Tenta novamente dentro de momentos.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Pagamento pendente</string>
+    <string name="upgrade_screen_pending_card_body">O Google Play ainda está a processar o teu pagamento. O Pro é desbloqueado automaticamente assim que o pagamento for concluído. Alguns métodos de pagamento podem demorar algum tempo. Não precisas de fazer mais nada.</string>
+    <string name="upgrade_screen_pending_dialog_message">O Google Play encontrou uma compra com um pagamento pendente e ainda está a processá-la. O Pro é desbloqueado automaticamente assim que o pagamento for concluído.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro continua ativo</string>
     <string name="upgrade_screen_grace_body">Estamos a confirmar a sua compra com o Google Play. As funcionalidades Pro mantêm-se desbloqueadas entretanto.</string>

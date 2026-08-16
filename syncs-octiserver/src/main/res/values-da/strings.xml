@@ -35,4 +35,12 @@
     <string name="sync_octiserver_add_link_existing_action">Link til eksisterende konto</string>
     <string name="sync_octiserver_add_select_server_label">Vælg server</string>
     <string name="sync_octiserver_add_custom_server_label">Brugerdefineret server</string>
+    <string name="sync_octiserver_link_code_invalid_label">Linkkoden er ufuldstændig</string>
+    <string name="sync_octiserver_link_code_invalid_description">Denne linkkode er ufuldstændig eller blev ændret undervejs. Kopiér hele koden fra den anden enhed, og indsæt den uden at skrive den om, eller scan QR-koden i stedet.</string>
+    <string name="sync_octiserver_link_code_copied_message">Linkkode kopieret</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d tegn</item>
+        <item quantity="other">%d tegn</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Begge enheder skal vise det samme antal.</string>
 </resources>

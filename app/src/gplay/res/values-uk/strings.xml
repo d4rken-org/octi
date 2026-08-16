@@ -93,6 +93,11 @@
     <string name="upgrade_screen_switch_action">Купити одноразову покупку (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Підписка все ще активна</string>
     <string name="upgrade_screen_sub_still_renewing_message">Ваша підписка все ще налаштована на продовження. Спочатку скасуйте її в Google Play, щоб з вас не стягнули двічі, а потім купіть одноразову покупку. Це не повертає кошти за підписку.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play не відповів вчасно, тому ми не можемо надійно підтвердити стан твоєї покупки. Спробуй ще раз за хвилину.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Очікується оплата</string>
+    <string name="upgrade_screen_pending_card_body">Google Play ще обробляє твій платіж. Pro розблокується автоматично, щойно платіж пройде. Деякі способи оплати можуть тривати довше. Тобі більше нічого не потрібно робити.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play знайшов покупку з платежем, що очікує обробки, і ще обробляє її. Pro розблокується автоматично, щойно платіж пройде.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro все ще активний</string>
     <string name="upgrade_screen_grace_body">Ми підтверджуємо вашу покупку через Google Play. Тим часом ваші функції Pro залишаються розблокованими.</string>

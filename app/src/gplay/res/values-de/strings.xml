@@ -91,6 +91,11 @@
     <string name="upgrade_screen_switch_action">Einmalig kaufen (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abo noch aktiv</string>
     <string name="upgrade_screen_sub_still_renewing_message">Dein Abonnement ist weiterhin zum Verlängern eingestellt. Kündige es zuerst in Google Play, damit du nicht doppelt berechnet wirst, dann kaufe den einmaligen Kauf. Dies erstattet das Abonnement nicht.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play hat nicht rechtzeitig geantwortet, daher können wir deinen Kaufstatus nicht sicher bestätigen. Bitte versuche es gleich noch einmal.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Zahlung ausstehend</string>
+    <string name="upgrade_screen_pending_card_body">Google Play verarbeitet deine Zahlung noch. Pro wird automatisch freigeschaltet, sobald die Zahlung abgeschlossen ist. Manche Zahlungsmethoden können eine Weile dauern. Du musst nichts weiter tun.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play hat einen Kauf mit ausstehender Zahlung gefunden und verarbeitet ihn noch. Pro wird automatisch freigeschaltet, sobald die Zahlung abgeschlossen ist.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro ist immer noch aktiv</string>
     <string name="upgrade_screen_grace_body">Wir bestätigen deinen Kauf mit Google Play. Deine Pro-Funktionen bleiben unterdessen freigeschaltet.</string>

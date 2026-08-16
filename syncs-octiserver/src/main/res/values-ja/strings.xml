@@ -37,4 +37,11 @@
     <string name="sync_octiserver_add_link_existing_action">既存のアカウントへリンク</string>
     <string name="sync_octiserver_add_select_server_label">サーバーを選択</string>
     <string name="sync_octiserver_add_custom_server_label">カスタムサーバー</string>
+    <string name="sync_octiserver_link_code_invalid_label">リンクコードが不完全です</string>
+    <string name="sync_octiserver_link_code_invalid_description">このリンクコードは不完全か、送信中に変更された可能性があります。もう一方の端末でコード全体をコピーし、手入力せずに貼り付けるか、代わりにQRコードをスキャンしてください。</string>
+    <string name="sync_octiserver_link_code_copied_message">リンクコードをコピーしました</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="other">%d 文字</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">両方の端末で同じ文字数が表示されている必要があります。</string>
 </resources>

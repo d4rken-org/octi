@@ -37,4 +37,12 @@
     <string name="sync_octiserver_add_link_existing_action">Σύνδεση με υπάρχοντα λογαριασμό</string>
     <string name="sync_octiserver_add_select_server_label">Επιλογή διακομιστή</string>
     <string name="sync_octiserver_add_custom_server_label">Προσαρμοσμένος διακομιστής</string>
+    <string name="sync_octiserver_link_code_invalid_label">Κώδικας σύνδεσης ατελής</string>
+    <string name="sync_octiserver_link_code_invalid_description">Αυτός ο κώδικας σύνδεσης είναι ατελής ή έχει αλλοιωθεί. Αντιγράφε ολόκληρο τον κώδικα από την άλλη συσκευή και επικόλλησέ τον χωρίς να τον ξαναγράψεις, ή σάρωσε το κωδικό QR.</string>
+    <string name="sync_octiserver_link_code_copied_message">Ο κώδικας σύνδεσης αντιγράφηκε</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d χαρακτήρας</item>
+        <item quantity="other">%d χαρακτήρες</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Και οι δύο συσκευές πρέπει να εμφανίζουν τον ίδιο αριθμό.</string>
 </resources>
