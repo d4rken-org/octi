@@ -93,7 +93,6 @@
     <string name="upgrade_screen_switch_action">Koupit jednorázový nákup (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Předplatné je stále aktivní</string>
     <string name="upgrade_screen_sub_still_renewing_message">Vaše předplatné je stále nastaveno na obnovení. Nejdříve jej zrušte v Obchodě Play, abyste nebyli účtováni dvakrát, poté si koupte jednorázový nákup. To nevrátí peníze za předplatné.</string>
-    <string name="upgrade_screen_sub_check_failed_title">Nepodařilo se ověřit předplatné</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro je stále aktivní</string>
     <string name="upgrade_screen_grace_body">Potvrzujeme váš nákup pomocí Obchodu Play. Vaše funkce Pro zatím zůstávají odemčené.</string>

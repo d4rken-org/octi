@@ -92,7 +92,6 @@
     <string name="upgrade_screen_switch_action">Купите једнократну куповину (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Претплата је и даље активна</string>
     <string name="upgrade_screen_sub_still_renewing_message">Ваша претплата је и даље подешена да се обнови. Прво је откажите у Google Play како не бисте били наплаћени два пута, затим купите једнократну куповину. Ово не враћа претплату.</string>
-    <string name="upgrade_screen_sub_check_failed_title">Није могуће потврдити претплату</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro је и даље активан</string>
     <string name="upgrade_screen_grace_body">Потврђујемо вашу куповину са Google Play. Ваше Pro функције остају откључане у међувремену.</string>

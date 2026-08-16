@@ -92,7 +92,6 @@ Dezelfde functies, gewoon verschillende prijsmodellen.</string>
     <string name="upgrade_screen_switch_action">Eenmalige aankoop kopen (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonnement nog actief</string>
     <string name="upgrade_screen_sub_still_renewing_message">Je abonnement is nog steeds ingesteld om te vernieuwen. Annuleer het eerst in Google Play zodat je niet dubbel wordt belast, koop dan de eenmalige aankoop. Dit vergoedt het abonnement niet.</string>
-    <string name="upgrade_screen_sub_check_failed_title">Kon abonnement niet verifiëren</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro is nog actief</string>
     <string name="upgrade_screen_grace_body">We bevestigen je aankoop met Google Play. Je Pro-functies blijven in de tussentijd ontgrendeld.</string>

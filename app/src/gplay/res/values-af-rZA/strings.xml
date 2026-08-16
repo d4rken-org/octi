@@ -91,7 +91,6 @@
     <string name="upgrade_screen_switch_action">Koop eenmalige aankoop (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Inskrywing nog aktief</string>
     <string name="upgrade_screen_sub_still_renewing_message">Jou inskrywing is nog steeds ingestel om te verleng. Kanselleer dit eers in Google Play sodat jy nie twee keer gehef word nie, koop dan die eenmalige aankoop. Dit terugbetaal nie die inskrywing nie.</string>
-    <string name="upgrade_screen_sub_check_failed_title">Kon inskrywing nie verifieer nie</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro is nog aktief</string>
     <string name="upgrade_screen_grace_body">Ons bevestig jou aankoop met Google Play. Jou Pro-funksies bly ondertussen ontgrendel.</string>

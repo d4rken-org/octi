@@ -93,7 +93,6 @@
     <string name="upgrade_screen_switch_action">Купити одноразову покупку (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Підписка все ще активна</string>
     <string name="upgrade_screen_sub_still_renewing_message">Ваша підписка все ще налаштована на продовження. Спочатку скасуйте її в Google Play, щоб з вас не стягнули двічі, а потім купіть одноразову покупку. Це не повертає кошти за підписку.</string>
-    <string name="upgrade_screen_sub_check_failed_title">Не вдалося перевірити підписку</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro все ще активний</string>
     <string name="upgrade_screen_grace_body">Ми підтверджуємо вашу покупку через Google Play. Тим часом ваші функції Pro залишаються розблокованими.</string>

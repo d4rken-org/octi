@@ -98,7 +98,6 @@
     <string name="upgrade_screen_switch_action">Buy one-time purchase (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Subscription still active</string>
     <string name="upgrade_screen_sub_still_renewing_message">Your subscription is still set to renew. Cancel it in Google Play first so you are not charged twice, then buy the one-time purchase. This does not refund the subscription.</string>
-    <string name="upgrade_screen_sub_check_failed_title">Couldn\'t verify subscription</string>
     <string name="upgrade_screen_purchase_check_failed_message">Google Play didn\'t respond in time, so we can\'t safely confirm your purchase state. Please try again in a moment.</string>
     <!-- Pending payment (Google Play is still processing a slow payment method) -->
     <string name="upgrade_screen_pending_card_title">Payment pending</string>
