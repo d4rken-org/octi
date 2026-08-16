@@ -86,7 +86,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">Prenumeration fortfarande aktiv</string>
     <string name="upgrade_screen_sub_still_renewing_message">Din prenumeration är fortfarande inställd på att förnyas. Avsluta den i Google Play först så att du inte debiteras två gånger, köp sedan engångsköpet. Detta återbetalar inte prenumerationen.</string>
     <string name="upgrade_screen_sub_check_failed_title">Kunde inte verifiera prenumeration</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play svarade inte i tid, så vi kan inte säkert bekräfta din prenumerationsstatus. Försök igen om en stund.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro är fortfarande aktivt</string>
     <string name="upgrade_screen_grace_body">Vi bekräftar ditt köp med Google Play. Dina Pro-funktioner förblir upplåsta under tiden.</string>

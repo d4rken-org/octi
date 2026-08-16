@@ -86,7 +86,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">Abonnement stadig aktivt</string>
     <string name="upgrade_screen_sub_still_renewing_message">Dit abonnement er stadig indstillet til at fornyes. Annuller det først i Google Play, så du ikke bliver debiteret to gange, derefter køb engangskøbet. Dette refunderer ikke abonnementet.</string>
     <string name="upgrade_screen_sub_check_failed_title">Kunne ikke bekræfte abonnement</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play svarede ikke i tide, så vi kan ikke sikkert bekræfte din abonnementstatus. Prøv igen om et øjeblik.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro er stadig aktivt</string>
     <string name="upgrade_screen_grace_body">Vi bekræfter dit køb med Google Play. Dine Pro-funktioner forbliver låst op i mellemtiden.</string>

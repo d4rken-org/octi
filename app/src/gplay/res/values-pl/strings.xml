@@ -88,7 +88,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">Subskrypcja nadal aktywna</string>
     <string name="upgrade_screen_sub_still_renewing_message">Twoja subskrypcja nadal jest ustawiona na odnowienie. Anuluj ją najpierw w Sklepie Google Play, aby uniknąć podwójnej opłaty, a następnie dokonaj jednorazowego zakupu. Nie spowoduje to zwrotu kosztów subskrypcji.</string>
     <string name="upgrade_screen_sub_check_failed_title">Nie można zweryfikować subskrypcji</string>
-    <string name="upgrade_screen_sub_check_failed_message">Sklep Google Play nie odpowiedział na czas, więc nie możemy bezpiecznie potwierdzić stanu twojej subskrypcji. Spróbuj ponownie za chwilę.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro jest nadal aktywne</string>
     <string name="upgrade_screen_grace_body">Potwierdzamy twój zakup w Google Play. Twoje funkcje Pro są w międzyczasie odblokowane.</string>

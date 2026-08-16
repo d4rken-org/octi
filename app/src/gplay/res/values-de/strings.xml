@@ -86,7 +86,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">Abo noch aktiv</string>
     <string name="upgrade_screen_sub_still_renewing_message">Dein Abonnement ist weiterhin zum Verlängern eingestellt. Kündige es zuerst in Google Play, damit du nicht doppelt berechnet wirst, dann kaufe den einmaligen Kauf. Dies erstattet das Abonnement nicht.</string>
     <string name="upgrade_screen_sub_check_failed_title">Abonnement konnte nicht verifiziert werden</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play hat nicht rechtzeitig reagiert, daher können wir deinen Abonnementstatus nicht sicher bestätigen. Versuche es in einem Moment erneut.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro ist immer noch aktiv</string>
     <string name="upgrade_screen_grace_body">Wir bestätigen deinen Kauf mit Google Play. Deine Pro-Funktionen bleiben unterdessen freigeschaltet.</string>

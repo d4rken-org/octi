@@ -86,7 +86,6 @@ Các tính năng giống nhau, chỉ khác các mô hình giá.</string>
     <string name="upgrade_screen_sub_still_renewing_title">Đăng ký vẫn hoạt động</string>
     <string name="upgrade_screen_sub_still_renewing_message">Đăng ký của bạn vẫn được đặt để gia hạn. Vui lòng hủy nó trên Google Play trước để bạn không bị tính phí hai lần, sau đó mua một lần. Điều này không hoàn tiền cho đăng ký.</string>
     <string name="upgrade_screen_sub_check_failed_title">Không thể xác minh đăng ký</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play không phản hồi kịp thời, vì vậy chúng tôi không thể xác nhận an toàn trạng thái đăng ký của bạn. Vui lòng thử lại sau vài giây.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro vẫn hoạt động</string>
     <string name="upgrade_screen_grace_body">Chúng tôi đang xác nhận lệnh mua của bạn với Google Play. Các tính năng Pro của bạn vẫn được mở khóa trong lúc đó.</string>

@@ -86,7 +86,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">La subscripció encara està activa</string>
     <string name="upgrade_screen_sub_still_renewing_message">La subscripció segueix configurada per renovar-se. Cancel·leu-la primer a Google Play perquè no us cobrin dues vegades, després compreu la compra única. Això no reemborsa la subscripció.</string>
     <string name="upgrade_screen_sub_check_failed_title">No s’ha pogut verificar la subscripció</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play no ha respost a temps, per tant no podem confirmar de forma segura l’estat de la vostra subscripció. Intenteu-ho de nou en un moment.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro segueix actiu</string>
     <string name="upgrade_screen_grace_body">Estem confirmant la vostra compra amb Google Play. Les vostres funcions de Pro es mantenen desbloquejades mentrestant.</string>

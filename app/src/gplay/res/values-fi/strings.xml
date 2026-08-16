@@ -86,7 +86,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">Tilaus on edelleen aktiivinen</string>
     <string name="upgrade_screen_sub_still_renewing_message">Tilauksesi on edelleen asetettu uusimiselle. Peruuta se ensin Google Play -sovelluksesta, jotta sinua ei veloiteta kahdesti, sitten osta kertamaksu. Tämä ei palauta tilausta.</string>
     <string name="upgrade_screen_sub_check_failed_title">Tilausta ei voitu vahvistaa</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play ei vastannut ajoissa, joten emme voi varmasti vahvistaa tilauksesi tilaa. Yritä uudelleen hetken kuluttua.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro on edelleen aktiivinen</string>
     <string name="upgrade_screen_grace_body">Vahvistamme ostoksesi Google Play:n kanssa. Pro-ominaisuudet pysyvät avattuna sillä välin.</string>

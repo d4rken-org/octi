@@ -99,7 +99,11 @@
     <string name="upgrade_screen_sub_still_renewing_title">Subscription still active</string>
     <string name="upgrade_screen_sub_still_renewing_message">Your subscription is still set to renew. Cancel it in Google Play first so you are not charged twice, then buy the one-time purchase. This does not refund the subscription.</string>
     <string name="upgrade_screen_sub_check_failed_title">Couldn\'t verify subscription</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play didn\'t respond in time, so we can\'t safely confirm your subscription state. Please try again in a moment.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Google Play didn\'t respond in time, so we can\'t safely confirm your purchase state. Please try again in a moment.</string>
+    <!-- Pending payment (Google Play is still processing a slow payment method) -->
+    <string name="upgrade_screen_pending_card_title">Payment pending</string>
+    <string name="upgrade_screen_pending_card_body">Google Play is still processing your payment. Pro unlocks automatically once the payment goes through. Some payment methods can take a while. There is nothing else you need to do.</string>
+    <string name="upgrade_screen_pending_dialog_message">Google Play found a purchase with a pending payment and is still processing it. Pro unlocks automatically once the payment goes through.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro is still active</string>
     <string name="upgrade_screen_grace_body">We\'re confirming your purchase with Google Play. Your Pro features stay unlocked in the meantime.</string>

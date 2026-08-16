@@ -87,7 +87,6 @@ Aynı özellikler, sadece farklı fiyatlandırma modelleri.</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonelik Hâlâ Etkin</string>
     <string name="upgrade_screen_sub_still_renewing_message">Aboneliğiniz hâlâ yenilenecek şekilde ayarlanmıştır. Önce Google Play\'de iptal edin, böylece iki kez ücretlendirilmezsiniz, ardından tek seferlik satın alma yapın. Bu işlem aboneliğin para iadesini içermez.</string>
     <string name="upgrade_screen_sub_check_failed_title">Abonelik doğrulanamadı</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play zamanında yanıt vermedi, bu nedenle abonelik durumunuzu güvenle doğrulayamıyoruz. Lütfen bir an sonra tekrar deneyin.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro hâlâ etkin</string>
     <string name="upgrade_screen_grace_body">Satın alımınızı Google Play ile doğruluyoruz. Pro özellikleriniz bu arada açık kalır.</string>
