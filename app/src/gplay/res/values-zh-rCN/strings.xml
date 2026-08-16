@@ -91,7 +91,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">订阅仍在活跃</string>
     <string name="upgrade_screen_sub_still_renewing_message">您的订阅仍设置为自动续订。请先在 Google Play 中取消，以免重复收费，然后再购买一次性购买。此操作不会退还订阅费用。</string>
     <string name="upgrade_screen_sub_check_failed_title">无法验证订阅</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play 未及时响应，因此我们无法安全确认您的订阅状态。请稍后重试。</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">专业版仍在激活中</string>
     <string name="upgrade_screen_grace_body">我们正在与 Google Play 确认您的购买。在此期间，您的专业版功能保持解锁。</string>

@@ -55,9 +55,10 @@ fun UpgradeScreenHost(
     val context = LocalContext.current
     val activity = context as? android.app.Activity
 
-    // Octi has no app-level activity-resume refresh of the upgrade repo, so the screen heals the
-    // renewal state itself on resume — returning from Play's subscription-management page must
-    // reflect a just-cancelled renewal promptly. It also re-runs a failed SKU query, so a transient
+    // Octi has no app-level activity-resume refresh of the upgrade repo, so the screen heals itself
+    // on resume via a tolerant billing refresh — returning from Play's subscription-management page
+    // must reflect a just-cancelled renewal promptly, and a payment that cleared while the user was
+    // in Play must turn into the entitlement. It also re-runs a failed SKU query, so a transient
     // Play outage doesn't leave the retry card up until it's tapped by hand.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.onResume() }
 
@@ -67,6 +68,7 @@ fun UpgradeScreenHost(
     var showRestoreInconclusive by rememberSaveable { mutableStateOf(false) }
     var showStillRenewing by rememberSaveable { mutableStateOf(false) }
     var showCheckFailed by rememberSaveable { mutableStateOf(false) }
+    var showPurchasePending by rememberSaveable { mutableStateOf(false) }
 
     val restoreSuccessMessage = stringResource(R.string.upgrade_screen_restore_success_message)
 
@@ -79,7 +81,8 @@ fun UpgradeScreenHost(
                 UpgradeEvents.RestoreFailed -> showRestoreFailed = true
                 UpgradeEvents.RestoreInconclusive -> showRestoreInconclusive = true
                 UpgradeEvents.SubscriptionStillRenewing -> showStillRenewing = true
-                UpgradeEvents.SubscriptionCheckFailed -> showCheckFailed = true
+                UpgradeEvents.PurchaseCheckFailed -> showCheckFailed = true
+                UpgradeEvents.PurchasePending -> showPurchasePending = true
             }
         }
     }
@@ -116,6 +119,10 @@ fun UpgradeScreenHost(
 
     if (showCheckFailed) {
         CheckFailedDialog(onDismiss = { showCheckFailed = false })
+    }
+
+    if (showPurchasePending) {
+        PurchasePendingDialog(onDismiss = { showPurchasePending = false })
     }
 
     val uiState by vm.state.collectAsStateWithLifecycle()
@@ -155,7 +162,27 @@ private fun StillRenewingDialog(onManage: () -> Unit, onDismiss: () -> Unit) {
 private fun CheckFailedDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        text = { Text(text = stringResource(R.string.upgrade_screen_sub_check_failed_message)) },
+        text = { Text(text = stringResource(R.string.upgrade_screen_purchase_check_failed_message)) },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(CommonR.string.general_dismiss_action))
+            }
+        },
+    )
+}
+
+/**
+ * Shown when Play is still processing a payment. Purely informational: there is nothing to fix, no
+ * purchase to restore and no support case — the entitlement arrives on its own once the payment
+ * clears, so the dialog offers only a dismiss.
+ */
+@Composable
+internal fun PurchasePendingDialog(
+    onDismiss: () -> Unit = {},
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        text = { Text(text = stringResource(R.string.upgrade_screen_pending_dialog_message)) },
         confirmButton = {
             TextButton(onClick = onDismiss) {
                 Text(text = stringResource(CommonR.string.general_dismiss_action))
@@ -298,6 +325,12 @@ internal fun UpgradeScreen(
                     )
                 }
             }
+
+            // Above the ownership/acquisition split, because a pending payment cuts across it: the
+            // buyer waiting for their first Pro purchase, the owner switching products and the
+            // grace user (whose offers box is hidden entirely) all need it, and it is the reason
+            // their purchase buttons are locked.
+            if (loaded?.hasPendingPurchase == true) PendingPurchaseCard()
 
             if (ownedState != null) {
                 UpgradeOwnershipContent(
@@ -497,6 +530,24 @@ private fun UpgradeScreenReturningBuyerPreview() {
                 iapEnabled = true,
                 iapPrice = "$24.99",
                 wasPreviouslyPro = true,
+            ),
+        )
+    }
+}
+
+// The acquisition variant of the pending state: card above the offers, both buy buttons locked.
+@Preview2
+@Composable
+private fun UpgradeScreenPendingPreview() {
+    PreviewWrapper {
+        UpgradeScreen(
+            uiState = GplayUpgradeUiState.Loaded(
+                subscriptionAction = SubscriptionAction.STANDARD,
+                subscriptionEnabled = false,
+                subscriptionPrice = "$12.99",
+                iapEnabled = false,
+                iapPrice = "$24.99",
+                hasPendingPurchase = true,
             ),
         )
     }

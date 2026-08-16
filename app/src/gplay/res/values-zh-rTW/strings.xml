@@ -92,7 +92,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">訂閱仍處於活躍狀態</string>
     <string name="upgrade_screen_sub_still_renewing_message">您的訂閱仍設定為續訂。請先在 Google Play 中取消以免被重複扣費，然後購買一次性版本。這不會退款訂閱。</string>
     <string name="upgrade_screen_sub_check_failed_title">無法驗證訂閱</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play 未及時回應，因此我們無法安全地確認您的訂閱狀態。請稍後重試。</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro 仍處於活躍狀態</string>
     <string name="upgrade_screen_grace_body">我們正在與 Google Play 確認您的購買。您的 Pro 功能在此期間保持解鎖。</string>

@@ -91,7 +91,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">サブスクリプションはまだ有効です</string>
     <string name="upgrade_screen_sub_still_renewing_message">あなたのサブスクリプションはまだ更新されるように設定されています。二重課金を避けるためにまずGoogle Playでキャンセルしてから、一回限りの購入を行ってください。これによりサブスクリプションの返金はされません。</string>
     <string name="upgrade_screen_sub_check_failed_title">サブスクリプションを確認できませんでした</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Playが時間内に応答しなかったため、サブスクリプション状態を安全に確認できませんでした。しばらくしてからもう一度お試しください。</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Proはまだ有効です</string>
     <string name="upgrade_screen_grace_body">Google Playであなたの購入を確認しています。その間もPro機能はロック解除されたままです。</string>

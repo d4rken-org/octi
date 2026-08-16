@@ -91,7 +91,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">구독이 여전히 활성입니다</string>
     <string name="upgrade_screen_sub_still_renewing_message">구독이 여전히 갱신되도록 설정되어 있습니다. 중복 청구를 피하기 위해 먼저 Google Play에서 취소한 후 일회성 구매를 하세요. 이는 구독을 환불하지 않습니다.</string>
     <string name="upgrade_screen_sub_check_failed_title">구독을 확인할 수 없습니다</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play에서 제시간에 응답하지 않아 구독 상태를 안전하게 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro가 여전히 활성입니다</string>
     <string name="upgrade_screen_grace_body">Google Play에서 구매를 확인하는 중입니다. Pro 기능은 계속 사용 가능합니다.</string>

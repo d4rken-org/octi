@@ -93,7 +93,6 @@ Os mesmos recursos, apenas modelos de preços diferentes.</string>
     <string name="upgrade_screen_sub_still_renewing_title">Assinatura ainda ativa</string>
     <string name="upgrade_screen_sub_still_renewing_message">Sua assinatura ainda está definida para se renovar. Cancele-a no Google Play primeiro para não ser cobrado duas vezes e depois compre a compra única. Isso não reembolsa a assinatura.</string>
     <string name="upgrade_screen_sub_check_failed_title">Não foi possível verificar a assinatura</string>
-    <string name="upgrade_screen_sub_check_failed_message">O Google Play não respondeu a tempo, então não conseguimos confirmar com segurança seu estado de assinatura. Tente novamente em um momento.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro ainda está ativo</string>
     <string name="upgrade_screen_grace_body">Estamos confirmando sua compra com o Google Play. Seus recursos Pro permanecem desbloqueados enquanto isso.</string>

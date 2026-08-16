@@ -93,7 +93,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">Abbonamento ancora attivo</string>
     <string name="upgrade_screen_sub_still_renewing_message">Il tuo abbonamento è ancora impostato per il rinnovo. Annullalo prima su Google Play in modo da non essere addebitato due volte, quindi acquista l’acquisto una tantum. Questo non rimborsa l’abbonamento.</string>
     <string name="upgrade_screen_sub_check_failed_title">Impossibile verificare l’abbonamento</string>
-    <string name="upgrade_screen_sub_check_failed_message">Google Play non ha risposto in tempo, quindi non possiamo confermare in sicurezza lo stato del tuo abbonamento. Riprova tra un momento.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro è ancora attivo</string>
     <string name="upgrade_screen_grace_body">Stiamo confermando il tuo acquisto con Google Play. Le tue funzioni Pro rimangono sbloccate nel frattempo.</string>

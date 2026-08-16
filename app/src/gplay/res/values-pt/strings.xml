@@ -92,7 +92,6 @@
     <string name="upgrade_screen_sub_still_renewing_title">Subscrição ainda ativa</string>
     <string name="upgrade_screen_sub_still_renewing_message">A sua subscrição ainda está definida para renovar. Cancele-a primeiro no Google Play para não ser cobrado duas vezes e depois compre a compra única. Isto não reembolsa a subscrição.</string>
     <string name="upgrade_screen_sub_check_failed_title">Não foi possível verificar a subscrição</string>
-    <string name="upgrade_screen_sub_check_failed_message">O Google Play não respondeu a tempo, por isso não conseguimos confirmar com segurança o estado da sua subscrição. Tente novamente daqui a pouco.</string>
     <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro continua ativo</string>
     <string name="upgrade_screen_grace_body">Estamos a confirmar a sua compra com o Google Play. As funcionalidades Pro mantêm-se desbloqueadas entretanto.</string>
