@@ -1,7 +1,11 @@
 package eu.darken.octi.syncs.octiserver.ui.link.host
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.octi.common.coroutine.DispatcherProvider
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
@@ -31,13 +35,14 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class OctiServerLinkHostVM @Inject constructor(
-    dispatcherProvider: DispatcherProvider,
+    private val dispatcherProvider: DispatcherProvider,
     private val syncManager: SyncManager,
     private val syncSettings: SyncSettings,
     private val json: Json,
@@ -64,6 +69,8 @@ class OctiServerLinkHostVM @Inject constructor(
 
     var deviceLinkedEvents = SingleEventFlow<Unit>()
         private set
+
+    val linkCodeCopiedEvents = SingleEventFlow<Unit>()
 
     private var deviceMonitorJob: Job? = null
 
@@ -140,6 +147,24 @@ class OctiServerLinkHostVM @Inject constructor(
         }
     }
 
+    /**
+     * A TV rarely has a share target that can accept text, and the code is ~500 characters, so
+     * "read it off the screen and retype it" is not a viable fallback. Copy is the escape hatch.
+     */
+    fun copyLinkCode(context: Context) = launch {
+        log(TAG) { "copyLinkCode()" }
+        val encodedCode = _state.value.encodedLinkCode ?: return@launch
+        // On Main deliberately: launch{} runs on Dispatchers.Default, and resolving CLIPBOARD_SERVICE
+        // off the main thread throws "Can't create handler inside thread that has not called
+        // Looper.prepare()" on some versions. ClipboardHelper carries a workaround for the same trap.
+        withContext(dispatcherProvider.Main) {
+            val clipboard = context.getSystemService(ClipboardManager::class.java) ?: return@withContext
+            clipboard.setPrimaryClip(ClipData.newPlainText(CLIP_LABEL, encodedCode))
+        }
+        // Android 13+ shows its own clipboard confirmation, a toast on top of it would double up.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) linkCodeCopiedEvents.tryEmit(Unit)
+    }
+
     fun shareLinkCode(activity: Activity) = launch {
         log(TAG) { "shareLinkCode()" }
         val encodedCode = _state.value.encodedLinkCode ?: return@launch
@@ -155,5 +180,6 @@ class OctiServerLinkHostVM @Inject constructor(
 
     companion object {
         private val TAG = logTag("Sync", "OctiServer", "Link", "Host", "VM")
+        private const val CLIP_LABEL = "Octi link code"
     }
 }

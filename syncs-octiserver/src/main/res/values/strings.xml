@@ -36,4 +36,10 @@
     <string name="sync_octiserver_add_custom_server_label">Custom server</string>
     <string name="sync_octiserver_link_code_invalid_label">Link code incomplete</string>
     <string name="sync_octiserver_link_code_invalid_description">This link code is incomplete or was altered on the way over. Copy the whole code from the other device and paste it without retyping it, or scan the QR code instead.</string>
+    <string name="sync_octiserver_link_code_copied_message">Link code copied</string>
+    <plurals name="sync_octiserver_link_code_character_count">
+        <item quantity="one">%d character</item>
+        <item quantity="other">%d characters</item>
+    </plurals>
+    <string name="sync_octiserver_link_code_character_count_hint">Both devices must show the same count.</string>
 </resources>
