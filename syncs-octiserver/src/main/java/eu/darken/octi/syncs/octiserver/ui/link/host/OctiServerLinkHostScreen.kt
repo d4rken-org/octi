@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -29,6 +30,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,9 +46,10 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
@@ -86,6 +89,16 @@ fun OctiServerLinkHostScreenHost(
         }
     }
 
+    LaunchedEffect(vm) {
+        vm.linkCodeCopiedEvents.collect {
+            Toast.makeText(
+                context,
+                OctiServerR.string.sync_octiserver_link_code_copied_message,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     val state by vm.state.collectAsState(initial = null)
     state?.let {
         OctiServerLinkHostScreen(
@@ -93,6 +106,7 @@ fun OctiServerLinkHostScreenHost(
             onNavigateUp = { vm.navUp() },
             onLinkOptionSelected = { option -> vm.onLinkOptionSelected(option) },
             onShareLinkCode = { activity?.let { act -> vm.shareLinkCode(act) } },
+            onCopyLinkCode = { vm.copyLinkCode(context) },
         )
     }
 }
@@ -103,6 +117,7 @@ fun OctiServerLinkHostScreen(
     onNavigateUp: () -> Unit,
     onLinkOptionSelected: (OctiServerLinkOption) -> Unit,
     onShareLinkCode: () -> Unit,
+    onCopyLinkCode: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -164,6 +179,7 @@ fun OctiServerLinkHostScreen(
                     LinkContent(
                         state = state,
                         onShareLinkCode = onShareLinkCode,
+                        onCopyLinkCode = onCopyLinkCode,
                         // No cap needed and no scroll around it: this pane is bounded, so QrCode
                         // measures the real height itself. A scroll here would hand it Infinity
                         // again and let its own padding push it back off the bottom.
@@ -191,6 +207,7 @@ fun OctiServerLinkHostScreen(
                     LinkContent(
                         state = state,
                         onShareLinkCode = onShareLinkCode,
+                        onCopyLinkCode = onCopyLinkCode,
                         qrMaxSide = viewportHeight * STACKED_QR_VIEWPORT_FRACTION,
                         // The Column above already scrolls; a second one here would nest.
                         contentScrolls = false,
@@ -268,6 +285,7 @@ private fun LinkOptionRow(
 private fun LinkContent(
     state: OctiServerLinkHostVM.State,
     onShareLinkCode: () -> Unit,
+    onCopyLinkCode: () -> Unit,
     contentScrolls: Boolean,
     modifier: Modifier = Modifier,
     qrMaxSide: Dp = Dp.Infinity,
@@ -281,6 +299,7 @@ private fun LinkContent(
     OctiServerLinkOption.DIRECT -> TextCode(
         encodedLinkCode = state.encodedLinkCode,
         onShareLinkCode = onShareLinkCode,
+        onCopyLinkCode = onCopyLinkCode,
         // Only the text code can outgrow its pane, and only where nothing else scrolls already.
         modifier = if (contentScrolls) modifier.verticalScroll(rememberScrollState()) else modifier,
     )
@@ -332,6 +351,7 @@ private fun QrCode(
 private fun TextCode(
     encodedLinkCode: String?,
     onShareLinkCode: () -> Unit,
+    onCopyLinkCode: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // No scroll of its own: each layout branch owns exactly one scroll container, otherwise the
@@ -348,19 +368,50 @@ private fun TextCode(
                 .padding(bottom = 8.dp),
         )
 
-        Text(
-            text = encodedLinkCode ?: "",
-            style = MaterialTheme.typography.bodyLarge,
-            fontStyle = FontStyle.Italic,
-        )
+        // Selectable and monospaced: the code is ~500 characters of case-sensitive base64 wrapped
+        // over several lines. Unselectable italic prose is the worst case for both copying it and
+        // reading it back, and losing one wrapped line while transcribing silently corrupts it.
+        SelectionContainer {
+            Text(
+                text = encodedLinkCode ?: "",
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = FontFamily.Monospace,
+            )
+        }
+
+        // The count is the one property of the code a person can compare across two screens without
+        // reading 500 characters, and a mismatch is exactly the failure this screen feeds into.
+        encodedLinkCode?.let { code ->
+            Text(
+                text = pluralStringResource(
+                    OctiServerR.plurals.sync_octiserver_link_code_character_count,
+                    code.length,
+                    code.length,
+                ),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(top = 8.dp),
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = onShareLinkCode,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(text = stringResource(CommonR.string.general_share_action))
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Button(
+                onClick = onCopyLinkCode,
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(text = stringResource(CommonR.string.general_copy_action))
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            OutlinedButton(
+                onClick = onShareLinkCode,
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(text = stringResource(CommonR.string.general_share_action))
+            }
         }
     }
 }
@@ -396,6 +447,7 @@ private fun OctiServerLinkHostScreenQRPreview() = PreviewWrapper {
         onNavigateUp = {},
         onLinkOptionSelected = {},
         onShareLinkCode = {},
+        onCopyLinkCode = {},
     )
 }
 
@@ -410,6 +462,7 @@ private fun OctiServerLinkHostScreenDirectPreview() = PreviewWrapper {
         onNavigateUp = {},
         onLinkOptionSelected = {},
         onShareLinkCode = {},
+        onCopyLinkCode = {},
     )
 }
 

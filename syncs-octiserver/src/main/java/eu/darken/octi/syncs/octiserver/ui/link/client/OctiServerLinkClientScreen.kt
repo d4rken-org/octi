@@ -37,9 +37,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.journeyapps.barcodescanner.ScanContract
@@ -204,8 +206,32 @@ fun OctiServerLinkClientScreen(
                                 onValueChange = { linkCodeText = it },
                                 label = { Text(text = stringResource(OctiServerR.string.sync_octiserver_link_code_label)) },
                                 singleLine = true,
-                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
+                                // A link code is a case-sensitive base64 blob, not prose. Left to
+                                // the platform defaults the IME applies autocorrect, word
+                                // suggestions and sentence capitalization to it, which silently
+                                // rewrites the code for anyone typing it by hand.
+                                keyboardOptions = KeyboardOptions(
+                                    capitalization = KeyboardCapitalization.None,
+                                    autoCorrectEnabled = false,
+                                    imeAction = ImeAction.Go,
+                                ),
                                 keyboardActions = KeyboardActions(onGo = { onCodeEntered(linkCodeText) }),
+                                // Counted trimmed, matching what the decoder sees and what the
+                                // sending device displays, so the two numbers are comparable.
+                                supportingText = {
+                                    val trimmed = linkCodeText.trim()
+                                    Text(
+                                        text = if (trimmed.isEmpty()) {
+                                            stringResource(OctiServerR.string.sync_octiserver_link_code_character_count_hint)
+                                        } else {
+                                            pluralStringResource(
+                                                OctiServerR.plurals.sync_octiserver_link_code_character_count,
+                                                trimmed.length,
+                                                trimmed.length,
+                                            )
+                                        },
+                                    )
+                                },
                                 modifier = Modifier.fillMaxWidth(),
                             )
 
