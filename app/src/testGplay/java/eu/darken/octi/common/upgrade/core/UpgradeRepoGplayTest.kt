@@ -13,6 +13,7 @@ import eu.darken.octi.common.upgrade.core.billing.ItemAlreadyOwnedBillingExcepti
 import eu.darken.octi.common.upgrade.core.billing.PendingPurchaseBillingException
 import eu.darken.octi.common.upgrade.core.billing.PurchasedSku
 import eu.darken.octi.common.upgrade.core.billing.UserCanceledBillingException
+import eu.darken.octi.common.upgrade.core.billing.work.PurchaseAckScheduler
 import eu.darken.octi.main.core.CurriculumVitae
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -56,6 +57,7 @@ class UpgradeRepoGplayTest : BaseTest() {
     private val billingManager = mockk<BillingManager>()
     private val billingCache = mockk<BillingCache>()
     private val curriculumVitae = mockk<CurriculumVitae>(relaxed = true)
+    private val ackScheduler = mockk<PurchaseAckScheduler>(relaxed = true)
     private lateinit var lastProAtMock: DataStoreValue<Long>
     private lateinit var lastProSkuMock: DataStoreValue<String>
     private lateinit var proUnconfirmedMock: DataStoreValue<Long>
@@ -103,7 +105,7 @@ class UpgradeRepoGplayTest : BaseTest() {
         }
         every { billingCache.proUnconfirmedSince } returns proUnconfirmedMock
         coJustRun { billingCache.stampLastProState(any(), any()) }
-        return UpgradeRepoGplay(scope, billingManager, billingCache, curriculumVitae)
+        return UpgradeRepoGplay(scope, billingManager, billingCache, curriculumVitae, ackScheduler)
     }
 
     private fun result(code: Int): BillingResult = BillingResult.newBuilder().setResponseCode(code).build()
@@ -1024,6 +1026,35 @@ class UpgradeRepoGplayTest : BaseTest() {
         gate.complete(Unit)
         repo.autoRestoreBusy.first() shouldBe false
     }
+
+    // endregion
+
+    // region ack safety net
+
+    @Test fun `launching a billing flow arms the persistent ack safety net first`() = runTest2 {
+        val order = mutableListOf<String>()
+        coEvery { ackScheduler.armForBillingFlowLaunch() } coAnswers { order.add("arm") }
+        coEvery { billingManager.startIapFlow(any(), any(), null) } coAnswers { order.add("launch") }
+
+        repo(lastProAt = 0L).startLaunch()
+
+        // Armed (and awaited) BEFORE the Play sheet can open: the process may die around the sheet,
+        // and the WorkManager transaction has to land first to be worth anything.
+        order shouldBe listOf("arm", "launch")
+    }
+
+    @Test fun `a failing safety net arm never blocks the purchase flow`() = runTest2 {
+        coEvery { ackScheduler.armForBillingFlowLaunch() } throws RuntimeException("workmanager broken")
+        coJustRun { billingManager.startIapFlow(any(), any(), null) }
+
+        val errors = mutableListOf<Throwable>()
+        repo(lastProAt = 0L).startLaunch { errors.add(it) }
+
+        // The net is best-effort: the foreground ack path still exists, the purchase must proceed.
+        errors shouldBe emptyList()
+        coVerify { billingManager.startIapFlow(any(), any(), null) }
+    }
+
 
     // endregion
 }
