@@ -97,7 +97,24 @@ class MetaInfoSerializationTest : BaseTest() {
         json.encodeToString(MetaInfo.DeviceType.TABLET) shouldBe "\"TABLET\""
         json.encodeToString(MetaInfo.DeviceType.DESKTOP) shouldBe "\"DESKTOP\""
         json.encodeToString(MetaInfo.DeviceType.BROWSER) shouldBe "\"BROWSER\""
+        json.encodeToString(MetaInfo.DeviceType.SERVER) shouldBe "\"SERVER\""
         json.encodeToString(MetaInfo.DeviceType.UNKNOWN) shouldBe "\"UNKNOWN\""
+    }
+
+    @Test
+    fun `SERVER DeviceType decodes to SERVER`() {
+        val serverJson = """
+            {
+                "deviceId": {"id": "hass-1"},
+                "octiVersionName": "1.0.0",
+                "octiGitSha": "serversha",
+                "deviceManufacturer": "Acme",
+                "deviceName": "Home Assistant",
+                "deviceType": "SERVER"
+            }
+        """
+        val decoded = json.decodeFromString<MetaInfo>(serverJson)
+        decoded.deviceType shouldBe MetaInfo.DeviceType.SERVER
     }
 
     @Test

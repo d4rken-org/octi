@@ -43,6 +43,7 @@ data class MetaInfo(
         TABLET,
         DESKTOP,
         BROWSER,
+        SERVER,
         UNKNOWN,
     }
 }

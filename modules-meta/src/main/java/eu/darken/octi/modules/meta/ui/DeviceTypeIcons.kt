@@ -3,6 +3,7 @@ package eu.darken.octi.modules.meta.ui
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Computer
+import androidx.compose.material.icons.twotone.Dns
 import androidx.compose.material.icons.twotone.PhoneAndroid
 import androidx.compose.material.icons.twotone.Public
 import androidx.compose.material.icons.twotone.QuestionMark
@@ -16,6 +17,7 @@ fun MetaInfo.DeviceType?.materialIcon(): ImageVector = when (this) {
     MetaInfo.DeviceType.TABLET -> Icons.TwoTone.Tablet
     MetaInfo.DeviceType.DESKTOP -> Icons.TwoTone.Computer
     MetaInfo.DeviceType.BROWSER -> Icons.TwoTone.Public
+    MetaInfo.DeviceType.SERVER -> Icons.TwoTone.Dns
     MetaInfo.DeviceType.UNKNOWN, null -> Icons.TwoTone.QuestionMark
 }
 
@@ -25,5 +27,6 @@ fun MetaInfo.DeviceType.labelRes(): Int = when (this) {
     MetaInfo.DeviceType.TABLET -> R.string.module_meta_detail_device_type_tablet
     MetaInfo.DeviceType.DESKTOP -> R.string.module_meta_detail_device_type_desktop
     MetaInfo.DeviceType.BROWSER -> R.string.module_meta_detail_device_type_browser
+    MetaInfo.DeviceType.SERVER -> R.string.module_meta_detail_device_type_server
     MetaInfo.DeviceType.UNKNOWN -> R.string.module_meta_detail_device_type_unknown
 }
