@@ -144,6 +144,7 @@ class ClipboardWidgetContentGlanceTest {
         MetaInfo.DeviceType.TABLET.widgetIconRes() shouldBe R.drawable.widget_device_tablet_24
         MetaInfo.DeviceType.DESKTOP.widgetIconRes() shouldBe R.drawable.widget_device_desktop_24
         MetaInfo.DeviceType.BROWSER.widgetIconRes() shouldBe R.drawable.widget_device_browser_24
+        MetaInfo.DeviceType.SERVER.widgetIconRes() shouldBe R.drawable.widget_device_server_24
         MetaInfo.DeviceType.UNKNOWN.widgetIconRes() shouldBe R.drawable.widget_device_unknown_24
     }
 
