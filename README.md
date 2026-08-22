@@ -33,6 +33,9 @@ Companion clients (early-stage, talk to the same Octi Server):
 * [Octi Desktop](https://github.com/d4rken-org/octi-desktop) — Compose Multiplatform desktop client (Linux / macOS / Windows).
 * [Octi Web](https://github.com/d4rken-org/octi-web) — Browser-based client, connects directly to your self-hosted Octi Server.
 
+Writing your own client? The [sync protocol reference](docs/protocol/README.md) documents the Octi
+Server wire protocol: linking, HTTP API, change notifications, and end-to-end encryption.
+
 Hungry for details? [Check the wiki](https://github.com/d4rken-org/octi/wiki). Still have
 questions? [Join us on discord](https://discord.gg/s7V4C6zuVy)!
 

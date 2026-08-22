@@ -85,10 +85,10 @@ makes it deliberate.
 
 ## Cross-repo workflow (consumer side)
 
-See [pull-request-guidelines.md](pull-request-guidelines.md) — sister PRs must
-be linked when a wire-format change crosses repos. The web/desktop side keeps a
-`fixture-lock.json` that pins this directory by app-main commit SHA, fetches via
-sparse-checkout, and verifies against `manifest.json` before running its tests.
+Sister PRs must be linked when a wire-format change crosses repos. The
+web/desktop side keeps a `fixture-lock.json` that pins this directory by
+app-main commit SHA, fetches via sparse-checkout, and verifies against
+`manifest.json` before running its tests.
 
 ## Upstream gating (this repo's CI)
 
@@ -199,10 +199,9 @@ impossible on its own. Two ways to break wire format intentionally:
 
 Open the consumer PRs first (or simultaneously). Each includes the matching
 decoder change. The producer PR then merges because the consumers' default
-branches already have the updated decoders when the gate fetches them. The
-[pull-request-guidelines.md](pull-request-guidelines.md) sister-repo section
-covers the mechanics. Right tool for renames, additions of required fields, or
-new value-class shapes.
+branches already have the updated decoders when the gate fetches them. Link the
+sister PRs to each other so the coordination is visible from either side. Right
+tool for renames, additions of required fields, or new value-class shapes.
 
 ### 2. Staged via capability flag
 
@@ -220,8 +219,12 @@ Full sequence:
 3. **Producer advertises a new capability tag** in `Octi-Device-Capabilities`
    (see [device-capabilities.md](device-capabilities.md)). Consumers reading
    peers' capabilities now know "peer X has the new format."
-4. **Producer adds dual-write**: emit old format unconditionally, emit new
-   format only for peers whose capabilities include the new tag.
+4. **Producer writes one backward-compatible document** carrying both shapes,
+   old fields and new fields side by side. There is exactly one stored document
+   per (owner device, module) and every peer reads that same document, so a
+   producer cannot emit one format to one peer and another format to another.
+   Capability tags don't route the write; they answer "may the old shape be
+   dropped yet?" (steps 5 and 6).
 5. **Support floor moves** — once every peer that matters has advertised the
    capability, the old format becomes dead code.
 6. **Producer removes the old write path** and the old fixture vector. This
