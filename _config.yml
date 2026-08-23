@@ -17,6 +17,7 @@ include:
   - CHANGELOG.md
   - README.md
 exclude:
+  - branding
   - buildSrc
   - gradle/wrapper
   - fastlane
