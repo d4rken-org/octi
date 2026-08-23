@@ -39,7 +39,8 @@ Community clients, built and maintained by others:
 
 Writing your own client? The [sync protocol reference](docs/protocol/README.md) documents the Octi
 Server wire protocol: linking, HTTP API, change notifications, and end-to-end encryption, and
-[branding/](branding/README.md) covers when you may use the Octi icon and how to name your project.
+[branding/](https://github.com/d4rken-org/octi/tree/main/branding) covers when you may use the Octi
+icon and how to name your project.
 
 Hungry for details? [Check the wiki](https://github.com/d4rken-org/octi/wiki). Still have
 questions? [Join us on discord](https://discord.gg/s7V4C6zuVy)!
