@@ -18,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import eu.darken.octi.common.humanizeIdentifier
 import eu.darken.octi.modules.meta.ui.materialIcon
 import eu.darken.octi.modules.meta.ui.osDisplayName
 
@@ -73,7 +74,7 @@ internal fun DeviceHeader(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            item.serverPlatform?.let { platform ->
+            item.serverPlatform?.takeIf { it.isNotBlank() }?.let { platform ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = when (platform.lowercase()) {
@@ -86,7 +87,7 @@ internal fun DeviceHeader(
                     )
                     Spacer(modifier = Modifier.width(2.dp))
                     Text(
-                        text = platform.replaceFirstChar { it.uppercase() },
+                        text = humanizeIdentifier(platform),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
