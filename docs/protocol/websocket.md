@@ -1,7 +1,7 @@
 # WebSocket notifications
 
-A change notification channel. It tells a client that something changed so the client can fetch it
-over HTTP sooner than its next poll. It never carries payload data, and it is not a reliable stream.
+A change notification channel. It tells a client that something changed so it can fetch it over
+HTTP sooner than its next poll. It carries no payload data and is not a reliable stream.
 
 A client that ignores this channel entirely still works. It just reacts more slowly.
 
@@ -21,25 +21,24 @@ X-Device-ID: 11111111-1111-1111-1111-111111111111
 Authorization: Basic <base64 of accountId:devicePassword>
 ```
 
-The device metadata headers described in [http-api.md](http-api.md) are also read on the upgrade and
-update the stored device record exactly as they do on an HTTP call.
+The device metadata headers from [http-api.md](http-api.md) are read on the upgrade too, and
+update the stored device record exactly as on an HTTP call.
 
-Authentication runs the same code path as the HTTP routes, and the per-account rate limit applies to
-connection establishment.
+Authentication runs the same code path as the HTTP routes, and the per-account rate limit applies
+to connection establishment.
 
 ### Close codes
 
 A refused connection fails differently depending on whether the upgrade already completed.
 
-**Before the upgrade** the request is still an ordinary HTTP call, so the HTTP plugins can reject
-it and the client sees an HTTP error response instead of a handshake. The global per-IP request
-limiter runs ahead of routing and treats the upgrade request like any other call; over the limit it
-answers `429` with `Retry-After` in delta-seconds. When CORS is enabled, an `Origin` that is not on
-the allowlist is answered with `403` before any upgrade happens; the CORS note in
-[http-api.md](http-api.md#limits-and-rate-limiting) describes the allowlist and who it applies to.
+**Before the upgrade** the request is still an ordinary HTTP call, so the client can get an HTTP
+error response instead of a handshake. The global per-IP limiter runs ahead of routing and counts
+the upgrade like any other request; over the limit it answers `429` with `Retry-After` in
+delta-seconds. With CORS enabled, an `Origin` that is not on the allowlist gets `403` before any
+upgrade happens. See the CORS note in [http-api.md](http-api.md#limits-and-rate-limiting).
 
-**After the upgrade** the route-level failures below, authentication, the per-account rate limit and
-the connection caps, arrive as a WebSocket close:
+**After the upgrade** the route-level failures below, authentication, the per-account rate limit
+and the connection caps, arrive as a WebSocket close:
 
 | Code | Reason text | Cause |
 |---|---|---|
@@ -55,11 +54,11 @@ it. `1013` is explicitly retryable after a delay.
 
 ### Session model
 
-Sessions are keyed by (account id, device id). Opening a second connection for the same key
-**replaces** the first: the old session's outbox is closed and its socket is closed with `1001`.
-A client must not hold two sockets for one device id.
+Sessions are keyed by (account id, device id). A second connection for the same key **replaces**
+the first: the old session's outbox is closed and its socket closed with `1001`. Never hold two
+sockets for one device id.
 
-Connection caps at the pinned revision, all server-side constants rather than configurable options:
+Connection caps at the pinned revision are server-side constants, not configurable:
 
 | Cap | Value |
 |---|---|
@@ -75,26 +74,25 @@ Server-side WebSocket configuration: **ping period 30 seconds**, **pong timeout 
 **maximum frame size 4096 bytes**.
 
 The 60 seconds is the pong deadline, not an inactivity timeout on application traffic. The server
-pings every 30 seconds and terminates the session if no pong comes back within 60 seconds; a
-connection that carries no notifications for hours stays open as long as pongs keep arriving. Any
-conforming WebSocket client answers pings automatically.
+pings every 30 seconds and drops the session if no pong arrives within 60 seconds. A connection
+with no notifications for hours stays open as long as pongs keep coming. Any conforming WebSocket
+client answers pings automatically.
 
-The 4096-byte frame limit is Ktor's `maxFrameSize`, and it applies to frames the server **reads**,
-counting the accumulated size of a fragmented message rather than each fragment on its own. It
-does not cap the frames the server sends. Do not refuse inbound frames larger than 4096 bytes: as
-the batching section below explains, one notification frame can describe every module of every
-peer, which is well past 4096 bytes on any account of a realistic size.
+The 4096-byte frame limit is Ktor's `maxFrameSize`. It applies to frames the server **reads**, and
+counts the accumulated size of a fragmented message rather than each fragment alone. It does not
+cap the frames the server sends. Do not refuse inbound frames larger than 4096 bytes: one
+notification frame can describe every module of every peer, well past 4096 bytes on a realistic
+account.
 
-The Android client independently sets its own OkHttp ping interval to 30 seconds and reconnects with
-exponential backoff from 1 second up to a 30 second ceiling. Those are client policy, not protocol.
-Reconnect strategy is entirely up to the implementer, within the retry semantics of the close codes
-above.
+The Android client sets its own OkHttp ping interval to 30 seconds and reconnects with exponential
+backoff from 1 second up to a 30 second ceiling. That is client policy, not protocol; reconnect
+strategy is yours to choose, within the retry semantics of the close codes above.
 
 ### Client-to-server frames
 
 There are none. The server reads incoming frames only to enforce a rate limit of **120 frames per
-60 second window**, and closes the connection with `1008` when a client exceeds it. Nothing a client
-sends is interpreted. Do not send application frames.
+60 second window**, closing with `1008` when a client exceeds it. Nothing you send is interpreted,
+so do not send application frames.
 
 ## Server frames
 
@@ -133,20 +131,19 @@ commit, and for a blob delete; `deleted` for a module delete. Treat an unrecogni
 ### Two device ids, one event
 
 `deviceId` and `sourceDeviceId` differ whenever a device writes into another device's slot. The
-server broadcasts to every connected session on the account and filters per recipient on
-`sourceDeviceId`: a peer never receives events it caused itself. A peer that received an event
-therefore knows it did not originate it, and should fetch `(deviceId, moduleId)`.
+server broadcasts to every session on the account and filters per recipient on `sourceDeviceId`, so
+a peer never receives events it caused itself. Anything you do receive came from someone else:
+fetch `(deviceId, moduleId)`.
 
 Do not self-filter on `deviceId`. Under the [single-writer invariant](README.md#single-writer-invariant)
-the two are usually equal, but filtering on the target rather than the actor would suppress
+the two are usually equal, but filtering on the target instead of the actor would suppress
 legitimate events.
 
 ### Batching
 
-Events are batched per account with a 500 millisecond debounce, and further writes inside the window
-extend it. One frame can therefore carry several events, and a burst of writes collapses into one
-delivery. Clients must handle an `events` array of any length, including one long enough to describe
-every module of every peer.
+Events are batched per account with a 500 millisecond debounce, and further writes inside the
+window extend it. A burst of writes collapses into one delivery. Handle an `events` array of any
+length, including one long enough to describe every module of every peer.
 
 ### What the Android decoder tolerates, and why you must not rely on it
 
@@ -156,35 +153,32 @@ The Android client's decoder is deliberately lenient. It is not the contract:
   it.
 - It defaults `action` to `updated` when absent. The server always sends it.
 - It accepts a `blobKey` field. The server does not emit one.
-- It has no field for `sourceDeviceId` and ignores it. The server always sends it, and it is what
-  self-suppression is based on.
+- It has no field for `sourceDeviceId` and ignores it. The server always sends it, and
+  self-suppression is based on it.
 - It logs and skips events whose `type` it does not recognize.
 
-A third-party client should encode the server contract, tolerate unknown fields for
-forward-compatibility, and not assume other implementations are as forgiving as this one.
+Encode the server contract, tolerate unknown fields, and do not assume other implementations are
+this forgiving.
 
 ## Delivery is best effort
 
-This is the single most important property of the channel. Notifications are a latency optimization
-layered on top of HTTP polling, never a source of truth.
+Notifications are a latency optimization layered on top of HTTP polling, never a source of truth.
 
-What the server does **not** do:
-
-- **No persistence.** Events go only to sessions that are connected at broadcast time. If no session
-  for the account is connected, the batch is discarded.
+- **No persistence.** Events go only to sessions that are connected at broadcast time. If no
+  session for the account is connected, the batch is discarded.
 - **No replay.** Reconnecting does not deliver anything missed while disconnected. There is no
   cursor, sequence number, or resume token in the protocol.
 - **No acknowledgement.** The server never learns whether a frame was processed, and never retries.
-- **No backpressure.** Each session has a bounded outbox buffer. When it is full, the broadcast drops
-  the notification for that peer and moves on. The socket stays open and the client sees no gap.
+- **No backpressure.** Each session has a bounded outbox buffer. When it is full, the broadcast
+  drops the notification for that peer and moves on. The socket stays open and the client sees no
+  gap.
 
 Consequences for an implementation:
 
-1. Perform a **full HTTP reconciliation** on first connect and again after **every** reconnect. Read
-   the device list, then read every module slot you care about. Do not assume the socket picked up
-   where it left off.
-2. Keep a **periodic reconciliation** running regardless of socket state if the client needs eventual
+1. Do a **full HTTP reconciliation** on first connect and after **every** reconnect: read the
+   device list, then every module slot you care about. The socket does not pick up where it left
+   off.
+2. Keep a **periodic reconciliation** running regardless of socket state if you need eventual
    consistency. A dropped notification is otherwise invisible until the next unrelated event.
 3. Treat every event as a hint to re-read, not as data. Frames carry no payload and no ciphertext.
-4. Never gate correctness on receiving an event. A feature that only works when a notification
-   arrives is a feature that intermittently does not work.
+4. Never gate correctness on receiving an event.

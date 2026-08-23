@@ -2,10 +2,10 @@
 
 Every module document is encrypted on the writing device and decrypted on the reading device. The
 server stores ciphertext, never sees a key, and cannot read or forge a document. It can still
-delete one, and it does see the metadata described in [http-api.md](http-api.md).
+delete one, and it sees the metadata in [http-api.md](http-api.md).
 
-The encryption mode is a property of the **account**, fixed when the account is created and shared
-by every device on it through the linking payload. It is not negotiated per peer and not per module.
+The encryption mode is a property of the **account**, fixed at creation and shared by every device
+through the linking payload. It is not negotiated per peer or per module.
 
 ## Keyset on the wire
 
@@ -20,11 +20,11 @@ The keyset travels inside the [link payload](linking.md) as:
 
 - `type` is the mode identifier, either `AES256_GCM_SIV` or `AES256_SIV`.
 - `key` is base64 of a serialized Tink keyset proto, not a raw symmetric key. Parse it with Tink's
-  `TinkProtoKeysetFormat` (the Android client uses `parseKeyset` with `InsecureSecretKeyAccess`,
-  because the keyset is stored unwrapped by design: there is no server-side key management).
+  `TinkProtoKeysetFormat` (the Android client uses `parseKeyset` with `InsecureSecretKeyAccess`: the
+  keyset is stored unwrapped by design, since there is no server-side key management).
 
-An implementation that does not use Tink has to reproduce both the keyset proto parsing and the Tink
-ciphertext framing described below.
+Without Tink you have to reproduce both the keyset proto parsing and the ciphertext framing
+described below.
 
 ## `AES256_GCM_SIV`, the default
 
@@ -40,13 +40,12 @@ Default for accounts created by current clients.
   <target device id>:<module id>
   ```
 
-  for example `11111111-1111-1111-1111-111111111111:eu.darken.octi.module.core.power`. The device id
-  is the owner of the slot, written in the same lowercase UUID form used in the API, and the module
-  id is the full dotted identifier, not a shortened label.
+  for example `11111111-1111-1111-1111-111111111111:eu.darken.octi.module.core.power`. The device
+  id is the slot's owner, in the lowercase UUID form used in the API. The module id is the full
+  dotted identifier, not a short label.
 
-The associated data binds a document to its slot. Moving ciphertext to a different device id or
-module id makes decryption fail, which is what stops a malicious server from shuffling documents
-between slots.
+The associated data binds a document to its slot: ciphertext moved to a different device id or
+module id fails to decrypt, so a malicious server cannot shuffle documents between slots.
 
 ## `AES256_SIV`, legacy
 
@@ -58,10 +57,9 @@ is unavailable.
 - **Associated data is not used.** The encrypt and decrypt calls pass an empty byte array
   unconditionally, and the caller-supplied associated data is discarded.
 
-This is the contrast that most often breaks a new implementation. Passing the
-`<deviceId>:<moduleId>` string as associated data to a legacy SIV keyset produces ciphertext that no
-existing Octi client can read, and fails to decrypt everything those clients wrote. The mode
-determines the associated data:
+Passing the `<deviceId>:<moduleId>` string as associated data to a legacy SIV keyset produces
+ciphertext no existing Octi client can read, and fails to decrypt everything those clients wrote.
+The mode decides:
 
 | Mode | Primitive | Associated data |
 |---|---|---|
@@ -70,8 +68,8 @@ determines the associated data:
 
 ## Layering
 
-The transport carries **bytes**. The known modules currently encode their documents as JSON, but the
-envelope does not require it and a client must not assume the plaintext is text.
+The transport carries bytes. The known modules encode their documents as JSON today, but the
+envelope does not require it; do not assume the plaintext is text.
 
 Writing:
 
@@ -92,12 +90,10 @@ response body (or base64-decoded documentBase64)
   -> module document bytes
 ```
 
-The gzip layer is inside the encryption, so the server sees only ciphertext and never a compressible
-representation. Compression happens before encryption on every write, without exception; there is no
-"uncompressed" flag on the wire.
+The gzip layer sits inside the encryption, so the server only ever sees ciphertext. Every write
+compresses first, without exception; there is no "uncompressed" flag on the wire.
 
-A zero-length response body means the slot exists but holds no document. Do not attempt to decrypt
-it.
+A zero-length response body means the slot exists but holds no document. Do not try to decrypt it.
 
 ## Tink ciphertext framing
 
@@ -109,26 +105,24 @@ Both modes start with the same 5-byte prefix: the version byte `0x01` followed b
 | `AES256_GCM_SIV` | 12-byte random nonce, then ciphertext, then a 16-byte tag | 33 bytes |
 | `AES256_SIV` | 16-byte synthetic IV, which doubles as the authentication tag, then ciphertext | 21 bytes |
 
-Legacy SIV carries no random nonce. Its synthetic IV is derived from the key and the plaintext,
-which is what makes the mode deterministic. The 12-byte difference between the two overheads is
-exactly that nonce, and the committed vectors show it: every GCM-SIV ciphertext is 33 bytes longer
-than the gzipped document it wraps, every SIV ciphertext 21 bytes longer.
+Legacy SIV carries no random nonce. Its synthetic IV comes from the key and the plaintext, which
+makes the mode deterministic. The 12-byte difference between the overheads is exactly that nonce.
+The committed vectors show it: every GCM-SIV ciphertext is 33 bytes longer than the gzipped document
+it wraps, every SIV ciphertext 21 bytes longer.
 
-Pin the leading `0x01`. It is what catches a silent Tink wire-format upgrade on the producing side,
-and it is the check the committed interop fixtures perform. See
-[stability.md](stability.md).
+Pin the leading `0x01`. It catches a silent Tink wire-format upgrade on the producing side, and it
+is the check the committed interop fixtures perform. See [stability.md](stability.md).
 
 ## Mode availability
 
-AES-GCM-SIV is not usable on every Android device: some platform providers accept the transformation
-name but return plain AES-GCM. The Android client verifies a known-answer test vector at startup and
-falls back to creating a **legacy SIV account** when the check fails. A legacy-SIV account is
+AES-GCM-SIV is not usable on every Android device: some platform providers accept the
+transformation name but return plain AES-GCM. The Android client checks a known-answer test vector
+at startup and creates a **legacy SIV account** when the check fails. A legacy-SIV account is
 therefore not necessarily an old account.
 
-Because the mode is account-wide, a device that cannot do AES-GCM-SIV cannot join a GCM-SIV account
-usefully; it will fail to decrypt what its peers write. Peers advertise which modes they can handle
-through their capability tags, which is how a client detects the mismatch before attempting to
-decrypt. See [capabilities.md](capabilities.md).
+Because the mode is account-wide, a device that cannot do AES-GCM-SIV cannot usefully join a
+GCM-SIV account; it will fail to decrypt what its peers write. Capability tags let a client spot
+that mismatch before it tries to decrypt. See [capabilities.md](capabilities.md).
 
 ## Blob encryption, out of scope
 

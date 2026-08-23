@@ -1,7 +1,7 @@
 # HTTP API
 
-All endpoints live under `/v1/`. A server address is a protocol, a domain, and a port, so the base
-URL a client builds is:
+All endpoints live under `/v1/`. A server address is a protocol, a domain and a port, so the base
+URL is:
 
 ```
 <protocol>://<domain>:<port>/v1/
@@ -9,8 +9,8 @@ URL a client builds is:
 
 for example `https://octi.example.invalid:443/v1/`.
 
-Error responses carry a human-readable **plain text** body, not JSON. Clients must branch on the
-status code and the `X-Octi-Reason` header, never on the body text.
+Error bodies are human-readable plain text, not JSON. Branch on the status code and the
+`X-Octi-Reason` header, never on the body text.
 
 ## Authentication
 
@@ -21,10 +21,10 @@ Every request except registration carries two headers:
 | `Authorization` | `Basic ` + base64 of `<accountId>:<devicePassword>` |
 | `X-Device-ID` | The caller's device UUID |
 
-The server splits the decoded credential on the first `:`, parses the left half as the account UUID,
-and looks up the device by the pair (account id, device id). The password is compared in constant
-time. Both headers are required together: the device id identifies which device inside the account
-is calling, and the account id comes only from the credential.
+The server splits the decoded credential on the first `:`, parses the left half as the account
+UUID, and looks up the device by (account id, device id). The password is compared in constant
+time. Both headers are required: the device id identifies which device inside the account is
+calling, and the account id comes only from the credential.
 
 Authentication failures:
 
@@ -35,13 +35,12 @@ Authentication failures:
 | `404` | No device with that (account id, device id) pair |
 | `401` | Device exists but the password does not match |
 
-The Android client treats `401`, `404` and `410` on any call as "this device is no longer
-registered" and pauses the connector. The server at the pinned revision never returns `410`; the
-client accepts it defensively.
+The Android client treats `401`, `404` and `410` on any call as "no longer registered" and pauses
+the connector. The pinned server never returns `410`; the client accepts it defensively.
 
 ## Device metadata headers
 
-A client may send these on any request. They are how a device advertises itself to its peers.
+Optional on any request. This is how a device advertises itself to peers.
 
 | Header | Meaning |
 |---|---|
@@ -50,27 +49,26 @@ A client may send these on any request. They are how a device advertises itself 
 | `Octi-Device-Label` | Human-readable device name |
 | `Octi-Device-Capabilities` | JSON array of capability tags, see [capabilities.md](capabilities.md) |
 
-Server rules:
+How the server treats them:
 
 - Values are stored on the device record and echoed back to peers through `GET /v1/devices`.
-- A header that is **absent** leaves the stored value untouched. There is no way to clear a value by
-  omitting the header. Sending a header with a new value overwrites the stored one.
-- `Octi-Device-Label` is trimmed and truncated to 128 characters. A value that is blank after
-  trimming normalizes to null, and null means different things on the two paths. At
-  **registration** the device is created with no label. On an **existing** device null is
-  indistinguishable from an absent header and is treated as no update, so the previously stored
-  label survives. There is no way to clear a label over HTTP at this revision.
+- An absent header leaves the stored value untouched; a header with a new value overwrites it.
+  Omitting a header never clears a value.
+- `Octi-Device-Label` is trimmed and truncated to 128 characters. Blank after trimming normalizes
+  to null, which means different things on the two paths. At **registration** the device is
+  created with no label. On an **existing** device it looks like an absent header and is treated as
+  no update, so the stored label survives. A label cannot be cleared over HTTP at this revision.
 - `Octi-Device-Version` and `Octi-Device-Platform` are stored verbatim, with no length or charset
   constraint at this revision.
 - `Octi-Device-Capabilities` is validated as a whole set. One bad tag discards the entire header
   value; the request itself still succeeds. See [capabilities.md](capabilities.md).
-- During registration only, `Octi-Device-Version` falls back to the `User-Agent` header when absent.
-- Metadata is recorded only for requests that pass both authentication and the per-account rate
-  limit, so a rejected request does not update `lastSeen` or any metadata field.
+- During registration only, `Octi-Device-Version` falls back to the `User-Agent` header when
+  absent.
+- Metadata is recorded only for requests that pass authentication and the per-account rate limit,
+  so a rejected request updates neither `lastSeen` nor any metadata field.
 
-Producer policy is separate from the server rule. The Android client derives its label by stripping
-non-printable ASCII from the device model and truncating to 128 characters. That filter is the
-client's own choice; the server neither requires nor enforces it, and other clients are not bound to
+Producer policy is separate. The Android client strips non-printable ASCII from the device model
+and truncates to 128 characters. The server does not require that, and other clients need not copy
 it.
 
 ## Identifiers and validation
@@ -105,16 +103,16 @@ Routes served at the pinned server revision:
 | `GET /v1/myip` | Returns `{"ip":"<caller ip>"}`, unauthenticated | no |
 | `GET /v1/ws` | WebSocket upgrade, see [websocket.md](websocket.md) | yes |
 
-`DELETE /v1/module/{moduleId}` is listed so the endpoint set is not silently partial. It exists,
-takes the same `device-id` query parameter as the other module routes, deletes the document together
-with every blob it references, and emits a `deleted` notification. No shipping client calls it.
+`DELETE /v1/module/{moduleId}` is listed so the endpoint set is not silently partial. It takes the
+same `device-id` parameter as the other module routes, deletes the document and every blob it
+references, and emits a `deleted` notification. No shipping client calls it.
 
 ## Account endpoints
 
 ### `POST /v1/account`
 
-Registers the calling device. With `?share=<code>` it joins the account behind that code; without
-it, a new account is created. See [linking.md](linking.md) for the full flow.
+Registers the calling device. With `?share=<code>` it joins that code's account; without it, a new
+account is created. See [linking.md](linking.md) for the full flow.
 
 Request: `X-Device-ID` required, `Authorization` must **not** be present, device metadata headers
 optional.
@@ -135,21 +133,21 @@ Response `200`:
 
 On `403` because the account vanished, and on `409`, the share code is restored and can be retried.
 
-The credential check is narrower than "no `Authorization` header". The server rejects only a
-header it can parse as Basic credentials: the value must start with `Basic `, the remainder must
-base64-decode, the decoded text must contain a `:`, and the part before that `:` must parse as a
-UUID. Anything else is treated as if no header were present and the registration proceeds. A
-`Bearer` token, a `Basic ` value that is not valid base64, and Basic credentials whose username is
-not a UUID all fall into that gap. It matters most with `?share=`: the credential check runs
-before the share is consumed, so a header the server rejects leaves the code usable, while a
-header it ignores lets the registration complete and burn the one-use code. Send no
-`Authorization` header at all.
+The check is narrower than "no `Authorization` header". The server rejects only a header it can
+parse as Basic credentials: it starts with `Basic `, the rest base64-decodes, the decoded text
+contains a `:`, and the part before that `:` parses as a UUID. Anything else counts as no header
+and the
+registration proceeds. A `Bearer` token, a `Basic ` value that is not valid base64, and Basic
+credentials with a non-UUID username all fall into that gap.
+
+The gap matters with `?share=`: the check runs before the share is consumed, so a rejected header
+leaves the code usable while an ignored one burns it. Send no `Authorization` header at all.
 
 ### `DELETE /v1/account`
 
-Authenticated. Deletes the account: aborts upload sessions, releases quota, deletes every device,
-every share, and all stored data. Responds `200` with no body. Not reversible and not confirmable;
-the caller's own registration is destroyed too.
+Authenticated. Aborts upload sessions, releases quota, and deletes every device, every share and
+all stored data. Responds `200` with no body. Not reversible, not confirmable, and it destroys the
+caller's own registration too.
 
 ### `POST /v1/account/share`
 
@@ -184,15 +182,15 @@ discovery endpoint for everything an operator can tune.
 
 All seventeen fields are always present. `availableBytes` is
 `max(0, accountQuotaBytes - usedBytes - reservedBytes)`. `reservedBytes` covers blob upload sessions
-that have reserved space but not yet committed.
+that reserved space but have not committed.
 
-`storageApiVersion` is the feature probe for the blob layer: the Android client treats a value of
-`1` or higher as "this server supports blob-backed modules" and a `404` or `405` on this endpoint as
-"legacy server, no blob support". The value at this revision is `2`. A client that never uses blobs
-does not need to call this endpoint at all.
+`storageApiVersion` is the feature probe for the blob layer. The Android client treats `1` or
+higher as "blob-backed modules supported", and a `404` or `405` here as "legacy server, no blob
+support". The value at this revision is `2`. A client that never uses blobs need not call this
+endpoint.
 
-The Android client's DTO decodes only five of these fields. That is a client limitation, not the
-contract; the response above is what the server sends.
+The Android client's DTO decodes only five of these fields. That is a client limitation; the server
+sends the response above.
 
 ## Device endpoints
 
@@ -218,23 +216,23 @@ Authenticated. Lists every device on the caller's account, including the caller.
 
 Field notes:
 
-- `version`, `platform` and `label` are always present and are `null` when the device has never
+- `version`, `platform` and `label` are always present, and `null` when the device has never
   reported them.
 - `capabilities` is **omitted entirely** when the device has never reported a valid capability set.
   When present it is a real JSON array of strings, not a stringified one. See
   [capabilities.md](capabilities.md).
 - `addedAt` and `lastSeen` are ISO-8601 instants in UTC.
 
-This is also how a client discovers which peers exist. There is no separate peer list.
+This is also how a client discovers its peers. There is no separate peer list.
 
 ### `DELETE /v1/devices/{deviceId}`
 
-Authenticated. Removes another device (or the caller) from the account, aborting its upload sessions
-and deleting all of its stored modules. `400` if the path segment is not a UUID, `404` if no such
-device is on this account, `200` on success.
+Authenticated. Removes another device (or the caller), aborting its upload sessions and deleting
+all of its stored modules. `400` if the path segment is not a UUID, `404` if no such device is on
+this account, `200` on success.
 
-The removed device's credentials stop working immediately. Its next request gets `404`, which is how
-a client learns it was revoked.
+The removed device's credentials stop working at once. Its next request gets `404`, which is how it
+learns it was revoked.
 
 ### `POST /v1/devices/reset`
 
@@ -245,12 +243,11 @@ Authenticated. Deletes stored module data without removing the device registrati
 ```
 
 An empty `targets` array means every device on the account. `404` if any listed device is not on
-this account, and in that case nothing is reset. `200` on success.
+this account, and nothing is reset in that case. `200` on success.
 
 Client divergence: the server expects `targets` to be an array of UUID **strings**. The Android
-client's request DTO would encode each entry as an object of the form `{"id": "<uuid>"}`, which the
-server would reject with `400`. This never fires today because the Android client only ever sends an
-empty list.
+client's DTO would encode each entry as `{"id": "<uuid>"}`, which the server rejects with `400`. It
+never fires today because the Android client only ever sends an empty list.
 
 ## Module endpoints
 
@@ -260,8 +257,8 @@ All three take the same target selector:
 /v1/module/{moduleId}?device-id=<target device uuid>
 ```
 
-`moduleId` is the owner-independent module identifier; `device-id` selects whose copy is addressed.
-Reading a peer's document and writing your own use the same route with a different `device-id`.
+`moduleId` is the same for every owner; `device-id` selects whose copy is addressed. Reading a
+peer's document and writing your own use the same route with a different `device-id`.
 
 ### `GET /v1/module/{moduleId}?device-id=`
 
@@ -282,23 +279,21 @@ A `200` response carries:
 | `ETag` | Current strong entity tag, quoted, 32 lowercase hex characters |
 | `Content-Type` | `application/octet-stream` |
 
-The body is the raw stored bytes, which is the ciphertext described in
-[encryption.md](encryption.md). It may be zero length. The `ETag` header is present whenever
-metadata exists.
+The body is the raw stored bytes, the ciphertext from [encryption.md](encryption.md). It may be
+zero length. `ETag` is present whenever metadata exists.
 
-Two client-side notes. The Android client reads the standard `Date` response header to estimate its
-clock offset against the server; that is ordinary HTTP, not an Octi extension. It also treats a body
-consisting of the four bytes `null` as empty. The pinned server never emits that, so a new client
-does not need the tolerance.
+Two Android quirks. It reads the standard `Date` response header to estimate its clock offset
+against the server, ordinary HTTP rather than an Octi extension. It treats a body of the four bytes
+`null` as empty; the pinned server never emits that.
 
 ### Write semantics and concurrency
 
-There are two write verbs and they are not interchangeable. Getting this wrong is the easiest way
-for a third-party client to destroy a peer's data.
+The two write verbs are not interchangeable. Confusing them is the easiest way to destroy a peer's
+data.
 
-`POST` is the **unconditional legacy write**. The body is the raw ciphertext. It has no precondition
-and always overwrites. Once a module has external blob references it stops working entirely and
-returns `409`, because an unconditional raw write cannot express what should happen to the blobs.
+`POST` is the **unconditional legacy write**. The body is raw ciphertext, there is no precondition,
+and it always overwrites. Once a module has external blob references it returns `409`, since a raw
+overwrite cannot say what happens to the blobs.
 
 `PUT` is the **conditional commit**. It requires exactly one applicable precondition:
 
@@ -317,15 +312,14 @@ Rules the server enforces:
 - A malformed entity tag is `400`. Weak tags (`W/"..."`) are rejected outright, since `If-Match`
   requires strong comparison. Both `"quoted"` and bare unquoted forms are accepted.
 
-**On `412`, re-read before retrying.** A `412` means the slot changed since the tag you hold was
-issued. Repeating the same body with a refreshed tag silently discards whatever the other writer
-committed. Read the current document, reconcile, then write. The Android client refreshes its cached
-tag and retries once, which is safe only because the single-writer invariant means the concurrent
-writer was itself.
+**On `412`, re-read before retrying.** The slot changed since the tag you hold was issued.
+Repeating the same body with a refreshed tag silently discards what the other writer committed.
+Read, reconcile, then write. The Android client refreshes its cached tag and retries once, safe only
+because the single-writer invariant means the concurrent writer was itself.
 
 Entity tags are **random 16-byte values, hex-encoded**, regenerated on every successful write. They
-are not derived from the content, so an identical document written twice produces two different
-tags. Compare them for equality only.
+are not content-derived, so writing an identical document twice gives two different tags. Compare
+them for equality only.
 
 ### `POST /v1/module/{moduleId}?device-id=`
 
@@ -350,9 +344,8 @@ Body: JSON.
 }
 ```
 
-`blobRefs` may be omitted or empty; a client that does not use blobs always sends it empty. Each
-listed blob must have been uploaded through the blob session routes, which this revision does not
-specify.
+`blobRefs` may be omitted or empty; a client without blobs always sends it empty. Each listed blob
+must already be uploaded through the blob session routes, which this revision does not specify.
 
 | Status | Meaning |
 |---|---|
@@ -363,8 +356,8 @@ specify.
 | `413` | Decoded document exceeds `maxModuleDocumentBytes` (default 256 KiB) |
 | `507` | Account quota exceeded, with `X-Octi-Reason: account_quota_exceeded` |
 
-The route's raw body limit is twice `maxModuleDocumentBytes`, which leaves room for base64 expansion
-of a document at the maximum size.
+The route's raw body limit is twice `maxModuleDocumentBytes`, leaving room for base64 expansion of
+a document at the maximum size.
 
 The Android client falls back from `PUT` to `POST` on `404` or `405`, treating those as "this server
 predates blob support".
@@ -395,17 +388,16 @@ Only ever sent alongside `507`, with exactly two defined values:
 | `account_quota_exceeded` | module `POST`, module `PUT`, and blob session routes | The account is at its storage quota |
 | `server_disk_low` | blob routes only | The server host is below its free-disk floor |
 
-A module write therefore never produces `server_disk_low`. A client that only writes documents needs
-to handle `account_quota_exceeded`, and should treat a `507` with a missing or unrecognized reason as
-a generic storage refusal rather than an error.
+A module write therefore never produces `server_disk_low`. A client that only writes documents
+handles `account_quota_exceeded`, and should treat a `507` with a missing or unknown reason as a
+generic storage refusal.
 
 `Retry-After` is emitted only in delta-seconds form, never as an HTTP-date.
 
 ## Limits and rate limiting
 
-Every value in the table below is a **deployment-configurable default** read from the server's
-configuration, not a protocol constant. `GET /v1/account/storage` reports the live values for most
-of them.
+Every value below is a **deployment-configurable default** from the server's configuration, not a
+protocol constant. `GET /v1/account/storage` reports the live values for most of them.
 
 | Limit | Default | Notes |
 |---|---|---|
@@ -419,19 +411,17 @@ of them.
 | Per-account rate limit | 256 requests per 60 s | `429` with `Retry-After` |
 
 Rate limiting is layered. The per-IP limiter runs before authentication and counts every request
-except CORS preflight `OPTIONS`. The per-account limiter runs after credentials validate, so a
-shared NAT address does not let one account exhaust another's budget. Both can be disabled by the
-operator with a single switch.
+except CORS preflight `OPTIONS`. The per-account limiter runs after credentials validate, so one
+account on a shared NAT address cannot exhaust another's budget. An operator can disable both with
+one switch.
 
-Browser clients face one more gate: the server's CORS allowlist. It ships with the official octi-web
-origins and an operator can replace or empty it. Non-browser clients are unaffected regardless of
-that setting.
+Browser clients face one more gate: the server's CORS allowlist. It ships with the official
+octi-web origins; an operator can replace or empty it. Non-browser clients are unaffected.
 
 ### Retention and garbage collection
 
-The server deletes idle data on its own. Both sweeps are destructive, neither is announced to the
-client, and a third-party client that assumes the server keeps what it wrote indefinitely will lose
-data.
+The server deletes idle data on its own. Both sweeps are destructive and neither is announced, so a
+client that assumes the server keeps what it wrote indefinitely will lose data.
 
 | Sweep | Deletes | Clock it reads | Threshold | Interval |
 |---|---|---|---|---|
@@ -441,28 +431,28 @@ data.
 Both loops run every 10 minutes, with the first pass one minute after server start, so deletion
 happens up to one interval after the threshold is crossed.
 
-`lastSeen` is refreshed by any request **from that device** that passes both authentication and the
-per-account rate limit, including the WebSocket upgrade. It tracks the caller only. A peer reading
-or writing your slots does not refresh your `lastSeen`, so a client that goes quiet for 90 days is
-deleted together with all of its data even while its peers are still reading that data. Its next
-request gets `404`, exactly as if it had been revoked, and it has to register again. The value is
-kept in memory and written to disk at most once every 30 seconds.
+`lastSeen` is refreshed by any request **from that device** that passes authentication and the
+per-account rate limit, including the WebSocket upgrade. It tracks the caller only: a peer reading
+or writing your slots does not refresh your `lastSeen`. A device that goes quiet for 90 days is
+deleted with all
+of its data, even while its peers still read that data. Its next request gets `404`, as if it had
+been revoked, and it must register again. The value lives in memory and is written to disk at most
+once every 30 seconds.
 
-A module's last-access time is refreshed by reading the slot, by any device on the account, by
+A module's last-access time is refreshed by reading the slot, from any device on the account, by
 writing it with `POST` or `PUT`, and by the blob routes: listing blobs, downloading a blob, and
-creating, appending to or finalizing an upload session. It is held in memory and persisted at most
-once every 30 seconds; when no persisted value exists the server falls back to the modification time
-of the slot's metadata file, then of its payload file.
+creating, appending to or finalizing an upload session. It lives in memory and is persisted at most
+once every 30 seconds. With no persisted value the server falls back to the modification time of
+the slot's metadata file, then of its payload file.
 
-Module GC skips a slot that has an upload session which is active, or finalized but not yet
-committed, and has not itself expired, so an in-flight upload cannot be reaped underneath itself.
-Device GC has no equivalent exemption: it aborts the device's upload sessions and deletes it.
+Module GC skips a slot whose upload session is active, or finalized but not yet committed, and has
+not itself expired, so an in-flight upload cannot be reaped underneath itself. Device GC has no
+such exemption: it aborts the device's upload sessions and deletes it.
 
 Both thresholds are server configuration with a 90-day default. `GET /v1/account/storage` does not
-report them, and the pinned revision parses no command-line flag for either one, so a client cannot
-discover a deployment's values and must not hard-code 90 days. Treat "stored data disappears after
-long inactivity" as the contract: keep talking to the server, and be able to re-upload rather than
-assuming the server still holds what you wrote.
+report them and the pinned revision parses no command-line flag for either one, so a client cannot
+discover a deployment's values. Do not hard-code 90 days. Treat "stored data disappears after long
+inactivity" as the contract: keep talking to the server, and be able to re-upload.
 
 ## Blob layer, out of scope
 
@@ -479,7 +469,7 @@ POST   /v1/module/{moduleId}/blob-sessions/{sessionId}/finalize
 DELETE /v1/module/{moduleId}/blob-sessions/{sessionId}
 ```
 
-They implement resumable chunked upload, download, and lifecycle for file attachments. A client that
+They implement resumable chunked upload, download and lifecycle for file attachments. A client that
 never attaches files never touches them, and can always send `PUT` with an empty `blobRefs` list.
 
 For the shapes, read the client's Retrofit declarations in
@@ -501,7 +491,6 @@ and for the encryption of blob content the committed vectors in
 | `eu.darken.octi.module.core.clipboard` | Shared clipboard |
 | `eu.darken.octi.module.core.files` | Shared files |
 
-Module ids are opaque to the protocol. This table is the set the Android client currently produces
-and consumes, not a closed enumeration. A client that encounters an unknown module id must ignore
-that slot and continue, never reject the peer or the response. The document schemas behind these ids
-are out of scope for this revision.
+Module ids are opaque to the protocol. This table is what the Android client currently produces and
+consumes, not a closed set. Ignore an unknown module id and carry on; never reject the peer or the
+response. The document schemas behind these ids are out of scope for this revision.
