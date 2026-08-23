@@ -155,8 +155,9 @@ Authenticated. Returns `{"code": "<share code>"}`. See [linking.md](linking.md).
 
 ### `GET /v1/account/storage`
 
-Authenticated. Reports the account's usage plus the server's configured limits. This is the
-discovery endpoint for everything an operator can tune.
+Authenticated. Reports the account's usage plus the server's configured limits. Use it to discover
+a deployment's values instead of hard-coding them. It does not report every server setting: the
+per-IP rate limit, the CORS allowlist and the retention thresholds are all absent.
 
 ```json
 {
