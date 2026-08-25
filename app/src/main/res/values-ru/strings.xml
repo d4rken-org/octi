@@ -203,7 +203,7 @@
          Keep it tier-free when translating: name no product edition. %1$d is the device limit. -->
     <plurals name="pro_device_limit_maximum_hint">
         <item quantity="one">Чтобы просматривать более %1$d устройства, обновитесь или удалите устройства.</item>
-        <item quantity="few">Чтобы просматривать более %1$d устройства, обновитесь или удалите устройства.</item>
+        <item quantity="few">Чтобы просматривать более %1$d устройств, обновитесь или удалите устройства.</item>
         <item quantity="many">Чтобы просматривать более %1$d устройств, обновитесь или удалите устройства.</item>
         <item quantity="other">Чтобы просматривать более %1$d устройств, обновитесь или удалите устройства.</item>
     </plurals>

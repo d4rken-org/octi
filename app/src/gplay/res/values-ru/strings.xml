@@ -82,7 +82,7 @@
          already composed from the app name and the tier qualifier - never translate it here. Render
          the sentence idiomatically if that reads better in your language ("%1$s is active", "Your
          %1$s access is active"), as long as the placeholder survives. -->
-    <string name="upgrade_screen_owned_hero_brand_title">У вас есть %1$s 🎉</string>
+    <string name="upgrade_screen_owned_hero_brand_title">У Вас есть %1$s 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Спасибо за покупку %1$s! Ваши функции Pro разблокированы и никогда не заканчиваются.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Спасибо за подписку на %1$s! Ваши функции Pro разблокированы.</string>
     <string name="upgrade_screen_manage_subscription_action">Управлять подпиской</string>
