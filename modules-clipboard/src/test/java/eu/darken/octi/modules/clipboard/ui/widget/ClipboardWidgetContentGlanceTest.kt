@@ -134,19 +134,20 @@ class ClipboardWidgetContentGlanceTest {
     fun `stale row keeps the copy affordance alongside the warning`() = runGlanceAppWidgetUnitTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         setContext(context)
+        val staleAt = Clock.System.now() - 8.days
+        val metaState = fakeMetaState(remoteLabel = "Pixel 9", remotesModifiedAt = staleAt)
+        val clipboardState = fakeClipboardState(
+            remote = ClipboardInfo(
+                type = ClipboardInfo.Type.SIMPLE_TEXT,
+                data = "Hello".encodeUtf8(),
+            ),
+            remotesModifiedAt = staleAt,
+        )
+        val expectedLastSeen = buildDeviceRows(metaState, clipboardState, selfDeviceId.id, null).single().lastSeen
         provideComposable {
             ClipboardWidgetContent(
-                metaState = fakeMetaState(
-                    remoteLabel = "Pixel 9",
-                    remotesModifiedAt = Clock.System.now() - 8.days,
-                ),
-                clipboardState = fakeClipboardState(
-                    remote = ClipboardInfo(
-                        type = ClipboardInfo.Type.SIMPLE_TEXT,
-                        data = "Hello".encodeUtf8(),
-                    ),
-                    remotesModifiedAt = Clock.System.now() - 8.days,
-                ),
+                metaState = metaState,
+                clipboardState = clipboardState,
                 themeColors = null,
                 maxRows = 5,
             )
@@ -154,29 +155,30 @@ class ClipboardWidgetContentGlanceTest {
         val staleLabel = context.getString(CommonR.string.widget_stale_device_content_description)
         val copyLabel = context.getString(R.string.module_clipboard_copy_action)
         onNode(hasContentDescription("$staleLabel. $copyLabel")).assertExists()
+        onNode(hasText("$expectedLastSeen \u00b7 Hello")).assertExists()
     }
 
     @Test
     fun `stale row without copyable content is labelled only as out of date`() = runGlanceAppWidgetUnitTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         setContext(context)
+        val staleAt = Clock.System.now() - 8.days
+        val metaState = fakeMetaState(remoteLabel = "Pixel 9", remotesModifiedAt = staleAt)
+        val clipboardState = fakeClipboardState(remote = ClipboardInfo(), remotesModifiedAt = staleAt)
+        val expectedLastSeen = buildDeviceRows(metaState, clipboardState, selfDeviceId.id, null).single().lastSeen
         provideComposable {
             ClipboardWidgetContent(
-                metaState = fakeMetaState(
-                    remoteLabel = "Pixel 9",
-                    remotesModifiedAt = Clock.System.now() - 8.days,
-                ),
-                clipboardState = fakeClipboardState(
-                    remote = ClipboardInfo(),
-                    remotesModifiedAt = Clock.System.now() - 8.days,
-                ),
+                metaState = metaState,
+                clipboardState = clipboardState,
                 themeColors = null,
                 maxRows = 5,
             )
         }
         val staleLabel = context.getString(CommonR.string.widget_stale_device_content_description)
+        val noData = context.getString(R.string.module_clipboard_widget_no_data)
         onNode(hasContentDescription(staleLabel)).assertExists()
         onNode(hasContentDescription("Copy to clipboard")).assertDoesNotExist()
+        onNode(hasText("$expectedLastSeen \u00b7 $noData")).assertExists()
     }
 
     @Test
