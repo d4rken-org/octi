@@ -19,6 +19,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
@@ -34,8 +36,9 @@ class ClipboardWidgetContentGlanceTest {
     private fun clipboardModuleData(
         deviceId: DeviceId,
         info: ClipboardInfo,
+        modifiedAt: Instant = Clock.System.now(),
     ): ModuleData<ClipboardInfo> = ModuleData(
-        modifiedAt = Instant.fromEpochMilliseconds(0),
+        modifiedAt = modifiedAt,
         deviceId = deviceId,
         moduleId = clipboardModuleId,
         data = info,
@@ -44,8 +47,9 @@ class ClipboardWidgetContentGlanceTest {
     private fun metaModuleData(
         deviceId: DeviceId,
         label: String,
+        modifiedAt: Instant = Clock.System.now(),
     ): ModuleData<MetaInfo> = ModuleData(
-        modifiedAt = Instant.fromEpochMilliseconds(0),
+        modifiedAt = modifiedAt,
         deviceId = deviceId,
         moduleId = metaModuleId,
         data = MetaInfo(
@@ -67,13 +71,14 @@ class ClipboardWidgetContentGlanceTest {
         self: ClipboardInfo = ClipboardInfo(),
         remote: ClipboardInfo? = null,
         extraRemotes: List<Pair<DeviceId, ClipboardInfo>> = emptyList(),
+        remotesModifiedAt: Instant = Clock.System.now(),
     ): BaseModuleRepo.State<ClipboardInfo> = BaseModuleRepo.State(
         moduleId = clipboardModuleId,
         self = clipboardModuleData(selfDeviceId, self),
         isOthersInitialized = true,
         others = buildList {
-            remote?.let { add(clipboardModuleData(remoteDeviceId, it)) }
-            extraRemotes.forEach { (id, info) -> add(clipboardModuleData(id, info)) }
+            remote?.let { add(clipboardModuleData(remoteDeviceId, it, remotesModifiedAt)) }
+            extraRemotes.forEach { (id, info) -> add(clipboardModuleData(id, info, remotesModifiedAt)) }
         },
     )
 
@@ -81,13 +86,14 @@ class ClipboardWidgetContentGlanceTest {
         selfLabel: String = "MyPhone",
         remoteLabel: String? = null,
         extraRemotes: List<Pair<DeviceId, String>> = emptyList(),
+        remotesModifiedAt: Instant = Clock.System.now(),
     ): BaseModuleRepo.State<MetaInfo> = BaseModuleRepo.State(
         moduleId = metaModuleId,
         self = metaModuleData(selfDeviceId, selfLabel),
         isOthersInitialized = true,
         others = buildList {
-            remoteLabel?.let { add(metaModuleData(remoteDeviceId, it)) }
-            extraRemotes.forEach { (id, label) -> add(metaModuleData(id, label)) }
+            remoteLabel?.let { add(metaModuleData(remoteDeviceId, it, remotesModifiedAt)) }
+            extraRemotes.forEach { (id, label) -> add(metaModuleData(id, label, remotesModifiedAt)) }
         },
     )
 
@@ -121,6 +127,77 @@ class ClipboardWidgetContentGlanceTest {
                 maxRows = 5,
             )
         }
+        onNode(hasContentDescription("Copy to clipboard")).assertExists()
+    }
+
+    @Test
+    fun `stale row keeps the copy affordance alongside the warning`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(
+                    remoteLabel = "Pixel 9",
+                    remotesModifiedAt = Clock.System.now() - 8.days,
+                ),
+                clipboardState = fakeClipboardState(
+                    remote = ClipboardInfo(
+                        type = ClipboardInfo.Type.SIMPLE_TEXT,
+                        data = "Hello".encodeUtf8(),
+                    ),
+                    remotesModifiedAt = Clock.System.now() - 8.days,
+                ),
+                themeColors = null,
+                maxRows = 5,
+            )
+        }
+        val staleLabel = context.getString(CommonR.string.widget_stale_device_content_description)
+        val copyLabel = context.getString(R.string.module_clipboard_copy_action)
+        onNode(hasContentDescription("$staleLabel. $copyLabel")).assertExists()
+    }
+
+    @Test
+    fun `stale row without copyable content is labelled only as out of date`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(
+                    remoteLabel = "Pixel 9",
+                    remotesModifiedAt = Clock.System.now() - 8.days,
+                ),
+                clipboardState = fakeClipboardState(
+                    remote = ClipboardInfo(),
+                    remotesModifiedAt = Clock.System.now() - 8.days,
+                ),
+                themeColors = null,
+                maxRows = 5,
+            )
+        }
+        val staleLabel = context.getString(CommonR.string.widget_stale_device_content_description)
+        onNode(hasContentDescription(staleLabel)).assertExists()
+        onNode(hasContentDescription("Copy to clipboard")).assertDoesNotExist()
+    }
+
+    @Test
+    fun `fresh row is not labelled as out of date`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        provideComposable {
+            ClipboardWidgetContent(
+                metaState = fakeMetaState(remoteLabel = "Pixel 9"),
+                clipboardState = fakeClipboardState(
+                    remote = ClipboardInfo(
+                        type = ClipboardInfo.Type.SIMPLE_TEXT,
+                        data = "Hello".encodeUtf8(),
+                    ),
+                ),
+                themeColors = null,
+                maxRows = 5,
+            )
+        }
+        val staleLabel = context.getString(CommonR.string.widget_stale_device_content_description)
+        onNode(hasContentDescription(staleLabel)).assertDoesNotExist()
         onNode(hasContentDescription("Copy to clipboard")).assertExists()
     }
 

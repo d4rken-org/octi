@@ -44,6 +44,7 @@ import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.modules.clipboard.ClipboardInfo
 import eu.darken.octi.modules.clipboard.R
 import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.sync.core.StalenessUtil
 import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import eu.darken.octi.common.R as CommonR
 
@@ -99,13 +100,14 @@ internal object ClipboardWidgetSizing {
     )
 }
 
-private data class ClipboardDeviceRow(
+internal data class ClipboardDeviceRow(
     val deviceName: String,
     val lastSeen: CharSequence,
     val clipboardText: String?,
     val hasCopyableContent: Boolean,
     val deviceType: MetaInfo.DeviceType,
     val deviceId: String,
+    val isStale: Boolean,
 )
 
 private data class SelfClipboardDisplay(
@@ -235,7 +237,7 @@ private fun extractSelf(clipboardState: ModuleRepo.State<*>?): SelfClipboardDisp
 }
 
 @Suppress("UNCHECKED_CAST")
-private fun buildDeviceRows(
+internal fun buildDeviceRows(
     metaState: ModuleRepo.State<*>?,
     clipboardState: ModuleRepo.State<*>?,
     selfDeviceId: String?,
@@ -268,10 +270,11 @@ private fun buildDeviceRows(
         )
         .map { (clipData, metaData) ->
             val preview = clipData.data.toWidgetPreview()
+            val lastActivity = maxOf(metaData.modifiedAt, clipData.modifiedAt)
             ClipboardDeviceRow(
                 deviceName = labelsByDevice[metaData.deviceId] ?: metaData.data.labelOrFallback,
                 lastSeen = DateUtils.getRelativeTimeSpanString(
-                    metaData.modifiedAt.toEpochMilliseconds(),
+                    lastActivity.toEpochMilliseconds(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE,
@@ -280,6 +283,7 @@ private fun buildDeviceRows(
                 hasCopyableContent = preview.hasCopyableContent,
                 deviceType = metaData.data.deviceType,
                 deviceId = clipData.deviceId.id,
+                isStale = StalenessUtil.isStale(lastActivity),
             )
         }
         .toList()
@@ -331,8 +335,23 @@ private fun ClipboardDeviceRowContent(
         actionRunCallback<NoOpClickCallback>()
     }
 
-    val titleColor = if (device.hasCopyableContent) primaryColor else secondaryColor
+    val titleColor = when {
+        device.isStale -> secondaryColor
+        device.hasCopyableContent -> primaryColor
+        else -> secondaryColor
+    }
     val bodyColor = secondaryColor
+
+    val copyLabel = context.getString(R.string.module_clipboard_copy_action)
+    val staleLabel = context.getString(CommonR.string.widget_stale_device_content_description)
+    // The icon's content description is the row's only accessibility label and the row still
+    // copies while stale, so the affordance has to survive alongside the warning.
+    val iconDescription = when {
+        device.isStale && device.hasCopyableContent -> "$staleLabel. $copyLabel"
+        device.isStale -> staleLabel
+        device.hasCopyableContent -> copyLabel
+        else -> null
+    }
 
     Box(
         modifier = GlanceModifier
@@ -347,12 +366,14 @@ private fun ClipboardDeviceRowContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
-                provider = ImageProvider(device.deviceType.widgetIconRes()),
-                contentDescription = if (device.hasCopyableContent) {
-                    context.getString(R.string.module_clipboard_copy_action)
-                } else {
-                    null
-                },
+                provider = ImageProvider(
+                    if (device.isStale) {
+                        CommonR.drawable.widget_warning_24
+                    } else {
+                        device.deviceType.widgetIconRes()
+                    },
+                ),
+                contentDescription = iconDescription,
                 modifier = GlanceModifier.size(18.dp),
                 colorFilter = ColorFilter.tint(titleColor),
             )
@@ -367,9 +388,11 @@ private fun ClipboardDeviceRowContent(
                 maxLines = 1,
             )
             Spacer(modifier = GlanceModifier.width(6.dp))
+            // This row computes an age but has nowhere to show it, so a stale row leads with it.
+            val detailPrefix = if (device.isStale) "${device.lastSeen} \u00b7 " else ""
             if (device.hasCopyableContent) {
                 Text(
-                    text = device.clipboardText ?: "",
+                    text = detailPrefix + (device.clipboardText ?: ""),
                     style = TextStyle(
                         fontSize = 10.sp,
                         color = bodyColor,
@@ -379,7 +402,7 @@ private fun ClipboardDeviceRowContent(
                 )
             } else {
                 Text(
-                    text = context.getString(R.string.module_clipboard_widget_no_data),
+                    text = detailPrefix + context.getString(R.string.module_clipboard_widget_no_data),
                     style = TextStyle(
                         fontSize = 10.sp,
                         fontStyle = FontStyle.Italic,
