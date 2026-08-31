@@ -38,12 +38,14 @@ import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.navigation.WidgetDeeplink
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.common.widget.widgetCornerRadius
+import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.modules.meta.core.MetaInfo
 import eu.darken.octi.common.R as CommonR
 import eu.darken.octi.modules.power.R
 import eu.darken.octi.modules.power.core.PowerInfo
+import eu.darken.octi.sync.core.StalenessUtil
 import eu.darken.octi.sync.core.disambiguateDeviceLabels
 
 internal object BatteryWidgetSizing {
@@ -111,12 +113,13 @@ private val TAG = logTag("Module", "Power", "Widget", "Content")
 private fun colorOrDefault(value: Int?, @ColorRes defaultRes: Int): ColorProvider =
     value?.let { ColorProvider(Color(it)) } ?: ColorProvider(defaultRes)
 
-private data class BatteryDeviceRow(
+internal data class BatteryDeviceRow(
     val deviceId: String,
     val deviceName: String,
     val lastSeen: CharSequence,
     val percent: Int,
     val isCharging: Boolean,
+    val isStale: Boolean,
 )
 
 @Composable
@@ -212,7 +215,7 @@ fun BatteryWidgetContent(
 }
 
 @Suppress("UNCHECKED_CAST")
-private fun buildDeviceRows(
+internal fun buildDeviceRows(
     metaState: ModuleRepo.State<*>?,
     powerState: ModuleRepo.State<*>?,
     allowedDeviceIds: Set<String>?,
@@ -221,6 +224,9 @@ private fun buildDeviceRows(
 
     val metaAll = metaState.all as? Collection<ModuleData<MetaInfo>> ?: return emptyList()
     val powerAll = powerState.all as? Collection<ModuleData<PowerInfo>> ?: return emptyList()
+    // Our own row is stamped only when MetaInfo actually changes, so an idle long-running
+    // process would otherwise report the user's own device as out of date.
+    val selfDeviceId = (powerState as? BaseModuleRepo.State<*>)?.self?.deviceId
 
     val pairs = powerAll
         .mapNotNull { powerData ->
@@ -244,17 +250,19 @@ private fun buildDeviceRows(
         .map { (powerData, metaData) ->
             val rawPercent = powerData.data.battery.percent
             val safePercent = if (rawPercent.isFinite()) (rawPercent * 100).toInt() else 0
+            val lastActivity = maxOf(metaData.modifiedAt, powerData.modifiedAt)
             BatteryDeviceRow(
                 deviceId = powerData.deviceId.id,
                 deviceName = labelsByDevice[metaData.deviceId] ?: metaData.data.labelOrFallback,
                 lastSeen = DateUtils.getRelativeTimeSpanString(
-                    metaData.modifiedAt.toEpochMilliseconds(),
+                    lastActivity.toEpochMilliseconds(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE,
                 ),
                 percent = safePercent.coerceIn(0, 100),
                 isCharging = powerData.data.isCharging,
+                isStale = powerData.deviceId != selfDeviceId && StalenessUtil.isStale(lastActivity),
             )
         }
 }
@@ -271,6 +279,15 @@ private fun BatteryDeviceRowContent(
     val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
     val accentContent = colorOrDefault(themeColors?.onAccent, CommonR.color.widgetOnAccent)
     val onContainer = colorOrDefault(themeColors?.onContainer, CommonR.color.widgetOnContainer)
+    val onTileVariant = colorOrDefault(themeColors?.onTileVariant, CommonR.color.widgetOnTileVariant)
+    val onContainerVariant = colorOrDefault(
+        themeColors?.onContainerVariant,
+        CommonR.color.widgetOnContainerVariant,
+    )
+
+    // A stale row drops the accent fill entirely, so its content sits on the plain tile.
+    val rowContent = if (device.isStale) onTileVariant else accentContent
+    val percentColor = if (device.isStale) onContainerVariant else onContainer
 
     val rowClick = WidgetDeeplink.buildIntent(context, device.deviceId, WidgetDeeplink.ModuleType.POWER)
         ?.let { actionStartActivity(it) }
@@ -291,7 +308,7 @@ private fun BatteryDeviceRowContent(
                     if (rowClick != null) GlanceModifier.clickable(rowClick) else GlanceModifier
                 ),
         ) {
-            val fillWidth = (barWidthDp * device.percent / 100f).coerceAtLeast(0f)
+            val fillWidth = if (device.isStale) 0f else (barWidthDp * device.percent / 100f).coerceAtLeast(0f)
             if (fillWidth > 0f) {
                 Box(
                     modifier = GlanceModifier
@@ -307,12 +324,19 @@ private fun BatteryDeviceRowContent(
             ) {
                 Image(
                     provider = ImageProvider(
-                        if (device.isCharging) R.drawable.widget_battery_charging_full_24
-                        else R.drawable.widget_battery_full_24,
+                        when {
+                            device.isStale -> CommonR.drawable.widget_warning_24
+                            device.isCharging -> R.drawable.widget_battery_charging_full_24
+                            else -> R.drawable.widget_battery_full_24
+                        },
                     ),
-                    contentDescription = null,
+                    contentDescription = if (device.isStale) {
+                        context.getString(CommonR.string.widget_stale_device_content_description)
+                    } else {
+                        null
+                    },
                     modifier = GlanceModifier.size(20.dp),
-                    colorFilter = ColorFilter.tint(accentContent),
+                    colorFilter = ColorFilter.tint(rowContent),
                 )
                 Spacer(modifier = GlanceModifier.width(4.dp))
                 Text(
@@ -320,7 +344,7 @@ private fun BatteryDeviceRowContent(
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = 11.sp,
-                        color = accentContent,
+                        color = rowContent,
                     ),
                     maxLines = 1,
                 )
@@ -328,8 +352,9 @@ private fun BatteryDeviceRowContent(
                 Text(
                     text = "\u00b7 ${device.lastSeen}",
                     style = TextStyle(
+                        fontWeight = if (device.isStale) FontWeight.Bold else null,
                         fontSize = 11.sp,
-                        color = accentContent,
+                        color = rowContent,
                     ),
                     maxLines = 1,
                 )
@@ -341,7 +366,7 @@ private fun BatteryDeviceRowContent(
             style = TextStyle(
                 fontWeight = FontWeight.Bold,
                 fontSize = 13.sp,
-                color = onContainer,
+                color = percentColor,
             ),
             modifier = GlanceModifier.width(44.dp),
         )
