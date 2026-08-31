@@ -262,18 +262,26 @@ class NetworkWidgetContentGlanceTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         setContext(context)
         val staleId = DeviceId("stale-device")
+        val staleAt = Clock.System.now() - 8.days
+        val staleMetaState = metaState(
+            extras = listOf(staleId to "Old Tablet"),
+            extrasModifiedAt = staleAt,
+        )
+        val staleConnectivityState = connectivityState(
+            extras = listOf(
+                staleId to connectivityInfo(localIp = "10.0.0.5", publicIp = "1.2.3.4"),
+            ),
+            extrasModifiedAt = staleAt,
+        )
+        val expectedLastSeen = buildDeviceTiles(
+            staleMetaState,
+            staleConnectivityState,
+            setOf(staleId.id),
+        ).single().lastSeen
         provideComposable {
             NetworkWidgetContent(
-                metaState = metaState(
-                    extras = listOf(staleId to "Old Tablet"),
-                    extrasModifiedAt = Clock.System.now() - 8.days,
-                ),
-                connectivityState = connectivityState(
-                    extras = listOf(
-                        staleId to connectivityInfo(localIp = "10.0.0.5", publicIp = "1.2.3.4"),
-                    ),
-                    extrasModifiedAt = Clock.System.now() - 8.days,
-                ),
+                metaState = staleMetaState,
+                connectivityState = staleConnectivityState,
                 themeColors = null,
                 maxRows = 4,
                 widthDp = 150f,
@@ -285,6 +293,7 @@ class NetworkWidgetContentGlanceTest {
         onNode(
             hasContentDescription(context.getString(CommonR.string.widget_stale_device_content_description))
         ).assertExists()
+        onNode(hasText(expectedLastSeen.toString())).assertExists()
     }
 
     @Test
