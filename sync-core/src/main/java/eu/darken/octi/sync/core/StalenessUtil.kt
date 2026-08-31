@@ -3,15 +3,18 @@ package eu.darken.octi.sync.core
 import android.content.Context
 import eu.darken.octi.sync.R
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 object StalenessUtil {
-    const val STALE_DEVICE_THRESHOLD_DAYS = 30L
+    const val STALE_DEVICE_THRESHOLD_DAYS = 7L
 
-    fun isStale(lastSyncTime: Instant?): Boolean {
+    fun isStale(lastSyncTime: Instant?): Boolean = isStale(lastSyncTime, Clock.System.now())
+
+    /** A device is stale once the age of its newest data reaches [STALE_DEVICE_THRESHOLD_DAYS]. */
+    internal fun isStale(lastSyncTime: Instant?, now: Instant): Boolean {
         if (lastSyncTime == null) return false
-        val daysSinceLastSync = (Clock.System.now() - lastSyncTime).inWholeDays
-        return daysSinceLastSync > STALE_DEVICE_THRESHOLD_DAYS
+        return (now - lastSyncTime) >= STALE_DEVICE_THRESHOLD_DAYS.days
     }
 
     fun SyncRead.Device.isStale(): Boolean {
