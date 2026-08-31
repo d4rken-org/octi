@@ -21,6 +21,7 @@ enum class WidgetTheme(
     data class Colors(
         val containerBg: Int,
         val onContainer: Int,
+        val onContainerVariant: Int,
         val tileBg: Int,
         val onTile: Int,
         val onTileVariant: Int,
@@ -43,6 +44,7 @@ enum class WidgetTheme(
             return Colors(
                 containerBg = bg,
                 onContainer = onContainer,
+                onContainerVariant = ColorUtils.blendARGB(onContainer, bg, 0.38f),
                 tileBg = tileBg,
                 onTile = onTile,
                 onTileVariant = ColorUtils.blendARGB(onTile, tileBg, 0.38f),

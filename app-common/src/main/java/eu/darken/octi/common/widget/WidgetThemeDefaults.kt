@@ -9,6 +9,7 @@ import eu.darken.octi.common.R
 fun widgetDefaultColors(): WidgetTheme.Colors = WidgetTheme.Colors(
     containerBg = colorResource(R.color.widgetContainerBackground).toArgb(),
     onContainer = colorResource(R.color.widgetOnContainer).toArgb(),
+    onContainerVariant = colorResource(R.color.widgetOnContainerVariant).toArgb(),
     tileBg = colorResource(R.color.widgetTileBackground).toArgb(),
     onTile = colorResource(R.color.widgetOnTile).toArgb(),
     onTileVariant = colorResource(R.color.widgetOnTileVariant).toArgb(),
