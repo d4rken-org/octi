@@ -37,11 +37,13 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import eu.darken.octi.common.widget.WidgetTheme
 import eu.darken.octi.common.widget.widgetCornerRadius
+import eu.darken.octi.module.core.BaseModuleRepo
 import eu.darken.octi.module.core.ModuleData
 import eu.darken.octi.module.core.ModuleRepo
 import eu.darken.octi.modules.connectivity.R
 import eu.darken.octi.modules.connectivity.core.ConnectivityInfo
 import eu.darken.octi.modules.meta.core.MetaInfo
+import eu.darken.octi.sync.core.StalenessUtil
 import eu.darken.octi.sync.core.disambiguateDeviceLabels
 import eu.darken.octi.common.R as CommonR
 
@@ -111,13 +113,14 @@ internal object NetworkWidgetSizing {
     )
 }
 
-private data class NetworkDeviceTile(
+internal data class NetworkDeviceTile(
     val deviceId: String,
     val deviceName: String,
     val lastSeen: CharSequence,
     val connectionType: ConnectivityInfo.ConnectionType?,
     val localIp: String,
     val publicIp: String,
+    val isStale: Boolean,
 )
 
 @Composable
@@ -229,7 +232,7 @@ fun NetworkWidgetContent(
 }
 
 @Suppress("UNCHECKED_CAST")
-private fun buildDeviceTiles(
+internal fun buildDeviceTiles(
     metaState: ModuleRepo.State<*>?,
     connectivityState: ModuleRepo.State<*>?,
     allowedDeviceIds: Set<String>?,
@@ -240,6 +243,9 @@ private fun buildDeviceTiles(
         ?: return emptyList()
     val connectivityAll = connectivityState.all as? Collection<ModuleData<ConnectivityInfo>>
         ?: return emptyList()
+    // Our own tile is stamped only when MetaInfo actually changes, so an idle long-running
+    // process would otherwise report the user's own device as out of date.
+    val selfDeviceId = (connectivityState as? BaseModuleRepo.State<*>)?.self?.deviceId
 
     val pairs = connectivityAll
         .mapNotNull { connData ->
@@ -261,11 +267,12 @@ private fun buildDeviceTiles(
             }.thenBy { it.second.deviceId.id }
         )
         .map { (connData, metaData) ->
+            val lastActivity = maxOf(metaData.modifiedAt, connData.modifiedAt)
             NetworkDeviceTile(
                 deviceId = connData.deviceId.id,
                 deviceName = labelsByDevice[metaData.deviceId] ?: metaData.data.labelOrFallback,
                 lastSeen = DateUtils.getRelativeTimeSpanString(
-                    metaData.modifiedAt.toEpochMilliseconds(),
+                    lastActivity.toEpochMilliseconds(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE,
@@ -273,6 +280,7 @@ private fun buildDeviceTiles(
                 connectionType = connData.data.connectionType,
                 localIp = connData.data.localAddressIpv4 ?: "\u2014",
                 publicIp = connData.data.publicIp ?: "\u2014",
+                isStale = connData.deviceId != selfDeviceId && StalenessUtil.isStale(lastActivity),
             )
         }
 }
@@ -330,9 +338,17 @@ private fun NetworkDeviceTileContent(
 ) {
     val context = LocalContext.current
     val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
-    val titleColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
     val detailColor = colorOrDefault(themeColors?.onTileVariant, CommonR.color.widgetOnTileVariant)
-    val iconRes = connectionIconRes(device.connectionType)
+    val titleColor = if (device.isStale) {
+        detailColor
+    } else {
+        colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
+    }
+    val iconRes = if (device.isStale) {
+        CommonR.drawable.widget_warning_24
+    } else {
+        connectionIconRes(device.connectionType)
+    }
 
     val copyAction = actionRunCallback<CopyNetworkAddressesCallback>(
         actionParametersOf(CopyNetworkAddressesCallback.KEY_DEVICE_ID to device.deviceId),
@@ -354,7 +370,11 @@ private fun NetworkDeviceTileContent(
             ) {
                 Image(
                     provider = ImageProvider(iconRes),
-                    contentDescription = null,
+                    contentDescription = if (device.isStale) {
+                        context.getString(CommonR.string.widget_stale_device_content_description)
+                    } else {
+                        null
+                    },
                     modifier = GlanceModifier.size(16.dp),
                     colorFilter = ColorFilter.tint(titleColor),
                 )
@@ -373,6 +393,7 @@ private fun NetworkDeviceTileContent(
             Text(
                 text = "${connectionTypeLabel(context, device.connectionType)} \u00b7 ${device.lastSeen}",
                 style = TextStyle(
+                    fontWeight = if (device.isStale) FontWeight.Bold else null,
                     fontSize = 10.sp,
                     color = detailColor,
                 ),
@@ -458,10 +479,19 @@ private fun NetworkDeviceCompactRow(
     device: NetworkDeviceTile,
     themeColors: WidgetTheme.Colors?,
 ) {
+    val context = LocalContext.current
     val tileBg = colorOrDefault(themeColors?.tileBg, CommonR.color.widgetTileBackground)
-    val titleColor = colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
     val detailColor = colorOrDefault(themeColors?.onTileVariant, CommonR.color.widgetOnTileVariant)
-    val iconRes = connectionIconRes(device.connectionType)
+    val titleColor = if (device.isStale) {
+        detailColor
+    } else {
+        colorOrDefault(themeColors?.onTile, CommonR.color.widgetOnTile)
+    }
+    val iconRes = if (device.isStale) {
+        CommonR.drawable.widget_warning_24
+    } else {
+        connectionIconRes(device.connectionType)
+    }
 
     val copyAction = actionRunCallback<CopyNetworkAddressesCallback>(
         actionParametersOf(CopyNetworkAddressesCallback.KEY_DEVICE_ID to device.deviceId),
@@ -481,7 +511,11 @@ private fun NetworkDeviceCompactRow(
         ) {
             Image(
                 provider = ImageProvider(iconRes),
-                contentDescription = null,
+                contentDescription = if (device.isStale) {
+                    context.getString(CommonR.string.widget_stale_device_content_description)
+                } else {
+                    null
+                },
                 modifier = GlanceModifier.size(16.dp),
                 colorFilter = ColorFilter.tint(titleColor),
             )
@@ -497,7 +531,13 @@ private fun NetworkDeviceCompactRow(
             )
             Spacer(modifier = GlanceModifier.width(6.dp))
             Text(
-                text = "${device.localIp} \u00b7 ${device.publicIp}",
+                // A week-old peer's addresses are almost certainly wrong, so the compact row
+                // trades them for the age that explains why the row is dimmed.
+                text = if (device.isStale) {
+                    device.lastSeen.toString()
+                } else {
+                    "${device.localIp} \u00b7 ${device.publicIp}"
+                },
                 style = TextStyle(
                     fontSize = 10.sp,
                     color = detailColor,
