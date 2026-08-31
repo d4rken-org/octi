@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">Surfplatta</string>
     <string name="module_meta_detail_device_type_desktop">Skrivbord</string>
     <string name="module_meta_detail_device_type_browser">Webbläsare</string>
+    <string name="module_meta_detail_device_type_server">Server</string>
     <string name="module_meta_detail_device_type_unknown">Okänd</string>
     <string name="module_meta_detail_os_label">Operativsystem</string>
     <string name="module_meta_detail_android_version_label">Android-version</string>

@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">Таблет</string>
     <string name="module_meta_detail_device_type_desktop">Десктоп</string>
     <string name="module_meta_detail_device_type_browser">Веб-прегледач</string>
+    <string name="module_meta_detail_device_type_server">Сервер</string>
     <string name="module_meta_detail_device_type_unknown">Непознато</string>
     <string name="module_meta_detail_os_label">Операциони систем</string>
     <string name="module_meta_detail_android_version_label">Верзија Android</string>

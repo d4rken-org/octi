@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">Tablet</string>
     <string name="module_meta_detail_device_type_desktop">Rekenaar</string>
     <string name="module_meta_detail_device_type_browser">Blaaier</string>
+    <string name="module_meta_detail_device_type_server">Bediener</string>
     <string name="module_meta_detail_device_type_unknown">Onbekend</string>
     <string name="module_meta_detail_os_label">Bedryfstelsel</string>
     <string name="module_meta_detail_android_version_label">Android-weergawe</string>

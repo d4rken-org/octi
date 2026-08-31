@@ -91,6 +91,7 @@
     <string name="widget_empty_label">一致するデバイスがありません</string>
     <string name="widget_no_sync_devices_label">同期デバイスがまだありません</string>
     <string name="widget_more_items">+ %1$d 件</string>
+    <string name="widget_stale_device_content_description">デバイスのデータが古くなっています</string>
     <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
          Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
     <string name="widget_upgrade_required_headline">アップグレードが必要</string>

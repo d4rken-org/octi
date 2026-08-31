@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">Máy tính bảng</string>
     <string name="module_meta_detail_device_type_desktop">Máy tính để bàn</string>
     <string name="module_meta_detail_device_type_browser">Trình duyệt</string>
+    <string name="module_meta_detail_device_type_server">Máy chủ</string>
     <string name="module_meta_detail_device_type_unknown">Không xác định</string>
     <string name="module_meta_detail_os_label">Hệ điều hành</string>
     <string name="module_meta_detail_android_version_label">Phiên bản Android</string>

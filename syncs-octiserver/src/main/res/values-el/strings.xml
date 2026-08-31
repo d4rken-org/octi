@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sync_octiserver_type_label">Octi Server</string>
-    <string name="sync_octiserver_type_description">Ένας ανοιχτού κώδικα διακομιστής συγχρονισμού για το Octi από τον δημιουργό της εφαρμογής. Τα δεδομένα είναι κρυπτογραφημένα στην πλευρά του πελάτη, μόνο οι συσκευές σας μπορούν να τα αποκρυπτογραφήσουν.
-
-Καθώς τόσο η εφαρμογή όσο και ο διακομιστής βελτιώνονται συνεχώς, ενδέχεται να είναι λιγότερο σταθερό από άλλες επιλογές συγχρονισμού.</string>
+    <string name="sync_octiserver_type_description">Ένας ανοιχτού κώδικα διακομιστής συγχρονισμού για το Octi από τον δημιουργό της εφαρμογής. Τα δεδομένα είναι κρυπτογραφημένα στην πλευρά του πελάτη, μόνο οι συσκευές σας μπορούν να τα αποκρυπτογραφήσουν.\n\nΚαθώς τόσο η εφαρμογή όσο και ο διακομιστής βελτιώνονται συνεχώς, ενδέχεται να είναι λιγότερο σταθερό από άλλες επιλογές συγχρονισμού.</string>
     <string name="sync_octiserver_add_create_action_hint">Οι ανενεργοί λογαριασμοί διαγράφονται μετά από μερικές εβδομάδες.</string>
     <string name="sync_octiserver_add_subtitle">Προσθήκη λογαριασμού Octi Server</string>
     <string name="sync_octiserver_add_link_action_hint">Θα χρειαστείτε πρόσβαση σε μια άλλη συσκευή που έχει ήδη συνδεθεί.</string>
@@ -26,7 +24,7 @@
     <string name="sync_octiserver_issues_type_device_not_registered">Η συσκευή δεν είναι πλέον συνδεδεμένη</string>
     <string name="sync_octiserver_error_device_not_registered">Αυτή η συσκευή δεν είναι πλέον καταχωρημένη στον διακομιστή. Αποσυνδεθείτε και επανασυνδεθείτε από άλλη συσκευή ή δημιουργήστε νέο λογαριασμό.</string>
     <string name="sync_octiserver_resume_sync_action">Συνέχιση συγχρονισμού</string>
-    <string name="sync_octiserver_add_create_account_title">Δημιουργία λογαριασμού?</string>
+    <string name="sync_octiserver_add_create_account_title">Δημιουργία λογαριασμού;</string>
     <string name="sync_octiserver_add_create_account_desc">Θα δημιουργηθεί ένας νέος κρυπτογραφημένος λογαριασμός συγχρονισμού σε αυτόν τον διακομιστή.</string>
     <string name="sync_octiserver_encryption_compatibility_incompatible">Αυτός ο λογαριασμός απαιτεί Octi %1$s ή νεότερη έκδοση. Ενημερώστε αυτή τη συσκευή ή αφαιρέστε την από τον λογαριασμό.</string>
     <string name="sync_octiserver_encryption_compatibility_unsupported_mode">Αυτή η συσκευή δεν υποστηρίζει τη λειτουργία κρυπτογράφησης που χρησιμοποιεί αυτός ο λογαριασμός (%1$s). Επικοινωνήστε με τον συντηρητή αυτής της συσκευής.</string>

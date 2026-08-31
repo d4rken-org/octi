@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">Tauleta</string>
     <string name="module_meta_detail_device_type_desktop">Escriptori</string>
     <string name="module_meta_detail_device_type_browser">Navegador</string>
+    <string name="module_meta_detail_device_type_server">Servidor</string>
     <string name="module_meta_detail_device_type_unknown">Desconegut</string>
     <string name="module_meta_detail_os_label">Sistema operatiu</string>
     <string name="module_meta_detail_android_version_label">Versió d\'Android</string>

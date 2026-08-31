@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">Tablet</string>
     <string name="module_meta_detail_device_type_desktop">Computador</string>
     <string name="module_meta_detail_device_type_browser">Navegador</string>
+    <string name="module_meta_detail_device_type_server">Servidor</string>
     <string name="module_meta_detail_device_type_unknown">Desconhecido</string>
     <string name="module_meta_detail_os_label">Sistema operacional</string>
     <string name="module_meta_detail_android_version_label">Versão do Android</string>

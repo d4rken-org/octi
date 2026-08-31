@@ -92,6 +92,7 @@
     <string name="widget_empty_label">Inga matchande enheter</string>
     <string name="widget_no_sync_devices_label">Inga synkenheter ännu</string>
     <string name="widget_more_items">+ %1$d fler</string>
+    <string name="widget_stale_device_content_description">Enhetens data är inaktuell</string>
     <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
          Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
     <string name="widget_upgrade_required_headline">Uppgradering krävs</string>

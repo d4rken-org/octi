@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">Tablet</string>
     <string name="module_meta_detail_device_type_desktop">Asztali</string>
     <string name="module_meta_detail_device_type_browser">Böngésző</string>
+    <string name="module_meta_detail_device_type_server">Szerver</string>
     <string name="module_meta_detail_device_type_unknown">Ismeretlen</string>
     <string name="module_meta_detail_os_label">Operációs rendszer</string>
     <string name="module_meta_detail_android_version_label">Android verziója</string>

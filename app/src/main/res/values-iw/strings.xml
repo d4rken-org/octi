@@ -37,7 +37,6 @@
     <plurals name="debug_debuglog_screen_log_files_ready">
         <item quantity="one">%1$d קובץ מוכן (%2$s) · %3$s</item>
         <item quantity="two">%1$d קבצים מוכנים (%2$s) · %3$s</item>
-        <item quantity="many">%1$d קבצים מוכנים (%2$s) · %3$s</item>
         <item quantity="other">%1$d קבצים מוכנים (%2$s) · %3$s</item>
     </plurals>
     <string name="debug_debuglog_duration_minutes_seconds">%1$dדק %2$dשנ</string>
@@ -119,7 +118,6 @@
     <plurals name="general_devices_count_label">
         <item quantity="one">מכשיר %d</item>
         <item quantity="two">%d מכשירים</item>
-        <item quantity="many">%d מכשירים</item>
         <item quantity="other">%d מכשירים</item>
     </plurals>
     <string name="sync_device_compatibility_hint">בעיית תאימות</string>
@@ -128,20 +126,17 @@
     <plurals name="sync_issues_errors_count">
         <item quantity="one">%d שגיאה</item>
         <item quantity="two">%d שגיאות</item>
-        <item quantity="many">%d שגיאות</item>
         <item quantity="other">%d שגיאות</item>
     </plurals>
     <plurals name="sync_issues_warnings_count">
         <item quantity="one">%d אזהרה</item>
         <item quantity="two">%d אזהרות</item>
-        <item quantity="many">%d אזהרות</item>
         <item quantity="other">%d אזהרות</item>
     </plurals>
     <string name="sync_device_added_at_label">נוסף %1$s</string>
     <plurals name="general_unique_devices_count_label">
         <item quantity="one">%d ייחודי, זמין רק כאן</item>
         <item quantity="two">%d ייחודים, זמינים רק כאן</item>
-        <item quantity="many">%d ייחודים, זמינים רק כאן</item>
         <item quantity="other">%d ייחודים, זמינים רק כאן</item>
     </plurals>
     <string name="updates_dashcard_title">יש עדכון זמין</string>
@@ -195,7 +190,6 @@
     <plurals name="pro_device_limit_current_description">
         <item quantity="one">יש לך כרגע מכשיר %1$d מסונכרן.</item>
         <item quantity="two">יש לך כרגע %1$d מכשירים מסונכרנים.</item>
-        <item quantity="many">יש לך כרגע %1$d מכשירים מסונכרנים.</item>
         <item quantity="other">יש לך כרגע %1$d מכשירים מסונכרנים.</item>
     </plurals>
     <!-- Replaces pro_device_limit_maximum_description, which named the Google Play tier ("upgrade to
@@ -204,7 +198,6 @@
     <plurals name="pro_device_limit_maximum_hint">
         <item quantity="one">כדי לצפות ביותר מ-%1$d מכשיר, יש לשדרג או להסיר מכשירים.</item>
         <item quantity="two">כדי לצפות ביותר מ-%1$d מכשירים, יש לשדרג או להסיר מכשירים.</item>
-        <item quantity="many">כדי לצפות ביותר מ-%1$d מכשירים, יש לשדרג או להסיר מכשירים.</item>
         <item quantity="other">כדי לצפות ביותר מ-%1$d מכשירים, יש לשדרג או להסיר מכשירים.</item>
     </plurals>
     <string name="sync_delete_device_keepaccess_caveat">הסרת מכשיר זה תמחק את הנתונים שלו אך לא תבטל את הגישה. כדי לבטל גישה, נתק את Octi במכשיר.</string>
@@ -228,7 +221,6 @@
     <plurals name="support_contact_word_count">
         <item quantity="one">%1$d / %2$d מילה</item>
         <item quantity="two">%1$d / %2$d מילים</item>
-        <item quantity="many">%1$d / %2$d מילים</item>
         <item quantity="other">%1$d / %2$d מילים</item>
     </plurals>
     <string name="support_contact_welcome">אני קורא כל הודעה בעצמי ועושה כמיטב להשיב, אבל מכיוון שאני עובד על זה לבד, זה עשוי לקחת קצת זמן. תודה על הבנתך.</string>
@@ -239,7 +231,6 @@
     <plurals name="support_debuglog_folder_desc">
         <item quantity="one">%1$d קובץ המשתמש ב-%2$s</item>
         <item quantity="two">%1$d קבצים המשתמשים ב-%2$s</item>
-        <item quantity="many">%1$d קבצים המשתמשים ב-%2$s</item>
         <item quantity="other">%1$d קבצים המשתמשים ב-%2$s</item>
     </plurals>
     <string name="support_debuglog_folder_empty_desc">אין יומני איתור שמורים</string>

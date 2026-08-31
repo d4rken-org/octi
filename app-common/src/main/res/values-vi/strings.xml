@@ -91,6 +91,7 @@
     <string name="widget_empty_label">Không có thiết bị phù hợp</string>
     <string name="widget_no_sync_devices_label">Chưa có thiết bị đồng bộ</string>
     <string name="widget_more_items">+ %1$d thêm</string>
+    <string name="widget_stale_device_content_description">Dữ liệu thiết bị đã cũ</string>
     <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
          Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
     <string name="widget_upgrade_required_headline">Cần nâng cấp</string>
