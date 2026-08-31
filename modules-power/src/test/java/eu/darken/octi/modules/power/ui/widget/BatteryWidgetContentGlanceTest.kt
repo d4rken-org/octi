@@ -2,6 +2,7 @@ package eu.darken.octi.modules.power.ui.widget
 
 import android.content.Context
 import androidx.glance.appwidget.testing.unit.runGlanceAppWidgetUnitTest
+import androidx.glance.testing.unit.hasContentDescription
 import androidx.glance.testing.unit.hasText
 import androidx.test.core.app.ApplicationProvider
 import eu.darken.octi.common.R as CommonR
@@ -15,6 +16,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
@@ -37,16 +40,24 @@ class BatteryWidgetContentGlanceTest {
         ),
     )
 
-    private fun powerModuleData(deviceId: DeviceId, info: PowerInfo = powerInfo()): ModuleData<PowerInfo> =
+    private fun powerModuleData(
+        deviceId: DeviceId,
+        info: PowerInfo = powerInfo(),
+        modifiedAt: Instant = Clock.System.now(),
+    ): ModuleData<PowerInfo> =
         ModuleData(
-            modifiedAt = Instant.fromEpochMilliseconds(0),
+            modifiedAt = modifiedAt,
             deviceId = deviceId,
             moduleId = powerModuleId,
             data = info,
         )
 
-    private fun metaModuleData(deviceId: DeviceId, label: String): ModuleData<MetaInfo> = ModuleData(
-        modifiedAt = Instant.fromEpochMilliseconds(0),
+    private fun metaModuleData(
+        deviceId: DeviceId,
+        label: String,
+        modifiedAt: Instant = Clock.System.now(),
+    ): ModuleData<MetaInfo> = ModuleData(
+        modifiedAt = modifiedAt,
         deviceId = deviceId,
         moduleId = metaModuleId,
         data = MetaInfo(
@@ -67,21 +78,23 @@ class BatteryWidgetContentGlanceTest {
     private fun powerState(
         selfInfo: PowerInfo = powerInfo(),
         extras: List<Pair<DeviceId, PowerInfo>> = emptyList(),
+        extrasModifiedAt: Instant = Clock.System.now(),
     ): BaseModuleRepo.State<PowerInfo> = BaseModuleRepo.State(
         moduleId = powerModuleId,
         self = powerModuleData(selfDeviceId, selfInfo),
         isOthersInitialized = true,
-        others = extras.map { (id, info) -> powerModuleData(id, info) },
+        others = extras.map { (id, info) -> powerModuleData(id, info, extrasModifiedAt) },
     )
 
     private fun metaState(
         selfLabel: String = "MyPhone",
         extras: List<Pair<DeviceId, String>> = emptyList(),
+        extrasModifiedAt: Instant = Clock.System.now(),
     ): BaseModuleRepo.State<MetaInfo> = BaseModuleRepo.State(
         moduleId = metaModuleId,
         self = metaModuleData(selfDeviceId, selfLabel),
         isOthersInitialized = true,
-        others = extras.map { (id, label) -> metaModuleData(id, label) },
+        others = extras.map { (id, label) -> metaModuleData(id, label, extrasModifiedAt) },
     )
 
     @Test
@@ -156,6 +169,52 @@ class BatteryWidgetContentGlanceTest {
         }
         onNode(hasText(context.getString(CommonR.string.widget_empty_label))).assertExists()
         onNode(hasText("MyPhone")).assertDoesNotExist()
+    }
+
+    @Test
+    fun `stale device row is labelled as out of date`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        val staleId = DeviceId("stale-device")
+        provideComposable {
+            BatteryWidgetContent(
+                metaState = metaState(
+                    extras = listOf(staleId to "Old Tablet"),
+                    extrasModifiedAt = Clock.System.now() - 8.days,
+                ),
+                powerState = powerState(
+                    extras = listOf(staleId to powerInfo()),
+                    extrasModifiedAt = Clock.System.now() - 8.days,
+                ),
+                themeColors = null,
+                maxRows = 5,
+                allowedDeviceIds = setOf(staleId.id),
+            )
+        }
+        onNode(hasText("Old Tablet")).assertExists()
+        onNode(
+            hasContentDescription(context.getString(CommonR.string.widget_stale_device_content_description))
+        ).assertExists()
+    }
+
+    @Test
+    fun `fresh device row is not labelled as out of date`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        val freshId = DeviceId("fresh-device")
+        provideComposable {
+            BatteryWidgetContent(
+                metaState = metaState(extras = listOf(freshId to "New Tablet")),
+                powerState = powerState(extras = listOf(freshId to powerInfo())),
+                themeColors = null,
+                maxRows = 5,
+                allowedDeviceIds = setOf(freshId.id),
+            )
+        }
+        onNode(hasText("New Tablet")).assertExists()
+        onNode(
+            hasContentDescription(context.getString(CommonR.string.widget_stale_device_content_description))
+        ).assertDoesNotExist()
     }
 
     @Test
