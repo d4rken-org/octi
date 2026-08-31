@@ -2,6 +2,7 @@ package eu.darken.octi.modules.connectivity.ui.widget
 
 import android.content.Context
 import androidx.glance.appwidget.testing.unit.runGlanceAppWidgetUnitTest
+import androidx.glance.testing.unit.hasContentDescription
 import androidx.glance.testing.unit.hasText
 import androidx.test.core.app.ApplicationProvider
 import eu.darken.octi.common.R as CommonR
@@ -15,6 +16,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
@@ -41,15 +44,20 @@ class NetworkWidgetContentGlanceTest {
     private fun connectivityModuleData(
         deviceId: DeviceId,
         info: ConnectivityInfo = connectivityInfo(),
+        modifiedAt: Instant = Clock.System.now(),
     ): ModuleData<ConnectivityInfo> = ModuleData(
-        modifiedAt = Instant.fromEpochMilliseconds(0),
+        modifiedAt = modifiedAt,
         deviceId = deviceId,
         moduleId = connectivityModuleId,
         data = info,
     )
 
-    private fun metaModuleData(deviceId: DeviceId, label: String): ModuleData<MetaInfo> = ModuleData(
-        modifiedAt = Instant.fromEpochMilliseconds(0),
+    private fun metaModuleData(
+        deviceId: DeviceId,
+        label: String,
+        modifiedAt: Instant = Clock.System.now(),
+    ): ModuleData<MetaInfo> = ModuleData(
+        modifiedAt = modifiedAt,
         deviceId = deviceId,
         moduleId = metaModuleId,
         data = MetaInfo(
@@ -70,21 +78,23 @@ class NetworkWidgetContentGlanceTest {
     private fun connectivityState(
         selfInfo: ConnectivityInfo = connectivityInfo(),
         extras: List<Pair<DeviceId, ConnectivityInfo>> = emptyList(),
+        extrasModifiedAt: Instant = Clock.System.now(),
     ): BaseModuleRepo.State<ConnectivityInfo> = BaseModuleRepo.State(
         moduleId = connectivityModuleId,
         self = connectivityModuleData(selfDeviceId, selfInfo),
         isOthersInitialized = true,
-        others = extras.map { (id, info) -> connectivityModuleData(id, info) },
+        others = extras.map { (id, info) -> connectivityModuleData(id, info, extrasModifiedAt) },
     )
 
     private fun metaState(
         selfLabel: String = "MyPhone",
         extras: List<Pair<DeviceId, String>> = emptyList(),
+        extrasModifiedAt: Instant = Clock.System.now(),
     ): BaseModuleRepo.State<MetaInfo> = BaseModuleRepo.State(
         moduleId = metaModuleId,
         self = metaModuleData(selfDeviceId, selfLabel),
         isOthersInitialized = true,
-        others = extras.map { (id, label) -> metaModuleData(id, label) },
+        others = extras.map { (id, label) -> metaModuleData(id, label, extrasModifiedAt) },
     )
 
     @Test
@@ -195,6 +205,86 @@ class NetworkWidgetContentGlanceTest {
         onNode(hasText("MyPhone")).assertDoesNotExist()
         onNode(hasText("Alpha")).assertDoesNotExist()
         onNode(hasText(context.getString(CommonR.string.widget_more_items, 3))).assertExists()
+    }
+
+    @Test
+    fun `stale tile is labelled as out of date`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        val staleId = DeviceId("stale-device")
+        provideComposable {
+            NetworkWidgetContent(
+                metaState = metaState(
+                    extras = listOf(staleId to "Old Tablet"),
+                    extrasModifiedAt = Clock.System.now() - 8.days,
+                ),
+                connectivityState = connectivityState(
+                    extras = listOf(staleId to connectivityInfo()),
+                    extrasModifiedAt = Clock.System.now() - 8.days,
+                ),
+                themeColors = null,
+                maxRows = 4,
+                widthDp = 300f,
+                heightDp = 200f,
+                allowedDeviceIds = setOf(staleId.id),
+            )
+        }
+        onNode(hasText("Old Tablet")).assertExists()
+        onNode(
+            hasContentDescription(context.getString(CommonR.string.widget_stale_device_content_description))
+        ).assertExists()
+    }
+
+    @Test
+    fun `fresh tile is not labelled as out of date`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        val freshId = DeviceId("fresh-device")
+        provideComposable {
+            NetworkWidgetContent(
+                metaState = metaState(extras = listOf(freshId to "New Tablet")),
+                connectivityState = connectivityState(extras = listOf(freshId to connectivityInfo())),
+                themeColors = null,
+                maxRows = 4,
+                widthDp = 300f,
+                heightDp = 200f,
+                allowedDeviceIds = setOf(freshId.id),
+            )
+        }
+        onNode(hasText("New Tablet")).assertExists()
+        onNode(
+            hasContentDescription(context.getString(CommonR.string.widget_stale_device_content_description))
+        ).assertDoesNotExist()
+    }
+
+    @Test
+    fun `stale compact row shows the age instead of the addresses`() = runGlanceAppWidgetUnitTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        setContext(context)
+        val staleId = DeviceId("stale-device")
+        provideComposable {
+            NetworkWidgetContent(
+                metaState = metaState(
+                    extras = listOf(staleId to "Old Tablet"),
+                    extrasModifiedAt = Clock.System.now() - 8.days,
+                ),
+                connectivityState = connectivityState(
+                    extras = listOf(
+                        staleId to connectivityInfo(localIp = "10.0.0.5", publicIp = "1.2.3.4"),
+                    ),
+                    extrasModifiedAt = Clock.System.now() - 8.days,
+                ),
+                themeColors = null,
+                maxRows = 4,
+                widthDp = 150f,
+                heightDp = 200f,
+                allowedDeviceIds = setOf(staleId.id),
+            )
+        }
+        onNode(hasText("10.0.0.5 · 1.2.3.4")).assertDoesNotExist()
+        onNode(
+            hasContentDescription(context.getString(CommonR.string.widget_stale_device_content_description))
+        ).assertExists()
     }
 
     @Test
