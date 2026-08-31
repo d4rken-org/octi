@@ -92,6 +92,7 @@
     <string name="widget_empty_label">No hay dispositivos coincidentes</string>
     <string name="widget_no_sync_devices_label">Aún no hay dispositivos de sincronización</string>
     <string name="widget_more_items">+ %1$d más</string>
+    <string name="widget_stale_device_content_description">Los datos del dispositivo están desactualizados</string>
     <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
          Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
     <string name="widget_upgrade_required_headline">Actualización necesaria</string>

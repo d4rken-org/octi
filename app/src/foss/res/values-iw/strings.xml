@@ -5,7 +5,6 @@
     <plurals name="upgrades_dashcard_device_limit_hint">
         <item quantity="one">הגרסה החינמית מוגבלת ל-%1$d מכשיר</item>
         <item quantity="two">הגרסה החינמית מוגבלת ל-%1$d מכשירים</item>
-        <item quantity="many">הגרסה החינמית מוגבלת ל-%1$d מכשירים</item>
         <item quantity="other">הגרסה החינמית מוגבלת ל-%1$d מכשירים</item>
     </plurals>
     <!-- Replaces upgrade_screen_title ("Upgrade to Octi Pro"), which sold the Google Play tier by name

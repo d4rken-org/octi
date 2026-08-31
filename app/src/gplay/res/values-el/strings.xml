@@ -27,7 +27,7 @@
     <string name="upgrade_screen_title_template">Λήψη %1$s</string>
     <string name="upgrade_screen_preamble">Το Octi δεν έχει διαφημίσεις και δεν πουλάει δεδομένα χρηστών. Η δουλειά μου χρηματοδοτείται από εσάς ❤️.</string>
     <string name="upgrade_screen_benefits_title">Πλεονεκτήματα</string>
-    <string name="upgrade_screen_benefits_body">• Περισσότερες από 3 συσκευές 💯\n• Διαφορετικά θέματα 🎨\n• Περισσότερες επιλογές ⚙️\n• Πρόσθετοι διακομιστές συγχρονισμού 🖥️\n• Συνεχιζόμενη ανάπτυξη ☕\n• Ένας κίνητος προγραμματιστής 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Περισσότερες από 3 συσκευές 💯\n• Διαφορετικά θέματα 🎨\n• Περισσότερες επιλογές ⚙️\n• Πρόσθετοι διακομιστές συγχρονισμού 🖥️\n• Συνεχιζόμενη ανάπτυξη ☕\n• Ένας παρακινημένος προγραμματιστής 🧙</string>
     <string name="upgrade_screen_how_title">Επιλογές</string>
     <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
          upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
@@ -42,7 +42,7 @@
     <string name="upgrade_screen_thanks_toast">Είσαι ο καλύτερος! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Επιλογές αναβάθμισης</string>
-    <string name="upgrade_screen_offers_unavailable_title">Μη διαθέσιμες τιμές</string>
+    <string name="upgrade_screen_offers_unavailable_title">Οι τιμές δεν είναι διαθέσιμες</string>
     <string name="upgrade_screen_offers_unavailable_message">Δεν ήταν δυνατή η φόρτωση των τιμών αυτή τη στιγμή. Ελέγξτε το Google Play και δοκιμάστε ξανά σε λίγο.</string>
     <string name="upgrade_screen_offers_or">ή</string>
     <string name="upgrade_screen_offers_body">Και τα δύο ξεκλειδώνουν τα ίδια χαρακτηριστικά — επιλέξτε την τιμολόγηση που προτιμάτε. Ακυρώστε ανά πάσα στιγμή.</string>
@@ -52,7 +52,7 @@
     <string name="upgrade_screen_iap_offer_title">Εφάπαξ αγορά</string>
     <string name="upgrade_screen_iap_offer_body">Πληρώστε μία φορά, δικό σας για πάντα — χωρίς συνδρομή.</string>
     <string name="upgrade_screen_restore_purchase_action">Επαναφορά αγοράς</string>
-    <string name="upgrade_screen_restore_banner_title">Έχετε ήδη αγοράσει Pro;</string>
+    <string name="upgrade_screen_restore_banner_title">Έχετε ήδη αγοράσει το Pro;</string>
     <string name="upgrade_screen_restore_banner_body">Φαίνεται ότι αναβαθμίσατε σε Pro σε αυτήν τη συσκευή πριν. Εάν εξακολουθείτε να κατέχετε την αναβάθμιση, η επαναφορά θα την ξεκλειδώσει ξανά.</string>
     <string name="upgrade_screen_restore_purchase_message">Η αναβάθμισή σας ισχύει σε όλες τις συσκευές με τον ίδιο λογαριασμό Google.</string>
     <string name="upgrade_screen_restore_troubleshooting_msg">Συμβουλές για μη αναγνωρισμένες αναβαθμίσεις:</string>
@@ -80,8 +80,8 @@
          already composed from the app name and the tier qualifier - never translate it here. Render
          the sentence idiomatically if that reads better in your language ("%1$s is active", "Your
          %1$s access is active"), as long as the placeholder survives. -->
-    <string name="upgrade_screen_owned_hero_brand_title">Έχετε %1$s 🎉</string>
-    <string name="upgrade_screen_owned_hero_iap_body">Ευχαριστούμε που αγοράσατε %1$s! Οι δυνατότητες Pro είναι ξεκλειδωμένες και δεν λήγουν ποτέ.</string>
+    <string name="upgrade_screen_owned_hero_brand_title">Έχετε το %1$s 🎉</string>
+    <string name="upgrade_screen_owned_hero_iap_body">Ευχαριστούμε που αγοράσατε το %1$s! Οι δυνατότητες Pro είναι ξεκλειδωμένες και δεν λήγουν ποτέ.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Ευχαριστούμε που κάνατε εγγραφή στο %1$s! Οι δυνατότητες Pro είναι ξεκλειδωμένες.</string>
     <string name="upgrade_screen_manage_subscription_action">Διαχείριση συνδρομής</string>
     <!-- Switch subscription → one-time purchase -->
@@ -91,7 +91,7 @@
     <string name="upgrade_screen_switch_action">Αγορά εφάπαξ αγοράς (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Η συνδρομή είναι ακόμα ενεργή</string>
     <string name="upgrade_screen_sub_still_renewing_message">Η συνδρομή σας είναι ακόμα ορισμένη να ανανεωθεί. Ακυρώστε την πρώτα στο Google Play ώστε να μην χρεωθείτε δύο φορές, και στη συνέχεια αγοράστε την εφάπαξ αγορά. Αυτό δεν επιστρέφει χρήματα για τη συνδρομή.</string>
-    <string name="upgrade_screen_purchase_check_failed_message">Το Google Play δεν ανταποκρίθηκε έγκαιρα, γι\' αυτό δεν μπορούμε να επιβεβαιώσουμε με ασφάλεια την κατάστασή σου. Προσπάθησε ξανά σε λίγο.</string>
+    <string name="upgrade_screen_purchase_check_failed_message">Το Google Play δεν ανταποκρίθηκε έγκαιρα, γι\' αυτό δεν μπορούμε να επιβεβαιώσουμε με ασφάλεια την κατάσταση τής αγοράς. Προσπάθησε ξανά σε λίγο.</string>
     <!-- Pending payment (Google Play is still processing a slow payment method) -->
     <string name="upgrade_screen_pending_card_title">Εκκρεμή πληρωμή</string>
     <string name="upgrade_screen_pending_card_body">Το Google Play επεξεργάζεται ακόμη την πληρωμή σου. Το Pro θα ξεκλειδωθεί αυτόματα μόλις η πληρωμή ολοκληρωθεί. Ορισμένες μέθοδοι πληρωμής μπορεί να χρειάσουν χρόνο. Δεν χρειάζεται να κάνεις κάτι άλλο.</string>

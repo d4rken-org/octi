@@ -9,12 +9,12 @@
     <!-- Replaces upgrade_screen_title ("Upgrade to Octi Pro"), which sold the Google Play tier by name
          inside the FOSS build, where the tier is called "Octi FOSS" and the ask is sponsorship rather
          than a purchase. Keep it tier-free: name no product edition when translating. -->
-    <string name="upgrade_screen_support_title">Υποστήρξτε το Octi</string>
+    <string name="upgrade_screen_support_title">Υποστηρίξτε το Octi</string>
     <string name="upgrade_screen_preamble">Το Octi δεν έχει διαφημίσεις και δεν πουλάει δεδομένα χρηστών. Η δουλειά μου χρηματοδοτείται από εσάς ❤️</string>
     <string name="upgrade_screen_how_title">Τι να κάνετε</string>
     <string name="upgrade_screen_how_body">Γίνετε υποστηρικτής και σπόνσορας της ανάπτυξης! Πατήστε το παρακάτω κουμπί για να ενεργοποιήσετε όλες τις επιπλέον λειτουργίες και να ανοίξετε το προφίλ των χορηγιών μου στο GitHub.</string>
     <string name="upgrade_screen_why_title">Πλεονεκτήματα</string>
-    <string name="upgrade_screen_benefits_body">• Περισσότερες από 3 συσκευές 💯\n• Διαφορετικά θέματα 🎨\n• Περισσότερες επιλογές ⚙️\n• Πρόσθετοι διακομιστές συγχρονισμού 🖥️\n• Συνεχιζόμενη ανάπτυξη ανοικτού κώδικα ☕\n• Ένας κίνητος προγραμματιστής 🧙</string>
+    <string name="upgrade_screen_benefits_body">• Περισσότερες από 3 συσκευές 💯\n• Διαφορετικά θέματα 🎨\n• Περισσότερες επιλογές ⚙️\n• Πρόσθετοι διακομιστές συγχρονισμού 🖥️\n• Συνεχιζόμενη ανάπτυξη ανοικτού κώδικα ☕\n• Ένας παρακινημένος προγραμματιστής 🧙</string>
     <string name="upgrade_screen_sponsor_action">Χορηγήστε την ανάπτυξη</string>
     <string name="upgrade_screen_sponsor_action_hint">Η εναλλακτική είναι διαφημίσεις, αναλύσεις και Google Play 🙁</string>
     <string name="upgrade_screen_thanks_toast">Σας ευχαριστούμε που στηρίζετε την ανάπτυξη ανοιχτού κώδικα ❤️</string>
@@ -23,9 +23,9 @@
     <string name="upgrade_screen_supporter_title">Είστε υποστηρικτής ❤️</string>
     <string name="upgrade_screen_supporter_body">Ευχαριστούμε που υποστηρίζετε την ανάπτυξη ανοιχτού κώδικα του Octi!</string>
     <string name="upgrade_screen_supporter_since">Υποστηρικτής από %1$s</string>
-    <string name="upgrade_screen_recurring_title">Κρατήστε το ενεργό</string>
+    <string name="upgrade_screen_recurring_title">Κρατήστε το ζωντανό</string>
     <string name="upgrade_screen_recurring_body">Το Octi συνεχίζει να εξελίσσεται μέσω ενημερώσεων και διορθώσεων. Αν θέλετε να το υποστηρίξετε, σκεφτείτε μια επαναλαμβανόμενη δωρεά μέσω των GitHub Sponsors.</string>
-    <string name="upgrade_screen_open_sponsors_action">Ανοίξτε GitHub Sponsors</string>
+    <string name="upgrade_screen_open_sponsors_action">Άνοιγμα GitHub Sponsors</string>
     <string name="upgrade_screen_free_status_title">Βρίσκεστε στη δωρεάν έκδοση</string>
     <string name="upgrade_screen_free_status_body">Γίνετε υποστηρικτής για να ξεκλειδώσετε επιπλέον δυνατότητες και να χορηγήσετε τη συνεχιζόμενη ανάπτυξη.</string>
     <string name="upgrade_screen_see_options_action">Δείτε τις επιλογές αναβάθμισης</string>

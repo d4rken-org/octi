@@ -94,6 +94,7 @@
     <string name="widget_empty_label">Нет подходящих устройств</string>
     <string name="widget_no_sync_devices_label">Нет синхронизированных устройств</string>
     <string name="widget_more_items">+ ещё %1$d</string>
+    <string name="widget_stale_device_content_description">Данные устройства устарели</string>
     <!-- Replaces widget_upgrade_required_title, which named the Google Play tier in the FOSS build too.
          Keep it tier-free and short: it renders on a small widget surface, capped at one line. -->
     <string name="widget_upgrade_required_headline">Требуется обновление</string>

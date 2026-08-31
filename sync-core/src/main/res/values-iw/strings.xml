@@ -13,7 +13,6 @@
     <plurals name="sync_stale_devices_info_message">
         <item quantity="one">מכשיר %d לא הסתנכרן לאחרונה</item>
         <item quantity="two">%d מכשירים לא סונכרנו לאחרונה</item>
-        <item quantity="many">%d מכשירים לא סונכרנו לאחרונה</item>
         <item quantity="other">%d מכשירים לא סונכרנו לאחרונה</item>
     </plurals>
     <string name="sync_device_outdated_version_warning">טוען גרסה מיושנת %s</string>
@@ -50,19 +49,16 @@
     <plurals name="sync_stale_period_days">
         <item quantity="one">יום %d</item>
         <item quantity="two">%d ימים</item>
-        <item quantity="many">%d ימים</item>
         <item quantity="other">%d ימים</item>
     </plurals>
     <plurals name="sync_stale_period_months">
         <item quantity="one">חודש %d</item>
         <item quantity="two">%d חודשים</item>
-        <item quantity="many">%d חודשים</item>
         <item quantity="other">%d חודשים</item>
     </plurals>
     <plurals name="sync_stale_period_years">
         <item quantity="one">שנה %d</item>
         <item quantity="two">%d שנים</item>
-        <item quantity="many">%d שנים</item>
         <item quantity="other">%d שנים</item>
     </plurals>
 </resources>

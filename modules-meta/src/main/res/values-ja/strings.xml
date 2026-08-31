@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">タブレット</string>
     <string name="module_meta_detail_device_type_desktop">デスクトップ</string>
     <string name="module_meta_detail_device_type_browser">ブラウザ</string>
+    <string name="module_meta_detail_device_type_server">サーバー</string>
     <string name="module_meta_detail_device_type_unknown">不明</string>
     <string name="module_meta_detail_os_label">オペレーティングシステム</string>
     <string name="module_meta_detail_android_version_label">Androidバージョン</string>

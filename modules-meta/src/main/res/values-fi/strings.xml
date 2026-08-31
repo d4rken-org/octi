@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">Tabletti</string>
     <string name="module_meta_detail_device_type_desktop">Pöytäkone</string>
     <string name="module_meta_detail_device_type_browser">Selain</string>
+    <string name="module_meta_detail_device_type_server">Palvelin</string>
     <string name="module_meta_detail_device_type_unknown">Tuntematon</string>
     <string name="module_meta_detail_os_label">Käyttöjärjestelmä</string>
     <string name="module_meta_detail_android_version_label">Android-versio</string>

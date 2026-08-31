@@ -5,7 +5,6 @@
     <plurals name="module_apps_x_installed">
         <item quantity="one">יישום %d הותקן</item>
         <item quantity="two">%d יישומים מותקנים</item>
-        <item quantity="many">%d יישומים מותקנים</item>
         <item quantity="other">%d יישומים מותקנים</item>
     </plurals>
     <string name="module_apps_last_installed_x">יישום אחרון שהותקן: %s</string>
@@ -13,7 +12,6 @@
     <plurals name="module_apps_tile_count">
         <item quantity="one">%d אפליקציה</item>
         <item quantity="two">%d אפליקציות</item>
-        <item quantity="many">%d אפליקציות</item>
         <item quantity="other">%d אפליקציות</item>
     </plurals>
     <string name="module_apps_tile_last_installed_label">הותקן לאחרונה</string>

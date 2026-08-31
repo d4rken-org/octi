@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">태블릿</string>
     <string name="module_meta_detail_device_type_desktop">데스크톱</string>
     <string name="module_meta_detail_device_type_browser">브라우저</string>
+    <string name="module_meta_detail_device_type_server">서버</string>
     <string name="module_meta_detail_device_type_unknown">알 수 없음</string>
     <string name="module_meta_detail_os_label">운영 체제</string>
     <string name="module_meta_detail_android_version_label">Android 버전</string>

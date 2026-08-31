@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">Nettbrett</string>
     <string name="module_meta_detail_device_type_desktop">Skrivebord</string>
     <string name="module_meta_detail_device_type_browser">Nettleser</string>
+    <string name="module_meta_detail_device_type_server">Tjener</string>
     <string name="module_meta_detail_device_type_unknown">Ukjent</string>
     <string name="module_meta_detail_os_label">Operativsystem</string>
     <string name="module_meta_detail_android_version_label">Android-versjon</string>

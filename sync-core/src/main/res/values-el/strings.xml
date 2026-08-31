@@ -5,12 +5,8 @@
     <string name="sync_device_clock_skew_warning_text">Το ρολόι της συσκευής φαίνεται εκτός συγχρονισμού</string>
     <string name="sync_clock_discrepancy_chip_label">Απόκλιση ρολογιού</string>
     <string name="sync_clock_discrepancy_title">Διαφορά ρολογιού</string>
-    <string name="sync_clock_discrepancy_uncertain">Εντοπίστηκε διαφορά ρολογιού μεταξύ των συσκευών σας. Με μόνο δύο συσκευές, δεν είναι δυνατό να καθοριστεί ποια έχει λάθος ώρα.
-
-Ελέγξτε τις ρυθμίσεις ώρας της συσκευής σας.</string>
-    <string name="sync_clock_discrepancy_current_suspect">Το ρολόι αυτής της συσκευής φαίνεται εκτός συγχρονισμού. Οι άλλες συσκευές σας συμφωνούν σε διαφορετική ώρα.
-
-Ελέγξτε τις ρυθμίσεις ώρας αυτής της συσκευής.</string>
+    <string name="sync_clock_discrepancy_uncertain">Εντοπίστηκε διαφορά ρολογιού μεταξύ των συσκευών σας. Με μόνο δύο συσκευές, δεν είναι δυνατό να καθοριστεί ποια έχει λάθος ώρα.\n\nΕλέγξτε τις ρυθμίσεις ώρας της συσκευής σας.</string>
+    <string name="sync_clock_discrepancy_current_suspect">Το ρολόι αυτής της συσκευής φαίνεται εκτός συγχρονισμού. Οι άλλες συσκευές σας συμφωνούν σε διαφορετική ώρα.\n\nΕλέγξτε τις ρυθμίσεις ώρας αυτής της συσκευής.</string>
     <string name="sync_clock_discrepancy_remote_suspect">Το ρολόι του %s φαίνεται εκτός συγχρονισμού. Οι άλλες συσκευές σας συμφωνούν στην τρέχουσα ώρα.</string>
     <string name="sync_clock_discrepancy_server_offset_ahead">Το ρολόι της συσκευής σας είναι μπροστά από τον διακομιστή κατά %s.</string>
     <string name="sync_clock_discrepancy_server_offset_behind">Το ρολόι της συσκευής σας είναι πίσω από τον διακομιστή κατά %s.</string>
@@ -21,7 +17,7 @@
     <string name="sync_device_outdated_version_warning">Τρέχει παλιά έκδοση %s</string>
     <string name="sync_issues_type_stale_device">Παρηχμένη συσκευή</string>
     <string name="sync_issues_type_clock_skew">Πρόβλημα ρολογιού</string>
-    <string name="sync_issues_type_outdated_version">Παρατηρημένη έκδοση</string>
+    <string name="sync_issues_type_outdated_version">Ξεπερασμένη έκδοση</string>
     <string name="sync_issues_type_server_storage_low">Ο διακομιστής δεν έχει χώρο</string>
     <string name="sync_server_storage_low_description">Ο διακομιστής συγχρονισμού έχει χαμηλό χώρο στον δίσκο. Οι αποστολές είναι σε παύση έως ότου ο διαχειριστής του διακομιστή ελευθερώσει χώρο.</string>
     <string name="sync_issues_type_account_quota_full">Ο λογαριασμός είναι πλήρης</string>
@@ -29,10 +25,10 @@
     <string name="sync_issues_type_low_storage">Χαμηλός χώρος αποθήκευσης</string>
     <string name="sync_low_storage_description">Απομένει λιγότερο από 10%% του διαθέσιμου χώρου αποθήκευσης. Ελευθερώστε χώρο σύντομα για να συνεχίσετε το συγχρονισμό.</string>
     <string name="sync_connector_paused_label">Διακοπή συγχρονισμού</string>
-    <string name="sync_connector_paused_error_label">Η σύνδεση σε παύση</string>
+    <string name="sync_connector_paused_error_label">Σύνδεση σε παύση</string>
     <string name="sync_connector_paused_error_desc">Αυτή η σύνδεση είναι σε παύση. Συνεχίστε την για να εκτελέσετε αυτή την ενέργεια.</string>
     <string name="sync_connector_account_label">Λογαριασμός</string>
-    <string name="sync_connector_progress_syncing">Συγχρονισμός…</string>
+    <string name="sync_connector_progress_syncing">Συγχρονισμός...</string>
     <string name="sync_connector_progress_sync_queued">Συγχρονισμός σε αναμονή...</string>
     <string name="sync_connector_progress_pausing">Παύση συγχρονισμού...</string>
     <string name="sync_connector_progress_pause_queued">Παύση σε αναμονή...</string>

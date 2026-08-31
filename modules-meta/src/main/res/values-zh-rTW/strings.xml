@@ -11,6 +11,7 @@
     <string name="module_meta_detail_device_type_tablet">平板電腦</string>
     <string name="module_meta_detail_device_type_desktop">桌面</string>
     <string name="module_meta_detail_device_type_browser">瀏覽器</string>
+    <string name="module_meta_detail_device_type_server">伺服器</string>
     <string name="module_meta_detail_device_type_unknown">未知</string>
     <string name="module_meta_detail_os_label">作業系統</string>
     <string name="module_meta_detail_android_version_label">Android 版本</string>
