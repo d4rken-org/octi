@@ -3,6 +3,7 @@
     <!-- Light mode widget colors (pre-API 31) -->
     <color name="widgetContainerBackground">#FF2D6A44</color>
     <color name="widgetOnContainer">#FFFFFFFF</color>
+    <color name="widgetOnContainerVariant">#FFAFC6B7</color>
     <color name="widgetTileBackground">#FF4A7057</color>
     <color name="widgetOnTile">#FFF3FFF4</color>
     <color name="widgetOnTileVariant">#FFCEE0D2</color>

@@ -51,4 +51,8 @@ dependencies {
     // types without dragging the dependency into non-widget consumers of app-common. Each widget
     // module brings glance-appwidget at runtime itself.
     compileOnly("androidx.glance:glance-appwidget:1.2.0-rc01")
+
+    // WidgetTheme.deriveColors goes through androidx.core ColorUtils, which calls into
+    // android.graphics.Color — not available in the plain unit-test android.jar.
+    testImplementation("org.robolectric:robolectric:4.16.1")
 }
