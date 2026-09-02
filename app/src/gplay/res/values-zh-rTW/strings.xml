@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">專業版</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play 無法使用</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi 無法連接到 Google Play。Google Play 是否已安裝且為最新版本？您的 Google 帳戶是否已登入？請嘗試清除 Google Play 應用程式的快取並重新啟動您的裝置。</string>
-    <string name="upgrades_no_purchases_found_check_account">找不到任何購買記錄。您是否使用了正確的帳戶？</string>
     <string name="upgrades_already_owned_error_title">已購買</string>
     <string name="upgrades_already_owned_error_description">Google Play 顯示您已擁有此升級。使用「恢復購買」以解鎖。</string>
     <string name="upgrades_gplay_billing_error_label">Google Play 問題</string>
@@ -27,19 +26,9 @@
     <string name="upgrade_screen_preamble">Octi 沒有廣告，也不販售使用者資料。我的工作由你贊助 ❤️。</string>
     <string name="upgrade_screen_benefits_title">優勢</string>
     <string name="upgrade_screen_benefits_body">• 超過 3 台裝置 💯\n• 不同主題 🎨\n• 更多選項 ⚙️\n• 額外同步伺服器 🖥️\n• 持續開發 ☕\n• 積極進取的開發者 🧙</string>
-    <string name="upgrade_screen_how_title">選項</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">您可以選擇一次性購買或較便宜的年度訂閱。兩者都可隨時取消。
-相同功能，只是定價模式不同。</string>
-    <string name="upgrade_screen_how_trial_hint">訂閱從免費的 14 天試用開始，之後每年收費一次。</string>
     <string name="upgrade_screen_subscription_trial_action">開始 14 天免費試用</string>
     <string name="upgrade_screen_subscription_action">訂閱</string>
-    <string name="upgrade_screen_subscription_action_hint">訂閱費用為 %s/年。</string>
     <string name="upgrade_screen_iap_action">一次性購買</string>
-    <string name="upgrade_screen_iap_action_hint">一次性購買費用為 %s。</string>
-    <string name="upgrade_screen_thanks_toast">你最棒！❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">升級選項</string>
     <string name="upgrade_screen_offers_unavailable_title">價格不可用</string>
@@ -54,8 +43,6 @@
     <string name="upgrade_screen_restore_purchase_action">恢復購買</string>
     <string name="upgrade_screen_restore_banner_title">已購買專業版？</string>
     <string name="upgrade_screen_restore_banner_body">看起來您之前在此設備上升級為專業版。如果您仍擁有此升級，恢復將再次解鎖。</string>
-    <string name="upgrade_screen_restore_purchase_message">你的升級適用於同一 Google 帳戶下的所有裝置。</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">無法識別升級項目的疑難排解提示：</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play 商店同步可能需要一點時間。請嘗試重啟裝置、清除 Google Play 快取或耐心等待。</string>
     <string name="upgrade_screen_restore_multiaccount_hint">多個帳戶可能會讓 Google Play 產生混淆。請登出其他帳戶，或透過 Google Play 網站安裝以強制綁定特定帳戶。</string>
     <string name="upgrade_screen_restore_success_message">購買已復原 — 謝謝您！</string>
@@ -69,10 +56,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">終身購買</string>
     <string name="upgrade_screen_owned_iap_body">您擁有一次性 Pro 購買。它永不過期。</string>
-    <string name="upgrade_screen_owned_sub_title">訂閱</string>
     <string name="upgrade_screen_owned_sub_renewing_body">您的 Pro 訂閱目前活躍，並會自動續約。</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">您的 Pro 訂閱目前活躍，但設定為不續約。它將保持活躍直到目前周期結束。</string>
-    <string name="upgrade_screen_owned_both_title">您同時擁有兩者</string>
     <string name="upgrade_screen_owned_both_warning">您同時擁有訂閱和一次性購買。為避免重複付款，請在 Google Play 中取消訂閱 — 您將透過終身購買保留 Pro。</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -85,10 +70,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">感謝您訂閱 %1$s！您的 Pro 功能已解鎖。</string>
     <string name="upgrade_screen_manage_subscription_action">管理訂閱</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">切換至一次性購買</string>
     <string name="upgrade_screen_switch_body">想一次性支付而不是訂閱？您可以購買 Pro 一次性版本並停止訂閱。</string>
     <string name="upgrade_screen_switch_locked_note">您的訂閱仍會自動續訂。請先在 Google Play 中取消，然後回來購買一次性版本。在此購買不會取消或退款訂閱 — 請使用相同的 Google 帳戶。</string>
-    <string name="upgrade_screen_switch_action">購買一次性版本 (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">訂閱仍處於活躍狀態</string>
     <string name="upgrade_screen_sub_still_renewing_message">您的訂閱仍設定為續訂。請先在 Google Play 中取消以免被重複扣費，然後購買一次性版本。這不會退款訂閱。</string>
     <string name="upgrade_screen_purchase_check_failed_message">Google Play 沒有及時回應，因此我們無法安全地確認你的購買狀態。請稍後再試一次。</string>

@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Služba Google Play není k dispozici</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi se nemůže připojit k Google Play. Je Google Play nainstalován a aktuální? Je váš účet Google přihlášen? Zkuste vyčistit mezipaměť aplikace Google Play a restartovat zařízení.</string>
-    <string name="upgrades_no_purchases_found_check_account">Nebyly nalezeny žádné nákupy. Používáte správný účet?</string>
     <string name="upgrades_already_owned_error_title">Již zakoupeno</string>
     <string name="upgrades_already_owned_error_description">Google Play hlásí, že již vlastníte tento upgrade. Chcete-li jej odemknout, použijte možnost \'Obnovit nákup\'.</string>
     <string name="upgrades_gplay_billing_error_label">Problém s Google Play</string>
@@ -30,18 +29,9 @@
     <string name="upgrade_screen_preamble">Octi neobsahuje žádné reklamy a neprodává data uživatelů. Mou práci financujete vy ❤️.</string>
     <string name="upgrade_screen_benefits_title">Výhody</string>
     <string name="upgrade_screen_benefits_body">• Více než 3 zařízení 💯\n• Různé motivy 🎨\n• Více možností ⚙️\n• Extra synchronizace serverů 🖥️\n• Pokračování ve vývoji ☕\n• Motivovaný vývojář 🧙</string>
-    <string name="upgrade_screen_how_title">Možnosti</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">Můžete si vybrat mezi jednorázovým nákupem a levnějším ročním předplatným. Obojí lze zrušit kdykoli.\nStejné funkce, pouze různé modely cen.</string>
-    <string name="upgrade_screen_how_trial_hint">Předplatné začíná bezplatným 14denním zkušebním obdobím, po kterém vám bude účtován poplatek jednou za rok.</string>
     <string name="upgrade_screen_subscription_trial_action">Zahájit bezplatnou 14denní zkušební dobu</string>
     <string name="upgrade_screen_subscription_action">Předplatit</string>
-    <string name="upgrade_screen_subscription_action_hint">Předplatné stojí %s ročně.</string>
     <string name="upgrade_screen_iap_action">Jednorázový nákup</string>
-    <string name="upgrade_screen_iap_action_hint">Jednorázový nákup stojí %s.</string>
-    <string name="upgrade_screen_thanks_toast">Jste nejlepší! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Možnosti upgradu</string>
     <string name="upgrade_screen_offers_unavailable_title">Ceny nejsou dostupné</string>
@@ -56,8 +46,6 @@
     <string name="upgrade_screen_restore_purchase_action">Obnovit nákup</string>
     <string name="upgrade_screen_restore_banner_title">Již jste si koupili Pro?</string>
     <string name="upgrade_screen_restore_banner_body">Vypadá to, že jste na tomto zařízení už dříve upgradovali na Pro. Pokud stále tento upgrade vlastníte, obnovením jej odemknete znovu.</string>
-    <string name="upgrade_screen_restore_purchase_message">Váš upgrade platí pro všechna zařízení na stejném účtu Google.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Tipy pro řešení problémů s nerozpoznanými upgrady:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Synchronizace Obchodu Play může chvíli trvat. Zkuste restartovat, vymazat mezipaměť Google Play nebo prostě počkat.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Více účtů může zmást Google Play. Odhlaste se z jiných účtů nebo nainstalujte přes webové stránky Google Play, což nutí sdružení k určitému účtu.</string>
     <string name="upgrade_screen_restore_success_message">Nákup obnoven — děkujeme!</string>
@@ -71,10 +59,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">Nákup na doživotí</string>
     <string name="upgrade_screen_owned_iap_body">Vlastníte jednorázový nákup Pro. Nikdy nevyprší.</string>
-    <string name="upgrade_screen_owned_sub_title">Předplatné</string>
     <string name="upgrade_screen_owned_sub_renewing_body">Vaše předplatné Pro je aktivní a automaticky se obnovuje.</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">Vaše předplatné Pro je aktivní, ale je nastaveno tak, aby se neobnovilo. Zůstane aktivní až do konce aktuálního období.</string>
-    <string name="upgrade_screen_owned_both_title">Vlastníte obojí</string>
     <string name="upgrade_screen_owned_both_warning">Vlastníte jak předplatné, tak jednorázový nákup. Abyste se vyhnuli zaplacení dvakrát, zrušte předplatné v Google Play — Pro si ponecháte díky nákupu na doživotí.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -87,10 +73,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">Děkujeme za přihlášení k odběru %1$s! Vaše funkce Pro jsou odemčeny.</string>
     <string name="upgrade_screen_manage_subscription_action">Spravovat předplatné</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">Přejít na jednorázový nákup</string>
     <string name="upgrade_screen_switch_body">Raději byste zaplatili jednou místo předplatného? Můžete koupit jednorázový nákup Pro a zastavit předplatné.</string>
     <string name="upgrade_screen_switch_locked_note">Vaše předplatné se stále automaticky obnovuje. Nejdříve jej zrušte v Obchodě Play, poté se vraťte a kupte si jednorázový nákup. Nákup zde nezruší ani nevrátí peníze za předplatné – použijte stejný účet Google.</string>
-    <string name="upgrade_screen_switch_action">Koupit jednorázový nákup (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Předplatné je stále aktivní</string>
     <string name="upgrade_screen_sub_still_renewing_message">Vaše předplatné je stále nastaveno na obnovení. Nejdříve jej zrušte v Obchodě Play, abyste nebyli účtováni dvakrát, poté si koupte jednorázový nákup. To nevrátí peníze za předplatné.</string>
     <string name="upgrade_screen_purchase_check_failed_message">Google Play včas neodpověděl, takže nemůžeme bezpečně potvrdit stav tvého nákupu. Zkus to prosím za chvíli znovu.</string>

@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Google Play nie je dostupný</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi sa nemôže pripojiť k službe Google Play. Je Google Play nainštalovaný a aktuálny? Je váš účet Google prihlásený? Skúste vymazať vyrovnávaciu pamäť aplikácie Google Play a reštartovať zariadenie.</string>
-    <string name="upgrades_no_purchases_found_check_account">Nenašli sa žiadne nákupy. Používate správny účet?</string>
     <string name="upgrades_dashcard_body">Prejdite na vyššiu verziu a odomknite ďalšie funkcie a podporíte vývoj!</string>
     <string name="upgrades_dashcard_upgrade_action">Aktualizovať</string>
     <string name="upgrade_screen_preamble">Octi nemá reklamy a nepredáva údaje používateľov. Moja práca je financovaná vami ❤️.</string>
     <string name="upgrade_screen_benefits_title">Výhody</string>
     <string name="upgrade_screen_benefits_body">• Viac ako 3 zariadenia 💯\n• Rôzne témy 🎨\n• Viac možností ⚙️\n• Extra servery na synchronizáciu🖥️️\n• Pokračujúci vývoj ☕\n• Motivovaný vývojár 🧙</string>
-    <string name="upgrade_screen_how_title">Možnosti</string>
     <string name="upgrade_screen_subscription_trial_action">Začať bezplatnú 14-dňovú skúšku</string>
     <string name="upgrade_screen_subscription_action">Predplatiť</string>
-    <string name="upgrade_screen_subscription_action_hint">Predplatné stojí %s ročne.</string>
     <string name="upgrade_screen_iap_action">Jednorazový nákup</string>
-    <string name="upgrade_screen_iap_action_hint">Jednorazový nákup stojí %s.</string>
-    <string name="upgrade_screen_thanks_toast">Ste najlepší! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Obnoviť nákup</string>
-    <string name="upgrade_screen_restore_purchase_message">Vaša aktualizácia platí na všetkých zariadeniach so zhodným účtom Google.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Tipy na riešenie problémov s neuznanými upgrade-mi:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Synchronizácia s obchodom Play môže chvíľu trvať. Skúste reštartovať, vymazať cache služby Google Play alebo len počkať.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Viacero účtov môže zmiasť Google Play. Odhláste sa z iných účtov alebo inštalujte cez web Google Play, ktorý vynúti asociáciu s konkrétnym účtom.</string>
 </resources>

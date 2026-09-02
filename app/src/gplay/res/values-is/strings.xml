@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Google Play er ekki í boði</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi getur ekki tengst Google Play. Er Google Play uppsett og uppfært? Er Google-aðgangurinn þinn virkur? Prófaðu að hreinsa skyndiminni fyrir Google Play og endurræsa tækið.</string>
-    <string name="upgrades_no_purchases_found_check_account">Engar kaupfundust. Ertu að nota rétta reikninginn?</string>
     <string name="upgrades_dashcard_body">Uppfærðu til að opna fleiri eiginleika og styðja við þróunina!</string>
     <string name="upgrades_dashcard_upgrade_action">Uppfæra</string>
     <string name="upgrade_screen_preamble">Octi er án auglýsinga og selur ekki notendagögn. Verk mitt er fjármagnað af þér ❤️.</string>
     <string name="upgrade_screen_benefits_title">Kostir</string>
     <string name="upgrade_screen_benefits_body">• Meira en 3 tæki 💯\n• Mismunandi þemu 🎨\n• Fleiri stillingar ⚙️\n• Aukalegir samstillingarþjónar 🖥️️\n• Samfelld þróun ☕\n• Áhugasamur hugbúnaðarþróari 🧙</string>
-    <string name="upgrade_screen_how_title">Valkostir</string>
     <string name="upgrade_screen_subscription_trial_action">Byrja 14 daga fría prufu</string>
     <string name="upgrade_screen_subscription_action">Gerast áskrifandi</string>
-    <string name="upgrade_screen_subscription_action_hint">Áskrift kostar %s á ári.</string>
     <string name="upgrade_screen_iap_action">Einskiptiskaup</string>
-    <string name="upgrade_screen_iap_action_hint">Einskiptiskaup kosta %s.</string>
-    <string name="upgrade_screen_thanks_toast">Þú ert bestur! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Endurheimta kaup</string>
-    <string name="upgrade_screen_restore_purchase_message">Uppfærslan þín gildir á öllum tækjum með sama Google-aðgangi.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Ráð við bilun í að finna uppfærslur:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Samstilling við Play Store getur tekið tíma. Prófaðu að endurræsa, hreinsa skyndiminni Google Play eða einfaldlega bíða.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Margir reikningar geta ruglað Google Play. Skráðu þig út úr öðrum reikningum eða settu upp í gegnum Google Play vefinn, sem tengir sérstaklega við einn reikning.</string>
 </resources>

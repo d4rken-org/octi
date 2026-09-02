@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Google Play ไม่พร้อมใช้งาน</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi ไม่สามารถเชื่อมต่อกับ Google Play ได้ ติดตั้งและอัปเดต Google Play แล้วหรือยัง? คุณเข้าสู่ระบบด้วยบัญชี Google หรือไม่? ลองล้างแคชของแอป Google Play และรีสตาร์ทอุปกรณ์ของคุณ</string>
-    <string name="upgrades_no_purchases_found_check_account">ไม่พบการซื้อ คุณใช้บัญชีที่ถูกต้องหรือไม่?</string>
     <string name="upgrades_dashcard_body">อัปเกรดเพื่อปลดล็อกฟีเจอร์เพิ่มเติมและสนับสนุนการพัฒนา!</string>
     <string name="upgrades_dashcard_upgrade_action">อัปเกรด</string>
     <string name="upgrade_screen_preamble">Octi ไม่มีโฆษณาและไม่ขายข้อมูลผู้ใช้ งานของฉันได้รับเงินสนับสนุนจากคุณ ❤️</string>
     <string name="upgrade_screen_benefits_title">ข้อดี</string>
     <string name="upgrade_screen_benefits_body">• มากกว่า 3 อุปกรณ์ 💯\n• ธีมที่แตกต่างกัน 🎨\n• ตัวเลือกเพิ่มเติม ⚙️\n• เซิร์ฟเวอร์ซิงค์เพิ่มเติม 🖥️️\n• การพัฒนาอย่างต่อเนื่อง ☕\n• นักพัฒนาที่มีแรงบันดาลใจ 🧙</string>
-    <string name="upgrade_screen_how_title">ตัวเลือก</string>
     <string name="upgrade_screen_subscription_trial_action">เริ่มทดลองใช้งานฟรี 14 วัน</string>
     <string name="upgrade_screen_subscription_action">สมัครสมาชิก</string>
-    <string name="upgrade_screen_subscription_action_hint">ค่าสมัครสมาชิก %s ต่อปี</string>
     <string name="upgrade_screen_iap_action">ซื้อครั้งเดียว</string>
-    <string name="upgrade_screen_iap_action_hint">ราคาสำหรับการซื้อครั้งเดียวคือ %s</string>
-    <string name="upgrade_screen_thanks_toast">คุณดีที่สุด! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">กู้คืนการซื้อ</string>
-    <string name="upgrade_screen_restore_purchase_message">การอัปเกรดของคุณใช้ได้กับทุกอุปกรณ์ที่ใช้บัญชี Google เดียวกัน</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">เคล็ดลับการแก้ไขปัญหาสำหรับการอัปเกรดที่ไม่รู้จัก:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">การซิงค์กับ Play Store อาจใช้เวลา ลองรีสตาร์ท ล้างแคชของ Google Play หรือรอสักครู่</string>
     <string name="upgrade_screen_restore_multiaccount_hint">หลายบัญชีอาจทำให้ Google Play สับสน ออกจากระบบบัญชีอื่นหรือไปติดตั้งผ่านเว็บไซต์ Google Play เพื่อเชื่อมโยงกับบัญชีที่ต้องการ</string>
 </resources>

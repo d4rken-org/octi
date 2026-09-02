@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play は利用できません</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi が Google Play に接続できません。Google Play はインストールされている環境ですか？Google アカウントにログインをしていますか？その他に Google Play アプリのキャッシュを削除して、デバイスの再起動をお試しください。</string>
-    <string name="upgrades_no_purchases_found_check_account">購入履歴が見つかりません。正しいアカウントを使用していますか？</string>
     <string name="upgrades_already_owned_error_title">既に購入済み</string>
     <string name="upgrades_already_owned_error_description">Google Play では、このアップグレードをすでに所有していると報告されています。「購入の復元」を使用してロック解除してください。</string>
     <string name="upgrades_gplay_billing_error_label">アプリ内購入の問題</string>
@@ -27,18 +26,9 @@
     <string name="upgrade_screen_preamble">Octi は無広告、ユーザーデータの販売もしません。あなたの支援で成り立っています ❤️</string>
     <string name="upgrade_screen_benefits_title">特典</string>
     <string name="upgrade_screen_benefits_body">• 3 台以上のデバイスを同期 💯\n• 様々なテーマ 🎨\n• より多くのオプション ⚙️\n• 追加の同期サーバー 🖥️\n• 開発の継続 ☕\n• 開発者のやる気 🧙</string>
-    <string name="upgrade_screen_how_title">オプション</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">一回限りの購入と、より安価な年間サブスクリプションのどちらかを選べます。どちらもいつでもキャンセルできます。\n機能は同じで、価格モデルが異なるだけです。</string>
-    <string name="upgrade_screen_how_trial_hint">サブスクリプションは14日間の無料体験から始まり、その後は年に1回課金されます。</string>
     <string name="upgrade_screen_subscription_trial_action">14 日間の試用期間を開始</string>
     <string name="upgrade_screen_subscription_action">定期購入</string>
-    <string name="upgrade_screen_subscription_action_hint">定期購入は年間で %s が必要です。</string>
     <string name="upgrade_screen_iap_action">1 回限りの購入</string>
-    <string name="upgrade_screen_iap_action_hint">1 回限りの購入は %s が必要です。</string>
-    <string name="upgrade_screen_thanks_toast">あなたは最高です！❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">アップグレードオプション</string>
     <string name="upgrade_screen_offers_unavailable_title">価格が利用できません</string>
@@ -53,8 +43,6 @@
     <string name="upgrade_screen_restore_purchase_action">購入を復元</string>
     <string name="upgrade_screen_restore_banner_title">既に Pro を購入しましたか？</string>
     <string name="upgrade_screen_restore_banner_body">このデバイスで以前 Pro にアップグレードしたようです。アップグレードをまだ所有している場合、復元によってもう一度ロック解除されます。</string>
-    <string name="upgrade_screen_restore_purchase_message">アップグレードは、同じ Google アカウントのデバイス間で有効です。</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">認識されないアップグレードのトラブルシューティングのヒント:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play ストアの同期には時間がかかる場合があります。再起動、Google Play キャッシュの消去、または暫く待ってください。</string>
     <string name="upgrade_screen_restore_multiaccount_hint">複数のアカウントがあると Google Play が混乱する可能性があります。他のアカウントをログアウトするか、Google Play のウェブサイトからインストールして特定のアカウントの関連付けを強制してください。</string>
     <string name="upgrade_screen_restore_success_message">購入を復元しました — ありがとうございます！</string>
@@ -68,10 +56,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">永久購入</string>
     <string name="upgrade_screen_owned_iap_body">一回限りのPro購入を所有しています。期限はありません。</string>
-    <string name="upgrade_screen_owned_sub_title">サブスクリプション</string>
     <string name="upgrade_screen_owned_sub_renewing_body">あなたのProサブスクリプションは有効で、自動的に更新されます。</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">あなたのProサブスクリプションは有効ですが、更新しないように設定されています。現在の期間の終了まで有効です。</string>
-    <string name="upgrade_screen_owned_both_title">両方を所有しています</string>
     <string name="upgrade_screen_owned_both_warning">サブスクリプションと一回限りの購入の両方を所有しています。二重支払いを避けるには、Google Playでサブスクリプションをキャンセルしてください — 永久購入によってProは継続されます。</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -84,10 +70,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">%1$sにご登録いただきありがとうございます！Pro機能がロック解除されました。</string>
     <string name="upgrade_screen_manage_subscription_action">サブスクリプションを管理</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">一回限りの購入に切り替え</string>
     <string name="upgrade_screen_switch_body">サブスクリプションではなく一回の支払いにしたいですか？一回限りのPro購入を購入して、サブスクリプションを停止できます。</string>
     <string name="upgrade_screen_switch_locked_note">あなたのサブスクリプションはこのまま自動的に更新されます。まずGoogle Playでキャンセルしてから、戻って一回限りの購入を行ってください。ここで購入してもサブスクリプションのキャンセルや返金はされません — 同じGoogleアカウントを使用してください。</string>
-    <string name="upgrade_screen_switch_action">一回限りの購入（%1$s）を購入</string>
     <string name="upgrade_screen_sub_still_renewing_title">サブスクリプションはまだ有効です</string>
     <string name="upgrade_screen_sub_still_renewing_message">あなたのサブスクリプションはまだ更新されるように設定されています。二重課金を避けるためにまずGoogle Playでキャンセルしてから、一回限りの購入を行ってください。これによりサブスクリプションの返金はされません。</string>
     <string name="upgrade_screen_purchase_check_failed_message">Google Play からの応答がなかったため、購入状況を安全に確認できませんでした。しばらくしてからもう一度お試しください。</string>

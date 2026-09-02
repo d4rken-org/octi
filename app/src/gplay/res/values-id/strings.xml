@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Google Play tidak tersedia</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi tidak dapat terhubung ke Google Play. Apakah Google Play sudah terinstal dan terbaru? Apakah akun Google Anda sudah masuk? Coba bersihkan cache aplikasi Google Play dan hidupkan ulang perangkat Anda.</string>
-    <string name="upgrades_no_purchases_found_check_account">Tidak ada pembelian yang ditemukan. Apakah Anda menggunakan akun yang benar?</string>
     <string name="upgrades_dashcard_body">Upgrade untuk membuka fitur tambahan dan dukung pengembangan!</string>
     <string name="upgrades_dashcard_upgrade_action">Upgrade</string>
     <string name="upgrade_screen_preamble">Octi tidak menampilkan iklan dan tidak menjual data pengguna. Karya saya didanai oleh Anda ❤️.</string>
     <string name="upgrade_screen_benefits_title">Keuntungan</string>
     <string name="upgrade_screen_benefits_body">• Lebih dari 3 perangkat 💯\n• Tema berbeda 🎨\n• Lebih banyak opsi ⚙️\n• Server sinkronisasi tambahan 🖥️️\n• Pengembangan berkelanjutan ☕\n• Pengembang yang termotivasi 🧙</string>
-    <string name="upgrade_screen_how_title">Pilihan</string>
     <string name="upgrade_screen_subscription_trial_action">Mulai uji coba gratis 14 hari</string>
     <string name="upgrade_screen_subscription_action">Langganan</string>
-    <string name="upgrade_screen_subscription_action_hint">Biaya langganan %s per tahun.</string>
     <string name="upgrade_screen_iap_action">Pembelian satu kali</string>
-    <string name="upgrade_screen_iap_action_hint">Pembelian satu kali seharga %s.</string>
-    <string name="upgrade_screen_thanks_toast">Kamu yang terbaik! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Pulihkan pembelian</string>
-    <string name="upgrade_screen_restore_purchase_message">Peningkatan Anda berlaku di semua perangkat dengan akun Google yang sama.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Tips pemecahan masalah untuk upgrade yang tidak dikenali:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Sinkronisasi Play Store mungkin membutuhkan waktu. Coba hidupkan ulang, bersihkan cache Google Play, atau cukup tunggu.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Beberapa akun dapat membingungkan Google Play. Logout dari akun lain atau instal melalui situs Google Play, yang memaksa asosiasi dengan akun tertentu.</string>
 </resources>

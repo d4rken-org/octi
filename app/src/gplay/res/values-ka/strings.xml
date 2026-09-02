@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Google Play მიუწვდომელია</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi ვერ უკავშირდება Google Play-ს. Google Play არის დამყენებული და განახლებული? თქვენ შედიხართ Google ანგარიშით? სცადეთ Google Play აპის ქეშის გასუფთავება და მოწყობილობის გადატვირთვა.</string>
-    <string name="upgrades_no_purchases_found_check_account">ვერ მოიძებნა შეძენილი პროდუქტები. ნამდვილად სწორ ანგარიშს იყენებთ?</string>
     <string name="upgrades_dashcard_body">განაახლეთ თქვენი Octi დამატებითი შესაძლებლობების გასახსნელად და განვითარების მხარდასაჭერად!</string>
     <string name="upgrades_dashcard_upgrade_action">განახლება</string>
     <string name="upgrade_screen_preamble">Octi-ს არ აქვს რეკლამები და არ ყიდის მომხმარებლის მონაცემებს. ჩემი საქმიანობა ფინანსდება თქვენით ❤️.</string>
     <string name="upgrade_screen_benefits_title">უპირატესობები</string>
     <string name="upgrade_screen_benefits_body">• 3-ზე მეტი მოწყობილობა 💯\n• სხვადასხვა თემები 🎨\n• მეტი პარამეტრი ⚙️\n• დამატებითი სინქრონიზაციის სერვერები 🖥️️\n• გამუდმებული ახალი შესაძლებლობების წარმოება ☕\n• მოტივირებული დეველოპერი 🧙</string>
-    <string name="upgrade_screen_how_title">არჩევანი</string>
     <string name="upgrade_screen_subscription_trial_action">დაიწყეთ 14-დღიანი უფასო საცდელი პერიოდი</string>
     <string name="upgrade_screen_subscription_action">გამოწერა</string>
-    <string name="upgrade_screen_subscription_action_hint">გამოწერის ღირებულებაა %s წელიწადში.</string>
     <string name="upgrade_screen_iap_action">ერთჯერადი შეძენა</string>
-    <string name="upgrade_screen_iap_action_hint">ერთჯერადი შეძენის ღირებულებაა %s.</string>
-    <string name="upgrade_screen_thanks_toast">თქვენ საუკეთესო ხართ! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">შეძენის აღდგენა</string>
-    <string name="upgrade_screen_restore_purchase_message">თქვენი განახლება აქტიურია იმავე Google ანგარიშით ყველა მოწყობილობაზე.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">უცნობი განახლებების გამოსასწორებელი რჩევები:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play Store-ის სინქრონიზაცია შეიძლება რამდენიმე წუთი გაგრძელდეს. სცადეთ გადატვირთვა, Google Play ქეშის გასუფთავება ან უბრალოდ დაელოდეთ.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">რამდენიმე ანგარიშმა შეიძლება დააბნიოს Google Play. გამოხვედით ზედმეტი ანგარიშებიდან ან დააინსტალირეთ Google Play ვებგვერდის მეშვეობით, რათა დამაკავშირებელი მხოლოდ ერთი კონკრეტული ანგარიში იყოს.</string>
 </resources>

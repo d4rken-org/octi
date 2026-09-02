@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">احترافي</string>
     <string name="upgrades_gplay_unavailable_error_title">جوجل بلاي غير متوفر</string>
     <string name="upgrades_gplay_unavailable_error_description">لا يمكن لأوكتي الاتصال بـ جوجل بلاي. هل جوجل بلاي مثبت ومحدث؟ هل حساب جوجل الخاص بك مسجل الدخول؟ حاول مسح ذاكرة التخزين المؤقت لتطبيق جوجل بلاي وأعد تشغيل جهازك.</string>
-    <string name="upgrades_no_purchases_found_check_account">لم يتم العثور على مشتريات. هل تستخدم الحساب الصحيح؟</string>
     <string name="upgrades_already_owned_error_title">تم الشراء بالفعل</string>
     <string name="upgrades_already_owned_error_description">يخبرك Google Play أنك تملك بالفعل هذه الترقية. استخدم \'استرجاع الشراء\' لفتحها.</string>
     <string name="upgrades_gplay_billing_error_label">هناك مشكلة مع المتجر التطبيقات Google Play</string>
@@ -32,18 +31,9 @@
     <string name="upgrade_screen_preamble">أوكتي خالٍ من الإعلانات ولا يبيع بيانات المستخدمين. عملي يُموَّل بكم ❤️.</string>
     <string name="upgrade_screen_benefits_title">المزايا</string>
     <string name="upgrade_screen_benefits_body">• أكثر من 3 أجهزة 💯\n• سمات مختلفة 🎨\n• المزيد من الخيارات ⚙️\n• خوادم مزامنة إضافية 🖥️\n• تطوير مستمر ☕\n• مطور متحمس 🧙</string>
-    <string name="upgrade_screen_how_title">الخيارات</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">يمكنك الاختيار بين شراء لمرة واحدة واشتراك سنوي أرخص. كلاهما قابل للإلغاء في أي وقت.\nنفس الميزات، فقط نماذج تسعير مختلفة.</string>
-    <string name="upgrade_screen_how_trial_hint">يبدأ الاشتراك بتجربة مجانية لمدة 14 يومًا، وبعدها سيتم محاسبتك مرة واحدة سنويًا.</string>
     <string name="upgrade_screen_subscription_trial_action">ابدأ فترة تجريبية مجانية لمدة 14 يومًا</string>
     <string name="upgrade_screen_subscription_action">اشتراك</string>
-    <string name="upgrade_screen_subscription_action_hint">تبلغ تكلفة الاشتراك %s سنوياً.</string>
     <string name="upgrade_screen_iap_action">شراء لمرة واحدة</string>
-    <string name="upgrade_screen_iap_action_hint">تبلغ تكلفة الشراء لمرة واحدة %s.</string>
-    <string name="upgrade_screen_thanks_toast">أنت الأفضل! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">خيارات الترقية</string>
     <string name="upgrade_screen_offers_unavailable_title">الأسعار غير متاحة</string>
@@ -58,8 +48,6 @@
     <string name="upgrade_screen_restore_purchase_action">استعادة الشراء</string>
     <string name="upgrade_screen_restore_banner_title">هل اشتريت Pro بالفعل؟</string>
     <string name="upgrade_screen_restore_banner_body">يبدو أنك قمت بالترقية إلى Pro على هذا الجهاز من قبل. إذا كنت لا تزال تملك الترقية، ستفتح الاستعادة قفلها مرة أخرى.</string>
-    <string name="upgrade_screen_restore_purchase_message">ترقيتك صالحة عبر الأجهزة على نفس حساب جوجل.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">نصائح لحل مشكلات الترقيات غير المعترف بها:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">قد تستغرق مزامنة متجر بلاي بعض الوقت. حاول إعادة التشغيل، أو مسح ذاكرة التخزين المؤقت لـ جوجل بلاي، أو ببساطة الانتظار.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">يمكن للحسابات المتعددة إرباك جوجل بلاي. قم بتسجيل الخروج من الحسابات الأخرى أو قم بالتثبيت عبر موقع جوجل بلاي الإلكتروني، مما يفرض الارتباط بحساب معين.</string>
     <string name="upgrade_screen_restore_success_message">تمت استعادة الشراء — شكرًا لك!</string>
@@ -73,10 +61,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">شراء مدى الحياة</string>
     <string name="upgrade_screen_owned_iap_body">أنت تملك شراء Pro لمرة واحدة. لا تنتهي صلاحيته أبدًا.</string>
-    <string name="upgrade_screen_owned_sub_title">اشتراك</string>
     <string name="upgrade_screen_owned_sub_renewing_body">اشتراكك في Pro نشط ويتجدد تلقائيًا.</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">اشتراكك في Pro نشط لكنه مضبوط على عدم التجديد. يبقى نشطًا حتى نهاية الفترة الحالية.</string>
-    <string name="upgrade_screen_owned_both_title">تملك كليهما</string>
     <string name="upgrade_screen_owned_both_warning">تملك كلاً من الاشتراك والشراء لمرة واحدة. لتجنب الدفع مرتين، ألغِ الاشتراك عبر Google Play — ستحتفظ بـ Pro من خلال الشراء مدى الحياة.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -89,10 +75,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">شكرًا لاشتراكك في %1$s! ميزات Pro مفتوحة الآن.</string>
     <string name="upgrade_screen_manage_subscription_action">إدارة الاشتراك</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">التحول إلى شراء لمرة واحدة</string>
     <string name="upgrade_screen_switch_body">تفضل الدفع مرة واحدة بدلًا من الاشتراك؟ يمكنك شراء Pro لمرة واحدة وإيقاف الاشتراك.</string>
     <string name="upgrade_screen_switch_locked_note">لا يزال اشتراكك يتجدد تلقائيًا. ألغِه عبر Google Play أولاً، ثم عد لشراء الشراء لمرة واحدة. الشراء هنا لا يلغي أو يسترد الاشتراك — استخدم نفس حساب Google.</string>
-    <string name="upgrade_screen_switch_action">شراء لمرة واحدة (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">الاشتراك لا يزال نشطًا</string>
     <string name="upgrade_screen_sub_still_renewing_message">لا يزال اشتراكك مضبوطًا على التجديد. ألغِه عبر Google Play أولاً حتى لا تُحاسب مرتين، ثم اشترِ الشراء لمرة واحدة. هذا لا يسترد الاشتراك.</string>
     <string name="upgrade_screen_purchase_check_failed_message">Google Play لم تستجب في الوقت المناسب، لذا لا يمكننا التأكد من حالة عملية الشراء. حاول مجدداً بعد قليل.</string>
