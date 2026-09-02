@@ -1,7 +1,5 @@
-🐛 Ispravke grešaka, 🚀 poboljšanja performansi, možda čak i ✨ nove funkcije.
+Исправке грешака и мала побољшања, да би увек видео шта се дешава на твојим другим уређајима.
 
-Ako imaš dobre ideje za Octi, javi mi 😊!
+Шта се променило у овој верзији: octi.darken.eu/changelog
 
-Dnevnik promena: https://octi.darken.eu/changelog
-
-Da znaš: Samo sam ja ovde — hvala na razumevanju ako odgovori malo potraju. ¯\_(ツ)_/¯
+Нешто се сломило после ажурирања или имаш идеју за Octi? Реци ми путем Подешавања > Подршка. То је пројекат једне особе, па одговори могу потрајати мало, али сваки извештај ће бити прочитан.

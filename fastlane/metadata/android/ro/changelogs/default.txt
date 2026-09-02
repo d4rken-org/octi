@@ -1,7 +1,5 @@
-🐛 Remedieri de erori, 🚀 îmbunătățiri ale performanței, poate chiar ✨ funcții noi.
+Corecturi de erori și mici îmbunătățiri, pentru a vedea mereu ce se întâmplă pe celelalte tale dispozitive.
 
-Dacă ai idei mișto pentru Octi, dă-mi de veste 😊!
+Ce s-a schimbat în această versiune: octi.darken.eu/changelog
 
-Jurnal de modificări: https://octi.darken.eu/changelog
-
-Ca să știi: sunt doar eu aici — mulțumesc pentru înțelegere dacă răspunsurile durează puțin. ¯\_(ツ)_/¯
+Ceva s-a stricat după actualizare, sau ai o idee pentru Octi? Spune-mi prin Setări > Suport. E un proiect de o singură persoană, deci răspunsurile pot dura puțin, dar orice raport se citește.

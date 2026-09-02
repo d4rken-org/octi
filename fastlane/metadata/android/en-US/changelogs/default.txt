@@ -1,7 +1,5 @@
-🐛 Bug fixes, 🚀 performance boosts, maybe even ✨ new features.
+Bug fixes and small improvements, so you always see what your other devices are up to.
 
-If you have cool ideas for Octi, let me know 😊!
+What changed in this version: octi.darken.eu/changelog
 
-Changelog: https://octi.darken.eu/changelog
-
-FYI: It’s just me here — thanks for understanding if replies take a bit. ¯\_(ツ)_/¯
+Something broke after updating, or you have an idea for Octi? Tell me via Settings > Support. It's a one-person project, so replies can take a little while, but every report gets read.

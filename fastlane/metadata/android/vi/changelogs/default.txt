@@ -1,7 +1,5 @@
-🐛 Sửa lỗi, 🚀 cải thiện hiệu suất, và có thể có cả ✨ những tính năng mới.
+Sửa lỗi và cải tiến nhỏ để bạn luôn biết điều gì đang xảy ra trên các thiết bị khác.
 
-Nếu bạn có ý tưởng hay cho Octi, hãy cho tôi biết nhé 😊!
+Những gì đã thay đổi trong phiên bản này: octi.darken.eu/changelog
 
-Nhật ký thay đổi: https://octi.darken.eu/changelog
-
-Để bạn biết: Chỉ có mình tôi ở đây thôi — cảm ơn vì đã thông cảm nếu tôi trả lời hơi lâu. ¯\_(ツ)_/¯
+Có điều gì đó bị lỗi sau khi cập nhật hoặc có ý tưởng cho Octi? Liên hệ tôi qua Cài đặt > Hỗ trợ. Đây là một dự án của một người, vì vậy thời gian trả lời có thể lâu một chút, nhưng mọi báo cáo đều được đọc.

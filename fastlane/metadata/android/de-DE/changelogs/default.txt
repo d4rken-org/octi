@@ -1,7 +1,5 @@
-🐛 Fehlerbehebungen, 🚀 Leistungsverbesserungen, vielleicht sogar ✨ neue Funktionen.
+Fehlerbehebungen und kleine Verbesserungen, damit du immer siehst, was auf deinen anderen Geräten passiert.
 
-Wenn du coole Ideen für Octi hast, lass es mich wissen 😊!
+Das hat sich in dieser Version geändert: octi.darken.eu/changelog
 
-Changelog: https://octi.darken.eu/changelog
-
-Nur zur Info: Ich bin hier alleine — danke für dein Verständnis, wenn Antworten etwas dauern. ¯\_(ツ)_/¯
+Etwas ist nach dem Update kaputt gegangen, oder du hast eine Idee für Octi? Sag mir Bescheid über Einstellungen > Hilfe. Ich bin hier allein, daher können Antworten etwas dauern, aber jeden Bericht lese ich.

@@ -1,7 +1,5 @@
-🐛 Bugfixes, 🚀 prestatieverbeteringen, misschien zelfs ✨ nieuwe functies.
+Bugfixes en kleine verbeteringen, zodat je altijd ziet wat er op je andere apparaten gebeurt.
 
-Als je coole ideeën hebt voor Octi, laat het me weten 😊!
+Wat is er veranderd in deze versie: octi.darken.eu/changelog
 
-Changelog: https://octi.darken.eu/changelog
-
-Ter info: ik ben hier alleen — bedankt voor je begrip als antwoorden wat langer duren. ¯\_(ツ)_/¯
+Iets ging kapot na een update, of heb je een idee voor Octi? Laat het me weten via Instellingen > Ondersteuning. Het is een eenpersoonsproject, dus antwoorden kunnen even duren, maar elk verslag wordt gelezen.

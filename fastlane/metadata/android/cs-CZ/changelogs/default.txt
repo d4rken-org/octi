@@ -1,7 +1,5 @@
-🐛 Opravy chyb, 🚀 vylepšení výkonu, možná dokonce ✨ nové funkce.
+Opravy chyb a drobná vylepšení, abys vždy věděl, co se děje na tvých ostatních zařízeních.
 
-Pokud máte skvělé nápady pro Octi, dejte mi vědět 😊!
+Co se změnilo v této verzi: octi.darken.eu/changelog
 
-Seznam změn: https://octi.darken.eu/changelog
-
-Jen pro informaci: Jsem tu jen já — díky za pochopení, pokud odpovědi chvíli trvají. ¯\_(ツ)_/¯
+Něco se rozbilo po aktualizaci, nebo máš nápad pro Octi? Dej mi vědět přes Nastavení > Podpora. Je to projekt jedné osoby, takže odpovědi mohou chvíli trvat, ale každá zpráva se čte.
