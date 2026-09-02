@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Google Play қолжетімсіз</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi Google Play қызметіне қосыла алмайды. Google Play орнатылған және жаңартылған ба? Google есептік жазбаңызға кіргенсіз бе? Google Play қолданбасының кэшін тазалап, құрылғыны қайта іске қосып көріңіз.</string>
-    <string name="upgrades_no_purchases_found_check_account">Сатып алулар табылмады. Дұрыс есептік жазбаны пайдаланудасыз ба?</string>
     <string name="upgrades_dashcard_body">Қосымша мүмкіндіктерді ашу және дамуды қолдау үшін жаңартыңыз!</string>
     <string name="upgrades_dashcard_upgrade_action">Жаңарту</string>
     <string name="upgrade_screen_preamble">Octi жарнамаларды көрсетпейді және пайдаланушы деректерін сатпайды. Менің жұмысым сіздің қолдауыңызбен қаржыландырылады ❤️.</string>
     <string name="upgrade_screen_benefits_title">Артықшылықтар</string>
     <string name="upgrade_screen_benefits_body">• 3-тен көп құрылғы 💯\n• Әртүрлі тақырыптар 🎨\n• Көптеген параметрлер ⚙️\n• Қосымша синхрондау серверлері🖥️️\n• Үздіксіз дамыту ☕\n• Мотивацияланған әзірлеуші 🧙</string>
-    <string name="upgrade_screen_how_title">Таңдау мүмкіндіктері</string>
     <string name="upgrade_screen_subscription_trial_action">14 күндік тегін сынақты бастаңыз</string>
     <string name="upgrade_screen_subscription_action">Жазылу</string>
-    <string name="upgrade_screen_subscription_action_hint">Жазылым құны жылына %s.</string>
     <string name="upgrade_screen_iap_action">Бір реттік сатып алу</string>
-    <string name="upgrade_screen_iap_action_hint">Бір реттік сатып алу құны %s.</string>
-    <string name="upgrade_screen_thanks_toast">Сіз ең үздіксіз! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Сатып алуды қалпына келтіру</string>
-    <string name="upgrade_screen_restore_purchase_message">Сіздің жаңарту барлық бір Google есептік жазбасымен байланысты құрылғыларда жарамды.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Танымау жағдайларына арналған ақаулықтарды жою кеңестері:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play Store синхрондау уақыты біраз уақыт алуы мүмкін. Қайта іске қосуды, Google Play кэшін тазалауды немесе біраз күтуді қолданыңыз.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Бірнеше есептік жазба Google Play-ді шатастыруы мүмкін. Басқа есептік жазбалардан шығып, немесе Google Play веб-сайты арқылы орнатыңыз, бұл нақты есептік жазбамен байланыстыруды қамтамасыз етеді.</string>
 </resources>

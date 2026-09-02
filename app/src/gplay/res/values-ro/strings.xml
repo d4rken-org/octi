@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play indisponibil</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi nu se poate conecta la Google Play. Este Google Play instalat și actualizat? Contul tău Google este conectat? Încearcă să ștergi memoria cache a aplicației Google Play și să repornești dispozitivul.</string>
-    <string name="upgrades_no_purchases_found_check_account">Nu au fost găsite achiziții. Folosiți contul corect?</string>
     <string name="upgrades_already_owned_error_title">Deja cumpărat</string>
     <string name="upgrades_already_owned_error_description">Google Play raportează că deja dețineți această actualizare. Utilizați \'Restabilire cumpărare\' pentru a o debloca.</string>
     <string name="upgrades_gplay_billing_error_label">Problemă din partea Google Play</string>
@@ -29,18 +28,9 @@
     <string name="upgrade_screen_preamble">Octi nu are reclame și nu vinde datele utilizatorilor. Munca mea este finanțată de tine ❤️.</string>
     <string name="upgrade_screen_benefits_title">Beneficii</string>
     <string name="upgrade_screen_benefits_body">• Mai mult de 3 dispozitive 💯\n• Teme diferite 🎨\n• Mai multe opțiuni ⚙️\n• Servere suplimentare de sincronizare 🖥️\n• Dezvoltare continuă ☕\n• Un dezvoltator motivat 🧙</string>
-    <string name="upgrade_screen_how_title">Opțiuni</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">Poți alege între o achiziție unică și un abonament anual mai ieftin. Ambele pot fi anulate oricând.\nAceleași funcții, doar modele de prețuri diferite.</string>
-    <string name="upgrade_screen_how_trial_hint">Abonamentul începe cu o probă gratuită de 14 zile, după care vei fi taxat o dată pe an.</string>
     <string name="upgrade_screen_subscription_trial_action">Începe perioada de probă gratuită de 14 zile</string>
     <string name="upgrade_screen_subscription_action">Abonare</string>
-    <string name="upgrade_screen_subscription_action_hint">Abonamentul costă %s pe an.</string>
     <string name="upgrade_screen_iap_action">Achiziție unică</string>
-    <string name="upgrade_screen_iap_action_hint">Achiziția unică costă %s.</string>
-    <string name="upgrade_screen_thanks_toast">Ești cel mai bun! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Opțiuni de upgrade</string>
     <string name="upgrade_screen_offers_unavailable_title">Prețuri indisponibile</string>
@@ -55,8 +45,6 @@
     <string name="upgrade_screen_restore_purchase_action">Restabilește achiziția</string>
     <string name="upgrade_screen_restore_banner_title">Ați cumpărat deja Pro?</string>
     <string name="upgrade_screen_restore_banner_body">Se pare că ați făcut upgrade la Pro pe acest dispozitiv mai înainte. Dacă încă dețineți actualizarea, restaurarea va debloca din nou.</string>
-    <string name="upgrade_screen_restore_purchase_message">Upgrade-ul tău este valabil pe dispozitivele cu același cont Google.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Sfaturi pentru depanarea upgrade-urilor nerecunoscute:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Sincronizarea cu Play Store poate dura. Încearcă să repornești, șterge cache-ul Google Play sau pur și simplu așteaptă.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Conturile multiple pot deruta Google Play. Deloghează-te de pe alte conturi sau instalează prin site-ul Google Play, ceea ce forțează asocierea cu un anumit cont.</string>
     <string name="upgrade_screen_restore_success_message">Achiziție restabilită — mulțumesc!</string>
@@ -70,10 +58,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">Achiziție pe viață</string>
     <string name="upgrade_screen_owned_iap_body">Deții achiziția Pro unică. Nu expiră niciodată.</string>
-    <string name="upgrade_screen_owned_sub_title">Abonament</string>
     <string name="upgrade_screen_owned_sub_renewing_body">Abonamentul tău Pro este activ și se reînnuiește automat.</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">Abonamentul tău Pro este activ, dar setat să nu se reînnuiască. Rămâne activ până la sfârșitul perioadei curente.</string>
-    <string name="upgrade_screen_owned_both_title">Deții ambele</string>
     <string name="upgrade_screen_owned_both_warning">Deții atât abonamentul cât și achiziția unică. Pentru a evita plata de două ori, anulează abonamentul în Google Play — păstrezi Pro prin achiziția pe viață.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -86,10 +72,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">Mulțumesc că te-ai abonat la %1$s! Caracteristicile tale Pro sunt deblocate.</string>
     <string name="upgrade_screen_manage_subscription_action">Gestionează abonamentul</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">Treci la o achiziție unică</string>
     <string name="upgrade_screen_switch_body">Preferi să plătești o dată în loc să te abonezi? Poți cumpăra achiziția Pro unică și să oprești abonamentul.</string>
     <string name="upgrade_screen_switch_locked_note">Abonamentul tău se reînnoiește în continuare automat. Anulează-l mai întâi în Google Play, apoi revino pentru a cumpăra achiziția unică. Cumpărarea aici nu anulează și nu returnează abonamentul — folosește același cont Google.</string>
-    <string name="upgrade_screen_switch_action">Cumpără achiziția unică (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonament încă activ</string>
     <string name="upgrade_screen_sub_still_renewing_message">Abonamentul tău este încă setat să se reînnoiască. Anulează-l mai întâi în Google Play pentru a nu fi taxat de două ori, apoi cumpără achiziția unică. Aceasta nu returnează abonamentul.</string>
     <string name="upgrade_screen_purchase_check_failed_message">Google Play nu a răspuns la timp, deci nu putem confirma în siguranță starea achiziției tale. Te rog, încearcă din nou peste puțin.</string>

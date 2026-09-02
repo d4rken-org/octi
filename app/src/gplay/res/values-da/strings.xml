@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play er utilgængelig</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi kan ikke oprette forbindelse til Google Play. Er Google Play installeret og opdateret? Er din Google-konto logget ind? Prøv at rydde cachen for Google Play-appen og genstart din enhed.</string>
-    <string name="upgrades_no_purchases_found_check_account">Ingen køb fundet. Bruger du den rigtige konto?</string>
     <string name="upgrades_already_owned_error_title">Allerede købt</string>
     <string name="upgrades_already_owned_error_description">Google Play rapporterer, at du allerede ejer denne opgradering. Brug \'Gendan køb\' for at låse den op.</string>
     <string name="upgrades_gplay_billing_error_label">Google Play Problem</string>
@@ -28,18 +27,9 @@
     <string name="upgrade_screen_preamble">Octi har ingen reklamer og sælger ikke brugerdata. Mit arbejde finansieres af dig ❤️.</string>
     <string name="upgrade_screen_benefits_title">Fordele</string>
     <string name="upgrade_screen_benefits_body">• Mere end 3 enheder 💯\n• Forskellige temaer 🎨\n• Flere muligheder ⚙️\n• Ekstra synkroniseringsservere🖥️\n• Fortsat udvikling ☕\n• En motiveret udvikler 🧙</string>
-    <string name="upgrade_screen_how_title">Muligheder</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">Du kan vælge mellem et engangskøb og et billigere årligt abonnement. Begge kan annulleres når som helst.\nDe samme funktioner, bare forskellige prismodeller.</string>
-    <string name="upgrade_screen_how_trial_hint">Abonnementet starter med en gratis 14-dages prøveperiode, hvorefter du faktureres én gang om året.</string>
     <string name="upgrade_screen_subscription_trial_action">Start gratis 14-dages prøveperiode</string>
     <string name="upgrade_screen_subscription_action">Abonner</string>
-    <string name="upgrade_screen_subscription_action_hint">Abonnementet koster %s om året.</string>
     <string name="upgrade_screen_iap_action">Engangskøb</string>
-    <string name="upgrade_screen_iap_action_hint">Engangskøbet koster %s.</string>
-    <string name="upgrade_screen_thanks_toast">Du er den bedste! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Opgraderingsmuligheder</string>
     <string name="upgrade_screen_offers_unavailable_title">Priser utilgængelige</string>
@@ -54,8 +44,6 @@
     <string name="upgrade_screen_restore_purchase_action">Gendan køb</string>
     <string name="upgrade_screen_restore_banner_title">Købte du allerede Pro?</string>
     <string name="upgrade_screen_restore_banner_body">Det ser ud til, at du opgraderede til Pro på denne enhed før. Hvis du stadig ejer opgraderingen, vil gendannelse låse den op igen.</string>
-    <string name="upgrade_screen_restore_purchase_message">Din opgradering gælder på tværs af enheder på samme Google-konto.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Fejlfindingstips for ikke-genkendte opgraderinger:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play Butik-synkronisering kan tage tid. Prøv at genstarte, rydde Google Play-cachen eller vent lidt.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Flere konti kan forvirre Google Play. Log af andre konti, eller installer via Google Play-webstedet, hvilket tvinger tilknytning til en bestemt konto.</string>
     <string name="upgrade_screen_restore_success_message">Køb gendannet – tak!</string>
@@ -69,10 +57,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">Livsvarigt køb</string>
     <string name="upgrade_screen_owned_iap_body">Du ejer engangskøbet af Pro. Det udløber aldrig.</string>
-    <string name="upgrade_screen_owned_sub_title">Abonnement</string>
     <string name="upgrade_screen_owned_sub_renewing_body">Dit Pro-abonnement er aktivt og fornyes automatisk.</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">Dit Pro-abonnement er aktivt, men indstillet til ikke at fornyes. Det forbliver aktivt indtil slutningen af den aktuelle periode.</string>
-    <string name="upgrade_screen_owned_both_title">Du ejer begge</string>
     <string name="upgrade_screen_owned_both_warning">Du ejer både abonnementet og engangskøbet. For at undgå at betale to gange, annuller abonnementet i Google Play – du beholder Pro gennem det livsvarige køb.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -85,10 +71,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">Tak for abonnementet på %1$s! Dine Pro-funktioner er låst op.</string>
     <string name="upgrade_screen_manage_subscription_action">Administrer abonnement</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">Skift til engangskøb</string>
     <string name="upgrade_screen_switch_body">Foretrækker du at betale en gang i stedet for at abonnere? Du kan købe engangskøbet af Pro og stoppe abonnementet.</string>
     <string name="upgrade_screen_switch_locked_note">Dit abonnement fornyes stadig automatisk. Annuller det først i Google Play, derefter kommer du tilbage for at købe engangskøbet. At købe det her annullerer eller refunderer ikke abonnementet – brug den samme Google-konto.</string>
-    <string name="upgrade_screen_switch_action">Køb engangskøb (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Abonnement stadig aktivt</string>
     <string name="upgrade_screen_sub_still_renewing_message">Dit abonnement er stadig indstillet til at fornyes. Annuller det først i Google Play, så du ikke bliver debiteret to gange, derefter køb engangskøbet. Dette refunderer ikke abonnementet.</string>
     <string name="upgrade_screen_purchase_check_failed_message">Google Play svarede ikke i tide, så vi kan ikke bekræfte din købsstatus. Prøv igen om et øjeblik.</string>

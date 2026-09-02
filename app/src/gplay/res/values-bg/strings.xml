@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Google Play не е наличен</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi не може да се свърже с Google Play. Инсталиран и актуализиран ли е Google Play? Влезли ли сте с вашия Google акаунт? Опитайте да изчистите кеша на приложението Google Play и рестартирайте устройството си.</string>
-    <string name="upgrades_no_purchases_found_check_account">Не са намерени покупки. Използвате ли правилния акаунт?</string>
     <string name="upgrades_dashcard_body">Актуализирайте, за да отключите допълнителни функции и да подкрепите развитието!</string>
     <string name="upgrades_dashcard_upgrade_action">Актуализация</string>
     <string name="upgrade_screen_preamble">Octi няма реклами и не продава потребителски данни. Моята работа се финансира от вас ❤️.</string>
     <string name="upgrade_screen_benefits_title">Предимства</string>
     <string name="upgrade_screen_benefits_body">• Повече от 3 устройства 💯\n• Различни теми 🎨\n• Повече опции ⚙️\n• Допълнителни сървъри за синхронизация 🖥️️\n• Продължаващо развитие ☕\n• Мотивиран разработчик 🧙</string>
-    <string name="upgrade_screen_how_title">Опции</string>
     <string name="upgrade_screen_subscription_trial_action">Стартирайте безплатен 14-дневен пробен период</string>
     <string name="upgrade_screen_subscription_action">Абонирайте се</string>
-    <string name="upgrade_screen_subscription_action_hint">Абонаментът струва %s на година.</string>
     <string name="upgrade_screen_iap_action">Еднократна покупка</string>
-    <string name="upgrade_screen_iap_action_hint">Еднократната покупка струва %s.</string>
-    <string name="upgrade_screen_thanks_toast">Вие сте най-добрите! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Възстановяване на покупка</string>
-    <string name="upgrade_screen_restore_purchase_message">Вашият ъпгрейд е валиден за устройства със същия Google акаунт.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Съвети за отстраняване на проблеми при неразпознати ъпгрейди:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Синхронизацията с Play Store може да отнеме време. Опитайте да рестартирате, изчистете кеша на Google Play или просто изчакайте.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Множество акаунти могат да объркат Google Play. Излезте от другите акаунти или инсталирайте през уебсайта на Google Play, което налага асоцииране с конкретен акаунт.</string>
 </resources>

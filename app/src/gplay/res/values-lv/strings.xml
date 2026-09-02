@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Google Play nav pieejams</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi nevar izveidot savienojumu ar Google Play. Vai Google Play ir instalēts un atjaunināts? Vai jūsu Google konts ir pieslēgts? Mēģiniet notīrīt Google Play lietotnes kešatmiņu un restartēt ierīci.</string>
-    <string name="upgrades_no_purchases_found_check_account">Netika atrasti pirkumi. Vai izmantojat pareizo kontu?</string>
     <string name="upgrades_dashcard_body">Atjauniniet, lai atbloķētu papildu funkcijas un atbalstītu izstrādi!</string>
     <string name="upgrades_dashcard_upgrade_action">Atjaunināt</string>
     <string name="upgrade_screen_preamble">Octi nerāda reklāmas un nepārdod lietotāju datus. Manu darbu finansējat jūs ❤️.</string>
     <string name="upgrade_screen_benefits_title">Priekšrocības</string>
     <string name="upgrade_screen_benefits_body">• Vairāk nekā 3 ierīces 💯\n• Dažādas tēmas 🎨\n• Vairāk opciju ⚙️\n• Papildu sinhronizācijas serveri 🖥️️\n• Pastāvīga izstrāde ☕\n• Motivēts izstrādātājs 🧙</string>
-    <string name="upgrade_screen_how_title">Iespējas</string>
     <string name="upgrade_screen_subscription_trial_action">Sākt bezmaksas 14 dienu izmēģinājumu</string>
     <string name="upgrade_screen_subscription_action">Abonēt</string>
-    <string name="upgrade_screen_subscription_action_hint">Abonements maksā %s gadā.</string>
     <string name="upgrade_screen_iap_action">Vienreizējs pirkums</string>
-    <string name="upgrade_screen_iap_action_hint">Vienreizējs pirkums maksā %s.</string>
-    <string name="upgrade_screen_thanks_toast">Jūs esat labākais! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Atjaunot pirkumu</string>
-    <string name="upgrade_screen_restore_purchase_message">Jūsu atjauninājums ir derīgs visām ierīcēm ar to pašu Google kontu.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Padomi neatpazītu atjauninājumu novēršanai:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Play Store sinhronizācija var aizņemt kādu laiku. Mēģiniet restartēt, notīrīt Google Play kešatmiņu vai vienkārši pagaidiet.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Vairāki konti var mulsināt Google Play. Izrakstieties no citiem kontiem vai instalējiet, izmantojot Google Play vietni, lai piesaistītu konkrētam kontam.</string>
 </resources>

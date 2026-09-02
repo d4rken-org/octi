@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play is nie beskikbaar nie</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi kan nie aan Google Play koppel nie. Is Google Play geïnstalleer en op datum? Is jou Google-rekening aangemeld? Probeer die kasgeheue van die Google Play-toepassing skoonmaak en jou toestel herlaai.</string>
-    <string name="upgrades_no_purchases_found_check_account">Geen aankope gevind nie. Gebruik jy die regte rekening?</string>
     <string name="upgrades_already_owned_error_title">Reeds gekoop</string>
     <string name="upgrades_already_owned_error_description">Google Play rapporteer dat jy hierdie upgrade reeds besit. Gebruik \'Herstel aankoop\' om dit te ontsluit.</string>
     <string name="upgrades_gplay_billing_error_label">Google Play-probleem</string>
@@ -28,18 +27,9 @@
     <string name="upgrade_screen_preamble">Octi het geen advertensies nie en verkoop nie gebruikersdata nie. My werk word deur jou gefinansier ❤️.</string>
     <string name="upgrade_screen_benefits_title">Voordele</string>
     <string name="upgrade_screen_benefits_body">• Meer as 3 toestelle 💯\n• Verskillende temas 🎨\n• Meer opsies ⚙️\n• Ekstra sinkroniseer-bedieners 🖥️\n• Voortgesette ontwikkeling ☕\n• \'n Gemotiveerde ontwikkelaar 🧙</string>
-    <string name="upgrade_screen_how_title">Opsies</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">Jy kan kies tussen \'n eenmalige aankoop en \'n goedkoper jaarlikse inskrywing. Beide kan te eniger tyd gekanselleer word.\nDieselfde funksies, net verskillende prysstelle.</string>
-    <string name="upgrade_screen_how_trial_hint">Die inskrywing begin met \'n gratis 14-dag proef, waarna jy eenmaal per jaar gehef word.</string>
     <string name="upgrade_screen_subscription_trial_action">Begin gratis 14-dae proef</string>
     <string name="upgrade_screen_subscription_action">Inskryf</string>
-    <string name="upgrade_screen_subscription_action_hint">Die inskrywing kos %s per jaar.</string>
     <string name="upgrade_screen_iap_action">Eenmalige aankoop</string>
-    <string name="upgrade_screen_iap_action_hint">Die eenmalige aankoop kos %s.</string>
-    <string name="upgrade_screen_thanks_toast">Jy is die beste! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Opgraadopsies</string>
     <string name="upgrade_screen_offers_unavailable_title">Pryse nie beskikbaar nie</string>
@@ -54,8 +44,6 @@
     <string name="upgrade_screen_restore_purchase_action">Herstel aankoop</string>
     <string name="upgrade_screen_restore_banner_title">Reeds Pro gekoop?</string>
     <string name="upgrade_screen_restore_banner_body">Dit lyk asof jy voorheen op hierdie toestel na Pro opgegradueer het. Indien jy die upgrade nog steeds besit, sal dit deur herstel weer ontsluit word.</string>
-    <string name="upgrade_screen_restore_purchase_message">Jou opgradering is geldig op toestelle met dieselfde Google-rekening.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Probleemoplossing vir onbekende opgraderings:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Sinkronisasie met die Play Winkel mag tyd neem. Probeer herlaai, vee Google Play se kasgeheue uit of wag net \'n bietjie.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Veelvuldige rekeninge kan Google Play verwar. Meld af by ander rekeninge of installeer via die Google Play-webwerf, wat die koppel aan \'n spesifieke rekening afdwing.</string>
     <string name="upgrade_screen_restore_success_message">Aankoop herstel — dankie!</string>
@@ -69,10 +57,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">Leeftydse aankoop</string>
     <string name="upgrade_screen_owned_iap_body">Jy eie die eenmalige Pro-aankoop. Dit verval nooit.</string>
-    <string name="upgrade_screen_owned_sub_title">Inskrywing</string>
     <string name="upgrade_screen_owned_sub_renewing_body">Jou Pro-inskrywing is aktief en vernuwe outomaties.</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">Jou Pro-inskrywing is aktief maar ingestel om nie te vernuwe nie. Dit bly aktief tot die einde van die huidige periode.</string>
-    <string name="upgrade_screen_owned_both_title">Jy eie albei</string>
     <string name="upgrade_screen_owned_both_warning">Jy eie beide die inskrywing en die eenmalige aankoop. Om dubbele betaling te vermy, kanselleer die inskrywing in Google Play — jy behou Pro deur die leeftydse aankoop.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -85,10 +71,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">Dankie vir inskrywing op %1$s! Jou Pro-funksies is ontsluit.</string>
     <string name="upgrade_screen_manage_subscription_action">Bestuur inskrywing</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">Skakel oor na eenmalige aankoop</string>
     <string name="upgrade_screen_switch_body">Verkies jy om eenmalig te betaal in plaas van \'n inskrywing? Jy kan die eenmalige Pro-aankoop koop en die inskrywing stop.</string>
     <string name="upgrade_screen_switch_locked_note">Jou inskrywing verleng nog steeds outomaties. Kanselleer dit eers in Google Play, kom dan terug om die eenmalige aankoop te koop. Dit hier te koop kanselleer of terugbetaal nie die inskrywing nie — gebruik dieselfde Google-rekening.</string>
-    <string name="upgrade_screen_switch_action">Koop eenmalige aankoop (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Inskrywing nog aktief</string>
     <string name="upgrade_screen_sub_still_renewing_message">Jou inskrywing is nog steeds ingestel om te verleng. Kanselleer dit eers in Google Play sodat jy nie twee keer gehef word nie, koop dan die eenmalige aankoop. Dit terugbetaal nie die inskrywing nie.</string>
     <string name="upgrade_screen_purchase_check_failed_message">Google Play het nie betyds gereageer nie, dus kan ons jou aankoopstatus nie veilig bevestig nie. Probeer asseblief oor \'n oomblik weer.</string>

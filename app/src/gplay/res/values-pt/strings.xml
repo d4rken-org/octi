@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play indisponível</string>
     <string name="upgrades_gplay_unavailable_error_description">O Octi não pode conectar ao Google Play. O Google Play está instalado e atualizado? Sua Conta Google está conectada? Tente limpar o cache do app Google Play e reiniciar o dispositivo.</string>
-    <string name="upgrades_no_purchases_found_check_account">Nenhuma compra encontrada. Você está usando a conta correta?</string>
     <string name="upgrades_already_owned_error_title">Já comprado</string>
     <string name="upgrades_already_owned_error_description">O Google Play indica que já possui esta atualização. Utilize \'Restaurar compra\' para a desbloquear.</string>
     <string name="upgrades_gplay_billing_error_label">Problema do Google Play</string>
@@ -28,18 +27,9 @@
     <string name="upgrade_screen_preamble">O Octi não exibe anúncios e não vende dados do usuário. Meu trabalho é financiado por você ❤️.</string>
     <string name="upgrade_screen_benefits_title">Benefícios</string>
     <string name="upgrade_screen_benefits_body">• Mais de 3 dispositivos 💯\n• Temas diferentes 🎨\n• Mais opções ⚙️\n• Servidores de sincronização extra 🖥️\n• Desenvolvimento contínuo ☕\n• Um programador motivado 🧙</string>
-    <string name="upgrade_screen_how_title">Opções</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">Pode escolher entre uma compra única e uma subscrição anual mais barata. Ambas são canceláveis a qualquer momento.\nMesmas funcionalidades, apenas modelos de preço diferentes.</string>
-    <string name="upgrade_screen_how_trial_hint">A subscrição começa com um período de teste gratuito de 14 dias, após o qual será cobrado uma vez por ano.</string>
     <string name="upgrade_screen_subscription_trial_action">Iniciar teste gratuito de 14 dias</string>
     <string name="upgrade_screen_subscription_action">Assinar</string>
-    <string name="upgrade_screen_subscription_action_hint">A assinatura custa %s por ano.</string>
     <string name="upgrade_screen_iap_action">Compra única</string>
-    <string name="upgrade_screen_iap_action_hint">A compra única custa %s.</string>
-    <string name="upgrade_screen_thanks_toast">Você é o melhor! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Opções de atualização</string>
     <string name="upgrade_screen_offers_unavailable_title">Preços indisponíveis</string>
@@ -54,8 +44,6 @@
     <string name="upgrade_screen_restore_purchase_action">Restaurar compra</string>
     <string name="upgrade_screen_restore_banner_title">Já comprou o Pro?</string>
     <string name="upgrade_screen_restore_banner_body">Parece que já atualizou para Pro neste dispositivo. Se ainda possui a atualização, restaure a compra para a desbloquear novamente.</string>
-    <string name="upgrade_screen_restore_purchase_message">Sua atualização é válida em dispositivos usando a mesma Conta Google.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Dicas de solução de problemas para upgrades não reconhecidos:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">A sincronização da Play Store pode levar algum tempo. Tente reiniciar, limpar o cache do Google Play ou apenas aguarde.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Várias contas podem confundir o Google Play. Saia de outras contas ou instale pelo site do Google Play, o que força a associação a uma conta específica.</string>
     <string name="upgrade_screen_restore_success_message">Compra restaurada — obrigado!</string>
@@ -69,10 +57,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">Compra vitalícia</string>
     <string name="upgrade_screen_owned_iap_body">Tem a compra Pro única. Nunca expira.</string>
-    <string name="upgrade_screen_owned_sub_title">Subscrição</string>
     <string name="upgrade_screen_owned_sub_renewing_body">A sua subscrição Pro está ativa e renova automaticamente.</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">A sua subscrição Pro está ativa, mas está definida para não renovar. Mantém-se ativa até ao final do período atual.</string>
-    <string name="upgrade_screen_owned_both_title">Tem ambas</string>
     <string name="upgrade_screen_owned_both_warning">Tem a subscrição e a compra única. Para evitar pagar duas vezes, cancele a subscrição no Google Play — mantém o Pro através da compra vitalícia.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -85,10 +71,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">Obrigado por subscrever %1$s! As suas funcionalidades Pro estão desbloqueadas.</string>
     <string name="upgrade_screen_manage_subscription_action">Gerir subscrição</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">Mudar para uma compra única</string>
     <string name="upgrade_screen_switch_body">Prefere pagar uma vez em vez de subscrever? Pode comprar a compra Pro única e cancelar a subscrição.</string>
     <string name="upgrade_screen_switch_locked_note">A sua subscrição ainda se renova automaticamente. Cancele-a primeiro no Google Play e depois volte para comprar a compra única. Comprar aqui não cancela nem reembolsa a subscrição — utilize a mesma conta Google.</string>
-    <string name="upgrade_screen_switch_action">Comprar compra única (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Subscrição ainda ativa</string>
     <string name="upgrade_screen_sub_still_renewing_message">A sua subscrição ainda está definida para renovar. Cancele-a primeiro no Google Play para não ser cobrado duas vezes e depois compre a compra única. Isto não reembolsa a subscrição.</string>
     <string name="upgrade_screen_purchase_check_failed_message">O Google Play não respondeu a tempo, por isso não conseguimos confirmar com segurança o estado da tua compra. Tenta novamente dentro de momentos.</string>

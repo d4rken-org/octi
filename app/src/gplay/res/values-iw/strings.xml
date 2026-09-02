@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">פרו</string>
     <string name="upgrades_gplay_unavailable_error_title">גוגל פליי לא זמין</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi לא יכול להתחבר ל-Google Play. האם Google Play מותקן ומעודכן? האם חשבון Google שלך מחובר? נסה לנקות את המטמון של אפליקציית Google Play ולאתחל את המכשיר שלך.</string>
-    <string name="upgrades_no_purchases_found_check_account">לא נמצאו רכישות. האם אתה משתמש בחשבון הנכון?</string>
     <string name="upgrades_already_owned_error_title">כבר נרכש</string>
     <string name="upgrades_already_owned_error_description">Google Play מדווח שכבר רכשת שדרוג זה. השתמש ב׳שחזור קנייה׳ כדי לפתוח אותו.</string>
     <string name="upgrades_gplay_billing_error_label">בעיה ב־Google Play</string>
@@ -29,18 +28,9 @@
     <string name="upgrade_screen_preamble">Octi לא מכילה מודעות ואיננו מוכרים נתוני משתמשים. העבודה שלי ממומנת על ידך ❤️.</string>
     <string name="upgrade_screen_benefits_title">יתרונות</string>
     <string name="upgrade_screen_benefits_body">• יותר מ־3 מכשירים 💯\n• ערכות נושא שונות 🎨\n• אפשרויות נוספות ⚙️\n• שרתי סנכרון נוספים 🖥️\n• המשך פיתוח ☕\n• מוטיבציה להמשך הפיתוח 🧙</string>
-    <string name="upgrade_screen_how_title">אפשרויות</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">אתה יכול לבחור בין רכישה חד פעמית לבין מנוי שנתי זול יותר. שניהם ניתנים לביטול בכל עת.\nאותן תכונות, רק מודלי תמחור שונים.</string>
-    <string name="upgrade_screen_how_trial_hint">המנוי מתחיל בניסיון חינם של 14 ימים, שלאחריו תחויב פעם בשנה.</string>
     <string name="upgrade_screen_subscription_trial_action">התחל ניסיון חינם למשך 14 יום</string>
     <string name="upgrade_screen_subscription_action">הרשמה</string>
-    <string name="upgrade_screen_subscription_action_hint">המנוי עולה %s לשנה.</string>
     <string name="upgrade_screen_iap_action">רכישה חד פעמית</string>
-    <string name="upgrade_screen_iap_action_hint">הרכישה החד פעמית עולה %s.</string>
-    <string name="upgrade_screen_thanks_toast">אתה הכי טוב! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">אפשרויות שדרוג</string>
     <string name="upgrade_screen_offers_unavailable_title">מחירים לא זמינים</string>
@@ -55,8 +45,6 @@
     <string name="upgrade_screen_restore_purchase_action">שחזור רכישה</string>
     <string name="upgrade_screen_restore_banner_title">כבר קנית Pro?</string>
     <string name="upgrade_screen_restore_banner_body">נראה שדירגת ל־Pro במכשיר זה בעבר. אם אתה עדיין בעלים על השדרוג, השחזור יפתח אותו שוב.</string>
-    <string name="upgrade_screen_restore_purchase_message">השדרוג שלך תקף בכל המכשירים באותו חשבון Google.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">עצות לפתרון בעיות עבור שדרוגים לא מזוהים:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">הסנכרון של חנות פליי עשוי לקחת זמן. נסה לאתחל מחדש, לנקות את המטמון של Google Play או פשוט המתן.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">חשבונות מרובים יכולים לבלבל את Google Play. התנתק מחשבונות אחרים או התקן דרך אתר Google Play, מה שמאלץ שיוך עם חשבון ספציפי.</string>
     <string name="upgrade_screen_restore_success_message">הרכישה שוחזרה — תודה!</string>
@@ -70,10 +58,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">רכישה לחיים</string>
     <string name="upgrade_screen_owned_iap_body">אתה בעלים של רכישת Pro חד פעמית. היא לעולם לא תפוג.</string>
-    <string name="upgrade_screen_owned_sub_title">מנוי</string>
     <string name="upgrade_screen_owned_sub_renewing_body">מנוי ה-Pro שלך פעיל ומתחדש באופן אוטומטי.</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">מנוי ה-Pro שלך פעיל אך מוגדר שלא להתחדש. הוא נשאר פעיל עד סוף התקופה הנוכחית.</string>
-    <string name="upgrade_screen_owned_both_title">יש לך שניהם</string>
     <string name="upgrade_screen_owned_both_warning">יש לך גם המנוי וגם את הרכישה החד-פעמית. כדי להימנע מתשלום כפול, בטל את המנוי ב-Google Play — אתה תשמור על Pro דרך הרכישה לכל החיים.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -86,10 +72,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">תודה על הרשמתך ל-%1$s! תכונות Pro שלך פתוחות.</string>
     <string name="upgrade_screen_manage_subscription_action">ניהול המנוי</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">עבור לרכישה חד-פעמית</string>
     <string name="upgrade_screen_switch_body">עדיף לך לשלם פעם אחת במקום להירשם? אתה יכול לקנות את הרכישה החד-פעמית של Pro ולעצור את המנוי.</string>
     <string name="upgrade_screen_switch_locked_note">המנוי שלך עדיין מתחדש באופן אוטומטי. בטל אותו ב-Google Play תחילה, ואז חזור לקנות את הרכישה החד-פעמית. קנייתה כאן לא מבטלת או מחזירה את הכסף עבור המנוי — השתמש באותו חשבון Google.</string>
-    <string name="upgrade_screen_switch_action">קנה רכישה חד-פעמית (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">המנוי עדיין פעיל</string>
     <string name="upgrade_screen_sub_still_renewing_message">המנוי שלך עדיין מוגדר להתחדש. בטל אותו ב-Google Play תחילה כדי שלא תחויב פעמיים, ואז קנה את הרכישה החד-פעמית. זה לא מחזיר כסף עבור המנוי.</string>
     <string name="upgrade_screen_purchase_check_failed_message">‏Google Play לא הגיב בזמן, ולכן לא ניתן לאשר בבטחה את מצב הרכישה שלך. כדאי לנסות שוב בעוד רגע.</string>

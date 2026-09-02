@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Google Play ni na voljo</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi se ne more povezati z Google Play. Ali je Google Play nameščen in posodobljen? Ali ste prijavljeni v svoj Google račun? Poskusite počistiti predpomnilnik aplikacije Google Play in znova zagnati napravo.</string>
-    <string name="upgrades_no_purchases_found_check_account">Nakupi niso bili najdeni. Ali uporabljate pravi račun?</string>
     <string name="upgrades_dashcard_body">Nadgradite za odklep dodatnih funkcij in podprite razvoj!</string>
     <string name="upgrades_dashcard_upgrade_action">Nadgradi</string>
     <string name="upgrade_screen_preamble">Octi ne prikazuje oglasov in ne prodaja podatkov uporabnikov. Moje delo financirate vi ❤️.</string>
     <string name="upgrade_screen_benefits_title">Prednosti</string>
     <string name="upgrade_screen_benefits_body">• Več kot 3 naprave 💯\n• Različne teme 🎨\n• Več možnosti ⚙️\n• Dodatni strežniki za sinhronizacijo 🖥️️\n• Neprekinjen razvoj ☕\n• Motiviran razvijalec 🧙</string>
-    <string name="upgrade_screen_how_title">Možnosti</string>
     <string name="upgrade_screen_subscription_trial_action">Začni brezplačni 14-dnevni preizkus</string>
     <string name="upgrade_screen_subscription_action">Naroči se</string>
-    <string name="upgrade_screen_subscription_action_hint">Naročnina stane %s letno.</string>
     <string name="upgrade_screen_iap_action">Enkratni nakup</string>
-    <string name="upgrade_screen_iap_action_hint">Enkratni nakup stane %s.</string>
-    <string name="upgrade_screen_thanks_toast">Najboljši ste! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Obnovi nakup</string>
-    <string name="upgrade_screen_restore_purchase_message">Vaša nadgradnja velja na vseh napravah z istim Google računom.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Nasveti za odpravljanje težav pri neprepoznanih nadgradnjah:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Sinhronizacija s Play Store lahko traja nekaj časa. Poskusite znova zagnati napravo, počistiti predpomnilnik Google Play ali preprosto nekoliko počakajte.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Več računov lahko zmede Google Play. Odjavite se iz drugih računov ali namestite prek spletnega mesta Google Play, kar omogoča povezavo z določenim računom.</string>
 </resources>

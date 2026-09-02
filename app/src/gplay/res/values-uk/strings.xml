@@ -4,7 +4,6 @@
     <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play недоступний</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi не може підключитися до Google Play. Чи встановлено і оновлено Google Play? Ви ввійшли у свій обліковий запис Google? Спробуйте очистити кеш застосунку Google Play і перезапустити пристрій.</string>
-    <string name="upgrades_no_purchases_found_check_account">Покупки не знайдено. Ви використовуєте правильний обліковий запис?</string>
     <string name="upgrades_already_owned_error_title">Вже придбано</string>
     <string name="upgrades_already_owned_error_description">Google Play повідомляє, що ви вже маєте це оновлення. Використовуйте «Відновити покупку», щоб розблокувати його.</string>
     <string name="upgrades_gplay_billing_error_label">Проблема з Google Play</string>
@@ -30,18 +29,9 @@
     <string name="upgrade_screen_preamble">В Octi немає реклами й не продаються дані користувача. Моя робота фінансується вами ❤️.</string>
     <string name="upgrade_screen_benefits_title">Переваги</string>
     <string name="upgrade_screen_benefits_body">• Більше ніж 3 пристрої 💯\n• Різні теми 🎨\n• Більше опцій ⚙️\n• Додаткові сервери синхронізації 🖥️\n• Безперервна розробка ☕\n• Мотивований розробник 🧙</string>
-    <string name="upgrade_screen_how_title">Варіанти</string>
-    <!-- Replaces upgrade_screen_how_body: the trial promise moved to the conditional
-         upgrade_screen_how_trial_hint. New key so stale translations of the old string (which
-         promise the trial unconditionally) can't be picked up. -->
-    <string name="upgrade_screen_how_body2">Ви можете обрати між одноразовою покупкою та дешевшою річною підпискою. Обидві можна скасувати в будь-який момент.\nТі самі функції, лише різні моделі ціноутворення.</string>
-    <string name="upgrade_screen_how_trial_hint">Підписка починається з безкоштовного 14-денного пробного періоду, після якого з вас буде стягуватися плата раз на рік.</string>
     <string name="upgrade_screen_subscription_trial_action">Почати безкоштовний 14-денний пробний період</string>
     <string name="upgrade_screen_subscription_action">Оформити підписку</string>
-    <string name="upgrade_screen_subscription_action_hint">Підписка коштує %s на рік.</string>
     <string name="upgrade_screen_iap_action">Одноразова покупка</string>
-    <string name="upgrade_screen_iap_action_hint">Одноразова покупка коштує %s.</string>
-    <string name="upgrade_screen_thanks_toast">Ви найкращі! ❤️</string>
     <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Варіанти оновлення</string>
     <string name="upgrade_screen_offers_unavailable_title">Ціни недоступні</string>
@@ -56,8 +46,6 @@
     <string name="upgrade_screen_restore_purchase_action">Відновити покупку</string>
     <string name="upgrade_screen_restore_banner_title">Вже купили Pro?</string>
     <string name="upgrade_screen_restore_banner_body">Схоже, ви раніше оновились до Pro на цьому пристрої. Якщо ви все ще маєте це оновлення, його відновлення розблокує його знову.</string>
-    <string name="upgrade_screen_restore_purchase_message">Ваша покупка дійсна на всіх пристроях із цим же Google-акаунтом.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Поради щодо усунення проблем з невизнаними оновленнями:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">Синхронізація Play Store може зайняти деякий час. Спробуйте перезапустити, очистити кеш Google Play або просто зачекайте.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Декілька акаунтів можуть заплутати Google Play. Вийдіть з інших акаунтів або встановлюйте через сайт Google Play, щоб прив\'язати до конкретного акаунта.</string>
     <string name="upgrade_screen_restore_success_message">Покупку відновлено — дякуємо!</string>
@@ -71,10 +59,8 @@
     <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">Довічна покупка</string>
     <string name="upgrade_screen_owned_iap_body">Ви володієте одноразовою покупкою Pro. Вона ніколи не спливає.</string>
-    <string name="upgrade_screen_owned_sub_title">Підписка</string>
     <string name="upgrade_screen_owned_sub_renewing_body">Ваша підписка Pro активна й автоматично поновлюється.</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">Ваша підписка Pro активна, але налаштована не продовжуватися. Вона залишається активною до кінця поточного періоду.</string>
-    <string name="upgrade_screen_owned_both_title">Ви володієте обома</string>
     <string name="upgrade_screen_owned_both_warning">Ви володієте і підпискою, і одноразовою покупкою. Щоб не платити двічі, скасуйте підписку в Google Play — ви збережете Pro завдяки довічній покупці.</string>
     <!-- Owned hero card (%1$s = "Octi Pro") -->
     <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
@@ -87,10 +73,8 @@
     <string name="upgrade_screen_owned_hero_sub_body">Дякуємо за підписку %1$s! Ваші функції Pro розблоковано.</string>
     <string name="upgrade_screen_manage_subscription_action">Керувати підпискою</string>
     <!-- Switch subscription → one-time purchase -->
-    <string name="upgrade_screen_switch_title">Перейти на одноразову покупку</string>
     <string name="upgrade_screen_switch_body">Віддаєте перевагу платити один раз замість підписки? Ви можете купити одноразову покупку Pro та зупинити підписку.</string>
     <string name="upgrade_screen_switch_locked_note">Ваша підписка все ще продовжується автоматично. Спочатку скасуйте її в Google Play, а потім повертайтеся, щоб купити одноразову покупку. Покупка тут не скасовує та не повертає кошти за підписку — використовуйте той самий акаунт Google.</string>
-    <string name="upgrade_screen_switch_action">Купити одноразову покупку (%1$s)</string>
     <string name="upgrade_screen_sub_still_renewing_title">Підписка все ще активна</string>
     <string name="upgrade_screen_sub_still_renewing_message">Ваша підписка все ще налаштована на продовження. Спочатку скасуйте її в Google Play, щоб з вас не стягнули двічі, а потім купіть одноразову покупку. Це не повертає кошти за підписку.</string>
     <string name="upgrade_screen_purchase_check_failed_message">Google Play не відповів вчасно, тому ми не можемо надійно підтвердити стан твоєї покупки. Спробуй ще раз за хвилину.</string>

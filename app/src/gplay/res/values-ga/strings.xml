@@ -2,22 +2,15 @@
 <resources>
     <string name="upgrades_gplay_unavailable_error_title">Níl Google Play ar fáil</string>
     <string name="upgrades_gplay_unavailable_error_description">Ní féidir le Octi nascadh le Google Play. An bhfuil Google Play suiteáilte agus cothrom le dáta? An bhfuil do Chuntas Google logáilte isteach? Bain triail as taisce an aipe Google Play a ghlanadh agus an gléas a atosú.</string>
-    <string name="upgrades_no_purchases_found_check_account">Níor aimsíodh aon cheannacháin. An bhfuil tú ag úsáid an chuntais cheart?</string>
     <string name="upgrades_dashcard_body">Uasghrádaigh chun gnéithe breise a dhíghlasáil agus tacú le forbairt!</string>
     <string name="upgrades_dashcard_upgrade_action">Uasghrádú</string>
     <string name="upgrade_screen_preamble">Níl fógraí ar Octi agus ní dhíoltar sonraí úsáideora. Maoiníonn tusa mo chuid oibre ❤️.</string>
     <string name="upgrade_screen_benefits_title">Buntáistí</string>
     <string name="upgrade_screen_benefits_body">• Níos mó ná 3 ghléas 💯\n• Téamaí éagsúla 🎨\n• Tuilleadh roghanna ⚙️\n• Freastalaithe sioncrónaithe breise🖥️️\n• Forbairt leanúnach ☕\n• Forbróir spreagtha 🧙</string>
-    <string name="upgrade_screen_how_title">Roghanna</string>
     <string name="upgrade_screen_subscription_trial_action">Cuir tús le triail saor in aisce 14 lá</string>
     <string name="upgrade_screen_subscription_action">Liostáil</string>
-    <string name="upgrade_screen_subscription_action_hint">Cosnaíonn an síntiús %s sa bhliain.</string>
     <string name="upgrade_screen_iap_action">Ceannach aonuaire</string>
-    <string name="upgrade_screen_iap_action_hint">Cosnaíonn an ceannach aonuaire %s.</string>
-    <string name="upgrade_screen_thanks_toast">Is tú an duine is fearr! ❤️</string>
     <string name="upgrade_screen_restore_purchase_action">Aisghabhann an ceannach</string>
-    <string name="upgrade_screen_restore_purchase_message">Tá d\'uasghrádú bailí ar ghléasanna leis an gcuntas Google céanna.</string>
-    <string name="upgrade_screen_restore_troubleshooting_msg">Leideanna fabhtcheartaithe le haghaidh uasghráduithe gan aithint:</string>
     <string name="upgrade_screen_restore_sync_patience_hint">D’fhéadfadh sé tamall a ghlacadh chun sioncrónú leis an Play Store. Bain triail as atosú, taisce Google Play a ghlanadh nó fan go simplí.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Is féidir le cuntais iolracha mearbhall a chur ar Google Play. Logáil amach as cuntais eile nó suiteáil tríd an suíomh Gréasáin Google Play chun nasc le cuntas áirithe a éileamh.</string>
 </resources>
