@@ -115,6 +115,16 @@
     "translation": "/modules-clipboard/src/main/res/values-%android_code%/strings.xml",
     "languages_mapping": *stringmapping
   }, {
+    "source": "/modules-connectivity/src/main/res/values/strings.xml",
+    "dest": "/strings-modules-connectivity.xml",
+    "translation": "/modules-connectivity/src/main/res/values-%android_code%/strings.xml",
+    "languages_mapping": *stringmapping
+  }, {
+    "source": "/modules-files/src/main/res/values/strings.xml",
+    "dest": "/strings-modules-files.xml",
+    "translation": "/modules-files/src/main/res/values-%android_code%/strings.xml",
+    "languages_mapping": *stringmapping
+  }, {
     "source": "/modules-meta/src/main/res/values/strings.xml",
     "dest": "/strings-modules-meta.xml",
     "translation": "/modules-meta/src/main/res/values-%android_code%/strings.xml",
