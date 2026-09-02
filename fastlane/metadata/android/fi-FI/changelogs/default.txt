@@ -1,7 +1,5 @@
-🐛 Virheenkorjauksia, 🚀 suorituskyvyn parannuksia, ehkä jopa ✨ uusia ominaisuuksia.
+Virheenkorjauksia ja pieniä parannuksia, jotta näet aina mitä muissa laitteissasi tapahtuu.
 
-Jos sinulla on hienoja ideoita Octille, kerro minulle 😊!
+Mikä muuttui tässä versiossa: octi.darken.eu/changelog
 
-Muutosloki: https://octi.darken.eu/changelog
-
-Tiedoksesi: Täällä on vain minä — kiitos ymmärryksestä, jos vastaukset kestävät hetken. ¯\_(ツ)_/¯
+Jokin hajosi päivityksen jälkeen, tai sinulla on idea Octille? Kerro minulle kohdassa Asetukset > Tuki. Se on yhden henkilön projekti, joten vastausajat voivat venähtää, mutta jokainen ilmoitus luetaan.

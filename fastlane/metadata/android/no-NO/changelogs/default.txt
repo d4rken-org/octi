@@ -1,7 +1,5 @@
-🐛 Feilrettinger, 🚀 ytelsesforbedringer, kanskje til og med ✨ nye funksjoner.
+Feilrettinger og små forbedringer, slik at du alltid ser hva som skjer på dine andre enheter.
 
-Hvis du har kule ideer for Octi, gi meg beskjed 😊!
+Hva endret seg i denne versjonen: octi.darken.eu/changelog
 
-Endringslogg: https://octi.darken.eu/changelog
-
-Til info: Det er bare meg her — takk for forståelsen for at svar kan ta litt tid. ¯\_(ツ)_/¯
+Noe ble ødelagt etter oppdatering, eller har du en idé for Octi? Si ifra via Innstillinger > Støtte. Det er et enmannsprosjekt, så svar kan ta litt tid, men alle meldinger blir lest.

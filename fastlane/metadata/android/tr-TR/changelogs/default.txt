@@ -1,7 +1,5 @@
-🐛 Hata düzeltmeleri, 🚀 performans iyileştirmeleri, belki hatta ✨ yeni özellikler.
+Hata düzeltmeleri ve küçük iyileştirmeler, böylece her zaman diğer cihazlarınızda neler olup bittiğini görebilirsiniz.
 
-Octi için havalı fikirlerin varsa, bana söyle 😊!
+Bu sürümde neler değişti: octi.darken.eu/changelog
 
-Değişiklik günlüğü: https://octi.darken.eu/changelog
-
-Bilgin olsun: Burada sadece benim — yanıtlar biraz zaman alırsa anlayışın için teşekkürler. ¯\_(ツ)_/¯
+Güncelleme sonrasında bir şey bozuldu mu veya Octi için bir fikriniz var mı? Bana Ayarlar > Destek üzerinden yazın. Bu, bir kişinin projesidir, bu nedenle yanıtlar biraz zaman alabilir, ancak her rapor okunacaktır.

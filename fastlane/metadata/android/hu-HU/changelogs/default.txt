@@ -1,7 +1,5 @@
-🐛 Hibajavítások, 🚀 teljesítmény-javítások, talán még ✨ új funkciók is.
+Hibajavítások és kisebb fejlesztések, hogy mindig tudd, mi történik a többi eszközödön.
 
-Ha van klassz ötleted az Octihoz, szólj 😊!
+Mi változott ebben a verzióban: octi.darken.eu/changelog
 
-Változásnapló: https://octi.darken.eu/changelog
-
-Csak hogy tudd: Itt csak én vagyok — köszi a megértést, ha a válaszok egy kicsit elhúzódnak. ¯\_(ツ)_/¯
+Valami elromlott a frissítés után, vagy van ötleted az Octihoz? Tudass velem a Beállítások > Támogatás menüponton. Egyszemélyes projekt, ezért a válaszok telhetnek, de mindent elolvasok.

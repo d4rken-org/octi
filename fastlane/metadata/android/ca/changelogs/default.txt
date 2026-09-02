@@ -1,7 +1,5 @@
-🐛 Correccions d'errors, 🚀 millores de rendiment, potser fins i tot ✨ noves funcions.
+Correccions d'errors i petites millores perquè sempre vegeu què està passant als vostres altres dispositius.
 
-Si tens idees genials per a Octi, fes-m'ho saber 😊!
+Què ha canviat en aquesta versió: octi.darken.eu/changelog
 
-Registre de canvis: https://octi.darken.eu/changelog
-
-Que sàpigues que: estic jo sol aquí — gràcies per la comprensió si les respostes triguen una mica. ¯\_(ツ)_/¯
+Alguna cosa s'ha trencat després de l'actualització, o teniu una idea per a Octi? Comuniqueu-m'ho a través de Configuració > Suport. Es tracta d'un projecte d'una sola persona, així que les respostes poden trigar una estona, però tots els informes es llegeixen.
