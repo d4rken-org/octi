@@ -43,3 +43,4 @@ Each module has its own `strings.xml` managed by Crowdin:
 - Project ID: `741615`
 - Config: `crowdin.yaml`
 - Only edit `values/strings.xml` (base English). Never edit translated `values-*/strings.xml` files — those are managed by Crowdin.
+- String context, character limits and file context are managed on Crowdin through the android-translation plugin's `crowdin-annotate` skill. XML comments in `values/strings.xml` no longer reach translators once a string's context has been written on Crowdin; change it there.
