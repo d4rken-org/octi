@@ -2,7 +2,7 @@
 <resources>
     <string name="module_connectivity_label">Module de connectivité</string>
     <string name="module_connectivity_desc">Type de connexion, IP publique, détails du réseau</string>
-    <string name="module_connectivity_type_wifi_label">WiFi</string>
+    <string name="module_connectivity_type_wifi_label">Wi-Fi</string>
     <string name="module_connectivity_type_cellular_label">Données mobiles</string>
     <string name="module_connectivity_type_ethernet_label">Ethernet</string>
     <string name="module_connectivity_type_none_label">Aucune connexion</string>
@@ -10,8 +10,13 @@
     <string name="module_connectivity_unknown_local_ip_label">IP locale inconnue</string>
     <string name="module_connectivity_detail_local_ipv4_label">IPv4 locale</string>
     <string name="module_connectivity_detail_local_ipv6_label">IPv6 locale</string>
-    <string name="module_connectivity_detail_gateway_label">Gateway</string>
+    <string name="module_connectivity_detail_gateway_label">Passerelle</string>
     <string name="module_connectivity_detail_dns_label">Serveurs DNS</string>
     <string name="module_connectivity_detail_public_ip_label">IP publique</string>
     <string name="module_connectivity_detail_connection_type_label">Type de connexion</string>
+    <string name="module_connectivity_status_connected_label">Connecté</string>
+    <string name="module_connectivity_status_disconnected_label">Déconnecté</string>
+    <string name="module_connectivity_widget_description">Affiche les informations réseau de vos appareils synchronisés.</string>
+    <string name="module_connectivity_widget_copy_action">Copier les adresses réseau</string>
+    <string name="module_connectivity_widget_copied_toast">Adresses copiées</string>
 </resources>

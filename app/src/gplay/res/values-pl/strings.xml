@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The upgraded postfix on its own, colored in the upgrade screen title ("Octi <Pro>"). -->
     <string name="app_name_upgrade_postfix">Pro</string>
     <string name="upgrades_gplay_unavailable_error_title">Google Play jest niedostępne</string>
     <string name="upgrades_gplay_unavailable_error_description">Octi nie może połączyć się z Google Play. Czy Google Play jest zainstalowane i aktualne? Czy jesteś zalogowany na swoim koncie Google? Spróbuj wyczyścić pamięć podręczną aplikacji Google Play i zrestartować urządzenie.</string>
@@ -14,7 +13,6 @@
     <string name="upgrades_gplay_network_error_description">Nie udało się połączyć się z Google Play. Sprawdź swoje połączenie internetowe i spróbuj ponownie.</string>
     <string name="upgrades_gplay_offer_unavailable_title">Oferta niedostępna</string>
     <string name="upgrades_gplay_offer_unavailable_description">Sklep Google Play obecnie nie oferuje tej opcji aktualizacji. Spróbuj ponownie później lub sprawdź w Sklepie Google Play.</string>
-    <!-- Toast shown when the "Google Play" button of an error dialog can't open Google Play's app info, e.g. Google Play is missing or blocked on this device. "Google Play" is a brand name, keep it untranslated. -->
     <string name="upgrades_gplay_not_installed_message">Nie udało się otworzyć Sklepu Google Play. Aplikacja może być niedostępna, wyłączona lub ograniczona na tym urządzeniu.</string>
     <string name="upgrades_dashcard_body">Uaktualnij, aby odblokować dodatkowe funkcje i wesprzeć rozwój!</string>
     <string name="upgrades_dashcard_upgrade_action">Uaktualnij</string>
@@ -24,7 +22,6 @@
         <item quantity="many">Darmowa wersja jest ograniczona do %1$d urządzeń.</item>
         <item quantity="other">Darmowa wersja jest ograniczona do %1$d urządzeń.</item>
     </plurals>
-    <!-- %1$s is the full localized brand ("Octi Pro", composed from the app name + postfix) — translate the sentence around it, keep the placeholder. -->
     <string name="upgrade_screen_title_template">Uzyskaj %1$s</string>
     <string name="upgrade_screen_preamble">Octi nie wyświetla reklam i nie sprzedaje danych użytkowników. Moja praca jest finansowana przez ciebie ❤️.</string>
     <string name="upgrade_screen_benefits_title">Korzyści</string>
@@ -32,7 +29,6 @@
     <string name="upgrade_screen_subscription_trial_action">Rozpocznij bezpłatny 14-dniowy okres próbny</string>
     <string name="upgrade_screen_subscription_action">Subskrybuj</string>
     <string name="upgrade_screen_iap_action">Jednorazowy zakup</string>
-    <!-- Offers box -->
     <string name="upgrade_screen_offers_title">Opcje aktualizacji</string>
     <string name="upgrade_screen_offers_unavailable_title">Ceny niedostępne</string>
     <string name="upgrade_screen_offers_unavailable_message">Ceny nie mogły zostać załadowane. Sprawdź Sklep Google Play i spróbuj ponownie za chwilę.</string>
@@ -49,48 +45,35 @@
     <string name="upgrade_screen_restore_sync_patience_hint">Synchronizacja Sklepu Play może zająć trochę czasu. Spróbuj uruchomić ponownie, wyczyścić pamięć podręczną Google Play lub po prostu poczekać.</string>
     <string name="upgrade_screen_restore_multiaccount_hint">Wiele kont może powodować problemy z Google Play. Wyloguj się z innych kont lub zainstaluj aplikację przez stronę Google Play, co wymusi powiązanie z konkretnym kontem.</string>
     <string name="upgrade_screen_restore_success_message">Zakup przywrócony — dziękuję!</string>
-    <!-- Restore section copy (plain acquisition + ownership recheck) and failed-restore dialog -->
     <string name="upgrade_screen_restore_body">Kupiłeś już wersję Pro na tym koncie? Poproś Sklep Google Play o ponowne sprawdzenie zakupów w tej aplikacji.</string>
     <string name="upgrade_screen_restore_status_title">Status zakupu</string>
     <string name="upgrade_screen_restore_status_body">Sprawdź ponownie swoje zakupy za pomocą Sklepu Google Play, jeśli twój status Pro zawsze wygląda na aktualny.</string>
     <string name="upgrade_screen_restore_checked_message">Zwróciliśmy się do Sklepu Google Play z prośbą o ponowne sprawdzenie zakupów dokonanych za pomocą tej aplikacji, ale nie udało nam się potwierdzić zakupów na bieżącym koncie.</string>
     <string name="upgrade_screen_restore_contact_hint">Nadal masz problem? Skontaktuj się z pomocą techniczną, a pomożemy ci go rozwiązać.</string>
     <string name="upgrade_screen_restore_inconclusive_message">Weryfikacja w Sklepie Google Play nie zakończyła się na czas, więc status twojego zakupu jest nadal nieznany. Na twoim koncie nic się nie zmieniło.</string>
-    <!-- Pro status / ownership -->
     <string name="upgrade_screen_owned_iap_title">Zakup dożywotni</string>
     <string name="upgrade_screen_owned_iap_body">Jesteś właścicielem jednorazowego zakupu Pro. Nigdy nie wygasa.</string>
     <string name="upgrade_screen_owned_sub_renewing_body">Twoja subskrypcja Pro jest aktywna i odnawia się automatycznie.</string>
     <string name="upgrade_screen_owned_sub_not_renewing_body">Twoja subskrypcja Pro jest aktywna, ale ustawiona na nieodnawialną. Pozostanie aktywna do końca bieżącego okresu.</string>
     <string name="upgrade_screen_owned_both_warning">Posiadasz zarówno subskrypcję, jak i jednorazowy zakup. Aby uniknąć podwójnego płacenia, anuluj subskrypcję w Sklepie Google Play — trzymasz Pro przez dożywotni zakup.</string>
-    <!-- Owned hero card (%1$s = "Octi Pro") -->
-    <!-- Replaces upgrade_screen_owned_hero_title, which told the user they *are* the product tier
-         ("You are Octi Pro") instead of that they own it. %1$s is the complete localized tier name,
-         already composed from the app name and the tier qualifier - never translate it here. Render
-         the sentence idiomatically if that reads better in your language ("%1$s is active", "Your
-         %1$s access is active"), as long as the placeholder survives. -->
     <string name="upgrade_screen_owned_hero_brand_title">Masz %1$s 🎉</string>
     <string name="upgrade_screen_owned_hero_iap_body">Dziękujemy za zakup %1$s! Twoje funkcje Pro są odblokowane i nigdy nie wygasają.</string>
     <string name="upgrade_screen_owned_hero_sub_body">Dziękuję za subskrybowanie %1$s! Twoje funkcje Pro są odblokowane.</string>
     <string name="upgrade_screen_manage_subscription_action">Zarządzaj subskrypcją</string>
-    <!-- Switch subscription → one-time purchase -->
     <string name="upgrade_screen_switch_body">Czy chcesz zapłacić raz zamiast subskrybować? Możesz kupić jednorazowy zakup i zatrzymać subskrypcję.</string>
     <string name="upgrade_screen_switch_locked_note">Twoja subskrypcja nadal odnawia się automatycznie. Anuluj ją najpierw w Sklepie Google Play, a następnie wróć do kupna jednorazowego zakupu. Kupno tutaj nie anuluje ani nie zwraca subskrypcji — użyj tego samego konta Google.</string>
     <string name="upgrade_screen_sub_still_renewing_title">Subskrypcja nadal aktywna</string>
     <string name="upgrade_screen_sub_still_renewing_message">Twoja subskrypcja nadal jest ustawiona na odnowienie. Anuluj ją najpierw w Sklepie Google Play, aby uniknąć podwójnej opłaty, a następnie dokonaj jednorazowego zakupu. Nie spowoduje to zwrotu kosztów subskrypcji.</string>
     <string name="upgrade_screen_purchase_check_failed_message">Sklep Google Play nie odpowiedział na czas, więc nie możemy bezpiecznie potwierdzić stanu twojego zakupu. Spróbuj ponownie za chwilę.</string>
-    <!-- Pending payment (Google Play is still processing a slow payment method) -->
-    <string name="upgrade_screen_pending_card_title">Płatność oczekuje</string>
+    <string name="upgrade_screen_pending_card_title">Oczekiwanie na płatność</string>
     <string name="upgrade_screen_pending_card_body">Sklep Google Play nadal przetwarza twoją płatność. Wersja Pro zostanie odblokowana automatycznie po przejściu płatności. Niektóre sposoby płatności mogą trwać dłużej. Nie musisz nic więcej robić.</string>
     <string name="upgrade_screen_pending_dialog_message">Sklep Google Play znalazł zakup z oczekującą płatnością i nadal go przetwarza. Wersja Pro zostanie odblokowana automatycznie po przejściu płatności.</string>
-    <!-- Grace period -->
     <string name="upgrade_screen_grace_title">Pro jest nadal aktywne</string>
     <string name="upgrade_screen_grace_body">Potwierdzamy twój zakup w Google Play. Twoje funkcje Pro są w międzyczasie odblokowane.</string>
     <string name="upgrade_screen_grace_diagnostics_body">Nadal nie możemy potwierdzić zakupu w Sklepie Google Play. Twoje funkcje Pro pozostają na razie odblokowane. Spróbuj przywrócić połączenie.</string>
     <string name="upgrade_screen_contact_support_action">Skontaktuj się z pomocą techniczną</string>
-    <!-- Free status page (manage entry) -->
     <string name="upgrade_screen_free_status_title">Jesteś na darmowej wersji</string>
     <string name="upgrade_screen_free_status_body">Zaktualizuj do wersji Octi Pro, aby odblokować dodatkowe funkcje i wesprzeć rozwój.</string>
     <string name="upgrade_screen_see_options_action">Zobacz opcje aktualizacji</string>
-    <!-- Settings status row (gplay) -->
     <string name="settings_upgrade_status_desc">Zobacz swój status Pro i zarządzaj aktualizacją</string>
 </resources>

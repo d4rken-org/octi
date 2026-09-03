@@ -10,8 +10,13 @@
     <string name="module_connectivity_unknown_local_ip_label">IP local desconocida</string>
     <string name="module_connectivity_detail_local_ipv4_label">IPv4 local</string>
     <string name="module_connectivity_detail_local_ipv6_label">IPv6 local</string>
-    <string name="module_connectivity_detail_gateway_label">Gateway</string>
+    <string name="module_connectivity_detail_gateway_label">Puerta de enlace</string>
     <string name="module_connectivity_detail_dns_label">Servidores DNS</string>
     <string name="module_connectivity_detail_public_ip_label">IP pública</string>
     <string name="module_connectivity_detail_connection_type_label">Tipo de conexión</string>
+    <string name="module_connectivity_status_connected_label">Conectado</string>
+    <string name="module_connectivity_status_disconnected_label">Desconectado</string>
+    <string name="module_connectivity_widget_description">Muestra información de red de tus dispositivos sincronizados.</string>
+    <string name="module_connectivity_widget_copy_action">Copiar direcciones de red</string>
+    <string name="module_connectivity_widget_copied_toast">Direcciones copiadas</string>
 </resources>

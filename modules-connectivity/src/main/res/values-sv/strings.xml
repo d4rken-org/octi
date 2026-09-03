@@ -3,7 +3,7 @@
     <string name="module_connectivity_label">Anslutningsmodul</string>
     <string name="module_connectivity_desc">Anslutningstyp, offentlig IP, nätverksdetaljer</string>
     <string name="module_connectivity_type_wifi_label">WiFi</string>
-    <string name="module_connectivity_type_cellular_label">Mobildata</string>
+    <string name="module_connectivity_type_cellular_label">Mobilnätverk</string>
     <string name="module_connectivity_type_ethernet_label">Ethernet</string>
     <string name="module_connectivity_type_none_label">Ingen anslutning</string>
     <string name="module_connectivity_unknown_public_ip_label">Okänd offentlig IP</string>
@@ -14,4 +14,9 @@
     <string name="module_connectivity_detail_dns_label">DNS-servrar</string>
     <string name="module_connectivity_detail_public_ip_label">Offentlig IP</string>
     <string name="module_connectivity_detail_connection_type_label">Anslutningstyp</string>
+    <string name="module_connectivity_status_connected_label">Ansluten</string>
+    <string name="module_connectivity_status_disconnected_label">Frånkopplad</string>
+    <string name="module_connectivity_widget_description">Visa nätverksinformation från dina synkroniserade enheter.</string>
+    <string name="module_connectivity_widget_copy_action">Kopiera nätverksadresser</string>
+    <string name="module_connectivity_widget_copied_toast">Adresser kopierade</string>
 </resources>
