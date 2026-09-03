@@ -69,7 +69,7 @@
     <string name="module_files_sort_by_name">Namn</string>
     <string name="module_files_sort_by_size">Storlek</string>
     <string name="module_files_sort_by_device">Enhet</string>
-    <string name="module_files_action_open">Öppet</string>
+    <string name="module_files_action_open">Öppna</string>
     <string name="module_files_action_save_as">Spara som…</string>
     <string name="module_files_open_chooser">Öppna med</string>
     <string name="module_files_open_no_app">Ingen app på den här enheten kan öppna den här filen</string>

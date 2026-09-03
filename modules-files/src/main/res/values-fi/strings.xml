@@ -69,7 +69,7 @@
     <string name="module_files_sort_by_name">Nimi</string>
     <string name="module_files_sort_by_size">Koko</string>
     <string name="module_files_sort_by_device">Laite</string>
-    <string name="module_files_action_open">Auki</string>
+    <string name="module_files_action_open">Avaa</string>
     <string name="module_files_action_save_as">Tallenna nimellä…</string>
     <string name="module_files_open_chooser">Avaa sovelluksella</string>
     <string name="module_files_open_no_app">Mikään tämän laitteen sovellus ei voi avata tätä tiedostoa</string>

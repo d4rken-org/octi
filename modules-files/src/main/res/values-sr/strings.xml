@@ -70,7 +70,7 @@
     <string name="module_files_sort_by_name">Назив</string>
     <string name="module_files_sort_by_size">Величина</string>
     <string name="module_files_sort_by_device">Уређај</string>
-    <string name="module_files_action_open">Отворено</string>
+    <string name="module_files_action_open">Отвори</string>
     <string name="module_files_action_save_as">Сачувај као…</string>
     <string name="module_files_open_chooser">Отвори помоћу</string>
     <string name="module_files_open_no_app">Ниједна апликација на овом уређају не може да отвори ову датотеку</string>

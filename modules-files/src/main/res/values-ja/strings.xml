@@ -68,6 +68,7 @@
     <string name="module_files_sort_by_name">名前</string>
     <string name="module_files_sort_by_size">サイズ</string>
     <string name="module_files_sort_by_device">デバイス</string>
+    <string name="module_files_action_open">開く</string>
     <string name="module_files_action_save_as">名前を付けて保存…</string>
     <string name="module_files_open_chooser">別のアプリで開く</string>
     <string name="module_files_open_no_app">このデバイスでこのファイルを開くことができるアプリがありません</string>
