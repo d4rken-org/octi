@@ -69,7 +69,7 @@
     <string name="module_files_sort_by_name">Név</string>
     <string name="module_files_sort_by_size">Méret</string>
     <string name="module_files_sort_by_device">Eszköz</string>
-    <string name="module_files_action_open">Nyitva</string>
+    <string name="module_files_action_open">Megnyitás</string>
     <string name="module_files_action_save_as">Mentés másként…</string>
     <string name="module_files_open_chooser">Megnyitás ezzel</string>
     <string name="module_files_open_no_app">Egyetlen alkalmazás sem tudja megnyitni ezt a fájlt ezen az eszközön</string>

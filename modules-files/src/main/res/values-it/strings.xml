@@ -69,6 +69,7 @@
     <string name="module_files_sort_by_name">Nome</string>
     <string name="module_files_sort_by_size">Dimensione</string>
     <string name="module_files_sort_by_device">Dispositivo</string>
+    <string name="module_files_action_open">Apri</string>
     <string name="module_files_action_save_as">Salva con nome…</string>
     <string name="module_files_open_chooser">Apri con</string>
     <string name="module_files_open_no_app">Nessuna app su questo dispositivo può aprire questo file</string>

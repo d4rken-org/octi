@@ -8,7 +8,7 @@
     <string name="module_meta_detail_model_label">Μοντέλο</string>
     <string name="module_meta_detail_device_type_label">Τύπος συσκευής</string>
     <string name="module_meta_detail_device_type_phone">Τηλέφωνο</string>
-    <string name="module_meta_detail_device_type_tablet">Ταμπλέτα</string>
+    <string name="module_meta_detail_device_type_tablet">Tablet</string>
     <string name="module_meta_detail_device_type_desktop">Επιτραπέζιος Υπολογιστής</string>
     <string name="module_meta_detail_device_type_browser">Περιηγητής</string>
     <string name="module_meta_detail_device_type_server">Διακομιστής</string>

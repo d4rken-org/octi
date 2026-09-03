@@ -10,7 +10,7 @@
     <string name="module_connectivity_unknown_local_ip_label">Непозната локална IP адреса</string>
     <string name="module_connectivity_detail_local_ipv4_label">Локална IPv4</string>
     <string name="module_connectivity_detail_local_ipv6_label">Локална IPv6</string>
-    <string name="module_connectivity_detail_gateway_label">Gateway</string>
+    <string name="module_connectivity_detail_gateway_label">Мрежни пролаз</string>
     <string name="module_connectivity_detail_dns_label">DNS сервери</string>
     <string name="module_connectivity_detail_public_ip_label">Јавна IP адреса</string>
     <string name="module_connectivity_detail_connection_type_label">Тип повезивања</string>
