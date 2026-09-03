@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="module_connectivity_label">Forbindelsesmodul</string>
-    <string name="module_connectivity_desc">Forbindelsestype, offentlig IP, netværksdetaljer</string>
+    <string name="module_connectivity_desc">Forbindelsestype, offentlig IP, netværksoplysninger</string>
     <string name="module_connectivity_type_wifi_label">WiFi</string>
-    <string name="module_connectivity_type_cellular_label">Mobildata</string>
+    <string name="module_connectivity_type_cellular_label">Mobilnetværk</string>
     <string name="module_connectivity_type_ethernet_label">Ethernet</string>
     <string name="module_connectivity_type_none_label">Ingen forbindelse</string>
     <string name="module_connectivity_unknown_public_ip_label">Ukendt offentlig IP</string>
@@ -14,4 +14,9 @@
     <string name="module_connectivity_detail_dns_label">DNS-servere</string>
     <string name="module_connectivity_detail_public_ip_label">Offentlig IP</string>
     <string name="module_connectivity_detail_connection_type_label">Forbindelsestype</string>
+    <string name="module_connectivity_status_connected_label">Forbundet</string>
+    <string name="module_connectivity_status_disconnected_label">Afbrudt</string>
+    <string name="module_connectivity_widget_description">Vis netværksoplysninger fra dine synkroniserede enheder.</string>
+    <string name="module_connectivity_widget_copy_action">Kopiér netværksadresser</string>
+    <string name="module_connectivity_widget_copied_toast">Adresser kopieret</string>
 </resources>

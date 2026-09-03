@@ -3,7 +3,7 @@
     <string name="module_connectivity_label">Connectiviteitsmodule</string>
     <string name="module_connectivity_desc">Verbindingstype, openbaar IP, netwerkdetails</string>
     <string name="module_connectivity_type_wifi_label">WiFi</string>
-    <string name="module_connectivity_type_cellular_label">Mobiele data</string>
+    <string name="module_connectivity_type_cellular_label">Mobiel</string>
     <string name="module_connectivity_type_ethernet_label">Ethernet</string>
     <string name="module_connectivity_type_none_label">Geen verbinding</string>
     <string name="module_connectivity_unknown_public_ip_label">Onbekend openbaar IP</string>
@@ -14,4 +14,9 @@
     <string name="module_connectivity_detail_dns_label">DNS-servers</string>
     <string name="module_connectivity_detail_public_ip_label">Openbaar IP</string>
     <string name="module_connectivity_detail_connection_type_label">Verbindingstype</string>
+    <string name="module_connectivity_status_connected_label">Verbonden</string>
+    <string name="module_connectivity_status_disconnected_label">Niet verbonden</string>
+    <string name="module_connectivity_widget_description">Toon netwerkinformatie van je gesynchroniseerde apparaten.</string>
+    <string name="module_connectivity_widget_copy_action">Netwerkadressen kopiëren</string>
+    <string name="module_connectivity_widget_copied_toast">Adressen gekopieerd</string>
 </resources>

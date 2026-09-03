@@ -14,4 +14,9 @@
     <string name="module_connectivity_detail_dns_label">DNS-Server</string>
     <string name="module_connectivity_detail_public_ip_label">Öffentliche IP</string>
     <string name="module_connectivity_detail_connection_type_label">Verbindungstyp</string>
+    <string name="module_connectivity_status_connected_label">Verbunden</string>
+    <string name="module_connectivity_status_disconnected_label">Getrennt</string>
+    <string name="module_connectivity_widget_description">Zeige Netzwerkinformationen von deinen synchronisierten Geräten an.</string>
+    <string name="module_connectivity_widget_copy_action">Netzwerkadressen kopieren</string>
+    <string name="module_connectivity_widget_copied_toast">Adressen kopiert</string>
 </resources>
