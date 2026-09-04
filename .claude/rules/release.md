@@ -44,10 +44,10 @@ bats tools/release/bump.bats
 
 | Tag suffix | FOSS APK | GitHub release | Fastlane lane | Play track | Rollout |
 |---|---|---|---|---|---|
-| `-beta*` | `assembleFossBeta` | pre-release | `beta` | `beta` | 10% |
-| `-rc*` (or anything else) | `assembleFossRelease` | full release | `production` | **`beta`** | 10% |
+| `-beta*` | `assembleFossBeta` | pre-release | `beta` | `beta` | 100% |
+| `-rc*` (or anything else) | `assembleFossRelease` | full release | `production` | **`beta`** | 100% |
 
-`lane :production` in `Fastfile` uploads to Play's **beta** track at 10% — manually promoted to production via Play Console. The lane is intentionally not renamed to preserve historical fastlane invocation surface.
+`lane :production` in `Fastfile` uploads to Play's **beta** track at 100% — manually promoted to production via Play Console. The lane is intentionally not renamed to preserve historical fastlane invocation surface.
 
 ## Rollback
 
@@ -55,7 +55,7 @@ bats tools/release/bump.bats
 |---|---|
 | Bump on `main`, downstream not started | `git push origin :refs/tags/v<bad>`, `git revert <bump-sha>`, push |
 | GitHub release created | Above + `gh release delete v<bad> --yes --cleanup-tag` |
-| Play upload completed | Above + halt rollout in Play Console (or `bundle exec fastlane supply --track beta --rollout 0 --version-code <bad-code>`) |
+| Play upload completed | Above + publish a fixed build with a higher `versionCode`. The lanes release at 100% (`completed`), so there is no staged rollout to halt: `supply --rollout` only accepts values greater than 0 and up to 1, and Play's halt action applies to in-progress rollouts. |
 | Job 2 ran but downstream rejected at env approval | Treat as first row — bump+tag are public on `main` regardless of downstream outcome |
 
 `bump.sh` enforces strict `versionCode` monotonicity, so re-using a code is impossible without manually editing `version.properties`.
