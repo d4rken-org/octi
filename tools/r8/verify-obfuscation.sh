@@ -59,7 +59,7 @@ check_line_numbers() {
     require_file "$gplay_config" || return 0
 
     local match
-    match=$(grep -E '^-keepattributes.*LineNumberTable' "$gplay_config" | head -1 || true)
+    match=$(grep -m1 -E '^-keepattributes.*LineNumberTable' "$gplay_config" || true)
     if [ -n "$match" ]; then
         pass "gplayRelease keeps line numbers ($match)"
     else
@@ -142,7 +142,7 @@ check_bundle_mapping() {
         return 0
     fi
 
-    if unzip -l "$aab" | grep -qF "BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map"; then
+    if unzip -l "$aab" | grep -F "BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map" > /dev/null; then
         pass "$aab embeds proguard.map"
     else
         fail "$aab does not embed BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map"
