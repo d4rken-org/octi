@@ -52,10 +52,12 @@ android {
         create("foss") {
             dimension = "version"
             signingConfig = signingConfigs["releaseFoss"]
+            proguardFiles("proguard-rules-foss.pro")
         }
         create("gplay") {
             dimension = "version"
             signingConfig = signingConfigs["releaseGplay"]
+            proguardFiles("proguard-rules-gplay.pro")
         }
     }
 
