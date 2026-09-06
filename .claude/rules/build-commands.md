@@ -64,6 +64,21 @@ Only the 6 smoke locales (en-US, de-DE, ja-JP, ar, zh-CN, pt-BR) have `phoneScre
 - **Flavors**: `foss` (open source), `gplay` (Google Play with additional features)
 - **Build types**: `debug`, `beta`, `release`
 
+## R8 obfuscation
+
+- `gplay` beta/release are obfuscated. `foss` is not — `app/proguard-rules-foss.pro` applies `-dontobfuscate` to that flavor only.
+- Mapping file: `app/build/outputs/mapping/<variant>/mapping.txt`. It is embedded in the AAB and downloadable from the Play Console (App bundle explorer → Downloads).
+- Retrace a user-reported stack trace:
+  ```bash
+  $ANDROID_HOME/cmdline-tools/latest/bin/retrace mapping.txt stacktrace.txt
+  ```
+- Verify the setup after a release build:
+  ```bash
+  ./gradlew assembleGplayRelease assembleFossRelease bundleGplayRelease
+  bash tools/r8/verify-obfuscation.sh
+  ```
+- After the next Play upload, confirm the Console reports an obfuscation percentage above 25%.
+
 ## Version Management
 
 - `version.properties`: Source of truth for version numbers (major.minor.patch.build)
