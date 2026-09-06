@@ -68,12 +68,6 @@ class PowerAlertNotifications @Inject constructor(
         setDeleteIntent(deletePi)
     }
 
-    private val PowerAlertRule.notificationId: Int
-        get() {
-            val hash = (deviceId.toString() + this::class.java.simpleName).hashCode()
-            return NOTIFICATION_ID_RANGE_STATE + (hash.absoluteValue % 101)
-        }
-
     private val PowerAlertRule.pendingIntentRequestCode: Int
         get() = id.hashCode() and Int.MAX_VALUE
 
@@ -120,12 +114,12 @@ class PowerAlertNotifications @Inject constructor(
             }
         }
 
-        notificationManager.notify(rule.notificationId, builder.build())
+        notificationManager.notify(rule.notificationId(), builder.build())
     }
 
     suspend fun dismiss(alert: PowerAlertRule) {
         log(TAG) { "dismiss($alert)" }
-        notificationManager.cancel(alert.notificationId)
+        notificationManager.cancel(alert.notificationId())
     }
 
     companion object {
@@ -135,4 +129,15 @@ class PowerAlertNotifications @Inject constructor(
         private const val CHANNEL_ID = "eu.darken.octi.notification.channel.module.power.alerts"
         val TAG = logTag("Module", "Power", "Alert", "Notifications")
     }
+}
+
+// The literals pin the IDs of notifications already posted on user devices, renaming a rule
+// class must not shift them.
+internal fun PowerAlertRule.notificationId(): Int {
+    val typeKey = when (this) {
+        is BatteryLowAlertRule -> "BatteryLowAlertRule"
+        is BatteryHighAlertRule -> "BatteryHighAlertRule"
+    }
+    val hash = (deviceId.toString() + typeKey).hashCode()
+    return PowerAlertNotifications.NOTIFICATION_ID_RANGE_STATE + (hash.absoluteValue % 101)
 }
