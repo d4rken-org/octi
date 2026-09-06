@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Error dialogs show the exception's simple name (LocalizedError). Names only; no shrinking impact.
+-keepnames class * extends java.lang.Throwable
+
+# ViewModel1 builds its log tag from the subclass name. Names only; no shrinking impact.
+-keepnames class * extends eu.darken.octi.common.uix.ViewModel1
