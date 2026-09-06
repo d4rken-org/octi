@@ -9,7 +9,10 @@ import androidx.annotation.RequiresApi
 import eu.darken.octi.common.debug.logging.Logging.Priority.WARN
 import eu.darken.octi.common.debug.logging.asLog
 import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.hasApiLevel
+
+private val TAG = logTag("Module", "Apps", "InstallerInfo")
 
 data class InstallerInfo(
     val installingPkg: String? = null,
@@ -76,7 +79,7 @@ private fun PackageInfo.getInstallerInfoLegacy(packageManager: PackageManager): 
         @Suppress("DEPRECATION") // TODO Remove when minSdk >= 30
         packageManager.getInstallerPackageName(packageName)
     } catch (e: IllegalArgumentException) {
-        log(WARN) { "OS race condition, package ($packageName) was uninstalled?: ${e.asLog()}" }
+        log(TAG, WARN) { "OS race condition, package ($packageName) was uninstalled?: ${e.asLog()}" }
         null
     }
 

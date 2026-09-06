@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.octi.common.coroutine.AppScope
 import eu.darken.octi.common.debug.logging.Logging.Priority.ERROR
 import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.flow.replayingShare
 import eu.darken.octi.common.flow.setupCommonEventHandlers
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +33,7 @@ class PackageEventListener @Inject constructor(
     val events: Flow<Event> = callbackFlow {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                log { "onReceive(context=$context, intent=$intent)" }
+                log(TAG) { "onReceive(context=$context, intent=$intent)" }
 
                 when (intent.action) {
                     Intent.ACTION_PACKAGE_ADDED -> {
@@ -43,7 +44,7 @@ class PackageEventListener @Inject constructor(
                         val pkgId = intent.data?.encodedSchemeSpecificPart
                         pkgId?.let { trySendBlocking(Event.PackageRemoved(it)) }
                     }
-                    else -> log(ERROR) { "Unknown intent: $intent" }
+                    else -> log(TAG, ERROR) { "Unknown intent: $intent" }
                 }
             }
 
@@ -58,11 +59,14 @@ class PackageEventListener @Inject constructor(
         context.registerReceiver(receiver, intentFilter)
 
         awaitClose {
-            log { "unregisterReceiver($receiver)" }
+            log(TAG) { "unregisterReceiver($receiver)" }
             context.unregisterReceiver(receiver)
         }
     }
         .setupCommonEventHandlers("PackageEventListener") { "events" }
         .replayingShare(appScope)
 
+    companion object {
+        private val TAG = logTag("Module", "Apps", "PackageEventListener")
+    }
 }
