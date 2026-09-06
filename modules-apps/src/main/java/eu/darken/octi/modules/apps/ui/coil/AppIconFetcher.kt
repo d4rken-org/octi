@@ -11,6 +11,7 @@ import coil3.fetch.ImageFetchResult
 import coil3.request.Options
 import eu.darken.octi.modules.apps.R
 import eu.darken.octi.common.debug.logging.log
+import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.getIcon2
 import eu.darken.octi.modules.apps.core.AppsInfo
 import javax.inject.Inject
@@ -22,7 +23,7 @@ class AppIconFetcher @Inject constructor(
 ) : Fetcher {
 
     override suspend fun fetch(): FetchResult {
-        log { "Fetching $data" }
+        log(TAG) { "Fetching $data" }
         val baseIcon = packageManager.getIcon2(data.packageName)
             ?: ContextCompat.getDrawable(options.context, R.drawable.ic_baseline_apps_24)!!
 
@@ -42,5 +43,9 @@ class AppIconFetcher @Inject constructor(
             options: Options,
             imageLoader: ImageLoader,
         ): Fetcher = AppIconFetcher(packageManager, data, options)
+    }
+
+    companion object {
+        private val TAG = logTag("Module", "Apps", "IconFetcher")
     }
 }

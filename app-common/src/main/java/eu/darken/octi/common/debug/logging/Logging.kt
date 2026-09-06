@@ -11,6 +11,8 @@ import java.io.StringWriter
  */
 
 object Logging {
+    private val TAG = logTag("Logging")
+
     enum class Priority(
         val intValue: Int,
         val shortLabel: String
@@ -50,14 +52,14 @@ object Logging {
 
     fun install(logger: Logger) {
         synchronized(internalLoggers) { internalLoggers.add(logger) }
-        log { "Was installed $logger" }
+        log(TAG) { "Was installed $logger" }
     }
 
     fun remove(logger: Logger) {
         // Deregister first: a logger that is being torn down is still a receiver for anything we
         // log before that, and if it fails on that line it would stay installed forever.
         synchronized(internalLoggers) { internalLoggers.remove(logger) }
-        log { "Removed: $logger" }
+        log(TAG) { "Removed: $logger" }
     }
 
     fun logInternal(
@@ -80,23 +82,8 @@ object Logging {
     }
 
     fun clearAll() {
-        log { "Clearing all loggers" }
+        log(TAG) { "Clearing all loggers" }
         synchronized(internalLoggers) { internalLoggers.clear() }
-    }
-}
-
-inline fun Any.log(
-    priority: Logging.Priority = Logging.Priority.DEBUG,
-    metaData: Map<String, Any>? = null,
-    message: () -> String,
-) {
-    if (Logging.hasReceivers) {
-        Logging.logInternal(
-            tag = logTag(logTagViaCallSite()),
-            priority = priority,
-            metaData = metaData,
-            message = message(),
-        )
     }
 }
 
@@ -122,17 +109,4 @@ fun Throwable.asLog(): String {
     printStackTrace(printWriter)
     printWriter.flush()
     return stringWriter.toString()
-}
-
-@PublishedApi
-internal fun Any.logTagViaCallSite(): String {
-    val javaClass = this::class.java
-    val fullClassName = javaClass.name
-    val outerClassName = fullClassName.substringBefore('$')
-    val simplerOuterClassName = outerClassName.substringAfterLast('.')
-    return if (simplerOuterClassName.isEmpty()) {
-        fullClassName
-    } else {
-        simplerOuterClassName.removeSuffix("Kt")
-    }
 }
