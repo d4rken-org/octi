@@ -1,6 +1,5 @@
 # Keep the BuildConfig
 -keep class eu.darken.octi.BuildConfig { *; }
--dontobfuscate
 
 -dontwarn org.bouncycastle.jsse.BCSSLParameters
 -dontwarn org.bouncycastle.jsse.BCSSLSocket
