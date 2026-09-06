@@ -944,7 +944,7 @@ class DashboardVM @Inject constructor(
         ): List<ConnectorIssue> {
             return allIssues
                 .filter { it.deviceId == item.deviceId }
-                .sortedWith(compareBy({ if (it.severity == IssueSeverity.ERROR) 0 else 1 }, { it::class.simpleName }))
+                .sortedBy { if (it.severity == IssueSeverity.ERROR) 0 else 1 }
         }
 
         /**

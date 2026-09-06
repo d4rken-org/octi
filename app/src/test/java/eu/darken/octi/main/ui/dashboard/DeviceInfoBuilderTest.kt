@@ -156,7 +156,7 @@ class DeviceInfoBuilderTest : BaseTest() {
             )
             val infos = DashboardVM.buildDeviceInfos(item, issues)
             infos shouldHaveSize 2
-            // StaleDevice is WARNING, ClockSkew is WARNING — both same severity, sorted by class name
+            // StaleDevice is WARNING, ClockSkew is WARNING — same severity keeps input order
             infos.all { it.severity == IssueSeverity.WARNING } shouldBe true
         }
     }
