@@ -14,6 +14,7 @@ import eu.darken.octi.common.debug.logging.log
 import eu.darken.octi.common.debug.logging.logTag
 import eu.darken.octi.common.error.addSuppressedSafely
 import eu.darken.octi.common.flow.DynamicStateFlow
+import eu.darken.octi.common.upgrade.UpgradeDiagnostics
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
@@ -29,6 +30,7 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -40,6 +42,7 @@ class RecorderModule @Inject constructor(
     @ApplicationContext private val context: Context,
     @AppScope private val appScope: CoroutineScope,
     private val dispatcherProvider: DispatcherProvider,
+    private val upgradeDiagnostics: UpgradeDiagnostics,
 ) {
 
     private val triggerFile = try {
@@ -59,6 +62,10 @@ class RecorderModule @Inject constructor(
     // Test seam for the recorder itself: a failing stop() has no reachable production trigger, so
     // the guarantee that a failed stop still completes cannot be driven without substituting one.
     internal var recorderFactory: () -> Recorder = { Recorder() }
+
+    // Test seam for the header's diagnostics read: the bound is wall-clock, so virtual time cannot
+    // drive it.
+    internal var headerReadTimeoutMs: Long = HEADER_READ_TIMEOUT_MS
 
     // Serializes the public request surface: without it two concurrent callers can observe each
     // other's start failure, or a stale one, instead of their own attempt's outcome.
@@ -106,6 +113,8 @@ class RecorderModule @Inject constructor(
 
                             triggerWriteStarted = true
                             writeTriggerFile(target.sessionDir, target.startedAt)
+
+                            logRecordingHeader()
 
                             copy(
                                 recorder = newRecorder,
@@ -202,6 +211,38 @@ class RecorderModule @Inject constructor(
             }
             .launchIn(appScope)
     }
+
+    /**
+     * Diagnostics for the freshly started recording. Runs AFTER the recorder is live, so the line
+     * lands in the session's own log rather than only on the log bus. Every read here is
+     * diagnostics-only: one that escapes costs the user the whole recording, because the start
+     * branch above rolls back around it.
+     */
+    private suspend fun logRecordingHeader() {
+        try {
+            // Debug recording is what a user reaches for when the app is ALREADY misbehaving, so a
+            // source that never answers must not be the thing that denies them the recording.
+            val read = withTimeoutOrNull(headerReadTimeoutMs) { HeaderRead(upgradeDiagnostics.debugInfo()) }
+            when {
+                read == null -> log(TAG, WARN) {
+                    "Upgrade diagnostics unavailable, read did not finish within ${headerReadTimeoutMs}ms"
+                }
+                // Completion is tracked separately from the value: a flavor that legitimately has
+                // nothing to report returns null and gets no line at all, not an "unavailable".
+                read.value != null -> log(TAG, INFO) { "Upgrade diagnostics: ${read.value}" }
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            log(TAG, WARN) { "Upgrade diagnostics unavailable: ${e.asLog()}" }
+        }
+    }
+
+    /**
+     * Completion marker for a header read: tells a source that legitimately has nothing to report
+     * apart from one that never answered within the deadline.
+     */
+    private class HeaderRead<T>(val value: T)
 
     /**
      * A start failure that arrived as a [CancellationException] while this module's own scope was
@@ -479,5 +520,13 @@ class RecorderModule @Inject constructor(
          * force-stop path, which has no duration check.
          */
         internal val MIN_RECORDING = 10.seconds
+
+        /**
+         * Budget for the header's diagnostics read. It has to stay above the bounds the diagnostics
+         * apply internally (2s for the billing cache, then 2s for the pro-state history): an outer
+         * budget that expires first cancels the read and drops the "unavailable" verdict those
+         * inner bounds exist to produce.
+         */
+        private const val HEADER_READ_TIMEOUT_MS = 5_000L
     }
 }

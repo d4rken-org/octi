@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.debug.logging.Logging
+import eu.darken.octi.common.upgrade.UpgradeDiagnostics
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldBeNull
@@ -109,6 +110,7 @@ class RecorderModuleDurationTest : BaseTest() {
                     context = context,
                     appScope = appScope,
                     dispatcherProvider = TestDispatcherProvider(Dispatchers.IO),
+                    upgradeDiagnostics = mockk<UpgradeDiagnostics> { coEvery { debugInfo() } returns null },
                 ).apply {
                     wallClock = { clocks.wall }
                     monotonicClock = { clocks.monotonic }
