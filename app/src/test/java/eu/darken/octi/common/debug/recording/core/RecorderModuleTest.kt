@@ -3,6 +3,7 @@ package eu.darken.octi.common.debug.recording.core
 import android.content.Context
 import eu.darken.octi.common.BuildConfigWrap
 import eu.darken.octi.common.coroutine.DispatcherProvider
+import eu.darken.octi.common.upgrade.UpgradeDiagnostics
 import io.kotest.matchers.file.shouldExist
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -10,6 +11,7 @@ import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineScope
@@ -56,6 +58,7 @@ class RecorderModuleTest : BaseTest() {
             context = context,
             appScope = TestScope(testDispatcher),
             dispatcherProvider = dispatcherProvider,
+            upgradeDiagnostics = mockk<UpgradeDiagnostics> { coEvery { debugInfo() } returns null },
         )
     }
 
