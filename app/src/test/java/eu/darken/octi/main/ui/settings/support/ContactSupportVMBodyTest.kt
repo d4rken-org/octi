@@ -6,19 +6,17 @@ import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import eu.darken.octi.common.WebpageTool
 import eu.darken.octi.common.debug.recording.core.DebugSessionManager
-import eu.darken.octi.common.upgrade.UpgradeDiagnostics
 import eu.darken.octi.common.upgrade.UpgradeRepo
-import eu.darken.octi.main.core.CurriculumVitae
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -34,40 +32,29 @@ import kotlin.time.Instant
 // the shadow application to assert what reached the support email body.
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE, application = Application::class)
-class ContactSupportVMDiagnosticsTest {
+class ContactSupportVMBodyTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val context: Context get() = ApplicationProvider.getApplicationContext()
 
-    private val proHistory = CurriculumVitae.ProHistory(
-        lastState = CurriculumVitae.ProState.PURCHASED,
-        graceEngagedCount = 3,
-        graceEngagedLast = null,
-        proLostCount = 0,
-        proLostLast = null,
-    )
-
-    private fun info(isPro: Boolean = true) = object : UpgradeRepo.Info {
+    private fun info() = object : UpgradeRepo.Info {
         override val type = UpgradeRepo.Type.GPLAY
-        override val isPro = isPro
+        override val isPro = true
         override val isSettled = true
         override val upgradedAt: Instant? = null
         override val error: Throwable? = null
     }
 
     private fun buildVm(
-        curriculumVitae: CurriculumVitae,
-        upgradeDiagnostics: UpgradeDiagnostics,
+        upgradeInfoFlow: Flow<UpgradeRepo.Info> = MutableStateFlow(info()),
     ): ContactSupportVM = ContactSupportVM(
         dispatcherProvider = TestDispatcherProvider(testDispatcher),
         sessionManager = mockk<DebugSessionManager>(relaxed = true).apply {
             every { state } returns emptyFlow()
         },
         upgradeRepo = mockk<UpgradeRepo>(relaxed = true).apply {
-            every { upgradeInfo } returns MutableStateFlow(info())
+            every { upgradeInfo } returns upgradeInfoFlow
         },
-        curriculumVitae = curriculumVitae,
-        upgradeDiagnostics = upgradeDiagnostics,
         webpageTool = mockk<WebpageTool>(relaxed = true),
         context = context,
     )
@@ -79,65 +66,53 @@ class ContactSupportVMDiagnosticsTest {
     }
 
     @Test
-    fun `both diagnostics reads are included in the support body`() = runTest(testDispatcher) {
-        val cv = mockk<CurriculumVitae>().apply { coEvery { proHistory() } returns proHistory }
-        val diag = mockk<UpgradeDiagnostics>().apply { coEvery { debugInfo() } returns "DIAG-SENTINEL" }
-        val vm = buildVm(cv, diag)
+    fun `the support body carries the device info block`() = runTest(testDispatcher) {
+        val vm = buildVm()
 
         vm.sendEmail()
         advanceUntilIdle()
 
         val body = sentBody()!!
-        body shouldContain "ProHistory: "
-        body shouldContain "graceEngagedCount=3"
-        body shouldContain "DIAG-SENTINEL"
+        body shouldContain "--- Device Info ---"
+        body shouldContain "App: "
+        body shouldContain "Android: "
+        body shouldContain "Device: "
     }
 
     @Test
-    fun `a failing store does not suppress the other diagnostic`() = runTest(testDispatcher) {
-        // The pro-state counters and the billing diagnostics live in different stores — one failing
-        // must not stop the email or the other's evidence.
-        val cv = mockk<CurriculumVitae>().apply {
-            coEvery { proHistory() } throws IllegalStateException("cv down")
-        }
-        val diag = mockk<UpgradeDiagnostics>().apply { coEvery { debugInfo() } returns "DIAG-SENTINEL" }
-        val vm = buildVm(cv, diag)
+    fun `the support body carries no billing diagnostics`() = runTest(testDispatcher) {
+        // Regression guard: the flavor billing diagnostics belong in the debug log header, where
+        // exactly one consumer renders them, not in the mail.
+        val vm = buildVm()
 
         vm.sendEmail()
         advanceUntilIdle()
 
         val body = sentBody()!!
-        body shouldContain "DIAG-SENTINEL"
-        body shouldNotContain "graceEngagedCount"
+        body shouldNotContain "--- Billing Diagnostics ---"
+        body shouldNotContain "ProHistory"
+        body shouldNotContain "BillingCache"
     }
 
     @Test
-    fun `a slow diagnostic is dropped on timeout but the email still sends`() = runTest(testDispatcher) {
-        val cv = mockk<CurriculumVitae>().apply { coEvery { proHistory() } returns proHistory }
-        val diag = mockk<UpgradeDiagnostics>().apply {
-            coEvery { debugInfo() } coAnswers {
-                delay(30_000) // far longer than the diagnostics timeout
-                "TOO-SLOW"
-            }
-        }
-        val vm = buildVm(cv, diag)
+    fun `a bug report carries the expected behavior block`() = runTest(testDispatcher) {
+        val vm = buildVm()
+        vm.setCategory(ContactSupportVM.Category.BUG_REPORT)
+        vm.setExpectedBehavior("The sync should have finished")
+        advanceUntilIdle()
 
         vm.sendEmail()
         advanceUntilIdle()
 
         val body = sentBody()!!
-        body shouldContain "graceEngagedCount=3"
-        body shouldNotContain "TOO-SLOW"
+        body shouldContain "--- Expected Behavior ---"
+        body shouldContain "The sync should have finished"
     }
 
     @Test
-    fun `a cancelled diagnostic read aborts the send instead of emailing`() = runTest(testDispatcher) {
+    fun `a cancelled entitlement read aborts the send instead of emailing`() = runTest(testDispatcher) {
         // Cancellation must propagate, never be swallowed into a "successful" email.
-        val cv = mockk<CurriculumVitae>().apply {
-            coEvery { proHistory() } throws CancellationException("cancelled")
-        }
-        val diag = mockk<UpgradeDiagnostics>().apply { coEvery { debugInfo() } returns "DIAG-SENTINEL" }
-        val vm = buildVm(cv, diag)
+        val vm = buildVm(upgradeInfoFlow = flow { throw CancellationException("cancelled") })
 
         vm.sendEmail()
         advanceUntilIdle()
