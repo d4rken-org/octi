@@ -2,8 +2,8 @@
 <resources>
     <string name="module_connectivity_label">Moduł łączności</string>
     <string name="module_connectivity_desc">Typ połączenia, publiczny adres IP, szczegóły sieci</string>
-    <string name="module_connectivity_type_wifi_label">WiFi</string>
-    <string name="module_connectivity_type_cellular_label">Sieć komórkowa</string>
+    <string name="module_connectivity_type_wifi_label">Wi-Fi</string>
+    <string name="module_connectivity_type_cellular_label">Dane mobilne</string>
     <string name="module_connectivity_type_ethernet_label">Ethernet</string>
     <string name="module_connectivity_type_none_label">Brak połączenia</string>
     <string name="module_connectivity_unknown_public_ip_label">Nieznany publiczny adres IP</string>
@@ -15,7 +15,7 @@
     <string name="module_connectivity_detail_public_ip_label">Publiczny adres IP</string>
     <string name="module_connectivity_detail_connection_type_label">Typ połączenia</string>
     <string name="module_connectivity_status_connected_label">Połączony</string>
-    <string name="module_connectivity_status_disconnected_label">Rozłączono</string>
+    <string name="module_connectivity_status_disconnected_label">Rozłączony</string>
     <string name="module_connectivity_widget_description">Wyświetla informacje o sieci z synchronizowanych urządzeń.</string>
     <string name="module_connectivity_widget_copy_action">Kopiuj adresy sieciowe</string>
     <string name="module_connectivity_widget_copied_toast">Skopiowano adresy</string>

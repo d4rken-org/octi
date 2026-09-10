@@ -17,7 +17,7 @@
     <string name="module_files_upload_too_large">Файл слишком велик для обмена (максимум %1$s)</string>
     <string name="module_files_upload_no_connectors">Нет доступной службы синхронизации для обмена файлами</string>
     <string name="module_files_save_success">Файл сохранён</string>
-    <string name="module_files_save_not_available">Файл недоступен ни на одной из ваших подключённых служб</string>
+    <string name="module_files_save_not_available">Файл недоступен ни на одной из Ваших подключённых служб</string>
     <string name="module_files_save_failed">Не удалось сохранить файл</string>
     <string name="module_files_checksum_mismatch">Ошибка проверки целостности файла</string>
     <string name="module_files_delete_success">Файл удалён</string>
@@ -89,11 +89,11 @@
     <string name="module_files_sheet_dismiss_action">Закрыть</string>
     <string name="module_files_share_unsupported">Это не файл</string>
     <string name="module_files_share_module_disabled">Обмен файлами отключён</string>
-    <string name="module_files_free_limit_reached_message">Бесплатная версия ограничена 1 общим файлом одновременно. Удалите его, чтобы поделиться другим, или обновите версию для неограниченного количества (в пределах вашей квоты хранилища).</string>
+    <string name="module_files_free_limit_reached_message">Бесплатная версия ограничена 1 общим файлом одновременно. Удалите его, чтобы поделиться другим, или обновите версию для неограниченного количества (в пределах Вашей квоты хранилища).</string>
     <string name="module_files_free_limit_action_upgrade">Обновить</string>
     <string name="module_files_free_limit_dropped_extras">%1$d дополнительных файлов пропущено — бесплатный лимит составляет 1.</string>
     <string name="module_files_delete_confirm_title">Удалить файл?</string>
-    <string name="module_files_delete_confirm_own">%1$s будет удалён со всех ваших устройств.</string>
+    <string name="module_files_delete_confirm_own">%1$s будет удалён со всех Ваших устройств.</string>
     <string name="module_files_delete_confirm_peer">Попросить %2$s удалить %1$s? Файл будет удалён после синхронизации.</string>
     <string name="module_files_delete_confirm_action">Удалить</string>
     <string name="module_files_delete_cancel_action">Отмена</string>

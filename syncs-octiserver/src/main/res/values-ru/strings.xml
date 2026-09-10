@@ -38,7 +38,7 @@
     <string name="sync_octiserver_add_select_server_label">Выбрать сервер</string>
     <string name="sync_octiserver_add_custom_server_label">Пользовательский сервер</string>
     <string name="sync_octiserver_link_code_invalid_label">Код связи неполный</string>
-    <string name="sync_octiserver_link_code_invalid_description">Этот код связи неполный или был изменён при передаче. Скопируй код целиком с другого устройства и вставь его, не набирая вручную, либо отсканируй QR-код.</string>
+    <string name="sync_octiserver_link_code_invalid_description">Этот код связи неполный или был изменён при передаче. Скопируйте код целиком с другого устройства и вставьте его, не набирая вручную, либо отсканируйте QR-код.</string>
     <string name="sync_octiserver_link_code_copied_message">Код связи скопирован</string>
     <plurals name="sync_octiserver_link_code_character_count">
         <item quantity="one">%d символ</item>

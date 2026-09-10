@@ -3,7 +3,7 @@
     <string name="module_connectivity_label">Μονάδα σύνδεσης</string>
     <string name="module_connectivity_desc">Τύπος σύνδεσης, δημόσια IP, λεπτομέρειες δικτύου</string>
     <string name="module_connectivity_type_wifi_label">WiFi</string>
-    <string name="module_connectivity_type_cellular_label">Κινητό</string>
+    <string name="module_connectivity_type_cellular_label">Δίκτυο κινητής</string>
     <string name="module_connectivity_type_ethernet_label">Ethernet</string>
     <string name="module_connectivity_type_none_label">Χωρίς σύνδεση</string>
     <string name="module_connectivity_unknown_public_ip_label">Άγνωστη δημόσια IP</string>
@@ -11,7 +11,7 @@
     <string name="module_connectivity_detail_local_ipv4_label">Τοπική IPv4</string>
     <string name="module_connectivity_detail_local_ipv6_label">Τοπική IPv6</string>
     <string name="module_connectivity_detail_gateway_label">Πύλη</string>
-    <string name="module_connectivity_detail_dns_label">DNS διακομιστές</string>
+    <string name="module_connectivity_detail_dns_label">Διακομιστές DNS</string>
     <string name="module_connectivity_detail_public_ip_label">Δημόσια IP</string>
     <string name="module_connectivity_detail_connection_type_label">Τύπος σύνδεσης</string>
     <string name="module_connectivity_status_connected_label">Συνδέθηκε</string>
