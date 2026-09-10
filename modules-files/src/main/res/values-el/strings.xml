@@ -11,7 +11,7 @@
     <string name="module_files_unavailable">Δεν είναι διαθέσιμο ακόμα</string>
     <string name="module_files_expired">Έληξε</string>
     <string name="module_files_upload_success">Το αρχείο κοινοποιήθηκε με επιτυχία</string>
-    <string name="module_files_upload_partial">Το αρχείο κοινοποιήθηκε σε ορισμένες συσκευές. Επανάληψη σε εξέλιξη…</string>
+    <string name="module_files_upload_partial">Το αρχείο κοινοποιήθηκε σε ορισμένες συσκευές. Επανάληψη σε εξέλιξη\u2026</string>
     <string name="module_files_upload_failed">Αποτυχία κοινοποίησης αρχείου</string>
     <string name="module_files_upload_source_unavailable">Δεν ήταν δυνατή η ανάγνωση του επιλεγμένου αρχείου — ενδέχεται να μετακινήθηκε ή να διαγράφηκε</string>
     <string name="module_files_upload_too_large">Το αρχείο είναι πολύ μεγάλο για κοινοποίηση (μέγ. %1$s)</string>
@@ -41,11 +41,11 @@
         <item quantity="other">%1$d σύνδεσμοι συγχρονισμού έχουν λιγότερο από 10%% ελεύθερο χώρο</item>
     </plurals>
     <string name="module_files_time_remaining">%1$s απομένει</string>
-    <string name="module_files_uploading">Ανέβασμα…</string>
+    <string name="module_files_uploading">Ανέβασμα\u2026</string>
     <string name="module_files_notification_channel_label">Εισερχόμενα Κοινοποιημένα Αρχεία</string>
     <string name="module_files_notification_incoming_title">%1$s κοινοποίησε ένα αρχείο</string>
     <string name="module_files_unavailable_title">Κοινή χρήση αρχείων μη διαθέσιμη</string>
-    <string name="module_files_unavailable_message">Καμία υπηρεσία συγχρονισμού σε αυτήν τη συσκευή δεν υποστηρίζει κοινή χρήση αρχείων. Ελέγξτε την προειδοποίηση στον πίνακα ελέγχου για περισσότερες λεπτομέρειες.</string>
+    <string name="module_files_unavailable_message">Καμία υπηρεσία συγχρονισμού σε αυτήν τη συσκευή δεν υποστηρίζει κοινή χρήση αρχείων. Ελέγξτε την προειδοποίηση στον πίνακα ελέγχου για λεπτομέρειες.</string>
     <string name="module_files_usage_hint_message">Για γρήγορα, μικρά αρχεία — διαμορφώσεις, PDF, έγγραφα κειμένου. Δεν έχει σχεδιαστεί για φωτογραφίες, βίντεο ή εγκαταστάσεις εφαρμογών.</string>
     <string name="module_files_hint_dismiss_action">Κλείσιμο</string>
     <string name="module_files_retry_action">Δοκιμάστε ξανά</string>
@@ -76,7 +76,7 @@
     <string name="module_files_open_failed">Αποτυχία ανοίγματος αρχείου</string>
     <string name="module_files_open_preparing">Προετοιμασία…</string>
     <string name="module_files_pending_delete_label">Εκκαθάριση σε εκκρεμότητα…</string>
-    <string name="module_files_delete_requested_label">Διαγραφή ζητήθηκε…</string>
+    <string name="module_files_delete_requested_label">Ζητήθηκε διαγραφή…</string>
     <string name="module_files_sheet_property_size">Μέγεθος</string>
     <string name="module_files_sheet_property_type">Τύπος</string>
     <string name="module_files_sheet_property_shared_by">Κοινοποιήθηκε από</string>
@@ -87,7 +87,7 @@
     <string name="module_files_sheet_dismiss_action">Κλείσιμο</string>
     <string name="module_files_share_unsupported">Αυτή η κοινή χρήση δεν είναι αρχείο</string>
     <string name="module_files_share_module_disabled">Η κοινή χρήση αρχείων είναι απενεργοποιημένη</string>
-    <string name="module_files_free_limit_reached_message">Η δωρεάν έκδοση περιορίζεται σε 1 κοινοποιημένο αρχείο κάθε φορά. Διαγράψτε το για να κοινοποιήσετε ένα άλλο, ή αναβαθμίστε για απεριόριστο (εντός του ορίου αποθήκευσης σας).</string>
+    <string name="module_files_free_limit_reached_message">Η δωρεάν έκδοση περιορίζεται σε 1 κοινοποιημένο αρχείο κάθε φορά. Διαγράψτε το για να κοινοποιήσετε ένα άλλο, ή αναβαθμίστε για απεριόριστα (εντός του ορίου αποθήκευσης σας).</string>
     <string name="module_files_free_limit_action_upgrade">Αναβάθμιση</string>
     <string name="module_files_free_limit_dropped_extras">%1$d επιπλέον αρχείο(α) παραλείφθηκε(αν) — το δωρεάν όριο είναι 1.</string>
     <string name="module_files_delete_confirm_title">Διαγραφή αρχείου;</string>

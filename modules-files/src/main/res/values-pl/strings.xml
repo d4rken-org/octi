@@ -3,7 +3,7 @@
     <string name="module_files_label">Udostępnianie plików</string>
     <string name="module_files_desc">Udostępniaj małe pliki między połączonymi urządzeniami</string>
     <string name="module_files_tile_empty">Brak plików</string>
-    <string name="module_files_tile_count">Udostępniono plików: %1$d</string>
+    <string name="module_files_tile_count">Udostępnione pliki: %1$d</string>
     <string name="module_files_list_title">Udostępnione pliki</string>
     <string name="module_files_share_action">Udostępnij plik</string>
     <string name="module_files_save_action">Zapisz</string>
@@ -19,7 +19,7 @@
     <string name="module_files_save_success">Plik zapisany</string>
     <string name="module_files_save_not_available">Plik nie jest dostępny w żadnej z połączonych usług</string>
     <string name="module_files_save_failed">Nie udało się zapisać pliku</string>
-    <string name="module_files_checksum_mismatch">Kontrola integralności pliku nie powiodła się</string>
+    <string name="module_files_checksum_mismatch">Kontrola integralności pliku się nie powiodła</string>
     <string name="module_files_delete_success">Plik usunięty</string>
     <string name="module_files_delete_requested">Zażądano usunięcia</string>
     <string name="module_files_delete_partial">Plik częściowo usunięty. Czyszczenie będzie kontynuowane w tle.</string>
@@ -27,7 +27,7 @@
     <string name="module_files_quota_header">Pamięć wewnętrzna</string>
     <string name="module_files_quota_item">%1$s: wykorzystano %2$s z %3$s</string>
     <string name="module_files_quota_label_gdrive">Dysk Google</string>
-    <string name="module_files_quota_label_gdrive_with_account">Google Drive (%1$s)</string>
+    <string name="module_files_quota_label_gdrive_with_account">Dysk Google (%1$s)</string>
     <string name="module_files_quota_label_octiserver_with_account">%1$s (%2$s)</string>
     <string name="module_files_quota_action">Szczegóły pamięci</string>
     <string name="module_files_quota_sheet_title">Pamięć wewnętrzna</string>
@@ -40,7 +40,7 @@
         <item quantity="one">%1$d usługa synchronizacji ma mniej niż 10%% wolnego miejsca</item>
         <item quantity="few">%1$d usługi synchronizacji mają mniej niż 10%% wolnego miejsca</item>
         <item quantity="many">%1$d usług synchronizacji ma mniej niż 10%% wolnego miejsca</item>
-        <item quantity="other">%1$d usługi synchronizacji ma mniej niż 10%% wolnego miejsca</item>
+        <item quantity="other">%1$d usług synchronizacji ma mniej niż 10%% wolnego miejsca</item>
     </plurals>
     <string name="module_files_time_remaining">Pozostało %1$s</string>
     <string name="module_files_uploading">Przesyłanie…</string>
@@ -66,7 +66,7 @@
     <string name="module_files_filter_devices_label">Urządzenia</string>
     <string name="module_files_sort_action">Sortuj</string>
     <string name="module_files_sync_now_action">Synchronizuj teraz</string>
-    <string name="module_files_sync_failed">Synchronizacja nie powiodła się</string>
+    <string name="module_files_sync_failed">Synchronizacja się nie powiodła</string>
     <string name="module_files_sort_by_date">Data</string>
     <string name="module_files_sort_by_name">Nazwa</string>
     <string name="module_files_sort_by_size">Rozmiar</string>
@@ -89,11 +89,11 @@
     <string name="module_files_sheet_dismiss_action">Zamknij</string>
     <string name="module_files_share_unsupported">To udostępnienie nie jest plikiem</string>
     <string name="module_files_share_module_disabled">Udostępnianie plików jest wyłączone</string>
-    <string name="module_files_free_limit_reached_message">Darmowa wersja umożliwia udostępnienie tylko 1 pliku naraz. Usuń go, aby udostępnić kolejny, albo uaktualnij, aby mieć nieograniczoną liczbę (w ramach limitu miejsca).</string>
-    <string name="module_files_free_limit_action_upgrade">Uaktualnij</string>
+    <string name="module_files_free_limit_reached_message">Darmowa wersja umożliwia udostępnienie tylko 1 pliku naraz. Usuń go, aby udostępnić kolejny, albo zaktualizuj, aby mieć nieograniczoną liczbę (w ramach limitu miejsca).</string>
+    <string name="module_files_free_limit_action_upgrade">Zaktualizuj</string>
     <string name="module_files_free_limit_dropped_extras">Pominięto %1$d dodatkowych plików — darmowy limit to 1.</string>
     <string name="module_files_delete_confirm_title">Usunąć plik?</string>
-    <string name="module_files_delete_confirm_own">%1$s zostanie usunięty ze wszystkich Twoich urządzeń.</string>
+    <string name="module_files_delete_confirm_own">%1$s zostanie usunięty ze wszystkich twoich urządzeń.</string>
     <string name="module_files_delete_confirm_peer">Poprosić %2$s o usunięcie %1$s? Zostanie usunięty po zsynchronizowaniu.</string>
     <string name="module_files_delete_confirm_action">Usuń</string>
     <string name="module_files_delete_cancel_action">Anuluj</string>
