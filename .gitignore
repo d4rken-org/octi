@@ -31,3 +31,5 @@ _site/
 .jekyll-cache/
 vendor/bundle/
 .cache/interop-fixtures/
+/.pi/*
+!/.pi/settings.json
