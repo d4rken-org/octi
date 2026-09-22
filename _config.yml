@@ -12,6 +12,10 @@ title: "Octi - Multi-Device Sync"
 description: "See battery, WiFi, clipboard and files across all your Android devices"
 author: "by Matthias Urhahn"
 
+header_pages:
+  - CHANGELOG.md
+  - PRIVACY_POLICY.md
+
 include:
   - PRIVACY_POLICY.md
   - CHANGELOG.md
