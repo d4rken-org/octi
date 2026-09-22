@@ -8,15 +8,15 @@ relative_links:
   enabled: true
   collections: true
 
-title: "Octi"
-description: "A multi-device manager for Android"
+title: "Octi - Multi-Device Sync"
+description: "See battery, WiFi, clipboard and files across all your Android devices"
 author: "by Matthias Urhahn"
 
 include:
   - PRIVACY_POLICY.md
   - CHANGELOG.md
-  - README.md
 exclude:
+  - README.md
   - branding
   - buildSrc
   - gradle/wrapper
@@ -26,7 +26,10 @@ exclude:
   - app-common-test
   - app-common
   - module-core
+  - modules-apps
   - modules-clipboard
+  - modules-connectivity
+  - modules-files
   - modules-meta
   - modules-power
   - modules-wifi
