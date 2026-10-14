@@ -242,5 +242,5 @@ Admin-merge of the required check exists in branch protection settings. Don't
 use it for normal cross-repo work — it skips the safety the gate provides.
 Reserve for "the gate itself is broken" emergencies (e.g. GitHub Actions
 outage, a runner image issue, raw.githubusercontent.com unreachable from
-ubuntu-22.04). When using it, file a follow-up to fix whatever made the gate
+ubuntu-24.04). When using it, file a follow-up to fix whatever made the gate
 unavailable.
